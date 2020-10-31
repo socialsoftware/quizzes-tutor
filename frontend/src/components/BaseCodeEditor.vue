@@ -41,6 +41,7 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
     mustacheOverlay
   );
 });
+
 @Component({
   components: {
     codemirror
@@ -77,6 +78,7 @@ export default class BaseCodeEditor extends Vue {
   onCmCodeChange(newCode: string) {
     this.syncedCode = newCode;
   }
+  
   updateQuestion() {
     this.CodemirrorUpdated = false;
     setTimeout(() => {

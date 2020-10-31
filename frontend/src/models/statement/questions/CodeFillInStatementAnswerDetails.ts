@@ -3,14 +3,13 @@ import { QuestionTypes } from '@/services/QuestionHelpers';
 import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
 import CodeFillInSpotAnswerStatement from './CodeFillInSpotAnswerStatement';
 
-//TODO: NEEDS TO BE FIXED
 export default class CodeFillInStatementAnswerDetails extends StatementAnswerDetails {
   public selectedOptions!: CodeFillInSpotAnswerStatement[];
 
   constructor(jsonObj?: CodeFillInStatementAnswerDetails) {
     super(QuestionTypes.CodeFillIn);
     if (jsonObj) {
-      console.log(jsonObj)
+      console.log('ups',jsonObj)
       this.selectedOptions = jsonObj.selectedOptions || [];
     }
   }
@@ -22,6 +21,9 @@ export default class CodeFillInStatementAnswerDetails extends StatementAnswerDet
   isAnswerCorrect(
     correctAnswerDetails: CodeFillInStatementCorrectAnswerDetails
   ): boolean {
-    return false;
-  }
+    var x = this.selectedOptions.length === correctAnswerDetails.correctOptions.length
+      && !correctAnswerDetails.correctOptions.some(op => !this.selectedOptions.some(s => s.optionId === op.optionId && s.sequence === op.sequence));
+    console.log('x=',x);
+    return x;
+    }
 }

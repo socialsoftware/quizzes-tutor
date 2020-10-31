@@ -37,6 +37,8 @@ import 'codemirror/addon/mode/overlay.js';
 import CodeMirror from 'codemirror';
 import { codemirror } from 'vue-codemirror';
 import CodeFillInSpotAnswerStatement from '@/models/statement/questions/CodeFillInSpotAnswerStatement';
+import StatementQuestionDetails from '@/models/statement/questions/StatementQuestionDetails';
+import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
 
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   const mustacheOverlay = {
@@ -72,8 +74,9 @@ export default class CodeFillInAnswer extends Vue {
   @Prop(CodeFillInStatementQuestionDetails) readonly questionDetails!:
     | CodeFillInStatementQuestionDetails;
   @PropSync('answerDetails', CodeFillInStatementAnswerDetails) answerDetailsSynced!: CodeFillInStatementAnswerDetails;
-  @Prop() readonly questionNumber!: number;
-  @Prop() readonly backsies!: boolean;
+  @Prop(CodeFillInStatementCorrectAnswerDetails)
+  readonly correctAnswerDetails!: CodeFillInStatementCorrectAnswerDetails;
+
   hover: boolean = false;
   cmOptions: any = {
     // codemirror options
@@ -115,103 +118,87 @@ export default class CodeFillInAnswer extends Vue {
       this.CodemirrorUpdated = true;
     }, 100);
   }
+  
   replaceDropdowns() {
-    var that = this;
-    function shuffle(arr: any) {
-      const array = arr.slice();
-      let currentIndex = array.length;
-      let temporaryValue;
-      let randomIndex;
-      while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-      }
-      return array;
-    }
-    function createOptionChild(optText: any, index: any, selected: boolean | undefined) {
-      const o = document.createElement('option');
-      o.appendChild(document.createTextNode(optText.content));
-      o.value = index;
-      if (selected){
-        o.setAttribute("selected","");
-      }
-      return o;
-    }
-     function creatBlankOptionChild(selected: boolean) {
-      const o = document.createElement('option');
-      o.innerHTML =  "-- select an option --";
-      o.setAttribute("disabled","");
-      if(selected){
-        o.setAttribute("selected","");
-      }
-      o.setAttribute("value","");
-      o.setAttribute("hidden","");
-      return o;
-    }
-    function addOptions(select: any, options: any) {
-      const data = that.answerDetailsSynced.selectedOptions?.find(el => el.sequence === options.sequence);
-      select.appendChild(creatBlankOptionChild(!data))
-      options.options.forEach((opt: any, i: any) => {
-        select.appendChild(createOptionChild(opt, i, data && data.optionId == opt.optionId));
-      });
-    }
-    function getOptions(name: number, options: CodeFillInSpotStatement[]) {
+    function getOptions(name: number, options: any[]): any {
       const result = options.find(el => el.sequence === name);
       return result;
     }
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
       const d = document.createElement('select');
       d.className = 'code-dropdown';
-      d.onchange = this.selectedANewOption;
       d.name = e.innerHTML;
       e.parentNode.replaceChild(d, e);
-      var num = e.innerHTML.match(/\d+/)[0];
+      var num = Number(e.innerHTML.match(/\d+/)[0]);
+      const option = document.createElement('option');
       var something = getOptions(Number(num), this.questionDetails.fillInSpots);
-      addOptions(d, something);
+      var optionAnswered = this.answerDetailsSynced.selectedOptions.find(
+        el => el.sequence === num
+      );
+      var optionAnsweredQuestion =
+        optionAnswered &&
+        something.options.find(el => el.optionId === optionAnswered.optionId);
+      var correctOption = this.correctAnswerDetails.correctOptions.find(
+        el => el.sequence === num
+      );
+      var correctOptionQuestion = something.options.find(
+        el => el.optionId === correctOption.optionId
+      );
+      var text;
+      if (
+        optionAnswered &&
+        optionAnswered.optionId === correctOption.optionId
+      ) {
+        text = ' ✔: ';
+      } else {
+        text = ' ✖: ';
+        const correctOption = document.createElement('option');
+        correctOption.innerHTML = ' ✔: ' + correctOptionQuestion.content;
+        correctOption.classList.add('answerDetailsSynced-spot', 'correct');
+        d.appendChild(correctOption);
+      }
+      option.innerHTML =
+        text +
+        (optionAnsweredQuestion
+          ? optionAnsweredQuestion.content
+          : 'Not Answered');
+      option.classList.add(
+        'answerDetailsSynced-spot',
+        optionAnswered && optionAnswered.optionId === correctOption.optionId
+          ? 'correct'
+          : 'incorrect'
+      );
+      d.prepend(option);
+      d.selectedIndex = 0;
     });
   }
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
-  }
-  selectedANewOption(event: Event){
-    var num = Number(event.target.name.match(/\d+/)[0]);
-    var selectIndex = event.target.selectedIndex - 1;
-    var dataQuestion = this.questionDetails.fillInSpots.find(el => el.sequence === num);
-    var data = this.answerDetailsSynced.selectedOptions?.find(el => el.sequence === num);
-    if(data){
-      data.optionId = dataQuestion?.options[selectIndex].optionId;
-    }else{
-      var newData = new CodeFillInSpotAnswerStatement();
-      newData.optionId = dataQuestion?.options[selectIndex].optionId;
-      newData.sequence = num;
-      this.answerDetailsSynced.selectedOptions.push(newData);
-    }
-    this.$emit("select-option");
-  }
+  
 }
 </script>
 
-<style>
-.code-container select.code-dropdown {
-  background-color: #e0e2e5;
-  color: inherit;
-  border-radius: 0px;
-  border-width: 0 0 1px 0;
-  border-style: solid;
-  border-color: rgb(169, 169, 169);
-  font-size: 0.8rem;
-  padding: 0;
-  -webkit-appearance: auto;
-  -moz-appearance: auto;
-}
-.code-container select.code-dropdown option {
-  color: #272822;
-}
-.code-container .CodeMirror {
-  border: 1px solid #eee;
-  height: auto;
+<style lang="scss">
+.code-container {
+  .code-dropdown{
+    border-radius: 0px;
+    border-width: 0 0 1px 0;
+    border-style: solid;
+    border-color: rgb(169, 169, 169);
+    font-size: 0.8rem;
+    padding: 0;
+    -webkit-appearance: auto;
+    -moz-appearance: auto;
+  }
+  .answerDetailsSynced-spot,
+  .code-dropdown {
+    border: solid 1px black;
+    &.correct {
+      background-color: #299455;
+      color: white;
+    }
+    &.incorrect {
+      background-color: #cf2323;
+      color: white;
+    }
+  }
 }
 </style>

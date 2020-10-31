@@ -1,13 +1,9 @@
 <template>
   <div id="ViewCodeMirror">
-    <div style="position:relative">
-      <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
-        <v-progress-circular indeterminate size="40" color="primary" />
-      </v-overlay>
-      <codemirror ref="myCmView" :value="questionDetails.code" :options="cmOptions">
-      </codemirror>
-    </div>
-    <br />
+    <BaseCodeEditor ref="myCmView" 
+      :code.sync="questionDetails.code"
+      :language.sync="questionDetails.language"
+      />
   </div>
 </template>
 
@@ -17,54 +13,18 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import CodeFillInQuestionDetails from '@/models/management/questions/CodeFillInQuestionDetails';
-import 'codemirror/mode/clike/clike.js';
-import 'codemirror/addon/mode/overlay.js';
-import CodeMirror from 'codemirror';
-import { codemirror } from 'vue-codemirror';
 import FillInOptions from '@/components/questions/FillInOptions.vue';
+import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
 
-CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
-  const mustacheOverlay = {
-    token: function(stream: any) {
-      let ch;
-      if (stream.match('{{slot-')) {
-        while ((ch = stream.next()) != null) {
-          if (ch === '}' && stream.next() === '}') {
-            stream.eat('}');
-            return 'custom-drop-down';
-          }
-        }
-      }
-      while (stream.next() != null && !stream.match('{{', false)) {
-        // empty
-      }
-      return null;
-    }
-  };
-  return CodeMirror.overlayMode(
-    CodeMirror.getMode(config, parserConfig.backdrop || 'text/x-java'),
-    mustacheOverlay
-  );
-});
 @Component({
   components: {
-    codemirror
+    BaseCodeEditor
   }
 })
 export default class ShowCodeFillInQuestion extends Vue {
   @Prop({ type: CodeFillInQuestionDetails, required: true })
   readonly questionDetails!: CodeFillInQuestionDetails;
-  cmOptions: any = {
-    // codemirror options
-    tabSize: 4,
-    mode: 'mustache',
-    theme: 'eclipse',
-    lineNumbers: true,
-    line: true,
-    readOnly: true
-  };
-  CodemirrorUpdated: boolean = false;
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
@@ -103,7 +63,7 @@ export default class ShowCodeFillInQuestion extends Vue {
       const result = options.find(el => el.sequence === name);
       return result ? result.options : result;
     }
-    console.log(document.querySelectorAll('.cm-custom-drop-down'));
+    console.log("SELECT", document.querySelectorAll('.cm-custom-drop-down'));
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
       console.log(e.innerHTML);
       const d = document.createElement('select');
@@ -116,54 +76,30 @@ export default class ShowCodeFillInQuestion extends Vue {
       addOptions(d, getOptions(Number(num) ,this.questionDetails.fillInSpots));
     });
   }
-  @Watch('questionDetails', { immediate: true, deep: true })
+
   updateQuestion() {
-    this.CodemirrorUpdated = false;
-    setTimeout(() => {
-      var that = this;
-      // this.$refs.myCmView.codemirror.on("refresh", function() {console.log("refresssh")})
-      // this.$refs.myCmView.codemirror.on("renderLine", function() {console.log("renderLine");that.replaceDropdowns();})
-      // this.$refs.myCmView.codemirror.on("redraw", function() {console.log("redraw")})
-      this.$refs.myCmView.codemirror.refresh();
-      this.replaceDropdowns();
-      document.body.addEventListener(
-        'mousedown',
-        function(evt: Event) {
-          if (evt && evt.target && evt.target.className === 'code-dropdown') {
-            evt.stopPropagation();
-          }
-        },
-        true
-      );
-      this.CodemirrorUpdated = true;
-    }, 500);
+    this.$refs.myCmView.codemirror.refresh();
+    this.replaceDropdowns();
+    document.body.addEventListener(
+      'mousedown',
+      function(evt: Event) {
+        if (evt && evt.target && evt.target.className === 'code-dropdown') {
+          evt.stopPropagation();
+        }
+      },
+      true
+    );
   }
+
   mounted() {
-    this.updateQuestion();
+    setTimeout(() => {
+      this.updateQuestion();
+    }, 1000);
   }
-  // updated() {
-  //   console.log('updated');
-  //   setTimeout(() => {
-  //     this.$refs.myCm.codemirror.refresh();
-  //     this.replaceDropdowns();
-  //     document.body.addEventListener(
-  //       'mousedown',
-  //       function(evt: Event) {
-  //         if (evt && evt.target && evt.target.className === 'code-dropdown') {
-  //           evt.stopPropagation();
-  //         }
-  //       },
-  //       true
-  //     );
-  //   }, 200);
-  // }
 }
 </script>
 
 <style>
-@import '~codemirror/lib/codemirror.css';
-@import '~codemirror/theme/eclipse.css';
-@import '~codemirror/theme/monokai.css';
 #ViewCodeMirror select.code-dropdown.incorrect {
   background-color: rgba(187, 36, 36, 0.76);
 }
@@ -177,7 +113,6 @@ export default class ShowCodeFillInQuestion extends Vue {
   border-width: 0 0 1px 0;
   border-style: solid;
   border-color: rgb(169, 169, 169);
-  /* font-size: 0.8rem; */
   padding: 0;
 }
 #ViewCodeMirror select.code-dropdown option {
