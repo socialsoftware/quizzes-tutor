@@ -5,7 +5,7 @@ import Question from '@/models/management/Question';
 export default class Discussion {
   id!: number;
   question?: Question;
-  userName!: string;
+  username!: string;
   message!: string;
   replies!: Reply[];
   date!: string | null;
@@ -17,7 +17,7 @@ export default class Discussion {
     if (jsonObj) {
       this.id = jsonObj.id;
       this.question = new Question(jsonObj.question);
-      this.userName = jsonObj.userName;
+      this.username = jsonObj.username;
       this.message = jsonObj.message;
       this.date = ISOtoString(jsonObj.date);
       this.courseExecutionId = jsonObj.courseExecutionId;

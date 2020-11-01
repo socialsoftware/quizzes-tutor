@@ -96,8 +96,8 @@ import User from '@/models/user/User';
 })
 export default class DiscussionComponent extends Vue {
   @Prop() readonly question!: StatementQuestion;
-  clarifications: Reply[] = [];
   @Prop() readonly userDiscussion?: Discussion;
+  clarifications: Reply[] = [];
   discussionMessage: string = '';
   user: User = this.$store.getters.getUser;
 

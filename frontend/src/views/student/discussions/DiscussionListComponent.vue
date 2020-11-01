@@ -11,38 +11,7 @@
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
     >
-      <template v-if="user.role === 'TEACHER'" v-slot:top>
-        <v-card-title>
-          <v-text-field
-            v-model="search"
-            append-icon="mdi-magnify"
-            label="Search"
-            single-line
-            hide-details
-            class="mx-2"
-          />
-
-          <v-spacer />
-          <v-btn
-            style="margin-right: 2% !important"
-            color="primary"
-            dark
-            @click="getDiscussions"
-            >Refresh List</v-btn
-          >
-          <v-btn
-            v-if="!showClosedDiscussions"
-            color="primary"
-            dark
-            @click="toggleClosedDiscussions"
-            >Show Closed Discussions</v-btn
-          >
-          <v-btn v-else color="primary" dark @click="toggleClosedDiscussions"
-            >Hide Closed Discussions</v-btn
-          >
-        </v-card-title>
-      </template>
-      <template v-else v-slot:top>
+      <template v-slot:top>
         <v-card-title style="width: 50%">
           <v-text-field
             v-model="search"
@@ -99,12 +68,10 @@ import ShowDiscussionDialog from '@/views/student/discussions/ShowDiscussionDial
   }
 })
 export default class DiscussionListComponent extends Vue {
-  @Prop() discussions: Discussion[] = [];
+  @Prop({ type: Array, required: true }) readonly discussions!: Discussion[];
   search: string = '';
-  user: User = this.$store.getters.getUser;
   currentDiscussion: Discussion | null = null;
   discussionDialog: boolean = false;
-  showClosedDiscussions: boolean = false;
 
   headers: object = [
     {
@@ -133,27 +100,6 @@ export default class DiscussionListComponent extends Vue {
   onCloseShowDiscussionDialog() {
     this.currentDiscussion = null;
     this.discussionDialog = false;
-  }
-
-  async toggleClosedDiscussions() {
-    await this.$store.dispatch('loading');
-    this.showClosedDiscussions = !this.showClosedDiscussions;
-    if (this.showClosedDiscussions) {
-      this.discussions = await RemoteServices.getCourseExecutionDiscussions();
-    } else {
-      this.discussions = await RemoteServices.getOpenCourseExecutionDiscussions();
-    }
-    await this.$store.dispatch('clearLoading');
-  }
-
-  async getDiscussions() {
-    await this.$store.dispatch('loading');
-    if (this.showClosedDiscussions) {
-      this.discussions = await RemoteServices.getCourseExecutionDiscussions();
-    } else {
-      this.discussions = await RemoteServices.getOpenCourseExecutionDiscussions();
-    }
-    await this.$store.dispatch('clearLoading');
   }
 }
 </script>
