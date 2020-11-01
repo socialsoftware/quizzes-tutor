@@ -14,6 +14,8 @@ import AuthDto from '@/models/user/AuthDto';
 import ExternalUser from '@/models/user/ExternalUser';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import Discussion from '@/models/management/Discussion';
+import Reply from '@/models/management/Reply';
 import Tournament from '@/models/user/Tournament';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
@@ -1084,6 +1086,114 @@ export default class RemoteServices {
       .delete(
         `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/removeTournament/${tournamentId}`
       )
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async addReply(reply: Reply, discussionId: number): Promise<Reply> {
+    return httpClient
+      .post('/discussions/' + discussionId + '/replies/add', reply)
+      .then(response => {
+        return new Reply(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getCourseExecutionDiscussions(): Promise<Discussion[]> {
+    return httpClient
+      .get(
+        `/discussions/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}`
+      )
+      .then(response => {
+        return response.data.map((discussion: any) => {
+          return new Discussion(discussion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getOpenCourseExecutionDiscussions(): Promise<Discussion[]> {
+    return httpClient
+      .get(
+        `/discussions/open/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}`
+      )
+      .then(response => {
+        return response.data.map((discussion: any) => {
+          return new Discussion(discussion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changeDiscussionStatus(id: number): Promise<Discussion> {
+    return httpClient
+      .put('/discussions/' + id + '/status')
+      .then(response => {
+        return new Discussion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getClarificationsByQuestionId(id: number): Promise<Reply[]> {
+    return httpClient
+      .get('/discussions/clarifications/questions/' + id)
+      .then(response => {
+        return response.data.map((reply: any) => {
+          return new Reply(reply);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getUserDiscussions(): Promise<Discussion[]> {
+    return httpClient
+      .get(
+        `/discussions/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}/users`
+      )
+      .then(response => {
+        return response.data.map((discussion: any) => {
+          return new Discussion(discussion);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async changeReplyAvailability(id: number): Promise<Discussion> {
+    return httpClient
+      .put('/discussions/replies/' + id + '/availability')
+      .then(response => {
+        return new Discussion(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createDiscussion(
+    discussion: Discussion,
+    questionAnswerId: number
+  ): Promise<Discussion> {
+    return httpClient
+      .post(
+        `/discussions/create?questionAnswerId=${questionAnswerId}`,
+        discussion
+      )
+      .then(response => {
+        return new Discussion(response.data);
+      })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });

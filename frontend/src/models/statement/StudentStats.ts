@@ -8,6 +8,7 @@ export default class StudentStats {
 
   uniqueCorrectAnswers!: number;
   uniqueWrongAnswers!: number;
+  createdDiscussions!: number;
 
   constructor(jsonObj?: StudentStats) {
     if (jsonObj) {
@@ -19,6 +20,7 @@ export default class StudentStats {
       this.uniqueCorrectAnswers = jsonObj.uniqueCorrectAnswers;
       this.uniqueWrongAnswers = jsonObj.uniqueWrongAnswers;
       this.totalAvailableQuestions = jsonObj.totalAvailableQuestions;
+      this.createdDiscussions = jsonObj.createdDiscussions;
     }
   }
 }

@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
@@ -123,6 +124,11 @@ class BeanConfiguration {
     }
 
     @Bean
+    DiscussionService discussionService() {
+        return new DiscussionService()
+    }
+
+    @Bean
     QuestionSubmissionService questionSubmissionService() {
         return new QuestionSubmissionService()
     }
@@ -149,5 +155,4 @@ class BeanConfiguration {
 
         return mailSender;
     }
-
 }

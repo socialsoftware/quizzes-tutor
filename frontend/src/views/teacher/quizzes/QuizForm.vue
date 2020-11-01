@@ -9,12 +9,20 @@
         {{ editMode ? 'Close' : 'Create' }}
       </v-btn>
 
-      <v-btn color="green darken-1" v-if="editMode && canSave" @click="save"
+      <v-btn
+        color="green darken-1"
+        v-if="editMode && canSave"
+        data-cy="saveQuizButton"
+        @click="save"
         >Save</v-btn
       >
     </v-card-title>
     <v-card-text>
-      <v-text-field v-model="quiz.title" label="*Title" />
+      <v-text-field
+        v-model="quiz.title"
+        label="*Title"
+        data-cy="quizTitleTextArea"
+      />
       <v-container fluid>
         <v-row>
           <v-col>
@@ -150,9 +158,11 @@
           <v-tooltip bottom v-if="!item.sequence">
             <template v-slot:activator="{ on }">
               <v-icon
+                id="addToQuizButton1"
                 class="mr-2 action-button"
                 v-on="on"
                 @click="addToQuiz(item)"
+                data-cy="addToQuizButton"
               >
                 add</v-icon
               >

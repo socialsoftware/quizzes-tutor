@@ -4,6 +4,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
@@ -50,6 +52,12 @@ public class User implements DomainEntity {
     private Integer numberOfCorrectTeacherAnswers = 0;
     private Integer numberOfCorrectInClassAnswers = 0;
     private Integer numberOfCorrectStudentAnswers = 0;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Discussion> discussions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Reply> replies = new HashSet<>();
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
@@ -107,6 +115,40 @@ public class User implements DomainEntity {
         this.key = key;
     }
 
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Boolean getAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(Boolean admin) {
+        this.admin = admin;
+    }
+
+    public Set<Discussion> getDiscussions() {
+        return discussions;
+    }
+
+    public void addDiscussion(Discussion discussion) {this.discussions.add(discussion);}
+
+    public void setDiscussions(Set<Discussion> discussions) {
+        this.discussions = discussions;
+    }
+
+    public Set<Reply> getReplies() {
+        return replies;
+    }
+
+    public void setReplies(Set<Reply> replies) {
+        this.replies = replies;
+    }
+
+    public void setQuizAnswers(Set<QuizAnswer> quizAnswers) {
+        this.quizAnswers = quizAnswers;
+    }
+
     public String getUsername() {
         if (authUser == null) {
             String role = getRole().toString().toLowerCase();
@@ -134,6 +176,12 @@ public class User implements DomainEntity {
     public Role getRole() {
         return role;
     }
+
+    public void addReply(Reply reply) {
+        this.replies.add(reply);
+    }
+
+    public void removeReply(Reply reply) {this.replies.remove(reply);}
 
     public void setRole(Role role) {
         if (role == null)
@@ -299,6 +347,7 @@ public class User implements DomainEntity {
         this.numberOfCorrectInClassAnswers = numberOfCorrectInClassAnswers;
     }
 
+
     public Integer getNumberOfCorrectStudentAnswers() {
         if (this.numberOfCorrectStudentAnswers == null)
             this.numberOfCorrectStudentAnswers = (int) this.getQuizAnswers().stream()
@@ -313,6 +362,14 @@ public class User implements DomainEntity {
 
     public void setNumberOfCorrectStudentAnswers(Integer numberOfCorrectStudentAnswers) {
         this.numberOfCorrectStudentAnswers = numberOfCorrectStudentAnswers;
+    }
+
+    public Integer getNumAnsweredDiscussions() {
+        return (int) this.getDiscussions().stream().filter(Discussion::teacherAnswered).count();
+    }
+
+    public void setReviews(Set<Review> reviews) {
+        this.reviews = reviews;
     }
 
     @Override
@@ -469,5 +526,7 @@ public class User implements DomainEntity {
 
         courseExecutions.forEach(ce -> ce.getUsers().remove(this));
         questionSubmissions.forEach(QuestionSubmission::remove);
+        discussions.forEach(Discussion::remove);
+        replies.forEach(Reply::remove);
     }
 }

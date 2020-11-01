@@ -203,5 +203,4 @@ public class QuizAnswer implements DomainEntity {
     public long getNumberOfCorrectAnswers() {
         return getQuestionAnswers().stream().filter(QuestionAnswer::isCorrect).count();
     }
-
 }

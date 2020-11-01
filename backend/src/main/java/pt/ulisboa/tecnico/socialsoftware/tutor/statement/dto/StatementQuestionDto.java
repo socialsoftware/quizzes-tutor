@@ -11,6 +11,7 @@ public class StatementQuestionDto implements Serializable {
     private String content;
     private ImageDto image;
     private Integer sequence;
+    private Integer questionId;
 
     private StatementQuestionDetailsDto questionDetails;
 
@@ -23,6 +24,9 @@ public class StatementQuestionDto implements Serializable {
         if (question.getImage() != null) {
             this.image = new ImageDto(question.getImage());
         }
+
+        this.questionId = questionAnswer.getQuizQuestion().getQuestion().getId();
+
         this.sequence = questionAnswer.getSequence();
         this.questionDetails = question.getStatementQuestionDetailsDto();
     }
@@ -67,5 +71,13 @@ public class StatementQuestionDto implements Serializable {
                 ", sequence=" + sequence +
                 ", questionDetails=" + questionDetails +
                 '}';
+    }
+
+    public Integer getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(Integer questionId) {
+        this.questionId = questionId;
     }
 }

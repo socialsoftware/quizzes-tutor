@@ -16,6 +16,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.mailer.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
@@ -127,6 +130,10 @@ class SpockTest extends Specification {
     public static final String REVIEW_2_COMMENT = "Review Comment 2"
     public static final String REVIEW_3_COMMENT = "Review Comment 3"
 
+    public static final String DISCUSSION_MESSAGE = "Discussion Message"
+    public static final String DISCUSSION_REPLY = "Discussion Reply"
+    public static final String DISCUSSION_REPLY2 = "Discussion Reply 2"
+
     @Autowired
     AuthUserService authUserService
 
@@ -234,6 +241,15 @@ class SpockTest extends Specification {
 
     @Autowired
     PasswordEncoder passwordEncoder
+
+    @Autowired
+    DiscussionRepository discussionRepository
+
+    @Autowired
+    DiscussionService discussionService
+
+    @Autowired
+    ReplyRepository replyRepository
 
     Course externalCourse
     @Shared

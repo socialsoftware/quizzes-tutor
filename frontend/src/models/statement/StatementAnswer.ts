@@ -2,12 +2,14 @@ import StatementAnswerDetails from '@/models/statement/questions/StatementAnswer
 import MultipleChoiceStatementAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementAnswerDetails';
 import { QuestionFactory } from '@/services/QuestionHelpers';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
+import Discussion from '@/models/management/Discussion';
 
 export default class StatementAnswer {
   public timeTaken: number = 0;
   public sequence!: number;
   public questionAnswerId!: number;
   public quizQuestionId!: number;
+  public userDiscussion?: Discussion;
   public timeToSubmission: number | null = null;
 
   answerDetails: StatementAnswerDetails = new MultipleChoiceStatementAnswerDetails();
@@ -23,6 +25,7 @@ export default class StatementAnswer {
       this.answerDetails = QuestionFactory.getFactory(
         jsonObj.answerDetails.type
       ).createStatementAnswerDetails(jsonObj.answerDetails);
+      this.userDiscussion = jsonObj.userDiscussion;
     }
   }
 

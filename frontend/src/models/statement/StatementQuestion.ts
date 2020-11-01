@@ -9,12 +9,14 @@ export default class StatementQuestion {
   image: Image | null = null;
 
   questionDetails: StatementQuestionDetails = new MultipleChoiceStatementQuestionDetails();
+  questionId!: number;
 
   constructor(jsonObj?: StatementQuestion) {
     if (jsonObj) {
       this.quizQuestionId = jsonObj.quizQuestionId;
       this.content = jsonObj.content;
       this.image = jsonObj.image;
+      this.questionId = jsonObj.questionId;
 
       this.questionDetails = QuestionFactory.getFactory(
         jsonObj.questionDetails.type

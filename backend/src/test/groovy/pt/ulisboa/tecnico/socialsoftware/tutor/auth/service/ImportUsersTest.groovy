@@ -38,7 +38,7 @@ class ImportUsersTest extends SpockTest {
         userServiceApplicational.registerListOfUsers(csvFile, courseExecution.getId())
 
         then:
-        userRepository.findAll().size() == usersInDataBase + NUMBER_OF_USERS_IN_FILE;
+        userRepository.findAll().size() == usersInDataBase + NUMBER_OF_USERS_IN_FILE
         and: "a mail was sent for each user"
         NUMBER_OF_USERS_IN_FILE * mailerMock.sendSimpleMail(mailerUsername,_, userService.PASSWORD_CONFIRMATION_MAIL_SUBJECT,_)
     }

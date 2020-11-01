@@ -61,7 +61,6 @@ class GetAvailableQuizzesTest extends SpockTest {
         Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER
         Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null
         Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER
-        Quiz.QuizType.GENERATED | false  | false      | LOCAL_DATE_BEFORE | null                | null
     }
 
     @Unroll

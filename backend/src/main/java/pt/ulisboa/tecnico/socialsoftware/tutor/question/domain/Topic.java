@@ -29,7 +29,7 @@ public class Topic implements DomainEntity {
     @ManyToMany
     private final Set<Question> questions = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
     private final List<TopicConjunction> topicConjunctions = new ArrayList<>();
 
     @ManyToOne(fetch=FetchType.EAGER, optional=false)

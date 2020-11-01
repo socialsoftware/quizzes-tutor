@@ -36,6 +36,7 @@
               :rules="[v => !!v || 'Question title is required']"
               label="Title"
               required
+              data-cy="questionTitleTextArea"
             />
           </v-row>
 
@@ -46,6 +47,7 @@
               :rules="[v => !!v || 'Question content is required']"
               auto-grow
               required
+              data-cy="questionQuestionTextArea"
               rows="4"
             ></v-textarea>
           </v-row>
@@ -63,7 +65,12 @@
         <v-btn color="red darken-1" @click="$emit('dialog', false)"
           >Cancel</v-btn
         >
-        <v-btn color="green darken-1" @click="saveQuestion">Save</v-btn>
+        <v-btn
+          color="green darken-1"
+          @click="saveQuestion"
+          data-cy="saveQuestionButton"
+          >Save</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>
