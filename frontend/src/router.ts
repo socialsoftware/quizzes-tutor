@@ -34,6 +34,8 @@ import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
 import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
 import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
+import StudentDiscussionsView from '@/views/student/discussions/StudentDiscussionsView.vue';
+import TeacherDiscussionsView from '@/views/teacher/discussions/TeacherDiscussionsView.vue';
 import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
 import ExportAllView from '@/views/admin/ExportAllView.vue';
 
@@ -172,6 +174,15 @@ let router = new Router({
             title: APP_NAME + ' - Submissions',
             requiredAuth: 'Teacher'
           }
+        },
+        {
+          path: 'discussions',
+          name: 'teacher-discussions',
+          component: TeacherDiscussionsView,
+          meta: {
+            title: APP_NAME + ' - Discussions',
+            requiredAuth: 'Teacher'
+          }
         }
       ]
     },
@@ -240,6 +251,15 @@ let router = new Router({
           component: ScanView,
           meta: {
             title: APP_NAME + ' - Scan',
+            requiredAuth: 'Student'
+          }
+        },
+        {
+          path: 'discussions',
+          name: 'discussions',
+          component: StudentDiscussionsView,
+          meta: {
+            title: APP_NAME + ' - Discussion',
             requiredAuth: 'Student'
           }
         },

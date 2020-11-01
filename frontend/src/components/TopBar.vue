@@ -26,33 +26,6 @@
       <v-spacer />
 
       <v-toolbar-items class="hidden-sm-and-down" hide-details>
-        <v-menu offset-y v-if="isAdmin" open-on-hover>
-          <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark data-cy="administrationMenuButton">
-              Administration
-              <v-icon>fas fa-file-alt</v-icon>
-            </v-btn>
-          </template>
-          <v-list dense>
-            <v-list-item to="/admin/courses" data-cy="manageCoursesMenuButton">
-              <v-list-item-action>
-                <v-icon>fas fa-school</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Manage Courses</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item to="/admin/export">
-              <v-list-item-action>
-                <v-icon>fas fa-download</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Export</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-          </v-list>
-        </v-menu>
-
         <v-menu offset-y v-if="isTeacher && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
             <v-btn v-on="on" text dark data-cy="managementMenuButton">
@@ -61,7 +34,10 @@
             </v-btn>
           </template>
           <v-list dense>
-            <v-list-item to="/management/questions">
+            <v-list-item
+              to="/management/questions"
+              data-cy="questionsTeacherMenuButton"
+            >
               <v-list-item-action>
                 <v-icon>question_answer</v-icon>
               </v-list-item-action>
@@ -91,7 +67,10 @@
                 <v-list-item-title>Topics</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/quizzes">
+            <v-list-item
+              to="/management/quizzes"
+              data-cy="quizzesTeacherMenuButton"
+            >
               <v-list-item-action>
                 <v-icon>ballot</v-icon>
               </v-list-item-action>
@@ -123,6 +102,17 @@
                 <v-list-item-title>Tournaments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
+            <v-list-item
+              to="/management/discussions"
+              data-cy="discussionsTeacherButton"
+            >
+              <v-list-item-action>
+                <v-icon>fas fa-comment-dots</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Discussions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item to="/management/export">
               <v-list-item-action>
                 <v-icon>fas fa-download</v-icon>
@@ -136,7 +126,7 @@
 
         <v-menu offset-y v-if="isStudent && currentCourse" open-on-hover>
           <template v-slot:activator="{ on }">
-            <v-btn v-on="on" text dark>
+            <v-btn data-cy="quizzesStudentMenuButton" v-on="on" text dark>
               Quizzes
               <v-icon>fas fa-file-alt</v-icon>
             </v-btn>
@@ -180,6 +170,17 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Solved</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item
+              to="/student/discussions"
+              data-cy="discussionsStudentMenuButton"
+            >
+              <v-list-item-action>
+                <v-icon>fas fa-comment-dots</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Discussions</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
           </v-list>
@@ -238,6 +239,33 @@
           Change course
           <v-icon>fa fa-book</v-icon>
         </v-btn>
+
+        <v-menu offset-y v-if="isAdmin" open-on-hover>
+          <template v-slot:activator="{ on }">
+            <v-btn v-on="on" text dark data-cy="administrationMenuButton">
+              Administration
+              <v-icon>fas fa-file-alt</v-icon>
+            </v-btn>
+          </template>
+          <v-list dense>
+            <v-list-item to="/admin/courses" data-cy="manageCoursesMenuButton">
+              <v-list-item-action>
+                <v-icon>fas fa-school</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Manage Courses</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/admin/export">
+              <v-list-item-action>
+                <v-icon>fas fa-download</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Export</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+          </v-list>
+        </v-menu>
       </v-toolbar-items>
 
       <v-toolbar-items class="hidden-sm-and-down" hide-details>
@@ -286,33 +314,6 @@
       </v-toolbar>
 
       <v-list class="pt-0" dense>
-        <!-- Administration Group-->
-        <v-list-group
-          prepend-icon="fas fa-file-alt"
-          :value="false"
-          v-if="isAdmin"
-        >
-          <template v-slot:activator>
-            <v-list-item-title>Administration</v-list-item-title>
-          </template>
-          <v-list-item to="/admin/courses">
-            <v-list-item-action>
-              <v-icon>fas fa-school</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Manage Courses</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-          <v-list-item to="/admin/export">
-            <v-list-item-action>
-              <v-icon>fas fa-download</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Export</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
-        </v-list-group>
-
         <!-- Management Group-->
         <v-list-group
           prepend-icon="fas fa-file-alt"
@@ -376,6 +377,14 @@
             </v-list-item-action>
             <v-list-item-content>
               <v-list-item-title>Tournaments</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/discussions">
+            <v-list-item-action>
+              <v-icon>fas fa-comment-dots</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Discussions</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
           <v-list-item to="/management/export">
@@ -450,6 +459,19 @@
             <v-list-item-title>Stats</v-list-item-title>
           </v-list-item>
 
+          <v-list-item to="/student/discussions">
+            <v-list-item-action>
+              <v-icon>fas fa-comment-dots</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>Discussions</v-list-item-title>
+          </v-list-item>
+
+          <v-list-item to="/student/all">
+            <v-list-item-action>
+              <v-icon>fas fa-calendar</v-icon>
+            </v-list-item-action>
+            <v-list-item-title>All Tournaments</v-list-item-title>
+          </v-list-item>
           <v-list-item to="/student/tournaments/open">
             <v-list-item-action>
               <v-icon>fas fa-medal</v-icon>
@@ -461,6 +483,33 @@
               <v-icon>fas fa-award</v-icon>
             </v-list-item-action>
             <v-list-item-title>Closed Tournaments</v-list-item-title>
+          </v-list-item>
+        </v-list-group>
+
+        <!-- Administration Group-->
+        <v-list-group
+          prepend-icon="fas fa-file-alt"
+          :value="false"
+          v-if="isAdmin"
+        >
+          <template v-slot:activator>
+            <v-list-item-title>Administration</v-list-item-title>
+          </template>
+          <v-list-item to="/admin/courses">
+            <v-list-item-action>
+              <v-icon>fas fa-school</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Manage Courses</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/admin/export">
+            <v-list-item-action>
+              <v-icon>fas fa-download</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Export</v-list-item-title>
+            </v-list-item-content>
           </v-list-item>
         </v-list-group>
 

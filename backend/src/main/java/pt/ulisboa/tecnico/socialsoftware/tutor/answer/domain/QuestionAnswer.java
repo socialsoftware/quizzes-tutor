@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -39,6 +40,9 @@ public class QuestionAnswer implements DomainEntity {
     @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
     @JoinColumn(name = "answer_details_id")
     private AnswerDetails answerDetails;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionAnswer")
+    private Discussion discussion;
 
     public QuestionAnswer() {
     }
@@ -134,6 +138,10 @@ public class QuestionAnswer implements DomainEntity {
         if (answerDetails != null) {
             answerDetails.remove();
         }
+
+        if (discussion != null) {
+            discussion.remove();
+        }
     }
 
     @Override
@@ -147,6 +155,14 @@ public class QuestionAnswer implements DomainEntity {
         } else {
             return this.getAnswerDetails().getStatementAnswerDetailsDto();
         }
+    }
+
+    public Discussion getDiscussion() {
+        return discussion;
+    }
+
+    public void setDiscussion(Discussion discussion) {
+        this.discussion = discussion;
     }
 
     public boolean isAnswered() {

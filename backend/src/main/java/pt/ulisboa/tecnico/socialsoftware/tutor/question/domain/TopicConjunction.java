@@ -17,7 +17,7 @@ public class TopicConjunction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions", fetch=FetchType.EAGER)
     private Set<Topic> topics = new HashSet<>();
 
     @ManyToOne(fetch=FetchType.LAZY, optional=false)

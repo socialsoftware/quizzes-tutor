@@ -5,7 +5,7 @@ Used on:
 -->
 
 <template>
-  <ul class="option-list">
+  <ul data-cy="optionList" class="option-list">
     <li
       v-for="(n, index) in questionDetails.options.length"
       :key="index"

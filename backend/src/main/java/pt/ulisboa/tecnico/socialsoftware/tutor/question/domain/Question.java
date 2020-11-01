@@ -5,6 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -75,6 +76,9 @@ public class Question implements DomainEntity {
     @ManyToMany(mappedBy = "questions")
     private final Set<Topic> topics = new HashSet<>();
 
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
+    private Set<Discussion> discussions = new HashSet<>();
 
     public Question() {
     }
@@ -198,6 +202,18 @@ public class Question implements DomainEntity {
     public void setCourse(Course course) {
         this.course = course;
         course.addQuestion(this);
+    }
+
+    public void setId(Integer id) {
+        this.id = id;
+    }
+
+    public Set<Discussion> getDiscussions() {
+        return discussions;
+    }
+
+    public void addDiscussion(Discussion discussion) {
+        discussions.add(discussion);
     }
 
     private void generateKeys() {
