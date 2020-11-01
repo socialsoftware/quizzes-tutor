@@ -179,12 +179,6 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteQuizAnswer(QuizAnswer quizAnswer) {
-        List<QuestionAnswer> questionAnswers = new ArrayList<>(quizAnswer.getQuestionAnswers());
-        questionAnswers.forEach(questionAnswer ->
-        {
-            questionAnswer.remove();
-            questionAnswerRepository.delete(questionAnswer);
-        });
         quizAnswer.remove();
         quizAnswerRepository.delete(quizAnswer);
     }

@@ -4,9 +4,15 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.AssessmentRepository;
@@ -51,6 +57,15 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     private TournamentRepository tournamentRepository;
+
+    @Autowired
+    private QuestionAnswerRepository questionAnswerRepository;
+
+    @Autowired
+    private DiscussionRepository discussionRepository;
+
+    @Autowired
+    private ReplyRepository replyRepository;
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
@@ -130,6 +145,18 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                         }
                     }
                     return false;
+                case "QUESTION_ANSWER.ACCESS":
+                    QuestionAnswer questionAnswer = questionAnswerRepository.findById(id).orElse(null);
+                    return questionAnswer != null && questionAnswer.getQuizAnswer().getUser().getId().equals(userId);
+                case "DISCUSSION.OWNER":
+                    Discussion discussion = discussionRepository.findById(id).orElse(null);
+                    return discussion != null && discussion.getUser().getId().equals(userId);
+                case "DISCUSSION.ACCESS":
+                    discussion = discussionRepository.findById(id).orElse(null);
+                    return discussion != null && user.isTeacher() && userHasThisExecution(userId, discussion.getCourseExecution().getId());
+                case "REPLY.ACCESS":
+                    Reply reply = replyRepository.findById(id).orElse(null);
+                    return reply != null && userHasThisExecution(userId, reply.getDiscussion().getCourseExecution().getId());
                 default: return false;
             }
         }

@@ -99,6 +99,8 @@ public class StatsService {
             statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
             statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
         }
+
+        statsDto.setCreatedDiscussions(user.getDiscussions().size());
         return statsDto;
     }
 }

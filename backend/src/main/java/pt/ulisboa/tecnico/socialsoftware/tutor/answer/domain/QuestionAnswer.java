@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -38,6 +39,9 @@ public class QuestionAnswer implements DomainEntity {
     private Option option;
 
     private Integer sequence;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionAnswer")
+    private Discussion discussion;
 
     public QuestionAnswer() {
     }
@@ -140,5 +144,17 @@ public class QuestionAnswer implements DomainEntity {
             option.getQuestionAnswers().remove(this);
             option = null;
         }
+
+        if (discussion != null) {
+            discussion.remove();
+        }
+    }
+
+    public Discussion getDiscussion() {
+        return discussion;
+    }
+
+    public void setDiscussion(Discussion discussion) {
+        this.discussion = discussion;
     }
 }

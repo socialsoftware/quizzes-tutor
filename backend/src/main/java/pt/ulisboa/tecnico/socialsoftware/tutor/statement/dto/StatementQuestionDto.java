@@ -12,6 +12,7 @@ public class StatementQuestionDto implements Serializable {
     private List<StatementOptionDto> options;
     private ImageDto image;
     private Integer sequence;
+    private Integer questionId;
 
     public StatementQuestionDto() {}
 
@@ -20,6 +21,7 @@ public class StatementQuestionDto implements Serializable {
         if (questionAnswer.getQuizQuestion().getQuestion().getImage() != null) {
             this.image = new ImageDto(questionAnswer.getQuizQuestion().getQuestion().getImage());
         }
+        this.questionId = questionAnswer.getQuizQuestion().getQuestion().getId();
         this.options = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream().map(StatementOptionDto::new).collect(Collectors.toList());
         this.sequence = questionAnswer.getSequence();
     }
@@ -64,5 +66,13 @@ public class StatementQuestionDto implements Serializable {
                 ", image=" + image +
                 ", sequence=" + sequence +
                 '}';
+    }
+
+    public Integer getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(Integer questionId) {
+        this.questionId = questionId;
     }
 }

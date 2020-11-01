@@ -6,7 +6,7 @@ export default class StatementQuestion {
   quizQuestionId!: number;
   content!: string;
   image: Image | null = null;
-
+  questionId!: number;
   options: StatementOption[] = [];
 
   constructor(jsonObj?: StatementQuestion) {
@@ -14,6 +14,7 @@ export default class StatementQuestion {
       this.quizQuestionId = jsonObj.quizQuestionId;
       this.content = jsonObj.content;
       this.image = jsonObj.image;
+      this.questionId = jsonObj.questionId;
 
       if (jsonObj.options) {
         this.options = _.shuffle(

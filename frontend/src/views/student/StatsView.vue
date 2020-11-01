@@ -57,6 +57,14 @@
           <p>Percentage of questions seen</p>
         </div>
       </div>
+      <div class="items">
+        <div class="icon-wrapper" ref="improvedCorrectAnswers">
+          <animated-number :number="stats.createdDiscussions" />
+        </div>
+        <div class="project-name">
+          <p>Discussions Created</p>
+        </div>
+      </div>
     </div>
   </div>
 </template>
