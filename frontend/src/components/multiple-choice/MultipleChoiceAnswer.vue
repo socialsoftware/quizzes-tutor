@@ -10,12 +10,16 @@ Used on:
       v-for="(n, index) in questionDetails.options.length"
       :key="index"
       v-bind:class="['option', optionClass(index)]"
-      @click="!isReadonly && selectOption(questionDetails.options[index].optionId)"
+      @click="
+        !isReadonly && selectOption(questionDetails.options[index].optionId)
+      "
     >
       <span
-        v-if="isReadonly &&
+        v-if="
+          isReadonly &&
             correctAnswerDetails.correctOptionId ===
-              questionDetails.options[index].optionId"
+              questionDetails.options[index].optionId
+        "
         class="fas fa-check option-letter"
       />
       <span
@@ -25,7 +29,9 @@ Used on:
         "
         class="fas fa-times option-letter"
       />
-      <span v-else class="option-letter">{{ String.fromCharCode(65 + index) }}</span>
+      <span v-else class="option-letter">{{
+        String.fromCharCode(65 + index)
+      }}</span>
       <span
         class="option-content"
         v-html="convertMarkDown(questionDetails.options[index].content)"

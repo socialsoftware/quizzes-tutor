@@ -43,7 +43,9 @@
 
           <component
             :is="editQuestionSubmission.question.questionDetailsDto.type"
-            :questionDetails="editQuestionSubmission.question.questionDetailsDto"
+            :questionDetails="
+              editQuestionSubmission.question.questionDetailsDto
+            "
           />
 
           <v-row>
@@ -163,6 +165,6 @@ export default class EditQuestionSubmissionDialog extends Vue {
       editQuestionSubmission.question &&
       editQuestionSubmission.question.id !== null
     );
-  } 
+  }
 }
 </script>
