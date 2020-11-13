@@ -53,12 +53,12 @@
     <question-component
       v-model="questionOrder"
       v-if="statementQuiz.answers[questionOrder]"
-      :optionId="statementQuiz.answers[questionOrder].optionId"
+      :answer="statementQuiz.answers[questionOrder]"
       :question="statementQuiz.questions[questionOrder]"
       :questionNumber="statementQuiz.questions.length"
       :backsies="!statementQuiz.oneWay"
       @increase-order="confirmAnswer"
-      @select-option="changeAnswer"
+      @question-answer-update="changeAnswer"
       @decrease-order="decreaseOrder"
     />
 
@@ -72,19 +72,9 @@
           <br />
           Are you sure you want to finish?
           <br />
-          <span
-            v-if="
-              statementQuiz.answers
-                .map(answer => answer.optionId)
-                .filter(optionId => optionId == null).length
-            "
-          >
+          <span v-if="statementQuiz.unansweredQuestions()">
             You still have
-            {{
-              statementQuiz.answers
-                .map(answer => answer.optionId)
-                .filter(optionId => optionId == null).length
-            }}
+            {{ statementQuiz.unansweredQuestions() }}
             unanswered questions!
           </span>
         </v-card-text>
@@ -204,25 +194,16 @@ export default class QuizView extends Vue {
     }
   }
 
-  async changeAnswer(optionId: number) {
+  async changeAnswer() {
     if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
       try {
         this.calculateTime();
-        let newAnswer = { ...this.statementQuiz.answers[this.questionOrder] };
-
-        if (newAnswer.optionId === optionId) {
-          newAnswer.optionId = null;
-        } else {
-          newAnswer.optionId = optionId;
-        }
+        let newAnswer = this.statementQuiz.answers[this.questionOrder];
 
         if (!!this.statementQuiz && this.statementQuiz.timed) {
           newAnswer.timeToSubmission = this.statementQuiz.timeToSubmission;
           RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
         }
-
-        this.statementQuiz.answers[this.questionOrder].optionId =
-          newAnswer.optionId;
       } catch (error) {
         await this.$store.dispatch('error', error);
       }

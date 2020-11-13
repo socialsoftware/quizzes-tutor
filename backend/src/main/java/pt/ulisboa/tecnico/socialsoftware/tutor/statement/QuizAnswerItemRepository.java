@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuizAnswerItem;
 
 import java.util.List;
 import java.util.Set;

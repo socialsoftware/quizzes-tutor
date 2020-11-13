@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
@@ -39,22 +40,11 @@ public interface Visitor {
 
     default void visitCourseExecution(CourseExecution courseExecution) {}
 
+    default void visitAnswerDetails(MultipleChoiceAnswer answer){}
+
+    default void visitQuestionDetails(MultipleChoiceQuestion question) {}
+
     default void visitDiscussion(Discussion discussion) {}
 
     default void visitReply(Reply reply) {}
-
-    default String convertSequenceToLetter(Integer value) {
-        switch (value) {
-            case 0:
-                return "A";
-            case 1:
-                return "B";
-            case 2:
-                return "C";
-            case 3:
-                return "D";
-            default:
-                return "X";
-        }
-    }
 }

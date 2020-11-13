@@ -4,9 +4,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
@@ -35,12 +37,15 @@ class AddQuizAnswerTest extends SpockTest {
         question.setKey(1)
         question.setCourse(externalCourse)
         question.setTitle(QUESTION_1_TITLE)
+        def questionDetails = new MultipleChoiceQuestion()
+        question.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(question)
 
         Option option = new Option()
         option.setSequence(1)
         option.setCorrect(true)
-        question.addOption(option)
+        question.getQuestionDetails().addOption(option)
 
         QuestionDto questionDto = new QuestionDto(question)
         questionDto.setKey(1)
@@ -59,7 +64,8 @@ class AddQuizAnswerTest extends SpockTest {
         QuizAnswer quizAnswer = new QuizAnswer(user, quiz)
         quizAnswer.setCompleted(true)
 
-        new QuestionAnswer(quizAnswer, quizQuestion, 1, option, 1)
+        def questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, 1, 1)
+        questionAnswer.setAnswerDetails(new MultipleChoiceAnswer(questionAnswer, option))
     }
 
     def "addQuizAnswer" (){

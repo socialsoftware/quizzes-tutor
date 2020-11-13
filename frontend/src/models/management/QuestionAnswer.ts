@@ -1,14 +1,17 @@
 import Question from '@/models/management/Question';
-import Option from '@/models/management/Option';
+import AnswerDetails from '@/models/management/questions/AnswerDetails';
+import { QuestionFactory } from '@/services/QuestionHelpers';
 
 export class QuestionAnswer {
   question!: Question;
-  option!: Option;
+  answerDetails!: AnswerDetails;
 
   constructor(jsonObj?: QuestionAnswer) {
     if (jsonObj) {
       this.question = new Question(jsonObj.question);
-      this.option = new Option(jsonObj.option);
+      this.answerDetails = QuestionFactory.getFactory(
+        jsonObj.answerDetails.type
+      ).createAnswerDetails(jsonObj.answerDetails);
     }
   }
 }

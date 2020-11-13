@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicConjunction
@@ -22,6 +23,7 @@ class GenerateStudentQuizTest extends SpockTest {
     def questionOne
     def questionTwo
     def assessment
+    def questionDetails
 
     def setup() {
         user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
@@ -41,6 +43,9 @@ class GenerateStudentQuizTest extends SpockTest {
         questionOne.setStatus(Question.Status.AVAILABLE)
         questionOne.setCourse(externalCourse)
         questionOne.addTopic(topic)
+        questionDetails = new MultipleChoiceQuestion()
+        questionOne.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(questionOne)
 
         questionTwo = new Question()
@@ -50,6 +55,9 @@ class GenerateStudentQuizTest extends SpockTest {
         questionTwo.setStatus(Question.Status.AVAILABLE)
         questionTwo.setCourse(externalCourse)
         questionTwo.addTopic(topic)
+        questionDetails = new MultipleChoiceQuestion()
+        questionTwo.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(questionTwo)
 
         assessment = new Assessment()

@@ -1,13 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-
-import java.util.Comparator;
-import java.util.stream.Collectors;
 
 public abstract class LatexVisitor implements Visitor {
     protected String result = "";
@@ -47,13 +45,19 @@ public abstract class LatexVisitor implements Visitor {
 
         this.result = this.result + "\t" + this.questionContent + "\n\n";
 
-        for (Option option: question.getOptions().stream().sorted(Comparator.comparing(Option::getSequence)).collect(Collectors.toList())) {
-            option.accept(this);
-        }
+        question.getQuestionDetails().accept(this);
+
+
+    }
+
+    @Override
+    public void visitQuestionDetails(MultipleChoiceQuestion question) {
+        question.visitOptions(this);
+
         this.result = this.result + "\\putOptions\n";
 
         this.result = this.result + "% Answer: " +
-            convertSequenceToLetter(question.getOptions().stream().filter(Option::getCorrect).map(Option::getSequence).findAny().orElse(null)) + "\n";
+                MultipleChoiceQuestion.convertSequenceToLetter(question.getOptions().stream().filter(Option::isCorrect).map(Option::getSequence).findAny().orElse(null)) + "\n";
 
         this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
     }
@@ -69,7 +73,7 @@ public abstract class LatexVisitor implements Visitor {
 
     @Override
     public void visitOption(Option option) {
-        this.result = this.result + "\t\\option" + convertSequenceToLetter(option.getSequence()) + "{" + option.getContent() + "}\n";
+        this.result = this.result + "\t\\option" + MultipleChoiceQuestion.convertSequenceToLetter(option.getSequence()) + "{" + option.getContent() + "}\n";
     }
 
 }

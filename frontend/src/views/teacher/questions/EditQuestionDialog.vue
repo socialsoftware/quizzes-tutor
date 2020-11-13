@@ -41,51 +41,10 @@
             ></v-textarea>
           </v-row>
 
-          <v-row>
-            <v-col cols="1" offset="10">
-              Correct
-            </v-col>
-          </v-row>
-
-          <v-row v-for="(option, index) in editQuestion.options" :key="index">
-            <v-col cols="10">
-              <v-textarea
-                v-model="option.content"
-                :label="`Option ${index + 1}`"
-                :data-cy="`OptionTextArea${index + 1}`"
-                rows="1"
-                auto-grow
-              ></v-textarea>
-            </v-col>
-            <v-col cols="1">
-              <v-switch
-                v-model="option.correct"
-                inset
-                :data-cy="`CorrectSwitch${index + 1}`"
-              />
-            </v-col>
-            <v-col v-if="editQuestion.options.length > 2">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-icon
-                    small
-                    class="ma-1 action-button"
-                    v-on="on"
-                    @click="removeOption(index)"
-                    color="red"
-                    >close</v-icon
-                  >
-                </template>
-                <span>Remove Option</span>
-              </v-tooltip>
-            </v-col>
-          </v-row>
-
-          <v-row>
-            <v-btn class="ma-auto" color="blue darken-1" @click="addOption"
-              >Add Option</v-btn
-            >
-          </v-row>
+          <component
+            :is="editQuestion.questionDetailsDto.type"
+            :questionDetails="editQuestion.questionDetailsDto"
+          />
         </v-form>
       </v-card-text>
 
@@ -110,8 +69,14 @@ import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
 import Option from '@/models/management/Option';
+import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
+import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 
-@Component
+@Component({
+  components: {
+    multiple_choice: MultipleChoiceCreate
+  }
+})
 export default class EditQuestionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: Question, required: true }) readonly question!: Question;
@@ -145,14 +110,6 @@ export default class EditQuestionDialog extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
-  }
-
-  addOption() {
-    this.editQuestion.options.push(new Option());
-  }
-
-  removeOption(index: number) {
-    this.editQuestion.options.splice(index, 1);
   }
 }
 </script>

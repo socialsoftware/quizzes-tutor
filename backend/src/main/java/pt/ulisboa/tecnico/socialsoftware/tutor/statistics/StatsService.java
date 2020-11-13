@@ -11,7 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -71,9 +70,8 @@ public class StatsService {
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
-                .map(QuestionAnswer::getOption)
-                .filter(Objects::nonNull)
-                .filter(Option::getCorrect).count();
+                .filter(QuestionAnswer::isCorrect)
+                .count();
 
         int uniqueCorrectAnswers = (int) user.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
@@ -82,9 +80,7 @@ public class StatsService {
                 .flatMap(Collection::stream)
                 .collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparingInt(questionAnswer -> questionAnswer.getQuizQuestion().getQuestion().getId()))),
                         ArrayList::new)).stream()
-                .map(QuestionAnswer::getOption)
-                .filter(Objects::nonNull)
-                .filter(Option::getCorrect)
+                .filter(QuestionAnswer::isCorrect)
                 .count();
 
         Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();

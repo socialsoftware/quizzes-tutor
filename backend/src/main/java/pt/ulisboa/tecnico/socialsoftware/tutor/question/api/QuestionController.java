@@ -23,9 +23,9 @@ import java.util.Objects;
 
 @RestController
 public class QuestionController {
-    private static Logger logger = LoggerFactory.getLogger(QuestionController.class);
+    private static final Logger logger = LoggerFactory.getLogger(QuestionController.class);
 
-    private QuestionService questionService;
+    private final QuestionService questionService;
 
     @Value("${figures.dir}")
     private String figuresDir;
@@ -42,7 +42,7 @@ public class QuestionController {
 
     @GetMapping(value = "/courses/{courseId}/questions/export")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
-    public void exportQuestions(HttpServletResponse response,@PathVariable int courseId) throws IOException {
+    public void exportQuestions(HttpServletResponse response, @PathVariable int courseId) throws IOException {
         response.setHeader("Content-Disposition", "attachment; filename=file.zip");
         response.setContentType("application/zip");
         response.getOutputStream().write(this.questionService.exportCourseQuestions(courseId).toByteArray());

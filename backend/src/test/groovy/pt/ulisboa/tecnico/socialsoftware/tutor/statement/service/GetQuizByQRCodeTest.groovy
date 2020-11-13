@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
@@ -36,6 +37,9 @@ class GetQuizByQRCodeTest extends SpockTest {
         question.setCourse(externalCourse)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
+        def questionDetails = new MultipleChoiceQuestion()
+        question.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(question)
     }
 

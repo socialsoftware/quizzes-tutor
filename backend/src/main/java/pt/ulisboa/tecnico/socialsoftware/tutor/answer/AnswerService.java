@@ -6,21 +6,22 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuizAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
@@ -51,14 +52,17 @@ public class AnswerService {
     private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
+    private AnswerDetailsRepository answerDetailsRepository;
+
+    @Autowired
     private QuizAnswerItemRepository quizAnswerItemRepository;
 
     @Autowired
     private AnswersXmlImport xmlImporter;
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizAnswerDto createQuizAnswer(Integer userId, Integer quizId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
@@ -72,7 +76,7 @@ public class AnswerService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<CorrectAnswerDto> concludeQuiz(StatementQuizDto statementQuizDto) {
@@ -109,7 +113,7 @@ public class AnswerService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void writeQuizAnswers(Integer quizId) {
@@ -139,43 +143,32 @@ public class AnswerService {
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswer.getId()));
 
         questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
-
-        if (statementAnswerDto.getOptionId() != null) {
-
-                Option option = questionAnswer.getQuizQuestion().getQuestion().getOptions().stream()
-                        .filter(option1 -> option1.getId().equals(statementAnswerDto.getOptionId()))
-                        .findAny()
-                        .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, statementAnswerDto.getOptionId()));
-
-            if (questionAnswer.getOption() != null) {
-                questionAnswer.getOption().getQuestionAnswers().remove(questionAnswer);
-            }
-            questionAnswer.setOption(option);
-        } else {
-            questionAnswer.setOption(null);
+        AnswerDetails answer = questionAnswer.setAnswerDetails(statementAnswerDto);
+        if (answer != null) {
+            answerDetailsRepository.save(answer);
         }
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public String exportAnswers() {
-        AnswersXmlExport xmlExport = new AnswersXmlExport();
+        AnswersXmlExportVisitor xmlExport = new AnswersXmlExportVisitor();
 
         return xmlExport.export(quizAnswerRepository.findAll());
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void importAnswers(String answersXml) {
         xmlImporter.importAnswers(answersXml);
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteQuizAnswer(QuizAnswer quizAnswer) {

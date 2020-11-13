@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
@@ -143,6 +144,9 @@ class SpockTest extends Specification {
     AnswerService answerService
 
     @Autowired
+    AnswerDetailsRepository answerDetailsRepository
+
+    @Autowired
     AssessmentRepository assessmentRepository
 
     @Autowired
@@ -171,6 +175,9 @@ class SpockTest extends Specification {
 
     @Autowired
     QuestionRepository questionRepository
+
+    @Autowired
+    QuestionDetailsRepository questionDetailsRepository
 
     @Autowired
     QuestionService questionService

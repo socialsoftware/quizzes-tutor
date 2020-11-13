@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 
 import java.io.Serializable;
@@ -10,11 +12,13 @@ public class StatementAnswerDto implements Serializable {
     private Integer sequence;
     private Integer questionAnswerId;
     private DiscussionDto userDiscussion;
-    private Integer optionId;
     private Integer quizQuestionId;
     private Integer timeToSubmission;
 
-    public StatementAnswerDto() {}
+    private StatementAnswerDetailsDto answerDetails;
+
+    public StatementAnswerDto() {
+    }
 
     public StatementAnswerDto(QuestionAnswer questionAnswer) {
         this.timeTaken = questionAnswer.getTimeTaken();
@@ -22,9 +26,7 @@ public class StatementAnswerDto implements Serializable {
         this.questionAnswerId = questionAnswer.getId();
         this.quizQuestionId = questionAnswer.getQuizQuestion().getId();
 
-        if (questionAnswer.getOption() != null) {
-            this.optionId = questionAnswer.getOption().getId();
-        }
+        this.answerDetails = questionAnswer.getStatementAnswerDetailsDto();
 
         if (questionAnswer.getDiscussion() != null){
             this.userDiscussion = new DiscussionDto(questionAnswer.getDiscussion(),false);
@@ -55,14 +57,6 @@ public class StatementAnswerDto implements Serializable {
         this.questionAnswerId = questionAnswerId;
     }
 
-    public Integer getOptionId() {
-        return optionId;
-    }
-
-    public void setOptionId(Integer optionId) {
-        this.optionId = optionId;
-    }
-
     public Integer getQuizQuestionId() {
         return quizQuestionId;
     }
@@ -79,6 +73,18 @@ public class StatementAnswerDto implements Serializable {
         this.timeToSubmission = timeToSubmission;
     }
 
+    public AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer){
+        return this.getAnswerDetails() != null ? this.answerDetails.getAnswerDetails(questionAnswer) : null;
+    }
+
+    public StatementAnswerDetailsDto getAnswerDetails() {
+        return answerDetails;
+    }
+
+    public void setAnswerDetails(StatementAnswerDetailsDto answerDetails) {
+        this.answerDetails = answerDetails;
+    }
+
     public DiscussionDto getUserDiscussion() {
         return userDiscussion;
     }
@@ -93,7 +99,17 @@ public class StatementAnswerDto implements Serializable {
                 "timeTaken=" + timeTaken +
                 ", sequence=" + sequence +
                 ", questionAnswerId=" + questionAnswerId +
-                ", optionId=" + optionId +
+                ", quizQuestionId=" + quizQuestionId +
+                ", timeToSubmission=" + timeToSubmission +
+                ", answerDetails=" + answerDetails +
                 '}';
+    }
+
+    public boolean emptyAnswer() {
+        return this.answerDetails.emptyAnswer();
+    }
+
+    public QuestionAnswerItem getQuestionAnswerItem(String username, int quizId) {
+        return this.answerDetails.getQuestionAnswerItem(username, quizId, this);
     }
 }

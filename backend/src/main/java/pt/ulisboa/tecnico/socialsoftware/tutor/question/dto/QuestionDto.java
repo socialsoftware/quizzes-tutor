@@ -24,10 +24,10 @@ public class QuestionDto implements Serializable {
     private int numberOfCorrect;
     private String creationDate;
     private String status;
-    private List<OptionDto> options = new ArrayList<>();
     private ImageDto image;
     private List<TopicDto> topics = new ArrayList<>();
     private Integer sequence;
+    private QuestionDetailsDto questionDetailsDto;
 
     public QuestionDto() {
     }
@@ -41,7 +41,6 @@ public class QuestionDto implements Serializable {
         this.numberOfNonGeneratedQuizzes = question.getQuizQuestions().size() - this.numberOfGeneratedQuizzes;
         this.numberOfCorrect = question.getNumberOfCorrect();
         this.status = question.getStatus().name();
-        this.options = question.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
         this.topics = question.getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
         this.creationDate = DateHandler.toISOString(question.getCreationDate());
 
@@ -54,6 +53,8 @@ public class QuestionDto implements Serializable {
 
         if (question.getImage() != null)
             this.image = new ImageDto(question.getImage());
+
+        this.questionDetailsDto = question.getQuestionDetailsDto();
     }
 
     public Integer getId() {
@@ -140,14 +141,6 @@ public class QuestionDto implements Serializable {
         this.status = status;
     }
 
-    public List<OptionDto> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<OptionDto> options) {
-        this.options = options;
-    }
-
     public ImageDto getImage() {
         return image;
     }
@@ -172,6 +165,14 @@ public class QuestionDto implements Serializable {
         this.sequence = sequence;
     }
 
+    public QuestionDetailsDto getQuestionDetailsDto() {
+        return questionDetailsDto;
+    }
+
+    public void setQuestionDetailsDto(QuestionDetailsDto questionDetails) {
+        this.questionDetailsDto = questionDetails;
+    }
+
     @Override
     public String toString() {
         return "QuestionDto{" +
@@ -186,10 +187,10 @@ public class QuestionDto implements Serializable {
                 ", numberOfCorrect=" + numberOfCorrect +
                 ", creationDate='" + creationDate + '\'' +
                 ", status='" + status + '\'' +
-                ", options=" + options +
                 ", image=" + image +
                 ", topics=" + topics +
                 ", sequence=" + sequence +
+                ", question=" + questionDetailsDto +
                 '}';
     }
 }

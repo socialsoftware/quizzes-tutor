@@ -26,7 +26,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
@@ -34,6 +33,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.SolvedQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementTournamentCreationDto;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -262,12 +262,12 @@ public class StatementService {
         if (answer.getTimeToSubmission() == null) {
             answer.setTimeToSubmission(0);
         }
-        if (answer.getOptionId() == null) {
+
+        if (answer.emptyAnswer()) {
             questionAnswerItemRepository.insertQuestionAnswerItemOptionIdNull(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
                     answer.getTimeTaken(), answer.getTimeToSubmission());
         } else {
-            questionAnswerItemRepository.insertQuestionAnswerItem(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
-                    answer.getTimeTaken(), answer.getTimeToSubmission(), answer.getOptionId());
+            questionAnswerItemRepository.save(answer.getQuestionAnswerItem(username, quizId));
         }
     }
 
@@ -285,9 +285,7 @@ public class StatementService {
 
         Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToCalculateStatistics(DateHandler.now());
 
-        quizAnswersToClose.forEach(quizAnswer -> {
-            quizAnswer.calculateStatistics();
-        });
+        quizAnswersToClose.forEach(QuizAnswer::calculateStatistics);
     }
 
     @Retryable(

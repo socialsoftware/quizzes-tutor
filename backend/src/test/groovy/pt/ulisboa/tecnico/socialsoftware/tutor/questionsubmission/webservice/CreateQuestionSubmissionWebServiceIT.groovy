@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.webservice
 
+import groovy.json.JsonOutput
+import groovy.json.JsonSlurper
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
@@ -7,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
@@ -46,6 +49,7 @@ class CreateQuestionSubmissionWebServiceIT extends SpockTest {
     def "create question submission for course execution"() {
         given: "a questionDto"
         def questionDto = new QuestionDto()
+        questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.SUBMITTED.name())
@@ -54,7 +58,7 @@ class CreateQuestionSubmissionWebServiceIT extends SpockTest {
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
-        questionDto.setOptions(options)
+        questionDto.getQuestionDetailsDto().setOptions(options)
 
         and: "a questionSubmissionDto"
         questionSubmissionDto = new QuestionSubmissionDto()
@@ -64,8 +68,8 @@ class CreateQuestionSubmissionWebServiceIT extends SpockTest {
 
         when:
         response = restClient.post(
-                path: '/submissions/'+courseExecution.getId(),
-                body: questionSubmissionDto,
+                path: '/submissions/' + courseExecution.getId(),
+                body: JsonOutput.toJson(questionSubmissionDto),
                 requestContentType: 'application/json'
         )
 

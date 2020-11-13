@@ -4,8 +4,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 
 import javax.persistence.*;
 
@@ -14,10 +16,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 @Entity
 @Table(name = "question_answers",
         indexes = {
-            @Index(name = "question_answers_indx_0", columnList = "quiz_question_id")
+                @Index(name = "question_answers_indx_0", columnList = "quiz_question_id")
         }
 )
-
 public class QuestionAnswer implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,19 +27,19 @@ public class QuestionAnswer implements DomainEntity {
     @Column(name = "time_taken")
     private Integer timeTaken;
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "quiz_question_id")
     private QuizQuestion quizQuestion;
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "quiz_answer_id")
     private QuizAnswer quizAnswer;
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=true)
-    @JoinColumn(name = "option_id")
-    private Option option;
-
     private Integer sequence;
+
+    @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL)
+    @JoinColumn(name = "answer_details_id")
+    private AnswerDetails answerDetails;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionAnswer")
     private Discussion discussion;
@@ -46,11 +47,10 @@ public class QuestionAnswer implements DomainEntity {
     public QuestionAnswer() {
     }
 
-    public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, Integer timeTaken, Option option, int sequence) {
+    public QuestionAnswer(QuizAnswer quizAnswer, QuizQuestion quizQuestion, Integer timeTaken, int sequence) {
         setTimeTaken(timeTaken);
         setQuizAnswer(quizAnswer);
         setQuizQuestion(quizQuestion);
-        setOption(option);
         setSequence(sequence);
     }
 
@@ -58,11 +58,6 @@ public class QuestionAnswer implements DomainEntity {
         setQuizAnswer(quizAnswer);
         setQuizQuestion(quizQuestion);
         setSequence(sequence);
-    }
-
-    @Override
-    public void accept(Visitor visitor) {
-        visitor.visitQuestionAnswer(this);
     }
 
     public Integer getId() {
@@ -86,6 +81,10 @@ public class QuestionAnswer implements DomainEntity {
         quizQuestion.addQuestionAnswer(this);
     }
 
+    public Question getQuestion() {
+        return quizQuestion.getQuestion();
+    }
+
     public QuizAnswer getQuizAnswer() {
         return quizAnswer;
     }
@@ -93,17 +92,6 @@ public class QuestionAnswer implements DomainEntity {
     public void setQuizAnswer(QuizAnswer quizAnswer) {
         this.quizAnswer = quizAnswer;
         quizAnswer.addQuestionAnswer(this);
-    }
-
-    public Option getOption() {
-        return option;
-    }
-
-    public void setOption(Option option) {
-        this.option = option;
-
-        if (option != null)
-            option.addQuestionAnswer(this);
     }
 
     public Integer getSequence() {
@@ -117,20 +105,27 @@ public class QuestionAnswer implements DomainEntity {
         this.sequence = sequence;
     }
 
-    @Override
-    public String toString() {
-        return "QuestionAnswer{" +
-                "id=" + id +
-                ", timeTaken=" + timeTaken +
-                ", quizQuestion=" + quizQuestion.getId() +
-                ", quizAnswer=" + quizAnswer.getId() +
-                ", option=" + option.getId() +
-                ", sequence=" + sequence +
-                '}';
+    public AnswerDetails getAnswerDetails() {
+        return answerDetails;
+    }
+
+    public void setAnswerDetails(AnswerDetails answerDetails) {
+        this.answerDetails = answerDetails;
+        if (this.answerDetails != null) {
+            this.answerDetails.setQuestionAnswer(this);
+        }
+    }
+
+    public AnswerDetails setAnswerDetails(StatementAnswerDto statementAnswerDto) {
+        this.answerDetails = statementAnswerDto.getAnswerDetails(this);
+        if (this.answerDetails != null) {
+            this.answerDetails.setQuestionAnswer(this);
+        }
+        return this.answerDetails;
     }
 
     public boolean isCorrect() {
-        return getOption() != null && getOption().getCorrect();
+        return getAnswerDetails() != null && getAnswerDetails().isCorrect();
     }
 
     public void remove() {
@@ -140,13 +135,25 @@ public class QuestionAnswer implements DomainEntity {
         quizQuestion.getQuestionAnswers().remove(this);
         quizQuestion = null;
 
-        if (option != null) {
-            option.getQuestionAnswers().remove(this);
-            option = null;
+        if (answerDetails != null) {
+            answerDetails.remove();
         }
 
         if (discussion != null) {
             discussion.remove();
+        }
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitQuestionAnswer(this);
+    }
+
+    public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
+        if (this.getAnswerDetails() == null) {
+            return this.getQuestion().getEmptyStatementAnswerDetailsDto();
+        } else {
+            return this.getAnswerDetails().getStatementAnswerDetailsDto();
         }
     }
 
@@ -156,5 +163,9 @@ public class QuestionAnswer implements DomainEntity {
 
     public void setDiscussion(Discussion discussion) {
         this.discussion = discussion;
+    }
+
+    public boolean isAnswered() {
+        return this.getTimeTaken() != null && this.getAnswerDetails() != null && this.getAnswerDetails().isAnswered();
     }
 }

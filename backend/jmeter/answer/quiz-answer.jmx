@@ -180,12 +180,16 @@
 	&quot;content&quot;:&quot;Question Content ${counter_value}&quot;,&#xd;
 	&quot;image&quot;:null,&#xd;
 	&quot;sequence&quot;:null,&#xd;
+	&quot;questionDetailsDto&quot;:&#xd;
+	{&#xd;
 	&quot;options&quot;:[&#xd;
 		{&quot;id&quot;:null,&quot;content&quot;:&quot;Option A&quot;,&quot;correct&quot;:true},&#xd;
 		{&quot;id&quot;:null,&quot;content&quot;:&quot;Option B&quot;,&quot;correct&quot;:false},&#xd;
 		{&quot;id&quot;:null,&quot;content&quot;:&quot;Option C&quot;,&quot;correct&quot;:false},&#xd;
 		{&quot;id&quot;:null,&quot;content&quot;:&quot;Option D&quot;,&quot;correct&quot;:false}&#xd;
 	],&#xd;
+	&quot;type&quot;: &quot;multiple_choice&quot;&#xd;
+	},&#xd;
 	&quot;topics&quot;:[],&#xd;
 	&quot;creationDate&quot;:&quot;-&quot;&#xd;
 }</stringProp>
@@ -552,7 +556,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option ids" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].options[0].optionId</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].questionDetails.options[0].optionId</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
@@ -578,12 +582,17 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
                 <collectionProp name="Arguments.arguments">
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">{&quot;optionId&quot;:${__V(option_id_${counter_value})},&#xd;
-&quot;timeTaken&quot;:1278,&#xd;
-&quot;questionAnswerId&quot;:${__V(question_answer_id_${counter_value})},&#xd;
-&quot;quizQuestionId&quot;:${__V(quiz_question_id_${counter_value})},&#xd;
-&quot;sequence&quot;:${counter_value},&#xd;
-&quot;timeToSubmission&quot;: 12345}&#xd;
+                    <stringProp name="Argument.value">{&#xd;
+	&quot;answerDetails&quot;: {&#xd;
+		&quot;optionId&quot;:${__V(option_id_${counter_value})},&#xd;
+		&quot;type&quot;: &quot;multiple_choice&quot;&#xd;
+	},&#xd;
+	&quot;timeTaken&quot;:1278,&#xd;
+	&quot;questionAnswerId&quot;:${__V(question_answer_id_${counter_value})},&#xd;
+	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${counter_value})},&#xd;
+	&quot;sequence&quot;:${counter_value},&#xd;
+	&quot;timeToSubmission&quot;: 12345&#xd;
+}&#xd;
 &#xd;
 </stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>

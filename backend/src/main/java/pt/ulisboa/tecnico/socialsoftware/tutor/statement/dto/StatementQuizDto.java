@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;

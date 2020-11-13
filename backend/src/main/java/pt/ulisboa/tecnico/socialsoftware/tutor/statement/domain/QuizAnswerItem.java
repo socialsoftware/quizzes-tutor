@@ -1,16 +1,19 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.statement;
+package pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
 
 import javax.persistence.*;
-import java.lang.reflect.Type;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CANNOT_CONCLUDE_QUIZ;
 
 @Entity
 public class QuizAnswerItem {
@@ -33,8 +36,12 @@ public class QuizAnswerItem {
     public QuizAnswerItem(StatementQuizDto statementQuizDto) {
         this.quizId = statementQuizDto.getId();
         this.quizAnswerId = statementQuizDto.getQuizAnswerId();
-        Gson gson = new Gson();
-        this.answers = gson.toJson(statementQuizDto.getAnswers());;
+        ObjectMapper obj = new ObjectMapper();
+        try {
+            this.answers = obj.writeValueAsString(statementQuizDto.getAnswers());
+        } catch (JsonProcessingException e) {
+            throw new TutorException(CANNOT_CONCLUDE_QUIZ);
+        }
         this.answerDate = DateHandler.now();
     }
 
@@ -79,8 +86,12 @@ public class QuizAnswerItem {
     }
 
     public List<StatementAnswerDto> getAnswersList() {
-        Type listOfMyClassObject = new TypeToken<ArrayList<StatementAnswerDto>>() {}.getType();
-        Gson gson = new Gson();
-        return gson.fromJson(getAnswers(), listOfMyClassObject);
+        ObjectMapper obj = new ObjectMapper();
+        try {
+            return obj.readValue(this.getAnswers(), new TypeReference<ArrayList<StatementAnswerDto>>() {
+            });
+        } catch (JsonProcessingException e) {
+            throw new TutorException(CANNOT_CONCLUDE_QUIZ);
+        }
     }
 }

@@ -4,6 +4,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
@@ -29,6 +31,15 @@ class GetStudentQuestionSubmissionsTest extends SpockTest{
         question.setContent(QUESTION_1_CONTENT)
         question.setCourse(externalCourse)
         question.setStatus(Question.Status.SUBMITTED)
+        def questionDetails = new MultipleChoiceQuestion()
+        question.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
+        def optionOK = new Option()
+        optionOK.setContent(OPTION_1_CONTENT)
+        optionOK.setCorrect(true)
+        optionOK.setSequence(0)
+        optionOK.setQuestionDetails(questionDetails)
+        optionRepository.save(optionOK)
         questionRepository.save(question)
     }
 

@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
@@ -39,20 +40,23 @@ class RemoveQuestionTest extends SpockTest {
         question.setNumberOfCorrect(1)
         question.setCourse(externalCourse)
         question.setImage(image)
+        def questionDetails = new MultipleChoiceQuestion()
+        question.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(question)
 
         optionOK = new Option()
         optionOK.setContent(OPTION_1_CONTENT)
         optionOK.setCorrect(true)
         optionOK.setSequence(0)
-        optionOK.setQuestion(question)
+        optionOK.setQuestionDetails(questionDetails)
         optionRepository.save(optionOK)
 
         optionKO = new Option()
         optionKO.setContent(OPTION_1_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(1)
-        optionKO.setQuestion(question)
+        optionKO.setQuestionDetails(questionDetails)
         optionRepository.save(optionKO)
     }
 

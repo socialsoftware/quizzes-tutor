@@ -1,7 +1,7 @@
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 
 export class QuizAnswers {
-  correctSequence!: number[];
+  correctSequence!: string[];
   timeToSubmission!: number;
   quizAnswers: QuizAnswer[] = [];
   private lastTimeCalled: number = Date.now();

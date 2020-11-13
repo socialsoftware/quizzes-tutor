@@ -1,19 +1,26 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -25,6 +32,9 @@ public class Question implements DomainEntity {
         DISABLED, REMOVED, AVAILABLE, SUBMITTED
     }
 
+    public static class QuestionTypes {
+        public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
+    }
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -49,21 +59,23 @@ public class Question implements DomainEntity {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval = true)
     private Image image;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval=true)
-    private final List<Option> options = new ArrayList<>();
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = "course_id")
+    private Course course;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "question", orphanRemoval = true)
+    private QuestionDetails questionDetails;
+
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<QuizQuestion> quizQuestions = new HashSet<>();
 
     @ManyToMany(mappedBy = "questions")
     private final Set<Topic> topics = new HashSet<>();
 
-    @ManyToOne(fetch=FetchType.LAZY, optional=false)
-    @JoinColumn(name = "course_id")
-    private Course course;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
     private Set<Discussion> discussions = new HashSet<>();
@@ -78,15 +90,11 @@ public class Question implements DomainEntity {
         setStatus(Status.valueOf(questionDto.getStatus()));
         setCreationDate(DateHandler.toLocalDateTime(questionDto.getCreationDate()));
         setCourse(course);
-        setOptions(questionDto.getOptions());
 
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
-    }
 
-    @Override
-    public void accept(Visitor visitor) {
-        visitor.visitQuestion(this);
+        setQuestionDetails(questionDto.getQuestionDetailsDto().getQuestionDetails(this));
     }
 
     public Integer getId() {
@@ -121,37 +129,6 @@ public class Question implements DomainEntity {
 
     public void setStatus(Status status) {
         this.status = status;
-    }
-
-    public List<Option> getOptions() {
-        return options;
-    }
-
-    public void setOptions(List<OptionDto> options) {
-        if (options.stream().filter(OptionDto::getCorrect).count() != 1) {
-            throw new TutorException(ONE_CORRECT_OPTION_NEEDED);
-        }
-
-        int index = 0;
-        for (OptionDto optionDto : options) {
-            if (optionDto.getId() == null || optionDto.getId() == 0) { // null option id might be converted to zero during testing
-                optionDto.setSequence(index++);
-                new Option(optionDto).setQuestion(this);
-            } else {
-                Option option = getOptions()
-                        .stream()
-                        .filter(op -> op.getId().equals(optionDto.getId()))
-                        .findFirst()
-                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, optionDto.getId()));
-
-                option.setContent(optionDto.getContent());
-                option.setCorrect(optionDto.getCorrect());
-            }
-        }
-    }
-
-    public void addOption(Option option) {
-        options.add(option);
     }
 
     public Image getImage() {
@@ -239,22 +216,6 @@ public class Question implements DomainEntity {
         discussions.add(discussion);
     }
 
-    @Override
-    public String toString() {
-        return "Question{" +
-                "id=" + id +
-                ", key=" + key +
-                ", content='" + content + '\'' +
-                ", title='" + title + '\'' +
-                ", numberOfAnswers=" + numberOfAnswers +
-                ", numberOfCorrect=" + numberOfCorrect +
-                ", status=" + status +
-                ", image=" + image +
-                ", options=" + options +
-                ", topics=" + topics +
-                '}';
-    }
-
     private void generateKeys() {
         int max = this.course.getQuestions().stream()
                 .filter(question -> question.key != null)
@@ -265,23 +226,15 @@ public class Question implements DomainEntity {
         List<Question> nullKeyQuestions = this.course.getQuestions().stream()
                 .filter(question -> question.key == null).collect(Collectors.toList());
 
-        for (Question question: nullKeyQuestions) {
+        for (Question question : nullKeyQuestions) {
             max = max + 1;
             question.key = max;
         }
     }
 
-    public Integer getCorrectOptionId() {
-        return this.getOptions().stream()
-                .filter(Option::getCorrect)
-                .findAny()
-                .map(Option::getId)
-                .orElse(null);
-    }
-
     public void addAnswerStatistics(QuestionAnswer questionAnswer) {
         numberOfAnswers++;
-        if (questionAnswer.getOption() != null && questionAnswer.getOption().getCorrect()) {
+        if (questionAnswer.isCorrect()) {
             numberOfCorrect++;
         }
     }
@@ -312,7 +265,8 @@ public class Question implements DomainEntity {
 
         setTitle(questionDto.getTitle());
         setContent(questionDto.getContent());
-        setOptions(questionDto.getOptions());
+
+        getQuestionDetails().update(questionDto.getQuestionDetailsDto());
     }
 
     public void updateTopics(Set<Topic> newTopics) {
@@ -336,6 +290,65 @@ public class Question implements DomainEntity {
 
         getTopics().forEach(topic -> topic.getQuestions().remove(this));
         getTopics().clear();
+    }
+
+    @Override
+    public void accept(Visitor visitor) {
+        visitor.visitQuestion(this);
+    }
+
+    public QuestionDetails getQuestionDetails() {
+        return questionDetails;
+    }
+
+    public void setQuestionDetails(QuestionDetails question) {
+        this.questionDetails = question;
+        if (this.questionDetails != null) {
+            this.questionDetails.setQuestion(this);
+        }
+    }
+
+    public CorrectAnswerDetailsDto getCorrectAnswerDetailsDto() {
+        return this.getQuestionDetails().getCorrectAnswerDetailsDto();
+    }
+
+    public StatementQuestionDetailsDto getStatementQuestionDetailsDto() {
+        return this.getQuestionDetails().getStatementQuestionDetailsDto();
+    }
+
+    public AnswerDetailsDto getEmptyAnswerDetailsDto() {
+        return this.getQuestionDetails().getEmptyAnswerDetailsDto();
+    }
+
+    public StatementAnswerDetailsDto getEmptyStatementAnswerDetailsDto() {
+        return this.getQuestionDetails().getEmptyStatementAnswerDetailsDto();
+    }
+
+    public QuestionDetailsDto getQuestionDetailsDto() {
+        return this.getQuestionDetails().getQuestionDetailsDto();
+    }
+
+    public String getCorrectAnswerText() {
+        return this.questionDetails.getCorrectAnswerText();
+    }
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "id=" + id +
+                ", key=" + key +
+                ", content='" + content + '\'' +
+                ", title='" + title + '\'' +
+                ", numberOfAnswers=" + numberOfAnswers +
+                ", numberOfCorrect=" + numberOfCorrect +
+                ", status=" + status +
+                ", creationDate=" + creationDate +
+                ", image=" + image +
+                ", quizQuestions=" + quizQuestions +
+                ", topics=" + topics +
+                ", course=" + course +
+                ", question=" + questionDetails +
+                '}';
     }
 
     public boolean isInSubmission() {

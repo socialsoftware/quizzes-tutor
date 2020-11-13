@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.service
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
@@ -9,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -34,11 +36,17 @@ class DiscussionFixtureSpockTest extends SpockTest {
         question1.setCourse(externalCourse)
         question1.setTitle(QUESTION_1_TITLE)
         question1.setContent(QUESTION_1_CONTENT)
+        def questionDetails1 = new MultipleChoiceQuestion()
+        question1.setQuestionDetails(questionDetails1)
+
 
         question2 = new Question()
         question2.setCourse(externalCourse)
         question2.setTitle(QUESTION_2_TITLE)
         question2.setContent(QUESTION_2_CONTENT)
+        def questionDetails2 = new MultipleChoiceQuestion()
+        question2.setQuestionDetails(questionDetails2)
+
 
         def optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
@@ -50,10 +58,12 @@ class DiscussionFixtureSpockTest extends SpockTest {
         options.add(optionDto)
         options.add(optionDto2)
 
-        question1.setOptions(options)
+        questionDetails1.setOptions(options)
+        questionDetailsRepository.save(questionDetails1)
         questionRepository.save(question1)
 
-        question2.setOptions(options)
+        questionDetails2.setOptions(options)
+        questionDetailsRepository.save(questionDetails2)
         questionRepository.save(question2)
 
         def quiz = new Quiz()
@@ -79,7 +89,11 @@ class DiscussionFixtureSpockTest extends SpockTest {
         questionanswer.setTimeTaken(1)
         questionanswer.setQuizAnswer(quizAnswer)
         questionanswer.setQuizQuestion(quizquestion)
-        questionanswer.setOption(optionRepository.findAll().get(0))
+
+        def answerDetails = new MultipleChoiceAnswer(questionanswer, optionRepository.findAll().get(0));
+        questionanswer.setAnswerDetails(answerDetails);
+
+        answerDetailsRepository.save(answerDetails)
         questionAnswerRepository.save(questionanswer)
         questionAnswer = questionAnswerRepository.findAll().get(0)
         quizquestion.addQuestionAnswer(questionAnswer)
@@ -89,7 +103,11 @@ class DiscussionFixtureSpockTest extends SpockTest {
         questionanswer2.setTimeTaken(0)
         questionanswer2.setQuizAnswer(quizAnswer)
         questionanswer2.setQuizQuestion(quizquestion)
-        questionanswer2.setOption(optionRepository.findAll().get(0))
+
+        def answerDetails2 = new MultipleChoiceAnswer(questionanswer, optionRepository.findAll().get(0));
+        questionanswer2.setAnswerDetails(answerDetails2);
+
+        answerDetailsRepository.save(answerDetails2)
         questionAnswerRepository.save(questionanswer2)
         questionAnswer2 = questionAnswerRepository.findAll().get(1)
         quizquestion.addQuestionAnswer(questionAnswer2)

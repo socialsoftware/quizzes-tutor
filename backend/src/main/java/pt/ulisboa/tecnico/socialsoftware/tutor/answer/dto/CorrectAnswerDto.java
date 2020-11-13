@@ -5,20 +5,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import java.io.Serializable;
 
 public class CorrectAnswerDto implements Serializable {
-    private Integer correctOptionId;
     private Integer sequence;
 
+    private CorrectAnswerDetailsDto correctAnswerDetails;
+
     public CorrectAnswerDto(QuestionAnswer questionAnswer) {
-        this.correctOptionId = questionAnswer.getQuizQuestion().getQuestion().getCorrectOptionId();
         this.sequence = questionAnswer.getSequence();
-    }
-
-    public Integer getCorrectOptionId() {
-        return correctOptionId;
-    }
-
-    public void setCorrectOptionId(Integer correctOptionId) {
-        this.correctOptionId = correctOptionId;
+        this.correctAnswerDetails = questionAnswer.getQuestion().getCorrectAnswerDetailsDto();
     }
 
     public Integer getSequence() {
@@ -29,11 +22,19 @@ public class CorrectAnswerDto implements Serializable {
         this.sequence = sequence;
     }
 
+    public CorrectAnswerDetailsDto getCorrectAnswerDetails() {
+        return correctAnswerDetails;
+    }
+
+    public void setCorrectAnswerDetails(CorrectAnswerDetailsDto correctAnswerDetails) {
+        this.correctAnswerDetails = correctAnswerDetails;
+    }
+
     @Override
     public String toString() {
         return "CorrectAnswerDto{" +
-                "correctOptionId=" + correctOptionId +
-                ", sequence=" + sequence +
+                "sequence=" + sequence +
+                ", correctAnswer=" + correctAnswerDetails +
                 '}';
     }
 }

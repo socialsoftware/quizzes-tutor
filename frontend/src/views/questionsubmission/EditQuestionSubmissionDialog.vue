@@ -41,56 +41,10 @@
             ></v-textarea>
           </v-row>
 
-          <v-row>
-            <v-col cols="1" offset="10">
-              Correct
-            </v-col>
-          </v-row>
-
-          <v-row
-            v-for="(option, index) in editQuestionSubmission.question.options"
-            :key="index"
-          >
-            <v-col cols="10">
-              <v-textarea
-                v-model="option.content"
-                :label="`Option ${index + 1}`"
-                :data-cy="`Option${index + 1}`"
-                rows="1"
-                auto-grow
-              ></v-textarea>
-            </v-col>
-
-            <v-col cols="1">
-              <v-switch
-                v-model="option.correct"
-                inset
-                :data-cy="'Switch' + index"
-              />
-            </v-col>
-
-            <v-col v-if="editQuestionSubmission.question.options.length > 2">
-              <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
-                  <v-icon
-                    small
-                    class="ma-1 action-button"
-                    v-on="on"
-                    @click="removeOption(index)"
-                    color="red"
-                    >close</v-icon
-                  >
-                </template>
-                <span>Remove Option</span>
-              </v-tooltip>
-            </v-col>
-          </v-row>
-
-          <v-row>
-            <v-btn class="ma-auto" color="blue darken-1" @click="addOption"
-              >Add Option</v-btn
-            >
-          </v-row>
+          <component
+            :is="editQuestionSubmission.question.questionDetailsDto.type"
+            :questionDetails="editQuestionSubmission.question.questionDetailsDto"
+          />
 
           <v-row>
             <v-textarea
@@ -134,9 +88,14 @@ import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import QuestionSubmission from '../../models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
-import Option from '@/models/management/Option';
+import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
+import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
 
-@Component
+@Component({
+  components: {
+    multiple_choice: MultipleChoiceCreate
+  }
+})
 export default class EditQuestionSubmissionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: QuestionSubmission, required: true })
@@ -204,14 +163,6 @@ export default class EditQuestionSubmissionDialog extends Vue {
       editQuestionSubmission.question &&
       editQuestionSubmission.question.id !== null
     );
-  }
-
-  addOption() {
-    this.editQuestionSubmission.question.options.push(new Option());
-  }
-
-  removeOption(index: number) {
-    this.editQuestionSubmission.question.options.splice(index, 1);
-  }
+  } 
 }
 </script>

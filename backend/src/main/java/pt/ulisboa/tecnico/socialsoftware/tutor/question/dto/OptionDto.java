@@ -17,7 +17,7 @@ public class OptionDto implements Serializable {
         this.id = option.getId();
         this.sequence = option.getSequence();
         this.content = option.getContent();
-        this.correct = option.getCorrect();
+        this.correct = option.isCorrect();
     }
 
     public Integer getId() {
@@ -32,7 +32,7 @@ public class OptionDto implements Serializable {
         this.sequence = sequence;
     }
 
-    public boolean getCorrect() {
+    public boolean isCorrect() {
         return correct;
     }
 

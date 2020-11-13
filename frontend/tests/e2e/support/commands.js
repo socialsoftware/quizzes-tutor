@@ -230,6 +230,12 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add(
+  'editQuestionSubmission',
+  (valid, title, content, opt1, opt2, opt3, opt4, comment) => {
+    cy.get('[data-cy="EditSubmission"]').first().click();
+  })
+
+Cypress.Commands.add(
   'saveQuestion',
   (valid, comment, title, content, opt1, opt2, opt3, opt4) => {
     cy.get('[data-cy="NewSubmission"]').click();
@@ -418,11 +424,11 @@ Cypress.Commands.add(
     cy.get('[data-cy="newQuestionButton"]').click();
     cy.get('[data-cy="questionTitleTextArea"]').type(title);
     cy.get('[data-cy="questionQuestionTextArea"]').type(question);
-    cy.get('[data-cy="OptionTextArea1"]').type(option1);
-    cy.get('[data-cy="OptionTextArea2"]').type(option2);
-    cy.get('[data-cy="OptionTextArea3"]').type(option3);
-    cy.get('[data-cy="OptionTextArea4"]').type(correct);
-    cy.get('[data-cy="CorrectSwitch4"]').click({ force: true });
+    cy.get('[data-cy="Option1"]').type(option1);
+    cy.get('[data-cy="Option2"]').type(option2);
+    cy.get('[data-cy="Option3"]').type(option3);
+    cy.get('[data-cy="Option4"]').type(correct);
+    cy.get('[data-cy="Switch4"]').click({ force: true });
     cy.get('[data-cy="saveQuestionButton"]').click();
   }
 );

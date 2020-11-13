@@ -2,11 +2,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -36,6 +38,9 @@ class FindQuestionsTest extends SpockTest {
         question.setNumberOfAnswers(2)
         question.setNumberOfCorrect(1)
         question.setCourse(externalCourse)
+        def questionDetails = new MultipleChoiceQuestion()
+        question.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
         questionRepository.save(question)
 
         and: 'an image'
@@ -50,14 +55,14 @@ class FindQuestionsTest extends SpockTest {
         optionOK.setContent(OPTION_1_CONTENT)
         optionOK.setCorrect(true)
         optionOK.setSequence(0)
-        optionOK.setQuestion(question)
+        optionOK.setQuestionDetails(questionDetails)
         optionRepository.save(optionOK)
 
         def optionKO = new Option()
         optionKO.setContent(OPTION_1_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(0)
-        optionKO.setQuestion(question)
+        optionKO.setQuestionDetails(questionDetails)
         optionRepository.save(optionKO)
 
         Quiz quiz = new Quiz()
@@ -78,16 +83,20 @@ class FindQuestionsTest extends SpockTest {
         quizAnswerRepository.save(quizAnswer)
 
         def questionAnswer = new QuestionAnswer()
-        questionAnswer.setOption(optionOK)
+        def answerDetails = new MultipleChoiceAnswer(questionAnswer, optionOK)
+        questionAnswer.setAnswerDetails(answerDetails)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
+        answerDetailsRepository.save(answerDetails)
 
         questionAnswer = new QuestionAnswer()
-        questionAnswer.setOption(optionKO)
+        answerDetails = new MultipleChoiceAnswer(questionAnswer, optionKO)
+        questionAnswer.setAnswerDetails(answerDetails)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
+        answerDetailsRepository.save(answerDetails)
 
         when:
         def result = questionService.findQuestions(externalCourse.getId())
@@ -104,7 +113,7 @@ class FindQuestionsTest extends SpockTest {
         resQuestion.getImage().getId() != null
         resQuestion.getImage().getUrl() == IMAGE_1_URL
         resQuestion.getImage().getWidth() == 20
-        resQuestion.getOptions().size() == 2
+        resQuestion.getQuestionDetailsDto().getOptions().size() == 2
     }
 
     @TestConfiguration

@@ -2,16 +2,10 @@
   <div>
     <span v-html="convertMarkDown(question.content, question.image)" />
     <br />
-    <ul>
-      <li v-for="option in question.options" :key="option.number">
-        <span
-          v-if="option.correct"
-          v-html="convertMarkDown('**[★]** ' + option.content)"
-          v-bind:class="[option.correct ? 'font-weight-bold' : '']"
-        />
-        <span v-else v-html="convertMarkDown(option.content)" />
-      </li>
-    </ul>
+    <component
+      :is="question.questionDetailsDto.type"
+      :questionDetails="question.questionDetailsDto"
+    />
     <br />
   </div>
 </template>
@@ -21,8 +15,13 @@ import { Component, Vue, Prop } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
+import MultipleChoiceView from '@/components/multiple-choice/MultipleChoiceView.vue';
 
-@Component
+@Component({
+  components: {
+    multiple_choice: MultipleChoiceView
+  }
+})
 export default class ShowQuestion extends Vue {
   @Prop({ type: Question, required: true }) readonly question!: Question;
 

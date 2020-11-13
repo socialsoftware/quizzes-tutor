@@ -8,12 +8,14 @@
             'question-button',
             index === questionOrder + 1 ? 'current-question-button' : '',
             index === questionOrder + 1 &&
-            statementManager.correctAnswers[index - 1].correctOptionId !==
-              statementManager.statementQuiz.answers[index - 1].optionId
+            !statementManager.statementQuiz.answers[index - 1].isAnswerCorrect(
+              statementManager.correctAnswers[index - 1]
+            )
               ? 'incorrect-current'
               : '',
-            statementManager.correctAnswers[index - 1].correctOptionId !==
-            statementManager.statementQuiz.answers[index - 1].optionId
+            !statementManager.statementQuiz.answers[index - 1].isAnswerCorrect(
+              statementManager.correctAnswers[index - 1]
+            )
               ? 'incorrect'
               : ''
           ]"

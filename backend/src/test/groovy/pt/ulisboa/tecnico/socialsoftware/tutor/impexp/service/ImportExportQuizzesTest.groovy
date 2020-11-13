@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -24,6 +25,7 @@ class ImportExportQuizzesTest extends SpockTest {
         questionDto.setTitle(QUESTION_1_TITLE)
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
+        questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
 
         def optionDto = new OptionDto()
         optionDto.setSequence(1)
@@ -31,8 +33,10 @@ class ImportExportQuizzesTest extends SpockTest {
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
-        questionDto.setOptions(options)
+
+        questionDto.getQuestionDetailsDto().setOptions(options)
         questionDto = questionService.createQuestion(externalCourse.getId(), questionDto)
+
 
         def quizDto = new QuizDto()
         quizDto.setKey(1)

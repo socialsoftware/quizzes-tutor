@@ -1,23 +1,25 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
 import java.io.Serializable;
 
 public class QuestionAnswerDto implements Serializable {
     private QuestionDto question;
-    private OptionDto option;
 
+    private AnswerDetailsDto answerDetails;
 
-    public QuestionAnswerDto() {}
+    public QuestionAnswerDto() {
+    }
 
     public QuestionAnswerDto(QuestionAnswer questionAnswer) {
         this.question = new QuestionDto(questionAnswer.getQuizQuestion().getQuestion());
-
-        if (questionAnswer.getOption() != null)
-            this.option = new OptionDto(questionAnswer.getOption());
+        if (questionAnswer.getAnswerDetails() == null) {
+            this.answerDetails = questionAnswer.getQuizQuestion().getQuestion().getEmptyAnswerDetailsDto();
+        } else {
+            this.answerDetails = questionAnswer.getAnswerDetails().getAnswerDetailsDto();
+        }
     }
 
     public QuestionDto getQuestion() {
@@ -28,11 +30,11 @@ public class QuestionAnswerDto implements Serializable {
         this.question = question;
     }
 
-    public OptionDto getOption() {
-        return option;
+    public AnswerDetailsDto getAnswerDetails() {
+        return answerDetails;
     }
 
-    public void setOption(OptionDto option) {
-        this.option = option;
+    public void setAnswerDetails(AnswerDetailsDto answerDetails) {
+        this.answerDetails = answerDetails;
     }
 }

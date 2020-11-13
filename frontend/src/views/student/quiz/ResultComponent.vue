@@ -3,9 +3,8 @@
     v-if="question"
     v-bind:class="[
       'question-container',
-      answer.optionId === null ? 'unanswered' : '',
-      answer.optionId !== null &&
-      correctAnswer.correctOptionId === answer.optionId
+      !answer.isQuestionAnswered() ? 'unanswered' : '',
+      answer.isQuestionAnswered() && answer.isAnswerCorrect(correctAnswer)
         ? 'correct-question'
         : 'incorrect-question'
     ]"
@@ -31,37 +30,13 @@
         />
       </div>
     </div>
-    <ul class="option-list">
-      <li
-        v-for="(n, index) in question.options.length"
-        :key="index"
-        v-bind:class="[
-          answer.optionId === question.options[index].optionId ? 'wrong' : '',
-          correctAnswer.correctOptionId === question.options[index].optionId
-            ? 'correct'
-            : '',
-          'option'
-        ]"
-      >
-        <i
-          v-if="
-            correctAnswer.correctOptionId === question.options[index].optionId
-          "
-          class="fas fa-check option-letter"
-        />
-        <i
-          v-else-if="answer.optionId === question.options[index].optionId"
-          class="fas fa-times option-letter"
-        />
-        <span v-else class="option-letter">{{
-          String.fromCharCode(65 + index)
-        }}</span>
-        <span
-          class="option-content"
-          v-html="convertMarkDown(question.options[index].content)"
-        />
-      </li>
-    </ul>
+    <component
+      :is="question.questionDetails.type"
+      :questionDetails="question.questionDetails"
+      :answerDetails="answer.answerDetails"
+      :correctAnswerDetails="correctAnswer.correctAnswerDetails"
+    >
+    </component>
   </div>
 </template>
 
@@ -72,8 +47,13 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 import Image from '@/models/management/Image';
+import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAnswer.vue';
 
-@Component
+@Component({
+  components: {
+    multiple_choice: MultipleChoiceAnswer
+  }
+})
 export default class ResultComponent extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
   @Prop(StatementQuestion) readonly question!: StatementQuestion;
@@ -104,17 +84,6 @@ export default class ResultComponent extends Vue {
     background-color: #761515 !important;
     color: #fff !important;
   }
-  .correct {
-    .option-content {
-      background-color: #333333;
-      color: rgb(255, 255, 255) !important;
-    }
-
-    .option-letter {
-      background-color: #333333 !important;
-      color: rgb(255, 255, 255) !important;
-    }
-  }
 }
 
 .correct-question {
@@ -126,17 +95,6 @@ export default class ResultComponent extends Vue {
     background-color: #285f23 !important;
     color: white !important;
   }
-  .correct {
-    .option-content {
-      background-color: #299455;
-      color: rgb(255, 255, 255) !important;
-    }
-
-    .option-letter {
-      background-color: #299455 !important;
-      color: rgb(255, 255, 255) !important;
-    }
-  }
 }
 
 .incorrect-question {
@@ -147,28 +105,6 @@ export default class ResultComponent extends Vue {
   .question .square {
     background-color: #761515 !important;
     color: white !important;
-  }
-  .wrong {
-    .option-content {
-      background-color: #cf2323;
-      color: rgb(255, 255, 255) !important;
-    }
-
-    .option-letter {
-      background-color: #cf2323 !important;
-      color: rgb(255, 255, 255) !important;
-    }
-  }
-  .correct {
-    .option-content {
-      background-color: #333333;
-      color: rgb(255, 255, 255) !important;
-    }
-
-    .option-letter {
-      background-color: #333333 !important;
-      color: rgb(255, 255, 255) !important;
-    }
   }
 }
 </style>

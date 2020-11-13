@@ -33,6 +33,7 @@ public enum ErrorMessage {
     OPTION_NOT_FOUND("Option not found with id %d"),
     QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
+    QUESTION_TYPE_NOT_IMPLEMENTED("Question type %s not implemented"),
     QUIZ_ANSWER_NOT_FOUND("Quiz answer not found with id %d"),
     QUIZ_NOT_FOUND("Quiz not found with id %d"),
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
@@ -123,11 +124,14 @@ public enum ErrorMessage {
     CANNOT_EDIT_REVIEWED_QUESTION("Question submission in review by teacher cannot be edited"),
     CANNOT_REVIEW_QUESTION_SUBMISSION("Question submission already reviewed by teacher cannot be reviewed again"),
 
+    CANNOT_CONCLUDE_QUIZ("Cannot conclude quiz."),
+
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file"),
 
     INVALID_CSV_FILE_FORMAT("The csv file uploaded has a wrong format"),
     WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on line: %d");
+
 
     public final String label;
 

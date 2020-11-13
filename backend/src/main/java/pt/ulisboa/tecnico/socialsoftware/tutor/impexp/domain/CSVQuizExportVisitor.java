@@ -1,11 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuestionAnswerItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import java.time.Duration;
 import java.util.ArrayList;
@@ -15,7 +18,6 @@ import java.util.List;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CSVQuizExportVisitor implements Visitor {
     private String[] line;
@@ -27,9 +29,12 @@ public class CSVQuizExportVisitor implements Visitor {
         int lineSize = numberOfQuestions + 5;
         Map<Integer, QuizQuestion> quizQuestions = quiz.getQuizQuestions().stream()
                 .collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));
+        // TODO[is->has]: questionMap XML
         Map<Integer, Option> options = quiz.getQuizQuestions().stream()
                 .map(QuizQuestion::getQuestion)
-                .flatMap(question -> question.getOptions().stream())
+                .map(Question::getQuestionDetails)
+                .filter(q -> q instanceof MultipleChoiceQuestion)
+                .flatMap(question -> ((MultipleChoiceQuestion)question).getOptions().stream())
                 .collect(Collectors.toMap(Option::getId, Function.identity()));
 
         // add header
@@ -100,7 +105,7 @@ public class CSVQuizExportVisitor implements Visitor {
             Arrays.fill(line, "");
             line[0] = questionAnswerItem.getUsername();
             line[1] = quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getSequence().toString();
-            line[2] = questionAnswerItem.getOptionId() != null ? convertSequenceToLetter(options.get(questionAnswerItem.getOptionId()).getSequence()) : "X";
+            line[2] = questionAnswerItem.getAnswerRepresentation(options);
             line[3] = DateHandler.toISOString(questionAnswerItem.getAnswerDate());
             line[4] = questionAnswerItem.getTimeToSubmission() != null ? questionAnswerItem.getTimeToSubmission().toString() : "";
             line[5] = questionAnswerItem.getTimeTaken().toString();
@@ -132,20 +137,36 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitQuestionAnswer(QuestionAnswer questionAnswer) {
-        line[column++] = questionAnswer.getOption() != null ? convertSequenceToLetter(questionAnswer.getOption().getSequence()) : "X";
+        if(questionAnswer.getAnswerDetails() !=null){
+            questionAnswer.getAnswerDetails().accept(this);
+        }
+    }
+
+    @Override
+    public void visitAnswerDetails(MultipleChoiceAnswer answer) {
+        line[column++] = answer.getOption() != null ? MultipleChoiceQuestion.convertSequenceToLetter(answer.getOption().getSequence()) : "X";
     }
 
     @Override
     public void visitQuizQuestion(QuizQuestion quizQuestion) {
-        line[column++] = quizQuestion.getQuestion().getOptions().stream()
-                .filter(Option::getCorrect)
+        quizQuestion.getQuestion().accept(this);
+    }
+
+    @Override
+    public void visitQuestion(Question question){
+        question.getQuestionDetails().accept(this);
+    }
+
+    @Override
+    public void visitQuestionDetails(MultipleChoiceQuestion question) {
+        line[column++] = question.getOptions().stream()
+                .filter(Option::isCorrect)
                 .findAny()
-                .map(option -> convertSequenceToLetter(option.getSequence())).orElse("");
+                .map(option -> MultipleChoiceQuestion.convertSequenceToLetter(option.getSequence())).orElse("");
     }
 
     private String convertToCSV(String[] data) {
-        return Stream.of(data)
-                .collect(Collectors.joining(","));
+        return String.join(",", data);
     }
 
 
