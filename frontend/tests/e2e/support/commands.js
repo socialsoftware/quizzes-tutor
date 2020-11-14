@@ -232,8 +232,11 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'editQuestionSubmission',
   (valid, title, content, opt1, opt2, opt3, opt4, comment) => {
-    cy.get('[data-cy="EditSubmission"]').first().click();
-  })
+    cy.get('[data-cy="EditSubmission"]')
+      .first()
+      .click();
+  }
+);
 
 Cypress.Commands.add(
   'saveQuestion',

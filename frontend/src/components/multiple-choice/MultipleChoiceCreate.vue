@@ -17,7 +17,11 @@
         ></v-textarea>
       </v-col>
       <v-col cols="1">
-        <v-switch v-model="option.correct" inset :data-cy="`Switch${index + 1}`" />
+        <v-switch
+          v-model="option.correct"
+          inset
+          :data-cy="`Switch${index + 1}`"
+        />
       </v-col>
       <v-col v-if="sQuestionDetails.options.length > 2">
         <v-tooltip bottom>

@@ -39,12 +39,11 @@ Cypress.Commands.add('cleanTestTopics', () => {
     `);
 });
 
-
 Cypress.Commands.add('cleanTestCourses', () => {
-    dbCommand(`
+  dbCommand(`
     delete from users_course_executions where course_executions_id in (select id from course_executions where acronym like 'TEST-%');
     delete from course_executions where acronym like 'TEST-%';
-    `)
+    `);
 });
 
 Cypress.Commands.add('updateTournamentStartTime', () => {
@@ -92,20 +91,22 @@ Cypress.Commands.add('addQuestionSubmission', (title, submissionStatus) => {
       `WITH quest AS (SELECT id FROM questions WHERE title='${title}' limit 1),
       quest_details as (INSERT INTO question_details (question_type, question_id) VALUES ('multiple_choice', (SELECT id FROM quest)) RETURNING id)
       INSERT INTO options(content, correct, question_details_id, sequence) 
-      VALUES ('${content}', '${correct}', (SELECT id FROM quest_details), ${content});`);  }
+      VALUES ('${content}', '${correct}', (SELECT id FROM quest_details), ${content});`
+    );
+  }
 });
 
-Cypress.Commands.add('removeQuestionSubmission', (hasReviews=false) => {
-    if (hasReviews) {
-        dbCommand(`WITH rev AS (DELETE FROM reviews WHERE id IN (SELECT max(id) FROM reviews) RETURNING question_submission_id)
+Cypress.Commands.add('removeQuestionSubmission', (hasReviews = false) => {
+  if (hasReviews) {
+    dbCommand(`WITH rev AS (DELETE FROM reviews WHERE id IN (SELECT max(id) FROM reviews) RETURNING question_submission_id)
                       , sub AS (DELETE FROM question_submissions WHERE id IN (SELECT * FROM rev) RETURNING question_id) 
                       , opt AS (DELETE FROM options WHERE question_details_id IN (SELECT qd.id FROM sub JOIN question_details qd on qd.question_id = sub.question_id)) 
                       , det AS (DELETE FROM question_details WHERE question_id in (SELECT * FROM sub))
                         DELETE FROM questions WHERE id IN (SELECT * FROM sub);`);
-    } else {
-        dbCommand(`WITH sub AS (DELETE FROM question_submissions WHERE id IN (SELECT max(id) FROM question_submissions) RETURNING question_id)
+  } else {
+    dbCommand(`WITH sub AS (DELETE FROM question_submissions WHERE id IN (SELECT max(id) FROM question_submissions) RETURNING question_id)
                       , opt AS (DELETE FROM options WHERE question_details_id IN (SELECT qd.id FROM sub JOIN question_details qd on qd.question_id = sub.question_id)) 
                       , det AS (DELETE FROM question_details WHERE question_id in (SELECT * FROM sub))
                     DELETE FROM questions WHERE id IN (SELECT * FROM sub);`);
-    }
+  }
 });

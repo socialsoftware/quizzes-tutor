@@ -20,7 +20,7 @@
       <v-card-text class="pa-4 text-left" v-if="editQuestionSubmission">
         <v-form ref="form" lazy-validation>
           <v-row>
-            <v-select 
+            <v-select
               v-model="questionType"
               :rules="[v => !!v || 'Question type is required']"
               label="Question Type"
@@ -54,7 +54,9 @@
 
           <component
             :is="editQuestionSubmission.question.questionDetailsDto.type"
-            :questionDetails="editQuestionSubmission.question.questionDetailsDto"
+            :questionDetails="
+              editQuestionSubmission.question.questionDetailsDto
+            "
             :readonlyEdit="editMode(editQuestionSubmission)"
           />
 
@@ -103,7 +105,7 @@ import Review from '@/models/management/Review';
 import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 import CodeFillInCreate from '@/components/code-fill-in/CodeFillInCreate.vue';
 import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
-import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers.ts'
+import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers.ts';
 
 @Component({
   components: {
@@ -120,14 +122,20 @@ export default class EditQuestionSubmissionDialog extends Vue {
     this.questionSubmission
   );
   comment: string = '';
-  questionType: string = this.questionSubmission.question.questionDetailsDto.type;
+  questionType: string = this.questionSubmission.question.questionDetailsDto
+    .type;
 
-  get questionTypesOptions(){
-    return Object.values(QuestionTypes).map(qt => ({text: qt.replace(/_/g,' '), value: qt}));;
+  get questionTypesOptions() {
+    return Object.values(QuestionTypes).map(qt => ({
+      text: qt.replace(/_/g, ' '),
+      value: qt
+    }));
   }
 
-  updateQuestionType(){
-    this.editQuestionSubmission.question.questionDetailsDto = QuestionFactory.getFactory(this.questionType).createEmptyQuestionDetails();
+  updateQuestionType() {
+    this.editQuestionSubmission.question.questionDetailsDto = QuestionFactory.getFactory(
+      this.questionType
+    ).createEmptyQuestionDetails();
   }
 
   @Watch('questionSubmission', { immediate: true, deep: true })
@@ -187,12 +195,13 @@ export default class EditQuestionSubmissionDialog extends Vue {
       editQuestionSubmission.question &&
       editQuestionSubmission.question.id !== null
     );
-  } 
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-.v-select-list, .v-select{
-  text-transform: capitalize
+.v-select-list,
+.v-select {
+  text-transform: capitalize;
 }
 </style>

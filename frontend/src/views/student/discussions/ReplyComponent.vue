@@ -43,6 +43,8 @@
             :id="'reply' + discussion.id"
             label="Type a reply..."
             @input="setReplyMessage"
+            counter
+            :rules="[v => v.length <= 255 || 'Max 255 characters']"
           ></v-textarea>
           <v-card-actions>
             <v-btn
