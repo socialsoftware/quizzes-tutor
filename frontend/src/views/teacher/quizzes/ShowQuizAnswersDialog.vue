@@ -1,4 +1,5 @@
 <template>
+<div>
   <v-dialog
     :value="dialog"
     @input="$emit('dialog', false)"
@@ -12,6 +13,7 @@
       disable-pagination
       :hide-default-footer="true"
       :mobile-breakpoint="0"
+      class="show-quiz-answer"
     >
       <template v-slot:top>
         <v-card-title>
@@ -27,7 +29,7 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item.submissionLag="{ item }">
+      <template v-slot:[`item.submissionLag`]="{ item }">
         <span
           v-bind:class="[
             new Date(item.answerDate).getTime() -
@@ -46,29 +48,26 @@
         </span>
       </template>
 
-      <template v-slot:item.answers="{ item }">
-        <td
-          v-for="questionAnswer in item.questionAnswers"
+      <template v-slot:[`item.answers`]="{ item }">
+        <span
+          v-for="(questionAnswer, index) in item.questionAnswers"
           :key="questionAnswer.question.id"
           v-bind:class="[
-            questionAnswer.answerDetails.isCorrect() ? 'green' : 'red darken-4'
+            'answer',
+            questionAnswer.answerDetails.isCorrect() ? 'correct' : 'incorrect'
           ]"
-          style="border: 0"
-        >
-          {{ questionAnswer.answerDetails.answerRepresentation() }}
-        </td>
+          @click="openAnswerDetailsDialog(item.questionAnswers, index)"
+        >{{ questionAnswer.answerDetails.answerRepresentation() }}</span>
         <template v-if="item.questionAnswers.length === 0">
-          <td
+          <span
             v-for="i in quizAnswers.correctSequence.length"
             :key="i"
-            style="border: 0"
-          >
-            X
-          </td>
+            class='answer'
+          >X</span>
         </template>
       </template>
 
-      <template v-slot:body.append>
+      <template v-slot:[`body.append`]>
         <tr>
           <td colspan="4">
             Correct key:
@@ -87,12 +86,34 @@
       </template>
     </v-data-table>
   </v-dialog>
+<v-dialog
+        v-model="dialog2"
+        max-width="500px"
+      >
+        <v-card>
+          <v-card-title>
+            {{ questionDetailCurrent !== undefined ? questionAnswersDetails[questionDetailCurrent].question.title : "" }}
+          </v-card-title>
+          <v-card-actions>
+            <v-btn
+              color="primary"
+              text
+              @click="dialog2 = false"
+            >
+              Close
+            </v-btn>
+          </v-card-actions>
+        </v-card>
+      </v-dialog>
+
+</div>
 </template>
 
 <script lang="ts">
 import { Component, Vue, Prop, Model, Watch } from 'vue-property-decorator';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import { QuestionAnswer } from '@/models/management/QuestionAnswer';
 
 @Component
 export default class ShowStudentAnswersDialog extends Vue {
@@ -100,6 +121,9 @@ export default class ShowStudentAnswersDialog extends Vue {
   @Prop({ required: true }) readonly quizAnswers!: QuizAnswers;
   @Prop({ required: true }) readonly conclusionDate!: String;
 
+  dialog2: boolean = false;
+  questionAnswersDetails?: QuestionAnswer[];
+  questionDetailCurrent?: number;
   search: string = '';
   timeout: number | null = null;
 
@@ -134,5 +158,38 @@ export default class ShowStudentAnswersDialog extends Vue {
   convertToHHMMSS(time: number | undefined | null): string {
     return milisecondsToHHMMSS(time);
   }
+
+  openAnswerDetailsDialog(questionAnswers: QuestionAnswer[], index: number){
+    this.questionDetailCurrent = index;
+    this.questionAnswersDetails = questionAnswers;
+    this.dialog2 = true;
+  }
 }
 </script>
+
+
+<style lang="scss">
+.show-quiz-answer {
+  
+  .answer {
+    padding: 2px 2px;
+    margin: 0px 1px;
+    text-align: center;
+    color: white;
+    cursor: pointer;
+
+    &:hover{
+      filter: brightness(0.7);
+    }
+
+    &.correct {
+      background-color: #4caf50;
+      border-color: #4caf50;
+    }
+    &.incorrect {
+      background-color: #b71c1c;
+      border-color: #b71c1c;
+    }
+  }
+}
+</style>

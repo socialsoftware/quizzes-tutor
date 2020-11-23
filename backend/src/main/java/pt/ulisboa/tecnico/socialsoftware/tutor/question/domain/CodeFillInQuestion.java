@@ -115,10 +115,11 @@ public class CodeFillInQuestion extends QuestionDetails {
 
     @Override
     public String getCorrectAnswerText() {
-        return this.getFillInSpots()
+        return String.format("%d/%d", this.getFillInSpots().size());
+        /*return this.getFillInSpots()
                 .stream()
                 .map(x -> x.getOptions().stream().filter(FillInOption::isCorrect).findFirst().get().getContent())
-                .collect(Collectors.joining("|"));
+                .collect(Collectors.joining("|"));*/
     }
 
     public void update(CodeFillInQuestionDto questionDetails) {
