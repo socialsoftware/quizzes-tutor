@@ -62,6 +62,11 @@ jobs:
         PSQL_INT_TEST_DB_USERNAME: "postgres"
         PSQL_INT_TEST_DB_PASSWORD: "postgres"
       
+    - name: Publish Test Report
+      uses: scacap/action-surefire-report@v1
+      with:
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+
     - name: Start backend machine for cypress tests
       working-directory: ./backend
       run: mvn clean -Ptest-int spring-boot:run &
