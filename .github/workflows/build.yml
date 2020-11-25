@@ -83,5 +83,6 @@ jobs:
         cypress_psql_db_username: "postgres"
         cypress_psql_db_password: "postgres"
         cypress_psql_db_host: "localhost"
-        cypress_psql_db_port: "5432"       
+        cypress_psql_db_port: "5432"
+        ACTIONS_ALLOW_UNSECURE_COMMANDS: true
 
