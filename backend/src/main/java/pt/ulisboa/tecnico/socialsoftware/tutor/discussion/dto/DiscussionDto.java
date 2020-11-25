@@ -15,7 +15,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DI
 
 public class DiscussionDto implements Serializable {
     private Integer id;
-    private String userName;
+    private String name;
+    private String username;
     private String message;
     private List<ReplyDto> replies = new ArrayList<>();
     private String date;
@@ -38,7 +39,9 @@ public class DiscussionDto implements Serializable {
             this.question = new QuestionDto(discussion.getQuestion());
         }
 
-        this.userName = discussion.getUser().getName();
+
+        this.name = discussion.getUser().getName();
+        this.username = discussion.getUser().getUsername();
         this.message = discussion.getMessage();
         this.date = DateHandler.toISOString(discussion.getDate());
         this.courseExecutionId = discussion.getCourseExecution().getId();
@@ -57,12 +60,21 @@ public class DiscussionDto implements Serializable {
         this.message = message;
     }
 
-    public String getUserName() {
-        return userName;
+
+    public String getName() {
+        return name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public List<ReplyDto> getReplies() {
@@ -117,7 +129,8 @@ public class DiscussionDto implements Serializable {
     public String toString() {
         return "DiscussionDto{" +
                 "id=" + id +
-                ", userName='" + userName + '\'' +
+                ", ame='" + name + '\'' +
+                ", username='" + username + '\'' +
                 ", message='" + message + '\'' +
                 ", replies=" + replies +
                 ", date='" + date + '\'' +

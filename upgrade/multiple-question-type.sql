@@ -1,3 +1,4 @@
+ALTER TABLE ONLY public.replies ALTER COLUMN message TYPE text;
 
 -- CREATE NEW TABLES
 

@@ -12,6 +12,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.ScheduledTasks;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
@@ -32,28 +33,10 @@ public class TutorApplication extends SpringBootServletInitializer implements In
     }
 
     @Autowired
-    UserService userService;
-
-    @Autowired
-    AuthUserService authUserService;
-
-    @Autowired
-    private QuizService quizService;
-
-    @Autowired
-    private TopicService topicService;
-
-    @Autowired
-    private AssessmentService assessmentService;
-
-    @Autowired
     private StatementService statementService;
 
     @Autowired
-    private QuestionSubmissionService questionSubmissionService;
-
-    @Autowired
-    private TournamentService tournamentService;
+    private ScheduledTasks scheduledTasks;
 
     @Override
     public void afterPropertiesSet() {
@@ -61,11 +44,6 @@ public class TutorApplication extends SpringBootServletInitializer implements In
         JwtTokenProvider.generateKeys();
         statementService.writeQuizAnswersAndCalculateStatistics();
 
-        questionSubmissionService.resetDemoQuestionSubmissions();
-        tournamentService.resetDemoTournaments();
-        quizService.resetDemoQuizzes();
-        topicService.resetDemoTopics();
-        assessmentService.resetDemoAssessments();
-        userService.resetDemoStudents();
+        scheduledTasks.resetDemoInfo();
     }
 }

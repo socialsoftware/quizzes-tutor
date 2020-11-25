@@ -34,7 +34,7 @@ import java.util.stream.Collectors;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
-public class  QuestionSubmissionService {
+public class QuestionSubmissionService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;

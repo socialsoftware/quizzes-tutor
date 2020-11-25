@@ -13,7 +13,8 @@
           <div v-if="user.role === 'STUDENT'" style="width: 100%">
             <div>
               <b v-if="user.id !== reply.userId"
-                >{{ reply.username }} replied on {{ reply.date }} :
+                >{{ reply.name }} ({{ reply.username }}) replied on
+                {{ reply.date }} :
               </b>
               <b v-else>You replied on {{ reply.date }} :</b>
               <span v-html="convertMarkDown(reply.message)" />
@@ -22,7 +23,8 @@
           <div v-else style="display: inline-flex; width: 100%">
             <div style="width: 88%">
               <b v-if="user.id !== reply.userId"
-                >{{ reply.username }} replied on {{ reply.date }}:
+                >{{ reply.name }} ({{ reply.username }}) replied on
+                {{ reply.date }}:
               </b>
               <b v-else>You replied on {{ reply.date }} :</b>
               <span v-html="convertMarkDown(reply.message)" />
@@ -43,8 +45,6 @@
             :id="'reply' + discussion.id"
             label="Type a reply..."
             @input="setReplyMessage"
-            counter
-            :rules="[v => v.length <= 255 || 'Max 255 characters']"
           ></v-textarea>
           <v-card-actions>
             <v-btn
