@@ -54,7 +54,7 @@ jobs:
         file: ./backend/target/site/jacoco/jacoco.xml
         yml: ./backend/codecov.yml
         
-    - name: Run integration tests
+    - name: Start backend machine for cypress tests
       working-directory: ./backend
       run: mvn clean -Ptest-int spring-boot:run &
       env:
@@ -77,3 +77,9 @@ jobs:
         cypress_psql_db_host: "localhost"
         cypress_psql_db_port: "5432"       
 
+    - name: Run integration tests
+      working-directory: ./backend
+      run: mvn clean verify -Ptest-int
+      env:
+        PSQL_INT_TEST_DB_USERNAME: "postgres"
+        PSQL_INT_TEST_DB_PASSWORD: "postgres"
