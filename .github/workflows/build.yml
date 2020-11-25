@@ -54,7 +54,12 @@ jobs:
         file: ./backend/target/site/jacoco/jacoco.xml
         yml: ./backend/codecov.yml
         
-    
+    - name: Publish unit tests Report
+      uses: scacap/action-surefire-report@v1
+      with:
+        check_name: Unit Tests Report
+        github_token: ${{ secrets.GITHUB_TOKEN }}
+        
     - name: Run integration tests
       working-directory: ./backend
       run: mvn clean verify -Ptest-int
@@ -62,9 +67,10 @@ jobs:
         PSQL_INT_TEST_DB_USERNAME: "postgres"
         PSQL_INT_TEST_DB_PASSWORD: "postgres"
       
-    - name: Publish Test Report
+    - name: Publish integration tests Report
       uses: scacap/action-surefire-report@v1
       with:
+        check_name: Integration Tests Report
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Start backend machine for cypress tests
