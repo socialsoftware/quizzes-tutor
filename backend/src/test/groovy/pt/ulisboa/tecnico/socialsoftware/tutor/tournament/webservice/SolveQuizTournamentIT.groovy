@@ -8,6 +8,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.AssessmentDto
@@ -96,8 +98,20 @@ class SolveQuizTournamentIT extends SpockTest {
         question1.setCourse(course)
         question1.addTopic(topic1)
         topic1.addQuestion(question1)
+
+        def questionDetails1 = new MultipleChoiceQuestion()
+        question1.setQuestionDetails(questionDetails1)
+
+        questionDetailsRepository.save(questionDetails1)
         questionRepository.save(question1)
         topicRepository.save(topic1)
+
+        def optionOK = new Option()
+        optionOK.setContent(OPTION_1_CONTENT)
+        optionOK.setCorrect(true)
+        optionOK.setSequence(0)
+        optionOK.setQuestionDetails(questionDetails1)
+        optionRepository.save(optionOK)
     }
 
     def "user solves quiz tournament"() {
