@@ -37,6 +37,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmis
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
 import spock.lang.Shared
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
@@ -250,6 +251,9 @@ class SpockTest extends Specification {
 
     @Autowired
     ReplyRepository replyRepository
+
+    @Autowired
+    DemoUtils demoUtils
 
     Course externalCourse
     @Shared

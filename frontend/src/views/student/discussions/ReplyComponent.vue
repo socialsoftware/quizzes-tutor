@@ -119,6 +119,8 @@ export default class ReplyComponent extends Vue {
     }
     this.discussion.replies.push(replyResponse);
     this.discussion.lastReplyDate = replyResponse.date;
+
+    this.replyMessage = '';
   }
 
   setReplyMessage(message: string) {

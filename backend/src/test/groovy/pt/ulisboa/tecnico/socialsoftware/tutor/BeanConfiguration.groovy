@@ -24,6 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
 
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")
@@ -131,6 +132,11 @@ class BeanConfiguration {
     @Bean
     QuestionSubmissionService questionSubmissionService() {
         return new QuestionSubmissionService()
+    }
+
+    @Bean
+    DemoUtils demoUtils() {
+        return new DemoUtils();
     }
 
     @Bean

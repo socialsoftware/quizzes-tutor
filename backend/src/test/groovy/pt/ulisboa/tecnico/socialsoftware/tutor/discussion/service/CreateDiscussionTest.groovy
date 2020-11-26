@@ -21,7 +21,8 @@ class CreateDiscussionTest extends DiscussionFixtureSpockTest {
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionDto.setUserName(student.getUsername())
+        discussionDto.setUsername(student.getUsername())
+        discussionDto.setName(student.getName())
 
         when: "discussion is created"
         discussionService.createDiscussion(questionAnswer.getId(), discussionDto)
@@ -40,7 +41,8 @@ class CreateDiscussionTest extends DiscussionFixtureSpockTest {
        def discussionDto = new DiscussionDto()
        discussionDto.setMessage(DISCUSSION_MESSAGE)
        discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-       discussionDto.setUserName(student.getUsername())
+       discussionDto.setUsername(student.getUsername())
+       discussionDto.setName(student.getName())
        and: "a discussion for a question answer"
        createDiscussion(questionAnswer)
 

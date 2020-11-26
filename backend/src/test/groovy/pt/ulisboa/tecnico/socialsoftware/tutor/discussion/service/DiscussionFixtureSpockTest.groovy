@@ -124,7 +124,8 @@ class DiscussionFixtureSpockTest extends SpockTest {
         def discussionDto = new DiscussionDto()
         discussionDto.setMessage(DISCUSSION_MESSAGE)
         discussionDto.setDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
-        discussionDto.setUserName(student.getUsername())
+        discussionDto.setUsername(student.getUsername())
+        discussionDto.setName(student.getName())
 
         def discussion = new Discussion(questionAnswerForDiscussion, discussionDto)
         discussionRepository.save(discussion)

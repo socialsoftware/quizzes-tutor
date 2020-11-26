@@ -10,16 +10,10 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.ScheduledTasks;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
+
 
 @PropertySource({ "classpath:application.properties" })
 @EnableJpaRepositories
@@ -36,7 +30,7 @@ public class TutorApplication extends SpringBootServletInitializer implements In
     private StatementService statementService;
 
     @Autowired
-    private ScheduledTasks scheduledTasks;
+    private DemoUtils demoUtils;
 
     @Override
     public void afterPropertiesSet() {
@@ -44,6 +38,7 @@ public class TutorApplication extends SpringBootServletInitializer implements In
         JwtTokenProvider.generateKeys();
         statementService.writeQuizAnswersAndCalculateStatistics();
 
-        scheduledTasks.resetDemoInfo();
+        demoUtils.resetDemoInfo();
     }
+
 }
