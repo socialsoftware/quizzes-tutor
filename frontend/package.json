@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "^5.15.1",
-    "axios": "^0.20.0",
+    "axios": "^0.21.0",
     "material-design-icons-iconfont": "^5.0.1",
     "qrcode": "^1.4.4",
     "sanitize-html": "^2.0.0",
