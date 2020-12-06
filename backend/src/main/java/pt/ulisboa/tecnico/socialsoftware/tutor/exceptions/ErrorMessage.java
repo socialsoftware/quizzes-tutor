@@ -122,7 +122,7 @@ public enum ErrorMessage {
     INVALID_TYPE_FOR_REVIEW("Invalid type for review"),
     QUESTION_SUBMISSION_NOT_FOUND("Question submission not found with id %d"),
     CANNOT_DELETE_REVIEWED_QUESTION("Question submission already in review or reviewed by teacher cannot be deleted"),
-    CANNOT_DELETE_SUBMITTED_QUESTION("Question submission can not be deleted by teacher"),
+    CANNOT_DELETE_SUBMITTED_QUESTION("Question submission cannot be deleted by teacher"),
     CANNOT_EDIT_REVIEWED_QUESTION("Question submission in review by teacher cannot be edited"),
     CANNOT_REVIEW_QUESTION_SUBMISSION("Question submission already reviewed by teacher cannot be reviewed again"),
 

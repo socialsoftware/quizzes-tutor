@@ -30,8 +30,8 @@
                         >You opened a discussion on {{ discussion.date }} :
                       </b>
                       <b v-else
-                        >{{ discussion.username }} opened a discussion on
-                        {{ discussion.date }} :
+                        >{{ discussion.name }} ({{ discussion.username }})
+                        opened a discussion on {{ discussion.date }} :
                       </b>
                       <span v-html="convertMarkDown(discussion.message)" />
                     </div>

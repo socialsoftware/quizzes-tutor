@@ -49,8 +49,8 @@
                 <div style="display: inline-flex; width: 100%">
                   <div style="width: 88%" class="text-left">
                     <b v-if="user.role === 'TEACHER'"
-                      >{{ user.username }} opened a discussion on
-                      {{ discussion.date }} :
+                      >{{ user.name }} ({{ user.username }}) opened a discussion
+                      on {{ discussion.date }} :
                     </b>
                     <b v-else
                       >You opened a discussion on {{ userDiscussion.date }} :</b

@@ -1,7 +1,7 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.config;
+package pt.ulisboa.tecnico.socialsoftware.tutor.utils;
+
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.ImpExpService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService;
@@ -11,31 +11,32 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.StatementService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 
 @Component
-public class ScheduledTasks {
-	@Autowired
-	private ImpExpService impExpService;
+public class DemoUtils {
+    @Autowired
+    private UserService userService;
 
-	@Autowired
-	private DemoUtils demoUtils;
+    @Autowired
+    private QuizService quizService;
 
-	@Autowired
-	private StatementService statementService;
+    @Autowired
+    private TopicService topicService;
 
-	@Scheduled(cron = "0 0 3,13 * * *")
-	public void exportAll() {
-		impExpService.exportAll();
-	}
+    @Autowired
+    private AssessmentService assessmentService;
 
-	@Scheduled(cron = "0 0 2 * * *")
-	public void writeQuizAnswersAndCalculateStatistics() {
-		statementService.writeQuizAnswersAndCalculateStatistics();
-	}
+    @Autowired
+    private QuestionSubmissionService questionSubmissionService;
 
-	@Scheduled(cron = "0 0 1 * * *")
+    @Autowired
+    private TournamentService tournamentService;
     public void resetDemoInfo() {
-		demoUtils.resetDemoInfo();
-	}
+        tournamentService.resetDemoTournaments();
+        quizService.resetDemoQuizzes();
+        questionSubmissionService.resetDemoQuestionSubmissions();
+        topicService.resetDemoTopics();
+        assessmentService.resetDemoAssessments();
+        userService.resetDemoStudents();
+    }
 }

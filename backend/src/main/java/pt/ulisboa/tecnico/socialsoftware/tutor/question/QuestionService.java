@@ -274,7 +274,7 @@ public class QuestionService {
         quizQuestion.remove();
         quizQuestionRepository.delete(quizQuestion);
 
-        if (question.getQuizQuestions().isEmpty()) {
+        if (question.getQuizQuestions().isEmpty() && questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId()) == null) {
             this.removeQuestion(question.getId());
         }
     }

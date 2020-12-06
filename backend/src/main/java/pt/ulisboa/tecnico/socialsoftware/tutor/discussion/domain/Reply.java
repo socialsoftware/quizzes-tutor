@@ -29,7 +29,7 @@ public class Reply implements DomainEntity {
     private User user;
 
     @NotNull
-    @Column(name="message")
+    @Column(name="message", columnDefinition="text")
     private String message;
 
     @Column(name="date")

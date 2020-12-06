@@ -29,6 +29,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
@@ -74,6 +76,9 @@ public class QuizService {
 
     @Autowired
     private QuestionRepository questionRepository;
+
+    @Autowired
+    private QuestionSubmissionRepository questionSubmissionRepository;
 
     @Autowired
     private QuizQuestionRepository quizQuestionRepository;
@@ -391,10 +396,10 @@ public class QuizService {
                     this.quizRepository.delete(quiz);
                 });
 
-        // remove questions that weren't in any quiz
+        // remove questions that weren't in any quiz and are not submitted
         for (Question question : questionRepository.findQuestions(courseService.getDemoCourse().getCourseId())
                 .stream()
-                .filter(question -> question.getQuizQuestions().isEmpty())
+                .filter(question -> question.getQuizQuestions().isEmpty() && questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId()) == null)
                 .collect(Collectors.toList())) {
             questionService.removeQuestion(question.getId());
         }

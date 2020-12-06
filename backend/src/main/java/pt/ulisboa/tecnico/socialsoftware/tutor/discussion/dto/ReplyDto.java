@@ -10,6 +10,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.RE
 
 public class ReplyDto implements Serializable {
     private Integer id;
+    private String name;
     private String username;
     private Integer userId;
     private String message;
@@ -20,6 +21,7 @@ public class ReplyDto implements Serializable {
     }
 
     public ReplyDto(Reply reply) {
+        this.name = reply.getUser().getName();
         this.username = reply.getUser().getUsername();
         this.id = reply.getId();
         this.userId = reply.getUser().getId();
@@ -27,6 +29,14 @@ public class ReplyDto implements Serializable {
         this.message = reply.getMessage();
         this.date = DateHandler.toISOString(reply.getDate());
         this.isPublic = reply.isPublic();
+    }
+
+    public String getName() {
+        return name;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     public String getDate() {
