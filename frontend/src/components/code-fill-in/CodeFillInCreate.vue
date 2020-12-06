@@ -20,8 +20,9 @@
           </span>
         </v-tooltip>
       </v-card-actions>
+      
       <BaseCodeEditor
-        ref='codeEditor'
+        ref="codeEditor"
         :code.sync="sQuestionDetails.code"
         :language.sync="sQuestionDetails.language"
       />
@@ -53,22 +54,32 @@ import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
   }
 })
 export default class CodeFillInQuestionEdit extends Vue {
-  @PropSync('questionDetails', { type: CodeFillInQuestionDetails }) sQuestionDetails!: CodeFillInQuestionDetails;
-  @Prop({default: true}) readonly readonlyEdit!: boolean;
+  @PropSync('questionDetails', { type: CodeFillInQuestionDetails })
+  sQuestionDetails!: CodeFillInQuestionDetails;
+  @Prop({ default: true }) readonly readonlyEdit!: boolean;
   counter: number = 1;
 
-  get languages(): String[]{
+  get languages(): String[] {
     return BaseCodeEditor.availableLanguages;
   }
- 
-  get baseCodeEditorRef() : BaseCodeEditor{
+
+  get baseCodeEditorRef(): BaseCodeEditor {
     return this.$refs.codeEditor as BaseCodeEditor;
   }
   created() {
-    this.counter = this.getMaxDropdown()
+    this.counter = this.getMaxDropdown();
   }
   getMaxDropdown() {
-      return (Math.max.apply(Math, this.sQuestionDetails.fillInSpots.map(function(o) { return o.sequence; })) | 0) + 1;
+    return (
+      (Math.max.apply(
+        Math,
+        this.sQuestionDetails.fillInSpots.map(function(o) {
+          return o.sequence;
+        })
+      ) |
+        0) +
+      1
+    );
   }
   onCmCodeChange(newCode: string) {
     this.sQuestionDetails.code = newCode;

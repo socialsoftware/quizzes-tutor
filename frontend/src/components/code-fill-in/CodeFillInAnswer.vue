@@ -4,10 +4,11 @@
       <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
-      <codemirror 
+      <codemirror
         ref="myCmStudent"
         :value="questionDetails.code"
-        :options="cmOptions">
+        :options="cmOptions"
+      >
       </codemirror>
     </div>
   </div>
@@ -69,9 +70,10 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
 })
 export default class CodeFillInAnswer extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
-  @Prop(CodeFillInStatementQuestionDetails) readonly questionDetails!:
-    | CodeFillInStatementQuestionDetails;
-  @PropSync('answerDetails', CodeFillInStatementAnswerDetails) answerDetailsSynced!: CodeFillInStatementAnswerDetails;
+  @Prop(CodeFillInStatementQuestionDetails)
+  readonly questionDetails!: CodeFillInStatementQuestionDetails;
+  @PropSync('answerDetails', CodeFillInStatementAnswerDetails)
+  answerDetailsSynced!: CodeFillInStatementAnswerDetails;
   @Prop() readonly questionNumber!: number;
   @Prop() readonly backsies!: boolean;
   hover: boolean = false;
@@ -93,7 +95,7 @@ export default class CodeFillInAnswer extends Vue {
   decreaseOrder() {
     return 1;
   }
-  
+
   @Watch('questionDetails', { immediate: true, deep: true })
   updateQuestion() {
     this.CodemirrorUpdated = false;
@@ -128,31 +130,39 @@ export default class CodeFillInAnswer extends Vue {
       }
       return array;
     }
-    function createOptionChild(optText: any, index: any, selected: boolean | undefined) {
+    function createOptionChild(
+      optText: any,
+      index: any,
+      selected: boolean | undefined
+    ) {
       const o = document.createElement('option');
       o.appendChild(document.createTextNode(optText.content));
       o.value = index;
-      if (selected){
-        o.setAttribute("selected","");
+      if (selected) {
+        o.setAttribute('selected', '');
       }
       return o;
     }
-     function creatBlankOptionChild(selected: boolean) {
+    function creatBlankOptionChild(selected: boolean) {
       const o = document.createElement('option');
-      o.innerHTML =  "-- select an option --";
-      o.setAttribute("disabled","");
-      if(selected){
-        o.setAttribute("selected","");
+      o.innerHTML = '-- select an option --';
+      o.setAttribute('disabled', '');
+      if (selected) {
+        o.setAttribute('selected', '');
       }
-      o.setAttribute("value","");
-      o.setAttribute("hidden","");
+      o.setAttribute('value', '');
+      o.setAttribute('hidden', '');
       return o;
     }
     function addOptions(select: any, options: any) {
-      const data = that.answerDetailsSynced.selectedOptions?.find(el => el.sequence === options.sequence);
-      select.appendChild(creatBlankOptionChild(!data))
+      const data = that.answerDetailsSynced.selectedOptions?.find(
+        el => el.sequence === options.sequence
+      );
+      select.appendChild(creatBlankOptionChild(!data));
       options.options.forEach((opt: any, i: any) => {
-        select.appendChild(createOptionChild(opt, i, data && data.optionId == opt.optionId));
+        select.appendChild(
+          createOptionChild(opt, i, data && data.optionId == opt.optionId)
+        );
       });
     }
     function getOptions(name: number, options: CodeFillInSpotStatement[]) {
@@ -173,20 +183,24 @@ export default class CodeFillInAnswer extends Vue {
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
-  selectedANewOption(event: Event){
+  selectedANewOption(event: Event) {
     var num = Number(event.target.name.match(/\d+/)[0]);
     var selectIndex = event.target.selectedIndex - 1;
-    var dataQuestion = this.questionDetails.fillInSpots.find(el => el.sequence === num);
-    var data = this.answerDetailsSynced.selectedOptions?.find(el => el.sequence === num);
-    if(data){
+    var dataQuestion = this.questionDetails.fillInSpots.find(
+      el => el.sequence === num
+    );
+    var data = this.answerDetailsSynced.selectedOptions?.find(
+      el => el.sequence === num
+    );
+    if (data) {
       data.optionId = dataQuestion?.options[selectIndex].optionId;
-    }else{
+    } else {
       var newData = new CodeFillInSpotAnswerStatement();
       newData.optionId = dataQuestion?.options[selectIndex].optionId;
       newData.sequence = num;
       this.answerDetailsSynced.selectedOptions.push(newData);
     }
-    this.$emit("select-option");
+    this.$emit('select-option');
   }
 }
 </script>

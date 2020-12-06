@@ -97,7 +97,8 @@ export default class ShowCodeFillInQuestion extends Vue {
     document.body.addEventListener(
       'mousedown',
       function(evt: Event) {
-        if (evt && evt.target && evt.target.className === 'code-dropdown') {
+        let htmlTarget = evt?.target as HTMLElement;
+        if (htmlTarget?.className === 'code-dropdown') {
           evt.stopPropagation();
         }
       },

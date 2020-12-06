@@ -20,9 +20,15 @@ export default class CodeFillInStatementAnswerDetails extends StatementAnswerDet
   isAnswerCorrect(
     correctAnswerDetails: CodeFillInStatementCorrectAnswerDetails
   ): boolean {
-    var x = this.selectedOptions.length === correctAnswerDetails.correctOptions.length
-      && !correctAnswerDetails.correctOptions.some(op => !this.selectedOptions.some(s => s.optionId === op.optionId && s.sequence === op.sequence));
-    console.log('x=',x);
+    var x =
+      this.selectedOptions.length ===
+        correctAnswerDetails.correctOptions.length &&
+      !correctAnswerDetails.correctOptions.some(
+        op =>
+          !this.selectedOptions.some(
+            s => s.optionId === op.optionId && s.sequence === op.sequence
+          )
+      );
     return x;
-    }
+  }
 }

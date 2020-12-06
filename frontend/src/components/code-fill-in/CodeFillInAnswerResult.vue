@@ -39,6 +39,9 @@ import { codemirror } from 'vue-codemirror';
 import CodeFillInSpotAnswerStatement from '@/models/statement/questions/CodeFillInSpotAnswerStatement';
 import StatementQuestionDetails from '@/models/statement/questions/StatementQuestionDetails';
 import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
+import Option from '@/models/management/Option';
+import StatementFillInSpot from '@/models/statement/questions/CodeFillInSpotStatement';
+
 
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   const mustacheOverlay = {
@@ -117,9 +120,9 @@ export default class CodeFillInAnswer extends Vue {
   }
   
   replaceDropdowns() {
-    function getOptions(name: number, options: any[]): any {
+    function getOptions(name: number, options: CodeFillInSpotStatement[]): StatementFillInSpot {
       const result = options.find(el => el.sequence === name);
-      return result;
+      return result || new StatementFillInSpot();
     }
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
       const d = document.createElement('select');
@@ -134,17 +137,17 @@ export default class CodeFillInAnswer extends Vue {
       );
       var optionAnsweredQuestion =
         optionAnswered &&
-        something.options.find(el => el.optionId === optionAnswered.optionId);
+        something.options.find(el => el.optionId === optionAnswered?.optionId);
       var correctOption = this.correctAnswerDetails.correctOptions.find(
         el => el.sequence === num
       );
       var correctOptionQuestion = something.options.find(
-        el => el.optionId === correctOption.optionId
+        el => el.optionId === correctOption?.optionId
       );
       var text;
       if (
         optionAnswered &&
-        optionAnswered.optionId === correctOption.optionId
+        optionAnswered.optionId === correctOption?.optionId
       ) {
         text = ' ✔: ';
       } else {
@@ -161,7 +164,7 @@ export default class CodeFillInAnswer extends Vue {
           : 'Not Answered');
       option.classList.add(
         'answerDetailsSynced-spot',
-        optionAnswered && optionAnswered.optionId === correctOption.optionId
+        optionAnswered && optionAnswered.optionId === correctOption?.optionId
           ? 'correct'
           : 'incorrect'
       );

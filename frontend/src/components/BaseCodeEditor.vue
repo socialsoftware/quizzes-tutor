@@ -9,7 +9,12 @@
 
 <script lang="ts">
 import {
-  Component, Vue, Watch, Prop, PropSync, Emit
+  Component,
+  Vue,
+  Watch,
+  Prop,
+  PropSync,
+  Emit
 } from 'vue-property-decorator';
 
 import { codemirror } from 'vue-codemirror';
@@ -52,22 +57,21 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
 export default class BaseCodeEditor extends Vue {
   @PropSync('code', { type: String, required: true }) syncedCode!: string;
   @PropSync('language', { type: String, default: 'Java' })
-  
   syncedLanguage!: string;
   counter: number = 1;
   CodemirrorUpdated: boolean = false;
   static languagesDict: Dictionary<string> = {
-    'Java':'text/x-java',
-    'Javascript':'text/javascript', 
-    'Python':'text/x-python',
-    'C#':'text/x-csharp'
-  }
+    Java: 'text/x-java',
+    Javascript: 'text/javascript',
+    Python: 'text/x-python',
+    'C#': 'text/x-csharp'
+  };
   @Watch('language')
   onLanguageUpdate() {
     console.log('ok', CodeMirror.modes);
   }
 
-  static get availableLanguages(): String[]{
+  static get availableLanguages(): String[] {
     return Object.keys(this.languagesDict);
   }
 
@@ -91,7 +95,7 @@ export default class BaseCodeEditor extends Vue {
   onCmCodeChange(newCode: string) {
     this.syncedCode = newCode;
   }
-  
+
   updateQuestion() {
     this.CodemirrorUpdated = false;
     setTimeout(() => {
