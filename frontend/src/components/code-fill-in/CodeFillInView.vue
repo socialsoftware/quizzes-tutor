@@ -1,9 +1,10 @@
 <template>
   <div id="ViewCodeMirror">
-    <BaseCodeEditor ref="myCmView" 
+    <BaseCodeEditor
+      ref="myCmView"
       :code.sync="questionDetails.code"
       :language.sync="questionDetails.language"
-      />
+    />
   </div>
 </template>
 
@@ -13,9 +14,11 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import CodeFillInQuestionDetails from '@/models/management/questions/CodeFillInQuestionDetails';
+import CodeFillInAnswerDetails from '@/models/management/questions/CodeFillInAnswerDetails';
 import FillInOptions from '@/components/questions/FillInOptions.vue';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
+import Option from '@/models/management/Option';
 
 @Component({
   components: {
@@ -25,61 +28,72 @@ import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
 export default class ShowCodeFillInQuestion extends Vue {
   @Prop({ type: CodeFillInQuestionDetails, required: true })
   readonly questionDetails!: CodeFillInQuestionDetails;
+  @Prop() readonly answerDetails?: CodeFillInAnswerDetails;
+
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
-  replaceDropdowns() {
-    function shuffle(arr: any) {
-      const array = arr.slice();
-      let currentIndex = array.length;
-      let temporaryValue;
-      let randomIndex;
-      while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
+
+  get baseCodeEditorInstance(): BaseCodeEditor {
+    return this.$refs.myCmView as BaseCodeEditor;
+  }
+
+  studentAnswered(option: Option): boolean{
+    return this.answerDetails && this.answerDetails.options.some(x => x.id === option.id) || false
+  }
+
+  createOptionChild(option: Option, index: number) {
+    const o = document.createElement('option');
+    o.appendChild(
+      document.createTextNode(
+        (this.studentAnswered(option) ? ' S - ' : '') +
+          (option.correct ? ' ✔: ' : ' ✖: ') +
+          option.content
+      )
+    );
+    o.value = option.id?.toString() || index.toString();
+    return o;
+  }
+
+  addOptions(select: HTMLSelectElement, options: Option[]) {
+    options.forEach((opt: Option, i: number) => {
+      let option = this.createOptionChild(opt, i);
+      if (this.studentAnswered(opt)){
+        select.prepend(option);
+      }else{
+        select.appendChild(option);
       }
-      return array;
-    }
-    function createOptionChild(optText: any, index: any) {
-      const o = document.createElement('option');
-      o.appendChild(
-        document.createTextNode(
-          (optText.correct ? ' ✔: ' : ' ✖: ') + optText.content
-        )
-      );
-      o.value = index;
-      return o;
-    }
-    function addOptions(select: any, options: any) {
-      console.log(options);
-      options.forEach((opt: any, i: any) => {
-        select.appendChild(createOptionChild(opt, i));
-      });
-    }
-    function getOptions(name: number, options: CodeFillInSpot[]) {
-      const result = options.find(el => el.sequence === name);
-      return result ? result.options : result;
-    }
-    console.log("SELECT", document.querySelectorAll('.cm-custom-drop-down'));
+    });
+  }
+
+  getOptions(name: number, options: CodeFillInSpot[]): Option[] {
+    const result = options.find(el => el.sequence === name);
+    return result?.options || [];
+  }
+
+  getSlotNumber(html: string) : number {
+    const num = html.match(/\d+/);
+    return Number(num);
+  }
+
+  replaceDropdowns() {
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
-      console.log(e.innerHTML);
       const d = document.createElement('select');
       d.className = 'code-dropdown';
       d.name = e.innerHTML;
-      console.log(e.parentNode);
-      console.log(d);
-      e.parentNode.replaceChild(d, e);
-      var num = e.innerHTML.match(/\d+/)[0];
-      addOptions(d, getOptions(Number(num) ,this.questionDetails.fillInSpots));
+      e.parentNode?.replaceChild(d, e);
+      this.addOptions(
+        d,
+        this.getOptions(this.getSlotNumber(e.innerHTML), this.questionDetails.fillInSpots)
+      );
+      d.selectedIndex = 0;
     });
   }
 
   updateQuestion() {
-    this.$refs.myCmView.codemirror.refresh();
+    this.baseCodeEditorInstance.codemirror.refresh();
     this.replaceDropdowns();
+    this.baseCodeEditorInstance.CodemirrorUpdated = true;
     document.body.addEventListener(
       'mousedown',
       function(evt: Event) {
@@ -91,10 +105,22 @@ export default class ShowCodeFillInQuestion extends Vue {
     );
   }
 
-  mounted() {
+  @Watch('questionDetails', { immediate: false, deep: true })
+  updateOnQuestionChange() {
+    if (this.baseCodeEditorInstance.CodemirrorUpdated) {
+      this.refreshQuestion();
+    }
+  }
+
+  refreshQuestion() {
+    this.baseCodeEditorInstance.CodemirrorUpdated = false;
     setTimeout(() => {
       this.updateQuestion();
     }, 1000);
+  }
+
+  mounted() {
+    this.refreshQuestion();
   }
 }
 </script>

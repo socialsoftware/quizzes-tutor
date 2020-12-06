@@ -1,90 +1,95 @@
 <template>
-<div>
-  <v-dialog
-    :value="dialog"
-    @input="$emit('dialog', false)"
-    @keydown.esc="$emit('dialog', false)"
-    max-width="75%"
-  >
-    <v-data-table
-      :headers="headers"
-      :items="quizAnswers.quizAnswers"
-      :search="search"
-      disable-pagination
-      :hide-default-footer="true"
-      :mobile-breakpoint="0"
-      class="show-quiz-answer"
+  <div>
+    <v-dialog
+      :value="dialog"
+      @input="$emit('dialog', false)"
+      @keydown.esc="$emit('dialog', false)"
+      max-width="75%"
     >
-      <template v-slot:top>
-        <v-card-title>
-          <v-text-field
-            v-model="search"
-            append-icon="search"
-            label="Search"
-            class="mx-2"
-          />
+      <v-data-table
+        :headers="headers"
+        :items="quizAnswers.quizAnswers"
+        :search="search"
+        disable-pagination
+        :hide-default-footer="true"
+        :mobile-breakpoint="0"
+        class="show-quiz-answer"
+      >
+        <template v-slot:top>
+          <v-card-title>
+            <v-text-field
+              v-model="search"
+              append-icon="search"
+              label="Search"
+              class="mx-2"
+            />
 
-          <v-spacer />
-          <span>{{ convertToHHMMSS(quizAnswers.timeToSubmission) }}</span>
-        </v-card-title>
-      </template>
+            <v-spacer />
+            <span>{{ convertToHHMMSS(quizAnswers.timeToSubmission) }}</span>
+          </v-card-title>
+        </template>
 
-      <template v-slot:[`item.submissionLag`]="{ item }">
-        <span
-          v-bind:class="[
-            new Date(item.answerDate).getTime() -
-              new Date(conclusionDate).getTime() <
-            0
-              ? 'green'
-              : 'red darken-4'
-          ]"
-        >
-          {{
-            convertToHHMMSS(
+        <template v-slot:[`item.submissionLag`]="{ item }">
+          <span
+            v-bind:class="[
               new Date(item.answerDate).getTime() -
-                new Date(conclusionDate).getTime()
-            )
-          }}
-        </span>
-      </template>
+                new Date(conclusionDate).getTime() <
+              0
+                ? 'green'
+                : 'red darken-4'
+            ]"
+          >
+            {{
+              convertToHHMMSS(
+                new Date(item.answerDate).getTime() -
+                  new Date(conclusionDate).getTime()
+              )
+            }}
+          </span>
+        </template>
 
-      <template v-slot:[`item.answers`]="{ item }">
-        <span
-          v-for="(questionAnswer, index) in item.questionAnswers"
-          :key="questionAnswer.question.id"
-          v-bind:class="[
-            'answer',
-            questionAnswer.answerDetails.isCorrect() ? 'correct' : 'incorrect'
-          ]"
-          @click="openAnswerDetailsDialog(item, index)"
-        >{{ questionAnswer.answerDetails.answerRepresentation(questionAnswer.question.questionDetailsDto) }}</span>
-      </template>
+        <template v-slot:[`item.answers`]="{ item }">
+          <span
+            v-for="(questionAnswer, index) in item.questionAnswers"
+            :key="questionAnswer.question.id"
+            v-bind:class="[
+              'answer',
+              questionAnswer.answerDetails.isCorrect() ? 'correct' : 'incorrect'
+            ]"
+            @click="openAnswerDetailsDialog(item, index)"
+            >{{
+              questionAnswer.answerDetails.answerRepresentation(
+                questionAnswer.question.questionDetailsDto
+              )
+            }}</span
+          >
+        </template>
 
-      <template v-slot:[`body.append`]>
-        <tr>
-          <td colspan="4">
-            Correct key:
-          </td>
-          <td>
-            <span
-              v-for="(sequence, index) in quizAnswers.correctSequence"
-              :key="index"
-              class="answer-key"
-            >
-              {{ sequence }}
-            </span>
-          </td>
-        </tr>
-      </template>
-    </v-data-table>
-  </v-dialog>
-  <show-quiz-answers-details-dialog 
-    v-if="detailDialog"
-    v-model="detailDialog"
-    :quizAnswer="quizAnswerDetails"
-    :questionNumber=""
-  />
-</div>
+        <template v-slot:[`body.append`]>
+          <tr>
+            <td colspan="4">
+              Correct key:
+            </td>
+            <td>
+              <span
+                v-for="(sequence, index) in quizAnswers.correctSequence"
+                :key="index"
+                class="answer-key"
+              >
+                {{ sequence }}
+              </span>
+            </td>
+          </tr>
+        </template>
+      </v-data-table>
+    </v-dialog>
+    <show-quiz-answers-details-dialog
+      v-if="detailDialog"
+      v-model="detailDialog"
+      :quizAnswer="quizAnswerDetails"
+      :questionNumber="quizAnswerDetailCurrentQuestion"
+    />
+  </div>
 </template>
 
 <script lang="ts">
@@ -143,7 +148,7 @@ export default class ShowStudentAnswersDialog extends Vue {
     return milisecondsToHHMMSS(time);
   }
 
-  openAnswerDetailsDialog(quizAnswerDetails: QuizAnswer, index: number){
+  openAnswerDetailsDialog(quizAnswerDetails: QuizAnswer, index: number) {
     this.quizAnswerDetailCurrentQuestion = index;
     this.quizAnswerDetails = quizAnswerDetails;
     this.detailDialog = true;
@@ -151,10 +156,8 @@ export default class ShowStudentAnswersDialog extends Vue {
 }
 </script>
 
-
 <style lang="scss">
 .show-quiz-answer {
-  
   .answer {
     padding: 2px 2px;
     margin: 0px 1px;
@@ -164,7 +167,7 @@ export default class ShowStudentAnswersDialog extends Vue {
     min-width: 15px;
     display: inline-block;
 
-    &:hover{
+    &:hover {
       filter: brightness(0.7);
     }
 
