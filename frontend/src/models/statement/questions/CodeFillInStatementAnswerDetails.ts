@@ -9,7 +9,6 @@ export default class CodeFillInStatementAnswerDetails extends StatementAnswerDet
   constructor(jsonObj?: CodeFillInStatementAnswerDetails) {
     super(QuestionTypes.CodeFillIn);
     if (jsonObj) {
-      console.log('ups',jsonObj)
       this.selectedOptions = jsonObj.selectedOptions || [];
     }
   }

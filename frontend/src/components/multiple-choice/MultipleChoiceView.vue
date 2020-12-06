@@ -25,7 +25,6 @@ export default class MultipleChoiceView extends Vue {
   @Prop() readonly answerDetails?: MultipleChoiceAnswerDetails;
 
   studentAnswered(option:number){
-    console.log(this.answerDetails)
     return this.answerDetails && this.answerDetails?.option.id === option ? "**[S]** " : "";
   }
 

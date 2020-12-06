@@ -18,7 +18,9 @@ import CodeMirror from 'codemirror';
 // codemirror plugins - check more @ https://codemirror.net/
 import 'codemirror/mode/clike/clike.js';
 import 'codemirror/mode/javascript/javascript.js';
+import 'codemirror/mode/python/python.js';
 import 'codemirror/addon/mode/overlay.js';
+import { Dictionary } from 'vue-router/types/router';
 
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   const mustacheOverlay = {
@@ -50,14 +52,25 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
 export default class BaseCodeEditor extends Vue {
   @PropSync('code', { type: String, required: true }) syncedCode!: string;
   @PropSync('language', { type: String, default: 'Java' })
+  
   syncedLanguage!: string;
-  languages: Array<string> = ['Java', 'Javascript'];
   counter: number = 1;
   CodemirrorUpdated: boolean = false;
+  static languagesDict: Dictionary<string> = {
+    'Java':'text/x-java',
+    'Javascript':'text/javascript', 
+    'Python':'text/x-python',
+    'C#':'text/x-csharp'
+  }
   @Watch('language')
   onLanguageUpdate() {
     console.log('ok', CodeMirror.modes);
   }
+
+  static get availableLanguages(): String[]{
+    return Object.keys(this.languagesDict);
+  }
+
   get codemirror(): CodeMirror.Editor {
     return this.$refs.myCm.codemirror;
   }
@@ -70,7 +83,7 @@ export default class BaseCodeEditor extends Vue {
     };
   }
   get languageCode() {
-    return this.syncedLanguage === 'Java' ? 'text/x-java' : 'text/javascript';
+    return BaseCodeEditor.languagesDict[this.syncedLanguage];
   }
   created() {
     this.updateQuestion();

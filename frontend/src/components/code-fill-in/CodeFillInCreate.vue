@@ -55,9 +55,11 @@ import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 export default class CodeFillInQuestionEdit extends Vue {
   @PropSync('questionDetails', { type: CodeFillInQuestionDetails }) sQuestionDetails!: CodeFillInQuestionDetails;
   @Prop({default: true}) readonly readonlyEdit!: boolean;
-
-  languages: Array<string> = ['Java', 'Javascript'];
   counter: number = 1;
+
+  get languages(): String[]{
+    return BaseCodeEditor.availableLanguages;
+  }
  
   get baseCodeEditorRef() : BaseCodeEditor{
     return this.$refs.codeEditor as BaseCodeEditor;

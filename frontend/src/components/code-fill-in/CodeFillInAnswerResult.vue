@@ -100,10 +100,7 @@ export default class CodeFillInAnswer extends Vue {
   @Watch('questionDetails', { immediate: true, deep: true })
   updateQuestion() {
     this.CodemirrorUpdated = false;
-    console.log("qd",this.questionDetails)
-    console.log("ad",this.answerDetailsSynced)
     setTimeout(() => {
-      console.log(this.$refs.myCmStudent)
       this.$refs.myCmStudent.codemirror.refresh();
       this.replaceDropdowns();
       document.body.addEventListener(

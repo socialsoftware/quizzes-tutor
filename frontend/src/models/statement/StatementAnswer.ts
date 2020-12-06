@@ -16,7 +16,6 @@ export default class StatementAnswer {
 
   constructor(jsonObj?: StatementAnswer) {
     if (jsonObj) {
-      console.log(jsonObj);
       this.timeTaken = jsonObj.timeTaken;
       this.sequence = jsonObj.sequence;
       this.questionAnswerId = jsonObj.questionAnswerId;
