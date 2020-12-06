@@ -1,3 +1,5 @@
+import QuestionDetails from '@/models/management/questions/QuestionDetails';
+
 export default abstract class AnswerDetails {
   type!: string;
 
@@ -7,5 +9,5 @@ export default abstract class AnswerDetails {
 
   abstract isCorrect(): boolean;
 
-  abstract answerRepresentation(): string;
+  abstract answerRepresentation(question:QuestionDetails): string;
 }

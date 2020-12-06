@@ -56,15 +56,8 @@
             'answer',
             questionAnswer.answerDetails.isCorrect() ? 'correct' : 'incorrect'
           ]"
-          @click="openAnswerDetailsDialog(item.questionAnswers, index)"
-        >{{ questionAnswer.answerDetails.answerRepresentation() }}</span>
-        <template v-if="item.questionAnswers.length === 0">
-          <span
-            v-for="i in quizAnswers.correctSequence.length"
-            :key="i"
-            class='answer'
-          >X</span>
-        </template>
+          @click="openAnswerDetailsDialog(item, index)"
+        >{{ questionAnswer.answerDetails.answerRepresentation(questionAnswer.question.questionDetailsDto) }}</span>
       </template>
 
       <template v-slot:[`body.append`]>
@@ -72,40 +65,25 @@
           <td colspan="4">
             Correct key:
           </td>
-          <div>
-            <td></td>
-            <td
+          <td>
+            <span
               v-for="(sequence, index) in quizAnswers.correctSequence"
               :key="index"
-              style="border: 0"
+              class="answer-key"
             >
               {{ sequence }}
-            </td>
-          </div>
+            </span>
+          </td>
         </tr>
       </template>
     </v-data-table>
   </v-dialog>
-<v-dialog
-        v-model="dialog2"
-        max-width="500px"
-      >
-        <v-card>
-          <v-card-title>
-            {{ questionDetailCurrent !== undefined ? questionAnswersDetails[questionDetailCurrent].question.title : "" }}
-          </v-card-title>
-          <v-card-actions>
-            <v-btn
-              color="primary"
-              text
-              @click="dialog2 = false"
-            >
-              Close
-            </v-btn>
-          </v-card-actions>
-        </v-card>
-      </v-dialog>
-
+  <show-quiz-answers-details-dialog 
+    v-if="detailDialog"
+    v-model="detailDialog"
+    :quizAnswer="quizAnswerDetails"
+    :questionNumber=""
+  />
 </div>
 </template>
 
@@ -114,16 +92,22 @@ import { Component, Vue, Prop, Model, Watch } from 'vue-property-decorator';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import { QuestionAnswer } from '@/models/management/QuestionAnswer';
+import { QuizAnswer } from '@/models/management/QuizAnswer';
+import ShowQuizAnswersDetailsDialog from '@/views/teacher/quizzes/ShowQuizAnswersDetailsDialog.vue';
 
-@Component
+@Component({
+  components: {
+    ShowQuizAnswersDetailsDialog
+  }
+})
 export default class ShowStudentAnswersDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ required: true }) readonly quizAnswers!: QuizAnswers;
   @Prop({ required: true }) readonly conclusionDate!: String;
 
-  dialog2: boolean = false;
-  questionAnswersDetails?: QuestionAnswer[];
-  questionDetailCurrent?: number;
+  detailDialog: boolean = false;
+  quizAnswerDetails?: QuizAnswer;
+  quizAnswerDetailCurrentQuestion?: number;
   search: string = '';
   timeout: number | null = null;
 
@@ -159,10 +143,10 @@ export default class ShowStudentAnswersDialog extends Vue {
     return milisecondsToHHMMSS(time);
   }
 
-  openAnswerDetailsDialog(questionAnswers: QuestionAnswer[], index: number){
-    this.questionDetailCurrent = index;
-    this.questionAnswersDetails = questionAnswers;
-    this.dialog2 = true;
+  openAnswerDetailsDialog(quizAnswerDetails: QuizAnswer, index: number){
+    this.quizAnswerDetailCurrentQuestion = index;
+    this.quizAnswerDetails = quizAnswerDetails;
+    this.detailDialog = true;
   }
 }
 </script>
@@ -177,6 +161,8 @@ export default class ShowStudentAnswersDialog extends Vue {
     text-align: center;
     color: white;
     cursor: pointer;
+    min-width: 15px;
+    display: inline-block;
 
     &:hover{
       filter: brightness(0.7);
@@ -190,6 +176,16 @@ export default class ShowStudentAnswersDialog extends Vue {
       background-color: #b71c1c;
       border-color: #b71c1c;
     }
+  }
+
+  .answer-key {
+    padding: 2px 2px;
+    margin: 0px 1px;
+    text-align: center;
+    color: white;
+    min-width: 15px;
+    display: inline-block;
+    background-color: #808080;
   }
 }
 </style>

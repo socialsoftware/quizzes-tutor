@@ -115,7 +115,7 @@ public class CodeFillInQuestion extends QuestionDetails {
 
     @Override
     public String getCorrectAnswerText() {
-        return String.format("%d/%d", this.getFillInSpots().size());
+        return String.format("%d/%d", this.getFillInSpots().size(), this.getFillInSpots().size());
         /*return this.getFillInSpots()
                 .stream()
                 .map(x -> x.getOptions().stream().filter(FillInOption::isCorrect).findFirst().get().getContent())

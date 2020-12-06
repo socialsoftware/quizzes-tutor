@@ -1,6 +1,7 @@
 import Option from '@/models/management/Option';
 import AnswerDetails from '@/models/management/questions/AnswerDetails';
 import { QuestionTypes, convertToLetter } from '@/services/QuestionHelpers';
+import CodeFillInQuestionDetails from './CodeFillInQuestionDetails';
 
 export default class CodeFillInAnswerType extends AnswerDetails {
   options: Option[] = [];
@@ -17,9 +18,10 @@ export default class CodeFillInAnswerType extends AnswerDetails {
   isCorrect(): boolean {
     return this.options.filter(op => !op.correct).length == 0;
   }
-  answerRepresentation(): string {
+
+  answerRepresentation(questionDetails: CodeFillInQuestionDetails): string {
     let correct = this.options.filter(op => op.correct).length;
-    let all = this.options.length
+    let all = questionDetails.fillInSpots.length;
     return `${correct}/${all}`;
   }
 }
