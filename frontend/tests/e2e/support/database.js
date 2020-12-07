@@ -19,8 +19,8 @@ function dbCommand(command) {
 
 Cypress.Commands.add('beforeEachTournament', () => {
   dbCommand(`
-        INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (1, 0, 'AVAILABLE', 'test1', 1);
-        INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (2, 0, 'AVAILABLE', 'test2', 1);
+        INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (1, 0, 'AVAILABLE', 'test1', (select id from course_executions where acronym = 'DemoCourse' limit 1));
+        INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (2, 0, 'AVAILABLE', 'test2', (select id from course_executions where acronym = 'DemoCourse' limit 1));
         INSERT INTO topic_conjunctions (id, assessment_id) VALUES (100, 1);
         INSERT INTO topic_conjunctions (id, assessment_id) VALUES (101, 2);
         INSERT INTO topics (id, name, course_id) VALUES (82, 'Software Architecture', 1);
@@ -77,12 +77,13 @@ Cypress.Commands.add('afterEachTournament', () => {
 
 Cypress.Commands.add('addQuestionSubmission', (title, submissionStatus) => {
   dbCommand(`
-    WITH quest AS (
+    WITH course as (select id from course_executions where acronym = 'DemoCourse' limit 1),    
+    quest AS (
       INSERT INTO questions (title, content, status, course_id, creation_date) 
-      VALUES ('${title}', 'Question?', 'SUBMITTED', 1, current_timestamp) RETURNING id
+      VALUES ('${title}', 'Question?', 'SUBMITTED', (select id from course), current_timestamp) RETURNING id
       )
     INSERT INTO question_submissions (status, question_id, submitter_id, course_execution_id) 
-    VALUES ('${submissionStatus}', (SELECT id from quest), (select id from users where name = 'Demo Student'), 1);`);
+    VALUES ('${submissionStatus}', (SELECT id from quest), (select id from users where name = 'Demo Student'), (select id from course));`);
 
   //add options
   for (let content in [0, 1, 2, 3]) {
