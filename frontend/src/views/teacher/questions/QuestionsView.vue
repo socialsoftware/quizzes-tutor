@@ -39,6 +39,7 @@
           @click="showQuestionDialog(item)"
           @contextmenu="editQuestion(item, $event)"
           class="clickableTitle"
+          data-cy="questionTitleGrid"
         >
           {{ item.title }}
         </div>

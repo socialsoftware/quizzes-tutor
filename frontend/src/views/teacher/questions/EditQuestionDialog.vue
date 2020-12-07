@@ -6,7 +6,7 @@
     max-width="75%"
     max-height="80%"
   >
-    <v-card class="px-5">
+    <v-card class="px-5" data-cy="createOrEditQuestionDialog">
       <v-card-title>
         <span class="headline">
           {{
@@ -28,6 +28,7 @@
               :items="questionTypesOptions"
               @change="updateQuestionType"
               :readonly="editQuestion.id != null"
+              data-cy="questionTypeInput"
             />
           </v-row>
           <v-row>

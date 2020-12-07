@@ -6,7 +6,7 @@
       </v-col>
     </v-row>
 
-    <v-row v-for="(option, index) in sQuestionDetails.options" :key="index">
+    <v-row v-for="(option, index) in sQuestionDetails.options" :key="index" data-cy="questionOptionsInput">
       <v-col cols="10">
         <v-textarea
           v-model="option.content"
@@ -27,6 +27,7 @@
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
+              :data-cy="`Delete${index + 1}`"
               small
               class="ma-1 action-button"
               v-on="on"
@@ -41,7 +42,7 @@
     </v-row>
 
     <v-row>
-      <v-btn class="ma-auto" color="blue darken-1" @click="addOption"
+      <v-btn class="ma-auto" color="blue darken-1" @click="addOption" data-cy="addOptionMultipleChoice"
         >Add Option</v-btn
       >
     </v-row>
