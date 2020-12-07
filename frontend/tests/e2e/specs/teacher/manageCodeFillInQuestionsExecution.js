@@ -1,5 +1,3 @@
-const { validateExtension } = require('showdown');
-
 describe('Manage Code Fill In Questions Walk-through', () => {
   function validateQuestion(
     title,
@@ -29,6 +27,9 @@ describe('Manage Code Fill In Questions Walk-through', () => {
       .contains('close')
       .click();
   }
+
+  before(() => {cy.cleanCodeFillInQuestionsByName('Cypress Question Example')});
+  after(() => {cy.cleanCodeFillInQuestionsByName('Cypress Question Example')});
 
   beforeEach(() => {
     cy.demoTeacherLogin();
@@ -234,6 +235,8 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
       cy.route('POST', '/courses/*/questions/').as('postQuestion');
 
+      cy.wait(1000);
+      
       cy.get('button')
         .contains('Save')
         .click();
