@@ -19,15 +19,16 @@ function dbCommand(command) {
 
 Cypress.Commands.add('beforeEachTournament', () => {
   dbCommand(`
-        INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (1, 0, 'AVAILABLE', 'test1', (select id from courses where name = 'Demo Course' limit 1));
-        INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (2, 0, 'AVAILABLE', 'test2', (select id from courses where name = 'Demo Course' limit 1));
-        INSERT INTO topic_conjunctions (id, assessment_id) VALUES (100, 1);
-        INSERT INTO topic_conjunctions (id, assessment_id) VALUES (101, 2);
-        INSERT INTO topics (id, name, course_id) VALUES (82, 'Software Architecture', (select id from courses where name = 'Demo Course' limit 1));
-        INSERT INTO topics (id, name, course_id) VALUES (83, 'Web Application', (select id from courses where name = 'Demo Course' limit 1));
-        INSERT INTO topics_topic_conjunctions (topics_id, topic_conjunctions_id) VALUES (82, 100);
-        INSERT INTO topics_topic_conjunctions (topics_id, topic_conjunctions_id) VALUES (83, 101);
-        INSERT INTO questions (id, title, content, status, course_id, creation_date) VALUES (1389, 'test', 'Question?', 'AVAILABLE', (select id from courses where name = 'Demo Course' limit 1), current_timestamp);
+      WITH tmpCourse as (SELECT ce.course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course')      
+        ,insert1 as (INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (1, 0, 'AVAILABLE', 'test1', (select course_execution_id from tmpCourse)))
+        ,insert2 as (INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (2, 0, 'AVAILABLE', 'test2', (select course_execution_id from tmpCourse)))
+        ,insert3 as (INSERT INTO topic_conjunctions (id, assessment_id) VALUES (100, 1))
+        ,insert4 as (INSERT INTO topic_conjunctions (id, assessment_id) VALUES (101, 2))
+        ,insert5 as (INSERT INTO topics (id, name, course_id) VALUES (82, 'Software Architecture', (select course_id from tmpCourse)))
+        ,insert6 as (INSERT INTO topics (id, name, course_id) VALUES (83, 'Web Application', (select course_id from tmpCourse)))
+        ,insert7 as (INSERT INTO topics_topic_conjunctions (topics_id, topic_conjunctions_id) VALUES (82, 100))
+        ,insert8 as (INSERT INTO topics_topic_conjunctions (topics_id, topic_conjunctions_id) VALUES (83, 101))
+        ,insert9 as (INSERT INTO questions (id, title, content, status, course_id, creation_date) VALUES (1389, 'test', 'Question?', 'AVAILABLE', (select course_id from tmpCourse), current_timestamp))
         INSERT INTO topics_questions (topics_id, questions_id) VALUES (82, 1389);
     `);
 });
