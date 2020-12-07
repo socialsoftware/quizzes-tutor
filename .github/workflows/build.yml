@@ -76,7 +76,7 @@ jobs:
     - name: Clean DB after integration tests
       run: psql -d postgresql://postgres@localhost/tutortestdb -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
       env:
-        PGPASSWORD: password
+        PGPASSWORD: postgres
 
     - name: Start backend machine for cypress tests
       working-directory: ./backend
