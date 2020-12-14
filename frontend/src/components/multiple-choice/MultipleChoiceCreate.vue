@@ -6,7 +6,11 @@
       </v-col>
     </v-row>
 
-    <v-row v-for="(option, index) in sQuestionDetails.options" :key="index" data-cy="questionOptionsInput">
+    <v-row
+      v-for="(option, index) in sQuestionDetails.options"
+      :key="index"
+      data-cy="questionOptionsInput"
+    >
       <v-col cols="10">
         <v-textarea
           v-model="option.content"
@@ -42,7 +46,11 @@
     </v-row>
 
     <v-row>
-      <v-btn class="ma-auto" color="blue darken-1" @click="addOption" data-cy="addOptionMultipleChoice"
+      <v-btn
+        class="ma-auto"
+        color="blue darken-1"
+        @click="addOption"
+        data-cy="addOptionMultipleChoice"
         >Add Option</v-btn
       >
     </v-row>

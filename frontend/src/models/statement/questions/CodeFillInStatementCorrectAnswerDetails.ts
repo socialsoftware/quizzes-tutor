@@ -9,7 +9,7 @@ export default class CodeFillInStatementCorrectAnswerDetails extends StatementCo
   constructor(jsonObj?: CodeFillInStatementCorrectAnswerDetails) {
     super(QuestionTypes.CodeFillIn);
     if (jsonObj) {
-      console.log('bla', jsonObj)
+      console.log('bla', jsonObj);
       this.correctOptions = jsonObj.correctOptions || [];
     }
   }

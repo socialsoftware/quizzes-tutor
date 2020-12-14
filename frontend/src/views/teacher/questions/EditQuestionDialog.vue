@@ -20,7 +20,7 @@
       <v-card-text class="pa-4 text-left" v-if="editQuestion">
         <v-form ref="form" lazy-validation>
           <v-row>
-            <v-select 
+            <v-select
               v-model="questionType"
               :rules="[v => !!v || 'Question type is required']"
               label="Question Type"
@@ -85,7 +85,7 @@ import Option from '@/models/management/Option';
 import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
 import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 import CodeFillInCreate from '@/components/code-fill-in/CodeFillInCreate.vue';
-import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers.ts'
+import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers.ts';
 
 @Component({
   components: {
@@ -100,12 +100,17 @@ export default class EditQuestionDialog extends Vue {
   editQuestion: Question = new Question(this.question);
   questionType: string = this.question.questionDetailsDto.type;
 
-  get questionTypesOptions(){
-    return Object.values(QuestionTypes).map(qt => ({text: qt.replace(/_/g,' '), value: qt}));;
+  get questionTypesOptions() {
+    return Object.values(QuestionTypes).map(qt => ({
+      text: qt.replace(/_/g, ' '),
+      value: qt
+    }));
   }
 
-  updateQuestionType(){
-    this.editQuestion.questionDetailsDto = QuestionFactory.getFactory(this.questionType).createEmptyQuestionDetails();
+  updateQuestionType() {
+    this.editQuestion.questionDetailsDto = QuestionFactory.getFactory(
+      this.questionType
+    ).createEmptyQuestionDetails();
   }
 
   @Watch('question', { immediate: true, deep: true })
@@ -139,7 +144,8 @@ export default class EditQuestionDialog extends Vue {
 </script>
 
 <style lang="scss" scoped>
-.v-select-list, .v-select{
-  text-transform: capitalize
+.v-select-list,
+.v-select {
+  text-transform: capitalize;
 }
 </style>

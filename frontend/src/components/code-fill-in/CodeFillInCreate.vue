@@ -20,7 +20,7 @@
           </span>
         </v-tooltip>
       </v-card-actions>
-      
+
       <BaseCodeEditor
         ref="codeEditor"
         :code.sync="sQuestionDetails.code"

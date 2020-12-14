@@ -38,8 +38,12 @@ export default class ShowCodeFillInQuestion extends Vue {
     return this.$refs.myCmView as BaseCodeEditor;
   }
 
-  studentAnswered(option: Option): boolean{
-    return this.answerDetails && this.answerDetails.options.some(x => x.id === option.id) || false
+  studentAnswered(option: Option): boolean {
+    return (
+      (this.answerDetails &&
+        this.answerDetails.options.some(x => x.id === option.id)) ||
+      false
+    );
   }
 
   createOptionChild(option: Option, index: number) {
@@ -58,9 +62,9 @@ export default class ShowCodeFillInQuestion extends Vue {
   addOptions(select: HTMLSelectElement, options: Option[]) {
     options.forEach((opt: Option, i: number) => {
       let option = this.createOptionChild(opt, i);
-      if (this.studentAnswered(opt)){
+      if (this.studentAnswered(opt)) {
         select.prepend(option);
-      }else{
+      } else {
         select.appendChild(option);
       }
     });
@@ -71,7 +75,7 @@ export default class ShowCodeFillInQuestion extends Vue {
     return result?.options || [];
   }
 
-  getSlotNumber(html: string) : number {
+  getSlotNumber(html: string): number {
     const num = html.match(/\d+/);
     return Number(num);
   }
@@ -84,7 +88,10 @@ export default class ShowCodeFillInQuestion extends Vue {
       e.parentNode?.replaceChild(d, e);
       this.addOptions(
         d,
-        this.getOptions(this.getSlotNumber(e.innerHTML), this.questionDetails.fillInSpots)
+        this.getOptions(
+          this.getSlotNumber(e.innerHTML),
+          this.questionDetails.fillInSpots
+        )
       );
       d.selectedIndex = 0;
     });

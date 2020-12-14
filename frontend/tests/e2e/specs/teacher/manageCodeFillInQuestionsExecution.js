@@ -1,8 +1,5 @@
 describe('Manage Code Fill In Questions Walk-through', () => {
-  function validateQuestion(
-    title,
-    content
-  ) {
+  function validateQuestion(title, content) {
     cy.get('[data-cy="showQuestionDialog"]')
       .should('be.visible')
       .within($ls => {
@@ -11,12 +8,9 @@ describe('Manage Code Fill In Questions Walk-through', () => {
       });
   }
 
-  function validateQuestionFull(
-    title,
-    content
-  ) {
-    cy.log("Validate question with show dialog.");
-    
+  function validateQuestionFull(title, content) {
+    cy.log('Validate question with show dialog.');
+
     cy.get('[data-cy="questionTitleGrid"]')
       .first()
       .click();
@@ -28,8 +22,12 @@ describe('Manage Code Fill In Questions Walk-through', () => {
       .click();
   }
 
-  before(() => {cy.cleanCodeFillInQuestionsByName('Cypress Question Example')});
-  after(() => {cy.cleanCodeFillInQuestionsByName('Cypress Question Example')});
+  before(() => {
+    cy.cleanCodeFillInQuestionsByName('Cypress Question Example');
+  });
+  after(() => {
+    cy.cleanCodeFillInQuestionsByName('Cypress Question Example');
+  });
 
   beforeEach(() => {
     cy.demoTeacherLogin();
@@ -70,15 +68,23 @@ describe('Manage Code Fill In Questions Walk-through', () => {
       '[data-cy="questionQuestionTextArea"]'
     ).type('Cypress Question Example - Content - 01', { force: true });
 
-    cy.get('[data-cy="questionTypeInput"]').type('code_fill_in', { force: true }).click({force: true});
+    cy.get('[data-cy="questionTypeInput"]')
+      .type('code_fill_in', { force: true })
+      .click({ force: true });
 
     cy.wait(1000);
 
-    cy.get('.CodeMirror textarea').type("public class TestCypress {}" , { force: true });
+    cy.get('.CodeMirror textarea').type('public class TestCypress {}', {
+      force: true
+    });
 
-    cy.get('.CodeMirror textarea').type("{home}{ctrl}{shift}{rightarrow}" , { force: true });
+    cy.get('.CodeMirror textarea').type('{home}{ctrl}{shift}{rightarrow}', {
+      force: true
+    });
 
-    cy.get('button').contains('answer slot', {matchCase: false}).click({force: true});  
+    cy.get('button')
+      .contains('answer slot', { matchCase: false })
+      .click({ force: true });
 
     cy.route('POST', '/courses/*/questions/').as('postQuestion');
 
@@ -212,61 +218,61 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
   it('Can duplicate question', function() {
     cy.get('tbody tr')
-    .first()
-    .within($list => {
-      cy.get('button')
-        .contains('cached')
-        .click();
-    });
+      .first()
+      .within($list => {
+        cy.get('button')
+          .contains('cached')
+          .click();
+      });
 
     cy.get('[data-cy="createOrEditQuestionDialog"]')
-        .parent()
-        .should('be.visible');
+      .parent()
+      .should('be.visible');
 
-      cy.get('span.headline').should('contain', 'New Question');
+    cy.get('span.headline').should('contain', 'New Question');
 
-      cy.get('[data-cy="questionTitleTextArea"]')
-        .should('have.value','Cypress Question Example - 01 - Edited')
-        .type('{end} - DUP', {force: true});
-      cy.get(
-        '[data-cy="questionQuestionTextArea"]'
-      )
-      .should('have.value', 'Cypress New Content For Question!');
+    cy.get('[data-cy="questionTitleTextArea"]')
+      .should('have.value', 'Cypress Question Example - 01 - Edited')
+      .type('{end} - DUP', { force: true });
+    cy.get('[data-cy="questionQuestionTextArea"]').should(
+      'have.value',
+      'Cypress New Content For Question!'
+    );
 
-      cy.route('POST', '/courses/*/questions/').as('postQuestion');
+    cy.route('POST', '/courses/*/questions/').as('postQuestion');
 
-      cy.wait(1000);
-      
-      cy.get('button')
-        .contains('Save')
-        .click();
+    cy.wait(1000);
 
-      cy.wait('@postQuestion')
-        .its('status')
-        .should('eq', 200);
+    cy.get('button')
+      .contains('Save')
+      .click();
 
-      cy.get('[data-cy="questionTitleGrid"]')
-        .first()
-        .should('contain', 'Cypress Question Example - 01 - Edited - DUP');
+    cy.wait('@postQuestion')
+      .its('status')
+      .should('eq', 200);
 
-      validateQuestionFull(
-        'Cypress Question Example - 01 - Edited - DUP',
-        'Cypress New Content For Question!'
-      );
-    });
+    cy.get('[data-cy="questionTitleGrid"]')
+      .first()
+      .should('contain', 'Cypress Question Example - 01 - Edited - DUP');
 
-    it('Can delete created question', function() {
-      cy.route('DELETE', '/questions/*').as('deleteQuestion');
-      cy.get('tbody tr')
-        .first()
-        .within($list => {
-          cy.get('button')
-            .contains('delete')
-            .click();
-        });
+    validateQuestionFull(
+      'Cypress Question Example - 01 - Edited - DUP',
+      'Cypress New Content For Question!'
+    );
+  });
 
-      cy.wait('@deleteQuestion')
-        .its('status')
-        .should('eq', 200);
-    });
+  it('Can delete created question', function() {
+    cy.route('DELETE', '/questions/*').as('deleteQuestion');
+    cy.get('tbody tr')
+      .first()
+      .within($list => {
+        cy.get('button')
+          .contains('delete')
+          .click();
+      });
+
+    cy.wait('@deleteQuestion')
+      .its('status')
+      .should('eq', 200);
+  });
 });

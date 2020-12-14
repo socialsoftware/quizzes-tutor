@@ -4,10 +4,11 @@
       <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
-      <codemirror 
+      <codemirror
         ref="myCmStudent"
         :value="questionDetails.code"
-        :options="cmOptions">
+        :options="cmOptions"
+      >
       </codemirror>
     </div>
   </div>
@@ -42,7 +43,6 @@ import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/question
 import Option from '@/models/management/Option';
 import StatementFillInSpot from '@/models/statement/questions/CodeFillInSpotStatement';
 
-
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
   const mustacheOverlay = {
     token: function(stream: any) {
@@ -74,9 +74,10 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
 })
 export default class CodeFillInAnswer extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
-  @Prop(CodeFillInStatementQuestionDetails) readonly questionDetails!:
-    | CodeFillInStatementQuestionDetails;
-  @PropSync('answerDetails', CodeFillInStatementAnswerDetails) answerDetailsSynced!: CodeFillInStatementAnswerDetails;
+  @Prop(CodeFillInStatementQuestionDetails)
+  readonly questionDetails!: CodeFillInStatementQuestionDetails;
+  @PropSync('answerDetails', CodeFillInStatementAnswerDetails)
+  answerDetailsSynced!: CodeFillInStatementAnswerDetails;
   @Prop(CodeFillInStatementCorrectAnswerDetails)
   readonly correctAnswerDetails!: CodeFillInStatementCorrectAnswerDetails;
 
@@ -99,7 +100,7 @@ export default class CodeFillInAnswer extends Vue {
   decreaseOrder() {
     return 1;
   }
-  
+
   @Watch('questionDetails', { immediate: true, deep: true })
   updateQuestion() {
     this.CodemirrorUpdated = false;
@@ -118,9 +119,12 @@ export default class CodeFillInAnswer extends Vue {
       this.CodemirrorUpdated = true;
     }, 100);
   }
-  
+
   replaceDropdowns() {
-    function getOptions(name: number, options: CodeFillInSpotStatement[]): StatementFillInSpot {
+    function getOptions(
+      name: number,
+      options: CodeFillInSpotStatement[]
+    ): StatementFillInSpot {
       const result = options.find(el => el.sequence === name);
       return result || new StatementFillInSpot();
     }
@@ -128,7 +132,7 @@ export default class CodeFillInAnswer extends Vue {
       const d = document.createElement('select');
       d.className = 'code-dropdown';
       d.name = e.innerHTML;
-      e.parentNode.replaceChild(d, e);
+      e.parentNode?.replaceChild(d, e);
       var num = Number(e.innerHTML.match(/\d+/)[0]);
       const option = document.createElement('option');
       var something = getOptions(Number(num), this.questionDetails.fillInSpots);
@@ -153,7 +157,7 @@ export default class CodeFillInAnswer extends Vue {
       } else {
         text = ' ✖: ';
         const correctOption = document.createElement('option');
-        correctOption.innerHTML = ' ✔: ' + correctOptionQuestion.content;
+        correctOption.innerHTML = ' ✔: ' + correctOptionQuestion?.content;
         correctOption.classList.add('answerDetailsSynced-spot', 'correct');
         d.appendChild(correctOption);
       }
@@ -172,13 +176,12 @@ export default class CodeFillInAnswer extends Vue {
       d.selectedIndex = 0;
     });
   }
-  
 }
 </script>
 
 <style lang="scss">
 .code-container {
-  .code-dropdown{
+  .code-dropdown {
     border-radius: 0px;
     border-width: 0 0 1px 0;
     border-style: solid;

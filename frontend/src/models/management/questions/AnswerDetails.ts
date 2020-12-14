@@ -9,5 +9,5 @@ export default abstract class AnswerDetails {
 
   abstract isCorrect(): boolean;
 
-  abstract answerRepresentation(question:QuestionDetails): string;
+  abstract answerRepresentation(question: QuestionDetails): string;
 }

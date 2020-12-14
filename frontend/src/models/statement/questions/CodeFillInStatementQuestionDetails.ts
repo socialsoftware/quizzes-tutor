@@ -14,7 +14,9 @@ export default class CodeFillInStatementQuestionDetails extends StatementQuestio
       this.language = jsonObj.language || this.language;
       this.code = jsonObj.code || this.code;
       this.fillInSpots = jsonObj.fillInSpots
-        ? jsonObj.fillInSpots.map((fill: CodeFillInSpotStatement) => new CodeFillInSpotStatement(fill))
+        ? jsonObj.fillInSpots.map(
+            (fill: CodeFillInSpotStatement) => new CodeFillInSpotStatement(fill)
+          )
         : this.fillInSpots;
     }
   }

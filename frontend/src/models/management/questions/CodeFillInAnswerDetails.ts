@@ -16,7 +16,10 @@ export default class CodeFillInAnswerType extends AnswerDetails {
   }
 
   isCorrect(): boolean {
-    return this.options.length > 0 && this.options.filter(op => !op.correct).length == 0;
+    return (
+      this.options.length > 0 &&
+      this.options.filter(op => !op.correct).length == 0
+    );
   }
 
   answerRepresentation(questionDetails: CodeFillInQuestionDetails): string {

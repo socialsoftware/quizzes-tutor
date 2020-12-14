@@ -18,7 +18,9 @@
           ]"
           >fas x-small fa-chevron-left</v-icon
         >
-        <span>{{ quizAnswer.questionAnswers[currentQuestion].question.title }}</span>
+        <span>{{
+          quizAnswer.questionAnswers[currentQuestion].question.title
+        }}</span>
         <v-icon
           @click="nextQuestion()"
           v-bind:class="[
@@ -31,7 +33,10 @@
         >
       </v-card-subtitle>
       <v-card-text class="quiz-details-question">
-        <show-question :question="quizAnswer.questionAnswers[currentQuestion].question" :answer="quizAnswer.questionAnswers[currentQuestion].answerDetails" />
+        <show-question
+          :question="quizAnswer.questionAnswers[currentQuestion].question"
+          :answer="quizAnswer.questionAnswers[currentQuestion].answerDetails"
+        />
       </v-card-text>
       <v-card-actions>
         <v-btn color="primary" text @click="dialog2 = false">
@@ -50,7 +55,7 @@ import { QuestionAnswer } from '@/models/management/QuestionAnswer';
 import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
 @Component({
-    components: {
+  components: {
     ShowQuestion
   }
 })
@@ -87,7 +92,7 @@ export default class ShowQuizAnswersDetailsDialog extends Vue {
   filter: opacity(0.5);
 }
 .quiz-details-navigation {
-  margin-top: 0!important;
+  margin-top: 0 !important;
   display: flex;
   justify-content: space-around;
 
@@ -96,7 +101,7 @@ export default class ShowQuizAnswersDetailsDialog extends Vue {
   }
 }
 
-.quiz-details-question{
+.quiz-details-question {
   text-align: left;
 }
 </style>

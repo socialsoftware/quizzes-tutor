@@ -40,12 +40,16 @@ export abstract class QuestionFactory {
     }
   }
 
-  abstract createEmptyQuestionDetails() : QuestionDetails;
+  abstract createEmptyQuestionDetails(): QuestionDetails;
   abstract createQuestionDetails(question: any): QuestionDetails;
   abstract createAnswerDetails(question: any): AnswerDetails;
-  abstract createStatementQuestionDetails(question: any): StatementQuestionDetails;
+  abstract createStatementQuestionDetails(
+    question: any
+  ): StatementQuestionDetails;
   abstract createStatementAnswerDetails(details: any): StatementAnswerDetails;
-  abstract createStatementCorrectAnswerDetails(details: any): StatementCorrectAnswerDetails;
+  abstract createStatementCorrectAnswerDetails(
+    details: any
+  ): StatementCorrectAnswerDetails;
 }
 
 class MultipleChoiceQuestionFactory extends QuestionFactory {
@@ -87,7 +91,9 @@ class CodeFillInQuestionFactory extends QuestionFactory {
   createStatementAnswerDetails(details: any): StatementAnswerDetails {
     return new CodeFillInStatementAnswerDetails(details);
   }
-  createStatementCorrectAnswerDetails(details: any): StatementCorrectAnswerDetails {
+  createStatementCorrectAnswerDetails(
+    details: any
+  ): StatementCorrectAnswerDetails {
     return new CodeFillInStatementCorrectAnswerDetails(details);
   }
 }
