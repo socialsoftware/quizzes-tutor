@@ -17,7 +17,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OP
 
 @Entity
 @Table(name = "fill_in_spot",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"question_details_id","sequence"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"question_details_id", "sequence"}))
 public class FillInSpot implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,14 +26,15 @@ public class FillInSpot implements DomainEntity {
     @Column(nullable = false)
     private Integer sequence;
 
-    @ManyToOne(fetch=FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
     @JoinColumn(name = "question_details_id")
     private CodeFillInQuestion questionDetails;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fillInSpot",fetch = FetchType.EAGER, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fillInSpot", fetch = FetchType.EAGER, orphanRemoval = true)
     private final List<FillInOption> options = new ArrayList<>();
 
-    public FillInSpot() {}
+    public FillInSpot() {
+    }
 
     public FillInSpot(FillInSpotDto fillInSpotDto) {
         setOptions(fillInSpotDto.getOptions());

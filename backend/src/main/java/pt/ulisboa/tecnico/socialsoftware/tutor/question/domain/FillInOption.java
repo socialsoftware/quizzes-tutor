@@ -26,14 +26,15 @@ public class FillInOption implements DomainEntity {
     @Column(columnDefinition = "TEXT", nullable = false)
     private String content;
 
-    @ManyToOne(fetch=FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fill_in_id")
     private FillInSpot fillInSpot;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fillInOptions", fetch = FetchType.LAZY, orphanRemoval=true)
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "fillInOptions", fetch = FetchType.LAZY)
     private final Set<CodeFillInAnswer> questionAnswers = new HashSet<>();
 
-    public FillInOption() {}
+    public FillInOption() {
+    }
 
     public FillInOption(OptionDto option) {
         setSequence(option.getSequence());

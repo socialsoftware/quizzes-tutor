@@ -36,6 +36,7 @@ public class Question implements DomainEntity {
         public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
         public static final String CODE_FILL_IN_QUESTION = "code_fill_in";
     }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -79,7 +80,7 @@ public class Question implements DomainEntity {
 
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Discussion> discussions = new HashSet<>();
+    private final Set<Discussion> discussions = new HashSet<>();
 
     public Question() {
     }

@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestio
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.CodeFillInAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 

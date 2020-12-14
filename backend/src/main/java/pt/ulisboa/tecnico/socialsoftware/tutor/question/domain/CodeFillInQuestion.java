@@ -1,18 +1,26 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInCorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.FillInSpotDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInStatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInStatementQuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AT_LEAST_ONE_OPTION_NEEDED;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FILL_IN_SPOT_NOT_FOUND;
 
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
@@ -24,7 +32,7 @@ public class CodeFillInQuestion extends QuestionDetails {
     private String code;
 
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails",fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails", fetch = FetchType.LAZY, orphanRemoval = true)
     private final List<FillInSpot> fillInSpots = new ArrayList<>();
 
 
@@ -57,7 +65,7 @@ public class CodeFillInQuestion extends QuestionDetails {
         return fillInSpots;
     }
 
-    public void setFillInSpots(List<FillInSpotDto> fillInSpots){
+    public void setFillInSpots(List<FillInSpotDto> fillInSpots) {
         if (fillInSpots.isEmpty()) {
             throw new TutorException(AT_LEAST_ONE_OPTION_NEEDED);
         }

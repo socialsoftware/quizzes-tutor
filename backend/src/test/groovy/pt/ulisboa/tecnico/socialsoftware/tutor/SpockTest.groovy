@@ -111,6 +111,10 @@ class SpockTest extends Specification {
     public static final String QUESTION_4_TITLE = "Question 4 Title"
     public static final String QUESTION_5_TITLE = "Question 5 Title"
 
+    public static final String CODE_QUESTION_1_CODE = "class Simple { {{drop1}} }"
+    public static final String CODE_QUESTION_1_LANGUAGE = "Java"
+
+
     public static final String OPTION_1_CONTENT = "Option 1 Content"
     public static final String OPTION_2_CONTENT = "Option 2 Content"
 
