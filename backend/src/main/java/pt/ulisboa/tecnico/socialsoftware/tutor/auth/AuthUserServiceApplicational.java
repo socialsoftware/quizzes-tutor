@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
 
 @Service
 public class AuthUserServiceApplicational {
-
     @Autowired
     private AuthUserService authUserService;
 

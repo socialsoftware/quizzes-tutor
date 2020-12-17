@@ -12,7 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ConfirmRegistrationWebServiceIT extends SpockTest {
-    
     @LocalServerPort
     private int port
 
