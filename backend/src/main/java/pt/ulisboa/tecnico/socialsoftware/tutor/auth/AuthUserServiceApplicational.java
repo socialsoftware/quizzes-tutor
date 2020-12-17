@@ -17,6 +17,12 @@ public class AuthUserServiceApplicational {
     public ExternalUserDto confirmRegistration(ExternalUserDto externalUserDto) {
         ExternalUserDto user = authUserService.confirmRegistrationTransactional(externalUserDto);
         if (!user.isActive()) {
+            System.out.println("confirmRegistration " + user.getEmail() + " " + user.getConfirmationToken());
+            System.out.println("confirmRegistration " + user.getEmail() + " " + user.getConfirmationToken());
+            System.out.println("confirmRegistration " + user.getEmail() + " " + user.getConfirmationToken());
+            System.out.println("confirmRegistration " + user.getEmail() + " " + user.getConfirmationToken());
+            System.out.println("confirmRegistration " + user.getEmail() + " " + user.getConfirmationToken());
+            System.out.println("confirmRegistration " + user.getEmail() + " " + user.getConfirmationToken());
             userServiceApplicational.sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken());
         }
         return user;

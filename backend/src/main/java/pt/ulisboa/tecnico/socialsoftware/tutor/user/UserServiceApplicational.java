@@ -32,7 +32,13 @@ public class UserServiceApplicational {
 
     public ExternalUserDto registerExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         ExternalUserDto user = userService.registerExternalUserTransactional(courseExecutionId, externalUserDto);
-        if (!user.isActive() && !activeProfile.equals("dev")) {
+        if (!user.isActive()) {
+            System.out.println("registerExternalUser " + user.getEmail() + " " + user.getConfirmationToken());
+            System.out.println("registerExternalUser " + user.getEmail() + " " + user.getConfirmationToken());
+            System.out.println("registerExternalUser " + user.getEmail() + " " + user.getConfirmationToken());
+            System.out.println("registerExternalUser " + user.getEmail() + " " + user.getConfirmationToken());
+            System.out.println("registerExternalUser " + user.getEmail() + " " + user.getConfirmationToken());
+
             sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken());
         }
 
