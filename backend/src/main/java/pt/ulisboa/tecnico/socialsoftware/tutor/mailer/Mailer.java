@@ -9,6 +9,9 @@ import org.springframework.stereotype.Component;
 @Component
 public class Mailer {
 
+    @Value("${spring.profiles.active}")
+    private String activeProfile;
+
     @Autowired
     private JavaMailSender mailSender;
 
@@ -18,7 +21,10 @@ public class Mailer {
         simpleMailMessage.setTo(to);
         simpleMailMessage.setSubject(subject);
         simpleMailMessage.setText(body);
-        mailSender.send(simpleMailMessage);
+
+        if (!activeProfile.equals("dev")) {
+            mailSender.send(simpleMailMessage);
+        }
     }
 
 }

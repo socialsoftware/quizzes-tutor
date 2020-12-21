@@ -24,16 +24,13 @@ public class UserServiceApplicational {
     @Autowired
     private AuthUserRepository authUserRepository;
 
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
-
     @Value("${spring.mail.username}")
     private String mailUsername;
 
     public ExternalUserDto registerExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         ExternalUserDto user = userService.registerExternalUserTransactional(courseExecutionId, externalUserDto);
-        if (!user.isActive() && !activeProfile.equals("dev")) {
-            sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken());
+        if (!user.isActive()) {
+             sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken());
         }
 
         return user;

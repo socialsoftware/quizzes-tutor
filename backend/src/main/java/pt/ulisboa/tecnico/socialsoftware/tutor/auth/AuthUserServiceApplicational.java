@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
 
 @Service
 public class AuthUserServiceApplicational {
-
     @Autowired
     private AuthUserService authUserService;
 
@@ -18,7 +17,7 @@ public class AuthUserServiceApplicational {
     public ExternalUserDto confirmRegistration(ExternalUserDto externalUserDto) {
         ExternalUserDto user = authUserService.confirmRegistrationTransactional(externalUserDto);
         if (!user.isActive()) {
-            userServiceApplicational.sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken());
+             userServiceApplicational.sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken());
         }
         return user;
     }

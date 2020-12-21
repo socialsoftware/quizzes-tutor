@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.webservice
 
 import groovy.json.JsonOutput
-import groovy.json.JsonSlurper
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort

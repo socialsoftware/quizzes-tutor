@@ -17,7 +17,6 @@ class CreateExternalUserWebServiceIT extends SpockTest {
     def course1
     def courseExecution1
     
-    @Override
     def setup(){
         restClient = new RESTClient("http://localhost:" + port)
         course1 = new Course("Demo Course", Course.Type.EXTERNAL)
