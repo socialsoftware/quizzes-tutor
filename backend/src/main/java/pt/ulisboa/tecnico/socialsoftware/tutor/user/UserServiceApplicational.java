@@ -24,9 +24,6 @@ public class UserServiceApplicational {
     @Autowired
     private AuthUserRepository authUserRepository;
 
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
-
     @Value("${spring.mail.username}")
     private String mailUsername;
 
