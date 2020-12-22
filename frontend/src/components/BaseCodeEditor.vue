@@ -76,7 +76,7 @@ export default class BaseCodeEditor extends Vue {
   }
 
   get codemirror(): CodeMirror.Editor {
-    return this.$refs.myCm.codemirror;
+    return (this.$refs.myCm as any).codemirror;
   }
   get cmOptions(): CodeMirror.EditorConfiguration {
     return {

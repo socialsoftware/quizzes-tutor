@@ -105,12 +105,16 @@ export default class CodeFillInAnswer extends Vue {
   updateQuestion() {
     this.CodemirrorUpdated = false;
     setTimeout(() => {
-      this.$refs.myCmStudent.codemirror.refresh();
+      (this.$refs.myCmStudent as any).codemirror.refresh();
       this.replaceDropdowns();
       document.body.addEventListener(
         'mousedown',
         function(evt: Event) {
-          if (evt && evt.target && evt.target.className === 'code-dropdown') {
+          if (
+            evt &&
+            evt.target &&
+            (evt.target as any).className === 'code-dropdown'
+          ) {
             evt.stopPropagation();
           }
         },
@@ -133,7 +137,8 @@ export default class CodeFillInAnswer extends Vue {
       d.className = 'code-dropdown';
       d.name = e.innerHTML;
       e.parentNode?.replaceChild(d, e);
-      var num = Number(e.innerHTML.match(/\d+/)[0]);
+      const match = e.innerHTML.match(/\d+/);
+      var num = Number(match ? match[0] : 0);
       const option = document.createElement('option');
       var something = getOptions(Number(num), this.questionDetails.fillInSpots);
       var optionAnswered = this.answerDetailsSynced.selectedOptions.find(

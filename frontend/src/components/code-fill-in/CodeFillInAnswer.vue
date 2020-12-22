@@ -100,12 +100,16 @@ export default class CodeFillInAnswer extends Vue {
   updateQuestion() {
     this.CodemirrorUpdated = false;
     setTimeout(() => {
-      this.$refs.myCmStudent.codemirror.refresh();
+      (this.$refs.myCmStudent as any).codemirror.refresh();
       this.replaceDropdowns();
       document.body.addEventListener(
         'mousedown',
         function(evt: Event) {
-          if (evt && evt.target && evt.target.className === 'code-dropdown') {
+          if (
+            evt &&
+            evt.target &&
+            (evt.target as any).className === 'code-dropdown'
+          ) {
             evt.stopPropagation();
           }
         },
@@ -174,8 +178,9 @@ export default class CodeFillInAnswer extends Vue {
       d.className = 'code-dropdown';
       d.onchange = this.selectedANewOption;
       d.name = e.innerHTML;
-      e.parentNode.replaceChild(d, e);
-      var num = e.innerHTML.match(/\d+/)[0];
+      e.parentNode?.replaceChild(d, e);
+      let match = e.innerHTML.match(/\d+/);
+      var num = match ? match[0] : 0;
       var something = getOptions(Number(num), this.questionDetails.fillInSpots);
       addOptions(d, something);
     });
@@ -184,8 +189,8 @@ export default class CodeFillInAnswer extends Vue {
     return convertMarkDown(text, image);
   }
   selectedANewOption(event: Event) {
-    var num = Number(event.target.name.match(/\d+/)[0]);
-    var selectIndex = event.target.selectedIndex - 1;
+    var num = Number((event.target as any).name.match(/\d+/)[0]);
+    var selectIndex = (event.target as any).selectedIndex - 1;
     var dataQuestion = this.questionDetails.fillInSpots.find(
       el => el.sequence === num
     );
