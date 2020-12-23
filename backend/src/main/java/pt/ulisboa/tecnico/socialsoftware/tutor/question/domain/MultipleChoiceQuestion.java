@@ -151,7 +151,7 @@ public class MultipleChoiceQuestion extends QuestionDetails {
     }
 
     public static String convertSequenceToLetter(Integer correctAnswer) {
-        return correctAnswer != null ? Character.toString('A' + correctAnswer) : "X";
+        return correctAnswer != null ? Character.toString('A' + correctAnswer) : "-";
     }
 
 }

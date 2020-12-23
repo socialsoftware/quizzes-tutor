@@ -23,7 +23,7 @@ class MultipleChoiceQuestionTest extends SpockTest {
         0               | "A"
         3               | "D"
         10              | "K"
-        null            | "X"
+        null            | "-"
     }
 
     @TestConfiguration
