@@ -13,7 +13,7 @@ public class CodeFillInQuestionDto extends QuestionDetailsDto {
 
     private String code;
 
-    private List<FillInSpotDto> fillInSpots = new ArrayList<>();
+    private List<CodeFillInSpotDto> fillInSpots = new ArrayList<>();
 
     public CodeFillInQuestionDto() {
     }
@@ -22,7 +22,7 @@ public class CodeFillInQuestionDto extends QuestionDetailsDto {
         this.language = question.getLanguage();
         this.code = question.getCode();
         this.fillInSpots = question.getFillInSpots()
-                .stream().map(FillInSpotDto::new)
+                .stream().map(CodeFillInSpotDto::new)
                 .collect(Collectors.toList());
     }
 
@@ -42,11 +42,11 @@ public class CodeFillInQuestionDto extends QuestionDetailsDto {
         this.code = code;
     }
 
-    public List<FillInSpotDto> getFillInSpots() {
+    public List<CodeFillInSpotDto> getFillInSpots() {
         return fillInSpots;
     }
 
-    public void setFillInSpots(List<FillInSpotDto> fillInSpots) {
+    public void setFillInSpots(List<CodeFillInSpotDto> fillInSpots) {
         this.fillInSpots = fillInSpots;
     }
 

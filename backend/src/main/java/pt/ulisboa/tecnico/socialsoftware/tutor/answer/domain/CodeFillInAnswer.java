@@ -5,8 +5,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInOption;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInSpot;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInOption;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInSpot;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInOptionStatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInStatementAnswerDetailsDto;
@@ -27,7 +27,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 public class CodeFillInAnswer extends AnswerDetails {
 
     @ManyToMany(cascade = CascadeType.ALL, mappedBy = "questionAnswers")
-    private Set<FillInOption> fillInOptions = new HashSet<>();
+    private Set<CodeFillInOption> codeFillInOptions = new HashSet<>();
 
     public CodeFillInAnswer() {
         super();
@@ -38,17 +38,17 @@ public class CodeFillInAnswer extends AnswerDetails {
 
     }
 
-    public Set<FillInOption> getFillInOptions() {
-        return fillInOptions;
+    public Set<CodeFillInOption> getFillInOptions() {
+        return codeFillInOptions;
     }
 
-    public void setFillInOptions(Set<FillInOption> fillInOptions) {
-        this.fillInOptions = fillInOptions;
+    public void setFillInOptions(Set<CodeFillInOption> codeFillInOptions) {
+        this.codeFillInOptions = codeFillInOptions;
     }
 
     @Override
     public boolean isCorrect() {
-        return this.getFillInOptions().stream().allMatch(FillInOption::isCorrect);
+        return this.getFillInOptions().stream().allMatch(CodeFillInOption::isCorrect);
     }
 
     @Override
@@ -63,7 +63,7 @@ public class CodeFillInAnswer extends AnswerDetails {
 
     @Override
     public boolean isAnswered() {
-        return fillInOptions != null && !fillInOptions.isEmpty();
+        return codeFillInOptions != null && !codeFillInOptions.isEmpty();
     }
 
     @Override
@@ -74,25 +74,25 @@ public class CodeFillInAnswer extends AnswerDetails {
     @Override
     public void remove() {
         super.remove();
-        if (fillInOptions != null) {
-            fillInOptions.forEach(x -> x.getQuestionAnswers().remove(this));
-            fillInOptions.clear();
+        if (codeFillInOptions != null) {
+            codeFillInOptions.forEach(x -> x.getQuestionAnswers().remove(this));
+            codeFillInOptions.clear();
         }
     }
 
     public void setFillInOptions(CodeFillInQuestion question, CodeFillInStatementAnswerDetailsDto codeFillInStatementAnswerDetailsDto) {
-        this.fillInOptions.clear();
+        this.codeFillInOptions.clear();
         if (codeFillInStatementAnswerDetailsDto.emptyAnswer()) {
             for (CodeFillInOptionStatementAnswerDto option : codeFillInStatementAnswerDetailsDto.getSelectedOptions()) {
 
-                FillInOption fillInOption = question.getFillInSpots().stream()
-                        .map(FillInSpot::getOptions)
+                CodeFillInOption codeFillInOption = question.getFillInSpots().stream()
+                        .map(CodeFillInSpot::getOptions)
                         .flatMap(Collection::stream)
                         .filter(option1 -> option1.getId().equals(option.getOptionId()))
                         .findAny()
                         .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, option.getOptionId()));
 
-                getFillInOptions().add(fillInOption);
+                getFillInOptions().add(codeFillInOption);
             }
         }
     }

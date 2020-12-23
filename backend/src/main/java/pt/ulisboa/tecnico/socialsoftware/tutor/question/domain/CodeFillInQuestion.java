@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.FillInSpotDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInSpotDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInStatementQuestionDetailsDto;
@@ -33,7 +33,7 @@ public class CodeFillInQuestion extends QuestionDetails {
 
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails", fetch = FetchType.LAZY, orphanRemoval = true)
-    private final List<FillInSpot> fillInSpots = new ArrayList<>();
+    private final List<CodeFillInSpot> codeFillInSpots = new ArrayList<>();
 
 
     public CodeFillInQuestion() {
@@ -61,28 +61,28 @@ public class CodeFillInQuestion extends QuestionDetails {
         this.code = code;
     }
 
-    public List<FillInSpot> getFillInSpots() {
-        return fillInSpots;
+    public List<CodeFillInSpot> getFillInSpots() {
+        return codeFillInSpots;
     }
 
-    public void setFillInSpots(List<FillInSpotDto> fillInSpots) {
+    public void setFillInSpots(List<CodeFillInSpotDto> fillInSpots) {
         if (fillInSpots.isEmpty()) {
             throw new TutorException(AT_LEAST_ONE_OPTION_NEEDED);
         }
 
-        for (FillInSpotDto fillInSpotDto : fillInSpots) {
-            if (fillInSpotDto.getId() == null) {
-                FillInSpot fillInSpot = new FillInSpot(fillInSpotDto);
-                fillInSpot.setQuestionDetails(this);
-                this.fillInSpots.add(fillInSpot);
+        for (CodeFillInSpotDto codeFillInSpotDto : fillInSpots) {
+            if (codeFillInSpotDto.getId() == null) {
+                CodeFillInSpot codeFillInSpot = new CodeFillInSpot(codeFillInSpotDto);
+                codeFillInSpot.setQuestionDetails(this);
+                this.codeFillInSpots.add(codeFillInSpot);
             } else {
-                FillInSpot option = getFillInSpots()
+                CodeFillInSpot option = getFillInSpots()
                         .stream()
-                        .filter(op -> op.getId().equals(fillInSpotDto.getId()))
+                        .filter(op -> op.getId().equals(codeFillInSpotDto.getId()))
                         .findFirst()
-                        .orElseThrow(() -> new TutorException(FILL_IN_SPOT_NOT_FOUND, fillInSpotDto.getId()));
+                        .orElseThrow(() -> new TutorException(FILL_IN_SPOT_NOT_FOUND, codeFillInSpotDto.getId()));
 
-                option.setOptions(fillInSpotDto.getOptions());
+                option.setOptions(codeFillInSpotDto.getOptions());
             }
         }
     }
@@ -115,10 +115,10 @@ public class CodeFillInQuestion extends QuestionDetails {
     @Override
     public void delete() {
         super.delete();
-        for (var spot : this.fillInSpots) {
+        for (var spot : this.codeFillInSpots) {
             spot.delete();
         }
-        this.fillInSpots.clear();
+        this.codeFillInSpots.clear();
     }
 
     @Override

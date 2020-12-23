@@ -10,8 +10,8 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "fill_in_options")
-public class FillInOption implements DomainEntity {
+@Table(name = "code_fill_in_options")
+public class CodeFillInOption implements DomainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -28,15 +28,15 @@ public class FillInOption implements DomainEntity {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "fill_in_id")
-    private FillInSpot fillInSpot;
+    private CodeFillInSpot codeFillInSpot;
 
     @ManyToMany()
     private final Set<CodeFillInAnswer> questionAnswers = new HashSet<>();
 
-    public FillInOption() {
+    public CodeFillInOption() {
     }
 
-    public FillInOption(OptionDto option) {
+    public CodeFillInOption(OptionDto option) {
         setSequence(option.getSequence());
         setContent(option.getContent());
         setCorrect(option.isCorrect());
@@ -74,12 +74,12 @@ public class FillInOption implements DomainEntity {
         this.content = content;
     }
 
-    public FillInSpot getFillInSpot() {
-        return fillInSpot;
+    public CodeFillInSpot getFillInSpot() {
+        return codeFillInSpot;
     }
 
-    public void setFillInSpot(FillInSpot fillInSpot) {
-        this.fillInSpot = fillInSpot;
+    public void setFillInSpot(CodeFillInSpot codeFillInSpot) {
+        this.codeFillInSpot = codeFillInSpot;
     }
 
     public Set<CodeFillInAnswer> getQuestionAnswers() {
@@ -93,7 +93,7 @@ public class FillInOption implements DomainEntity {
 
 
     public void delete() {
-        this.fillInSpot = null;
+        this.codeFillInSpot = null;
         this.questionAnswers.clear();
     }
 }

@@ -49,9 +49,9 @@ public interface Visitor {
 
     default void visitQuestionDetails(CodeFillInQuestion question) {}
 
-    default void visitFillInSpot(FillInSpot spot) {}
+    default void visitFillInSpot(CodeFillInSpot spot) {}
 
-    default void visitFillInOption(FillInOption spot) {}
+    default void visitFillInOption(CodeFillInOption spot) {}
 
     default void visitDiscussion(Discussion discussion) {}
 

@@ -135,7 +135,7 @@ class CreateQuestionTest extends SpockTest {
         codeQuestionDto.setCode(CODE_QUESTION_1_CODE)
         codeQuestionDto.setLanguage(CODE_QUESTION_1_LANGUAGE)
 
-        FillInSpotDto fillInSpotDto = new FillInSpotDto()
+        CodeFillInSpotDto fillInSpotDto = new CodeFillInSpotDto()
         OptionDto optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
@@ -208,7 +208,7 @@ class CreateQuestionTest extends SpockTest {
         questionDto.setStatus(Question.Status.AVAILABLE.name())
         questionDto.setQuestionDetailsDto(new CodeFillInQuestionDto())
 
-        FillInSpotDto fillInSpotDto = new FillInSpotDto()
+        CodeFillInSpotDto fillInSpotDto = new CodeFillInSpotDto()
         questionDto.getQuestionDetailsDto().getFillInSpots().add(fillInSpotDto)
 
 
@@ -229,7 +229,7 @@ class CreateQuestionTest extends SpockTest {
         questionDto.setStatus(Question.Status.AVAILABLE.name())
         questionDto.setQuestionDetailsDto(new CodeFillInQuestionDto())
 
-        FillInSpotDto fillInSpotDto = new FillInSpotDto()
+        CodeFillInSpotDto fillInSpotDto = new CodeFillInSpotDto()
         OptionDto optionDto = new OptionDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(false)

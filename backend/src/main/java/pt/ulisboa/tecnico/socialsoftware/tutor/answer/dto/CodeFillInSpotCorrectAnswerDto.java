@@ -1,15 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInOption;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInSpot;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInOption;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInSpot;
 
 public class CodeFillInSpotCorrectAnswerDto {
     private Integer sequence;
     private Integer optionId;
 
-    public CodeFillInSpotCorrectAnswerDto(FillInSpot fillInSpot) {
-        this.sequence = fillInSpot.getSequence();
-        this.optionId = fillInSpot.getOptions().stream().filter(FillInOption::isCorrect).findFirst().get().getId();
+    public CodeFillInSpotCorrectAnswerDto(CodeFillInSpot codeFillInSpot) {
+        this.sequence = codeFillInSpot.getSequence();
+        this.optionId = codeFillInSpot.getOptions().stream().filter(CodeFillInOption::isCorrect).findFirst().get().getId();
     }
 
     public Integer getSequence() {

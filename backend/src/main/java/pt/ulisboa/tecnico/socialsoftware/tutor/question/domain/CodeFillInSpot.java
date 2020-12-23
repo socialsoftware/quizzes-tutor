@@ -4,7 +4,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.FillInSpotDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInSpotDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
@@ -16,9 +16,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.NO
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OPTION_NOT_FOUND;
 
 @Entity
-@Table(name = "fill_in_spot",
+@Table(name = "code_fill_in_spot",
         uniqueConstraints = @UniqueConstraint(columnNames = {"question_details_id", "sequence"}))
-public class FillInSpot implements DomainEntity {
+public class CodeFillInSpot implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -30,15 +30,15 @@ public class FillInSpot implements DomainEntity {
     @JoinColumn(name = "question_details_id")
     private CodeFillInQuestion questionDetails;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "fillInSpot", fetch = FetchType.EAGER, orphanRemoval = true)
-    private final List<FillInOption> options = new ArrayList<>();
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "codeFillInSpot", fetch = FetchType.EAGER, orphanRemoval = true)
+    private final List<CodeFillInOption> options = new ArrayList<>();
 
-    public FillInSpot() {
+    public CodeFillInSpot() {
     }
 
-    public FillInSpot(FillInSpotDto fillInSpotDto) {
-        setOptions(fillInSpotDto.getOptions());
-        setSequence(fillInSpotDto.getSequence());
+    public CodeFillInSpot(CodeFillInSpotDto codeFillInSpotDto) {
+        setOptions(codeFillInSpotDto.getOptions());
+        setSequence(codeFillInSpotDto.getSequence());
     }
 
     public Integer getId() {
@@ -65,7 +65,7 @@ public class FillInSpot implements DomainEntity {
         this.sequence = sequence;
     }
 
-    public List<FillInOption> getOptions() {
+    public List<CodeFillInOption> getOptions() {
         return options;
     }
 
@@ -81,11 +81,11 @@ public class FillInSpot implements DomainEntity {
         for (OptionDto optionDto : options) {
             if (optionDto.getId() == null) {
                 optionDto.setSequence(index++);
-                FillInOption fillInOption = new FillInOption(optionDto);
-                fillInOption.setFillInSpot(this);
-                this.options.add(fillInOption);
+                CodeFillInOption codeFillInOption = new CodeFillInOption(optionDto);
+                codeFillInOption.setFillInSpot(this);
+                this.options.add(codeFillInOption);
             } else {
-                FillInOption option = getOptions()
+                CodeFillInOption option = getOptions()
                         .stream()
                         .filter(op -> op.getId().equals(optionDto.getId()))
                         .findFirst()
@@ -103,14 +103,14 @@ public class FillInSpot implements DomainEntity {
     }
 
     public void visitOptions(Visitor visitor) {
-        for (FillInOption option : this.getOptions()) {
+        for (CodeFillInOption option : this.getOptions()) {
             option.accept(visitor);
         }
     }
 
     public void delete() {
         this.questionDetails = null;
-        for (FillInOption option : this.options) {
+        for (CodeFillInOption option : this.options) {
             option.delete();
         }
         this.options.clear();

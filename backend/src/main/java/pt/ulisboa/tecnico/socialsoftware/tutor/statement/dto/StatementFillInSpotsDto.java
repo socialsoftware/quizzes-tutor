@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.FillInSpot;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInSpot;
 
 import java.io.Serializable;
 import java.util.List;
@@ -10,9 +10,9 @@ public class StatementFillInSpotsDto implements Serializable {
     public Integer sequence;
     public List<StatementOptionDto> options;
 
-    public StatementFillInSpotsDto(FillInSpot fillInSpot) {
-        this.sequence = fillInSpot.getSequence();
-        this.options = fillInSpot.getOptions().stream().map(StatementOptionDto::new).collect(Collectors.toList());
+    public StatementFillInSpotsDto(CodeFillInSpot codeFillInSpot) {
+        this.sequence = codeFillInSpot.getSequence();
+        this.options = codeFillInSpot.getOptions().stream().map(StatementOptionDto::new).collect(Collectors.toList());
     }
 
     public Integer getSequence() {
