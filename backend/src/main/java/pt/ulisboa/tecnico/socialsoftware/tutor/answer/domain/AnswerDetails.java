@@ -18,7 +18,7 @@ public abstract class AnswerDetails implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "question_answer_id")
     private QuestionAnswer questionAnswer;
 
@@ -44,8 +44,8 @@ public abstract class AnswerDetails implements DomainEntity {
 
     public abstract boolean isCorrect();
 
-    public void remove(){
-        this.questionAnswer.setAnswerDetails((AnswerDetails)null);
+    public void remove() {
+        this.questionAnswer.setAnswerDetails((AnswerDetails) null);
         this.questionAnswer = null;
     }
 

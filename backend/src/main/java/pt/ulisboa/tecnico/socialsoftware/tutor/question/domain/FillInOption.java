@@ -30,7 +30,7 @@ public class FillInOption implements DomainEntity {
     @JoinColumn(name = "fill_in_id")
     private FillInSpot fillInSpot;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "fillInOptions", fetch = FetchType.LAZY)
+    @ManyToMany()
     private final Set<CodeFillInAnswer> questionAnswers = new HashSet<>();
 
     public FillInOption() {
@@ -80,6 +80,10 @@ public class FillInOption implements DomainEntity {
 
     public void setFillInSpot(FillInSpot fillInSpot) {
         this.fillInSpot = fillInSpot;
+    }
+
+    public Set<CodeFillInAnswer> getQuestionAnswers() {
+        return questionAnswers;
     }
 
     @Override

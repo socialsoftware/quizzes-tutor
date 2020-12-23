@@ -12,10 +12,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInOptionSta
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 
-import javax.persistence.*;
-import java.util.ArrayList;
+import javax.persistence.CascadeType;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import javax.persistence.ManyToMany;
 import java.util.Collection;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
 
@@ -23,8 +26,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 @DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInAnswer extends AnswerDetails {
 
-    @ManyToMany
-    private List<FillInOption> fillInOptions = new ArrayList<>();
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "questionAnswers")
+    private Set<FillInOption> fillInOptions = new HashSet<>();
 
     public CodeFillInAnswer() {
         super();
@@ -35,11 +38,11 @@ public class CodeFillInAnswer extends AnswerDetails {
 
     }
 
-    public List<FillInOption> getFillInOptions() {
+    public Set<FillInOption> getFillInOptions() {
         return fillInOptions;
     }
 
-    public void setFillInOptions(List<FillInOption> fillInOptions) {
+    public void setFillInOptions(Set<FillInOption> fillInOptions) {
         this.fillInOptions = fillInOptions;
     }
 
@@ -66,6 +69,15 @@ public class CodeFillInAnswer extends AnswerDetails {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitAnswerDetails(this);
+    }
+
+    @Override
+    public void remove() {
+        super.remove();
+        if (fillInOptions != null) {
+            fillInOptions.forEach(x -> x.getQuestionAnswers().remove(this));
+            fillInOptions.clear();
+        }
     }
 
     public void setFillInOptions(CodeFillInQuestion question, CodeFillInStatementAnswerDetailsDto codeFillInStatementAnswerDetailsDto) {
