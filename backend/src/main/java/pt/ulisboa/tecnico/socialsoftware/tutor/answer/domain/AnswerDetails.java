@@ -44,10 +44,7 @@ public abstract class AnswerDetails implements DomainEntity {
 
     public abstract boolean isCorrect();
 
-    public void remove() {
-        this.questionAnswer.setAnswerDetails((AnswerDetails) null);
-        this.questionAnswer = null;
-    }
+    public abstract void remove();
 
     public abstract AnswerDetailsDto getAnswerDetailsDto();
 

@@ -23,7 +23,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 @DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInAnswer extends AnswerDetails {
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "questionAnswers", fetch = FetchType.EAGER)
+    @ManyToMany(mappedBy = "questionAnswers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private Set<CodeFillInOption> codeFillInOptions = new HashSet<>();
 
     public CodeFillInAnswer() {
@@ -70,10 +70,9 @@ public class CodeFillInAnswer extends AnswerDetails {
 
     @Override
     public void remove() {
-        super.remove();
-        if (codeFillInOptions != null) {
-            codeFillInOptions.forEach(x -> x.getQuestionAnswers().remove(this));
-            codeFillInOptions.clear();
+        if (this.codeFillInOptions != null) {
+            this.codeFillInOptions.forEach(x -> x.getQuestionAnswers().remove(this));
+            this.codeFillInOptions.clear();
         }
     }
 

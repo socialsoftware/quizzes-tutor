@@ -27,7 +27,7 @@ public class CodeFillInOption implements DomainEntity {
     private String content;
 
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "fill_in_id")
+    @JoinColumn(name = "code_fill_in_id")
     private CodeFillInSpot codeFillInSpot;
 
     @ManyToMany()

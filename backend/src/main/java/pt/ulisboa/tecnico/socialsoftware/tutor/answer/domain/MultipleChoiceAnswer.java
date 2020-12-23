@@ -71,7 +71,6 @@ public class MultipleChoiceAnswer extends AnswerDetails {
 
 
     public void remove() {
-        super.remove();
         if (option != null) {
             option.getQuestionAnswers().remove(this);
             option = null;
