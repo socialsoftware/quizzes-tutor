@@ -4,18 +4,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInOption;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInSpot;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInOptionStatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeFillInStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 
-import javax.persistence.CascadeType;
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
+import javax.persistence.*;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
@@ -26,7 +23,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 @DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInAnswer extends AnswerDetails {
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "questionAnswers")
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "questionAnswers", fetch = FetchType.EAGER)
     private Set<CodeFillInOption> codeFillInOptions = new HashSet<>();
 
     public CodeFillInAnswer() {
@@ -93,6 +90,7 @@ public class CodeFillInAnswer extends AnswerDetails {
                         .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, option.getOptionId()));
 
                 getFillInOptions().add(codeFillInOption);
+                codeFillInOption.getQuestionAnswers().add(this);
             }
         }
     }

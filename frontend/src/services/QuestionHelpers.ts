@@ -21,7 +21,7 @@ export enum QuestionTypes {
 }
 
 export function convertToLetter(number: number | null) {
-  if (!number) {
+  if (number == null) {
     return '-';
   } else {
     return String.fromCharCode(65 + number);
