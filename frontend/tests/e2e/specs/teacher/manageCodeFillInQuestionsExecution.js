@@ -24,6 +24,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
   before(() => {
     cy.cleanCodeFillInQuestionsByName('Cypress Question Example');
+    cy.cleanMultipleChoiceQuestionsByName('Cypress Question Example');
   });
   after(() => {
     cy.cleanCodeFillInQuestionsByName('Cypress Question Example');

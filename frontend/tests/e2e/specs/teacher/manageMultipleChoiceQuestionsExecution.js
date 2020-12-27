@@ -42,6 +42,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
   before(() => {
     cy.cleanMultipleChoiceQuestionsByName('Cypress Question Example');
+    cy.cleanCodeFillInQuestionsByName('Cypress Question Example');
   });
   after(() => {
     cy.cleanMultipleChoiceQuestionsByName('Cypress Question Example');
