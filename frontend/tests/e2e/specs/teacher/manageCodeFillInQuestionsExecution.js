@@ -116,6 +116,8 @@ describe('Manage Code Fill In Questions Walk-through', () => {
           .click();
       });
 
+      cy.wait(1000);
+
     validateQuestion(
       'Cypress Question Example - 01',
       'Cypress Question Example - Content - 01'
@@ -131,6 +133,8 @@ describe('Manage Code Fill In Questions Walk-through', () => {
     cy.get('[data-cy="questionTitleGrid"]')
       .first()
       .click();
+
+    cy.wait(1000); //making sure codemirror loaded
 
     validateQuestion(
       'Cypress Question Example - 01',
@@ -149,6 +153,8 @@ describe('Manage Code Fill In Questions Walk-through', () => {
     cy.get('[data-cy="questionTitleGrid"]')
       .first()
       .rightclick();
+
+    cy.wait(1000); //making sure codemirror loaded
 
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
@@ -190,6 +196,8 @@ describe('Manage Code Fill In Questions Walk-through', () => {
           .click();
       });
 
+    cy.wait(1000); //making sure codemirror loaded
+
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
       .should('be.visible')
@@ -226,7 +234,9 @@ describe('Manage Code Fill In Questions Walk-through', () => {
           .click();
       });
 
-    cy.get('[data-cy="createOrEditQuestionDialog"]')
+      cy.wait(1000); //making sure codemirror loaded
+
+      cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
       .should('be.visible');
 
