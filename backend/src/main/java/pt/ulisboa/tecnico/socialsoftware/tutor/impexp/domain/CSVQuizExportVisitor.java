@@ -1,8 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -10,11 +13,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+
 import java.time.Duration;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Comparator;
-import java.util.List;
 import java.util.*;
 import java.util.function.Function;
 import java.util.stream.Collectors;
@@ -22,7 +22,7 @@ import java.util.stream.Collectors;
 public class CSVQuizExportVisitor implements Visitor {
     private String[] line;
     private int column;
-    private List<String[]> table = new ArrayList<>();
+    private final List<String[]> table = new ArrayList<>();
 
     public String export(Quiz quiz, List<QuestionAnswerItem> questionAnswerItems) {
         int numberOfQuestions = quiz.getQuizQuestions().size();
@@ -34,7 +34,7 @@ public class CSVQuizExportVisitor implements Visitor {
                 .map(QuizQuestion::getQuestion)
                 .map(Question::getQuestionDetails)
                 .filter(q -> q instanceof MultipleChoiceQuestion)
-                .flatMap(question -> ((MultipleChoiceQuestion)question).getOptions().stream())
+                .flatMap(question -> ((MultipleChoiceQuestion) question).getOptions().stream())
                 .collect(Collectors.toMap(Option::getId, Function.identity()));
 
         // add header
@@ -100,7 +100,7 @@ public class CSVQuizExportVisitor implements Visitor {
         line[5] = "Time Taken";
         table.add(line);
 
-        for (QuestionAnswerItem questionAnswerItem: questionAnswerItems) {
+        for (QuestionAnswerItem questionAnswerItem : questionAnswerItems) {
             line = new String[lineSize];
             Arrays.fill(line, "");
             line[0] = questionAnswerItem.getUsername();
@@ -130,21 +130,25 @@ public class CSVQuizExportVisitor implements Visitor {
                 quizAnswer.getAnswerDate().isAfter(quizAnswer.getQuiz().getConclusionDate())) {
             Duration duration = Duration.between(quizAnswer.getAnswerDate(), quizAnswer.getQuiz().getConclusionDate());
             line[column++] = String.valueOf(Math.abs(duration.toSeconds()));
-        }
-        else
+        } else
             line[column++] = "";
     }
 
     @Override
     public void visitQuestionAnswer(QuestionAnswer questionAnswer) {
-        if(questionAnswer.getAnswerDetails() !=null){
+        if (questionAnswer.getAnswerDetails() != null) {
             questionAnswer.getAnswerDetails().accept(this);
         }
     }
 
     @Override
     public void visitAnswerDetails(MultipleChoiceAnswer answer) {
-        line[column++] = answer.getOption() != null ? MultipleChoiceQuestion.convertSequenceToLetter(answer.getOption().getSequence()) : "-";
+        line[column++] = answer.getAnswerRepresentation();
+    }
+
+    @Override
+    public void visitAnswerDetails(CodeFillInAnswer answer) {
+        line[column++] = answer.getAnswerRepresentation();
     }
 
     @Override
@@ -153,16 +157,18 @@ public class CSVQuizExportVisitor implements Visitor {
     }
 
     @Override
-    public void visitQuestion(Question question){
+    public void visitQuestion(Question question) {
         question.getQuestionDetails().accept(this);
     }
 
     @Override
     public void visitQuestionDetails(MultipleChoiceQuestion question) {
-        line[column++] = question.getOptions().stream()
-                .filter(Option::isCorrect)
-                .findAny()
-                .map(option -> MultipleChoiceQuestion.convertSequenceToLetter(option.getSequence())).orElse("");
+        line[column++] = question.getCorrectAnswerRepresentation();
+    }
+
+    @Override
+    public void visitQuestionDetails(CodeFillInQuestion question) {
+        line[column++] = question.getCorrectAnswerRepresentation();
     }
 
     private String convertToCSV(String[] data) {

@@ -63,6 +63,13 @@ public class CodeFillInAnswer extends AnswerDetails {
         return codeFillInOptions != null && !codeFillInOptions.isEmpty();
     }
 
+    public String getAnswerRepresentation() {
+        var correctAnswers = this.getFillInOptions().stream().filter(CodeFillInOption::isCorrect).count();
+        // TODO: Might be relevant for answer details to know about the respective question answers.
+        var questionOptions = ((CodeFillInQuestion) this.getQuestionAnswer().getQuestion().getQuestionDetails()).getFillInSpots().size();
+        return String.format("%d/%d", correctAnswers, questionOptions);
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visitAnswerDetails(this);

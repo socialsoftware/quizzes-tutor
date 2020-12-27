@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 
 import javax.persistence.*;
@@ -47,6 +48,8 @@ public abstract class AnswerDetails implements DomainEntity {
     public abstract void remove();
 
     public abstract AnswerDetailsDto getAnswerDetailsDto();
+
+    public abstract String getAnswerRepresentation();
 
     public abstract StatementAnswerDetailsDto getStatementAnswerDetailsDto();
 

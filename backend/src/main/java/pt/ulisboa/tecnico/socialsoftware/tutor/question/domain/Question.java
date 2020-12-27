@@ -330,8 +330,8 @@ public class Question implements DomainEntity {
         return this.getQuestionDetails().getQuestionDetailsDto();
     }
 
-    public String getCorrectAnswerText() {
-        return this.questionDetails.getCorrectAnswerText();
+    public String getCorrectAnswerRepresentation() {
+        return this.questionDetails.getCorrectAnswerRepresentation();
     }
 
     @Override

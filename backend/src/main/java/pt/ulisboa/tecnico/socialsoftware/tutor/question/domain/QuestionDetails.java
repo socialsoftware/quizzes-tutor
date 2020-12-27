@@ -61,5 +61,5 @@ public abstract class QuestionDetails implements DomainEntity {
 
     public abstract void update(Updator updator);
 
-    public abstract String getCorrectAnswerText();
+    public abstract String getCorrectAnswerRepresentation();
 }

@@ -88,6 +88,11 @@ public class MultipleChoiceAnswer extends AnswerDetails {
     }
 
     @Override
+    public String getAnswerRepresentation() {
+        return this.getOption() != null ? MultipleChoiceQuestion.convertSequenceToLetter(this.getOption().getSequence()) : "-";
+    }
+
+    @Override
     public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
         return new MultipleChoiceStatementAnswerDetailsDto(this);
     }

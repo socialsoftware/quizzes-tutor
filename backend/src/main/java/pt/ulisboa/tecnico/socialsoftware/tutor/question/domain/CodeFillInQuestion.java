@@ -122,7 +122,7 @@ public class CodeFillInQuestion extends QuestionDetails {
     }
 
     @Override
-    public String getCorrectAnswerText() {
+    public String getCorrectAnswerRepresentation() {
         return String.format("%d/%d", this.getFillInSpots().size(), this.getFillInSpots().size());
     }
 
@@ -140,5 +140,11 @@ public class CodeFillInQuestion extends QuestionDetails {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuestionDetails(this);
+    }
+
+    public void visitFillInSpots(Visitor visitor) {
+        for (var spot : this.getFillInSpots()) {
+            spot.accept(visitor);
+        }
     }
 }
