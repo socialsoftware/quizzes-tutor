@@ -85,7 +85,7 @@ public class CodeFillInAnswer extends AnswerDetails {
 
     public void setFillInOptions(CodeFillInQuestion question, CodeFillInStatementAnswerDetailsDto codeFillInStatementAnswerDetailsDto) {
         this.codeFillInOptions.clear();
-        if (codeFillInStatementAnswerDetailsDto.emptyAnswer()) {
+        if (!codeFillInStatementAnswerDetailsDto.emptyAnswer()) {
             for (CodeFillInOptionStatementAnswerDto option : codeFillInStatementAnswerDetailsDto.getSelectedOptions()) {
 
                 CodeFillInOption codeFillInOption = question.getFillInSpots().stream()
