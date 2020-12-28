@@ -56,4 +56,8 @@ public interface Visitor {
     default void visitDiscussion(Discussion discussion) {}
 
     default void visitReply(Reply reply) {}
+
+    default void visitQuestionDetails(CodeOrderQuestion codeOrderQuestion) {}
+
+    default void visitCodeOrderSlot(CodeOrderSlot codeOrderSlot);
 }

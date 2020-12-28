@@ -1,0 +1,62 @@
+package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class CodeOrderQuestionDto extends QuestionDetailsDto {
+    private String language;
+
+    private List<CodeOrderSlotDto> codeOrderSlots = new ArrayList<>();
+
+    public CodeOrderQuestionDto() {
+    }
+
+    public CodeOrderQuestionDto(CodeOrderQuestion question) {
+        this.language = question.getLanguage();
+        this.codeOrderSlots = question
+                .getCodeOrderSlots()
+                .stream()
+                .map(CodeOrderSlotDto::new)
+                .collect(Collectors.toList());
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public void setLanguage(String language) {
+        this.language = language;
+    }
+
+    public List<CodeOrderSlotDto> getCodeOrderSlots() {
+        return codeOrderSlots;
+    }
+
+    public void setCodeOrderSlots(List<CodeOrderSlotDto> codeOrderSlots) {
+        this.codeOrderSlots = codeOrderSlots;
+    }
+
+    @Override
+    public String toString() {
+        return "CodeFillInQuestionDto{" +
+                "language='" + language + '\'' +
+                ", fillInSpots=" + codeOrderSlots +
+                '}';
+    }
+
+    @Override
+    public QuestionDetails getQuestionDetails(Question question) {
+        return new CodeOrderQuestion(question, this);
+    }
+
+    @Override
+    public void update(CodeFillInQuestion question) {
+        question.update(this);
+    }
+}

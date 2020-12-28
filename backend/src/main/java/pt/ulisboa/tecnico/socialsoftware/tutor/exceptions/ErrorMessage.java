@@ -32,6 +32,7 @@ public enum ErrorMessage {
     INVALID_ROLE("The Role %s is invalid."),
     OPTION_NOT_FOUND("Option not found with id %d"),
     FILL_IN_SPOT_NOT_FOUND("Fill in spot not found with id %d"),
+    ORDER_SLOT_NOT_FOUND("Order slot not found with id %d"),
     QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
     QUESTION_TYPE_NOT_IMPLEMENTED("Question type %s not implemented"),
@@ -52,6 +53,7 @@ public enum ErrorMessage {
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
 
     QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
+    QUESTION_ORDER_SLOT_MISMATCH("Question %d does not have slot %d"),
 
     DUPLICATE_TOPIC("Duplicate topic: %s"),
     DUPLICATE_USER("Duplicate user: %s"),
