@@ -59,5 +59,5 @@ public interface Visitor {
 
     default void visitQuestionDetails(CodeOrderQuestion codeOrderQuestion) {}
 
-    default void visitCodeOrderSlot(CodeOrderSlot codeOrderSlot);
+    default void visitCodeOrderSlot(CodeOrderSlot codeOrderSlot) {}
 }

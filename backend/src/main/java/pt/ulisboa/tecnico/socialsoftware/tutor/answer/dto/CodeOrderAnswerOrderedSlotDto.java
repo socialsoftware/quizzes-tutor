@@ -6,15 +6,18 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
 public class CodeOrderAnswerOrderedSlotDto {
     private Integer spotId;
     private Integer order;
+    private boolean correct;
 
     public CodeOrderAnswerOrderedSlotDto(CodeOrderSlot correctSlot) {
         spotId = correctSlot.getId();
-        spotId = correctSlot.getOrder();
+        order = correctSlot.getOrder();
+        correct = true;
     }
 
     public CodeOrderAnswerOrderedSlotDto(CodeOrderAnswerOrderedSlot answerOrderedSlot) {
         spotId = answerOrderedSlot.getCodeOrderSlot().getId();
         order = answerOrderedSlot.getAssignedOrder();
+        correct = answerOrderedSlot.isCorrect();
     }
 
     public Integer getSpotId() {
@@ -31,5 +34,13 @@ public class CodeOrderAnswerOrderedSlotDto {
 
     public void setOrder(Integer order) {
         this.order = order;
+    }
+
+    public boolean isCorrect() {
+        return correct;
+    }
+
+    public void setCorrect(boolean correct) {
+        this.correct = correct;
     }
 }

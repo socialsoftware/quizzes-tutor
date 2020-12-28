@@ -55,4 +55,8 @@ public class CodeOrderAnswerOrderedSlot {
         this.codeOrderSlot = null;
         this.codeOrderAnswer = null;
     }
+
+    public boolean isCorrect() {
+        return this.assignedOrder.equals(this.codeOrderSlot.getOrder());
+    }
 }

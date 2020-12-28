@@ -116,7 +116,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
           .click();
       });
 
-      cy.wait(1000);
+    cy.wait(1000);
 
     validateQuestion(
       'Cypress Question Example - 01',
@@ -234,9 +234,9 @@ describe('Manage Code Fill In Questions Walk-through', () => {
           .click();
       });
 
-      cy.wait(1000); //making sure codemirror loaded
+    cy.wait(1000); //making sure codemirror loaded
 
-      cy.get('[data-cy="createOrEditQuestionDialog"]')
+    cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
       .should('be.visible');
 

@@ -128,13 +128,15 @@ import QuestionSubmission from '../../models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 import CodeFillInCreate from '@/components/code-fill-in/CodeFillInCreate.vue';
+import CodeOrderCreate from '@/components/code-order/CodeOrderCreate.vue';
 import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
 import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers.ts';
 
 @Component({
   components: {
     multiple_choice: MultipleChoiceCreate,
-    code_fill_in: CodeFillInCreate
+    code_fill_in: CodeFillInCreate,
+    code_order: CodeOrderCreate
   }
 })
 export default class EditQuestionSubmissionDialog extends Vue {
