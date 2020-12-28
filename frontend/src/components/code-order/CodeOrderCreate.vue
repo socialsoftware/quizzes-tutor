@@ -6,6 +6,7 @@
 import CodeOrderQuestionDetails from '@/models/management/questions/CodeOrderQuestionDetails';
 import { Component, Vue, Prop, Watch, PropSync } from 'vue-property-decorator';
 
+@Component
 export default class CodeOrderCreate extends Vue {
   @PropSync('questionDetails', { type: CodeOrderQuestionDetails })
   sQuestionDetails!: CodeOrderQuestionDetails;

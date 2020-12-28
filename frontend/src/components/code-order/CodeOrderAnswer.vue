@@ -3,13 +3,14 @@
 </template>
 
 <script lang="ts">
-import { Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import CodeOrderStatementQuestionDetails from '@/models/statement/questions/CodeOrderStatementQuestionDetails';
 import CodeOrderStatementAnswerDetails from '@/models/statement/questions/CodeOrderStatementAnswerDetails';
 import CodeOrderStatementCorrectAnswerDetails from '@/models/statement/questions/CodeOrderStatementCorrectAnswerDetails';
 
+@Component
 export default class CodeOrderAnswer extends Vue {
-@Prop(CodeOrderStatementQuestionDetails)
+  @Prop(CodeOrderStatementQuestionDetails)
   readonly questionDetails!: CodeOrderStatementQuestionDetails;
   @Prop(CodeOrderStatementAnswerDetails)
   answerDetails!: CodeOrderStatementAnswerDetails;
