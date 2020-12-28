@@ -30,6 +30,7 @@
     "vue-qrcode-reader": "^2.3.14",
     "vue-router": "^3.4.8",
     "vue-underscore": "^0.1.4",
+    "vuedraggable": "^2.24.3",
     "vuetify": "^2.3.16",
     "vuex": "^3.6.0"
   },
