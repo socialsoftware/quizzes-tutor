@@ -50,6 +50,6 @@ services:
       - 8081:80
     restart: unless-stopped
     volumes:
-      - ./data/localhost-nginx.conf:/etc/nginx/nginx.conf
+      - ./data/nginx.conf:/etc/nginx/nginx.conf
       - ./data/error.log:/var/log/nginx/error.log
       - ./data/access.log:/var/log/nginx/access.log
