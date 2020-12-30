@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.MultipleChoiceState
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 
 import javax.persistence.DiscriminatorValue;
+import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import javax.persistence.Lob;
 import java.util.List;
@@ -18,8 +19,7 @@ import java.util.stream.Collectors;
 @DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInAnswerItem extends QuestionAnswerItem {
 
-    // TODO: MIGHT NOT BE THE SMARTEST APPROACH HERE
-    @Lob
+    @ElementCollection
     private List<Integer> optionIds;
 
     public CodeFillInAnswerItem() {
@@ -35,7 +35,7 @@ public class CodeFillInAnswerItem extends QuestionAnswerItem {
 
     @Override
     public String getAnswerRepresentation(Map<Integer, Option> options) {
-        // TODO: Need to create a string representation for export
-        return null;
+        // TODO: Need to create a better string representation for export
+        return optionIds.stream().map(Object::toString).collect(Collectors.joining("|"));
     }
 }
