@@ -7,6 +7,7 @@
       :group="{ name: 'answer', pull: 'clone', put: false }"
       :clone="cloneAnswerFromQuestion"
       draggable="li.dragable"
+      :sort="false"
     >
       <h4 class="code-order-header" slot="header">
         Answer Options:
