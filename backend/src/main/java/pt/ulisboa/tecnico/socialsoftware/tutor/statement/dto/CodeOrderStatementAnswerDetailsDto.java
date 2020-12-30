@@ -3,10 +3,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderAnswerOrderedSlotDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.CodeOrderAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,6 +24,7 @@ public class CodeOrderStatementAnswerDetailsDto extends StatementAnswerDetailsDt
                     .stream()
                     .map(CodeOrderSlotStatementAnswerDetailsDto::new)
                     .collect(Collectors.toList());
+            this.orderedSlots.sort(Comparator.comparing(CodeOrderSlotStatementAnswerDetailsDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
         }
     }
 

@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswer;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,8 +13,10 @@ public class CodeOrderAnswerDto extends AnswerDetailsDto {
     }
 
     public CodeOrderAnswerDto(CodeOrderAnswer answer) {
-        if (answer.getOrderedSlots() != null)
+        if (answer.getOrderedSlots() != null) {
             this.orderedSlots = answer.getOrderedSlots().stream().map(CodeOrderAnswerOrderedSlotDto::new).collect(Collectors.toList());
+            this.orderedSlots.sort(Comparator.comparing(CodeOrderAnswerOrderedSlotDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
+        }
     }
 
     public List<CodeOrderAnswerOrderedSlotDto> getOrderedSlots() {

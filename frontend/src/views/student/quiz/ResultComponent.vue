@@ -55,7 +55,7 @@ import CodeOrderAnswerResult from '@/components/code-order/CodeOrderAnswerResult
   components: {
     multiple_choice: MultipleChoiceAnswer,
     code_fill_in: CodeFillInAnswerResult,
-    code_order: CodeFillInAnswerResult
+    code_order: CodeOrderAnswerResult
   }
 })
 export default class ResultComponent extends Vue {

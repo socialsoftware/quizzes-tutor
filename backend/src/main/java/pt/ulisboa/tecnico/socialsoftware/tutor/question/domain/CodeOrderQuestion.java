@@ -124,7 +124,7 @@ public class CodeOrderQuestion extends QuestionDetails {
 
     @Override
     public String getCorrectAnswerRepresentation() {
-        return null;
+        return String.format("%d/%d", this.getCodeOrderSlots().size(), this.getCodeOrderSlots().size());
     }
 
     @Override

@@ -6,12 +6,10 @@ import java.io.Serializable;
 
 public class CodeOrderSlotStatementQuestionDetailsDto implements Serializable {
     private Integer id;
-    private Integer order;
     private String content;
 
     public CodeOrderSlotStatementQuestionDetailsDto(CodeOrderSlot codeOrderSlot) {
         id = codeOrderSlot.getId();
-        order = codeOrderSlot.getOrder();
         content = codeOrderSlot.getContent();
     }
 
@@ -21,14 +19,6 @@ public class CodeOrderSlotStatementQuestionDetailsDto implements Serializable {
 
     public void setId(Integer id) {
         this.id = id;
-    }
-
-    public Integer getOrder() {
-        return order;
-    }
-
-    public void setOrder(Integer order) {
-        this.order = order;
     }
 
     public String getContent() {

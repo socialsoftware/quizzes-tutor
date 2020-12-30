@@ -1,11 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeOrderStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 
@@ -45,22 +44,24 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public AnswerDetailsDto getAnswerDetailsDto() {
-        return null;
+        return new CodeOrderAnswerDto(this);
     }
 
     @Override
     public String getAnswerRepresentation() {
-        return null;
+        var correctAnswers = this.getOrderedSlots().stream().filter(CodeOrderAnswerOrderedSlot::isCorrect).count();
+        var questionOptions = ((CodeOrderQuestion) this.getQuestionAnswer().getQuestion().getQuestionDetails()).getCodeOrderSlots().size();
+        return String.format("%d/%d", correctAnswers, questionOptions);
     }
 
     @Override
     public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
-        return null;
+        return new CodeOrderStatementAnswerDetailsDto(this);
     }
 
     @Override
     public boolean isAnswered() {
-        return false;
+        return orderedSlots != null && !orderedSlots.isEmpty();
     }
 
     public Set<CodeOrderAnswerOrderedSlot> getOrderedSlots() {
@@ -84,6 +85,7 @@ public class CodeOrderAnswer extends AnswerDetails {
                 answerSlot.setCodeOrderSlot(orderSlot);
                 answerSlot.setCodeOrderAnswer(this);
                 answerSlot.setAssignedOrder(slot.getOrder());
+                this.orderedSlots.add(answerSlot);
             }
         }
     }

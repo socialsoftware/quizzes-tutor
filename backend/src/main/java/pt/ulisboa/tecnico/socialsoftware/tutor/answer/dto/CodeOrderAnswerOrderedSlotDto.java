@@ -4,28 +4,28 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerOrde
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
 
 public class CodeOrderAnswerOrderedSlotDto {
-    private Integer spotId;
+    private Integer slotId;
     private Integer order;
     private boolean correct;
 
     public CodeOrderAnswerOrderedSlotDto(CodeOrderSlot correctSlot) {
-        spotId = correctSlot.getId();
+        slotId = correctSlot.getId();
         order = correctSlot.getOrder();
         correct = true;
     }
 
     public CodeOrderAnswerOrderedSlotDto(CodeOrderAnswerOrderedSlot answerOrderedSlot) {
-        spotId = answerOrderedSlot.getCodeOrderSlot().getId();
+        slotId = answerOrderedSlot.getCodeOrderSlot().getId();
         order = answerOrderedSlot.getAssignedOrder();
         correct = answerOrderedSlot.isCorrect();
     }
 
-    public Integer getSpotId() {
-        return spotId;
+    public Integer getSlotId() {
+        return slotId;
     }
 
-    public void setSpotId(Integer spotId) {
-        this.spotId = spotId;
+    public void setSlotId(Integer slotId) {
+        this.slotId = slotId;
     }
 
     public Integer getOrder() {

@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
 
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,6 +13,7 @@ public class CodeOrderStatementQuestionDetailsDto extends StatementQuestionDetai
     public CodeOrderStatementQuestionDetailsDto(CodeOrderQuestion question) {
         this.language = question.getLanguage();
         this.orderSlots = question.getCodeOrderSlots().stream().map(CodeOrderSlotStatementQuestionDetailsDto::new).collect(Collectors.toList());
+        Collections.shuffle(this.orderSlots);
     }
 
     public String getLanguage() {

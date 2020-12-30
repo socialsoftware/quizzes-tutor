@@ -24,8 +24,18 @@ export default class CodeOrderAnswerDetails extends AnswerDetails {
   }
 
   answerRepresentation(questionDetails: CodeOrderQuestionDetails): string {
-    let correct = this.orderedSlots.filter(os => !os.correct).length;
+    console.log(questionDetails.codeOrderSlots, this.orderedSlots);
     let all = questionDetails.codeOrderSlots.length;
-    return `${correct}/${all}`;
+    let correctAnswer = questionDetails.codeOrderSlots.length;
+    for (const key in questionDetails.codeOrderSlots) {
+      let correct = questionDetails.codeOrderSlots[key];
+      if (!this.orderedSlots[key] && correct.order != null){
+        correctAnswer -= 1;
+      }
+      else if (correct.order != null && correct.id != this.orderedSlots[key].slotId) {
+        correctAnswer -= 1;
+      }
+    }
+    return `${correctAnswer}/${all}`;
   }
 }

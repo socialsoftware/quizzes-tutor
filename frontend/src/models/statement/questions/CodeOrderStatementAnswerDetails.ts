@@ -17,19 +17,18 @@ export default class CodeOrderStatementAnswerDetails extends StatementAnswerDeta
     return this.orderedSlots != null;
   }
 
-  // TODO: Fix this :D
   isAnswerCorrect(
     correctAnswerDetails: CodeOrderStatementCorrectAnswerDetails
   ): boolean {
-    // var x =
-    //   this.orderedSlots.length ===
-    //     correctAnswerDetails.correctOptions.length &&
-    //   !correctAnswerDetails.correctOptions.some(
-    //     op =>
-    //       !this.orderedSlots.some(
-    //         s => s.optionId === op.optionId && s.sequence === op.sequence
-    //       )
-    //   );
-    return false;
+    for (const key in correctAnswerDetails.correctOrder) {
+      let correct = correctAnswerDetails.correctOrder[key];
+      if (!this.orderedSlots[key] && correct.order != null){
+        return false;
+      }
+      else if (correct.order != null && correct.slotId != this.orderedSlots[key].slotId) {
+        return false;        
+      }
+    }
+    return true;
   }
 }
