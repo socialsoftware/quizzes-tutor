@@ -68,7 +68,6 @@ export default class BaseCodeEditor extends Vue {
   };
   @Watch('language')
   onLanguageUpdate() {
-    console.log('ok', CodeMirror.modes);
   }
 
   static get availableLanguages(): String[] {

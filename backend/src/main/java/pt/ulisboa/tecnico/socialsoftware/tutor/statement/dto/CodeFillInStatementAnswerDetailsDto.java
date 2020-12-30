@@ -54,7 +54,7 @@ public class CodeFillInStatementAnswerDetailsDto extends StatementAnswerDetailsD
 
     @Override
     public boolean emptyAnswer() {
-        return selectedOptions != null && !selectedOptions.isEmpty();
+        return selectedOptions == null || selectedOptions.isEmpty();
     }
 
     @Override

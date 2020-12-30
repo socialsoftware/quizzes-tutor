@@ -205,7 +205,7 @@ export default class CodeFillInAnswer extends Vue {
       newData.sequence = num;
       this.answerDetailsSynced.selectedOptions.push(newData);
     }
-    this.$emit('select-option');
+    this.$emit('question-answer-update');
   }
 }
 </script>
