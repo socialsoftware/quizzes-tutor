@@ -11,13 +11,13 @@ import java.util.Set;
 
 @Entity
 @Table(name = "code_order_slot",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"question_details_id", "order"}))
+        uniqueConstraints = @UniqueConstraint(columnNames = {"question_details_id", "correct_order"}))
 public class CodeOrderSlot implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column
+    @Column(name = "correct_order")
     private Integer order;
 
     @Column(columnDefinition = "TEXT")
@@ -29,6 +29,9 @@ public class CodeOrderSlot implements DomainEntity {
 
     @OneToMany(mappedBy = "codeOrderSlot", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
     private final Set<CodeOrderAnswerOrderedSlot> orderedSlots = new HashSet<>();
+
+    public CodeOrderSlot() {
+    }
 
     public CodeOrderSlot(CodeOrderSlotDto codeOrderSlotDto) {
         this.order = codeOrderSlotDto.getOrder();

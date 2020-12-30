@@ -9,6 +9,9 @@ public class CodeOrderSlotDto implements Serializable {
     private String content;
     private Integer order;
 
+    public CodeOrderSlotDto() {
+    }
+
     public CodeOrderSlotDto(CodeOrderSlot codeOrderSlot) {
         this.id = codeOrderSlot.getId();
         this.content = codeOrderSlot.getContent();

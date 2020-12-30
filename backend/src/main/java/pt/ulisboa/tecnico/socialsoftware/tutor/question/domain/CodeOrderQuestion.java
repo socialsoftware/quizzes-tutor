@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderCorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -8,15 +10,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderSlotDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeOrderStatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeOrderStatementQuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuestionDetailsDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AT_LEAST_ONE_OPTION_NEEDED;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ORDER_SLOT_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.CODE_ORDER_QUESTION)
@@ -51,8 +55,14 @@ public class CodeOrderQuestion extends QuestionDetails {
 
     private void setCodeOrderSlots(List<CodeOrderSlotDto> codeOrderSlots) {
         if (codeOrderSlots.isEmpty()) {
-            throw new TutorException(AT_LEAST_ONE_OPTION_NEEDED);
+            throw new TutorException(AT_LEAST_THREE_SLOTS_NEEDED);
         }
+        if (codeOrderSlots.stream().filter(x -> x.getOrder() != null).count() < 3 ){
+            throw new TutorException(AT_LEAST_THREE_SLOTS_NEEDED);
+        }
+
+        // Ensures some randomization when creating the slots ids.
+        Collections.shuffle(codeOrderSlots);
 
         for (var codeOrderSlotDto : codeOrderSlots) {
             if (codeOrderSlotDto.getId() == null) {
@@ -80,27 +90,27 @@ public class CodeOrderQuestion extends QuestionDetails {
 
     @Override
     public CorrectAnswerDetailsDto getCorrectAnswerDetailsDto() {
-        return null;
+        return new CodeOrderCorrectAnswerDto(this);
     }
 
     @Override
     public StatementQuestionDetailsDto getStatementQuestionDetailsDto() {
-        return null;
+        return new CodeOrderStatementQuestionDetailsDto(this);
     }
 
     @Override
     public StatementAnswerDetailsDto getEmptyStatementAnswerDetailsDto() {
-        return null;
+        return new CodeOrderStatementAnswerDetailsDto();
     }
 
     @Override
     public AnswerDetailsDto getEmptyAnswerDetailsDto() {
-        return null;
+        return new CodeOrderAnswerDto();
     }
 
     @Override
     public QuestionDetailsDto getQuestionDetailsDto() {
-        return null;
+        return new CodeOrderQuestionDto(this);
     }
 
     @Override

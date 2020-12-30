@@ -14,14 +14,20 @@
     ></v-textarea>
     <div class="toolbar">
       <v-btn icon>
-        <!-- <v-icon v-if="!item.correct" color="grey lighten-1"
+        <v-icon
+          v-if="sQuestionSlot.order == null"
+          @click="$emit('add-order')"
+          color="grey lighten-1"
           >mdi-checkbox-blank-outline
-        </v-icon> -->
-        <v-icon @click="sQuestionSlot.order=null" color="green lighten-1"
+        </v-icon>
+        <v-icon
+          v-if="sQuestionSlot.order != null"
+          @click="$emit('remove-order')"
+          color="green lighten-1"
           >mdi-checkbox-marked-outline</v-icon
         >
       </v-btn>
-      <v-btn @click="$emit('delete-row', sQuestionSlot)" icon>
+      <v-btn v-if="canDelete" @click="$emit('delete-row')" icon>
         <v-icon color="red lighten-1">mdi-delete-forever </v-icon>
       </v-btn>
     </div>
@@ -30,12 +36,14 @@
 
 <script lang="ts">
 import CodeOrderSlot from '@/models/management/questions/CodeOrderSlot';
-import { Component, PropSync, Vue } from 'vue-property-decorator';
+import { Component, PropSync, Vue, Prop } from 'vue-property-decorator';
 
 @Component
 export default class CodeOrderSlotEditor extends Vue {
   @PropSync('questionSlot', { type: CodeOrderSlot })
   sQuestionSlot!: CodeOrderSlot;
+  @Prop({ default: false })
+  readonly canDelete!: boolean;
 }
 </script>
 
@@ -52,11 +60,11 @@ export default class CodeOrderSlotEditor extends Vue {
     margin: auto;
   }
 
-  & > slot-content {
-    flex-flow: 1;
+  & > .slot-content {
+    flex-grow: 1;
   }
 
-  & > .toolbar{
+  & > .toolbar {
     display: inline-flex;
     flex-direction: column;
     justify-content: center;
