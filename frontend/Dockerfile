@@ -6,7 +6,7 @@ COPY package*.json ./
 RUN npm install
 COPY . .
 ARG NODE_ENV
-RUN if [ "$NODE_ENV" = "development" ] ; then npm run build:dev ; else npm run build ; fi
+RUN if [ "$NODE_ENV" = "dev" ] ; then npm run build:dev ; else npm run build ; fi
 
 
 ## Production stage
