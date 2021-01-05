@@ -78,7 +78,7 @@ public class XMLQuestionExportVisitor implements Visitor {
         this.currentElement.setAttribute("type", Question.QuestionTypes.CODE_FILL_IN_QUESTION);
 
         Element codeElement = new Element("code");
-        codeElement.setAttribute("language", question.getLanguage());
+        codeElement.setAttribute("language", question.getLanguage().toString());
         codeElement.addContent(question.getCode());
         this.currentElement.addContent(codeElement);
 

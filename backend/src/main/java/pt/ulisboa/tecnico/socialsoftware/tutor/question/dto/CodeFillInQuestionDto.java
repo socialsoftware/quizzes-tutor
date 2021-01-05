@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Languages;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
@@ -9,7 +10,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CodeFillInQuestionDto extends QuestionDetailsDto {
-    private String language;
+    private Languages language;
 
     private String code;
 
@@ -26,11 +27,11 @@ public class CodeFillInQuestionDto extends QuestionDetailsDto {
                 .collect(Collectors.toList());
     }
 
-    public String getLanguage() {
+    public Languages getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
+    public void setLanguage(Languages language) {
         this.language = language;
     }
 

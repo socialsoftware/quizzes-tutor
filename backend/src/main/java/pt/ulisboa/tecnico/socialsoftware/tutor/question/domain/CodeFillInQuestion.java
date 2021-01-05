@@ -26,7 +26,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FI
 @DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInQuestion extends QuestionDetails {
 
-    private String language;
+    private Languages language;
 
     @Column(columnDefinition = "TEXT")
     private String code;
@@ -45,11 +45,11 @@ public class CodeFillInQuestion extends QuestionDetails {
         update(codeFillInQuestionDto);
     }
 
-    public String getLanguage() {
+    public Languages getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
+    public void setLanguage(Languages language) {
         this.language = language;
     }
 
