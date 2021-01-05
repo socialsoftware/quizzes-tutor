@@ -1,9 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeOrderSlotStatementAnswerDetailsDto;
 
 import java.util.ArrayList;
@@ -12,7 +9,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CodeOrderQuestionDto extends QuestionDetailsDto {
-    private String language;
+    private Languages language;
 
     private List<CodeOrderSlotDto> codeOrderSlots = new ArrayList<>();
 
@@ -29,11 +26,11 @@ public class CodeOrderQuestionDto extends QuestionDetailsDto {
         this.codeOrderSlots.sort(Comparator.comparing(CodeOrderSlotDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
     }
 
-    public String getLanguage() {
+    public Languages getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
+    public void setLanguage(Languages language) {
         this.language = language;
     }
 

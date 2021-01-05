@@ -26,7 +26,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @DiscriminatorValue(Question.QuestionTypes.CODE_ORDER_QUESTION)
 public class CodeOrderQuestion extends QuestionDetails {
 
-    private String language;
+    private Languages language;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails", fetch = FetchType.LAZY, orphanRemoval = true)
     private final List<CodeOrderSlot> codeOrderSlots = new ArrayList<>();
@@ -41,11 +41,11 @@ public class CodeOrderQuestion extends QuestionDetails {
         update(codeOrderQuestionDto);
     }
 
-    public String getLanguage() {
+    public Languages getLanguage() {
         return language;
     }
 
-    public void setLanguage(String language) {
+    public void setLanguage(Languages language) {
         this.language = language;
     }
 

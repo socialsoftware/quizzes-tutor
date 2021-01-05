@@ -64,7 +64,7 @@ export default class BaseCodeEditor extends Vue {
     Java: 'text/x-java',
     Javascript: 'text/javascript',
     Python: 'text/x-python',
-    'C#': 'text/x-csharp'
+    CSharp: 'text/x-csharp'
   };
   @Watch('language')
   onLanguageUpdate() {
