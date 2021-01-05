@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Languages;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*;
 
@@ -138,7 +139,7 @@ public class QuestionsXmlImport {
     private QuestionDetailsDto importCodeFillInQuestion(Element questionElement) {
         CodeFillInQuestionDto questionDto = new CodeFillInQuestionDto();
         questionDto.setCode(questionElement.getChildText("code"));
-        questionDto.setLanguage(questionElement.getChild("code").getAttributeValue("language"));
+        questionDto.setLanguage(Languages.valueOf(questionElement.getChild("code").getAttributeValue("language")));
         var spots = new ArrayList<CodeFillInSpotDto>();
         for (Element spotElement : questionElement.getChild("fillInSpots").getChildren("fillInSpot")) {
             var spot = new CodeFillInSpotDto();
