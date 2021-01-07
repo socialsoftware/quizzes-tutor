@@ -74,10 +74,51 @@ public class XMLQuestionExportVisitor implements Visitor {
     }
 
     @Override
+    public void visitQuestionDetails(CodeFillInQuestion question) {
+        this.currentElement.setAttribute("type", Question.QuestionTypes.CODE_FILL_IN_QUESTION);
+
+        Element codeElement = new Element("code");
+        codeElement.setAttribute("language", question.getLanguage().toString());
+        codeElement.addContent(question.getCode());
+        this.currentElement.addContent(codeElement);
+
+        Element spotsElement = new Element("fillInSpots");
+        this.currentElement.addContent(spotsElement);
+
+        this.currentElement = spotsElement;
+        question.visitFillInSpots(this);
+    }
+
+    @Override
+    public void visitFillInSpot(CodeFillInSpot spot) {
+        Element spotElement = new Element("fillInSpot");
+
+        spotElement.setAttribute("sequence", String.valueOf(spot.getSequence()));
+        this.currentElement.addContent(spotElement);
+        var oldElement = this.currentElement;
+        this.currentElement = spotElement;
+
+        spot.visitOptions(this);
+
+        this.currentElement = oldElement;
+    }
+
+    @Override
+    public void visitFillInOption(CodeFillInOption option) {
+        Element optionElement = new Element("fillInOption");
+
+        optionElement.setAttribute("sequence", String.valueOf(option.getSequence()));
+        optionElement.setAttribute("content", option.getContent());
+        optionElement.setAttribute("correct", String.valueOf(option.isCorrect()));
+
+        this.currentElement.addContent(optionElement);
+    }
+
+    @Override
     public void visitImage(Image image) {
         Element imageElement = new Element("image");
         if (image.getWidth() != null) {
-            imageElement.setAttribute("width",String.valueOf(image.getWidth()));
+            imageElement.setAttribute("width", String.valueOf(image.getWidth()));
         }
         imageElement.setAttribute("url", image.getUrl());
 

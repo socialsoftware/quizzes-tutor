@@ -23,7 +23,7 @@ import java.time.LocalDateTime
 
 @DataJpaTest
 class TournamentTest extends SpockTest {
-    public static final String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
+    public static String STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
 
     def assessment
     def topic1
@@ -50,6 +50,8 @@ class TournamentTest extends SpockTest {
 
         topicsList.add(topic1)
         topicsList.add(topic2)
+
+        STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
     }
 
     def createUser(String name, String username, String email, User.Role role, CourseExecution courseExecution) {

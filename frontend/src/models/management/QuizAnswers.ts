@@ -19,7 +19,7 @@ export class QuizAnswers {
 
     // if there is timeToSubmission start an interval that decreases the timeToSubmission every second
     if (this.timeToSubmission != null && this.timeToSubmission > 0) {
-      this.timerId = setInterval(() => {
+      this.timerId = window.setInterval(() => {
         if (this.timeToSubmission != null && this.timeToSubmission > 0) {
           this.timeToSubmission = Math.max(
             0,

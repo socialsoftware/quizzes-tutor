@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Languages;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*;
 
@@ -19,9 +20,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.List;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTIONS_IMPORT_ERROR;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_TYPE_NOT_IMPLEMENTED;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 public class QuestionsXmlImport {
     private QuestionService questionService;
@@ -105,6 +104,9 @@ public class QuestionsXmlImport {
             case Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION:
                 questionDetailsDto = importMultipleChoiceQuestion(questionElement);
                 break;
+            case Question.QuestionTypes.CODE_FILL_IN_QUESTION:
+                questionDetailsDto = importCodeFillInQuestion(questionElement);
+                break;
             default:
                 throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, type);
         }
@@ -133,4 +135,34 @@ public class QuestionsXmlImport {
         multipleChoiceQuestionDto.setOptions(optionDtos);
         return multipleChoiceQuestionDto;
     }
+
+    private QuestionDetailsDto importCodeFillInQuestion(Element questionElement) {
+        CodeFillInQuestionDto questionDto = new CodeFillInQuestionDto();
+        questionDto.setCode(questionElement.getChildText("code"));
+        questionDto.setLanguage(Languages.valueOf(questionElement.getChild("code").getAttributeValue("language")));
+        var spots = new ArrayList<CodeFillInSpotDto>();
+        for (Element spotElement : questionElement.getChild("fillInSpots").getChildren("fillInSpot")) {
+            var spot = new CodeFillInSpotDto();
+            spot.setSequence(Integer.valueOf(spotElement.getAttributeValue("sequence")));
+            var options = new ArrayList<OptionDto>();
+            for (Element optionElement : spotElement.getChildren("fillInOption")) {
+                Integer optionSequence = Integer.valueOf(optionElement.getAttributeValue("sequence"));
+                String optionContent = optionElement.getAttributeValue("content");
+                boolean correct = Boolean.parseBoolean(optionElement.getAttributeValue("correct"));
+
+                OptionDto optionDto = new OptionDto();
+                optionDto.setSequence(optionSequence);
+                optionDto.setContent(optionContent);
+                optionDto.setCorrect(correct);
+
+                options.add(optionDto);
+            }
+
+            spot.setOptions(options);
+            spots.add(spot);
+        }
+        questionDto.setFillInSpots(spots);
+        return questionDto;
+    }
+
 }

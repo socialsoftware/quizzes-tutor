@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.CODE_FILL_IN_QUESTION;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
 
 @JsonTypeInfo(
@@ -15,7 +16,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.Q
         defaultImpl = MultipleChoiceStatementAnswerDetailsDto.class,
         property = "type")
 @JsonSubTypes({
-        @JsonSubTypes.Type(value = MultipleChoiceStatementAnswerDetailsDto.class, name = MULTIPLE_CHOICE_QUESTION)
+        @JsonSubTypes.Type(value = MultipleChoiceStatementAnswerDetailsDto.class, name = MULTIPLE_CHOICE_QUESTION),
+        @JsonSubTypes.Type(value = CodeFillInStatementAnswerDetailsDto.class, name = CODE_FILL_IN_QUESTION),
 })
 public abstract class StatementAnswerDetailsDto implements Updator {
     public abstract AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer);

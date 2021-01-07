@@ -12,7 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
-class ImportExportQuestionsTest extends SpockTest {
+class ImportExportMultipleChoiceQuestionsTest extends SpockTest {
     def questionId
     def teacher
 

@@ -5,7 +5,7 @@
     @keydown.esc="$emit('dialog', false)"
     max-width="75%"
   >
-    <v-card>
+    <v-card data-cy="showQuestionDialog">
       <v-card-title>
         <span class="headline">{{ question.title }}</span>
       </v-card-title>

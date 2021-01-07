@@ -71,6 +71,7 @@ class UpdateQuestionSubmissionWebServiceIT extends SpockTest {
         def newQuestionDto = questionDto
         newQuestionDto.setTitle(QUESTION_2_TITLE)
         newQuestionDto.setContent(QUESTION_2_CONTENT)
+
         and: "a questionSubmissionDto"
         def questionSubmissionDto = new QuestionSubmissionDto()
         questionSubmissionDto.setCourseExecutionId(courseExecution.getId())

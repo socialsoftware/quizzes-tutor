@@ -71,7 +71,6 @@ public class MultipleChoiceAnswer extends AnswerDetails {
 
 
     public void remove() {
-        super.remove();
         if (option != null) {
             option.getQuestionAnswers().remove(this);
             option = null;
@@ -86,6 +85,11 @@ public class MultipleChoiceAnswer extends AnswerDetails {
     @Override
     public boolean isAnswered() {
         return this.getOption() != null;
+    }
+
+    @Override
+    public String getAnswerRepresentation() {
+        return this.getOption() != null ? MultipleChoiceQuestion.convertSequenceToLetter(this.getOption().getSequence()) : "-";
     }
 
     @Override

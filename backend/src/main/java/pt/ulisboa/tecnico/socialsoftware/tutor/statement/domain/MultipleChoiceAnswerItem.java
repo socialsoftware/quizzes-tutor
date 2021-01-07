@@ -28,7 +28,7 @@ public class MultipleChoiceAnswerItem extends QuestionAnswerItem {
 
     @Override
     public String getAnswerRepresentation(Map<Integer, Option> options) {
-        return this.getOptionId() != null ? MultipleChoiceQuestion.convertSequenceToLetter(options.get(this.getOptionId()).getSequence()) : "X";
+        return this.getOptionId() != null ? MultipleChoiceQuestion.convertSequenceToLetter(options.get(this.getOptionId()).getSequence()) : "-";
     }
 
     public Integer getOptionId() {

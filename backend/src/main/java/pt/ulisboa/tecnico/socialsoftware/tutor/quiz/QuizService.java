@@ -29,7 +29,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -242,7 +241,7 @@ public class QuizService {
         quizAnswersDto.setCorrectSequence(
                 quiz.getQuizQuestions().stream()
                         .sorted(Comparator.comparing(QuizQuestion::getSequence))
-                        .map(quizQuestion -> quizQuestion.getQuestion().getCorrectAnswerText()
+                        .map(quizQuestion -> quizQuestion.getQuestion().getCorrectAnswerRepresentation()
                 ).collect(Collectors.toList()));
 
         quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));

@@ -5,6 +5,7 @@
     <component
       :is="question.questionDetailsDto.type"
       :questionDetails="question.questionDetailsDto"
+      :answerDetails="answer"
     />
     <br />
   </div>
@@ -16,14 +17,18 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import MultipleChoiceView from '@/components/multiple-choice/MultipleChoiceView.vue';
+import CodeFillInView from '@/components/code-fill-in/CodeFillInView.vue';
+import AnswerDetails from '@/models/management/questions/AnswerDetails';
 
 @Component({
   components: {
-    multiple_choice: MultipleChoiceView
+    multiple_choice: MultipleChoiceView,
+    code_fill_in: CodeFillInView
   }
 })
 export default class ShowQuestion extends Vue {
   @Prop({ type: Question, required: true }) readonly question!: Question;
+  @Prop() readonly answer?: AnswerDetails;
 
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);

@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 
 import javax.persistence.*;
@@ -18,7 +19,7 @@ public abstract class AnswerDetails implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(fetch = FetchType.EAGER, optional = false, cascade = CascadeType.ALL, orphanRemoval = true)
+    @OneToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "question_answer_id")
     private QuestionAnswer questionAnswer;
 
@@ -44,12 +45,11 @@ public abstract class AnswerDetails implements DomainEntity {
 
     public abstract boolean isCorrect();
 
-    public void remove(){
-        this.questionAnswer.setAnswerDetails((AnswerDetails)null);
-        this.questionAnswer = null;
-    }
+    public abstract void remove();
 
     public abstract AnswerDetailsDto getAnswerDetailsDto();
+
+    public abstract String getAnswerRepresentation();
 
     public abstract StatementAnswerDetailsDto getStatementAnswerDetailsDto();
 

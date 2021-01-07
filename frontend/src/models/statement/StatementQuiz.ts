@@ -49,7 +49,7 @@ export default class StatementQuiz {
         (this.timeToSubmission != null && this.timeToSubmission > 0) ||
         (this.timeToAvailability != null && this.timeToAvailability > 0)
       ) {
-        this.timerId = setInterval(() => {
+        this.timerId = window.setInterval(() => {
           if (this.timeToAvailability != null && this.timeToAvailability > 0) {
             this.timeToAvailability = Math.max(
               0,

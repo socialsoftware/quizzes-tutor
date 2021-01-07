@@ -5,7 +5,12 @@ Cypress.Commands.add('demoAdminLogin', () => {
 
 Cypress.Commands.add('demoTeacherLogin', () => {
   cy.visit('/');
+  cy.server();
+  cy.route('GET', '/auth/demo/teacher').as('authTeacher');
   cy.get('[data-cy="demoTeacherLoginButton"]').click();
+  cy.wait('@authTeacher')
+  .its('status')
+  .should('eq', 200);
 });
 
 Cypress.Commands.add('demoStudentLogin', () => {
