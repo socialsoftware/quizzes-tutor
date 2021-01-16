@@ -102,6 +102,10 @@ public class CSVQuizExportVisitor implements Visitor {
         line[5] = "Time Taken";
         table.add(line);
 
+        Comparator<QuestionAnswerItem> comparator = Comparator.comparing(QuestionAnswerItem::getUsername);
+        comparator.thenComparing(Comparator.comparing(QuestionAnswerItem::getAnswerDate));
+        questionAnswerItems.sort(comparator);
+
         for (QuestionAnswerItem questionAnswerItem : questionAnswerItems) {
             line = new String[lineSize];
             Arrays.fill(line, "");
