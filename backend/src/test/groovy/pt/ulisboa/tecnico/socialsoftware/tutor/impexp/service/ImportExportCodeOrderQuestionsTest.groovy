@@ -18,23 +18,29 @@ class ImportExportCodeOrderQuestionsTest extends SpockTest {
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
 
-        def codeQuestionDto = new CodeFillInQuestionDto()
-        codeQuestionDto.setCode(CODE_QUESTION_1_CODE)
-        codeQuestionDto.setLanguage(CODE_QUESTION_1_LANGUAGE)
-
         def image = new ImageDto()
         image.setUrl(IMAGE_1_URL)
         image.setWidth(20)
         questionDto.setImage(image)
 
-        CodeFillInSpotDto fillInSpotDto = new CodeFillInSpotDto()
-        OptionDto optionDto = new OptionDto()
-        optionDto.setContent(OPTION_1_CONTENT)
-        optionDto.setCorrect(true)
-        fillInSpotDto.getOptions().add(optionDto)
-        fillInSpotDto.setSequence(1)
+        def codeQuestionDto = new CodeOrderQuestionDto()
+        codeQuestionDto.setLanguage(CODE_QUESTION_1_LANGUAGE)
 
-        codeQuestionDto.getFillInSpots().add(fillInSpotDto)
+        CodeOrderSlotDto slotDto1 = new CodeOrderSlotDto()
+        slotDto1.content = OPTION_1_CONTENT;
+        slotDto1.order = 1;
+
+        CodeOrderSlotDto slotDto2 = new CodeOrderSlotDto()
+        slotDto2.content = OPTION_1_CONTENT;
+        slotDto2.order = 2;
+
+        CodeOrderSlotDto slotDto3 = new CodeOrderSlotDto()
+        slotDto3.content = OPTION_1_CONTENT;
+        slotDto3.order = 3;
+
+        codeQuestionDto.getCodeOrderSlots().add(slotDto1)
+        codeQuestionDto.getCodeOrderSlots().add(slotDto2)
+        codeQuestionDto.getCodeOrderSlots().add(slotDto3)
 
         questionDto.setQuestionDetailsDto(codeQuestionDto)
 
@@ -62,13 +68,11 @@ class ImportExportCodeOrderQuestionsTest extends SpockTest {
         imageResult.getWidth() == 20
         imageResult.getUrl() == IMAGE_1_URL
 
-        def codeFillInDetailsDto = (CodeFillInQuestionDto) questionResult.getQuestionDetailsDto()
-        codeFillInDetailsDto.getFillInSpots().size() == 1
-        codeFillInDetailsDto.getCode() == CODE_QUESTION_1_CODE
+        def codeFillInDetailsDto = (CodeOrderQuestionDto) questionResult.getQuestionDetailsDto()
+        codeFillInDetailsDto.getCodeOrderSlots().size() == 3
         codeFillInDetailsDto.getLanguage() == CODE_QUESTION_1_LANGUAGE
-        def resOption = codeFillInDetailsDto.getFillInSpots().get(0).getOptions().get(0)
+        def resOption = codeFillInDetailsDto.getCodeOrderSlots().get(0)
         resOption.getContent() == OPTION_1_CONTENT
-        resOption.isCorrect()
     }
 
     def 'export to latex'() {
