@@ -8,8 +8,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
+import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
 
@@ -44,7 +46,7 @@ public class CSVQuizExportVisitor implements Visitor {
         quiz.getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .forEach(quizQuestion -> {
-                    line[++column] = quizQuestion.getSequence().toString();
+                    line[++column] = String.valueOf(quizQuestion.getSequence()+1);
                 });
 
         table.add(line);
@@ -94,15 +96,19 @@ public class CSVQuizExportVisitor implements Visitor {
         line[5] = "Time Taken";
         table.add(line);
 
+        Comparator<QuestionAnswerItem> comparator = Comparator.comparing(QuestionAnswerItem::getUsername);
+        comparator.thenComparing(Comparator.comparing(QuestionAnswerItem::getAnswerDate));
+        questionAnswerItems.sort(comparator);
+
         for (QuestionAnswerItem questionAnswerItem : questionAnswerItems) {
             line = new String[lineSize];
             Arrays.fill(line, "");
             line[0] = questionAnswerItem.getUsername();
-            line[1] = quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getSequence().toString();
+            line[1] = String.valueOf(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getSequence()+1);
             line[2] = questionAnswerItem.getAnswerRepresentation(options);
             line[3] = DateHandler.toISOString(questionAnswerItem.getAnswerDate());
-            line[4] = questionAnswerItem.getTimeToSubmission() != null ? questionAnswerItem.getTimeToSubmission().toString() : "";
-            line[5] = questionAnswerItem.getTimeTaken().toString();
+            line[4] = questionAnswerItem.getTimeToSubmission() != null ? convertMiliseconds(questionAnswerItem.getTimeToSubmission()) : "";
+            line[5] = convertMiliseconds(questionAnswerItem.getTimeTaken());
             table.add(line);
         }
 
@@ -177,6 +183,16 @@ public class CSVQuizExportVisitor implements Visitor {
 
     private String convertToCSV(String[] data) {
         return String.join(",", data);
+    }
+
+    private String convertMiliseconds(int millis) {
+       return  String.format("%02d:%02d:%02d",
+               TimeUnit.MILLISECONDS.toHours(millis),
+               TimeUnit.MILLISECONDS.toMinutes(millis)  -
+                       TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+                TimeUnit.MILLISECONDS.toSeconds(millis) -
+                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
+        );
     }
 
 

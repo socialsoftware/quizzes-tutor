@@ -33,7 +33,7 @@ services:
       - ./data/env/backend.dev.env
     environment:
       - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tutordb
- 
+
   frontend:
     build:
       context:  ./frontend/

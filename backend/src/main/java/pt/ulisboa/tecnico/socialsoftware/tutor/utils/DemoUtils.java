@@ -32,11 +32,11 @@ public class DemoUtils {
     @Autowired
     private TournamentService tournamentService;
     public void resetDemoInfo() {
+        userService.resetDemoStudents();
         tournamentService.resetDemoTournaments();
         quizService.resetDemoQuizzes();
         questionSubmissionService.resetDemoQuestionSubmissions();
         topicService.resetDemoTopics();
         assessmentService.resetDemoAssessments();
-        userService.resetDemoStudents();
     }
 }
