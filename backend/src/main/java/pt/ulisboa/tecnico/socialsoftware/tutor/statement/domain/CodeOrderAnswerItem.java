@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -33,6 +34,6 @@ public class CodeOrderAnswerItem extends QuestionAnswerItem {
     @Override
     public String getAnswerRepresentation(Map<Integer, Option> options) {
         // TODO: Need to create a string representation for export
-        return null;
+        return orderedSlots.stream().sorted(Comparator.comparing(CodeOrderSlotAnswerItem::getAssignedOrder)).map(c -> String.format("%s(%s)", c.getSlotId(), c.getAssignedOrder())).collect(Collectors.joining("|"));
     }
 }

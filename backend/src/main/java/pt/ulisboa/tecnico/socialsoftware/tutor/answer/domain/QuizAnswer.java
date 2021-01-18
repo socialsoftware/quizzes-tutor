@@ -197,7 +197,7 @@ public class QuizAnswer implements DomainEntity {
     }
 
     public long getNumberOfAnsweredQuestions() {
-        return getQuestionAnswers().stream().filter(questionAnswer -> questionAnswer.isAnswered()).count();
+        return getQuestionAnswers().stream().filter(QuestionAnswer::isAnswered).count();
     }
 
     public long getNumberOfCorrectAnswers() {

@@ -1,14 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
@@ -152,6 +146,11 @@ public class CSVQuizExportVisitor implements Visitor {
     }
 
     @Override
+    public void visitAnswerDetails(CodeOrderAnswer answer){
+        line[column++] = answer.getAnswerRepresentation();
+    }
+
+    @Override
     public void visitQuizQuestion(QuizQuestion quizQuestion) {
         quizQuestion.getQuestion().accept(this);
     }
@@ -168,6 +167,11 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitQuestionDetails(CodeFillInQuestion question) {
+        line[column++] = question.getCorrectAnswerRepresentation();
+    }
+
+    @Override
+    public void visitQuestionDetails(CodeOrderQuestion question) {
         line[column++] = question.getCorrectAnswerRepresentation();
     }
 

@@ -10,10 +10,10 @@ public class CodeOrderAnswerOrderedSlot {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     private CodeOrderAnswer codeOrderAnswer;
 
-    @ManyToOne(cascade = CascadeType.ALL)
+    @ManyToOne()
     private CodeOrderSlot codeOrderSlot;
 
     private Integer assignedOrder;
@@ -52,8 +52,9 @@ public class CodeOrderAnswerOrderedSlot {
 
     public void remove() {
         this.codeOrderSlot.getOrderedSlots().remove(this);
-        this.codeOrderSlot = null;
+        this.codeOrderAnswer.getOrderedSlots().remove(this);
         this.codeOrderAnswer = null;
+        this.codeOrderSlot = null;
     }
 
     public boolean isCorrect() {

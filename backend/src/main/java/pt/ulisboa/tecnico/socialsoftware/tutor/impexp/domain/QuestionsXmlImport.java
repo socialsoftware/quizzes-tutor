@@ -107,6 +107,9 @@ public class QuestionsXmlImport {
             case Question.QuestionTypes.CODE_FILL_IN_QUESTION:
                 questionDetailsDto = importCodeFillInQuestion(questionElement);
                 break;
+            case Question.QuestionTypes.CODE_ORDER_QUESTION:
+                questionDetailsDto = importCodeOrderQuestion(questionElement);
+                break;
             default:
                 throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, type);
         }
@@ -162,6 +165,21 @@ public class QuestionsXmlImport {
             spots.add(spot);
         }
         questionDto.setFillInSpots(spots);
+        return questionDto;
+    }
+
+    private QuestionDetailsDto importCodeOrderQuestion(Element questionElement) {
+        CodeOrderQuestionDto questionDto = new CodeOrderQuestionDto();
+        questionDto.setLanguage(Languages.valueOf(questionElement.getChild("orderSlots").getAttributeValue("language")));
+        var slots = new ArrayList<CodeOrderSlotDto>();
+        for (Element slotElement : questionElement.getChild("orderSlots").getChildren("slot")) {
+            var slot = new CodeOrderSlotDto();
+            slot.setOrder(Integer.valueOf(slotElement.getAttributeValue("order")));
+            slot.setContent(slotElement.getContent().toString());
+
+            slots.add(slot);
+        }
+        questionDto.setCodeOrderSlots(slots);
         return questionDto;
     }
 

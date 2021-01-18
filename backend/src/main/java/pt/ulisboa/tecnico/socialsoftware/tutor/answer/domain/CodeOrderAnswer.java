@@ -9,6 +9,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.CodeOrderStatementA
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDetailsDto;
 
 import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -18,7 +20,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 @DiscriminatorValue(Question.QuestionTypes.CODE_ORDER_QUESTION)
 public class CodeOrderAnswer extends AnswerDetails {
 
-    @OneToMany(mappedBy = "codeOrderAnswer", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "codeOrderAnswer", fetch = FetchType.EAGER)
     private final Set<CodeOrderAnswerOrderedSlot> orderedSlots = new HashSet<>();
 
     public CodeOrderAnswer() {
@@ -37,7 +39,8 @@ public class CodeOrderAnswer extends AnswerDetails {
     @Override
     public void remove() {
         if (this.orderedSlots != null) {
-            this.orderedSlots.forEach(CodeOrderAnswerOrderedSlot::remove);
+            var toDelete = new ArrayList<>(this.orderedSlots);
+            toDelete.forEach(CodeOrderAnswerOrderedSlot::remove);
             this.orderedSlots.clear();
         }
     }
@@ -93,6 +96,6 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public void accept(Visitor visitor) {
-
+        visitor.visitAnswerDetails(this);
     }
 }

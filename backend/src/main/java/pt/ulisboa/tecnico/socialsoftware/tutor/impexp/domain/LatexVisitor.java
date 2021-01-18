@@ -85,6 +85,23 @@ public abstract class LatexVisitor implements Visitor {
         this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
     }
 
+    @Override
+    public void visitQuestionDetails(CodeOrderQuestion question) {
+
+        this.result += String.format("\n\tCode snippet language: %s", question.getLanguage()) + "\n\n";
+
+        question.visitCodeOrderSlots(this);
+
+        this.result = this.result + "% Answer: " +
+                question.getCodeOrderSlots()
+                        .stream()
+                        .filter(x -> x.getOrder() != null)
+                        .sorted(Comparator.comparing(CodeOrderSlot::getOrder))
+                        .map(spot -> spot.getContent()
+                        ).collect(Collectors.joining("\n ")) + "\n";
+
+        this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
+    }
 
     @Override
     public void visitImage(Image image) {
@@ -93,6 +110,11 @@ public abstract class LatexVisitor implements Visitor {
         imageString = imageString + "\t\\end{center}\n\t";
 
         this.questionContent = this.questionContent.replaceAll("!\\[image\\]\\[image\\]", imageString);
+    }
+
+    @Override
+    public void visitCodeOrderSlot(CodeOrderSlot slot) {
+        this.result += String.format("%s\n", slot.getContent());
     }
 
     @Override
