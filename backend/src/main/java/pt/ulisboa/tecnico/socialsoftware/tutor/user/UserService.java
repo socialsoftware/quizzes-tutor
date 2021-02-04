@@ -42,8 +42,10 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Random;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -164,13 +166,7 @@ public class UserService {
         userRepository.findAll()
                 .stream()
                 .filter(user -> user.getAuthUser().isDemoStudent())
-                .forEach(user -> {
-                    for (QuizAnswer quizAnswer : new ArrayList<>(user.getQuizAnswers())) {
-                        answerService.deleteQuizAnswer(quizAnswer);
-                    }
-
-                    this.userRepository.delete(user);
-                });
+                .forEach(user ->this.userRepository.delete(user));
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED,
