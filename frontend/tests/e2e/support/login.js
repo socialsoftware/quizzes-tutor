@@ -9,8 +9,8 @@ Cypress.Commands.add('demoTeacherLogin', () => {
   cy.route('GET', '/auth/demo/teacher').as('authTeacher');
   cy.get('[data-cy="demoTeacherLoginButton"]').click();
   cy.wait('@authTeacher')
-  .its('status')
-  .should('eq', 200);
+    .its('status')
+    .should('eq', 200);
 });
 
 Cypress.Commands.add('demoStudentLogin', () => {

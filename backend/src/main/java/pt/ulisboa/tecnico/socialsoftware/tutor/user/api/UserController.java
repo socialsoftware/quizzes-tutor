@@ -24,7 +24,7 @@ public class UserController {
     @PostMapping ("/users/create/{executionId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
     public ExternalUserDto registerExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
-        return userServiceApplicational.registerExternalUser(executionId,externalUserDto);
+        return userServiceApplicational.registerExternalUser(executionId, externalUserDto);
     }
 
     @PostMapping("/courses/executions/{executionId}/csv")

@@ -67,8 +67,7 @@ export default class BaseCodeEditor extends Vue {
     CSharp: 'text/x-csharp'
   };
   @Watch('language')
-  onLanguageUpdate() {
-  }
+  onLanguageUpdate() {}
 
   static get availableLanguages(): String[] {
     return Object.keys(this.languagesDict);
