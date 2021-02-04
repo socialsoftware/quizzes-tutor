@@ -261,7 +261,7 @@ class FenixAuthTest extends SpockTest {
         user.getCourseExecutions().stream().collect(Collectors.toList()).get(0).getAcronym() == COURSE_1_ACRONYM
     }
 
-    def "student does not have courses, throw exception"() {
+    def "student does not have courses and it is in the database"() {
         given: 'a student'
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
@@ -278,15 +278,13 @@ class FenixAuthTest extends SpockTest {
         when:
         authUserService.fenixAuth(client)
 
-        then: "the returned data are correct"
-        thrown(TutorException)
-        and: 'the user is created in the db'
+        then: 'the user is in the db'
         userRepository.findAll().size() == existingUsers + 1
         and: 'is not enrolled'
         user.getCourseExecutions().size() == 0
     }
 
-    def "student has courses but not in the database, throw exception"() {
+    def "student has courses but they are not in the database, throw exception"() {
         userRepository.deleteAll()
         courseExecutionRepository.deleteAll()
         courseRepository.deleteAll()
@@ -307,9 +305,7 @@ class FenixAuthTest extends SpockTest {
         when:
         authUserService.fenixAuth(client)
 
-        then: "the returned data are correct"
-        thrown(TutorException)
-        and: 'the user is created in the db'
+        then: 'the user is in the db'
         userRepository.findAll().size() == 1
         and: 'is not enrolled'
         user.getCourseExecutions().size() == 0
@@ -343,7 +339,7 @@ class FenixAuthTest extends SpockTest {
         user.getCourseExecutions().stream().collect(Collectors.toList()).get(0).getAcronym() == COURSE_1_ACRONYM
     }
 
-    def "student has teaching courses, throw exception"() {
+    def "student has teaching courses"() {
         given: 'a student'
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
@@ -359,12 +355,10 @@ class FenixAuthTest extends SpockTest {
         when:
         authUserService.fenixAuth(client)
 
-        then:
-        thrown(TutorException)
-        and: 'the user is created in the db'
+        then: 'the user is  in the db'
         userRepository.findAll().size() == existingUsers + 1
         authUserRepository.findAuthUserByUsername(USER_1_USERNAME).orElse(null).getUser().getRole() == User.Role.STUDENT
-        and: 'is not enrolled'
+        and: 'but is not enrolled in the teaching courses'
         user.getCourseExecutions().size() == 0
     }
 
