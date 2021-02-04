@@ -377,6 +377,7 @@ public class QuizService {
     public void resetDemoQuizzes() {
         quizRepository.findQuizzesOfExecution(courseService.getDemoCourse().getCourseExecutionId())
                 .stream()
+                .sorted(Comparator.comparing(Quiz::getId))
                 .skip(2)
                 .forEach(quiz -> {
 

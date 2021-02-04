@@ -72,7 +72,10 @@
           <span class="bold">{{ selectedCourse.academicTerm }}</span
           >?
           <br />
-          (Once activated students will be able to login and use this platform)
+          (<b
+            >logout and login again to get the priviledges to start managing the
+            course</b
+          >)
         </v-card-text>
 
         <v-divider />

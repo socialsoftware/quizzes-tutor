@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
+import java.util.Locale;
 
 @Entity
 @DiscriminatorValue("DEMO")
@@ -20,6 +21,6 @@ public class AuthDemoUser extends AuthUser {
 
     @Override
     public boolean isDemoStudent() {
-        return getUsername().startsWith("demo-student-");
+        return getUsername().toLowerCase(Locale.ROOT).startsWith("demo-student");
     }
 }
