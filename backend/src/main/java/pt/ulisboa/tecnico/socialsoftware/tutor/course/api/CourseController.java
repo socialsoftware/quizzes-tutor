@@ -76,8 +76,15 @@ public class CourseController {
 
     @PostMapping("/courses/activate")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseDto, 'EXECUTION.CREATE')")
-    public CourseDto activateCourseExecution(@RequestBody CourseDto courseDto) {
-        return courseService.createTecnicoCourseExecution(courseDto);
+    public CourseDto activateCourseExecution(Authentication authentication, @RequestBody CourseDto courseDto) {
+        CourseDto result = courseService.createTecnicoCourseExecution(courseDto);
+
+        String username = ((User) authentication.getPrincipal()).getUsername();
+
+        // it may abort due to a failure, but the previous transaction is idempotent
+        courseService.addUserToTecnicoCourseExecution(username, result.getCourseExecutionId());
+
+        return result;
     }
 
     @GetMapping("/executions/{executionId}/deactivate")

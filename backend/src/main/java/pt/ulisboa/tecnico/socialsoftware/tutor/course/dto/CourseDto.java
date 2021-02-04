@@ -53,7 +53,7 @@ public class CourseDto implements Serializable {
         if (courseExecution.getType().equals(Course.Type.EXTERNAL)) {
             this.courseExecutionUsers = new ArrayList<>();
             courseExecution.getUsers().stream().forEach(user -> {
-                if(user.isStudent()) {
+                if (user.isStudent()) {
                     courseExecutionUsers.add(new StudentDto(user));
                 } else {
                     courseExecutionUsers.add(new UserDto(user));

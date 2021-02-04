@@ -72,10 +72,7 @@
           <span class="bold">{{ selectedCourse.academicTerm }}</span
           >?
           <br />
-          (<b
-            >logout and login again to get the priviledges to start managing the
-            course</b
-          >)
+          (Once activated students will be able to login and use this platform)
         </v-card-text>
 
         <v-divider />
@@ -127,6 +124,7 @@ export default class CourseSelectionView extends Vue {
     this.confirmationDialog = false;
     try {
       if (this.selectedCourse) {
+        this.selectedCourse.status = 'ACTIVE';
         this.selectedCourse = await RemoteServices.activateCourse(
           this.selectedCourse
         );

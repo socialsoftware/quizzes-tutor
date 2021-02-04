@@ -57,11 +57,6 @@ public class AuthUserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto fenixAuth(FenixEduInterface fenix) {
         String username = fenix.getPersonUsername();
-        List<CourseDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
-        List<CourseDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();
-
-        List<CourseExecution> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
-        List<CourseExecution> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
         AuthTecnicoUser authUser;
         try {
             authUser = (AuthTecnicoUser) authUserRepository.findAuthUserByUsername(username).orElse(null);;
@@ -69,37 +64,35 @@ public class AuthUserService {
             throw new TutorException(INVALID_AUTH_USERNAME, username);
         }
 
-        // If user is student and is not in db
-        if (authUser == null && !activeAttendingCourses.isEmpty()) {
-            authUser = (AuthTecnicoUser) userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT, AuthUser.Type.TECNICO);
-        }
-
-        // If user is teacher and is not in db
-        if (authUser == null && !fenixTeachingCourses.isEmpty()) {
-            authUser = (AuthTecnicoUser) userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER, AuthUser.Type.TECNICO);
-        }
-
         if (authUser == null) {
-            throw new TutorException(USER_NOT_ENROLLED, username);
+            authUser = createAuthUser(fenix, username);
+        } else {
+            refreshFenixAuthUserInfo(fenix, authUser);
         }
 
-        if (authUser.getEmail() == null) {
-            authUser.setEmail(fenix.getPersonEmail());
-        }
         authUser.setLastAccess(DateHandler.now());
 
-        // Update student courses
-        if (!activeAttendingCourses.isEmpty() && authUser.getUser().getRole() == User.Role.STUDENT) {
-            User student = authUser.getUser();
-            activeAttendingCourses.stream()
-                    .filter(courseExecution ->
-                            !student.getCourseExecutions().contains(courseExecution))
-                    .forEach(authUser.getUser()::addCourse);
+        if (authUser.getUser().isTeacher()) {
+            return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser, fenix.getPersonTeachingCourses()));
+        } else {
             return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
         }
+    }
 
-        // Update teacher courses
-        if (!fenixTeachingCourses.isEmpty() && authUser.getUser().getRole() == User.Role.TEACHER) {
+    private void refreshFenixAuthUserInfo(FenixEduInterface fenix, AuthTecnicoUser authUser) {
+        authUser.setEmail(fenix.getPersonEmail());
+        if (authUser.getUser().isTeacher()) {
+            List<CourseDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();
+            updateTeacherCourses(authUser, fenixTeachingCourses);
+        } else {
+            List<CourseDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
+            updateStudentCourses(authUser, fenixAttendingCourses);
+        }
+    }
+
+    private void updateTeacherCourses(AuthTecnicoUser authUser, List<CourseDto> fenixTeachingCourses) {
+        List<CourseExecution> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
+        if (!fenixTeachingCourses.isEmpty() && authUser.getUser().isTeacher()) {
             User teacher = authUser.getUser();
             activeTeachingCourses.stream()
                     .filter(courseExecution ->
@@ -111,17 +104,45 @@ public class AuthUserService {
                     .collect(Collectors.joining(","));
 
             authUser.setEnrolledCoursesAcronyms(ids);
-            return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser, fenixTeachingCourses));
         }
-
-        // Previous teacher without active courses
-        if (authUser.getUser().getRole() == User.Role.TEACHER) {
-            return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
-        }
-
-        throw new TutorException(USER_NOT_ENROLLED, username);
     }
 
+    private void updateStudentCourses(AuthTecnicoUser authUser, List<CourseDto> fenixAttendingCourses) {
+        List<CourseExecution> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
+        if (!activeAttendingCourses.isEmpty() && authUser.getUser().isStudent()) {
+            User student = authUser.getUser();
+            activeAttendingCourses.stream()
+                    .filter(courseExecution ->
+                            !student.getCourseExecutions().contains(courseExecution))
+                    .forEach(authUser.getUser()::addCourse);
+        }
+    }
+
+    private AuthTecnicoUser createAuthUser(FenixEduInterface fenix, String username) {
+        List<CourseDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
+        List<CourseDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();
+
+        List<CourseExecution> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
+
+        AuthTecnicoUser authUser = null;
+
+        // If user is student and is not in db
+        if (!activeAttendingCourses.isEmpty()) {
+            authUser = (AuthTecnicoUser) userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT, AuthUser.Type.TECNICO);
+            updateStudentCourses(authUser, fenixAttendingCourses);
+        }
+
+        // If user is teacher and is not in db
+        if (!fenixTeachingCourses.isEmpty()) {
+            authUser = (AuthTecnicoUser) userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER, AuthUser.Type.TECNICO);
+            updateTeacherCourses(authUser, fenixTeachingCourses);
+        }
+
+        if (authUser == null) {
+            throw new TutorException(USER_NOT_ENROLLED, username);
+        }
+        return authUser;
+    }
 
     @Retryable(
             value = { SQLException.class },

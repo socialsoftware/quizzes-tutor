@@ -87,6 +87,17 @@ public class CourseService {
         return new CourseDto(courseExecution);
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void addUserToTecnicoCourseExecution(String username, int courseExecutionId) {
+        CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);
+        User user = this.authUserRepository.findAuthUserByUsername(username).map(AuthUser::getUser).orElse(null);
+
+        if (user != null && courseExecution != null) {
+            courseExecution.addUser(user);
+            user.addCourse(courseExecution);
+        }
+    }
+
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
