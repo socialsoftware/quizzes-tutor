@@ -7,21 +7,21 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CodeOrderCorrectAnswerDto extends CorrectAnswerDetailsDto {
-    private List<CodeOrderAnswerOrderedSlotDto> correctOrder;
+    private List<CodeOrderAnswerSlotDto> correctOrder;
 
     public CodeOrderCorrectAnswerDto(CodeOrderQuestion question) {
         this.correctOrder = question.getCodeOrderSlots()
                 .stream()
-                .map(CodeOrderAnswerOrderedSlotDto::new)
+                .map(CodeOrderAnswerSlotDto::new)
                 .collect(Collectors.toList());
-        this.correctOrder.sort(Comparator.comparing(CodeOrderAnswerOrderedSlotDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
+        this.correctOrder.sort(Comparator.comparing(CodeOrderAnswerSlotDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
     }
 
-    public List<CodeOrderAnswerOrderedSlotDto> getCorrectOrder() {
+    public List<CodeOrderAnswerSlotDto> getCorrectOrder() {
         return correctOrder;
     }
 
-    public void setCorrectOrder(List<CodeOrderAnswerOrderedSlotDto> correctOrder) {
+    public void setCorrectOrder(List<CodeOrderAnswerSlotDto> correctOrder) {
         this.correctOrder = correctOrder;
     }
 }

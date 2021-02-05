@@ -1,20 +1,20 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerOrderedSlot;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerSlot;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
 
-public class CodeOrderAnswerOrderedSlotDto {
+public class CodeOrderAnswerSlotDto {
     private Integer slotId;
     private Integer order;
     private boolean correct;
 
-    public CodeOrderAnswerOrderedSlotDto(CodeOrderSlot correctSlot) {
+    public CodeOrderAnswerSlotDto(CodeOrderSlot correctSlot) {
         slotId = correctSlot.getId();
         order = correctSlot.getOrder();
         correct = true;
     }
 
-    public CodeOrderAnswerOrderedSlotDto(CodeOrderAnswerOrderedSlot answerOrderedSlot) {
+    public CodeOrderAnswerSlotDto(CodeOrderAnswerSlot answerOrderedSlot) {
         slotId = answerOrderedSlot.getCodeOrderSlot().getId();
         order = answerOrderedSlot.getAssignedOrder();
         correct = answerOrderedSlot.isCorrect();

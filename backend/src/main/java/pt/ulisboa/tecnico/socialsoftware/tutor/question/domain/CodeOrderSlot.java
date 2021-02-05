@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerOrderedSlot;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerSlot;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderSlotDto;
@@ -23,12 +23,12 @@ public class CodeOrderSlot implements DomainEntity {
     @Column(columnDefinition = "TEXT")
     private String content;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "question_details_id")
     private CodeOrderQuestion questionDetails;
 
-    @OneToMany(mappedBy = "codeOrderSlot", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    private final Set<CodeOrderAnswerOrderedSlot> orderedSlots = new HashSet<>();
+    @OneToMany(mappedBy = "codeOrderSlot", fetch = FetchType.LAZY, cascade = CascadeType.ALL, orphanRemoval = true)
+    private final Set<CodeOrderAnswerSlot> orderedSlots = new HashSet<>();
 
     public CodeOrderSlot() {
     }
@@ -70,7 +70,7 @@ public class CodeOrderSlot implements DomainEntity {
         this.questionDetails = questionDetails;
     }
 
-    public Set<CodeOrderAnswerOrderedSlot> getOrderedSlots() {
+    public Set<CodeOrderAnswerSlot> getOrderedSlots() {
         return orderedSlots;
     }
 

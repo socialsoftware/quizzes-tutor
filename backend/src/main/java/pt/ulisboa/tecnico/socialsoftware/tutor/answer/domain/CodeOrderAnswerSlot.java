@@ -5,18 +5,27 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
 import javax.persistence.*;
 
 @Entity
-public class CodeOrderAnswerOrderedSlot {
+public class CodeOrderAnswerSlot {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne()
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private CodeOrderAnswer codeOrderAnswer;
 
-    @ManyToOne()
+    @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private CodeOrderSlot codeOrderSlot;
 
     private Integer assignedOrder;
+
+    public CodeOrderAnswerSlot() {
+    }
+
+    public CodeOrderAnswerSlot(CodeOrderSlot orderSlot, CodeOrderAnswer codeOrderAnswer, Integer assignedOrder) {
+        setCodeOrderSlot(orderSlot);
+        setCodeOrderAnswer(codeOrderAnswer);
+        setAssignedOrder(assignedOrder);
+    }
 
     public Integer getId() {
         return id;

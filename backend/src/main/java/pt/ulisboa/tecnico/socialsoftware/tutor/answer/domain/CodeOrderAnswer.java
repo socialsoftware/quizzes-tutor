@@ -10,7 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDeta
 
 import javax.persistence.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -21,7 +20,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 public class CodeOrderAnswer extends AnswerDetails {
 
     @OneToMany(mappedBy = "codeOrderAnswer", fetch = FetchType.EAGER)
-    private final Set<CodeOrderAnswerOrderedSlot> orderedSlots = new HashSet<>();
+    private final Set<CodeOrderAnswerSlot> orderedSlots = new HashSet<>();
 
     public CodeOrderAnswer() {
         super();
@@ -40,7 +39,7 @@ public class CodeOrderAnswer extends AnswerDetails {
     public void remove() {
         if (this.orderedSlots != null) {
             var toDelete = new ArrayList<>(this.orderedSlots);
-            toDelete.forEach(CodeOrderAnswerOrderedSlot::remove);
+            toDelete.forEach(CodeOrderAnswerSlot::remove);
             this.orderedSlots.clear();
         }
     }
@@ -52,7 +51,7 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public String getAnswerRepresentation() {
-        var correctAnswers = this.getOrderedSlots().stream().filter(CodeOrderAnswerOrderedSlot::isCorrect).count();
+        var correctAnswers = this.getOrderedSlots().stream().filter(CodeOrderAnswerSlot::isCorrect).count();
         var questionOptions = ((CodeOrderQuestion) this.getQuestionAnswer().getQuestion().getQuestionDetails()).getCodeOrderSlots().size();
         return String.format("%d/%d", correctAnswers, questionOptions);
     }
@@ -67,7 +66,7 @@ public class CodeOrderAnswer extends AnswerDetails {
         return orderedSlots != null && !orderedSlots.isEmpty();
     }
 
-    public Set<CodeOrderAnswerOrderedSlot> getOrderedSlots() {
+    public Set<CodeOrderAnswerSlot> getOrderedSlots() {
         return orderedSlots;
     }
 
@@ -78,16 +77,9 @@ public class CodeOrderAnswer extends AnswerDetails {
             for (var slot : codeOrderStatementAnswerDetailsDto.getOrderedSlots()) {
 
                 CodeOrderSlot orderSlot = question
-                        .getCodeOrderSlots()
-                        .stream()
-                        .filter(slot1 -> slot1.getId().equals(slot.getSlotId()))
-                        .findAny()
-                        .orElseThrow(() -> new TutorException(QUESTION_ORDER_SLOT_MISMATCH, slot.getSlotId()));
+                        .getCodeOrderSlotBySlotId(slot.getSlotId());
 
-                var answerSlot = new CodeOrderAnswerOrderedSlot();
-                answerSlot.setCodeOrderSlot(orderSlot);
-                answerSlot.setCodeOrderAnswer(this);
-                answerSlot.setAssignedOrder(slot.getOrder());
+                var answerSlot = new CodeOrderAnswerSlot(orderSlot, this, slot.getOrder());
                 this.orderedSlots.add(answerSlot);
             }
         }

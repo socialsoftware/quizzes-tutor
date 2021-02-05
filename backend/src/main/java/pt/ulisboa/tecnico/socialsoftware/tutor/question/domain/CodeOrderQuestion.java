@@ -28,7 +28,7 @@ public class CodeOrderQuestion extends QuestionDetails {
 
     private Languages language;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails", fetch = FetchType.EAGER, orphanRemoval = true)
     private final List<CodeOrderSlot> codeOrderSlots = new ArrayList<>();
 
 
@@ -141,5 +141,13 @@ public class CodeOrderQuestion extends QuestionDetails {
         for (var slot : this.getCodeOrderSlots()) {
             slot.accept(visitor);
         }
+    }
+
+    public CodeOrderSlot getCodeOrderSlotBySlotId(Integer slotId) {
+        return this.codeOrderSlots
+                .stream()
+                .filter(slot1 -> slot1.getId().equals(slotId))
+                .findAny()
+                .orElseThrow(() -> new TutorException(QUESTION_ORDER_SLOT_MISMATCH, slotId));
     }
 }

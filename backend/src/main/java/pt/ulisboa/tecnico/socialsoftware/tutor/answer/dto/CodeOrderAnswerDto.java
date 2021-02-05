@@ -7,23 +7,23 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class CodeOrderAnswerDto extends AnswerDetailsDto {
-    private List<CodeOrderAnswerOrderedSlotDto> orderedSlots;
+    private List<CodeOrderAnswerSlotDto> orderedSlots;
 
     public CodeOrderAnswerDto() {
     }
 
     public CodeOrderAnswerDto(CodeOrderAnswer answer) {
         if (answer.getOrderedSlots() != null) {
-            this.orderedSlots = answer.getOrderedSlots().stream().map(CodeOrderAnswerOrderedSlotDto::new).collect(Collectors.toList());
-            this.orderedSlots.sort(Comparator.comparing(CodeOrderAnswerOrderedSlotDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
+            this.orderedSlots = answer.getOrderedSlots().stream().map(CodeOrderAnswerSlotDto::new).collect(Collectors.toList());
+            this.orderedSlots.sort(Comparator.comparing(CodeOrderAnswerSlotDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
         }
     }
 
-    public List<CodeOrderAnswerOrderedSlotDto> getOrderedSlots() {
+    public List<CodeOrderAnswerSlotDto> getOrderedSlots() {
         return orderedSlots;
     }
 
-    public void setOrderedSlots(List<CodeOrderAnswerOrderedSlotDto> orderedSlots) {
+    public void setOrderedSlots(List<CodeOrderAnswerSlotDto> orderedSlots) {
         this.orderedSlots = orderedSlots;
     }
 }

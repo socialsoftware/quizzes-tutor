@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerOrderedSlot;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerSlot;
 
 import java.io.Serializable;
 
@@ -11,7 +11,7 @@ public class CodeOrderSlotStatementAnswerDetailsDto implements Serializable {
     public CodeOrderSlotStatementAnswerDetailsDto() {
     }
 
-    public CodeOrderSlotStatementAnswerDetailsDto(CodeOrderAnswerOrderedSlot option) {
+    public CodeOrderSlotStatementAnswerDetailsDto(CodeOrderAnswerSlot option) {
         this.order = option.getAssignedOrder();
         this.slotId = option.getId();
     }
