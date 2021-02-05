@@ -18,6 +18,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -48,13 +51,10 @@ public class AnswersXmlImport {
     private AnswerService answerService;
 
     @Autowired
-    private QuestionRepository questionRepository;
+    private CourseRepository courseRepository;
 
     @Autowired
     private QuestionDetailsRepository questionDetailsRepository;
-
-    @Autowired
-    private QuizRepository quizRepository;
 
     @Autowired
     private QuizAnswerRepository quizAnswerRepository;
@@ -64,9 +64,6 @@ public class AnswersXmlImport {
 
     @Autowired
     private UserService userService;
-
-    @Autowired
-    private QuizQuestionRepository quizQuestionRepository;
 
     @Autowired
     private OptionRepository optionRepository;
@@ -137,8 +134,22 @@ public class AnswersXmlImport {
             completed = Boolean.parseBoolean(answerElement.getAttributeValue("completed"));
         }
 
-        Integer quizKey = Integer.valueOf(answerElement.getChild("quiz").getAttributeValue("key"));
-        Quiz quiz = quizRepository.findByKey(quizKey)
+        Element quizElement = answerElement.getChild("quiz");
+
+        String courseName = quizElement.getAttributeValue("courseName");
+        String courseType = quizElement.getAttributeValue("courseType");
+        String courseExecutionType = quizElement.getAttributeValue("courseExecutionType");
+        String acronym = quizElement.getAttributeValue("acronym");
+        String academicTerm = quizElement.getAttributeValue("academicTerm");
+        Course course = courseRepository.findByNameType(courseName, courseType)
+                .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName + ":" + courseType));
+        CourseExecution courseExecution = course.getCourseExecution(acronym, academicTerm, Course.Type.valueOf(courseExecutionType))
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, acronym));
+
+        Integer quizKey = Integer.valueOf(quizElement.getAttributeValue("key"));
+        Quiz quiz = courseExecution.getQuizzes().stream()
+                .filter(quiz1 -> quiz1.getKey() == quizKey)
+                .findAny()
                 .orElseThrow(() -> new TutorException(ANSWERS_IMPORT_ERROR,
                         "quiz id does not exist " + quizKey));
 

@@ -84,7 +84,6 @@ public class StatementService {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         Quiz quiz = new Quiz();
-        quiz.setKey(quizService.getMaxQuizKey() + 1);
         quiz.setType(Quiz.QuizType.GENERATED.toString());
         quiz.setCreationDate(DateHandler.now());
 
@@ -124,7 +123,6 @@ public class StatementService {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         Quiz quiz = new Quiz();
-        quiz.setKey(quizService.getMaxQuizKey() + 1);
         quiz.setType(Quiz.QuizType.GENERATED.toString());
         quiz.setCreationDate(DateHandler.now());
 

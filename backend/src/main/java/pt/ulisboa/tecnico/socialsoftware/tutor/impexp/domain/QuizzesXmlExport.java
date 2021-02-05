@@ -45,7 +45,7 @@ public class QuizzesXmlExport {
 		quizElement.setAttribute("courseExecutionType",quiz.getCourseExecution().getType().name());
 		quizElement.setAttribute("acronym",quiz.getCourseExecution().getAcronym());
         quizElement.setAttribute("academicTerm",quiz.getCourseExecution().getAcademicTerm());
-        quizElement.setAttribute("key", String.valueOf(quiz.getKey()));
+        quizElement.setAttribute("key", String.valueOf(quiz.getNonNullKey()));
 		quizElement.setAttribute("scramble", String.valueOf(quiz.getScramble()));
 		quizElement.setAttribute("qrCodeOnly", String.valueOf(quiz.isQrCodeOnly()));
 		quizElement.setAttribute("oneWay", String.valueOf(quiz.isOneWay()));
