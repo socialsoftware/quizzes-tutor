@@ -275,7 +275,7 @@ public class User implements DomainEntity {
             this.numberOfTeacherAnswers = getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
-                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
+                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestionsNumber())
                     .sum();
 
         return numberOfTeacherAnswers;
@@ -290,7 +290,7 @@ public class User implements DomainEntity {
             this.numberOfInClassAnswers = getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
-                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
+                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestionsNumber())
                     .sum();
             return numberOfInClassAnswers;
     }
@@ -304,7 +304,7 @@ public class User implements DomainEntity {
             this.numberOfStudentAnswers = getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
                     .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
-                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestions().size())
+                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestionsNumber())
                     .sum();
         }
 

@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -12,11 +13,11 @@ public class LatexQuizExportVisitor extends LatexVisitor {
     public String export(Quiz quiz) {
         quiz.accept(this);
 
-        quiz.getQuizQuestions().stream()
-                .sorted(Comparator.comparing(QuizQuestion::getSequence))
-                .forEach(quizQuestion -> quizQuestion.accept(this));
+        List<QuizQuestion> quizQuestions = new ArrayList<>(quiz.getQuizQuestions());
 
-        exportQuestions(quiz.getQuizQuestions().stream().map(QuizQuestion::getQuestion).collect(Collectors.toList()));
+        quizQuestions.forEach(quizQuestion -> quizQuestion.accept(this));
+
+        exportQuestions(quizQuestions.stream().map(QuizQuestion::getQuestion).collect(Collectors.toList()));
 
         return this.result;
     }

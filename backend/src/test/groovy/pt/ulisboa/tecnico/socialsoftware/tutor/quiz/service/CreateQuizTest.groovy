@@ -78,7 +78,7 @@ class CreateQuizTest extends SpockTest {
             result.getResultsDate() == DateHandler.toLocalDateTime(resultsDate)
         }
         result.getType() == quizType
-        result.getQuizQuestions().size() == 1
+        result.getQuizQuestionsNumber() == 1
 
         where:
         quizType                | title      | availableDate               | conclusionDate       | resultsDate

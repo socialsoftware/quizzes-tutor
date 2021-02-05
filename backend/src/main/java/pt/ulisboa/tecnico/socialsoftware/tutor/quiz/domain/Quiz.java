@@ -13,10 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.Comparator;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
 
@@ -70,7 +67,7 @@ public class Quiz implements DomainEntity {
     private String version;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval=true)
-    private final Set<QuizQuestion> quizQuestions = new HashSet<>();
+    private final List<QuizQuestion> quizQuestions = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval=true)
     private final Set<QuizAnswer> quizAnswers = new HashSet<>();
@@ -238,23 +235,27 @@ public class Quiz implements DomainEntity {
     }
 
     public Integer getSeries() {
-    return series;
+        return series;
     }
 
     public void setSeries(Integer series) {
-    this.series = series;
+        this.series = series;
     }
 
     public String getVersion() {
-    return version;
+        return version;
     }
 
     public void setVersion(String version) {
-    this.version = version;
+        this.version = version;
     }
 
-    public Set<QuizQuestion> getQuizQuestions() {
-    return quizQuestions;
+    public List<QuizQuestion> getQuizQuestions() {
+        return this.quizQuestions.stream().sorted(Comparator.comparing(QuizQuestion::getSequence)).collect(Collectors.toList());
+    }
+
+    public int getQuizQuestionsNumber() {
+        return this.quizQuestions.size();
     }
 
     public Set<QuizAnswer> getQuizAnswers() {
@@ -280,6 +281,10 @@ public class Quiz implements DomainEntity {
 
     public void addQuizQuestion(QuizQuestion quizQuestion) {
         this.quizQuestions.add(quizQuestion);
+    }
+
+    public void removeQuizQuestion(QuizQuestion quizQuestion) {
+        this.quizQuestions.remove(quizQuestion);
     }
 
     public void addQuizAnswer(QuizAnswer quizAnswer) {
@@ -348,7 +353,7 @@ public class Quiz implements DomainEntity {
         if (!quizAnswers.isEmpty()) {
             throw new TutorException(QUIZ_HAS_ANSWERS);
         }
-        getQuizQuestions().forEach(QuizQuestion::checkCanRemove);
+        this.quizQuestions.forEach(QuizQuestion::checkCanRemove);
     }
 
     public void generate(List<Question> questions) {

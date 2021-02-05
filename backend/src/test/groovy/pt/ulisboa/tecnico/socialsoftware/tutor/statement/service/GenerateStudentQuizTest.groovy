@@ -89,8 +89,8 @@ class GenerateStudentQuizTest extends SpockTest {
         resQuizAnswer.getQuiz() == result
         resQuizAnswer.getUser() == user
         resQuizAnswer.getQuestionAnswers().size() == 1
-        result.getQuizQuestions().size() == 1
-        def resQuizQuestion = result.getQuizQuestions().stream().collect(Collectors.toList()).get(0)
+        result.getQuizQuestionsNumber() == 1
+        def resQuizQuestion = result.getQuizQuestions().get(0)
         resQuizQuestion.getQuiz() == result
         resQuizQuestion.getQuestion() == questionOne || resQuizQuestion.getQuestion() == questionTwo
         (questionOne.getQuizQuestions().size() == 1 &&  questionTwo.getQuizQuestions().size() == 0) ||  (questionOne.getQuizQuestions().size() == 0 &&  questionTwo.getQuizQuestions().size() == 1)
@@ -114,7 +114,7 @@ class GenerateStudentQuizTest extends SpockTest {
         resQuizAnswer.getQuiz() == result
         resQuizAnswer.getUser() == user
         resQuizAnswer.getQuestionAnswers().size() == 2
-        result.getQuizQuestions().size() == 2
+        result.getQuizQuestionsNumber() == 2
         result.getQuizQuestions().stream().map{quizQuestion -> quizQuestion.getQuestion()}.allMatch{question -> question == questionOne || question == questionTwo}
         questionOne.getQuizQuestions().size() == 1
         questionTwo.getQuizQuestions().size() == 1

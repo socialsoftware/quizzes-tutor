@@ -3,11 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -44,7 +42,7 @@ public class QuizDto implements Serializable {
         this.type = quiz.getType().toString();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
-        this.numberOfQuestions = quiz.getQuizQuestions().size();
+        this.numberOfQuestions = quiz.getQuizQuestionsNumber();
         this.numberOfAnswers = quiz.getQuizAnswers().size();
         this.creationDate = DateHandler.toISOString(quiz.getCreationDate());
         this.availableDate = DateHandler.toISOString(quiz.getAvailableDate());
@@ -53,7 +51,6 @@ public class QuizDto implements Serializable {
 
         if (deepCopy) {
             this.questions = quiz.getQuizQuestions().stream()
-                    .sorted(Comparator.comparing(QuizQuestion::getSequence))
                     .map(quizQuestion -> {
                        QuestionDto questionDto = new QuestionDto(quizQuestion.getQuestion());
                        questionDto.setSequence(quizQuestion.getSequence());

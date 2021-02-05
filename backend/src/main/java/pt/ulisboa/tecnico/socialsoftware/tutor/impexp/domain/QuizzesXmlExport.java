@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
+import java.util.Comparator;
 import java.util.List;
 import java.util.Set;
 
@@ -37,8 +38,7 @@ public class QuizzesXmlExport {
 		}
 	}
 
-
-	private void exportQuiz(Element element, Quiz quiz, Set<QuizQuestion> quizQuestions) {
+	private void exportQuiz(Element element, Quiz quiz, List<QuizQuestion> quizQuestions) {
 		Element quizElement = new Element("quiz");
 		quizElement.setAttribute("courseName",quiz.getCourseExecution().getCourse().getName());
 		quizElement.setAttribute("courseType",quiz.getCourseExecution().getCourse().getType().name());
@@ -68,12 +68,12 @@ public class QuizzesXmlExport {
 		element.addContent(quizElement);
 	}
 
-	private void exportQuizQuestions(Element questionElement, Set<QuizQuestion> quizQuestions) {
+	private void exportQuizQuestions(Element questionElement, List<QuizQuestion> quizQuestions) {
 		Element quizQuestionsElement = new Element("quizQuestions");
 
-		for (QuizQuestion quizQuestion: quizQuestions) {
-			exportQuizQuestion(quizQuestionsElement, quizQuestion);
-		}
+		quizQuestions.stream()
+			.sorted(Comparator.comparing(QuizQuestion::getSequence))
+			.forEach(quizQuestion -> exportQuizQuestion(quizQuestionsElement, quizQuestion));
 
 		questionElement.addContent(quizQuestionsElement);
 	}

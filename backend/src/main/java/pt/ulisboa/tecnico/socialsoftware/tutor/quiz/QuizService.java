@@ -144,7 +144,7 @@ public class QuizService {
             for (QuestionDto questionDto : quizDto.getQuestions()) {
                 Question question = questionRepository.findById(questionDto.getId())
                         .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionDto.getId()));
-                new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
+                new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());
             }
         }
 
@@ -188,7 +188,7 @@ public class QuizService {
             for (QuestionDto questionDto : quizDto.getQuestions()) {
                 Question question = questionRepository.findById(questionDto.getId())
                         .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionDto.getId()));
-                QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
+                QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());
                 quizQuestionRepository.save(quizQuestion);
             }
         }
@@ -205,7 +205,7 @@ public class QuizService {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
-        QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestions().size());
+        QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());
 
         quizQuestionRepository.save(quizQuestion);
 
@@ -240,7 +240,6 @@ public class QuizService {
 
         quizAnswersDto.setCorrectSequence(
                 quiz.getQuizQuestions().stream()
-                        .sorted(Comparator.comparing(QuizQuestion::getSequence))
                         .map(quizQuestion -> quizQuestion.getQuestion().getCorrectAnswerRepresentation()
                 ).collect(Collectors.toList()));
 
