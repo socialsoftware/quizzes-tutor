@@ -2,11 +2,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import org.springframework.context.annotation.Bean
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -47,7 +42,7 @@ class AddQuestionToQuizTest extends SpockTest {
         quizQuestion.getId() != null
         quizQuestion.getSequence() == 0
         quizQuestion.getQuiz() != null
-        quizQuestion.getQuiz().getQuizQuestions().size() == 1
+        quizQuestion.getQuiz().getQuizQuestionsNumber() == 1
         quizQuestion.getQuiz().getQuizQuestions().contains(quizQuestion)
         quizQuestion.getQuestion() != null
         quizQuestion.getQuestion().getQuizQuestions().size() == 1

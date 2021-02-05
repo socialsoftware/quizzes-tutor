@@ -8,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
-import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
@@ -21,12 +20,13 @@ public class CSVQuizExportVisitor implements Visitor {
     private final List<String[]> table = new ArrayList<>();
 
     public String export(Quiz quiz, List<QuestionAnswerItem> questionAnswerItems) {
-        int numberOfQuestions = quiz.getQuizQuestions().size();
+        int numberOfQuestions = quiz.getQuizQuestionsNumber();
+        List<QuizQuestion> quizQuestionsList = new ArrayList<>(quiz.getQuizQuestions());
         int lineSize = numberOfQuestions + 5;
-        Map<Integer, QuizQuestion> quizQuestions = quiz.getQuizQuestions().stream()
+        Map<Integer, QuizQuestion> quizQuestions = quizQuestionsList.stream()
                 .collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));
         // TODO[is->has]: questionMap XML
-        Map<Integer, Option> options = quiz.getQuizQuestions().stream()
+        Map<Integer, Option> options = quizQuestionsList.stream()
                 .map(QuizQuestion::getQuestion)
                 .map(Question::getQuestionDetails)
                 .filter(q -> q instanceof MultipleChoiceQuestion)
@@ -43,8 +43,7 @@ public class CSVQuizExportVisitor implements Visitor {
         line[4] = "Delay in Seconds";
         column = 4;
 
-        quiz.getQuizQuestions().stream()
-                .sorted(Comparator.comparing(QuizQuestion::getSequence))
+        quizQuestionsList.stream()
                 .forEach(quizQuestion -> {
                     line[++column] = String.valueOf(quizQuestion.getSequence()+1);
                 });
@@ -73,8 +72,7 @@ public class CSVQuizExportVisitor implements Visitor {
         Arrays.fill(line, "");
         line[4] = "KEYS";
         column = 5;
-        quiz.getQuizQuestions().stream()
-                .sorted(Comparator.comparing(QuizQuestion::getSequence))
+        quizQuestionsList.stream()
                 .forEach(quizQuestion -> quizQuestion.accept(this));
         table.add(line);
 
@@ -97,7 +95,7 @@ public class CSVQuizExportVisitor implements Visitor {
         table.add(line);
 
         Comparator<QuestionAnswerItem> comparator = Comparator.comparing(QuestionAnswerItem::getUsername);
-        comparator.thenComparing(Comparator.comparing(QuestionAnswerItem::getAnswerDate));
+        comparator.thenComparing(QuestionAnswerItem::getAnswerDate);
         questionAnswerItems.sort(comparator);
 
         for (QuestionAnswerItem questionAnswerItem : questionAnswerItems) {

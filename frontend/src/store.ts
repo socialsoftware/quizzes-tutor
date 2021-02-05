@@ -34,13 +34,32 @@ Vue.config.devtools = true;
 export default new Vuex.Store({
   state: state,
   mutations: {
+    initialiseStore(state) {
+      const token = localStorage.getItem('token');
+      if (token) {
+        state.token = token;
+      }
+      const user = localStorage.getItem('user');
+      if (user) {
+        state.user = JSON.parse(user);
+      }
+      const currentCourse = localStorage.getItem('currentCourse');
+      if (currentCourse) {
+        state.currentCourse = JSON.parse(currentCourse);
+      }
+    },
     login(state, authResponse: AuthDto) {
+      localStorage.setItem('token', authResponse.token);
       state.token = authResponse.token;
+      localStorage.setItem('user', JSON.stringify(authResponse.user));
       state.user = authResponse.user;
     },
     logout(state) {
+      localStorage.setItem('token', '');
       state.token = '';
+      localStorage.setItem('user', '');
       state.user = null;
+      localStorage.setItem('currentCourse', '');
       state.currentCourse = null;
     },
     error(state, errorMessage: string) {
@@ -66,6 +85,7 @@ export default new Vuex.Store({
       state.loading = false;
     },
     currentCourse(state, currentCourse: Course) {
+      localStorage.setItem('currentCourse', JSON.stringify(currentCourse));
       state.currentCourse = currentCourse;
     }
   },

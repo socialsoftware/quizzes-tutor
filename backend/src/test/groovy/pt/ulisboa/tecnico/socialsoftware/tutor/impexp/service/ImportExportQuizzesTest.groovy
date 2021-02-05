@@ -79,7 +79,7 @@ class ImportExportQuizzesTest extends SpockTest {
         quizResult.getAvailableDate() == availableDate
         quizResult.getConclusionDate() == conclusionDate
         quizResult.getType() == Quiz.QuizType.EXAM
-        quizResult.getQuizQuestions().size() == 1
+        quizResult.getQuizQuestionsNumber() == 1
         def quizQuestionResult =  quizResult.getQuizQuestions().stream().findAny().orElse(null)
         quizQuestionResult.getSequence() == 0
         quizQuestionResult.getQuiz() == quizResult

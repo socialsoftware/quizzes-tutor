@@ -38,7 +38,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         result.getTitle() == ("Tournament " + tournamentDto.getId() + " Quiz")
         result.getType() == Quiz.QuizType.TOURNAMENT
         DateHandler.toISOString(result.getConclusionDate()) == STRING_DATE_LATER
-        result.getQuizQuestions().size() == NUMBER_OF_QUESTIONS
+        result.getQuizQuestionsNumber() == NUMBER_OF_QUESTIONS
     }
 
     def "generate a quiz with 2 student solving" () {
@@ -60,7 +60,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         result.getTitle() == ("Tournament " + tournamentDto.getId() + " Quiz")
         result.getType() == Quiz.QuizType.TOURNAMENT
         DateHandler.toISOString(result.getConclusionDate()) == STRING_DATE_LATER
-        result.getQuizQuestions().size() == NUMBER_OF_QUESTIONS
+        result.getQuizQuestionsNumber() == NUMBER_OF_QUESTIONS
     }
 
     def "disabling assessment for already created tournament" () {
