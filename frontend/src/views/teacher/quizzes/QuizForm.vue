@@ -443,7 +443,7 @@ export default class QuizForm extends Vue {
     return items;
   }
 
-  compare(a: number, b: number) {
+  compare(a: number | null, b?: number | null) {
     if (a == b) {
       return 0;
     } else if (a == null) {
@@ -474,9 +474,11 @@ export default class QuizForm extends Vue {
     let index: number = this.quizQuestions.indexOf(question);
     this.quizQuestions.splice(index, 1);
     question.sequence = null;
-    this.quizQuestions.forEach((question, index) => {
-      question.sequence = index + 1;
-    });
+    this.quizQuestions
+      .sort((qq1, qq2) => this.compare(qq1.sequence, qq2.sequence))
+      .forEach((question, index) => {
+        question.sequence = index + 1;
+      });
   }
 
   openSetPosition(question: Question) {
@@ -508,6 +510,9 @@ export default class QuizForm extends Vue {
 
   changeQuestionPosition(question: Question, position: number) {
     if (question.sequence) {
+      this.quizQuestions.sort((qq1, qq2) =>
+        this.compare(qq1.sequence, qq2.sequence)
+      );
       let currentPosition: number = this.quizQuestions.indexOf(question);
       this.quizQuestions.splice(
         position,

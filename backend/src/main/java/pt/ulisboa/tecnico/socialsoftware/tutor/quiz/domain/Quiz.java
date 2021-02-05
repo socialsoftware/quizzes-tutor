@@ -356,7 +356,7 @@ public class Quiz implements DomainEntity {
         this.quizQuestions.forEach(QuizQuestion::checkCanRemove);
     }
 
-    public void generate(List<Question> questions) {
+    public void generateQuiz(List<Question> questions) {
         IntStream.range(0,questions.size())
                 .forEach(index -> new QuizQuestion(this, questions.get(index), index));
 

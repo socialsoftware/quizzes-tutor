@@ -141,11 +141,12 @@ public class QuizService {
         quiz.setCourseExecution(courseExecution);
 
         if (quizDto.getQuestions() != null) {
-            for (QuestionDto questionDto : quizDto.getQuestions()) {
-                Question question = questionRepository.findById(questionDto.getId())
-                        .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionDto.getId()));
-                new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());
-            }
+            quizDto.getQuestions().stream().sorted(Comparator.comparing(QuestionDto::getSequence))
+                    .forEach( questionDto -> {
+                        Question question = questionRepository.findById(questionDto.getId())
+                                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionDto.getId()));
+                        new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());
+                    });
         }
 
         quizRepository.save(quiz);
@@ -185,12 +186,13 @@ public class QuizService {
         quizQuestions.forEach(quizQuestion -> quizQuestionRepository.delete(quizQuestion));
 
         if (quizDto.getQuestions() != null) {
-            for (QuestionDto questionDto : quizDto.getQuestions()) {
-                Question question = questionRepository.findById(questionDto.getId())
-                        .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionDto.getId()));
-                QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());
-                quizQuestionRepository.save(quizQuestion);
-            }
+            quizDto.getQuestions().stream().sorted(Comparator.comparing(QuestionDto::getSequence))
+                    .forEach(questionDto -> {
+                        Question question = questionRepository.findById(questionDto.getId())
+                                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionDto.getId()));
+                        QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());
+                        quizQuestionRepository.save(quizQuestion);
+                    });
         }
 
         return new QuizDto(quiz, true);
