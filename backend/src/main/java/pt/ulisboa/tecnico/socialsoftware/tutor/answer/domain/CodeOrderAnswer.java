@@ -19,7 +19,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 @DiscriminatorValue(Question.QuestionTypes.CODE_ORDER_QUESTION)
 public class CodeOrderAnswer extends AnswerDetails {
 
-    @OneToMany(mappedBy = "codeOrderAnswer", fetch = FetchType.EAGER)
+    @OneToMany(mappedBy = "codeOrderAnswer", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private final Set<CodeOrderAnswerSlot> orderedSlots = new HashSet<>();
 
     public CodeOrderAnswer() {
@@ -72,7 +72,7 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     public void setOrderedSlots(CodeOrderQuestion question,
                                 CodeOrderStatementAnswerDetailsDto codeOrderStatementAnswerDetailsDto) {
-        this.getOrderedSlots().clear();
+        this.orderedSlots.clear();
         if (codeOrderStatementAnswerDetailsDto.emptyAnswer()) {
             for (var slot : codeOrderStatementAnswerDetailsDto.getOrderedSlots()) {
 
