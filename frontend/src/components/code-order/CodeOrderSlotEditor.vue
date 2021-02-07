@@ -1,17 +1,14 @@
 <template>
   <div class="code-order-create-slot">
     <i class="fa fa-align-justify handle"></i>
-    <div>{{ sQuestionSlot.order + 1 }}</div>
-    <v-textarea
+    <div>{{ sQuestionSlot.order == null ? null : sQuestionSlot.order + 1 }}</div>
+    <BaseCodeEditor
       class="slot-content"
-      v-model="sQuestionSlot.content"
-      :rules="[() => !!sQuestionSlot.content || 'This field is required']"
-      label="Slot Content"
-      auto-grow
-      required
-      data-cy="questionQuestionTextArea"
-      rows="4"
-    ></v-textarea>
+      ref="codeEditor"
+      :code.sync="sQuestionSlot.content"
+      :language.sync="language"
+    />
+    <!--TODO: How to add this rules :thinking:-->
     <div class="toolbar">
       <v-btn icon>
         <v-icon
@@ -37,13 +34,20 @@
 <script lang="ts">
 import CodeOrderSlot from '@/models/management/questions/CodeOrderSlot';
 import { Component, PropSync, Vue, Prop } from 'vue-property-decorator';
+import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
-@Component
+@Component({
+  components: {
+    BaseCodeEditor,
+  }
+})
 export default class CodeOrderSlotEditor extends Vue {
   @PropSync('questionSlot', { type: CodeOrderSlot })
   sQuestionSlot!: CodeOrderSlot;
   @Prop({ default: false })
   readonly canDelete!: boolean;
+  @Prop()
+  readonly language!: string;  
 }
 </script>
 
@@ -54,6 +58,7 @@ export default class CodeOrderSlotEditor extends Vue {
   justify-content: space-between;
   align-items: center;
   width: 100%;
+  margin: 10px 10px;
 
   & > * {
     min-width: 30px;
@@ -62,6 +67,11 @@ export default class CodeOrderSlotEditor extends Vue {
 
   & > .slot-content {
     flex-grow: 1;
+
+    & .CodeMirror{
+      max-height: 150px!important;
+      height: 150px!important;
+    }
   }
 
   & > .toolbar {

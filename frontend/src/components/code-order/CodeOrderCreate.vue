@@ -31,8 +31,9 @@
         :key="index"
       >
         <CodeOrderSlotEditor
-          :questionSlot="element"
+          :questionSlot.sync="sQuestionDetails.codeOrderSlots[index]"
           :canDelete="sQuestionDetails.codeOrderSlots.length > 3"
+          :language="sQuestionDetails.language"
           v-on:delete-row="removeRow(index)"
           v-on:add-order="addOrderQuestion(element)"
           v-on:remove-order="rmOrderQuestion(element)"

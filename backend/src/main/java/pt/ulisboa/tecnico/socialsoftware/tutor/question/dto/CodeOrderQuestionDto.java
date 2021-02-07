@@ -44,7 +44,7 @@ public class CodeOrderQuestionDto extends QuestionDetailsDto {
 
     @Override
     public String toString() {
-        return "CodeFillInQuestionDto{" +
+        return "CodeOrderQuestionDto{" +
                 "language='" + language + '\'' +
                 ", fillInSpots=" + codeOrderSlots +
                 '}';
@@ -56,7 +56,7 @@ public class CodeOrderQuestionDto extends QuestionDetailsDto {
     }
 
     @Override
-    public void update(CodeFillInQuestion question) {
+    public void update(CodeOrderQuestion question) {
         question.update(this);
     }
 }

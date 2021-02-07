@@ -10,8 +10,7 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-@Table(name = "code_order_slot",
-        uniqueConstraints = @UniqueConstraint(columnNames = {"question_details_id", "correct_order"}))
+@Table(name = "code_order_slot")
 public class CodeOrderSlot implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
