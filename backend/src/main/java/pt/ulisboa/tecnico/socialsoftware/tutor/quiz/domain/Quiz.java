@@ -116,6 +116,10 @@ public class Quiz implements DomainEntity {
     }
 
     public Integer getKey() {
+        return key;
+    }
+
+    public Integer getNonNullKey() {
         if (this.key == null)
             generateKeys();
 

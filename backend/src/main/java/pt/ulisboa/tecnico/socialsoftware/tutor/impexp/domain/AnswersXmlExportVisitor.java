@@ -60,7 +60,12 @@ public class AnswersXmlExportVisitor implements Visitor {
         quizAnswerElement.setAttribute("completed", String.valueOf(quizAnswer.isCompleted()));
 
         Element quizElement = new Element("quiz");
-        quizElement.setAttribute("key", String.valueOf(quizAnswer.getQuiz().getKey()));
+        quizElement.setAttribute("courseName", quizAnswer.getQuiz().getCourseExecution().getCourse().getName());
+        quizElement.setAttribute("courseType", quizAnswer.getQuiz().getCourseExecution().getCourse().getType().name());
+        quizElement.setAttribute("courseExecutionType", quizAnswer.getQuiz().getCourseExecution().getType().name());
+        quizElement.setAttribute("acronym", quizAnswer.getQuiz().getCourseExecution().getAcronym());
+        quizElement.setAttribute("academicTerm", quizAnswer.getQuiz().getCourseExecution().getAcademicTerm());
+        quizElement.setAttribute("key", String.valueOf(quizAnswer.getQuiz().getNonNullKey()));
         quizAnswerElement.addContent(quizElement);
 
         Element userElement = new Element("user");
@@ -84,7 +89,7 @@ public class AnswersXmlExportVisitor implements Visitor {
         questionAnswerElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getSequence()));
 
         Element quizQuestionElement = new Element("quizQuestion");
-        quizQuestionElement.setAttribute("key", String.valueOf(questionAnswer.getQuizQuestion().getQuiz().getKey()));
+        quizQuestionElement.setAttribute("key", String.valueOf(questionAnswer.getQuizQuestion().getQuiz().getNonNullKey()));
         quizQuestionElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getQuizQuestion().getSequence()));
         quizQuestionElement.setAttribute("type", Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION);
         questionAnswerElement.addContent(quizQuestionElement);

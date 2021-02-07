@@ -52,8 +52,6 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
-
-
 @Service
 public class QuizService {
     @SuppressWarnings("unused")
@@ -118,11 +116,6 @@ public class QuizService {
                 .collect(Collectors.toList());
     }
 
-    public Integer getMaxQuizKey() {
-        Integer maxQuizKey = quizRepository.getMaxQuizKey();
-        return maxQuizKey != null ? maxQuizKey : 0;
-    }
-
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
@@ -130,10 +123,6 @@ public class QuizService {
     public QuizDto createQuiz(int executionId, QuizDto quizDto) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
         Quiz quiz = new Quiz(quizDto);
-
-        if (quizDto.getKey() == null) {
-            quizDto.setKey(getMaxQuizKey() + 1);
-        }
 
         if (quizDto.getCreationDate() == null) {
             quiz.setCreationDate(DateHandler.now());
