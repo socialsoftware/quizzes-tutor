@@ -1,7 +1,7 @@
 <template>
   <div class="code-order-create-slot">
     <i class="fa fa-align-justify handle"></i>
-    <div>{{ sQuestionSlot.order }}</div>
+    <div>{{ sQuestionSlot.order + 1 }}</div>
     <v-textarea
       class="slot-content"
       v-model="sQuestionSlot.content"

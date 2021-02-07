@@ -1,7 +1,7 @@
 <template>
   <ul class="code-order-view">
     <li v-for="el in questionDetails.codeOrderSlots" :key="el.id" :class="{'not-used': el.order == null, student: !!answerDetails, correct: !!answerDetails && studentAnswerCorrect(el)}">
-      <b style="padding-right:10px">{{ el.order }}</b>
+      <b style="padding-right:10px">{{ el.order + 1 }}</b>
       <div class="slot-content" v-html="convertMarkDown(el.content)" />
       <div v-if="!answerDetails" v-html="el.order != null? ' ✔ ' :' ✖ '" />
       <div v-if="answerDetails" v-html="studentAnswer(el)" />
