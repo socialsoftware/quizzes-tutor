@@ -21,10 +21,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.CSVQuizExportVisitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuizExportVisitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlExport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuizzesXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -287,9 +284,9 @@ public class QuizService {
             List<Quiz> quizzes = new ArrayList<>();
             quizzes.add(quiz);
 
-            QuizzesXmlExport xmlExport = new QuizzesXmlExport();
-            InputStream in = IOUtils.toInputStream(xmlExport.export(quizzes), StandardCharsets.UTF_8);
-            zos.putNextEntry(new ZipEntry(quizId + ".xml"));
+            CSVQuizExportVisitor csvExport = new CSVQuizExportVisitor();
+            zos.putNextEntry(new ZipEntry(quizId + ".csv"));
+            InputStream in = IOUtils.toInputStream(csvExport.export(quiz, questionAnswerItems), StandardCharsets.UTF_8);
             copyToZipStream(zos, in);
             zos.closeEntry();
 
@@ -299,9 +296,29 @@ public class QuizService {
             copyToZipStream(zos, in);
             zos.closeEntry();
 
-            CSVQuizExportVisitor csvExport = new CSVQuizExportVisitor();
-            zos.putNextEntry(new ZipEntry(quizId + ".csv"));
-            in = IOUtils.toInputStream(csvExport.export(quiz, questionAnswerItems), StandardCharsets.UTF_8);
+            XMLQuestionExportVisitor questionsXmlExport = new XMLQuestionExportVisitor();
+            in = IOUtils.toInputStream(questionsXmlExport.export(
+                    quizzes.get(0).getQuizQuestions().stream()
+                            .map(QuizQuestion::getQuestion)
+                            .collect(Collectors.toList())),
+                    StandardCharsets.UTF_8);
+            zos.putNextEntry(new ZipEntry("questions-" + quizId + ".xml"));
+            copyToZipStream(zos, in);
+            zos.closeEntry();
+
+            QuizzesXmlExport quizzesXmlExport = new QuizzesXmlExport();
+            in = IOUtils.toInputStream(quizzesXmlExport.export(quizzes), StandardCharsets.UTF_8);
+            zos.putNextEntry(new ZipEntry("quiz-" + quizId + ".xml"));
+            copyToZipStream(zos, in);
+            zos.closeEntry();
+
+            AnswersXmlExportVisitor answersXmlExport = new AnswersXmlExportVisitor();
+            in = IOUtils.toInputStream(answersXmlExport.export(
+                    quizzes.get(0).getQuizAnswers().stream()
+                            .sorted(Comparator.comparing(quizAnswer -> quizAnswer.getUser().getId()))
+                            .collect(Collectors.toList())),
+                    StandardCharsets.UTF_8);
+            zos.putNextEntry(new ZipEntry("answers-" + quizId + ".xml"));
             copyToZipStream(zos, in);
             zos.closeEntry();
 
