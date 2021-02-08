@@ -109,7 +109,6 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.TEACHER, false, AuthUser.Type.TECNICO)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         and:
         client.getPersonName() >> USER_1_NAME
@@ -138,7 +137,6 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.TEACHER, false, AuthUser.Type.TECNICO)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         and:
         client.getPersonName() >> USER_1_NAME
@@ -167,7 +165,6 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.TEACHER, false, AuthUser.Type.TECNICO)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -266,7 +263,6 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         and:
         client.getPersonName() >> USER_1_NAME
@@ -293,7 +289,6 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         and:
         client.getPersonName() >> USER_1_NAME
@@ -316,7 +311,6 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -344,7 +338,6 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -367,7 +360,6 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.TEACHER, false, AuthUser.Type.TECNICO)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -394,7 +386,6 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.TEACHER, false, AuthUser.Type.TECNICO)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -422,7 +413,6 @@ class FenixAuthTest extends SpockTest {
         def user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         and:
         client.getPersonName() >> USER_1_NAME

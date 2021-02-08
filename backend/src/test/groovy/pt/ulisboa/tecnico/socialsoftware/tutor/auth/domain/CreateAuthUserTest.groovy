@@ -20,7 +20,6 @@ class CreateAuthUserTest  extends SpockTest {
     def setup() {
         user = new User(USER_1_NAME, User.Role.STUDENT, false)
         userRepository.save(user)
-        user.setKey(user.getId())
     }
 
     @Unroll

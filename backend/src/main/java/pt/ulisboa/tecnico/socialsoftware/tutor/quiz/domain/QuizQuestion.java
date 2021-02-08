@@ -88,7 +88,6 @@ public class QuizQuestion implements DomainEntity {
     public String toString() {
         return "QuizQuestion{" +
                 "id=" + id +
-                ", question=" + question +
                 ", sequence=" + sequence +
                 '}';
     }

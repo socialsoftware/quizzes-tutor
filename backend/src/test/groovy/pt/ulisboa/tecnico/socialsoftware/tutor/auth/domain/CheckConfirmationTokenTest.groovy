@@ -16,7 +16,6 @@ class CheckConfirmationTokenTest extends SpockTest {
     def setup() {
         user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user)
-        user.setKey(user.getId())
     }
 
     def "checkConfirmationToken: correct token and date has not expired" (){

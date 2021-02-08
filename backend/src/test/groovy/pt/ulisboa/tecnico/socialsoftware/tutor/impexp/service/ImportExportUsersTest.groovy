@@ -20,7 +20,6 @@ class ImportExportUsersTest extends SpockTest {
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyOne = user.getId()
-        user.setKey(keyOne)
         AuthUser authUser = user.getAuthUser()
         authUser.setPassword(USER_1_PASSWORD)
         authUser.setLastAccess(LOCAL_DATE_TODAY)
@@ -30,7 +29,6 @@ class ImportExportUsersTest extends SpockTest {
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyTwo = user.getId()
-        user.setKey(keyTwo)
         AuthExternalUser authExternalUser = user.getAuthUser()
         authExternalUser.setPassword(USER_2_PASSWORD)
         authExternalUser.setLastAccess(LOCAL_DATE_TODAY)
@@ -83,13 +81,11 @@ class ImportExportUsersTest extends SpockTest {
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyOne = user.getId()
-        user.setKey(keyOne)
 
         user = new User(USER_2_NAME, User.Role.STUDENT, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyTwo = user.getId()
-        user.setKey(keyTwo)
         and: 'a xml with of users'
         def usersXml = userService.exportUsers()
         and: 'a clean database'

@@ -32,7 +32,6 @@ class GetExternalUserAuthWebServiceIT extends SpockTest {
         user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
         user.addCourse(courseExecution)
         user.getAuthUser().setPassword(passwordEncoder.encode(USER_1_PASSWORD))
-        user.setKey(userRepository.getMaxUserNumber()+1)
         userRepository.save(user)
         courseExecution.addUser(user)
 
