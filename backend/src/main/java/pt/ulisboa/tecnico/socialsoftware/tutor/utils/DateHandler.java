@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.config;
+package pt.ulisboa.tecnico.socialsoftware.tutor.utils;
 
 import java.time.LocalDateTime;
 import java.time.ZoneId;

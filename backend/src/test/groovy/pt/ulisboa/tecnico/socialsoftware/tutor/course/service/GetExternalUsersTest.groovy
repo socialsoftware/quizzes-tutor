@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 
 @DataJpaTest
 class GetExternalUsersTest extends SpockTest {

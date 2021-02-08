@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.auth.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.context.annotation.Bean
@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
 
@@ -54,7 +54,7 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setPassword(USER_1_PASSWORD)
 
         when:
-        def result = authUserServiceApplicational.confirmRegistration(externalUserDto)
+        def result = userServiceApplicational.confirmRegistration(externalUserDto)
 
         then:"the user has a new password and matches"
         passwordEncoder.matches(USER_1_PASSWORD, result.getPassword())
@@ -70,7 +70,7 @@ class ConfirmRegistrationTest extends SpockTest {
         authUser.setActive(true)
 
         when:
-        authUserServiceApplicational.confirmRegistration(externalUserDto)
+        userServiceApplicational.confirmRegistration(externalUserDto)
 
         then:
         def error = thrown(TutorException)
@@ -87,7 +87,7 @@ class ConfirmRegistrationTest extends SpockTest {
         authUser.setTokenGenerationDate(LocalDateTime.now().minusDays(1).minusMinutes(1))
 
         when:
-        def result = authUserServiceApplicational.confirmRegistration(externalUserDto)
+        def result = userServiceApplicational.confirmRegistration(externalUserDto)
 
         then:
         !result.active
@@ -107,7 +107,7 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setPassword(password)
 
         when:
-        authUserServiceApplicational.confirmRegistration(externalUserDto)
+        userServiceApplicational.confirmRegistration(externalUserDto)
 
         then:
         def error = thrown(TutorException)

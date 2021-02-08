@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

@@ -10,7 +10,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserServiceApplicational
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
@@ -19,7 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.StatementService
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
@@ -53,11 +53,6 @@ class BeanConfiguration {
 
     @Value('${spring.mail.properties.mail.debug}')
     private String debug
-
-    @Bean
-    StatementService statementService() {
-        return new StatementService()
-    }
 
     @Bean
     QuizService quizService() {
@@ -102,11 +97,6 @@ class BeanConfiguration {
     @Bean
     AuthUserService authUserService() {
         return new AuthUserService()
-    }
-
-    @Bean
-    AuthUserServiceApplicational authUserServiceApplicational() {
-        return new AuthUserServiceApplicational()
     }
 
     @Bean

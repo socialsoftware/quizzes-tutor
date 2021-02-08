@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.auth.webservice
+package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
 
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CreateExternalUserWebServiceIT extends SpockTest {
+class RegisterExternalUserWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
@@ -29,7 +29,7 @@ class CreateExternalUserWebServiceIT extends SpockTest {
     def "login as demo admin, and create an external user" () {
         when:
         response = restClient.post(
-                path: '/users/create/'+courseExecution1.getId(),
+                path: '/users/register/' + courseExecution1.getId(),
                 body: [
                         admin: false,
                         email: USER_1_EMAIL,

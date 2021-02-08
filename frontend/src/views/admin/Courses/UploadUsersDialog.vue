@@ -70,7 +70,7 @@ export default class UploadUsersDialog extends Vue {
   async uploadUsers(course: Course) {
     try {
       if (course.courseExecutionId != null && this.chosenFile != null) {
-        let updatedCourse = await RemoteServices.uploadCSVFile(
+        let updatedCourse = await RemoteServices.registerExternalUsersCsvFile(
           this.chosenFile,
           course.courseExecutionId
         );

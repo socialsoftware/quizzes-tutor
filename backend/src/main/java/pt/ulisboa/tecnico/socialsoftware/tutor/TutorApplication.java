@@ -10,8 +10,8 @@ import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.StatementService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 
 
@@ -27,7 +27,7 @@ public class TutorApplication extends SpringBootServletInitializer implements In
     }
 
     @Autowired
-    private StatementService statementService;
+    private AnswerService answerService;
 
     @Autowired
     private DemoUtils demoUtils;
@@ -36,7 +36,7 @@ public class TutorApplication extends SpringBootServletInitializer implements In
     public void afterPropertiesSet() {
         // Run on startup
         JwtTokenProvider.generateKeys();
-        statementService.writeQuizAnswersAndCalculateStatistics();
+        answerService.writeQuizAnswersAndCalculateStatistics();
 
         demoUtils.resetDemoInfo();
     }

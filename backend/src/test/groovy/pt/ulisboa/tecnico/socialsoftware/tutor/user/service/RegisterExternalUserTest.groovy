@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.auth.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
@@ -14,12 +14,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
 
 @DataJpaTest
-class CreateExternalUserTest extends SpockTest {
+class RegisterExternalUserTest extends SpockTest {
     def externalUserDto
     def previousNumberUser
 

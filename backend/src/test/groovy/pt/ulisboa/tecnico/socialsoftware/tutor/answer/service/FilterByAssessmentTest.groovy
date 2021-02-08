@@ -96,7 +96,7 @@ class FilterByAssessmentTest extends SpockTest {
         statementCreationDto.assessment = assessmentTopic1.id
 
         when:
-        def result = statementService.filterByAssessment(questionList, statementCreationDto)
+        def result = answerService.filterByAssessment(questionList, statementCreationDto)
 
         then: "the result is question 1 and 5"
         result.size() == 2
@@ -120,7 +120,7 @@ class FilterByAssessmentTest extends SpockTest {
         statementCreationDto.assessment = assessmentTopic1_and_2.id
 
         when:
-        def result = statementService.filterByAssessment(questionList, statementCreationDto)
+        def result = answerService.filterByAssessment(questionList, statementCreationDto)
 
         then: "the result is question 3"
         result.size() == 1
@@ -146,7 +146,7 @@ class FilterByAssessmentTest extends SpockTest {
         statementCreationDto.assessment = assessmentTopic1_or_2.id
 
         when:
-        def result = statementService.filterByAssessment(questionList, statementCreationDto)
+        def result = answerService.filterByAssessment(questionList, statementCreationDto)
 
         then: "the result is question 1, 2 and 5"
         result.size() == 3

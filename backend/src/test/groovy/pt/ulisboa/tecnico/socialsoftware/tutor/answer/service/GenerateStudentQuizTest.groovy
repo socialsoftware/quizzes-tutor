@@ -78,7 +78,7 @@ class GenerateStudentQuizTest extends SpockTest {
         quizForm.setAssessment(assessment.getId())
 
         when:
-        statementService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
+        answerService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
 
         then:
         quizRepository.count() == 1L
@@ -103,7 +103,7 @@ class GenerateStudentQuizTest extends SpockTest {
         quizForm.setAssessment(assessment.getId())
 
         when:
-        statementService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
+        answerService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
 
         then:
         quizRepository.count() == 1L
@@ -126,7 +126,7 @@ class GenerateStudentQuizTest extends SpockTest {
         quizForm.setAssessment(assessment.getId())
 
         when:
-        statementService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
+        answerService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
 
         then:
         TutorException exception = thrown()
@@ -140,7 +140,7 @@ class GenerateStudentQuizTest extends SpockTest {
         quizForm.setNumberOfQuestions(1)
 
         when:
-        statementService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
+        answerService.generateStudentQuiz(user.getId(), externalCourseExecution.getId(), quizForm)
 
         then:
         TutorException exception = thrown()

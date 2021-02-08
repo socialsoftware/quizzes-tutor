@@ -67,7 +67,7 @@ class StartQuizTest extends SpockTest {
         quizQuestionRepository.save(quizQuestion)
 
         when:
-        def statementQuizDto = statementService.startQuiz(user.getId(), quiz.getId())
+        def statementQuizDto = answerService.startQuiz(user.getId(), quiz.getId())
 
         then: 'the return statement contains one quiz'
         statementQuizDto.id != null
@@ -116,7 +116,7 @@ class StartQuizTest extends SpockTest {
         quizQuestionRepository.save(quizQuestion)
 
         when:
-        statementService.startQuiz(user.getId(), quiz.getId())
+        answerService.startQuiz(user.getId(), quiz.getId())
 
         then: 'an exception is thrown'
         def error = thrown(TutorException)
@@ -165,7 +165,7 @@ class StartQuizTest extends SpockTest {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def statementQuizDto = statementService.startQuiz(user.getId(), quiz.getId())
+        def statementQuizDto = answerService.startQuiz(user.getId(), quiz.getId())
 
         then: 'the return statement contains one quiz'
         statementQuizDto.id != null
@@ -224,7 +224,7 @@ class StartQuizTest extends SpockTest {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        statementService.startQuiz(user.getId(), quiz.getId())
+        answerService.startQuiz(user.getId(), quiz.getId())
 
         then: 'an exception is thrown'
         def error = thrown(TutorException)

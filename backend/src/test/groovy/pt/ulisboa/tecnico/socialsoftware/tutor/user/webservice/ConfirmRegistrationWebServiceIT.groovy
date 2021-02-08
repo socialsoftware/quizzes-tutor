@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.auth.webservice
+package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
 
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
@@ -41,7 +41,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest {
 
         when:
         response = restClient.post(
-                path: '/auth/registration/confirm',
+                path: '/users/register/confirm',
                 body: [
                         username: USER_1_EMAIL,
                         password: USER_1_PASSWORD,
@@ -76,7 +76,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest {
 
         when:
         response = restClient.post(
-                path: '/auth/registration/confirm',
+                path: '/users/register/confirm',
                 body: [
                         username: USER_1_EMAIL,
                         password: USER_1_PASSWORD,

@@ -20,17 +20,18 @@ import java.security.Principal;
 import java.util.List;
 
 @RestController
-public class StatementController {
+public class AnswerController {
     private static final Logger logger = LoggerFactory.getLogger(TopicController.class);
+
     @Autowired
-    private StatementService statementService;
+    private AnswerService answerService;
 
     @GetMapping("/executions/{executionId}/quizzes/available")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<QuizDto> getAvailableQuizzes(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return statementService.getAvailableQuizzes(user.getId(), executionId);
+        return answerService.getAvailableQuizzes(user.getId(), executionId);
     }
 
     @PostMapping("/executions/{executionId}/quizzes/generate")
@@ -38,7 +39,7 @@ public class StatementController {
     public StatementQuizDto getNewQuiz(Principal principal, @PathVariable int executionId, @RequestBody StatementCreationDto quizDetails) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return statementService.generateStudentQuiz(user.getId(), executionId, quizDetails);
+        return answerService.generateStudentQuiz(user.getId(), executionId, quizDetails);
     }
 
     @GetMapping("/executions/{executionId}/quizzes/solved")
@@ -46,7 +47,7 @@ public class StatementController {
     public List<SolvedQuizDto> getSolvedQuizzes(Principal principal, @PathVariable int executionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return statementService.getSolvedQuizzes(user.getId(), executionId);
+        return answerService.getSolvedQuizzes(user.getId(), executionId);
     }
 
     @GetMapping("/quizzes/{quizId}/byqrcode")
@@ -54,7 +55,7 @@ public class StatementController {
     public StatementQuizDto getQuizByQRCode(Principal principal, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return statementService.getQuizByQRCode(user.getId(), quizId);
+        return answerService.getQuizByQRCode(user.getId(), quizId);
     }
 
     @PostMapping("/quizzes/{quizId}/submit")
@@ -62,7 +63,7 @@ public class StatementController {
     public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        statementService.submitAnswer(user.getUsername(), quizId, answer);
+        answerService.submitAnswer(user.getUsername(), quizId, answer);
     }
 
     @GetMapping("/quizzes/{quizId}/start")
@@ -70,14 +71,13 @@ public class StatementController {
     public StatementQuizDto startQuiz(Principal principal, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
-        return statementService.startQuiz(user.getId(), quizId);
+        return answerService.startQuiz(user.getId(), quizId);
     }
 
     @PostMapping("/quizzes/{quizId}/conclude")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public List<CorrectAnswerDto> concludeQuiz(Principal principal, @PathVariable int quizId, @RequestBody StatementQuizDto statementQuizDto) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        return statementService.concludeQuiz(statementQuizDto);
+    public List<CorrectAnswerDto> concludeQuiz(@PathVariable int quizId, @RequestBody StatementQuizDto statementQuizDto) {
+        return answerService.concludeQuiz(statementQuizDto);
     }
+
 }

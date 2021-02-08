@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
@@ -48,6 +48,14 @@ public class UserServiceApplicational {
                 });
 
         return courseDtoNotificationResponse;
+    }
+
+    public ExternalUserDto confirmRegistration(ExternalUserDto externalUserDto) {
+        ExternalUserDto user = userService.confirmRegistrationTransactional(externalUserDto);
+        if (!user.isActive()) {
+            sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken());
+        }
+        return user;
     }
 
     public void sendConfirmationEmailTo(String email, String token) {

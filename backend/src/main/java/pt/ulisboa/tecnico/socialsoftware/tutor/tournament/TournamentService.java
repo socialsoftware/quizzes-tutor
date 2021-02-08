@@ -6,7 +6,8 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
@@ -17,7 +18,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.StatementService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementTournamentCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
@@ -51,7 +51,7 @@ public class TournamentService {
     private QuizRepository quizRepository;
 
     @Autowired
-    private StatementService statementService;
+    private AnswerService answerService;
 
     @Autowired
     private TopicRepository topicRepository;
@@ -137,7 +137,7 @@ public class TournamentService {
             createQuiz(tournament);
         }
 
-        return statementService.startQuiz(userId, tournament.getQuiz().getId());
+        return answerService.startQuiz(userId, tournament.getQuiz().getId());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -232,7 +232,7 @@ public class TournamentService {
     private void createQuiz(Tournament tournament) {
         StatementTournamentCreationDto quizForm = new StatementTournamentCreationDto(tournament);
 
-        StatementQuizDto statementQuizDto = statementService.generateTournamentQuiz(tournament.getCreator().getId(),
+        StatementQuizDto statementQuizDto = answerService.generateTournamentQuiz(tournament.getCreator().getId(),
                 tournament.getCourseExecution().getId(), quizForm, tournament);
 
         Quiz quiz = quizRepository.findById(statementQuizDto.getId()).orElse(null);
