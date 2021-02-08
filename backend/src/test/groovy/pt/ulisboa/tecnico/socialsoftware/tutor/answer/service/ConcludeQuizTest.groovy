@@ -4,6 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
@@ -170,8 +171,8 @@ class ConcludeQuizTest extends SpockTest {
         quizAnswer.getQuestionAnswers().contains(questionAnswer)
         questionAnswer.getQuizQuestion() == quizQuestion
         quizQuestion.getQuestionAnswers().contains(questionAnswer)
-        questionAnswer.getAnswerDetails().getOption() == optionOk
-        optionOk.getQuestionAnswers().contains(questionAnswer)
+        ((MultipleChoiceAnswer) questionAnswer.getAnswerDetails()).getOption() == optionOk
+        optionOk.getQuestionAnswers().contains(questionAnswer.getAnswerDetails())
         and: 'the return value is OK'
         correctAnswers.size() == 1
         def correctAnswerDto = correctAnswers.get(0)
