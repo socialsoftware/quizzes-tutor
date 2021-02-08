@@ -25,7 +25,10 @@ public abstract class LatexVisitor implements Visitor {
 
     @Override
     public void visitQuizQuestion(QuizQuestion quizQuestion) {
-        this.result = this.result + "\\q" + quizQuestion.getQuestion().getTitle().replaceAll("\\s+", "") + "\n\n";
+        this.result = this.result
+                + "\\q" + quizQuestion.getQuestion().getTitle().replaceAll("\\s+", "")
+                + convertToAlphabet(quizQuestion.getQuestion().getKey())
+                + "\n\n";
     }
 
     @Override
@@ -33,8 +36,7 @@ public abstract class LatexVisitor implements Visitor {
         this.result = this.result
                 + "\\newcommand{\\q"
                 + question.getTitle().replaceAll("\\s+", "")
-                + "-"
-                + question.getKey()
+                + convertToAlphabet(question.getKey())
                 + "}{\n"
                 + "\\begin{ClosedQuestion}\n";
 
@@ -109,6 +111,18 @@ public abstract class LatexVisitor implements Visitor {
     @Override
     public void visitOption(Option option) {
         this.result = this.result + "\t\\option" + MultipleChoiceQuestion.convertSequenceToLetter(option.getSequence()) + "{" + option.getContent() + "}\n";
+    }
+
+    private String convertToAlphabet(int number) {
+        String result = "";
+        String ALPHABET = "ABCDEFGHIJ";
+        String numberString = String.valueOf(number);
+        for (int i = 0; i < numberString.length(); i++) {
+            int position = Character.getNumericValue(numberString.charAt(i));
+            result = result + ALPHABET.charAt(position);
+        }
+
+        return result;
     }
 
 }
