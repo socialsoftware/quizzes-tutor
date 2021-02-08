@@ -20,10 +20,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExportVis
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.QuizAnswerItemRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuizAnswerItem;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.statement.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswerItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
