@@ -45,7 +45,6 @@ class FilterQuestionsByStudentModelTest extends SpockTest {
 
         user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         availableQuestions = [questionOne, questionTwo, questionThree, questionFour, questionFive, questionSix]
     }

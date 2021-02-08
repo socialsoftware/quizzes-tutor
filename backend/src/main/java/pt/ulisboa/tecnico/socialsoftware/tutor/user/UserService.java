@@ -96,7 +96,6 @@ public class UserService {
     public User createUser(String name, User.Role role) {
         User user = new User(name, role, false);
         userRepository.save(user);
-        user.setKey(user.getId());
         return user;
     }
 
@@ -108,7 +107,6 @@ public class UserService {
 
         User user = new User(name, username, email, role, false, type);
         userRepository.save(user);
-        user.setKey(user.getId());
         return user.getAuthUser();
     }
 
@@ -251,7 +249,6 @@ public class UserService {
                             externalUserDto.getEmail(), externalUserDto.getEmail(),
                             externalUserDto.getRole(), false, AuthUser.Type.EXTERNAL);
                     userRepository.save(user);
-                    user.setKey(user.getId());
                     return user.getAuthUser();
                 });
     }

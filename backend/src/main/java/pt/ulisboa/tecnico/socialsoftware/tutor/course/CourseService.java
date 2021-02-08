@@ -167,7 +167,7 @@ public class CourseService {
         }
         return courseExecution.getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
-                .sorted(Comparator.comparing(User::getKey))
+                .sorted(Comparator.comparing(User::getName))
                 .map(StudentDto::new)
                 .collect(Collectors.toList());
     }

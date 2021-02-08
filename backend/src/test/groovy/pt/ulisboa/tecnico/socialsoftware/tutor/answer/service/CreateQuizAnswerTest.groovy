@@ -16,7 +16,6 @@ class CreateQuizAnswerTest extends SpockTest {
         User user = new User(USER_1_NAME, User.Role.STUDENT, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         Quiz quiz = new Quiz()
         quiz.setKey(1)

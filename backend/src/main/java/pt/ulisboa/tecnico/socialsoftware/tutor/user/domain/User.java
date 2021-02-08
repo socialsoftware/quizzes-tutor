@@ -108,6 +108,9 @@ public class User implements DomainEntity {
     }
 
     public Integer getKey() {
+        if (this.key == null) {
+            this.key = this.id;
+        }
         return key;
     }
 

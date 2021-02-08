@@ -58,7 +58,6 @@ class TournamentTest extends SpockTest {
         def user = new User(name, username, email, role, false, AuthUser.Type.EXTERNAL)
         user.addCourse(courseExecution)
         userRepository.save(user)
-        user.setKey(user.getId())
 
         return user
     }

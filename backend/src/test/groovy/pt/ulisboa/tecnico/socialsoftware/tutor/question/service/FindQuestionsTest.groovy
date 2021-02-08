@@ -25,7 +25,6 @@ class FindQuestionsTest extends SpockTest {
 
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
-        user.setKey(user.getId())
     }
 
     def "create a question with image and two options and a quiz questions with two answers"() {
