@@ -1,11 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.time.Duration;

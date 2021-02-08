@@ -29,10 +29,12 @@ export default class CodeOrderAnswerDetails extends AnswerDetails {
     let correctAnswer = questionDetails.codeOrderSlots.length;
     for (const key in questionDetails.codeOrderSlots) {
       let correct = questionDetails.codeOrderSlots[key];
-      if (!this.orderedSlots[key] && correct.order != null){
+      if (!this.orderedSlots[key] && correct.order != null) {
         correctAnswer -= 1;
-      }
-      else if (correct.order != null && correct.id != this.orderedSlots[key].slotId) {
+      } else if (
+        correct.order != null &&
+        correct.id != this.orderedSlots[key].slotId
+      ) {
         correctAnswer -= 1;
       }
     }

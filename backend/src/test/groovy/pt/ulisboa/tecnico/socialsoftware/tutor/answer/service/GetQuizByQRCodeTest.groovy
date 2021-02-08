@@ -64,7 +64,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quizQuestionRepository.save(quizQuestion)
 
         when:
-        def statementQuizDto = statementService.getQuizByQRCode(user.getId(), quiz.getId())
+        def statementQuizDto = answerService.getQuizByQRCode(user.getId(), quiz.getId())
 
         then: 'the return statement contains one quiz'
         statementQuizDto.id != null
@@ -110,7 +110,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quizQuestionRepository.save(quizQuestion)
 
         when:
-        def statementQuizDto = statementService.getQuizByQRCode(user.getId(), quiz.getId())
+        def statementQuizDto = answerService.getQuizByQRCode(user.getId(), quiz.getId())
 
         then: 'the returns statement with time to availability'
         statementQuizDto.timeToAvailability != null
@@ -146,7 +146,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quizQuestionRepository.save(quizQuestion)
 
         when:
-        statementService.getQuizByQRCode(user.getId(), quiz.getId())
+        answerService.getQuizByQRCode(user.getId(), quiz.getId())
 
         then: 'an exception is thrown'
         def error = thrown(TutorException)
@@ -189,7 +189,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def statementQuizDto = statementService.getQuizByQRCode(user.getId(), quiz.getId())
+        def statementQuizDto = answerService.getQuizByQRCode(user.getId(), quiz.getId())
 
         then: 'the return statement contains one quiz'
         statementQuizDto.id != null
@@ -241,7 +241,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def statementQuizDto = statementService.getQuizByQRCode(user.getId(), quiz.getId())
+        def statementQuizDto = answerService.getQuizByQRCode(user.getId(), quiz.getId())
 
         then: 'the returns statement with time to availability'
         statementQuizDto.timeToAvailability != null
@@ -282,7 +282,7 @@ class GetQuizByQRCodeTest extends SpockTest {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        statementService.getQuizByQRCode(user.getId(), quiz.getId())
+        answerService.getQuizByQRCode(user.getId(), quiz.getId())
 
         then: 'an exception is thrown'
         def error = thrown(TutorException)

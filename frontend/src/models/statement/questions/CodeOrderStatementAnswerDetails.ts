@@ -22,11 +22,13 @@ export default class CodeOrderStatementAnswerDetails extends StatementAnswerDeta
   ): boolean {
     for (const key in correctAnswerDetails.correctOrder) {
       let correct = correctAnswerDetails.correctOrder[key];
-      if (!this.orderedSlots[key] && correct.order != null){
+      if (!this.orderedSlots[key] && correct.order != null) {
         return false;
-      }
-      else if (correct.order != null && correct.slotId != this.orderedSlots[key].slotId) {
-        return false;        
+      } else if (
+        correct.order != null &&
+        correct.slotId != this.orderedSlots[key].slotId
+      ) {
+        return false;
       }
     }
     return true;

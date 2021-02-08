@@ -55,6 +55,7 @@ httpClient.interceptors.response.use(
 );
 
 export default class RemoteServices {
+  // AuthUser Controller
   static async fenixLogin(code: string): Promise<AuthDto> {
     return httpClient
       .get(`/auth/fenix?code=${code}`)
@@ -113,14 +114,35 @@ export default class RemoteServices {
       });
   }
 
-  static async createExternalUser(
+  // User Controller
+  static async registerExternalUser(
     executionId: number,
     externalUser: ExternalUser
   ): Promise<ExternalUser> {
     return httpClient
-      .post(`/users/create/${executionId}`, externalUser)
+      .post(`/users/register/${executionId}`, externalUser)
       .then(response => {
         return new ExternalUser(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async registerExternalUsersCsvFile(
+    file: File,
+    executionId: number
+  ): Promise<Course> {
+    let formData = new FormData();
+    formData.append('file', file);
+    return httpClient
+      .post(`/users/register/${executionId}/csv`, formData, {
+        headers: {
+          'Content-Type': 'multipart/form-data'
+        }
+      })
+      .then(response => {
+        return new Course(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
@@ -131,7 +153,7 @@ export default class RemoteServices {
     externalUser: ExternalUser
   ): Promise<ExternalUser> {
     return httpClient
-      .post('/auth/registration/confirm', externalUser)
+      .post('/users/register/confirm', externalUser)
       .then(response => {
         return new ExternalUser(response.data);
       })
@@ -140,6 +162,7 @@ export default class RemoteServices {
       });
   }
 
+  // Statistics Controller
   static async getUserStats(): Promise<StudentStats> {
     return httpClient
       .get(
@@ -153,6 +176,7 @@ export default class RemoteServices {
       });
   }
 
+  // Questions Controller
   static async getQuestions(): Promise<Question[]> {
     return httpClient
       .get(`/courses/${Store.getters.getCurrentCourse.courseId}/questions`)
@@ -887,23 +911,6 @@ export default class RemoteServices {
         );
         document.body.appendChild(link);
         link.click();
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async uploadCSVFile(file: File, executionId: number): Promise<Course> {
-    let formData = new FormData();
-    formData.append('file', file);
-    return httpClient
-      .post(`/courses/executions/${executionId}/csv`, formData, {
-        headers: {
-          'Content-Type': 'multipart/form-data'
-        }
-      })
-      .then(response => {
-        return new Course(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

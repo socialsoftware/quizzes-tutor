@@ -1,14 +1,10 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.auth.api;
+package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserServiceApplicational;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.FenixEduInterface;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_LOGIN_CREDENTIALS;
 
@@ -16,9 +12,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 public class AuthController {
     @Autowired
     private AuthUserService authUserService;
-
-    @Autowired
-    private AuthUserServiceApplicational authUserServiceApplicational;
 
     @Value("${base.url}")
     private String baseUrl;
@@ -63,9 +56,4 @@ public class AuthController {
         return this.authUserService.demoAdminAuth();
     }
 
-    @PostMapping("/auth/registration/confirm")
-    public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto){
-        ExternalUserDto user = authUserServiceApplicational.confirmRegistration(externalUserDto);
-        return user;
-    }
 }

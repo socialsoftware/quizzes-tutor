@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;

@@ -5,11 +5,17 @@
       <div
         v-for="(el, index) in answerDetails.orderedSlots"
         :key="index"
-        :class="{correct: isCorrect(el, index)}"
+        :class="{ correct: isCorrect(el, index) }"
       >
         <span class="order" v-html="el.order" />
-        <span class="content" v-html="convertMarkDown(slotById(el.slotId).content)" />
-        <span class="is-correct" v-html="isCorrect(el, index) ? ' ✔ ' :' ✖ '" />
+        <span
+          class="content"
+          v-html="convertMarkDown(slotById(el.slotId).content)"
+        />
+        <span
+          class="is-correct"
+          v-html="isCorrect(el, index) ? ' ✔ ' : ' ✖ '"
+        />
       </div>
     </div>
     <div class="code-order-answer-correct">
@@ -17,9 +23,12 @@
       <div
         v-for="(el, index) in correctAnswerDetails.correctOrder"
         :key="index"
-        :class="{'not-used': el.order == null}"
+        :class="{ 'not-used': el.order == null }"
       >
-        <span class="content" v-html="convertMarkDown(slotById(el.slotId).content)"/>
+        <span
+          class="content"
+          v-html="convertMarkDown(slotById(el.slotId).content)"
+        />
       </div>
     </div>
   </div>
@@ -43,11 +52,11 @@ export default class CodeOrderAnswerResult extends Vue {
   @Prop(CodeOrderStatementCorrectAnswerDetails)
   readonly correctAnswerDetails!: CodeOrderStatementCorrectAnswerDetails;
 
-  slotById(slotId:number){
+  slotById(slotId: number) {
     return this.questionDetails.orderSlots.find(x => x.id == slotId);
   }
 
-  isCorrect(element: CodeOrderSlotStatementAnswerDetails, index:number){
+  isCorrect(element: CodeOrderSlotStatementAnswerDetails, index: number) {
     let correctPlaced = this.correctAnswerDetails.correctOrder[index];
     return element.slotId == correctPlaced.slotId;
   }
@@ -55,7 +64,6 @@ export default class CodeOrderAnswerResult extends Vue {
   convertMarkDown(text: string, image: Image | null = null): string {
     return convertMarkDown(text, image);
   }
-
 }
 </script>
 

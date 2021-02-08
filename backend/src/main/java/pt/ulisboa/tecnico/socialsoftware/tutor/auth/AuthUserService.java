@@ -8,23 +8,20 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.Demo;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthUserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -214,51 +211,25 @@ public class AuthUserService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public ExternalUserDto confirmRegistrationTransactional(ExternalUserDto externalUserDto) {
-        AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findAuthUserByUsername(externalUserDto.getUsername()).orElse(null);
-
-        if (authUser == null) {
-            throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
-        }
-
-        if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty()) {
-            throw new TutorException(INVALID_PASSWORD);
-        }
-
-        try {
-            authUser.confirmRegistration(passwordEncoder, externalUserDto.getConfirmationToken(),
-                    externalUserDto.getPassword());
-        }
-        catch (TutorException e) {
-            if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
-                authUser.generateConfirmationToken();
-            }
-            else throw new TutorException(e.getErrorMessage());
-        }
-
-        return new ExternalUserDto(authUser);
-    }
-
     private AuthUser getDemoTeacher() {
-        return authUserRepository.findAuthUserByUsername(Demo.TEACHER_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Teacher", Demo.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.DEMO);
+        return authUserRepository.findAuthUserByUsername(DemoUtils.TEACHER_USERNAME).orElseGet(() -> {
+            AuthUser authUser = userService.createUserWithAuth("Demo Teacher", DemoUtils.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
             return authUser;
         });
     }
 
     private AuthUser getDemoStudent() {
-        return authUserRepository.findAuthUserByUsername(Demo.STUDENT_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Student", Demo.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
+        return authUserRepository.findAuthUserByUsername(DemoUtils.STUDENT_USERNAME).orElseGet(() -> {
+            AuthUser authUser = userService.createUserWithAuth("Demo Student", DemoUtils.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
             return authUser;
         });
     }
 
     private AuthUser getDemoAdmin() {
-        return authUserRepository.findAuthUserByUsername(Demo.ADMIN_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Admin", Demo.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.DEMO);
+        return authUserRepository.findAuthUserByUsername(DemoUtils.ADMIN_USERNAME).orElseGet(() -> {
+            AuthUser authUser = userService.createUserWithAuth("Demo Admin", DemoUtils.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseService.getDemoCourseExecution());
             return authUser;
         });

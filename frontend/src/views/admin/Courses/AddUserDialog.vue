@@ -95,7 +95,7 @@ export default class AddUserDialog extends Vue {
       return;
 
     try {
-      user = await RemoteServices.createExternalUser(
+      user = await RemoteServices.registerExternalUser(
         this.course.courseExecutionId as number,
         this.user
       );

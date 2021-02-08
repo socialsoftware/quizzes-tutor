@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto;
+package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;

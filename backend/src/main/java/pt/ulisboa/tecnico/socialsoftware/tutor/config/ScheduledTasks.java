@@ -3,8 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.config;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.ImpExpService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.StatementService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 
 @Component
@@ -16,7 +16,7 @@ public class ScheduledTasks {
 	private DemoUtils demoUtils;
 
 	@Autowired
-	private StatementService statementService;
+	private AnswerService answerService;
 
 	@Scheduled(cron = "0 0 3,13 * * *")
 	public void exportAll() {
@@ -25,7 +25,7 @@ public class ScheduledTasks {
 
 	@Scheduled(cron = "0 0 2 * * *")
 	public void writeQuizAnswersAndCalculateStatistics() {
-		statementService.writeQuizAnswersAndCalculateStatistics();
+		answerService.writeQuizAnswersAndCalculateStatistics();
 	}
 
 	@Scheduled(cron = "0 0 1 * * *")

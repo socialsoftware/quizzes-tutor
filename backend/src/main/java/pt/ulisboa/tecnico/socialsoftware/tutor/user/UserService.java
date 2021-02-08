@@ -28,7 +28,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
@@ -235,6 +235,32 @@ public class UserService {
 
         authUser.getUser().addCourse(courseExecution);
         authUser.generateConfirmationToken();
+        return new ExternalUserDto(authUser);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public ExternalUserDto confirmRegistrationTransactional(ExternalUserDto externalUserDto) {
+        AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findAuthUserByUsername(externalUserDto.getUsername()).orElse(null);
+
+        if (authUser == null) {
+            throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
+        }
+
+        if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty()) {
+            throw new TutorException(INVALID_PASSWORD);
+        }
+
+        try {
+            authUser.confirmRegistration(passwordEncoder, externalUserDto.getConfirmationToken(),
+                    externalUserDto.getPassword());
+        }
+        catch (TutorException e) {
+            if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
+                authUser.generateConfirmationToken();
+            }
+            else throw new TutorException(e.getErrorMessage());
+        }
+
         return new ExternalUserDto(authUser);
     }
 

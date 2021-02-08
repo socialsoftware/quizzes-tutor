@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
 
 import java.io.Serializable;

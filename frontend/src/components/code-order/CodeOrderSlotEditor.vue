@@ -1,7 +1,9 @@
 <template>
   <div class="code-order-create-slot">
     <i class="fa fa-align-justify handle"></i>
-    <div>{{ sQuestionSlot.order == null ? null : sQuestionSlot.order + 1 }}</div>
+    <div>
+      {{ sQuestionSlot.order == null ? null : sQuestionSlot.order + 1 }}
+    </div>
     <BaseCodeEditor
       class="slot-content"
       ref="codeEditor"
@@ -38,7 +40,7 @@ import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
 @Component({
   components: {
-    BaseCodeEditor,
+    BaseCodeEditor
   }
 })
 export default class CodeOrderSlotEditor extends Vue {
@@ -47,7 +49,7 @@ export default class CodeOrderSlotEditor extends Vue {
   @Prop({ default: false })
   readonly canDelete!: boolean;
   @Prop()
-  readonly language!: string;  
+  readonly language!: string;
 }
 </script>
 
@@ -68,9 +70,9 @@ export default class CodeOrderSlotEditor extends Vue {
   & > .slot-content {
     flex-grow: 1;
 
-    & .CodeMirror{
-      max-height: 150px!important;
-      height: 150px!important;
+    & .CodeMirror {
+      max-height: 150px !important;
+      height: 150px !important;
     }
   }
 

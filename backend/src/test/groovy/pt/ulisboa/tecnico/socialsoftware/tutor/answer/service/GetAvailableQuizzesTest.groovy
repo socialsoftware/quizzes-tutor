@@ -41,7 +41,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizRepository.save(quiz)
 
         when:
-        def quizDtos = statementService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
+        def quizDtos = answerService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
 
         then: 'the return statement contains one quiz'
         quizDtos.size() == 1
@@ -77,7 +77,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizRepository.save(quiz)
 
         when:
-        def quizDtos = statementService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
+        def quizDtos = answerService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
 
         then: 'no quiz is returned'
         quizDtos.size() == 0
@@ -118,7 +118,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizAnswerRepository.save(quizAnswer)
 
         when:
-        def quizDtos = statementService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
+        def quizDtos = answerService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
 
         then: 'the return statement contains one quiz'
         quizDtos.size() == 1
@@ -158,7 +158,7 @@ class GetAvailableQuizzesTest extends SpockTest {
         quizAnswer.setCreationDate(creationDate)
         quizAnswerRepository.save(quizAnswer)
         when:
-        def quizDtos = statementService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
+        def quizDtos = answerService.getAvailableQuizzes(user.getId(), externalCourseExecution.getId())
 
         then: 'no quiz is returned'
         quizDtos.size() == 0

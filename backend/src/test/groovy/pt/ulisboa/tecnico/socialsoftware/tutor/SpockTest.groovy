@@ -9,8 +9,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRe
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserServiceApplicational
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.DateHandler
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository
@@ -33,7 +33,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.StatementService
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
@@ -144,9 +144,6 @@ class SpockTest extends Specification {
     AuthUserService authUserService
 
     @Autowired
-    AuthUserServiceApplicational authUserServiceApplicational
-
-    @Autowired
     AnswerService answerService
 
     @Autowired
@@ -202,9 +199,6 @@ class SpockTest extends Specification {
 
     @Autowired
     QuizService quizService
-
-    @Autowired
-    StatementService statementService
 
     @Autowired
     TopicConjunctionRepository topicConjunctionRepository

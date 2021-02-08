@@ -82,7 +82,7 @@ export default class BaseCodeEditor extends Vue {
       mode: { name: 'mustache', backdrop: this.languageCode },
       theme: 'eclipse',
       lineNumbers: true,
-      dragDrop: false,
+      dragDrop: false
     };
   }
   get languageCode() {
