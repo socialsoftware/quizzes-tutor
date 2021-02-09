@@ -9,11 +9,11 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
@@ -37,7 +37,7 @@ public class AuthUserService {
     private UserService userService;
 
     @Autowired
-    private CourseService courseService;
+    private CourseExecutionService courseExecutionService;
 
     @Autowired
     private AuthUserRepository authUserRepository;
@@ -79,15 +79,15 @@ public class AuthUserService {
     private void refreshFenixAuthUserInfo(FenixEduInterface fenix, AuthTecnicoUser authUser) {
         authUser.setEmail(fenix.getPersonEmail());
         if (authUser.getUser().isTeacher()) {
-            List<CourseDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();
+            List<CourseExecutionDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();
             updateTeacherCourses(authUser, fenixTeachingCourses);
         } else {
-            List<CourseDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
+            List<CourseExecutionDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
             updateStudentCourses(authUser, fenixAttendingCourses);
         }
     }
 
-    private void updateTeacherCourses(AuthTecnicoUser authUser, List<CourseDto> fenixTeachingCourses) {
+    private void updateTeacherCourses(AuthTecnicoUser authUser, List<CourseExecutionDto> fenixTeachingCourses) {
         List<CourseExecution> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
         if (!fenixTeachingCourses.isEmpty() && authUser.getUser().isTeacher()) {
             User teacher = authUser.getUser();
@@ -104,7 +104,7 @@ public class AuthUserService {
         }
     }
 
-    private void updateStudentCourses(AuthTecnicoUser authUser, List<CourseDto> fenixAttendingCourses) {
+    private void updateStudentCourses(AuthTecnicoUser authUser, List<CourseExecutionDto> fenixAttendingCourses) {
         List<CourseExecution> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
         if (!activeAttendingCourses.isEmpty() && authUser.getUser().isStudent()) {
             User student = authUser.getUser();
@@ -116,8 +116,8 @@ public class AuthUserService {
     }
 
     private AuthTecnicoUser createAuthUser(FenixEduInterface fenix, String username) {
-        List<CourseDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
-        List<CourseDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();
+        List<CourseExecutionDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
+        List<CourseExecutionDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();
 
         List<CourseExecution> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
 
@@ -201,7 +201,7 @@ public class AuthUserService {
         return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
     }
 
-    private List<CourseExecution> getActiveTecnicoCourses(List<CourseDto> courses) {
+    private List<CourseExecution> getActiveTecnicoCourses(List<CourseExecutionDto> courses) {
         return courses.stream()
                 .map(courseDto ->  {
                     return courseExecutionRepository.findByFields(courseDto.getAcronym(),courseDto.getAcademicTerm(), Course.Type.TECNICO.name())
@@ -214,7 +214,7 @@ public class AuthUserService {
     private AuthUser getDemoTeacher() {
         return authUserRepository.findAuthUserByUsername(DemoUtils.TEACHER_USERNAME).orElseGet(() -> {
             AuthUser authUser = userService.createUserWithAuth("Demo Teacher", DemoUtils.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.DEMO);
-            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
+            authUser.getUser().addCourse(courseExecutionService.getDemoCourseExecution());
             return authUser;
         });
     }
@@ -222,7 +222,7 @@ public class AuthUserService {
     private AuthUser getDemoStudent() {
         return authUserRepository.findAuthUserByUsername(DemoUtils.STUDENT_USERNAME).orElseGet(() -> {
             AuthUser authUser = userService.createUserWithAuth("Demo Student", DemoUtils.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
-            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
+            authUser.getUser().addCourse(courseExecutionService.getDemoCourseExecution());
             return authUser;
         });
     }
@@ -230,7 +230,7 @@ public class AuthUserService {
     private AuthUser getDemoAdmin() {
         return authUserRepository.findAuthUserByUsername(DemoUtils.ADMIN_USERNAME).orElseGet(() -> {
             AuthUser authUser = userService.createUserWithAuth("Demo Admin", DemoUtils.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.DEMO);
-            authUser.getUser().addCourse(courseService.getDemoCourseExecution());
+            authUser.getUser().addCourse(courseExecutionService.getDemoCourseExecution());
             return authUser;
         });
     }

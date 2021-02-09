@@ -15,10 +15,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.*;
@@ -84,7 +84,7 @@ public class QuizService {
     private QuestionService questionService;
 
     @Autowired
-    private CourseService courseService;
+    private CourseExecutionService courseExecutionService;
 
 
     @Retryable(
@@ -382,7 +382,7 @@ public class QuizService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoQuizzes() {
-        quizRepository.findQuizzesOfExecution(courseService.getDemoCourse().getCourseExecutionId())
+        quizRepository.findQuizzesOfExecution(courseExecutionService.getDemoCourse().getCourseExecutionId())
                 .stream()
                 .sorted(Comparator.comparing(Quiz::getId))
                 .skip(2)
@@ -404,7 +404,7 @@ public class QuizService {
                 });
 
         // remove questions that weren't in any quiz and are not submitted
-        for (Question question : questionRepository.findQuestions(courseService.getDemoCourse().getCourseId())
+        for (Question question : questionRepository.findQuestions(courseExecutionService.getDemoCourse().getCourseId())
                 .stream()
                 .filter(question -> question.getQuizQuestions().isEmpty() && questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId()) == null)
                 .collect(Collectors.toList())) {

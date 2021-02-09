@@ -329,7 +329,9 @@ export default class CoursesView extends Vue {
   async deleteCourse(courseToDelete: Course) {
     if (confirm('Are you sure you want to delete this course execution?')) {
       try {
-        await RemoteServices.deleteCourse(courseToDelete.courseExecutionId);
+        await RemoteServices.deleteCourseExecution(
+          courseToDelete.courseExecutionId
+        );
         this.courses = this.courses.filter(
           course => course.courseExecutionId != courseToDelete.courseExecutionId
         );

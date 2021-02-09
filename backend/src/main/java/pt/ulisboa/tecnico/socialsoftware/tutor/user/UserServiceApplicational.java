@@ -6,7 +6,7 @@ import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.LinkHandler;
@@ -36,8 +36,8 @@ public class UserServiceApplicational {
         return user;
     }
 
-    public NotificationResponse<CourseDto> registerListOfUsers(InputStream stream, int courseExecutionId) {
-        NotificationResponse<CourseDto> courseDtoNotificationResponse = userService.registerListOfUsersTransactional(stream, courseExecutionId);
+    public NotificationResponse<CourseExecutionDto> registerListOfUsers(InputStream stream, int courseExecutionId) {
+        NotificationResponse<CourseExecutionDto> courseDtoNotificationResponse = userService.registerListOfUsersTransactional(stream, courseExecutionId);
 
         courseDtoNotificationResponse.getResponse().getCourseExecutionUsers()
                 .stream()

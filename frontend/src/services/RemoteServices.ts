@@ -56,6 +56,7 @@ httpClient.interceptors.response.use(
 
 export default class RemoteServices {
   // AuthUser Controller
+
   static async fenixLogin(code: string): Promise<AuthDto> {
     return httpClient
       .get(`/auth/fenix?code=${code}`)
@@ -115,6 +116,7 @@ export default class RemoteServices {
   }
 
   // User Controller
+
   static async registerExternalUser(
     executionId: number,
     externalUser: ExternalUser
@@ -163,6 +165,7 @@ export default class RemoteServices {
   }
 
   // Statistics Controller
+
   static async getUserStats(): Promise<StudentStats> {
     return httpClient
       .get(
@@ -177,6 +180,7 @@ export default class RemoteServices {
   }
 
   // Questions Controller
+
   static async getQuestions(): Promise<Question[]> {
     return httpClient
       .get(`/courses/${Store.getters.getCurrentCourse.courseId}/questions`)
@@ -254,14 +258,6 @@ export default class RemoteServices {
     });
   }
 
-  static async deleteSubmittedQuestion(questionSubmissionId: number) {
-    return httpClient
-      .delete(`/submissions/${questionSubmissionId}`)
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
   static async setQuestionStatus(
     questionId: number,
     status: String
@@ -297,15 +293,7 @@ export default class RemoteServices {
     return httpClient.put(`/questions/${questionId}/topics`, topics);
   }
 
-  static async updateQuestionSubmissionTopics(
-    questionSubmissionId: number,
-    topics: Topic[]
-  ) {
-    return httpClient.put(
-      `/submissions/${questionSubmissionId}/topics`,
-      topics
-    );
-  }
+  // Topics Controller
 
   static async getTopics(): Promise<Topic[]> {
     return httpClient
@@ -320,10 +308,152 @@ export default class RemoteServices {
       });
   }
 
-  static async getTournamentTopics(): Promise<Topic[]> {
+  static async createTopic(topic: Topic): Promise<Topic> {
+    return httpClient
+      .post(
+        `/courses/${Store.getters.getCurrentCourse.courseId}/topics/`,
+        topic
+      )
+      .then(response => {
+        return new Topic(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateTopic(topic: Topic): Promise<Topic> {
+    return httpClient
+      .put(`/topics/${topic.id}`, topic)
+      .then(response => {
+        return new Topic(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteTopic(topic: Topic) {
+    return httpClient.delete(`/topics/${topic.id}`).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
+  }
+
+  static async getTopicQuestions(topicId: number): Promise<Question[]> {
+    return httpClient
+      .get(`/topics/${topicId}/questions`)
+      .then(response => {
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // CourseExecution Controller
+
+  static getCourses(): Promise<Course[]> {
+    return httpClient
+      .get('/executions')
+      .then(response => {
+        return response.data.map((course: any) => {
+          return new Course(course);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createExternalCourse(course: Course): Promise<Course> {
+    return httpClient
+      .post('/executions/external', course)
+      .then(response => {
+        return new Course(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteCourseExecution(courseExecutionId: number | undefined) {
+    return httpClient
+      .delete(`/executions/${courseExecutionId}`)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async activateCourseExecution(course: Course): Promise<Course> {
+    return httpClient
+      .post('/executions/activate', course)
+      .then(response => {
+        return new Course(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async anonymizeCourse(courseExecutionId: number | undefined) {
+    return httpClient
+      .get(`/executions/${courseExecutionId}/anonymize`)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getCourseStudents(course: Course) {
+    return httpClient
+      .get(`/executions/${course.courseExecutionId}/students`)
+      .then(response => {
+        return response.data.map((student: any) => {
+          return new Student(student);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteExternalInactiveUsers(
+    courseExecution: Course,
+    userIdList: number[]
+  ): Promise<Course> {
+    return httpClient
+      .post(
+        `/executions/${courseExecution.courseExecutionId}/users/delete`,
+        userIdList
+      )
+      .then(response => {
+        return new Course(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async exportCourseExecutionInfo(executionId: number): Promise<Blob> {
+    return httpClient
+      .get(`/executions/${executionId}/export`, {
+        responseType: 'blob'
+      })
+      .then(response => {
+        return new Blob([response.data], {
+          type: 'application/tar.gz, application/octet-stream'
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAvailableTopicsByCourseExecution(): Promise<Topic[]> {
     return httpClient
       .get(
-        `/courses/${Store.getters.getCurrentCourse.courseId}/${Store.getters.getCurrentCourse.courseExecutionId}/available`
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/topics/available`
       )
       .then(response => {
         return response.data.map((topic: any) => {
@@ -334,6 +464,104 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
+  // Assessment Controller
+
+  static async getAssessments(): Promise<Assessment[]> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments`
+      )
+      .then(response => {
+        return response.data.map((assessment: any) => {
+          return new Assessment(assessment);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAvailableAssessments() {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments/available`
+      )
+      .then(response => {
+        return response.data.map((assessment: any) => {
+          return new Assessment(assessment);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async saveAssessment(assessment: Assessment) {
+    if (assessment.id) {
+      return httpClient
+        .put(`/assessments/${assessment.id}`, assessment)
+        .then(response => {
+          return new Assessment(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+    } else {
+      return httpClient
+        .post(
+          `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments`,
+          assessment
+        )
+        .then(response => {
+          return new Assessment(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+    }
+  }
+
+  static async deleteAssessment(assessmentId: number) {
+    return httpClient
+      .delete(`/assessments/${assessmentId}`)
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async setAssessmentStatus(
+    assessmentId: number,
+    status: string
+  ): Promise<Assessment> {
+    return httpClient
+      .post(`/assessments/${assessmentId}/set-status`, status, {
+        headers: {
+          'Content-Type': 'text/html'
+        }
+      })
+      .then(response => {
+        return new Assessment(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getAssessmentQuestions(assessmentId: number) {
+    return httpClient
+      .get(`/assessments/${assessmentId}/questions`)
+      .then(response => {
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Quiz Controller
 
   static async getAvailableQuizzes(): Promise<StatementQuiz[]> {
     return httpClient
@@ -440,50 +668,6 @@ export default class RemoteServices {
       });
   }
 
-  static async createTopic(topic: Topic): Promise<Topic> {
-    return httpClient
-      .post(
-        `/courses/${Store.getters.getCurrentCourse.courseId}/topics/`,
-        topic
-      )
-      .then(response => {
-        return new Topic(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async getTopicQuestions(topicId: number): Promise<Question[]> {
-    return httpClient
-      .get(`/topics/${topicId}/questions`)
-      .then(response => {
-        return response.data.map((question: any) => {
-          return new Question(question);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async updateTopic(topic: Topic): Promise<Topic> {
-    return httpClient
-      .put(`/topics/${topic.id}`, topic)
-      .then(response => {
-        return new Topic(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async deleteTopic(topic: Topic) {
-    return httpClient.delete(`/topics/${topic.id}`).catch(async error => {
-      throw Error(await this.errorMessage(error));
-    });
-  }
-
   static async getNonGeneratedQuizzes(): Promise<Quiz[]> {
     return httpClient
       .get(
@@ -574,196 +758,6 @@ export default class RemoteServices {
       });
   }
 
-  static async getCourseStudents(course: Course) {
-    return httpClient
-      .get(`/executions/${course.courseExecutionId}/students`)
-      .then(response => {
-        return response.data.map((student: any) => {
-          return new Student(student);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async getExternalUsers(
-    courseExecutionId: number
-  ): Promise<ExternalUser[]> {
-    return httpClient
-      .get(`/executions/${courseExecutionId}/users/external`)
-      .then(response => {
-        return response.data.map((user: any) => {
-          return new ExternalUser(user);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async deleteExternalInactiveUsers(
-    courseExecution: Course,
-    userIdList: number[]
-  ): Promise<Course> {
-    return httpClient
-      .post(
-        `/executions/${courseExecution.courseExecutionId}/users/delete/`,
-        userIdList
-      )
-      .then(response => {
-        return new Course(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async getAssessments(): Promise<Assessment[]> {
-    return httpClient
-      .get(
-        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments`
-      )
-      .then(response => {
-        return response.data.map((assessment: any) => {
-          return new Assessment(assessment);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async getAvailableAssessments() {
-    return httpClient
-      .get(
-        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments/available`
-      )
-      .then(response => {
-        return response.data.map((assessment: any) => {
-          return new Assessment(assessment);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async saveAssessment(assessment: Assessment) {
-    if (assessment.id) {
-      return httpClient
-        .put(`/assessments/${assessment.id}`, assessment)
-        .then(response => {
-          return new Assessment(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
-    } else {
-      return httpClient
-        .post(
-          `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments`,
-          assessment
-        )
-        .then(response => {
-          return new Assessment(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
-    }
-  }
-
-  static async getAssessmentQuestions(assessmentId: number) {
-    return httpClient
-      .get(`/assessments/${assessmentId}/questions`)
-      .then(response => {
-        return response.data.map((question: any) => {
-          return new Question(question);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async deleteAssessment(assessmentId: number) {
-    return httpClient
-      .delete(`/assessments/${assessmentId}`)
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async setAssessmentStatus(
-    assessmentId: number,
-    status: string
-  ): Promise<Assessment> {
-    return httpClient
-      .post(`/assessments/${assessmentId}/set-status`, status, {
-        headers: {
-          'Content-Type': 'text/html'
-        }
-      })
-      .then(response => {
-        return new Assessment(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static getCourses(): Promise<Course[]> {
-    return httpClient
-      .get('/courses/executions')
-      .then(response => {
-        return response.data.map((course: any) => {
-          return new Course(course);
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async activateCourse(course: Course): Promise<Course> {
-    return httpClient
-      .post('/courses/activate', course)
-      .then(response => {
-        return new Course(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async createExternalCourse(course: Course): Promise<Course> {
-    return httpClient
-      .post('/courses/external', course)
-      .then(response => {
-        return new Course(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async deleteCourse(courseExecutionId: number | undefined) {
-    return httpClient
-      .delete(`/executions/${courseExecutionId}`)
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async anonymizeCourse(courseExecutionId: number | undefined) {
-    return httpClient
-      .get(`/executions/${courseExecutionId}/anonymize`)
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
   static async createQuestionSubmission(
     questionSubmission: QuestionSubmission
   ): Promise<QuestionSubmission> {
@@ -775,6 +769,24 @@ export default class RemoteServices {
       .then(response => {
         return new QuestionSubmission(response.data);
       })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateQuestionSubmissionTopics(
+    questionSubmissionId: number,
+    topics: Topic[]
+  ) {
+    return httpClient.put(
+      `/submissions/${questionSubmissionId}/topics`,
+      topics
+    );
+  }
+
+  static async deleteSubmittedQuestion(questionSubmissionId: number) {
+    return httpClient
+      .delete(`/submissions/${questionSubmissionId}`)
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
@@ -911,21 +923,6 @@ export default class RemoteServices {
         );
         document.body.appendChild(link);
         link.click();
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async exportCourseExecutionInfo(executionId: number): Promise<Blob> {
-    return httpClient
-      .get(`/executions/${executionId}/export`, {
-        responseType: 'blob'
-      })
-      .then(response => {
-        return new Blob([response.data], {
-          type: 'application/tar.gz, application/octet-stream'
-        });
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

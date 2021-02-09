@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 
@@ -17,7 +17,7 @@ public class ExternalUserDto implements Serializable {
     private User.Role role;
     private boolean active;
     private boolean isAdmin;
-    private List<CourseDto> courseExecutions;
+    private List<CourseExecutionDto> courseExecutions;
     private String confirmationToken;
 
     public ExternalUserDto(){ }
@@ -124,11 +124,11 @@ public class ExternalUserDto implements Serializable {
         isAdmin = admin;
     }
 
-    public List<CourseDto> getCourseExecutions() {
+    public List<CourseExecutionDto> getCourseExecutions() {
         return courseExecutions;
     }
 
-    public void setCourseExecutions(List<CourseDto> courseExecutions) {
+    public void setCourseExecutions(List<CourseExecutionDto> courseExecutions) {
         this.courseExecutions = courseExecutions;
     }
 

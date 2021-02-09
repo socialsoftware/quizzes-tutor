@@ -9,18 +9,18 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRe
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.AssessmentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Languages
@@ -162,7 +162,7 @@ class SpockTest extends Specification {
     CourseRepository courseRepository
 
     @Autowired
-    CourseService courseService
+    CourseExecutionService courseService
 
     @Autowired
     ImageRepository imageRepository

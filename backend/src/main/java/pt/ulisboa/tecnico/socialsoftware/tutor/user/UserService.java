@@ -10,14 +10,14 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
@@ -60,7 +60,7 @@ public class UserService {
     private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
-    private CourseService courseService;
+    private CourseExecutionService courseExecutionService;
 
     @Autowired
     private AnswerService answerService;
@@ -134,7 +134,7 @@ public class UserService {
     public AuthUser createDemoStudent() {
         String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
         AuthUser authUser = createUserWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
-        CourseExecution courseExecution = courseService.getDemoCourseExecution();
+        CourseExecution courseExecution = courseExecutionService.getDemoCourseExecution();
         if (courseExecution != null) {
             courseExecution.addUser(authUser.getUser());
             authUser.getUser().addCourse(courseExecution);
@@ -165,15 +165,15 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED)
-    public NotificationResponse<CourseDto> registerListOfUsersTransactional(InputStream stream, int courseExecutionId) {
+    public NotificationResponse<CourseExecutionDto> registerListOfUsersTransactional(InputStream stream, int courseExecutionId) {
         Notification notification = new Notification();
         extractUserDtos(stream, notification).forEach(userDto -> registerExternalUserTransactional(courseExecutionId, userDto));
 
-        CourseDto courseDto = courseExecutionRepository.findById(courseExecutionId)
-                .map(CourseDto::new)
+        CourseExecutionDto courseExecutionDto = courseExecutionRepository.findById(courseExecutionId)
+                .map(CourseExecutionDto::new)
                 .get();
 
-        return new NotificationResponse<>(notification, courseDto);
+        return new NotificationResponse<>(notification, courseExecutionDto);
     }
 
     private List<ExternalUserDto> extractUserDtos(InputStream stream, Notification notification) {
