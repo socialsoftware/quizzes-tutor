@@ -563,6 +563,113 @@ export default class RemoteServices {
 
   // Quiz Controller
 
+  static async getNonGeneratedQuizzes(): Promise<Quiz[]> {
+    return httpClient
+      .get(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/non-generated`
+      )
+      .then(response => {
+        return response.data.map((quiz: any) => {
+          return new Quiz(quiz);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getQuiz(quizId: number): Promise<Quiz> {
+    return httpClient
+      .get(`/quizzes/${quizId}`)
+      .then(response => {
+        return new Quiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async saveQuiz(quiz: Quiz): Promise<Quiz> {
+    if (quiz.id) {
+      return httpClient
+        .put(`/quizzes/${quiz.id}`, quiz)
+        .then(response => {
+          return new Quiz(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+    } else {
+      return httpClient
+        .post(
+          `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes`,
+          quiz
+        )
+        .then(response => {
+          return new Quiz(response.data);
+        })
+        .catch(async error => {
+          throw Error(await this.errorMessage(error));
+        });
+    }
+  }
+
+  static async deleteQuiz(quizId: number) {
+    return httpClient.delete(`/quizzes/${quizId}`).catch(async error => {
+      throw Error(await this.errorMessage(error));
+    });
+  }
+
+  static async exportQuiz(quizId: number): Promise<Blob> {
+    return httpClient
+      .get(`/quizzes/${quizId}/export`, {
+        responseType: 'blob'
+      })
+      .then(response => {
+        return new Blob([response.data], {
+          type: 'application/zip, application/octet-stream'
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async populateWithQuizAnswers(quizId: number): Promise<Quiz> {
+    return httpClient
+      .post(`/quizzes/${quizId}/populate`)
+      .then(response => {
+        return new Quiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async removeNonAnsweredQuizAnswers(quizId: number): Promise<Quiz> {
+    return httpClient
+      .post(`/quizzes/${quizId}/unpopulate`)
+      .then(response => {
+        return new Quiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getQuizAnswers(quizId: number): Promise<QuizAnswers> {
+    return httpClient
+      .get(`/quizzes/${quizId}/answers`)
+      .then(response => {
+        return new QuizAnswers(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Answer Controller
+
   static async getAvailableQuizzes(): Promise<StatementQuiz[]> {
     return httpClient
       .get(
@@ -618,21 +725,6 @@ export default class RemoteServices {
       });
   }
 
-  static async exportQuiz(quizId: number): Promise<Blob> {
-    return httpClient
-      .get(`/quizzes/${quizId}/export`, {
-        responseType: 'blob'
-      })
-      .then(response => {
-        return new Blob([response.data], {
-          type: 'application/zip, application/octet-stream'
-        });
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
   static async startQuiz(quizId: number): Promise<StatementQuiz> {
     return httpClient
       .get(`/quizzes/${quizId}/start`)
@@ -668,95 +760,32 @@ export default class RemoteServices {
       });
   }
 
-  static async getNonGeneratedQuizzes(): Promise<Quiz[]> {
+  // ImportExport Controller
+
+  static async exportAll() {
     return httpClient
-      .get(
-        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/non-generated`
-      )
+      .get('/admin/export', {
+        timeout: 1000000,
+        responseType: 'blob'
+      })
       .then(response => {
-        return response.data.map((quiz: any) => {
-          return new Quiz(quiz);
-        });
+        const url = window.URL.createObjectURL(new Blob([response.data]));
+        const link = document.createElement('a');
+        link.href = url;
+        let dateTime = new Date();
+        link.setAttribute(
+          'download',
+          `export-${dateTime.toLocaleString()}.zip`
+        );
+        document.body.appendChild(link);
+        link.click();
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
   }
 
-  static async deleteQuiz(quizId: number) {
-    return httpClient.delete(`/quizzes/${quizId}`).catch(async error => {
-      throw Error(await this.errorMessage(error));
-    });
-  }
-
-  static async getQuiz(quizId: number): Promise<Quiz> {
-    return httpClient
-      .get(`/quizzes/${quizId}`)
-      .then(response => {
-        return new Quiz(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async getQuizAnswers(quizId: number): Promise<QuizAnswers> {
-    return httpClient
-      .get(`/quizzes/${quizId}/answers`)
-      .then(response => {
-        return new QuizAnswers(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async saveQuiz(quiz: Quiz): Promise<Quiz> {
-    if (quiz.id) {
-      return httpClient
-        .put(`/quizzes/${quiz.id}`, quiz)
-        .then(response => {
-          return new Quiz(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
-    } else {
-      return httpClient
-        .post(
-          `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes`,
-          quiz
-        )
-        .then(response => {
-          return new Quiz(response.data);
-        })
-        .catch(async error => {
-          throw Error(await this.errorMessage(error));
-        });
-    }
-  }
-
-  static async removeNonAnsweredQuizAnswers(quizId: number): Promise<Quiz> {
-    return httpClient
-      .post(`/quizzes/${quizId}/unpopulate`)
-      .then(response => {
-        return new Quiz(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async populateWithQuizAnswers(quizId: number): Promise<Quiz> {
-    return httpClient
-      .post(`/quizzes/${quizId}/populate`)
-      .then(response => {
-        return new Quiz(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
+  // Question Submission Controller
 
   static async createQuestionSubmission(
     questionSubmission: QuestionSubmission
@@ -774,14 +803,17 @@ export default class RemoteServices {
       });
   }
 
-  static async updateQuestionSubmissionTopics(
-    questionSubmissionId: number,
-    topics: Topic[]
-  ) {
-    return httpClient.put(
-      `/submissions/${questionSubmissionId}/topics`,
-      topics
-    );
+  static async updateQuestionSubmission(
+    questionSubmission: QuestionSubmission
+  ): Promise<QuestionSubmission> {
+    return httpClient
+      .put(`/submissions/${questionSubmission.id}`, questionSubmission)
+      .then(response => {
+        return new QuestionSubmission(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async deleteSubmittedQuestion(questionSubmissionId: number) {
@@ -803,17 +835,14 @@ export default class RemoteServices {
       });
   }
 
-  static async updateQuestionSubmission(
-    questionSubmission: QuestionSubmission
-  ): Promise<QuestionSubmission> {
-    return httpClient
-      .put(`/submissions/${questionSubmission.id}`, questionSubmission)
-      .then(response => {
-        return new QuestionSubmission(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
+  static async updateQuestionSubmissionTopics(
+    questionSubmissionId: number,
+    topics: Topic[]
+  ) {
+    return httpClient.put(
+      `/submissions/${questionSubmissionId}/topics`,
+      topics
+    );
   }
 
   static async getStudentQuestionSubmissions(): Promise<QuestionSubmission[]> {
@@ -906,44 +935,7 @@ export default class RemoteServices {
       });
   }
 
-  static async exportAll() {
-    return httpClient
-      .get('/admin/export', {
-        timeout: 1000000,
-        responseType: 'blob'
-      })
-      .then(response => {
-        const url = window.URL.createObjectURL(new Blob([response.data]));
-        const link = document.createElement('a');
-        link.href = url;
-        let dateTime = new Date();
-        link.setAttribute(
-          'download',
-          `export-${dateTime.toLocaleString()}.zip`
-        );
-        document.body.appendChild(link);
-        link.click();
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async errorMessage(error: any): Promise<string> {
-    if (error.message === 'Network Error') {
-      return 'Unable to connect to server';
-    } else if (error.message.split(' ')[0] === 'timeout') {
-      return 'Request timeout - Server took too long to respond';
-    } else if (error.response) {
-      return error.response.data.message;
-    } else if (error.message === 'Request failed with status code 403') {
-      await Store.dispatch('logout');
-      return 'Unauthorized access or Expired token';
-    } else {
-      console.log(error);
-      return 'Unknown Error - Contact admin';
-    }
-  }
+  // Tournament Controller
 
   static async createTournament(
     topicsId: Number[],
@@ -1095,16 +1087,7 @@ export default class RemoteServices {
       });
   }
 
-  static async addReply(reply: Reply, discussionId: number): Promise<Reply> {
-    return httpClient
-      .post('/discussions/' + discussionId + '/replies/add', reply)
-      .then(response => {
-        return new Reply(response.data);
-      })
-      .catch(async error => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
+  // Discussion Controller
 
   static async getCourseExecutionDiscussions(): Promise<Discussion[]> {
     return httpClient
@@ -1175,6 +1158,17 @@ export default class RemoteServices {
       });
   }
 
+  static async addReply(reply: Reply, discussionId: number): Promise<Reply> {
+    return httpClient
+      .post('/discussions/' + discussionId + '/replies/add', reply)
+      .then(response => {
+        return new Reply(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async changeReplyAvailability(id: number): Promise<Discussion> {
     return httpClient
       .put('/discussions/replies/' + id + '/availability')
@@ -1201,5 +1195,23 @@ export default class RemoteServices {
       .catch(async error => {
         throw Error(await this.errorMessage(error));
       });
+  }
+
+  // Error
+
+  static async errorMessage(error: any): Promise<string> {
+    if (error.message === 'Network Error') {
+      return 'Unable to connect to server';
+    } else if (error.message.split(' ')[0] === 'timeout') {
+      return 'Request timeout - Server took too long to respond';
+    } else if (error.response) {
+      return error.response.data.message;
+    } else if (error.message === 'Request failed with status code 403') {
+      await Store.dispatch('logout');
+      return 'Unauthorized access or Expired token';
+    } else {
+      console.log(error);
+      return 'Unknown Error - Contact admin';
+    }
   }
 }

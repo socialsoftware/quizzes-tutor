@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.assessment.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.execution.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
