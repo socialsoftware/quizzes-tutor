@@ -6,11 +6,11 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlImport;
@@ -22,7 +22,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 import java.sql.SQLException;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -36,7 +35,7 @@ public class TopicService {
     private QuestionService questionService;
 
     @Autowired
-    private CourseService courseService;
+    private CourseExecutionService courseExecutionService;
 
     @Autowired
     private CourseRepository courseRepository;
@@ -54,16 +53,6 @@ public class TopicService {
     public List<TopicDto> findTopics(int courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         return topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<TopicDto> findAvailableTopicsByCourseExecution(int courseExecutionId) {
-        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
-
-        return courseExecution.findAvailableTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -104,7 +93,6 @@ public class TopicService {
         return new TopicDto(topic);
     }
 
-
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
@@ -142,7 +130,7 @@ public class TopicService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoTopics() {
-        this.topicRepository.findTopics(courseService.getDemoCourse().getCourseId())
+        this.topicRepository.findTopics(courseExecutionService.getDemoCourse().getCourseId())
                 .stream()
                 .skip(5)
                 .forEach(topic -> this.topicRepository.delete(topic));

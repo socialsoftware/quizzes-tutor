@@ -125,7 +125,7 @@ export default class CourseSelectionView extends Vue {
     try {
       if (this.selectedCourse) {
         this.selectedCourse.status = 'ACTIVE';
-        this.selectedCourse = await RemoteServices.activateCourse(
+        this.selectedCourse = await RemoteServices.activateCourseExecution(
           this.selectedCourse
         );
         await this.$store.dispatch('currentCourse', this.selectedCourse);

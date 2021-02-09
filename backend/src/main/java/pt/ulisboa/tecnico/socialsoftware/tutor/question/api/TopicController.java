@@ -26,23 +26,12 @@ public class TopicController {
         return this.topicService.findTopics(courseId);
     }
 
-    @GetMapping("/courses/{courseId}/{courseExecutionId}/available")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseId, 'COURSE.ACCESS')")
-    public List<TopicDto> getAvailableTopicsByCourseExecution(@PathVariable int courseId, @PathVariable int courseExecutionId) {
-        return this.topicService.findAvailableTopicsByCourseExecution(courseExecutionId);
-    }
-
-    @GetMapping("/topics/{topicId}/questions")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#topicId, 'TOPIC.ACCESS')")
-    public List<QuestionDto> getTopicQuestions(@PathVariable Integer topicId) {
-        return this.topicService.getTopicQuestions(topicId);
-    }
-
     @PostMapping(value = "/courses/{courseId}/topics")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public TopicDto createTopic(@PathVariable int courseId, @Valid @RequestBody TopicDto topicDto) {
         return this.topicService.createTopic(courseId, topicDto);
     }
+
 
     @PutMapping(value = "/topics/{topicId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#topicId, 'TOPIC.ACCESS')")
@@ -54,5 +43,11 @@ public class TopicController {
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#topicId, 'TOPIC.ACCESS')")
     public void removeTopic(@PathVariable Integer topicId) {
         topicService.removeTopic(topicId);
+    }
+
+    @GetMapping("/topics/{topicId}/questions")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#topicId, 'TOPIC.ACCESS')")
+    public List<QuestionDto> getTopicQuestions(@PathVariable Integer topicId) {
+        return this.topicService.getTopicQuestions(topicId);
     }
 }

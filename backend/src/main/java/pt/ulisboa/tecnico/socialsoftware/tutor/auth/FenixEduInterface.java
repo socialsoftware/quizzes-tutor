@@ -8,7 +8,7 @@ import org.fenixedu.sdk.FenixEduClientImpl;
 import org.fenixedu.sdk.FenixEduUserDetails;
 import org.fenixedu.sdk.exception.FenixEduClientException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 
 import java.time.LocalDateTime;
@@ -81,14 +81,14 @@ public class FenixEduInterface {
         return client.getPersonCourses(userDetails.getAuthorization(), currentYear);
     }
 
-    public List<CourseDto> getPersonAttendingCourses() {
+    public List<CourseExecutionDto> getPersonAttendingCourses() {
         if (courses == null) {
             courses = getPersonCourses();
         }
         return getCourses(API_ATTENDING);
     }
 
-    public List<CourseDto> getPersonTeachingCourses() {
+    public List<CourseExecutionDto> getPersonTeachingCourses() {
         if (courses == null) {
             courses = getPersonCourses();
         }
@@ -118,11 +118,11 @@ public class FenixEduInterface {
         return DateHandler.toISOString(lastDate);
     }
 
-    private List<CourseDto> getCourses(String type) {
+    private List<CourseExecutionDto> getCourses(String type) {
         JsonArray coursesJson = courses.get(type).getAsJsonArray();
-        List<CourseDto> result = new ArrayList<>();
+        List<CourseExecutionDto> result = new ArrayList<>();
         for (JsonElement courseJson : coursesJson) {
-            CourseDto course = new CourseDto(courseJson.getAsJsonObject().get(API_COURSE_NAME).getAsString(),
+            CourseExecutionDto course = new CourseExecutionDto(courseJson.getAsJsonObject().get(API_COURSE_NAME).getAsString(),
                     courseJson.getAsJsonObject().get(API_COURSE_ACRONYM).getAsString(),
                     courseJson.getAsJsonObject().get(API_COURSE_ACADEMIC_TERM).getAsString());
             if (type.equals(API_TEACHING)) {

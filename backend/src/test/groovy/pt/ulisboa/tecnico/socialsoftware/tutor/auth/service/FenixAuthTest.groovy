@@ -6,7 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.FenixEduInterface
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
@@ -26,10 +26,10 @@ class FenixAuthTest extends SpockTest {
         client = Mock(FenixEduInterface)
 
         courses = new ArrayList<>()
-        def courseDto = new CourseDto(COURSE_1_NAME, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM)
+        def courseDto = new CourseExecutionDto(COURSE_1_NAME, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM)
         courseDto.setEndDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         courses.add(courseDto)
-        courseDto = new CourseDto("Tópicos Avançados em Engenharia de Software", "TAES", COURSE_1_ACADEMIC_TERM)
+        courseDto = new CourseExecutionDto("Tópicos Avançados em Engenharia de Software", "TAES", COURSE_1_ACADEMIC_TERM)
         courseDto.setEndDate(DateHandler.toISOString(LOCAL_DATE_TODAY))
         courses.add(courseDto)
 

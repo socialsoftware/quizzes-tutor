@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.dto.CourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 
@@ -20,7 +20,7 @@ public class AuthUserDto implements Serializable {
     private String email;
     private User.Role role;
     private boolean admin;
-    private Map<String, List<CourseDto>> courses;
+    private Map<String, List<CourseExecutionDto>> courses;
 
     public AuthUserDto(AuthUser authUser) {
         this.id = authUser.getUser().getId();
@@ -33,7 +33,7 @@ public class AuthUserDto implements Serializable {
         this.courses = getActiveAndInactiveCourses(authUser.getUser(), new ArrayList<>());
     }
 
-    public AuthUserDto(AuthUser authUser, List<CourseDto> currentCourses) {
+    public AuthUserDto(AuthUser authUser, List<CourseExecutionDto> currentCourses) {
         this.id = authUser.getUser().getId();
         this.key = authUser.getUser().getKey();
         this.name = authUser.getUser().getName();
@@ -88,11 +88,11 @@ public class AuthUserDto implements Serializable {
         this.admin = admin;
     }
 
-    public Map<String, List<CourseDto>> getCourses() {
+    public Map<String, List<CourseExecutionDto>> getCourses() {
         return courses;
     }
 
-    public void setCourses(Map<String, List<CourseDto>> courses) {
+    public void setCourses(Map<String, List<CourseExecutionDto>> courses) {
         this.courses = courses;
     }
 
@@ -104,8 +104,8 @@ public class AuthUserDto implements Serializable {
         this.email = email;
     }
 
-    private Map<String, List<CourseDto>> getActiveAndInactiveCourses(User user, List<CourseDto> courses) {
-        List<CourseDto> courseExecutions = user.getCourseExecutions().stream().map(CourseDto::new).collect(Collectors.toList());
+    private Map<String, List<CourseExecutionDto>> getActiveAndInactiveCourses(User user, List<CourseExecutionDto> courses) {
+        List<CourseExecutionDto> courseExecutions = user.getCourseExecutions().stream().map(CourseExecutionDto::new).collect(Collectors.toList());
         courses.stream()
                 .forEach(courseDto -> {
                     if (courseExecutions.stream().noneMatch(c -> c.getAcronym().equals(courseDto.getAcronym()) && c.getAcademicTerm().equals(courseDto.getAcademicTerm()))) {
@@ -116,8 +116,8 @@ public class AuthUserDto implements Serializable {
                     }
                 });
 
-        return courseExecutions.stream().sorted(Comparator.comparing(CourseDto::getName).thenComparing(CourseDto::getAcademicTerm).reversed())
-                .collect(Collectors.groupingBy(CourseDto::getName,
+        return courseExecutions.stream().sorted(Comparator.comparing(CourseExecutionDto::getName).thenComparing(CourseExecutionDto::getAcademicTerm).reversed())
+                .collect(Collectors.groupingBy(CourseExecutionDto::getName,
                         Collectors.mapping(courseDto -> courseDto, Collectors.toList())));
     }
 }

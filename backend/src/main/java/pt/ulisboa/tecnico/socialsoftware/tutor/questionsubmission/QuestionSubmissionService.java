@@ -6,10 +6,10 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.repository.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.course.CourseService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -40,7 +40,7 @@ public class QuestionSubmissionService {
     private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
-    private CourseService courseService;
+    private CourseExecutionService courseExecutionService;
 
     @Autowired
     private UserRepository userRepository;
@@ -203,7 +203,7 @@ public class QuestionSubmissionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoQuestionSubmissions() {
-        questionSubmissionRepository.findQuestionSubmissionsByCourseExecution(courseService.getDemoCourse().getCourseExecutionId())
+        questionSubmissionRepository.findQuestionSubmissionsByCourseExecution(courseExecutionService.getDemoCourse().getCourseExecutionId())
                 .forEach(this::deleteQuestionSubmission);
     }
 
