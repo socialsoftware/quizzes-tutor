@@ -28,12 +28,6 @@ public class QuestionSubmissionController {
         return questionSubmissionService.createQuestionSubmission(questionSubmissionDto);
     }
 
-    @PostMapping("/submissions/{questionSubmissionId}/reviews")
-    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionSubmissionId,'SUBMISSION.ACCESS')")
-    public ReviewDto createReview(@PathVariable int questionSubmissionId, @Valid @RequestBody ReviewDto reviewDto) {
-        return questionSubmissionService.createReview(reviewDto);
-    }
-
     @PutMapping("/submissions/{questionSubmissionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
     public QuestionSubmissionDto updateQuestionSubmission(@PathVariable int questionSubmissionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
@@ -44,6 +38,12 @@ public class QuestionSubmissionController {
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
     public void removeSubmittedQuestion(@PathVariable Integer questionSubmissionId) {
         questionSubmissionService.removeSubmittedQuestion(questionSubmissionId);
+    }
+
+    @PostMapping("/submissions/{questionSubmissionId}/reviews")
+    @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionSubmissionId,'SUBMISSION.ACCESS')")
+    public ReviewDto createReview(@PathVariable int questionSubmissionId, @Valid @RequestBody ReviewDto reviewDto) {
+        return questionSubmissionService.createReview(reviewDto);
     }
 
     @PutMapping("/submissions/{questionSubmissionId}/topics")

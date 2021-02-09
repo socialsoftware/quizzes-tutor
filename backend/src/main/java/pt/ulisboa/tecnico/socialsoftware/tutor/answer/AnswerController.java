@@ -58,20 +58,20 @@ public class AnswerController {
         return answerService.getQuizByQRCode(user.getId(), quizId);
     }
 
-    @PostMapping("/quizzes/{quizId}/submit")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
-        User user = (User) ((Authentication) principal).getPrincipal();
-
-        answerService.submitAnswer(user.getUsername(), quizId, answer);
-    }
-
     @GetMapping("/quizzes/{quizId}/start")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuizDto startQuiz(Principal principal, @PathVariable int quizId) {
         User user = (User) ((Authentication) principal).getPrincipal();
 
         return answerService.startQuiz(user.getId(), quizId);
+    }
+
+    @PostMapping("/quizzes/{quizId}/submit")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
+        User user = (User) ((Authentication) principal).getPrincipal();
+
+        answerService.submitAnswer(user.getUsername(), quizId, answer);
     }
 
     @PostMapping("/quizzes/{quizId}/conclude")

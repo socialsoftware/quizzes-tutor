@@ -32,40 +32,22 @@ public class QuizController {
         return quizService.findNonGeneratedQuizzes(executionId);
     }
 
-    @PostMapping("/executions/{executionId}/quizzes")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public QuizDto createQuiz(@PathVariable int executionId, @Valid @RequestBody QuizDto quiz) {
-        return this.quizService.createQuiz(executionId, quiz);
-    }
-
     @GetMapping("/quizzes/{quizId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public QuizDto getQuiz(@PathVariable Integer quizId) {
         return this.quizService.findById(quizId);
     }
 
+    @PostMapping("/executions/{executionId}/quizzes")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public QuizDto createQuiz(@PathVariable int executionId, @Valid @RequestBody QuizDto quiz) {
+        return this.quizService.createQuiz(executionId, quiz);
+    }
+
     @PutMapping("/quizzes/{quizId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public QuizDto updateQuiz(@PathVariable Integer quizId, @Valid @RequestBody QuizDto quiz) {
         return this.quizService.updateQuiz(quizId, quiz);
-    }
-
-    @PostMapping("/quizzes/{quizId}/populate")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public QuizDto populateWithQuizAnswers(@PathVariable Integer quizId) {
-        return this.quizService.populateWithQuizAnswers(quizId);
-    }
-
-    @PostMapping("/quizzes/{quizId}/write")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public void writeQuizAnswers(@PathVariable Integer quizId) {
-        this.answerService.writeQuizAnswers(quizId);
-    }
-
-    @PostMapping("/quizzes/{quizId}/unpopulate")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public QuizDto removeNonFilledQuizAnswers(@PathVariable Integer quizId) {
-        return this.quizService.removeNonFilledQuizAnswers(quizId);
     }
 
     @DeleteMapping("/quizzes/{quizId}")
@@ -86,10 +68,29 @@ public class QuizController {
         response.flushBuffer();
     }
 
+    @PostMapping("/quizzes/{quizId}/populate")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public QuizDto populateWithQuizAnswers(@PathVariable Integer quizId) {
+        return this.quizService.populateWithQuizAnswers(quizId);
+    }
+
+    @PostMapping("/quizzes/{quizId}/unpopulate")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public QuizDto removeNonFilledQuizAnswers(@PathVariable Integer quizId) {
+        return this.quizService.removeNonFilledQuizAnswers(quizId);
+    }
+
     @GetMapping("/quizzes/{quizId}/answers")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public QuizAnswersDto getQuizAnswers(@PathVariable Integer quizId) {
         answerService.writeQuizAnswers(quizId);
         return this.quizService.getQuizAnswers(quizId);
+    }
+
+    // only used from JMeter test
+    @PostMapping("/quizzes/{quizId}/write")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public void writeQuizAnswers(@PathVariable Integer quizId) {
+        this.answerService.writeQuizAnswers(quizId);
     }
 }
