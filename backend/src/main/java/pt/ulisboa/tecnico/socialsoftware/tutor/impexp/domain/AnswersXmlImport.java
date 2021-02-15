@@ -29,6 +29,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionDetai
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -60,7 +61,7 @@ public class AnswersXmlImport {
     private AnswerDetailsRepository answerDetailsRepository;
 
     @Autowired
-    private UserService userService;
+    private UserRepository userRepository;
 
     @Autowired
     private OptionRepository optionRepository;
@@ -151,7 +152,7 @@ public class AnswersXmlImport {
                         "quiz id does not exist " + quizKey));
 
         Integer key = Integer.valueOf(answerElement.getChild("user").getAttributeValue("key"));
-        User user = userService.findByKey(key);
+        User user = userRepository.findByKey(key).orElse(null);
 
         QuizAnswerDto quizAnswerDto = answerService.createQuizAnswer(user.getId(), quiz.getId());
         QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerDto.getId())

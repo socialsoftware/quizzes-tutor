@@ -40,7 +40,7 @@ class ImportUsersTest extends SpockTest {
         then:
         userRepository.findAll().size() == usersInDataBase + NUMBER_OF_USERS_IN_FILE
         and: "a mail was sent for each user"
-        NUMBER_OF_USERS_IN_FILE * mailerMock.sendSimpleMail(mailerUsername,_, userService.PASSWORD_CONFIRMATION_MAIL_SUBJECT,_)
+        NUMBER_OF_USERS_IN_FILE * mailerMock.sendSimpleMail(mailerUsername,_, Mailer.QUIZZES_TUTOR_SUBJECT + userService.PASSWORD_CONFIRMATION_MAIL_SUBJECT,_)
     }
 
     def 'Csv file has wrong format on some lines, no users are added' () {

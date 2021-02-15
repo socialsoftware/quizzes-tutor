@@ -65,7 +65,7 @@ public class UsersXmlImport {
 		for (Element element : xp.evaluate(doc)) {
 			Integer key = Integer.valueOf(element.getAttributeValue("key"));
 
-			if (userService.findByKey(key) == null) {
+			if (!userService.existsUserWithKey(key)) {
 				User user;
 				if (element.getChild("authUsers") != null) {
 					user = importUserWithAuth(element);

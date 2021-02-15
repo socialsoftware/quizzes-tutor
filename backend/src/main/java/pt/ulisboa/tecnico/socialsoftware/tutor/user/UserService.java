@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
@@ -24,6 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
@@ -63,30 +65,14 @@ public class UserService {
     private CourseExecutionService courseExecutionService;
 
     @Autowired
-    private AnswerService answerService;
-
-     @Autowired
-     public AuthUserService authUserService;
+    public AuthUserService authUserService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
-    @Autowired
-    private Mailer mailer;
-
-    @Autowired
-    private DiscussionService discussionService;
-
-    @Value("${spring.mail.username}")
-    private String mailUsername;
-
     public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-    public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Quiz-Tutor Password Confirmation";
+    public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Password Confirmation";
     public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
-
-    public User findByKey(Integer key) {
-        return this.userRepository.findByKey(key).orElse(null);
-    }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User createUser(String name, User.Role role) {
@@ -262,6 +248,27 @@ public class UserService {
         }
 
         return new ExternalUserDto(authUser);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public UserDto findUserByUsername(String username) {
+        return  authUserRepository.findAuthUserByUsername(username)
+                    .filter(authUser -> authUser.getUser() != null)
+                    .map(authUser -> new UserDto(authUser.getUser()))
+                    .orElse(null);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public UserDto findUserById(Integer id) {
+        return  userRepository.findById(id)
+                .filter(user -> user != null)
+                .map(user -> new UserDto(user))
+                .orElse(null);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public boolean existsUserWithKey(Integer key) {
+        return userRepository.findByKey(key).isPresent();
     }
 
     private AuthExternalUser getOrCreateUser(ExternalUserDto externalUserDto) {

@@ -1,5 +1,7 @@
 describe('Teacher walkthrough', () => {
   beforeEach(() => {
+    cy.demoStudentLogin();
+    cy.contains('Logout').click();
     cy.demoTeacherLogin();
     cy.log('student submits a question');
     cy.addQuestionSubmission('Test', 'IN_REVIEW');

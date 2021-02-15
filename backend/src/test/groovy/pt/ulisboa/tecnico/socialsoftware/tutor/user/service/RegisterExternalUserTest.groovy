@@ -85,7 +85,7 @@ class RegisterExternalUserTest extends SpockTest {
         externalCourseExecution.getUsers().size() == 1
         externalCourseExecution.getUsers().toList().get(0).getId() == result.getId()
         and: "a mail is sent"
-        1 * mailerMock.sendSimpleMail(mailerUsername, USER_1_EMAIL, userService.PASSWORD_CONFIRMATION_MAIL_SUBJECT, _)
+        1 * mailerMock.sendSimpleMail(mailerUsername, USER_1_EMAIL, Mailer.QUIZZES_TUTOR_SUBJECT + userService.PASSWORD_CONFIRMATION_MAIL_SUBJECT, _)
     }
 
     def "the course execution exists, the user exists but he's not enrolled and enroll him in the course execution"() {

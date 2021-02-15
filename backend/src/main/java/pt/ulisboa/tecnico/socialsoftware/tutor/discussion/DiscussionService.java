@@ -25,6 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.sql.SQLException;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -65,7 +66,7 @@ public class DiscussionService {
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public DiscussionDto changeStatus(int discussionId) {
         Discussion discussion = discussionRepository
                 .findById(discussionId)
@@ -76,7 +77,7 @@ public class DiscussionService {
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public DiscussionDto changeReplyAvailability(int replyId) {
         Reply reply = replyRepository
                 .findById(replyId)
@@ -87,7 +88,7 @@ public class DiscussionService {
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ReplyDto addReply(int userId, int discussionId, ReplyDto replyDto) {
         User user = userRepository.findById(userId).orElseThrow(()->new TutorException(USER_NOT_FOUND, userId));
 
@@ -102,14 +103,14 @@ public class DiscussionService {
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<DiscussionDto> findDiscussionsByCourseExecutionId(int courseExecutionId)  {
         return discussionRepository.findDiscussionsByCourseExecution(courseExecutionId).stream().map(discussion -> new DiscussionDto(discussion, true))
                 .collect(Collectors.toList());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<DiscussionDto> findOpenDiscussionsByCourseExecutionId(int courseExecutionId)  {
         return discussionRepository.
                 findOpenDiscussionsByCourseExecutionId(courseExecutionId).
@@ -117,15 +118,22 @@ public class DiscussionService {
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<DiscussionDto> findByCourseExecutionIdAndUserId(Integer courseExecutionId, Integer userId) {
         return discussionRepository.findDiscussionsByCourseExecutionIdAndUserId(courseExecutionId, userId).stream().map(discussion -> new DiscussionDto(discussion, true))
                 .collect(Collectors.toList());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<ReplyDto> findClarificationsByQuestionId(Integer questionId) {
         return replyRepository.findClarificationsByQuestionId(questionId).stream().map(ReplyDto::new).collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public DiscussionDto findDiscussionById(Integer discussionId, boolean deep) {
+         return discussionRepository.findById(discussionId)
+                 .map(discussion -> new DiscussionDto(discussion, deep))
+                 .orElse(null);
     }
 }

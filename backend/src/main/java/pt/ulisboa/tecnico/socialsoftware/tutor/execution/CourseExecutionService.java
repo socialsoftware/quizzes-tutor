@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
@@ -151,7 +152,7 @@ public class CourseExecutionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<StudentDto> getCourseStudents(int executionId) {
+    public List<StudentDto> getStudents(int executionId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElse(null);
         if (courseExecution == null) {
             return new ArrayList<>();
@@ -160,6 +161,18 @@ public class CourseExecutionService {
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
                 .sorted(Comparator.comparing(User::getName))
                 .map(StudentDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<UserDto> getTeachers(Integer courseExecutionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElse(null);
+        if (courseExecution == null) {
+            return new ArrayList<>();
+        }
+        return courseExecution.getUsers().stream()
+                .filter(user -> user.getRole().equals(User.Role.TEACHER))
+                .map(UserDto::new)
                 .collect(Collectors.toList());
     }
 

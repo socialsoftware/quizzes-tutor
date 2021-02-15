@@ -31,7 +31,8 @@ export default class QuestionSubmission {
       width: '5px',
       sortable: false
     },
-    { text: 'Title', value: 'question.title', align: 'center', width: '20%' },
+    { text: 'Number', value: 'id', align: 'center', width: '5%' },
+    { text: 'Title', value: 'question.title', align: 'center', width: '30%' },
     {
       text: 'Status',
       value: 'status',
@@ -43,7 +44,7 @@ export default class QuestionSubmission {
       value: 'question.topics',
       align: 'center',
       sortable: false,
-      width: '50%'
+      width: '35%'
     },
     {
       text: 'Creation Date',

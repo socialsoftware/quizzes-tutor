@@ -14,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.LinkHandler;
 import java.io.InputStream;
 
 @Service
-public class UserServiceApplicational {
+public class UserApplicationalService {
     @Autowired
     private UserService userService;
 
@@ -59,7 +59,7 @@ public class UserServiceApplicational {
     }
 
     public void sendConfirmationEmailTo(String email, String token) {
-        mailer.sendSimpleMail(mailUsername, email, UserService.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(email, token));
+        mailer.sendSimpleMail(mailUsername, email, Mailer.QUIZZES_TUTOR_SUBJECT + UserService.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(email, token));
     }
 
     private String buildMailBody(String email, String token) {

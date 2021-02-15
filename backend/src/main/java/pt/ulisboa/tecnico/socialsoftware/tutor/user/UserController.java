@@ -17,12 +17,12 @@ public class UserController {
     private UserService userService;
 
     @Autowired
-    private UserServiceApplicational userServiceApplicational;
+    private UserApplicationalService userApplicationalService;
 
     @PostMapping ("/users/register/{executionId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
     public ExternalUserDto registerExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
-        return userServiceApplicational.registerExternalUser(executionId, externalUserDto);
+        return userApplicationalService.registerExternalUser(executionId, externalUserDto);
     }
 
     @PostMapping("/users/register/{executionId}/csv")
@@ -33,7 +33,7 @@ public class UserController {
 
     @PostMapping("/users/register/confirm")
     public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto){
-        ExternalUserDto user = userServiceApplicational.confirmRegistration(externalUserDto);
+        ExternalUserDto user = userApplicationalService.confirmRegistration(externalUserDto);
         return user;
     }
 

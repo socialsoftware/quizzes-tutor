@@ -38,10 +38,10 @@ public class DemoUtils {
     private TournamentService tournamentService;
 
     public void resetDemoInfo() {
+        questionSubmissionService.resetDemoQuestionSubmissions();
         userService.resetDemoStudents();
         tournamentService.resetDemoTournaments();
         quizService.resetDemoQuizzes();
-        questionSubmissionService.resetDemoQuestionSubmissions();
         topicService.resetDemoTopics();
         assessmentService.resetDemoAssessments();
     }
