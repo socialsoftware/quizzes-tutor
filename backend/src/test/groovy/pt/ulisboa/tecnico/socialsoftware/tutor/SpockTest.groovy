@@ -40,7 +40,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
 import spock.lang.Shared
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
 import spock.lang.Specification
 
@@ -234,7 +234,7 @@ class SpockTest extends Specification {
     ReviewRepository reviewRepository
 
     @Autowired
-    UserServiceApplicational userServiceApplicational
+    UserApplicationalService userServiceApplicational
 
     @Autowired
     Mailer mailer

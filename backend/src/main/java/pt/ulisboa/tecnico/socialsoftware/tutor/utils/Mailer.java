@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 
 @Component
 public class Mailer {
+    public static String QUIZZES_TUTOR_SUBJECT =  "Quizzes Tutor: ";
 
     @Value("${spring.profiles.active}")
     private String activeProfile;

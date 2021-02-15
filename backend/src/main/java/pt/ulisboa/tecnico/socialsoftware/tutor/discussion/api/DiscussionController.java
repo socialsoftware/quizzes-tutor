@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionApplicationalService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
@@ -18,6 +19,9 @@ import java.util.List;
 
 @RestController
 public class DiscussionController {
+    @Autowired
+    private DiscussionApplicationalService discussionApplicationalService;
+
     @Autowired
     private DiscussionService discussionService;
 
@@ -49,7 +53,7 @@ public class DiscussionController {
     @PostMapping(value = "/discussions/create")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionAnswerId, 'QUESTION_ANSWER.ACCESS')")
     public DiscussionDto createDiscussion(@RequestParam int questionAnswerId, @Valid @RequestBody DiscussionDto discussion){
-        return discussionService.createDiscussion(questionAnswerId, discussion);
+        return discussionApplicationalService.createDiscussion(questionAnswerId, discussion);
     }
 
     @PutMapping(value = "/discussions/{discussionId}/status")
@@ -68,6 +72,6 @@ public class DiscussionController {
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#discussionId, 'DISCUSSION.ACCESS')) or (hasRole('ROLE_STUDENT') and hasPermission(#discussionId, 'DISCUSSION.OWNER'))")
     public ReplyDto addReply(Principal principal, @Valid @RequestBody ReplyDto reply, @PathVariable int discussionId) {
         User user = (User) ((Authentication) principal).getPrincipal();
-        return discussionService.addReply(user.getId(), discussionId, reply);
+        return discussionApplicationalService.addReply(user, discussionId, reply);
     }
 }

@@ -104,12 +104,24 @@
               <span>Delete Submission</span>
             </v-tooltip>
           </td>
+          <td id="id">
+            <div
+              @click="showQuestionSubmissionDialog(item)"
+              class="clickableId"
+            >
+              <v-layout justify-center>
+                {{ item.id }}
+              </v-layout>
+            </div>
+          </td>
           <td id="title">
             <div
               @click="showQuestionSubmissionDialog(item)"
               class="clickableTitle"
             >
-              {{ item.question.title }}
+              <v-layout justify-center>
+                {{ item.question.title }}
+              </v-layout>
             </div>
           </td>
           <td id="submittedBy" v-if="$store.getters.isTeacher">
@@ -189,11 +201,11 @@ export default class QuestionSubmissionView extends Vue {
 
   async created() {
     if (this.$store.getters.isTeacher) {
-      this.headers.splice(2, 0, {
+      this.headers.splice(3, 0, {
         text: 'Submitted by',
         value: 'name',
         align: 'center',
-        width: '50%'
+        width: '10%'
       });
     }
     await this.getQuestionSubmissions();

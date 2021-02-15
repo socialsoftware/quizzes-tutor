@@ -82,6 +82,10 @@ export default class DiscussionListComponent extends Vue {
       sortable: false
     },
     {
+      text: 'Discussion Number',
+      value: 'id'
+    },
+    {
       text: 'Question Title',
       value: 'question.title'
     },

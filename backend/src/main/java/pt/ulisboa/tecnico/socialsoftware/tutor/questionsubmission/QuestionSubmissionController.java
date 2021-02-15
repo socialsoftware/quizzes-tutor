@@ -22,6 +22,9 @@ public class QuestionSubmissionController {
     @Autowired
     private QuestionSubmissionService questionSubmissionService;
 
+    @Autowired
+    private QuestionSubmissionApplicationalService questionSubmissionApplicationalService;
+
     @PostMapping(value = "/submissions/{executionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public QuestionSubmissionDto createQuestionSubmission(@PathVariable int executionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
@@ -42,8 +45,10 @@ public class QuestionSubmissionController {
 
     @PostMapping("/submissions/{questionSubmissionId}/reviews")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionSubmissionId,'SUBMISSION.ACCESS')")
-    public ReviewDto createReview(@PathVariable int questionSubmissionId, @Valid @RequestBody ReviewDto reviewDto) {
-        return questionSubmissionService.createReview(reviewDto);
+    public ReviewDto createReview(Authentication authentication, @PathVariable int questionSubmissionId, @Valid @RequestBody ReviewDto reviewDto) {
+        User user = (User) authentication.getPrincipal();
+
+        return questionSubmissionApplicationalService.createReview(user, reviewDto);
     }
 
     @PutMapping("/submissions/{questionSubmissionId}/topics")

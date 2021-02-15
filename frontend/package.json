@@ -14,11 +14,11 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "^5.15.1",
+    "@fortawesome/fontawesome-free": "^5.15.2",
     "axios": "^0.21.1",
     "material-design-icons-iconfont": "^5.0.1",
     "qrcode": "^1.4.4",
-    "sanitize-html": "^2.1.2",
+    "sanitize-html": "^2.3.2",
     "showdown": "^1.9.1",
     "typeface-roboto": "0.0.75",
     "vue": "^2.6.12",

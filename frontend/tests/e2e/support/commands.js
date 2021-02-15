@@ -219,9 +219,10 @@ Cypress.Commands.add(
       cy.contains(title)
         .parent()
         .parent()
+        .parent()
         .should('have.length', 1)
         .children()
-        .should('have.length', 5);
+        .should('have.length', 6);
     } else {
       cy.get('[data-cy="Comment"]').type(comment);
       cy.get('[data-cy="RequestReviewButton"]').click();
@@ -276,9 +277,10 @@ Cypress.Commands.add(
     cy.contains(title)
       .parent()
       .parent()
+      .parent()
       .should('have.length', 1)
       .children()
-      .should('have.length', 5)
+      .should('have.length', 6)
       .find('[data-cy="ViewSubmission"]')
       .click();
     cy.contains(title);
@@ -298,9 +300,10 @@ Cypress.Commands.add('deleteQuestionSubmission', title => {
   cy.contains(title)
     .parent()
     .parent()
+    .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 5)
+    .should('have.length', 6)
     .find('[data-cy="DeleteSubmission"]')
     .click();
 });
@@ -311,9 +314,10 @@ Cypress.Commands.add(
     cy.contains(title)
       .parent()
       .parent()
+      .parent()
       .should('have.length', 1)
       .children()
-      .should('have.length', 6)
+      .should('have.length', 7)
       .find('[data-cy="ViewSubmission"]')
       .click();
     if (comment != null) {
@@ -331,9 +335,10 @@ Cypress.Commands.add(
       cy.contains(title)
         .parent()
         .parent()
+        .parent()
         .should('have.length', 1)
         .children()
-        .should('have.length', 6)
+        .should('have.length', 7)
         .find('[data-cy="ViewSubmission"]')
         .click();
     }
@@ -350,9 +355,10 @@ Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
   cy.contains(title)
     .parent()
     .parent()
+    .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 6)
+    .should('have.length', 7)
     .contains(status);
 });
 
@@ -511,7 +517,7 @@ Cypress.Commands.add('createDiscussion', discussionContent => {
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 7);
+    .should('have.length', 8);
 });
 
 Cypress.Commands.add('replyToDiscussion', (discussionContent, replyContent) => {
@@ -521,7 +527,7 @@ Cypress.Commands.add('replyToDiscussion', (discussionContent, replyContent) => {
     .parent()
     .should('have.length', 1)
     .children()
-    .should('have.length', 7)
+    .should('have.length', 8)
     .find('[data-cy="showDiscussionButton"]')
     .click();
 

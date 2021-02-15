@@ -103,7 +103,7 @@ public class CourseExecutionController {
     @GetMapping("/executions/{executionId}/students")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<StudentDto> getCourseStudents(@PathVariable int executionId) {
-        return courseExecutionService.getCourseStudents(executionId);
+        return courseExecutionService.getStudents(executionId);
     }
 
     @PostMapping("/executions/{executionId}/users/delete")

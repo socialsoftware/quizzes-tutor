@@ -23,7 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserServiceApplicational
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
 
 @TestConfiguration
@@ -75,8 +75,8 @@ class BeanConfiguration {
     }
 
     @Bean
-    UserServiceApplicational userServiceApplicational() {
-        return new UserServiceApplicational()
+    UserApplicationalService userServiceApplicational() {
+        return new UserApplicationalService()
     }
 
     @Bean
