@@ -349,13 +349,12 @@ public class QuizService {
         File file = new File(directoryPath);
         file.mkdir();
 
-        QuizzesXmlExport xmlExport = new QuizzesXmlExport();
-        List<Quiz> quizzes = new ArrayList<>();
-        quizzes.add(quiz);
-        File myObj = new File(directoryPath + "/" + quiz.getId() + ".xml");
+        List<QuestionAnswerItem> questionAnswerItems = questionAnswerItemRepository.findQuestionAnswerItemsByQuizId(quizId);
+        CSVQuizExportVisitor csvExport = new CSVQuizExportVisitor();
+        File myObj = new File(directoryPath + "/" + quiz.getId() + ".csv");
         if (myObj.createNewFile()) {
             FileWriter myWriter = new FileWriter(myObj);
-            myWriter.write(xmlExport.export(quizzes));
+            myWriter.write(csvExport.export(quiz, questionAnswerItems));
             myWriter.close();
         }
 
@@ -367,12 +366,33 @@ public class QuizService {
             myWriter.close();
         }
 
-        List<QuestionAnswerItem> questionAnswerItems = questionAnswerItemRepository.findQuestionAnswerItemsByQuizId(quizId);
-        CSVQuizExportVisitor csvExport = new CSVQuizExportVisitor();
-        myObj = new File(directoryPath + "/" + quiz.getId() + ".csv");
+        QuizzesXmlExport xmlExport = new QuizzesXmlExport();
+        List<Quiz> quizzes = new ArrayList<>();
+        quizzes.add(quiz);
+        myObj = new File(directoryPath + "/" + "quizzes-" + quiz.getId() + ".xml");
         if (myObj.createNewFile()) {
             FileWriter myWriter = new FileWriter(myObj);
-            myWriter.write(csvExport.export(quiz, questionAnswerItems));
+            myWriter.write(xmlExport.export(quizzes));
+            myWriter.close();
+        }
+
+        XMLQuestionExportVisitor questionsXmlExport = new XMLQuestionExportVisitor();
+        myObj = new File(directoryPath + "/" + "questions-" + quiz.getId() + ".xml");
+        if (myObj.createNewFile()) {
+            FileWriter myWriter = new FileWriter(myObj);
+            myWriter.write(questionsXmlExport.export(quiz.getQuizQuestions().stream()
+                            .map(QuizQuestion::getQuestion)
+                            .collect(Collectors.toList())));
+            myWriter.close();
+        }
+
+        AnswersXmlExportVisitor answersXmlExport = new AnswersXmlExportVisitor();
+        myObj = new File(directoryPath + "/" + "answers-" + quiz.getId() + ".xml");
+        if (myObj.createNewFile()) {
+            FileWriter myWriter = new FileWriter(myObj);
+            myWriter.write(answersXmlExport.export(quiz.getQuizAnswers().stream()
+                    .sorted(Comparator.comparing(quizAnswer -> quizAnswer.getUser().getId()))
+                    .collect(Collectors.toList())));
             myWriter.close();
         }
     }
