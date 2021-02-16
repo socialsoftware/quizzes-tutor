@@ -46,17 +46,6 @@
               </v-list-item-content>
             </v-list-item>
             <v-list-item
-              to="/management/submissions"
-              data-cy="submissionTeacherMenuButton"
-            >
-              <v-list-item-action>
-                <v-icon>fas fa-user-edit</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Submissions</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
-            <v-list-item
               to="/management/topics"
               data-cy="manageTopicsMenuButton"
             >
@@ -94,14 +83,6 @@
                 <v-list-item-title>Students</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
-            <v-list-item to="/management/tournaments">
-              <v-list-item-action>
-                <v-icon>fas fa-trophy</v-icon>
-              </v-list-item-action>
-              <v-list-item-content>
-                <v-list-item-title>Tournaments</v-list-item-title>
-              </v-list-item-content>
-            </v-list-item>
             <v-list-item
               to="/management/discussions"
               data-cy="discussionsTeacherButton"
@@ -111,6 +92,25 @@
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Discussions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item
+              to="/management/submissions"
+              data-cy="submissionTeacherMenuButton"
+            >
+              <v-list-item-action>
+                <v-icon>fas fa-user-edit</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Submissions</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
+            <v-list-item to="/management/tournaments">
+              <v-list-item-action>
+                <v-icon>fas fa-trophy</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Tournaments</v-list-item-title>
               </v-list-item-content>
             </v-list-item>
             <v-list-item to="/management/export">
@@ -331,14 +331,6 @@
               <v-list-item-title>Questions</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item to="/management/submissions">
-            <v-list-item-action>
-              <v-icon>fas fa-user-edit</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Submissions</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
           <v-list-item to="/management/topics">
             <v-list-item-action>
               <v-icon>category</v-icon>
@@ -371,14 +363,6 @@
               <v-list-item-title>Students</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
-          <v-list-item to="/management/tournaments">
-            <v-list-item-action>
-              <v-icon>fas fa-trophy</v-icon>
-            </v-list-item-action>
-            <v-list-item-content>
-              <v-list-item-title>Tournaments</v-list-item-title>
-            </v-list-item-content>
-          </v-list-item>
           <v-list-item to="/management/discussions">
             <v-list-item-action>
               <v-icon>fas fa-comment-dots</v-icon>
@@ -387,6 +371,23 @@
               <v-list-item-title>Discussions</v-list-item-title>
             </v-list-item-content>
           </v-list-item>
+          <v-list-item to="/management/submissions">
+            <v-list-item-action>
+              <v-icon>fas fa-user-edit</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Submissions</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+          <v-list-item to="/management/tournaments">
+            <v-list-item-action>
+              <v-icon>fas fa-trophy</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Tournaments</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
+
           <v-list-item to="/management/export">
             <v-list-item-action>
               <v-icon>fas fa-download</v-icon>
