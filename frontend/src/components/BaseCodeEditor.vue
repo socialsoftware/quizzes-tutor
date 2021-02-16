@@ -63,6 +63,9 @@ export default class BaseCodeEditor extends Vue {
   @Prop({ default: true })
   readonly editable!: boolean;
 
+    @Prop({ default: false })
+  readonly simple!: boolean;
+
   counter: number = 1;
   CodemirrorUpdated: boolean = false;
   static languagesDict: Dictionary<string> = {
@@ -86,7 +89,7 @@ export default class BaseCodeEditor extends Vue {
       tabSize: 4,
       mode: { name: 'mustache', backdrop: this.languageCode },
       theme: 'eclipse',
-      lineNumbers: true,
+      lineNumbers: !this.simple,
       dragDrop: false,
       readOnly: !this.editable,
       scrollbarStyle: 'overlay'
@@ -96,7 +99,11 @@ export default class BaseCodeEditor extends Vue {
     return BaseCodeEditor.languagesDict[this.syncedLanguage];
   }
   created() {
-    this.updateQuestion();
+    if (!this.simple){
+      this.updateQuestion();
+    }
+          this.CodemirrorUpdated = true;
+
   }
   onCmCodeChange(newCode: string) {
     this.syncedCode = newCode;

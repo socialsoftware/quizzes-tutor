@@ -18,6 +18,7 @@
         :code.sync="el.content"
         :language.sync="questionDetails.language"
         :editable="false"
+        :simple="true"
       />
       <div v-if="!answerDetails" v-html="el.order != null ? ' ✔ ' : ' ✖ '" />
       <div v-if="answerDetails" v-html="studentAnswer(el)" />
