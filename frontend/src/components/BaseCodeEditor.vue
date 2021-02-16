@@ -58,6 +58,10 @@ export default class BaseCodeEditor extends Vue {
   @PropSync('code', { type: String, required: true }) syncedCode!: string;
   @PropSync('language', { type: String, default: 'Java' })
   syncedLanguage!: string;
+
+  @Prop({default: true})
+  readonly editable!: boolean
+
   counter: number = 1;
   CodemirrorUpdated: boolean = false;
   static languagesDict: Dictionary<string> = {
@@ -82,7 +86,8 @@ export default class BaseCodeEditor extends Vue {
       mode: { name: 'mustache', backdrop: this.languageCode },
       theme: 'eclipse',
       lineNumbers: true,
-      dragDrop: false
+      dragDrop: false,
+      readOnly: !this.editable
     };
   }
   get languageCode() {

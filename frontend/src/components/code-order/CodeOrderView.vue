@@ -12,7 +12,13 @@
       <b style="padding-right:10px">{{
         el.order == null ? null : el.order + 1
       }}</b>
-      <div class="slot-content" v-html="convertMarkDown(el.content)" />
+      <BaseCodeEditor
+        class="slot-content"
+        ref="codeEditor"
+        :code.sync="el.content"
+        :language.sync="questionDetails.language"
+        :editable="false"
+      />
       <div v-if="!answerDetails" v-html="el.order != null ? ' ✔ ' : ' ✖ '" />
       <div v-if="answerDetails" v-html="studentAnswer(el)" />
     </li>
@@ -26,8 +32,13 @@ import { Component, Prop, Vue } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import CodeOrderSlot from '@/models/management/questions/CodeOrderSlot';
+import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
-@Component
+@Component({
+  components: {
+    BaseCodeEditor,
+  }
+})
 export default class CodeOrderView extends Vue {
   @Prop() readonly questionDetails!: CodeOrderQuestionDetails;
   @Prop() readonly answerDetails?: CodeOrderAnswerDetails;
@@ -80,6 +91,10 @@ export default class CodeOrderView extends Vue {
     & > .slot-content {
       flex-grow: 1;
       text-align: left;
+
+      & .CodeMirror {
+  height: auto;
+      }
 
       & > p:last-child {
         margin-bottom: 0;
