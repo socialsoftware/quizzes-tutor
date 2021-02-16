@@ -23,7 +23,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 @DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInAnswer extends AnswerDetails {
 
-    @ManyToMany(mappedBy = "questionAnswers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "questionAnswers", fetch = FetchType.EAGER)
     private Set<CodeFillInOption> codeFillInOptions = new HashSet<>();
 
     public CodeFillInAnswer() {

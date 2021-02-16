@@ -8,9 +8,12 @@
         :class="{ correct: isCorrect(el, index) }"
       >
         <span class="order" v-html="el.order" />
-        <span
+        <BaseCodeEditor
           class="content"
-          v-html="convertMarkDown(slotById(el.slotId).content)"
+          ref="codeEditor"
+          :code.sync="slotById(el.slotId).content"
+          :language.sync="questionDetails.language"
+          :editable="false"
         />
         <span
           class="is-correct"
@@ -25,9 +28,12 @@
         :key="index"
         :class="{ 'not-used': el.order == null }"
       >
-        <span
+        <BaseCodeEditor
           class="content"
-          v-html="convertMarkDown(slotById(el.slotId).content)"
+          ref="codeEditor"
+          :code.sync="slotById(el.slotId).content"
+          :language.sync="questionDetails.language"
+          :editable="false"
         />
       </div>
     </div>
@@ -42,8 +48,13 @@ import CodeOrderStatementQuestionDetails from '@/models/statement/questions/Code
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
+import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
-@Component
+@Component({
+  components: {
+    BaseCodeEditor
+  }
+})
 export default class CodeOrderAnswerResult extends Vue {
   @Prop(CodeOrderStatementQuestionDetails)
   readonly questionDetails!: CodeOrderStatementQuestionDetails;
@@ -76,6 +87,18 @@ export default class CodeOrderAnswerResult extends Vue {
   width: 100%;
   position: relative;
 
+  & > div {
+    max-width: 50%;
+  }
+
+  & .content {
+    text-align: left;
+  }
+
+  & .CodeMirror {
+    height: auto;
+  }
+
   & .code-order-header {
     padding: 10px;
     margin: 0px 10px;
@@ -96,7 +119,11 @@ export default class CodeOrderAnswerResult extends Vue {
     justify-content: space-between;
     align-items: center;
     width: 100%;
-
+    & .content {
+      flex-grow: 1;
+      margin: 0 5px;
+      max-width: 90%;
+    }
     &.correct {
       background-color: #299455;
       color: white;

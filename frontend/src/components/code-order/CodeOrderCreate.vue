@@ -120,4 +120,8 @@ export default class CodeOrderCreate extends Vue {
 }
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+.code-order-create .CodeMirror {
+  height: auto;
+}
+</style>

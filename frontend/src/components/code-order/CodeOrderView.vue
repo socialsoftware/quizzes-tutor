@@ -36,7 +36,7 @@ import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
 @Component({
   components: {
-    BaseCodeEditor,
+    BaseCodeEditor
   }
 })
 export default class CodeOrderView extends Vue {
@@ -93,7 +93,7 @@ export default class CodeOrderView extends Vue {
       text-align: left;
 
       & .CodeMirror {
-  height: auto;
+        height: auto;
       }
 
       & > p:last-child {

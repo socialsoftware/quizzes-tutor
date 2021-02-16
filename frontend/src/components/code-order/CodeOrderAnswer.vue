@@ -23,7 +23,13 @@
         }"
       >
         <i class="fa fa-align-justify handle"></i>
-        <span class="content" v-html="convertMarkDown(el.content)" />
+        <BaseCodeEditor
+          class="content"
+          ref="codeEditor"
+          :code.sync="el.content"
+          :language.sync="questionDetails.language"
+          :editable="false"
+        />
       </li>
     </draggable>
     <draggable
@@ -42,16 +48,17 @@
         class="dragable"
       >
         <i class="fa fa-align-justify handle"></i>
-        <span
+        <BaseCodeEditor
           class="content"
-          v-html="
-            convertMarkDown(
-              questionDetails.orderSlots.find(x => x.id == el.slotId).content
-            )
+          ref="codeEditor"
+          :code.sync="
+            questionDetails.orderSlots.find(x => x.id == el.slotId).content
           "
+          :language.sync="questionDetails.language"
+          :editable="false"
         />
         <v-btn @click="removeAnswer(index)" icon small>
-          <v-icon color="red lighten-1">mdi-delete </v-icon>
+          <v-icon color="red lighten-1">mdi-playlist-remove </v-icon>
         </v-btn>
       </li>
     </draggable>
@@ -67,9 +74,11 @@ import Image from '@/models/management/Image';
 import draggable from 'vuedraggable';
 import CodeOrderSlotStatementQuestionDetails from '@/models/statement/questions/CodeOrderSlotStatementQuestionDetails';
 import CodeOrderSlotStatementAnswerDetails from '@/models/statement/questions/CodeOrderSlotStatementAnswerDetails';
+import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
 @Component({
   components: {
+    BaseCodeEditor,
     draggable
   }
 })
@@ -150,6 +159,11 @@ export default class CodeOrderAnswer extends Vue {
 
     & > .content {
       flex-grow: 1;
+      max-width: 95%;
+
+      & .CodeMirror {
+        height: auto;
+      }
     }
 
     & > .content > *:last-child {

@@ -13,7 +13,7 @@ public class CodeOrderSlotStatementAnswerDetailsDto implements Serializable {
 
     public CodeOrderSlotStatementAnswerDetailsDto(CodeOrderAnswerSlot option) {
         this.order = option.getAssignedOrder();
-        this.slotId = option.getId();
+        this.slotId = option.getCodeOrderSlot().getId();
     }
 
     public Integer getSlotId() {

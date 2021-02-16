@@ -25,6 +25,7 @@ import 'codemirror/mode/clike/clike.js';
 import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/mode/python/python.js';
 import 'codemirror/addon/mode/overlay.js';
+import 'codemirror/addon/scroll/simplescrollbars.js';
 import { Dictionary } from 'vue-router/types/router';
 
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
@@ -59,8 +60,8 @@ export default class BaseCodeEditor extends Vue {
   @PropSync('language', { type: String, default: 'Java' })
   syncedLanguage!: string;
 
-  @Prop({default: true})
-  readonly editable!: boolean
+  @Prop({ default: true })
+  readonly editable!: boolean;
 
   counter: number = 1;
   CodemirrorUpdated: boolean = false;
@@ -87,7 +88,8 @@ export default class BaseCodeEditor extends Vue {
       theme: 'eclipse',
       lineNumbers: true,
       dragDrop: false,
-      readOnly: !this.editable
+      readOnly: !this.editable,
+      scrollbarStyle: 'overlay'
     };
   }
   get languageCode() {
@@ -113,6 +115,7 @@ export default class BaseCodeEditor extends Vue {
 <style>
 @import '~codemirror/lib/codemirror.css';
 @import '~codemirror/theme/eclipse.css';
+@import '~codemirror/addon/scroll/simplescrollbars.css';
 .cm-custom-drop-down {
   background: #ffa014;
   color: white;
