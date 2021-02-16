@@ -100,7 +100,7 @@ export default class EditQuestionDialog extends Vue {
   @Prop({ type: Question, required: true }) readonly question!: Question;
 
   editQuestion: Question = new Question(this.question);
-  questionType: string = this.question.questionDetailsDto.type;
+  questionType: string = this.editQuestion.questionDetailsDto.type;
 
   get questionTypesOptions() {
     return Object.values(QuestionTypes).map(qt => ({
