@@ -166,6 +166,18 @@ export default class CodeFillInAnswer extends Vue {
         correctOption.classList.add('answerDetailsSynced-spot', 'correct');
         d.appendChild(correctOption);
       }
+
+      something.options.forEach(element => {
+        if (! (element.optionId === optionAnswered?.optionId || 
+        element.optionId === correctOption?.optionId)
+        ){
+          const newOption = document.createElement('option');
+        newOption.innerHTML = element?.content;
+        newOption.classList.add('answerDetailsSynced-spot');
+        d.appendChild(newOption);
+        }
+      });
+      
       option.innerHTML =
         text +
         (optionAnsweredQuestion
