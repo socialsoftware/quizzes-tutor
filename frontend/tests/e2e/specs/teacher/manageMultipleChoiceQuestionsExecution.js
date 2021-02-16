@@ -135,7 +135,6 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
     cy.get('button')
       .contains('close')
       .click();
-    cy.get('[data-cy="showQuestionDialog"]').should('not.be.visible');
   });
 
   it('Can view question (with click)', function() {
@@ -151,7 +150,6 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
     cy.get('button')
       .contains('close')
       .click();
-    cy.get('[data-cy="showQuestionDialog"]').should('not.be.visible');
   });
 
   it('Can update title (with right-click)', function() {
