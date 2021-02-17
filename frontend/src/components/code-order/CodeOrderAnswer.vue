@@ -184,6 +184,11 @@ export default class CodeOrderAnswer extends Vue {
 
   & > .code-order-answer-response {
     background-color: rgb(241, 241, 241);
+
+    & > .content {
+      flex-grow: 1;
+      max-width: 90%;
+    }
   }
 }
 </style>

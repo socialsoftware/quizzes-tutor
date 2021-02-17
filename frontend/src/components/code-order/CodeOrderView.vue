@@ -55,7 +55,7 @@ export default class CodeOrderView extends Vue {
 
   studentAnswer(el: CodeOrderSlot): string {
     let answer = this.answerDetails?.orderedSlots.find(x => x.slotId == el.id);
-    return `S[${!!answer ? answer.order : 'Not Used'}][${
+    return `S[${!!answer ? (answer?.order || 0) + 1 : 'Not Used'}][${
       this.studentAnswerCorrect(el) ? '✔' : '✖'
     }]`;
   }
