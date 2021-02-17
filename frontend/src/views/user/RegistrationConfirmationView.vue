@@ -2,7 +2,7 @@
   <div class="container">
     <password-card
       :title="TITLE"
-      :email="email"
+      :username="username"
       :error="errorMsg"
       :success="success"
       @onSubmit="confirmRegistration"
@@ -22,20 +22,20 @@ import RemoteServices from '../../services/RemoteServices';
 export default class RegistrationConfirmationView extends Vue {
   TITLE = 'Registration Confirmation';
 
-  email: string = '';
+  username: string = '';
   token: string = '';
   errorMsg: string = '';
   success: boolean = false;
 
   async created() {
-    this.email = this.$route.query.email as string;
+    this.username = this.$route.query.username as string;
     this.token = this.$route.query.token as string;
-    this.errorMsg = this.email && this.token ? '' : 'Invalid query';
+    this.errorMsg = this.username && this.token ? '' : 'Invalid query';
   }
 
   async confirmRegistration(password: string) {
     const externalUser = new ExternalUser();
-    externalUser.username = this.email;
+    externalUser.username = this.username;
     externalUser.password = password;
     externalUser.confirmationToken = this.token;
 
