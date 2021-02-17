@@ -362,29 +362,33 @@ Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
     .contains(status);
 });
 
-Cypress.Commands.add('addUserThroughForm', (acronym, name, email, type) => {
-  cy.contains(acronym)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 13)
-    .find('[data-cy="addExternalUser"]')
-    .click();
+Cypress.Commands.add(
+  'addUserThroughForm',
+  (acronym, name, username, email, type) => {
+    cy.contains(acronym)
+      .parent()
+      .should('have.length', 1)
+      .children()
+      .should('have.length', 13)
+      .find('[data-cy="addExternalUser"]')
+      .click();
 
-  cy.get('[data-cy="userNameInput"]').type(name);
-  cy.get('[data-cy="userEmailInput"]').type(email);
-  cy.get('[data-cy="userRoleSelect"]')
-    .parent()
-    .parent()
-    .click();
-  cy.get('.v-menu__content .v-list')
-    .children()
-    .contains(type)
-    .first()
-    .click();
-  cy.get('[data-cy="saveButton"]').click();
-  cy.wait(3000);
-});
+    cy.get('[data-cy="userNameInput"]').type(name);
+    cy.get('[data-cy="userUsernameInput"]').type(username);
+    cy.get('[data-cy="userEmailInput"]').type(email);
+    cy.get('[data-cy="userRoleSelect"]')
+      .parent()
+      .parent()
+      .click();
+    cy.get('.v-menu__content .v-list')
+      .children()
+      .contains(type)
+      .first()
+      .click();
+    cy.get('[data-cy="saveButton"]').click();
+    cy.wait(3000);
+  }
+);
 
 Cypress.Commands.add('deleteUser', (mail, acronym) => {
   cy.contains(acronym)

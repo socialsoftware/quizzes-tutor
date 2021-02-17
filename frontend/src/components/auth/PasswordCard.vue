@@ -4,8 +4,8 @@
     <v-card-text v-if="!success">
       <form>
         <v-text-field
-          v-model="email"
-          label="Email"
+          v-model="username"
+          label="Username"
           disabled
           required
         ></v-text-field>
@@ -52,7 +52,7 @@ export default class PasswordCard extends Vue {
   @Prop({ required: true })
   title: string | undefined;
   @Prop({ required: true })
-  email: string | undefined;
+  username: string | undefined;
   @Prop({ required: true })
   error: string | undefined;
   @Prop({ required: true })

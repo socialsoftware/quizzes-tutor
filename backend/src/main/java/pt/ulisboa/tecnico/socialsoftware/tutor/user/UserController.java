@@ -28,7 +28,7 @@ public class UserController {
     @PostMapping("/users/register/{executionId}/csv")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
     public NotificationResponse<CourseExecutionDto> registerExternalUsersCsvFile(@PathVariable Integer executionId, @RequestParam("file") MultipartFile file) throws IOException {
-        return userService.registerListOfUsersTransactional(file.getInputStream(), executionId);
+        return userApplicationalService.registerListOfUsers(file.getInputStream(), executionId);
     }
 
     @PostMapping("/users/register/confirm")

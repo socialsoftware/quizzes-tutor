@@ -23,6 +23,13 @@
             required
           />
           <v-text-field
+            v-model="user.username"
+            label="Username"
+            data-cy="userUsernameInput"
+            :rules="[value => !!value || 'Username is required']"
+            required
+          />
+          <v-text-field
             v-model="user.email"
             label="Email"
             data-cy="userEmailInput"
