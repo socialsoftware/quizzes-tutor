@@ -33,7 +33,9 @@ public class CodeOrderAnswerItem extends QuestionAnswerItem {
 
     @Override
     public String getAnswerRepresentation(Map<Integer, Option> options) {
-        // TODO: Need to create a string representation for export
-        return orderedSlots.stream().sorted(Comparator.comparing(CodeOrderSlotAnswerItem::getAssignedOrder)).map(c -> String.format("%s(%s)", c.getSlotId(), c.getAssignedOrder())).collect(Collectors.joining("|"));
+        return orderedSlots.stream()
+                .sorted(Comparator.comparing(CodeOrderSlotAnswerItem::getAssignedOrder))
+                .map(c -> String.format("%s(%s)", c.getSlotId(), c.getAssignedOrder()+1))
+                .collect(Collectors.joining("|"));
     }
 }

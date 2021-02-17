@@ -33,7 +33,6 @@ public class CodeFillInAnswerItem extends QuestionAnswerItem {
 
     @Override
     public String getAnswerRepresentation(Map<Integer, Option> options) {
-        // TODO: Need to create a better string representation for export
         return optionIds.stream().map(Object::toString).collect(Collectors.joining("|"));
     }
 }

@@ -13,9 +13,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInStatementAns
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
 
@@ -64,10 +66,19 @@ public class CodeFillInAnswer extends AnswerDetails {
     }
 
     public String getAnswerRepresentation() {
-        var correctAnswers = this.getFillInOptions().stream().filter(CodeFillInOption::isCorrect).count();
-        // TODO: Might be relevant for answer details to know about the respective question answers.
-        var questionOptions = ((CodeFillInQuestion) this.getQuestionAnswer().getQuestion().getQuestionDetails()).getFillInSpots().size();
-        return String.format("%d/%d", correctAnswers, questionOptions);
+        var fillInSpots = ((CodeFillInQuestion) this.getQuestionAnswer().getQuestion().getQuestionDetails()).getFillInSpots();
+        var answers = new ArrayList<String>();
+        for (var spot:fillInSpots) {
+            var option = this.getFillInOptions().stream().filter(x -> x.getFillInSpot().getId().equals(spot.getId())).findAny();
+            if (option.isPresent()){
+                Integer humanSequence = option.get().getSequence();
+                answers.add(humanSequence.toString());
+            }
+            else {
+                answers.add("-");
+            }
+        }
+        return String.join(" | ", answers);
     }
 
     @Override

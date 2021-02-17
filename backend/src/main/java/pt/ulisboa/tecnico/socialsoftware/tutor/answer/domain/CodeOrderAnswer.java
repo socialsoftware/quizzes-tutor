@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import org.apache.commons.lang3.tuple.Pair;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -8,9 +9,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderStatementAnsw
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.HashSet;
-import java.util.Set;
+import java.util.*;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_ORDER_SLOT_MISMATCH;
 
@@ -50,9 +50,17 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public String getAnswerRepresentation() {
-        var correctAnswers = this.getOrderedSlots().stream().filter(CodeOrderAnswerSlot::isCorrect).count();
-        var questionOptions = ((CodeOrderQuestion) this.getQuestionAnswer().getQuestion().getQuestionDetails()).getCodeOrderSlots().size();
-        return String.format("%d/%d", correctAnswers, questionOptions);
+        int counter = 1;
+        var slots = new ArrayList<>(((CodeOrderQuestion) this.getQuestionAnswer().getQuestion().getQuestionDetails()).getCodeOrderSlots());
+        slots.sort(Comparator.comparing(CodeOrderSlot::getId));
+        var slotsSequence = new HashMap<Integer, Integer>();
+        for (var codeOrderSlot : slots) {
+            slotsSequence.put(codeOrderSlot.getId(),counter++);
+        }
+        return this.getOrderedSlots().stream()
+                .sorted(Comparator.comparing(CodeOrderAnswerSlot::getAssignedOrder))
+                .map(x -> slotsSequence.get(x.getCodeOrderSlot().getId()).toString())
+                .collect(Collectors.joining(" | "));
     }
 
     @Override

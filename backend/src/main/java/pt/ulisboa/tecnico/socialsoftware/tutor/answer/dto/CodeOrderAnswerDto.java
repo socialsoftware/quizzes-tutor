@@ -2,12 +2,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswer;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CodeOrderAnswerDto extends AnswerDetailsDto {
-    private List<CodeOrderAnswerSlotDto> orderedSlots;
+    private List<CodeOrderAnswerSlotDto> orderedSlots = new ArrayList<>();
 
     public CodeOrderAnswerDto() {
     }

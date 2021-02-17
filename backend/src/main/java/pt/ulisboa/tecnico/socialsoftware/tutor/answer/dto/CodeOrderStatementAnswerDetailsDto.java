@@ -51,7 +51,7 @@ public class CodeOrderStatementAnswerDetailsDto extends StatementAnswerDetailsDt
 
     @Override
     public boolean emptyAnswer() {
-        return orderedSlots != null && !orderedSlots.isEmpty();
+        return orderedSlots == null || orderedSlots.isEmpty();
     }
 
     @Override
