@@ -129,15 +129,16 @@ public class CodeOrderQuestion extends QuestionDetails {
 
     @Override
     public String getCorrectAnswerRepresentation() {
-        int counter = 1;
+        int counter = 0;
         var slots = new ArrayList<>(this.codeOrderSlots);
         slots.sort(Comparator.comparing(CodeOrderSlot::getId));
         var response = new ArrayList<Pair<Integer, Integer>>();
         for (var codeOrderSlot : slots) {
+            counter++;
             if (codeOrderSlot.getOrder() == null){
                 continue;
             }
-            response.add(Pair.of(counter++, codeOrderSlot.getOrder()));
+            response.add(Pair.of(counter, codeOrderSlot.getOrder()));
         }
         response.sort(Comparator.comparing(Pair::getRight));
         return response.stream().map(x -> x.getLeft().toString())

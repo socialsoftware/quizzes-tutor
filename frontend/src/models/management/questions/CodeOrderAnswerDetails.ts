@@ -18,13 +18,15 @@ export default class CodeOrderAnswerDetails extends AnswerDetails {
 
   isCorrect(questionDetails: CodeOrderQuestionDetails): boolean {
     return (
-      this.orderedSlots.length === questionDetails.codeOrderSlots.length &&
+      this.orderedSlots.length === questionDetails.codeOrderSlots.filter(os => os.order != null).length &&
       this.orderedSlots.filter(os => !os.correct).length == 0
     );
   }
 
   answerRepresentation(questionDetails: CodeOrderQuestionDetails): string {
-    let minId = Math.min(...questionDetails.codeOrderSlots.map(x => x?.id || 0));
-    return this.orderedSlots.map(x => (x?.slotId || minId) - minId + 1).join(" | ");
+    let counter = 1;
+    let allIds = questionDetails.codeOrderSlots.map(x => x.id || 0)
+    let options = Object.assign({}, ...allIds.sort((x,y) => x - y).map(x => ({[x]: ""+counter++})));
+    return this.orderedSlots.map(x => options[x.slotId || 0] || "-").join(" | ");
   }
 }

@@ -14,7 +14,7 @@ export default class CodeFillInStatementAnswerDetails extends StatementAnswerDet
   }
 
   isQuestionAnswered(): boolean {
-    return this.selectedOptions != null;
+    return this.selectedOptions != null && this.selectedOptions.length > 0;
   }
 
   isAnswerCorrect(

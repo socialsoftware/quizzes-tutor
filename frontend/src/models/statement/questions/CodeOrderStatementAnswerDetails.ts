@@ -14,7 +14,7 @@ export default class CodeOrderStatementAnswerDetails extends StatementAnswerDeta
   }
 
   isQuestionAnswered(): boolean {
-    return this.orderedSlots != null;
+    return this.orderedSlots != null && this.orderedSlots.length > 0;
   }
 
   isAnswerCorrect(
