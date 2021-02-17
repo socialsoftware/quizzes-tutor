@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import groovy.lang.Tuple;
+import org.apache.commons.lang3.tuple.Pair;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderCorrectAnswerDto;
@@ -18,7 +20,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDetai
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -124,7 +129,19 @@ public class CodeOrderQuestion extends QuestionDetails {
 
     @Override
     public String getCorrectAnswerRepresentation() {
-        return String.format("%d/%d", this.getCodeOrderSlots().size(), this.getCodeOrderSlots().size());
+        int counter = 1;
+        var slots = new ArrayList<>(this.codeOrderSlots);
+        slots.sort(Comparator.comparing(CodeOrderSlot::getId));
+        var response = new ArrayList<Pair<Integer, Integer>>();
+        for (var codeOrderSlot : slots) {
+            if (codeOrderSlot.getOrder() == null){
+                continue;
+            }
+            response.add(Pair.of(counter++, codeOrderSlot.getOrder()));
+        }
+        response.sort(Comparator.comparing(Pair::getRight));
+        return response.stream().map(x -> x.getLeft().toString())
+                .collect(Collectors.joining(" | "));
     }
 
     @Override

@@ -16,28 +16,15 @@ export default class CodeOrderAnswerDetails extends AnswerDetails {
     }
   }
 
-  isCorrect(): boolean {
+  isCorrect(questionDetails: CodeOrderQuestionDetails): boolean {
     return (
-      this.orderedSlots.length > 0 &&
+      this.orderedSlots.length === questionDetails.codeOrderSlots.length &&
       this.orderedSlots.filter(os => !os.correct).length == 0
     );
   }
 
   answerRepresentation(questionDetails: CodeOrderQuestionDetails): string {
-    console.log(questionDetails.codeOrderSlots, this.orderedSlots);
-    let all = questionDetails.codeOrderSlots.length;
-    let correctAnswer = questionDetails.codeOrderSlots.length;
-    for (const key in questionDetails.codeOrderSlots) {
-      let correct = questionDetails.codeOrderSlots[key];
-      if (!this.orderedSlots[key] && correct.order != null) {
-        correctAnswer -= 1;
-      } else if (
-        correct.order != null &&
-        correct.id != this.orderedSlots[key].slotId
-      ) {
-        correctAnswer -= 1;
-      }
-    }
-    return `${correctAnswer}/${all}`;
+    let minId = Math.min(...questionDetails.codeOrderSlots.map(x => x?.id || 0));
+    return this.orderedSlots.map(x => (x?.slotId || minId) - minId + 1).join(" | ");
   }
 }

@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDetai
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AT_LEAST_ONE_OPTION_NEEDED;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FILL_IN_SPOT_NOT_FOUND;
@@ -123,7 +124,15 @@ public class CodeFillInQuestion extends QuestionDetails {
 
     @Override
     public String getCorrectAnswerRepresentation() {
-        return String.format("%d/%d", this.getFillInSpots().size(), this.getFillInSpots().size());
+        return this.codeFillInSpots.stream()
+                .map(x ->
+                        String.valueOf(
+                                x.getOptions().stream()
+                                        .filter(CodeFillInOption::isCorrect)
+                                        .findAny()
+                                        .get()
+                                        .getSequence() + 1))
+                .collect(Collectors.joining(" | "));
     }
 
     public void update(CodeFillInQuestionDto questionDetails) {
