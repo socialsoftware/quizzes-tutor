@@ -99,7 +99,7 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
         if (email == null || !email.matches(UserService.MAIL_FORMAT))
             throw new TutorException(INVALID_EMAIL, email);
 
-        this.email = email;
+        this.email = email.toLowerCase();
     }
 
     @Override
