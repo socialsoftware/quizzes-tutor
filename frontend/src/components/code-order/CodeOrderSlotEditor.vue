@@ -10,7 +10,6 @@
       :code.sync="sQuestionSlot.content"
       :language.sync="language"
     />
-    <!--TODO: How to add this rules :thinking:-->
     <div class="toolbar">
       <v-btn icon>
         <v-icon

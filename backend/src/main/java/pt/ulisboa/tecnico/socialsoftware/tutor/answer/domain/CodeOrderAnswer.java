@@ -80,7 +80,7 @@ public class CodeOrderAnswer extends AnswerDetails {
     public void setOrderedSlots(CodeOrderQuestion question,
                                 CodeOrderStatementAnswerDetailsDto codeOrderStatementAnswerDetailsDto) {
         this.orderedSlots.clear();
-        if (codeOrderStatementAnswerDetailsDto.emptyAnswer()) {
+        if (!codeOrderStatementAnswerDetailsDto.emptyAnswer()) {
             for (var slot : codeOrderStatementAnswerDetailsDto.getOrderedSlots()) {
 
                 CodeOrderSlot orderSlot = question

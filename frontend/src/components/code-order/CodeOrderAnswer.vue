@@ -38,7 +38,6 @@
       v-model="answerList"
       group="answer"
       draggable="li"
-      @change="updateAnswer"
     >
       <h4 class="code-order-header" slot="header">
         Reponse:

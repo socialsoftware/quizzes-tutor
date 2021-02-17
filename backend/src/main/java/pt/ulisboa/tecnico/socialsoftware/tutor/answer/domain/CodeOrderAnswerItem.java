@@ -35,7 +35,7 @@ public class CodeOrderAnswerItem extends QuestionAnswerItem {
     public String getAnswerRepresentation(Map<Integer, Answerable> options) {
         return orderedSlots.stream()
                 .sorted(Comparator.comparing(CodeOrderSlotAnswerItem::getAssignedOrder))
-                .map(c -> String.format("%s(%s)", options.get(c.getSlotId()).getAnswerRepresentation(), c.getAssignedOrder()+1))
+                .map(c -> options.get(c.getSlotId()).getAnswerRepresentation())
                 .collect(Collectors.joining("|"));
     }
 }
