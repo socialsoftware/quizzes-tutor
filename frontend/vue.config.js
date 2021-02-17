@@ -74,6 +74,7 @@ module.exports = {
   transpileDependencies: ['vuetify'],
   configureWebpack: {
     plugins: [
+      // README: Commented because removed relevant css
       // https://github.com/FullHuman/purgecss/issues/67
       // isProductionEnvFlag
       //   ? new PurgecssPlugin({

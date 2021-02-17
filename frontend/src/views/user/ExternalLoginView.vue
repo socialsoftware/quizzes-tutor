@@ -16,9 +16,9 @@ import RemoteServices from '../../services/RemoteServices';
 export default class ExternalLoginView extends Vue {
   async created() {}
 
-  async login(email: string, password: string) {
+  async login(username: string, password: string) {
     const user = new ExternalUser();
-    user.email = email;
+    user.username = username;
     user.password = password;
 
     await this.$store.dispatch('loading');

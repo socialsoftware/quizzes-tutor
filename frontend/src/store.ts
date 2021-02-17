@@ -116,7 +116,7 @@ export default new Vuex.Store({
     },
     async externalLogin({ commit }, user: ExternalUser) {
       const authResponse = await RemoteServices.externalLogin(
-        user.email,
+        user.username,
         user.password
       );
       commit('login', authResponse);

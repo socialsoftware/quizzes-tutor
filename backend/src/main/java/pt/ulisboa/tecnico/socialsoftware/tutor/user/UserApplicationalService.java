@@ -30,7 +30,7 @@ public class UserApplicationalService {
     public ExternalUserDto registerExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         ExternalUserDto user = userService.registerExternalUserTransactional(courseExecutionId, externalUserDto);
         if (!user.isActive()) {
-             sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken());
+             sendConfirmationEmailTo(user.getUsername(), user.getEmail(), user.getConfirmationToken());
         }
 
         return user;
@@ -44,7 +44,7 @@ public class UserApplicationalService {
                 .filter(userDto -> !userDto.isActive())
                 .map(userDto -> authUserRepository.findAuthUserByUsername(userDto.getUsername()).get())
                 .forEach(authUser -> {
-                    this.sendConfirmationEmailTo(authUser.getEmail(), ((AuthExternalUser) authUser).getConfirmationToken());
+                    this.sendConfirmationEmailTo(authUser.getUsername(), authUser.getEmail(), ((AuthExternalUser) authUser).getConfirmationToken());
                 });
 
         return courseDtoNotificationResponse;
@@ -53,17 +53,17 @@ public class UserApplicationalService {
     public ExternalUserDto confirmRegistration(ExternalUserDto externalUserDto) {
         ExternalUserDto user = userService.confirmRegistrationTransactional(externalUserDto);
         if (!user.isActive()) {
-            sendConfirmationEmailTo(user.getEmail(), user.getConfirmationToken());
+            sendConfirmationEmailTo(user.getUsername(), user.getEmail(), user.getConfirmationToken());
         }
         return user;
     }
 
-    public void sendConfirmationEmailTo(String email, String token) {
-        mailer.sendSimpleMail(mailUsername, email, Mailer.QUIZZES_TUTOR_SUBJECT + UserService.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(email, token));
+    public void sendConfirmationEmailTo(String username, String email, String token) {
+        mailer.sendSimpleMail(mailUsername, email, Mailer.QUIZZES_TUTOR_SUBJECT + UserService.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(username, token));
     }
 
-    private String buildMailBody(String email, String token) {
-        String msg = "To confirm your registration click the following link";
-        return String.format("%s: %s", msg, LinkHandler.createConfirmRegistrationLink(email, token));
+    private String buildMailBody(String username, String token) {
+        String msg = "To confirm your registration, as external user using username (" + username + ") click the following link";
+        return String.format("%s: %s", msg, LinkHandler.createConfirmRegistrationLink(username, token));
     }
 }
