@@ -166,10 +166,10 @@ public class CodeFillInQuestion extends QuestionDetails {
         for (var spots: orderSpots) {
             var option = spots.getOptions().stream().filter(x -> selectedIds.contains(x.getId())).findAny();
             if (option.isPresent()){
-                result.add(String.format("%s.%s", spots.getSequence(),option.get().getSequence() + 1));
+                result.add(String.format("%s", option.get().getSequence() + 1));
             }
             else {
-                result.add(String.format("%s.-", spots.getSequence()));
+                result.add("-");
             }
         }
         return String.join(" | ", result);
