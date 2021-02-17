@@ -55,8 +55,9 @@ public class QuestionSubmissionApplicationalService {
                         userDto.getEmail(),
                         Mailer.QUIZZES_TUTOR_SUBJECT + QUESTION_SUBMISSION_SUBJECT,
                         "There is a comment to question submission number " + reviewDto.getQuestionSubmissionId() + " by "
-                                + reviewDto.getName() + " ("
-                                + reviewDto.getUsername() + ")");
+                                + result.getName() + " ("
+                                + result.getUsername() + "): "
+                                + result.getComment());
             } catch (MailException me) {
                 logger.debug("createReview, fail to send email to {}", userDto.getEmail());
             }

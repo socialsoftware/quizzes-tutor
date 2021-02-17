@@ -48,7 +48,7 @@ public class DiscussionApplicationalService {
                 mailer.sendSimpleMail(mailUsername,
                     teacher.getEmail(),
                     Mailer.QUIZZES_TUTOR_SUBJECT + DISCUSSION_SUBJECT,
-                    "Discussion number " + discussionDto.getId() + " was created by " + discussionDto.getName() + " (" + discussionDto.getUsername() + ")");
+                    "Discussion number " + discussionDto.getId() + " was created by " + discussionDto.getName() + " (" + discussionDto.getUsername() + "): " + discussion.getMessage());
             } catch (MailException me) {
                 logger.debug("createDiscussion, fail to send email to {}", teacher.getEmail());
             }});
@@ -56,11 +56,11 @@ public class DiscussionApplicationalService {
         return discussionDto;
     }
 
-    public ReplyDto addReply(User user, int discussionId, ReplyDto reply) {
+    public ReplyDto addReply(User user, int discussionId, ReplyDto replyDto) {
         DiscussionDto discussionDto = discussionService.findDiscussionById(discussionId, false);
         List<UserDto> users = getUsersToSendEmail(user, discussionDto);
 
-        ReplyDto replyDto = discussionService.addReply(user.getId(), discussionId, reply);
+        ReplyDto result = discussionService.addReply(user.getId(), discussionId, replyDto);
 
         users.forEach(userDto -> {
             try {
@@ -68,14 +68,14 @@ public class DiscussionApplicationalService {
                         userDto.getEmail(),
                         Mailer.QUIZZES_TUTOR_SUBJECT + DISCUSSION_SUBJECT,
                         "There is a reply to discussion number " + discussionDto.getId() + " by "
-                                + replyDto.getName() + " ("
-                                + replyDto.getUsername() + ")");
+                                + result.getName() + " ("
+                                + result.getUsername() + "): " + result.getMessage());
             } catch (MailException me) {
                 logger.debug("addReply, fail to send email to {}", userDto.getEmail());
             }
         });
 
-        return replyDto;
+        return result;
     }
 
     private List<UserDto> getUsersToSendEmail(User user, DiscussionDto discussionDto) {
