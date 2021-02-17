@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.Answerable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
@@ -32,10 +32,10 @@ public class CodeOrderAnswerItem extends QuestionAnswerItem {
     }
 
     @Override
-    public String getAnswerRepresentation(Map<Integer, Option> options) {
+    public String getAnswerRepresentation(Map<Integer, Answerable> options) {
         return orderedSlots.stream()
                 .sorted(Comparator.comparing(CodeOrderSlotAnswerItem::getAssignedOrder))
-                .map(c -> String.format("%s(%s)", c.getSlotId(), c.getAssignedOrder()+1))
+                .map(c -> String.format("%s(%s)", options.get(c.getSlotId()).getAnswerRepresentation(), c.getAssignedOrder()+1))
                 .collect(Collectors.joining("|"));
     }
 }

@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.Answerable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInOptionStatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInStatementAnswerDetailsDto;
@@ -32,7 +32,9 @@ public class CodeFillInAnswerItem extends QuestionAnswerItem {
     }
 
     @Override
-    public String getAnswerRepresentation(Map<Integer, Option> options) {
-        return optionIds.stream().map(Object::toString).collect(Collectors.joining("|"));
+    public String getAnswerRepresentation(Map<Integer, Answerable> options) {
+        return optionIds.stream()
+                .map(x -> options.get(x).getAnswerRepresentation())
+                .collect(Collectors.joining("|"));
     }
 }

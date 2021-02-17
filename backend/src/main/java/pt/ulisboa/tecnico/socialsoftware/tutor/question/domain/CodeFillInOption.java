@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.Answerable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
@@ -11,7 +12,7 @@ import java.util.Set;
 
 @Entity
 @Table(name = "code_fill_in_options")
-public class CodeFillInOption implements DomainEntity {
+public class CodeFillInOption implements DomainEntity, Answerable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -95,5 +96,10 @@ public class CodeFillInOption implements DomainEntity {
     public void delete() {
         this.codeFillInSpot = null;
         this.questionAnswers.clear();
+    }
+
+    @Override
+    public String getAnswerRepresentation() {
+        return String.format("%s.%s", this.getFillInSpot().getSequence(),this.getSequence()+1);
     }
 }

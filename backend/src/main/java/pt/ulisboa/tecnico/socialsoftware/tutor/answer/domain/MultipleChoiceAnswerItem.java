@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.Answerable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
@@ -26,8 +26,8 @@ public class MultipleChoiceAnswerItem extends QuestionAnswerItem {
     }
 
     @Override
-    public String getAnswerRepresentation(Map<Integer, Option> options) {
-        return this.getOptionId() != null ? MultipleChoiceQuestion.convertSequenceToLetter(options.get(this.getOptionId()).getSequence()) : "-";
+    public String getAnswerRepresentation(Map<Integer, Answerable> options) {
+        return this.getOptionId() != null ? options.get(this.getOptionId()).getAnswerRepresentation() : "-";
     }
 
     public Integer getOptionId() {

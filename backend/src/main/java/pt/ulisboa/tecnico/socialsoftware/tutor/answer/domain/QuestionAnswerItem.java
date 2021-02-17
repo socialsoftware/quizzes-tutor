@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.Answerable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
@@ -97,5 +98,5 @@ public abstract class QuestionAnswerItem {
         this.timeToSubmission = timeToSubmission;
     }
 
-    public abstract String getAnswerRepresentation(Map<Integer, Option> options);
+    public abstract String getAnswerRepresentation(Map<Integer, Answerable> options);
 }

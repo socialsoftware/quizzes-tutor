@@ -3,15 +3,18 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerSlot;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.Answerable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderSlotDto;
 
 import javax.persistence.*;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "code_order_slot")
-public class CodeOrderSlot implements DomainEntity {
+public class CodeOrderSlot implements DomainEntity, Answerable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -80,5 +83,13 @@ public class CodeOrderSlot implements DomainEntity {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitCodeOrderSlot(this);
+    }
+
+    @Override
+    public String getAnswerRepresentation() {
+        int index = this.getQuestionDetails().getCodeOrderSlots().stream()
+                .sorted(Comparator.comparing(CodeOrderSlot::getId))
+                .collect(Collectors.toList()).indexOf(this);
+        return String.format("%s", index +1);
     }
 }
