@@ -4,7 +4,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswe
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.Answerable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
 import javax.persistence.*;
@@ -16,7 +15,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 
 @Entity
 @Table(name = "options")
-public class Option implements DomainEntity, Answerable {
+public class Option implements DomainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -118,10 +117,5 @@ public class Option implements DomainEntity, Answerable {
     public void remove() {
         this.questionDetails = null;
         this.questionAnswers.clear();
-    }
-
-    @Override
-    public String getAnswerRepresentation() {
-        return MultipleChoiceQuestion.convertSequenceToLetter(this.getSequence());
     }
 }

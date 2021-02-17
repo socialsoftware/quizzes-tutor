@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import groovy.lang.Tuple;
 import org.apache.commons.lang3.tuple.Pair;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderAnswerDto;
@@ -18,11 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetails
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDetailsDto;
 
 import javax.persistence.*;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collector;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -127,21 +122,25 @@ public class CodeOrderQuestion extends QuestionDetails {
         this.codeOrderSlots.clear();
     }
 
+    private Map<Integer, Integer> getSlotSequenceValue(){
+        int counter = 1;
+        var slots = this.codeOrderSlots.stream()
+                .sorted(Comparator.comparing(CodeOrderSlot::getId))
+                .collect(Collectors.toList());
+        var slotSequence = new HashMap<Integer, Integer>();
+        for (var codeOrderSlot : slots) {
+            slotSequence.put(codeOrderSlot.getId(), counter++);
+        }
+        return slotSequence;
+    }
+
     @Override
     public String getCorrectAnswerRepresentation() {
-        int counter = 0;
-        var slots = new ArrayList<>(this.codeOrderSlots);
-        slots.sort(Comparator.comparing(CodeOrderSlot::getId));
-        var response = new ArrayList<Pair<Integer, Integer>>();
-        for (var codeOrderSlot : slots) {
-            counter++;
-            if (codeOrderSlot.getOrder() == null){
-                continue;
-            }
-            response.add(Pair.of(counter, codeOrderSlot.getOrder()));
-        }
-        response.sort(Comparator.comparing(Pair::getRight));
-        return response.stream().map(x -> x.getLeft().toString())
+        var idSequenceMap = getSlotSequenceValue();
+        return this.codeOrderSlots.stream()
+                .filter(x-> x.getOrder() != null)
+                .sorted(Comparator.comparing(CodeOrderSlot::getOrder))
+                .map(x -> idSequenceMap.get(x.getId()).toString())
                 .collect(Collectors.joining(" | "));
     }
 
@@ -167,5 +166,13 @@ public class CodeOrderQuestion extends QuestionDetails {
                 .filter(slot1 -> slot1.getId().equals(slotId))
                 .findAny()
                 .orElseThrow(() -> new TutorException(QUESTION_ORDER_SLOT_MISMATCH, slotId));
+    }
+
+    @Override
+    public String getAnswerRepresentation(List<Integer> selectedIds) {
+        var idSequenceMap = getSlotSequenceValue();
+        return selectedIds.stream()
+                .map(x -> idSequenceMap.get(x).toString())
+                .collect(Collectors.joining(" | "));
     }
 }

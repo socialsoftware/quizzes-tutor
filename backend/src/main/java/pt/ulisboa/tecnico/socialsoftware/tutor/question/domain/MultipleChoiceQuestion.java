@@ -1,23 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceCorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementQuestionDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDetailsDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -155,4 +149,13 @@ public class MultipleChoiceQuestion extends QuestionDetails {
         return correctAnswer != null ? Character.toString('A' + correctAnswer) : "-";
     }
 
+    @Override
+    public String getAnswerRepresentation(List<Integer> selectedIds) {
+        var result = this.options
+                .stream()
+                .filter(x -> selectedIds.contains(x.getId()))
+                .map(x -> convertSequenceToLetter(x.getSequence()))
+                .collect(Collectors.joining("|"));
+        return !result.isEmpty() ? result : "-";
+    }
 }

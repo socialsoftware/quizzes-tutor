@@ -17,7 +17,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDetai
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collector;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AT_LEAST_ONE_OPTION_NEEDED;
@@ -155,5 +157,21 @@ public class CodeFillInQuestion extends QuestionDetails {
         for (var spot : this.getFillInSpots()) {
             spot.accept(visitor);
         }
+    }
+
+    @Override
+    public String getAnswerRepresentation(List<Integer> selectedIds) {
+        var result = new ArrayList<String>();
+        var orderSpots = getFillInSpots().stream().sorted(Comparator.comparing(CodeFillInSpot::getSequence)).collect(Collectors.toList());
+        for (var spots: orderSpots) {
+            var option = spots.getOptions().stream().filter(x -> selectedIds.contains(x.getId())).findAny();
+            if (option.isPresent()){
+                result.add(String.format("%s.%s", spots.getSequence(),option.get().getSequence() + 1));
+            }
+            else {
+                result.add(String.format("%s.-", spots.getSequence()));
+            }
+        }
+        return String.join(" | ", result);
     }
 }

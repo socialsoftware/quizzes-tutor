@@ -1,16 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.Answerable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Entity
@@ -32,10 +31,11 @@ public class CodeOrderAnswerItem extends QuestionAnswerItem {
     }
 
     @Override
-    public String getAnswerRepresentation(Map<Integer, Answerable> options) {
-        return orderedSlots.stream()
-                .sorted(Comparator.comparing(CodeOrderSlotAnswerItem::getAssignedOrder))
-                .map(c -> options.get(c.getSlotId()).getAnswerRepresentation())
-                .collect(Collectors.joining("|"));
+    public String getAnswerRepresentation(QuestionDetails questionDetails) {
+        return questionDetails.getAnswerRepresentation(
+                orderedSlots.stream()
+                        .sorted(Comparator.comparing(CodeOrderSlotAnswerItem::getAssignedOrder))
+                        .map(CodeOrderSlotAnswerItem::getSlotId)
+                        .collect(Collectors.toList()));
     }
 }

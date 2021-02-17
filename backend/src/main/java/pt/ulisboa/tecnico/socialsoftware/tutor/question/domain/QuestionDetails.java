@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetails
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDetailsDto;
 
 import javax.persistence.*;
+import java.util.List;
 
 @Entity
 @Table(name = "question_details")
@@ -62,4 +63,6 @@ public abstract class QuestionDetails implements DomainEntity {
     public abstract void update(Updator updator);
 
     public abstract String getCorrectAnswerRepresentation();
+
+    public abstract String getAnswerRepresentation(List<Integer> selectedIds);
 }

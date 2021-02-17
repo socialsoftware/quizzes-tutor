@@ -2,7 +2,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
 import org.apache.commons.lang.NotImplementedException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.Answerable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -14,55 +13,11 @@ import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
 import java.util.stream.Collectors;
-import java.util.stream.Stream;
 
 public class CSVQuizExportVisitor implements Visitor {
     private String[] line;
     private int column;
     private final List<String[]> table = new ArrayList<>();
-
-    private Map<Integer, Answerable> multipleChoiceOptions;
-    private Map<Integer, Answerable> codeFillInOptions;
-    private Map<Integer, Answerable> codeOrderSlots;
-
-    private void fetchOptions(List<QuizQuestion> quizQuestionsList){
-        multipleChoiceOptions = quizQuestionsList.stream()
-                .map(QuizQuestion::getQuestion)
-                .map(Question::getQuestionDetails)
-                .filter(q -> q instanceof MultipleChoiceQuestion)
-                .flatMap(question -> ((MultipleChoiceQuestion) question).getOptions().stream())
-                .collect(Collectors.toMap(Option::getId, Function.identity()));
-
-        codeFillInOptions = quizQuestionsList.stream()
-                .map(QuizQuestion::getQuestion)
-                .map(Question::getQuestionDetails)
-                .filter(q -> q instanceof CodeFillInQuestion)
-                .flatMap(question ->
-                        ((CodeFillInQuestion) question).getFillInSpots().stream()
-                                .flatMap(x -> x.getOptions().stream())
-                                .collect(Collectors.toList()).stream())
-                .collect(Collectors.toMap(CodeFillInOption::getId, Function.identity()));
-
-        codeOrderSlots = quizQuestionsList.stream()
-                .map(QuizQuestion::getQuestion)
-                .map(Question::getQuestionDetails)
-                .filter(q -> q instanceof CodeOrderQuestion)
-                .flatMap(question -> ((CodeOrderQuestion) question).getCodeOrderSlots().stream())
-                .collect(Collectors.toMap(CodeOrderSlot::getId, Function.identity()));
-    }
-
-    private Map<Integer, Answerable> getOptions(QuestionAnswerItem questionAnswerItem){
-        if (questionAnswerItem instanceof MultipleChoiceAnswerItem){
-            return multipleChoiceOptions;
-        }
-        if (questionAnswerItem instanceof CodeFillInAnswerItem){
-            return codeFillInOptions;
-        }
-        if (questionAnswerItem instanceof CodeOrderAnswerItem){
-            return codeOrderSlots;
-        }
-        throw new NotImplementedException();
-    }
 
     public String export(Quiz quiz, List<QuestionAnswerItem> questionAnswerItems) {
         int numberOfQuestions = quiz.getQuizQuestionsNumber();
@@ -70,8 +25,6 @@ public class CSVQuizExportVisitor implements Visitor {
         int lineSize = numberOfQuestions + 5;
         Map<Integer, QuizQuestion> quizQuestions = quizQuestionsList.stream()
                 .collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));
-
-        fetchOptions(quizQuestionsList);
 
         // add header
         line = new String[lineSize];
@@ -143,7 +96,7 @@ public class CSVQuizExportVisitor implements Visitor {
             Arrays.fill(line, "");
             line[0] = questionAnswerItem.getUsername();
             line[1] = String.valueOf(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getSequence()+1);
-            line[2] = questionAnswerItem.getAnswerRepresentation(getOptions(questionAnswerItem));
+            line[2] = questionAnswerItem.getAnswerRepresentation(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getQuestion().getQuestionDetails());
             line[3] = DateHandler.toISOString(questionAnswerItem.getAnswerDate());
             line[4] = questionAnswerItem.getTimeToSubmission() != null ? convertMiliseconds(questionAnswerItem.getTimeToSubmission()) : "";
             line[5] = convertMiliseconds(questionAnswerItem.getTimeTaken());
