@@ -66,7 +66,9 @@ public abstract class LatexVisitor implements Visitor {
     @Override
     public void visitQuestionDetails(CodeFillInQuestion question) {
 
-        this.result += String.format("\n\tCode snippet language: %s", question.getLanguage()) + "\n" + question.getCode() + "\n\n";
+        this.result +=
+                String.format("\n\tCode snippet language: %s", question.getLanguage()) +
+                        "\n\\begin{lstlisting}\n" + question.getCode() + "\n\\end{lstlisting}\n\n";
 
         question.visitFillInSpots(this);
 
@@ -91,16 +93,17 @@ public abstract class LatexVisitor implements Visitor {
     public void visitQuestionDetails(CodeOrderQuestion question) {
 
         this.result += String.format("\n\tCode snippet language: %s", question.getLanguage()) + "\n\n";
-
+        this.result += "\\begin{lstlisting}\n";
         question.visitCodeOrderSlots(this);
+        this.result += "\\end{lstlisting}\n";
 
-        this.result = this.result + "% Answer: " +
+        this.result = this.result + "% Answer: \n\\begin{lstlisting}\n" +
                 question.getCodeOrderSlots()
                         .stream()
                         .filter(x -> x.getOrder() != null)
                         .sorted(Comparator.comparing(CodeOrderSlot::getOrder))
                         .map(spot -> spot.getContent()
-                        ).collect(Collectors.joining("\n ")) + "\n";
+                        ).collect(Collectors.joining("\n")) + "\n\\end{lstlisting}\n";
 
         this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
     }
