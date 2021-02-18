@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -87,8 +88,8 @@ public class CSVQuizExportVisitor implements Visitor {
         line[5] = "Time Taken";
         table.add(line);
 
-        Comparator<QuestionAnswerItem> comparator = Comparator.comparing(QuestionAnswerItem::getUsername);
-        comparator.thenComparing(QuestionAnswerItem::getAnswerDate);
+        Comparator<QuestionAnswerItem> comparator = Comparator.comparing(QuestionAnswerItem::getUsername)
+                .thenComparing(Comparator.comparing(QuestionAnswerItem::getTimeToSubmission).reversed());
         questionAnswerItems.sort(comparator);
 
         for (QuestionAnswerItem questionAnswerItem : questionAnswerItems) {
@@ -97,7 +98,7 @@ public class CSVQuizExportVisitor implements Visitor {
             line[0] = questionAnswerItem.getUsername();
             line[1] = String.valueOf(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getSequence()+1);
             line[2] = questionAnswerItem.getAnswerRepresentation(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getQuestion().getQuestionDetails());
-            line[3] = DateHandler.toISOString(questionAnswerItem.getAnswerDate());
+            line[3] = DateHandler.toHumanReadableString(questionAnswerItem.getAnswerDate());
             line[4] = questionAnswerItem.getTimeToSubmission() != null ? convertMiliseconds(questionAnswerItem.getTimeToSubmission()) : "";
             line[5] = convertMiliseconds(questionAnswerItem.getTimeTaken());
             table.add(line);
@@ -114,8 +115,8 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitQuizAnswer(QuizAnswer quizAnswer) {
-        line[column++] = quizAnswer.getCreationDate() != null ? DateHandler.toISOString(quizAnswer.getCreationDate()) : "";
-        line[column++] = quizAnswer.getAnswerDate() != null ? DateHandler.toISOString(quizAnswer.getAnswerDate()) : "";
+        line[column++] = quizAnswer.getCreationDate() != null ? DateHandler.toHumanReadableString(quizAnswer.getCreationDate()) : "";
+        line[column++] = quizAnswer.getAnswerDate() != null ? DateHandler.toHumanReadableString(quizAnswer.getAnswerDate()) : "";
         if (quizAnswer.getAnswerDate() != null &&
                 quizAnswer.getQuiz().getConclusionDate() != null &&
                 quizAnswer.getAnswerDate().isAfter(quizAnswer.getQuiz().getConclusionDate())) {

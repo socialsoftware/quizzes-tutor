@@ -29,8 +29,8 @@
           :code.sync="el.content"
           :language.sync="questionDetails.language"
           :editable="false"
-                :simple="true"
-/>
+          :simple="true"
+        />
       </li>
     </draggable>
     <draggable
@@ -56,8 +56,8 @@
           "
           :language.sync="questionDetails.language"
           :editable="false"
-                :simple="true"
-/>
+          :simple="true"
+        />
         <v-btn @click="removeAnswer(index)" icon small>
           <v-icon color="red lighten-1">mdi-playlist-remove </v-icon>
         </v-btn>
