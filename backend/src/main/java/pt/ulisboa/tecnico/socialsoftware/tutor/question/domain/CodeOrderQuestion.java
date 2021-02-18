@@ -64,10 +64,13 @@ public class CodeOrderQuestion extends QuestionDetails {
         // Ensures some randomization when creating the slots ids.
         Collections.shuffle(codeOrderSlots);
 
+        var sequence = getCodeOrderSlots().size();
+
         for (var codeOrderSlotDto : codeOrderSlots) {
             if (codeOrderSlotDto.getId() == null) {
                 CodeOrderSlot codeOrderSlot = new CodeOrderSlot(codeOrderSlotDto);
                 codeOrderSlot.setQuestionDetails(this);
+                codeOrderSlot.setSequence(sequence++);
                 this.codeOrderSlots.add(codeOrderSlot);
             } else {
                 CodeOrderSlot codeOrderSlot = getCodeOrderSlots()
@@ -122,25 +125,12 @@ public class CodeOrderQuestion extends QuestionDetails {
         this.codeOrderSlots.clear();
     }
 
-    private Map<Integer, Integer> getSlotSequenceValue(){
-        int counter = 1;
-        var slots = this.codeOrderSlots.stream()
-                .sorted(Comparator.comparing(CodeOrderSlot::getId))
-                .collect(Collectors.toList());
-        var slotSequence = new HashMap<Integer, Integer>();
-        for (var codeOrderSlot : slots) {
-            slotSequence.put(codeOrderSlot.getId(), counter++);
-        }
-        return slotSequence;
-    }
-
     @Override
     public String getCorrectAnswerRepresentation() {
-        var idSequenceMap = getSlotSequenceValue();
         return this.codeOrderSlots.stream()
                 .filter(x-> x.getOrder() != null)
                 .sorted(Comparator.comparing(CodeOrderSlot::getOrder))
-                .map(x -> idSequenceMap.get(x.getId()).toString())
+                .map(x -> String.valueOf(x.getSequence() + 1))
                 .collect(Collectors.joining(" | "));
     }
 
@@ -170,9 +160,8 @@ public class CodeOrderQuestion extends QuestionDetails {
 
     @Override
     public String getAnswerRepresentation(List<Integer> selectedIds) {
-        var idSequenceMap = getSlotSequenceValue();
         return selectedIds.stream()
-                .map(x -> idSequenceMap.get(x).toString())
+                .map(x -> String.valueOf(this.codeOrderSlots.stream().filter(co -> co.getId().equals(x)).findAny().get().getSequence() + 1))
                 .collect(Collectors.joining(" | "));
     }
 }

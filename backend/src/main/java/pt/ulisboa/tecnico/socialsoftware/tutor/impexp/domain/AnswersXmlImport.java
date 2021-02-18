@@ -217,10 +217,15 @@ public class AnswersXmlImport {
 
             CodeOrderStatementAnswerDetailsDto codeOrderStatementAnswerDetailsDto = new CodeOrderStatementAnswerDetailsDto();
             for (var slot: slotsElement.getChildren("slot")) {
-                var correctOrder = Integer.valueOf(slot.getAttributeValue("correctOrder"));
+                var sequence = Integer.valueOf(slot.getAttributeValue("sequence"));
                 var order = Integer.valueOf(slot.getAttributeValue("order"));
 
-                // TODO: NEED TO ADD A SEQUENCE FOR THIS TO WORK
+                var slotId = codeOrderQuestion.getCodeOrderSlots()
+                        .stream()
+                        .filter(x -> x.getSequence() == sequence)
+                        .findAny()
+                        .get().getId();
+                codeOrderStatementAnswerDetailsDto.getOrderedSlots().add(new CodeOrderSlotStatementAnswerDetailsDto(slotId, order));
             }
             CodeOrderAnswer answer = new CodeOrderAnswer(questionAnswer);
             answer.setOrderedSlots(codeOrderQuestion, codeOrderStatementAnswerDetailsDto);

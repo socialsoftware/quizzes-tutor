@@ -125,7 +125,7 @@ public class AnswersXmlExportVisitor implements Visitor {
 
             for (var slot:answer.getOrderedSlots()) {
                 Element slotElement = new Element("slot");
-                slotElement.setAttribute("correctOrder", String.valueOf(slot.getCodeOrderSlot().getOrder()));
+                slotElement.setAttribute("sequence", String.valueOf(slot.getCodeOrderSlot().getSequence()));
                 slotElement.setAttribute("order", String.valueOf(slot.getAssignedOrder()));
                 slotContainerElement.addContent(slotElement);
             }

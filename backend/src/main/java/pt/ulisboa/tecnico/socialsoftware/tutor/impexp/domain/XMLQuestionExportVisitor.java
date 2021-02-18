@@ -153,6 +153,7 @@ public class XMLQuestionExportVisitor implements Visitor {
         Element spotElement = new Element("slot");
 
         spotElement.setAttribute("order", String.valueOf(codeOrderSlot.getOrder()));
+        spotElement.setAttribute("sequence", String.valueOf(codeOrderSlot.getSequence()));
         spotElement.addContent(codeOrderSlot.getContent());
         this.currentElement.addContent(spotElement);
     }

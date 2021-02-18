@@ -175,6 +175,7 @@ public class QuestionsXmlImport {
         for (Element slotElement : questionElement.getChild("orderSlots").getChildren("slot")) {
             var slot = new CodeOrderSlotDto();
             slot.setOrder(Integer.valueOf(slotElement.getAttributeValue("order")));
+            slot.setSequence(Integer.valueOf(slotElement.getAttributeValue("sequence")));
             slot.setContent(slotElement.getValue());
 
             slots.add(slot);
