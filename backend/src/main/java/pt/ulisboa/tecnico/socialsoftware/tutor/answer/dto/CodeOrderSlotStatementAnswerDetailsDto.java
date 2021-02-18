@@ -11,6 +11,11 @@ public class CodeOrderSlotStatementAnswerDetailsDto implements Serializable {
     public CodeOrderSlotStatementAnswerDetailsDto() {
     }
 
+    public CodeOrderSlotStatementAnswerDetailsDto(Integer slotId, Integer order) {
+        this.slotId = slotId;
+        this.order = order;
+    }
+
     public CodeOrderSlotStatementAnswerDetailsDto(CodeOrderAnswerSlot option) {
         this.order = option.getAssignedOrder();
         this.slotId = option.getCodeOrderSlot().getId();

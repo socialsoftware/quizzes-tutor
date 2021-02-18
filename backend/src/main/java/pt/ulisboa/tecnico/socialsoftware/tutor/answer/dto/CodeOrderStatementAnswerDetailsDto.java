@@ -7,12 +7,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CodeOrderStatementAnswerDetailsDto extends StatementAnswerDetailsDto {
-    private List<CodeOrderSlotStatementAnswerDetailsDto> orderedSlots;
+    private List<CodeOrderSlotStatementAnswerDetailsDto> orderedSlots = new ArrayList<>();
 
     public CodeOrderStatementAnswerDetailsDto() {
     }
