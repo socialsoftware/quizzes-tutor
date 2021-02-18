@@ -247,8 +247,8 @@ public class AnswersXmlImport {
 
                 var optionId = codeFillInQuestion.getFillInSpots().stream()
                         .filter(x -> x.getSequence().equals(slotSequence))
-                        .flatMap(x -> x.getOptions().stream()
-                                .filter(x -> x.getSequence().equals(optionSequence))
+                        .flatMap(s -> s.getOptions().stream()
+                                .filter(op -> op.getSequence().equals(optionSequence))
                                 .map(CodeFillInOption::getId)
                         ).findAny().get();
 
