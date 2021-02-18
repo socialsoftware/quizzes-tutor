@@ -18,7 +18,7 @@ public class CodeOrderSlot implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false, columnDefinition = "int default 0")
+    @Column(nullable = false)
     private Integer sequence;
 
     @Column(name = "correct_order")
