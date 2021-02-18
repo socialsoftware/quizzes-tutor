@@ -18,15 +18,21 @@ export default class CodeOrderAnswerDetails extends AnswerDetails {
 
   isCorrect(questionDetails: CodeOrderQuestionDetails): boolean {
     return (
-      this.orderedSlots.length === questionDetails.codeOrderSlots.filter(os => os.order != null).length &&
+      this.orderedSlots.length ===
+        questionDetails.codeOrderSlots.filter(os => os.order != null).length &&
       this.orderedSlots.filter(os => !os.correct).length == 0
     );
   }
 
   answerRepresentation(questionDetails: CodeOrderQuestionDetails): string {
     let counter = 1;
-    let allIds = questionDetails.codeOrderSlots.map(x => x.id || 0)
-    let options = Object.assign({}, ...allIds.sort((x,y) => x - y).map(x => ({[x]: ""+counter++})));
-    return this.orderedSlots.map(x => options[x.slotId || 0] || "-").join(" | ");
+    let allIds = questionDetails.codeOrderSlots.map(x => x.id || 0);
+    let options = Object.assign(
+      {},
+      ...allIds.sort((x, y) => x - y).map(x => ({ [x]: '' + counter++ }))
+    );
+    return this.orderedSlots
+      .map(x => options[x.slotId || 0] || '-')
+      .join(' | ');
   }
 }

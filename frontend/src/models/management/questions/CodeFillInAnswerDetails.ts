@@ -28,16 +28,16 @@ export default class CodeFillInAnswerType extends AnswerDetails {
       let inserted = false;
       for (const option of this.options) {
         let optionInSpot = spot.options.filter(op => op.id == option.id);
-        if (optionInSpot.length > 0){
+        if (optionInSpot.length > 0) {
           answerRepr.push((optionInSpot[0]?.sequence || 0) + 1);
-          inserted =true;
+          inserted = true;
           continue;
         }
       }
-      if(!inserted){
-        answerRepr.push("-")
+      if (!inserted) {
+        answerRepr.push('-');
       }
     }
-    return answerRepr.join(" | ");
+    return answerRepr.join(' | ');
   }
 }

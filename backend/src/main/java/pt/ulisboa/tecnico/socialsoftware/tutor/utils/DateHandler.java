@@ -21,6 +21,18 @@ public class DateHandler {
     }
 
     /**
+     *  Converts LocalDateTime to ISO8601 string format
+     */
+    public static String toHumanReadableString(LocalDateTime time) {
+        if (time == null) {
+            return null;
+        }
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+
+        return ZonedDateTime.of(time, ZoneId.of("UTC")).format(formatter);
+    }
+
+    /**
      *  Converts ISO8601 string format to LocalDateTime
      */
     public static LocalDateTime toLocalDateTime(String date) {

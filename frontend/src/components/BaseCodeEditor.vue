@@ -63,7 +63,7 @@ export default class BaseCodeEditor extends Vue {
   @Prop({ default: true })
   readonly editable!: boolean;
 
-    @Prop({ default: false })
+  @Prop({ default: false })
   readonly simple!: boolean;
 
   counter: number = 1;
@@ -99,11 +99,10 @@ export default class BaseCodeEditor extends Vue {
     return BaseCodeEditor.languagesDict[this.syncedLanguage];
   }
   created() {
-    if (!this.simple){
+    if (!this.simple) {
       this.updateQuestion();
     }
-          this.CodemirrorUpdated = true;
-
+    this.CodemirrorUpdated = true;
   }
   onCmCodeChange(newCode: string) {
     this.syncedCode = newCode;

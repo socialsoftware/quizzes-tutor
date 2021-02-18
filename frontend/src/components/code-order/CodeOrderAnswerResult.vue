@@ -14,8 +14,8 @@
           :code.sync="slotById(el.slotId).content"
           :language.sync="questionDetails.language"
           :editable="false"
-               :simple="true"
- />
+          :simple="true"
+        />
         <span
           class="is-correct"
           v-html="isCorrect(el, index) ? ' ✔ ' : ' ✖ '"
@@ -34,8 +34,8 @@
           ref="codeEditor"
           :code.sync="slotById(el.slotId).content"
           :language.sync="questionDetails.language"
-          :editable="false"        :simple="true"
-
+          :editable="false"
+          :simple="true"
         />
       </div>
     </div>

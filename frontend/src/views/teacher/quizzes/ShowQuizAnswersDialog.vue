@@ -54,7 +54,11 @@
             :key="questionAnswer.question.id"
             v-bind:class="[
               'answer',
-              questionAnswer.answerDetails.isCorrect(questionAnswer.question.questionDetailsDto) ? 'correct' : 'incorrect'
+              questionAnswer.answerDetails.isCorrect(
+                questionAnswer.question.questionDetailsDto
+              )
+                ? 'correct'
+                : 'incorrect'
             ]"
             @click="openAnswerDetailsDialog(item, index)"
             >{{

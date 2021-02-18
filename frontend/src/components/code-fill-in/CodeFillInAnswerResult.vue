@@ -168,16 +168,19 @@ export default class CodeFillInAnswer extends Vue {
       }
 
       something.options.forEach(element => {
-        if (! (element.optionId === optionAnswered?.optionId || 
-        element.optionId === correctOption?.optionId)
-        ){
+        if (
+          !(
+            element.optionId === optionAnswered?.optionId ||
+            element.optionId === correctOption?.optionId
+          )
+        ) {
           const newOption = document.createElement('option');
-        newOption.innerHTML = element?.content;
-        newOption.classList.add('answerDetailsSynced-spot');
-        d.appendChild(newOption);
+          newOption.innerHTML = element?.content;
+          newOption.classList.add('answerDetailsSynced-spot');
+          d.appendChild(newOption);
         }
       });
-      
+
       option.innerHTML =
         text +
         (optionAnsweredQuestion
