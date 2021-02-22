@@ -222,7 +222,7 @@ public class AnswersXmlImport {
 
                 var slotId = codeOrderQuestion.getCodeOrderSlots()
                         .stream()
-                        .filter(x -> x.getSequence() == sequence)
+                        .filter(x -> x.getSequence().equals(sequence))
                         .findAny()
                         .get().getId();
                 codeOrderStatementAnswerDetailsDto.getOrderedSlots().add(new CodeOrderSlotStatementAnswerDetailsDto(slotId, order));

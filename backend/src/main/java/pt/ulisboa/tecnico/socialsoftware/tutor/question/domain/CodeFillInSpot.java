@@ -77,23 +77,15 @@ public class CodeFillInSpot implements DomainEntity {
         // Ensures some randomization when creating the options ids.
         Collections.shuffle(options);
 
+        this.options.clear();
+
         int index = 0;
         for (OptionDto optionDto : options) {
-            if (optionDto.getId() == null) {
-                optionDto.setSequence(index++);
-                CodeFillInOption codeFillInOption = new CodeFillInOption(optionDto);
-                codeFillInOption.setFillInSpot(this);
-                this.options.add(codeFillInOption);
-            } else {
-                CodeFillInOption option = getOptions()
-                        .stream()
-                        .filter(op -> op.getId().equals(optionDto.getId()))
-                        .findFirst()
-                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, optionDto.getId()));
-
-                option.setContent(optionDto.getContent());
-                option.setCorrect(optionDto.isCorrect());
-            }
+            int sequence = optionDto.getSequence() != null ? optionDto.getSequence() : index++;
+            optionDto.setSequence(sequence);
+            CodeFillInOption codeFillInOption = new CodeFillInOption(optionDto);
+            codeFillInOption.setFillInSpot(this);
+            this.options.add(codeFillInOption);
         }
     }
 

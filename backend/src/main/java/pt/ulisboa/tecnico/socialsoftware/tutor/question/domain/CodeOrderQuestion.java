@@ -67,10 +67,11 @@ public class CodeOrderQuestion extends QuestionDetails {
         var sequence = getCodeOrderSlots().size();
 
         for (var codeOrderSlotDto : codeOrderSlots) {
+            int newSequence = codeOrderSlotDto.getSequence() != null ? codeOrderSlotDto.getSequence() : sequence++;
             if (codeOrderSlotDto.getId() == null) {
                 CodeOrderSlot codeOrderSlot = new CodeOrderSlot(codeOrderSlotDto);
                 codeOrderSlot.setQuestionDetails(this);
-                codeOrderSlot.setSequence(sequence++);
+                codeOrderSlot.setSequence(newSequence);
                 this.codeOrderSlots.add(codeOrderSlot);
             } else {
                 CodeOrderSlot codeOrderSlot = getCodeOrderSlots()
@@ -81,6 +82,7 @@ public class CodeOrderQuestion extends QuestionDetails {
 
                 codeOrderSlot.setContent(codeOrderSlotDto.getContent());
                 codeOrderSlot.setOrder(codeOrderSlotDto.getOrder());
+                codeOrderSlot.setSequence(newSequence);
             }
         }
     }

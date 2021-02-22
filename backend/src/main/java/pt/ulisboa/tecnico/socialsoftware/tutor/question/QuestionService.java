@@ -279,7 +279,6 @@ public class QuestionService {
         }
     }
 
-    // TODO: might not be needed.
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
