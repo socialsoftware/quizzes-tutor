@@ -97,6 +97,9 @@ public class CodeFillInAnswer extends AnswerDetails {
         if (!codeFillInStatementAnswerDetailsDto.emptyAnswer()) {
             for (CodeFillInOptionStatementAnswerDto option : codeFillInStatementAnswerDetailsDto.getSelectedOptions()) {
 
+                if(option.getOptionId() == null){
+                    continue;
+                }
                 CodeFillInOption codeFillInOption = question.getFillInSpots().stream()
                         .map(CodeFillInSpot::getOptions)
                         .flatMap(Collection::stream)

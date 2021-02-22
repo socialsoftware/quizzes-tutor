@@ -7,6 +7,7 @@ public class CodeOrderAnswerSlotDto {
     private Integer slotId;
     private Integer order;
     private boolean correct;
+    private Integer sequence;
 
     public CodeOrderAnswerSlotDto(CodeOrderSlot correctSlot) {
         slotId = correctSlot.getId();
@@ -18,6 +19,7 @@ public class CodeOrderAnswerSlotDto {
         slotId = answerOrderedSlot.getCodeOrderSlot().getId();
         order = answerOrderedSlot.getAssignedOrder();
         correct = answerOrderedSlot.isCorrect();
+        sequence = answerOrderedSlot.getCodeOrderSlot().getSequence();
     }
 
     public Integer getSlotId() {
@@ -42,5 +44,13 @@ public class CodeOrderAnswerSlotDto {
 
     public void setCorrect(boolean correct) {
         this.correct = correct;
+    }
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
     }
 }
