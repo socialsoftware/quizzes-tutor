@@ -17,7 +17,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.CODE_ORDER_QUESTION)
 public class CodeOrderAnswer extends AnswerDetails {
-
     @OneToMany(mappedBy = "codeOrderAnswer", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private final Set<CodeOrderAnswerSlot> orderedSlots = new HashSet<>();
 
@@ -37,9 +36,7 @@ public class CodeOrderAnswer extends AnswerDetails {
     @Override
     public void remove() {
         if (this.orderedSlots != null) {
-            var toDelete = new ArrayList<>(this.orderedSlots);
-            toDelete.forEach(CodeOrderAnswerSlot::remove);
-            this.orderedSlots.clear();
+            orderedSlots.forEach(CodeOrderAnswerSlot::remove);
         }
     }
 

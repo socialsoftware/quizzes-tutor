@@ -147,7 +147,10 @@ public class UserService {
         userRepository.findAll()
                 .stream()
                 .filter(user -> user.getAuthUser().isDemoStudent())
-                .forEach(user ->this.userRepository.delete(user));
+                .forEach(user -> {
+                    user.remove();
+                    this.userRepository.delete(user);
+                });
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED,

@@ -18,4 +18,5 @@ public interface CourseExecutionRepository extends JpaRepository<CourseExecution
     @Modifying
     @Query(value = "delete from users_course_executions uce where uce.course_executions_id = :courseExecutionId", nativeQuery = true)
     void dissociateCourseExecutionUsers(int courseExecutionId);
+
 }

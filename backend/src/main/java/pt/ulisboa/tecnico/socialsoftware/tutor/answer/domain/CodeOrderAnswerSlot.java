@@ -13,7 +13,7 @@ public class CodeOrderAnswerSlot {
     @ManyToOne(optional = false, fetch = FetchType.EAGER)
     private CodeOrderAnswer codeOrderAnswer;
 
-    @ManyToOne(optional = false, fetch = FetchType.EAGER)
+    @ManyToOne(optional = false)
     private CodeOrderSlot codeOrderSlot;
 
     private Integer assignedOrder;
@@ -61,8 +61,6 @@ public class CodeOrderAnswerSlot {
 
     public void remove() {
         this.codeOrderSlot.getOrderedSlots().remove(this);
-        this.codeOrderAnswer.getOrderedSlots().remove(this);
-        this.codeOrderAnswer = null;
         this.codeOrderSlot = null;
     }
 

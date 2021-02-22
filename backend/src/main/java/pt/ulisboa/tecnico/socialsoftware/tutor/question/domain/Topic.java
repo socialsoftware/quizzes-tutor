@@ -29,14 +29,14 @@ public class Topic implements DomainEntity {
     @ManyToMany
     private final Set<Question> questions = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, fetch=FetchType.LAZY)
+    @ManyToMany
     private final List<TopicConjunction> topicConjunctions = new ArrayList<>();
 
     @ManyToOne(fetch=FetchType.EAGER, optional=false)
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topics")
+    @ManyToMany(mappedBy = "topics")
     private Set<Tournament> tournaments = new HashSet<>();
 
     public Topic() {
@@ -96,14 +96,6 @@ public class Topic implements DomainEntity {
         course.addTopic(this);
     }
 
-    public void addTournament(Tournament tournament) {
-        this.tournaments.add(tournament);
-    }
-
-    public void removeTournament(Tournament tournament) {
-        this.tournaments.remove(tournament);
-    }
-
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -126,15 +118,16 @@ public class Topic implements DomainEntity {
     }
 
     public void remove() {
-        getCourse().getTopics().remove(this);
+        course.getTopics().remove(this);
         course = null;
 
-        getQuestions().forEach(question -> question.getTopics().remove(this));
-        getQuestions().clear();
+        questions.forEach(question -> question.getTopics().remove(this));
+        questions.clear();
 
-        this.topicConjunctions.forEach(topicConjunction -> topicConjunction.getTopics().remove(this));
+        topicConjunctions.forEach(topicConjunction -> topicConjunction.getTopics().remove(this));
+        topicConjunctions.clear();
 
-        getTournaments().forEach(tournament -> tournament.getTopics().remove(this));
-        getTournaments().clear();
+        tournaments.forEach(tournament -> tournament.getTopics().remove(this));
+        tournaments.clear();
     }
 }

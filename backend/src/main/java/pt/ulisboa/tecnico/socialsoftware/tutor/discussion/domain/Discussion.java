@@ -79,7 +79,9 @@ public class Discussion implements DomainEntity {
 
     public void setQuestionAnswer(QuestionAnswer questionAnswer) {
         this.questionAnswer = questionAnswer;
-        this.questionAnswer.setDiscussion(this);
+        if (questionAnswer != null) {
+            this.questionAnswer.setDiscussion(this);
+        }
     }
 
     public User getUser() {
@@ -88,7 +90,9 @@ public class Discussion implements DomainEntity {
 
     public void setUser(User user) {
         this.user = user;
-        this.user.addDiscussion(this);
+        if (user != null) {
+            this.user.addDiscussion(this);
+        }
     }
 
     public String getMessage() {
@@ -177,9 +181,13 @@ public class Discussion implements DomainEntity {
         courseExecution.getDiscussions().remove(this);
         courseExecution = null;
 
-        for (Reply reply: new ArrayList<>(this.replies)) {
-            reply.remove();
-        }
+        question.getDiscussions().remove(this);
+        question = null;
+
+        questionAnswer.setDiscussion(null);
+        questionAnswer = null;
+
+        replies.forEach(reply -> reply.remove());
     }
 
     private void checkExistingDiscussion(QuestionAnswer questionAnswer) {

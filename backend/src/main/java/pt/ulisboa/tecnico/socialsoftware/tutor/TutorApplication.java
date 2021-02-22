@@ -38,7 +38,7 @@ public class TutorApplication extends SpringBootServletInitializer implements In
         JwtTokenProvider.generateKeys();
         answerService.writeQuizAnswersAndCalculateStatistics();
 
-      //  demoUtils.resetDemoInfo();
+        demoUtils.resetDemoInfo();
     }
 
 }

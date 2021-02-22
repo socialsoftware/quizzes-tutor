@@ -44,7 +44,6 @@ class GenerateStudentQuizTest extends SpockTest {
         questionOne.addTopic(topic)
         questionDetails = new MultipleChoiceQuestion()
         questionOne.setQuestionDetails(questionDetails)
-        questionDetailsRepository.save(questionDetails)
         questionRepository.save(questionOne)
 
         questionTwo = new Question()
@@ -56,19 +55,17 @@ class GenerateStudentQuizTest extends SpockTest {
         questionTwo.addTopic(topic)
         questionDetails = new MultipleChoiceQuestion()
         questionTwo.setQuestionDetails(questionDetails)
-        questionDetailsRepository.save(questionDetails)
         questionRepository.save(questionTwo)
 
         assessment = new Assessment()
         assessment.setTitle("Assessment title")
         assessment.setStatus(Assessment.Status.AVAILABLE)
         assessment.setCourseExecution(externalCourseExecution)
-        assessmentRepository.save(assessment)
-
         def topicConjunction = new TopicConjunction()
         topicConjunction.addTopic(topic)
         topicConjunction.setAssessment(assessment)
-        topicConjunctionRepository.save(topicConjunction)
+        assessmentRepository.save(assessment)
+
     }
 
     def 'generate quiz for one question and there are two questions available'() {

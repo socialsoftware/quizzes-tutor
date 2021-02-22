@@ -1,6 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
 public enum ErrorMessage {
+    USER_HAS_QUIZ_ANSWERS("User %s has quiz answers"),
+    USER_HAS_QUESTION_SUBMISSIONS("User %s has question submissions"),
+    USER_HAS_DISCUSSIONS("User %s has discussions"),
+    USER_HAS_REPLIES("User %s has replies"),
 
     INVALID_ACADEMIC_TERM_FOR_COURSE_EXECUTION("Invalid academic term for course execution"),
     INVALID_ACRONYM_FOR_COURSE_EXECUTION("Invalid acronym for course execution"),
@@ -33,12 +37,14 @@ public enum ErrorMessage {
     OPTION_NOT_FOUND("Option not found with id %d"),
     FILL_IN_SPOT_NOT_FOUND("Fill in spot not found with id %d"),
     ORDER_SLOT_NOT_FOUND("Order slot not found with id %d"),
+    QUESTION_ANSWER_HAS_DISCUSSION("Question answers has discussion"),
     QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
     QUESTION_TYPE_NOT_IMPLEMENTED("Question type %s not implemented"),
     QUIZ_ANSWER_NOT_FOUND("Quiz answer not found with id %d"),
     QUIZ_NOT_FOUND("Quiz not found with id %d"),
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
+    QUIZ_HAS_TOURNAMENT("Quiz has tournament"),
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     TOPIC_NOT_FOUND("Topic not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),

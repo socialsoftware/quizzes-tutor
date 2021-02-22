@@ -100,9 +100,7 @@ public class Review {
     }
 
     public void remove() {
-        this.questionSubmission = null;
-
-        getUser().getReviews().remove(this);
-        this.user = null;
+        user.getReviews().remove(this);
+        user = null;
     }
 }

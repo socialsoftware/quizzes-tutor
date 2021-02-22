@@ -69,7 +69,7 @@ public class Quiz implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval=true)
     private final List<QuizQuestion> quizQuestions = new ArrayList<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY)
     private final Set<QuizAnswer> quizAnswers = new HashSet<>();
 
     @ManyToOne(fetch=FetchType.EAGER, optional=false)
@@ -345,9 +345,8 @@ public class Quiz implements DomainEntity {
         checkCanChange();
 
         if (this.tournament != null) {
-            this.tournament.setQuiz(null);
+            throw new TutorException(QUIZ_HAS_TOURNAMENT);
         }
-        this.tournament = null;
 
         this.courseExecution.getQuizzes().remove(this);
         this.courseExecution = null;

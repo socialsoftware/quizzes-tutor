@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
 import javax.persistence.*;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_QUESTION_ANSWER;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_ANSWER_HAS_DISCUSSION;
 
 @Entity
 @Table(name = "question_answers",
@@ -37,10 +38,10 @@ public class QuestionAnswer implements DomainEntity {
 
     private Integer sequence;
 
-    @OneToOne(fetch = FetchType.EAGER, orphanRemoval = true, cascade = CascadeType.ALL, mappedBy = "questionAnswer")
+    @OneToOne(mappedBy = "questionAnswer", fetch = FetchType.EAGER, cascade = CascadeType.ALL, orphanRemoval = true)
     private AnswerDetails answerDetails;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "questionAnswer")
+    @OneToOne(mappedBy = "questionAnswer")
     private Discussion discussion;
 
     public QuestionAnswer() {
@@ -128,20 +129,15 @@ public class QuestionAnswer implements DomainEntity {
     }
 
     public void remove() {
-        quizAnswer.getQuestionAnswers().remove(this);
-        quizAnswer = null;
+        if (discussion != null) {
+            throw new TutorException(QUESTION_ANSWER_HAS_DISCUSSION);
+        }
 
         quizQuestion.getQuestionAnswers().remove(this);
         quizQuestion = null;
 
         if (answerDetails != null) {
             answerDetails.remove();
-            answerDetails.setQuestionAnswer(null);
-            answerDetails = null;
-        }
-
-        if (discussion != null) {
-            discussion.remove();
         }
     }
 
