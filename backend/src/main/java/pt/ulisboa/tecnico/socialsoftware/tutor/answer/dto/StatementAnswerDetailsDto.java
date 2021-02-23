@@ -7,8 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.CODE_FILL_IN_QUESTION;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.*;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -18,6 +17,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.Q
 @JsonSubTypes({
         @JsonSubTypes.Type(value = MultipleChoiceStatementAnswerDetailsDto.class, name = MULTIPLE_CHOICE_QUESTION),
         @JsonSubTypes.Type(value = CodeFillInStatementAnswerDetailsDto.class, name = CODE_FILL_IN_QUESTION),
+        @JsonSubTypes.Type(value = CodeOrderStatementAnswerDetailsDto.class, name = CODE_ORDER_QUESTION),
 })
 public abstract class StatementAnswerDetailsDto implements Updator {
     public abstract AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer);

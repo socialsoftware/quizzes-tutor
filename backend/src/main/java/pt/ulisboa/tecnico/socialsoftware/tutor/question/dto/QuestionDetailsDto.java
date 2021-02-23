@@ -8,8 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import java.io.Serializable;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.CODE_FILL_IN_QUESTION;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.*;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -18,7 +17,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.Q
         property = "type")
 @JsonSubTypes({
         @JsonSubTypes.Type(value = MultipleChoiceQuestionDto.class, name = MULTIPLE_CHOICE_QUESTION),
-        @JsonSubTypes.Type(value = CodeFillInQuestionDto.class, name = CODE_FILL_IN_QUESTION)
+        @JsonSubTypes.Type(value = CodeFillInQuestionDto.class, name = CODE_FILL_IN_QUESTION),
+        @JsonSubTypes.Type(value = CodeOrderQuestionDto.class, name = CODE_ORDER_QUESTION),
 })
 public abstract class QuestionDetailsDto implements Serializable, Updator {
 

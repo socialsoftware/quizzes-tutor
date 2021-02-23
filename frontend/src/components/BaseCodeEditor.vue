@@ -25,6 +25,7 @@ import 'codemirror/mode/clike/clike.js';
 import 'codemirror/mode/javascript/javascript.js';
 import 'codemirror/mode/python/python.js';
 import 'codemirror/addon/mode/overlay.js';
+import 'codemirror/addon/scroll/simplescrollbars.js';
 import { Dictionary } from 'vue-router/types/router';
 
 CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
@@ -58,6 +59,13 @@ export default class BaseCodeEditor extends Vue {
   @PropSync('code', { type: String, required: true }) syncedCode!: string;
   @PropSync('language', { type: String, default: 'Java' })
   syncedLanguage!: string;
+
+  @Prop({ default: true })
+  readonly editable!: boolean;
+
+  @Prop({ default: false })
+  readonly simple!: boolean;
+
   counter: number = 1;
   CodemirrorUpdated: boolean = false;
   static languagesDict: Dictionary<string> = {
@@ -81,14 +89,20 @@ export default class BaseCodeEditor extends Vue {
       tabSize: 4,
       mode: { name: 'mustache', backdrop: this.languageCode },
       theme: 'eclipse',
-      lineNumbers: true
+      lineNumbers: !this.simple,
+      dragDrop: false,
+      readOnly: !this.editable,
+      scrollbarStyle: 'overlay'
     };
   }
   get languageCode() {
     return BaseCodeEditor.languagesDict[this.syncedLanguage];
   }
   created() {
-    this.updateQuestion();
+    if (!this.simple) {
+      this.updateQuestion();
+    }
+    this.CodemirrorUpdated = true;
   }
   onCmCodeChange(newCode: string) {
     this.syncedCode = newCode;
@@ -107,6 +121,7 @@ export default class BaseCodeEditor extends Vue {
 <style>
 @import '~codemirror/lib/codemirror.css';
 @import '~codemirror/theme/eclipse.css';
+@import '~codemirror/addon/scroll/simplescrollbars.css';
 .cm-custom-drop-down {
   background: #ffa014;
   color: white;

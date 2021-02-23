@@ -1,16 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInOptionStatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.ElementCollection;
 import javax.persistence.Entity;
 import java.util.List;
-import java.util.Map;
 import java.util.stream.Collectors;
 
 @Entity
@@ -32,8 +31,7 @@ public class CodeFillInAnswerItem extends QuestionAnswerItem {
     }
 
     @Override
-    public String getAnswerRepresentation(Map<Integer, Option> options) {
-        // TODO: Need to create a better string representation for export
-        return optionIds.stream().map(Object::toString).collect(Collectors.joining("|"));
+    public String getAnswerRepresentation(QuestionDetails questionDetails) {
+        return questionDetails.getAnswerRepresentation(optionIds);
     }
 }

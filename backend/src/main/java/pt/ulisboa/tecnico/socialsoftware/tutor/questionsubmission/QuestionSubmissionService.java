@@ -6,8 +6,13 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -23,6 +28,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSu
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.UserQuestionSubmissionInfoDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
@@ -49,6 +55,9 @@ public class QuestionSubmissionService {
     private QuestionRepository questionRepository;
 
     @Autowired
+    private QuizRepository quizRepository;
+
+    @Autowired
     private QuestionSubmissionRepository questionSubmissionRepository;
 
     @Autowired
@@ -59,6 +68,9 @@ public class QuestionSubmissionService {
 
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private AnswerService answerService;
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -204,7 +216,10 @@ public class QuestionSubmissionService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoQuestionSubmissions() {
         questionSubmissionRepository.findQuestionSubmissionsByCourseExecution(courseExecutionService.getDemoCourse().getCourseExecutionId())
-                .forEach(this::deleteQuestionSubmission);
+                .forEach(questionSubmission -> {
+                    questionSubmission.remove();
+                    questionSubmissionRepository.delete(questionSubmission);
+                });
     }
 
     private void checkIfConsistentQuestionSubmission(QuestionSubmissionDto questionSubmissionDto) {

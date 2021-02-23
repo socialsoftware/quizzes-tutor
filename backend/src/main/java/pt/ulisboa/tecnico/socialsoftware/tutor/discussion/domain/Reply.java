@@ -17,7 +17,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.RE
 @Entity
 @Table(name = "replies")
 public class Reply implements DomainEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;

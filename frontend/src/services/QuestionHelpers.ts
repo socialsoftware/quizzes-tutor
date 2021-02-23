@@ -14,10 +14,16 @@ import StatementCorrectAnswerDetails from '@/models/statement/questions/Statemen
 import CodeFillInStatementQuestionDetails from '@/models/statement/questions/CodeFillInStatementQuestionDetails';
 import CodeFillInStatementAnswerDetails from '@/models/statement/questions/CodeFillInStatementAnswerDetails';
 import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
+import CodeOrderQuestionDetails from '@/models/management/questions/CodeOrderQuestionDetails';
+import CodeOrderAnswerDetails from '@/models/management/questions/CodeOrderAnswerDetails';
+import CodeOrderStatementQuestionDetails from '@/models/statement/questions/CodeOrderStatementQuestionDetails';
+import CodeOrderStatementAnswerDetails from '@/models/statement/questions/CodeOrderStatementAnswerDetails';
+import CodeOrderStatementCorrectAnswerDetails from '@/models/statement/questions/CodeOrderStatementCorrectAnswerDetails';
 
 export enum QuestionTypes {
   MultipleChoice = 'multiple_choice',
-  CodeFillIn = 'code_fill_in'
+  CodeFillIn = 'code_fill_in',
+  CodeOrder = 'code_order'
 }
 
 export function convertToLetter(number: number | null) {
@@ -35,6 +41,8 @@ export abstract class QuestionFactory {
         return new MultipleChoiceQuestionFactory();
       case QuestionTypes.CodeFillIn:
         return new CodeFillInQuestionFactory();
+      case QuestionTypes.CodeOrder:
+        return new CodeOrderQuestionFactory();
       default:
         throw new Error('Unknown question type.');
     }
@@ -95,5 +103,28 @@ class CodeFillInQuestionFactory extends QuestionFactory {
     details: any
   ): StatementCorrectAnswerDetails {
     return new CodeFillInStatementCorrectAnswerDetails(details);
+  }
+}
+
+class CodeOrderQuestionFactory extends QuestionFactory {
+  createEmptyQuestionDetails(): QuestionDetails {
+    return new CodeOrderQuestionDetails();
+  }
+  createQuestionDetails(details: any): QuestionDetails {
+    return new CodeOrderQuestionDetails(details);
+  }
+  createAnswerDetails(details: any): AnswerDetails {
+    return new CodeOrderAnswerDetails(details);
+  }
+  createStatementQuestionDetails(details: any): StatementQuestionDetails {
+    return new CodeOrderStatementQuestionDetails(details);
+  }
+  createStatementAnswerDetails(details: any): StatementAnswerDetails {
+    return new CodeOrderStatementAnswerDetails(details);
+  }
+  createStatementCorrectAnswerDetails(
+    details: any
+  ): StatementCorrectAnswerDetails {
+    return new CodeOrderStatementCorrectAnswerDetails(details);
   }
 }

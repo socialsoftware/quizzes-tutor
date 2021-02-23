@@ -12,7 +12,6 @@ import java.util.Set;
 @Entity
 @Table(name = "code_fill_in_options")
 public class CodeFillInOption implements DomainEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;

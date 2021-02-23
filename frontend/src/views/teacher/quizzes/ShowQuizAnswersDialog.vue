@@ -4,7 +4,7 @@
       :value="dialog"
       @input="$emit('dialog', false)"
       @keydown.esc="$emit('dialog', false)"
-      max-width="75%"
+      max-width="85%"
     >
       <v-data-table
         :headers="headers"
@@ -54,7 +54,11 @@
             :key="questionAnswer.question.id"
             v-bind:class="[
               'answer',
-              questionAnswer.answerDetails.isCorrect() ? 'correct' : 'incorrect'
+              questionAnswer.answerDetails.isCorrect(
+                questionAnswer.question.questionDetailsDto
+              )
+                ? 'correct'
+                : 'incorrect'
             ]"
             @click="openAnswerDetailsDialog(item, index)"
             >{{
@@ -140,7 +144,7 @@ export default class ShowStudentAnswersDialog extends Vue {
       text: 'Answers',
       value: 'answers',
       align: 'center',
-      width: '5%'
+      width: '15%'
     }
   ];
 

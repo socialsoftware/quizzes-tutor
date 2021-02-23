@@ -6,11 +6,10 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
@@ -24,7 +23,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
@@ -63,6 +61,9 @@ public class AnswerService {
     private QuestionAnswerItemRepository questionAnswerItemRepository;
 
     @Autowired
+    private QuestionAnswerRepository questionAnswerRepository;
+
+    @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
@@ -70,6 +71,9 @@ public class AnswerService {
 
     @Autowired
     private AnswersXmlImport xmlImporter;
+
+    @Autowired
+    private CourseExecutionService courseExecutionService;
 
     @Retryable(
             value = {SQLException.class},
@@ -221,7 +225,6 @@ public class AnswerService {
         quiz.setCourseExecution(courseExecution);
 
         quizRepository.save(quiz);
-        quizAnswerRepository.save(quizAnswer);
 
         return new StatementQuizDto(quizAnswer);
     }
@@ -268,7 +271,6 @@ public class AnswerService {
         quiz.setType(Quiz.QuizType.TOURNAMENT.toString());
 
         quizRepository.save(quiz);
-        quizAnswerRepository.save(quizAnswer);
 
         return new StatementQuizDto(quizAnswer);
     }
@@ -435,4 +437,18 @@ public class AnswerService {
 
         return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
     }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void resetDemoAnswers() {
+        Set<QuizAnswer> quizAnswers = quizAnswerRepository.findByExecutionCourseId(courseExecutionService.getDemoCourse().getCourseExecutionId());
+
+        System.out.println(quizAnswers.size());
+        System.out.println(quizAnswers.stream().filter(quizAnswer -> quizAnswer.getUser().getAuthUser().isDemoStudent()).count());
+
+        quizAnswers.forEach(quizAnswer -> {
+                quizAnswer.remove();
+                quizAnswerRepository.delete(quizAnswer);
+        });
+    }
+
 }

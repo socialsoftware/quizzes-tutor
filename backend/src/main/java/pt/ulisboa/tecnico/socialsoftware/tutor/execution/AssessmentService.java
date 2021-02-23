@@ -76,6 +76,15 @@ public class AssessmentService {
     public AssessmentDto createAssessment(int executionId, AssessmentDto assessmentDto) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
+        List<TopicConjunction> topicConjunctions = createTopicConjunctions(assessmentDto);
+
+        Assessment assessment = new Assessment(courseExecution, topicConjunctions, assessmentDto);
+        assessmentRepository.save(assessment);
+
+        return new AssessmentDto(assessment);
+    }
+
+    private List<TopicConjunction> createTopicConjunctions(AssessmentDto assessmentDto) {
         List<TopicConjunction> topicConjunctions = assessmentDto.getTopicConjunctions().stream()
                 .map(topicConjunctionDto -> {
                     TopicConjunction topicConjunction = new TopicConjunction();
@@ -83,11 +92,7 @@ public class AssessmentService {
                     topicConjunction.updateTopics(newTopics);
                     return topicConjunction;
                 }).collect(Collectors.toList());
-
-        Assessment assessment = new Assessment(courseExecution, topicConjunctions, assessmentDto);
-        assessmentRepository.save(assessment);
-
-        return new AssessmentDto(assessment);
+        return topicConjunctions;
     }
 
     @Retryable(
@@ -103,10 +108,13 @@ public class AssessmentService {
 
         // remove TopicConjunction that are not in the Dto
         assessment.getTopicConjunctions().stream()
-                .filter(topicConjunction -> assessmentDto.getTopicConjunctions().stream().noneMatch(topicConjunctionDto -> topicConjunction.getId().equals(topicConjunctionDto.getId())))
+                .filter(topicConjunction -> assessmentDto.getTopicConjunctions().stream()
+                        .noneMatch(topicConjunctionDto -> topicConjunction.getId().equals(topicConjunctionDto.getId())))
                 .collect(Collectors.toList())
                 .forEach(topicConjunction -> {
                     topicConjunction.remove();
+                    topicConjunction.getAssessment().getTopicConjunctions().remove(topicConjunction);
+                    topicConjunction.setAssessment(null);
                     topicConjunctionRepository.delete(topicConjunction);
                 });
 
@@ -159,7 +167,10 @@ public class AssessmentService {
         this.assessmentRepository.findByExecutionCourseId(courseExecutionService.getDemoCourse().getCourseExecutionId())
                 .stream()
                 .skip(5)
-                .forEach(assessment -> assessmentRepository.delete(assessment));
+                .forEach(assessment -> {
+                    assessment.remove();
+                    assessmentRepository.delete(assessment);
+                });
     }
 
     @Retryable(

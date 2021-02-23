@@ -127,12 +127,13 @@ public class QuestionSubmission {
 
     public void remove() {
         getCourseExecution().getQuestionSubmissions().remove(this);
-        getSubmitter().getQuestionSubmissions().remove(this);
-
         this.courseExecution = null;
+
+        getSubmitter().getQuestionSubmissions().remove(this);
         this.submitter = null;
 
         question.remove();
-        getReviews().forEach(Review::remove);
+
+        reviews.forEach(Review::remove);
     }
 }

@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @Transactional
@@ -27,4 +28,7 @@ public interface DiscussionRepository extends JpaRepository<Discussion, Integer>
 
     @Query(value = "SELECT * FROM discussions d WHERE d.course_execution_id = :courseExecutionId AND d.closed = false", nativeQuery = true)
     List<Discussion> findOpenDiscussionsByCourseExecutionId(int courseExecutionId);
+
+    @Query(value = "SELECT d FROM Discussion d WHERE d.courseExecution.id = :courseExecutionId")
+    List<Discussion> findByExecutionCourseId(int courseExecutionId);
 }

@@ -41,7 +41,9 @@ public class TopicConjunction {
 
     public void setAssessment(Assessment assessment) {
         this.assessment = assessment;
-        assessment.addTopicConjunction(this);
+        if (assessment != null) {
+            assessment.addTopicConjunction(this);
+        }
     }
 
     public void addTopic(Topic topic) {
@@ -52,8 +54,6 @@ public class TopicConjunction {
     public void remove() {
         getTopics().forEach(topic -> topic.getTopicConjunctions().remove(this));
         getTopics().clear();
-        this.assessment.getTopicConjunctions().remove(this);
-        this.assessment = null;
     }
 
     @Override

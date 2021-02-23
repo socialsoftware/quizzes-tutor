@@ -7,6 +7,7 @@ import java.io.Serializable;
 public class CodeFillInOptionStatementAnswerDto implements Serializable {
 
     private Integer sequence;
+    private Integer optionSequence;
     private Integer optionId;
 
     public CodeFillInOptionStatementAnswerDto() {
@@ -14,6 +15,7 @@ public class CodeFillInOptionStatementAnswerDto implements Serializable {
 
     public CodeFillInOptionStatementAnswerDto(CodeFillInOption option) {
         this.sequence = option.getFillInSpot().getSequence();
+        this.optionSequence = option.getSequence();
         this.optionId = option.getId();
     }
 
@@ -31,5 +33,13 @@ public class CodeFillInOptionStatementAnswerDto implements Serializable {
 
     public void setOptionId(Integer optionId) {
         this.optionId = optionId;
+    }
+
+    public Integer getOptionSequence() {
+        return optionSequence;
+    }
+
+    public void setOptionSequence(Integer optionSequence) {
+        this.optionSequence = optionSequence;
     }
 }

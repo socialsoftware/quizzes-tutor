@@ -3,21 +3,25 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInAnswer
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInOption
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInSpot
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
 @DataJpaTest
-class ImportExportAnswersTest extends SpockTest {
+class ImportExportCodeFillInAnswersTest extends SpockTest {
     def quizAnswer
     def questionAnswer
 
@@ -28,17 +32,23 @@ class ImportExportAnswersTest extends SpockTest {
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setStatus(Question.Status.AVAILABLE)
-        def questionDetails = new MultipleChoiceQuestion()
+        def questionDetails = new CodeFillInQuestion()
         question.setQuestionDetails(questionDetails)
+
+        CodeFillInSpot spot = new CodeFillInSpot()
+        spot.setSequence(0)
+        spot.setQuestionDetails(questionDetails)
+        questionDetails.getFillInSpots().add(spot)
+
+        CodeFillInOption option = new CodeFillInOption()
+        option.setCorrect(true)
+        option.setContent(OPTION_1_CONTENT)
+        option.setSequence(0)
+        option.setFillInSpot(spot)
+        spot.getOptions().add(option)
+
         questionDetailsRepository.save(questionDetails)
         questionRepository.save(question)
-
-        Option option = new Option()
-        option.setContent(OPTION_1_CONTENT)
-        option.setCorrect(true)
-        option.setSequence(0)
-        option.setQuestionDetails(questionDetails)
-        optionRepository.save(option)
 
         Quiz quiz = new Quiz()
         quiz.setKey(1)
@@ -66,7 +76,8 @@ class ImportExportAnswersTest extends SpockTest {
         quizAnswerRepository.save(quizAnswer)
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, 1, 0)
-        def answer = new MultipleChoiceAnswer(questionAnswer, option);
+        def answer = new CodeFillInAnswer(questionAnswer)
+        answer.getFillInOptions().add(option)
         questionAnswer.setAnswerDetails(answer)
         questionAnswerRepository.save(questionAnswer)
         answerDetailsRepository.save(answer)

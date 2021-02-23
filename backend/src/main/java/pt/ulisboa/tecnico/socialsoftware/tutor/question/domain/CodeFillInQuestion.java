@@ -17,7 +17,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDetai
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collector;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AT_LEAST_ONE_OPTION_NEEDED;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FILL_IN_SPOT_NOT_FOUND;
@@ -123,7 +126,15 @@ public class CodeFillInQuestion extends QuestionDetails {
 
     @Override
     public String getCorrectAnswerRepresentation() {
-        return String.format("%d/%d", this.getFillInSpots().size(), this.getFillInSpots().size());
+        return this.codeFillInSpots.stream()
+                .map(x ->
+                        String.valueOf(
+                                x.getOptions().stream()
+                                        .filter(CodeFillInOption::isCorrect)
+                                        .findAny()
+                                        .get()
+                                        .getSequence() + 1))
+                .collect(Collectors.joining(" | "));
     }
 
     public void update(CodeFillInQuestionDto questionDetails) {
@@ -146,5 +157,21 @@ public class CodeFillInQuestion extends QuestionDetails {
         for (var spot : this.getFillInSpots()) {
             spot.accept(visitor);
         }
+    }
+
+    @Override
+    public String getAnswerRepresentation(List<Integer> selectedIds) {
+        var result = new ArrayList<String>();
+        var orderSpots = getFillInSpots().stream().sorted(Comparator.comparing(CodeFillInSpot::getSequence)).collect(Collectors.toList());
+        for (var spots: orderSpots) {
+            var option = spots.getOptions().stream().filter(x -> selectedIds.contains(x.getId())).findAny();
+            if (option.isPresent()){
+                result.add(String.format("%s", option.get().getSequence() + 1));
+            }
+            else {
+                result.add("-");
+            }
+        }
+        return String.join(" | ", result);
     }
 }

@@ -150,12 +150,10 @@ export default class CodeFillInAnswer extends Vue {
     function creatBlankOptionChild(selected: boolean) {
       const o = document.createElement('option');
       o.innerHTML = '-- select an option --';
-      o.setAttribute('disabled', '');
       if (selected) {
         o.setAttribute('selected', '');
       }
       o.setAttribute('value', '');
-      o.setAttribute('hidden', '');
       return o;
     }
     function addOptions(select: any, options: any) {
@@ -198,10 +196,10 @@ export default class CodeFillInAnswer extends Vue {
       el => el.sequence === num
     );
     if (data) {
-      data.optionId = dataQuestion?.options[selectIndex].optionId;
+      data.optionId = dataQuestion?.options[selectIndex]?.optionId;
     } else {
       var newData = new CodeFillInSpotAnswerStatement();
-      newData.optionId = dataQuestion?.options[selectIndex].optionId;
+      newData.optionId = dataQuestion?.options[selectIndex]?.optionId;
       newData.sequence = num;
       this.answerDetailsSynced.selectedOptions.push(newData);
     }

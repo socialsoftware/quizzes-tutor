@@ -154,13 +154,13 @@
       title to edit it.
     </footer>
     <edit-question-dialog
-      v-if="currentQuestion"
+      v-if="currentQuestion && editQuestionDialog"
       v-model="editQuestionDialog"
       :question="currentQuestion"
       v-on:save-question="onSaveQuestion"
     />
     <show-question-dialog
-      v-if="currentQuestion"
+      v-if="currentQuestion && questionDialog"
       v-model="questionDialog"
       :question="currentQuestion"
       v-on:close-show-question-dialog="onCloseShowQuestionDialog"

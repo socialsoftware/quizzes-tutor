@@ -30,5 +30,7 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Integer>
     @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.id = :quizId AND qa.creationDate IS NULL")
     Set<QuizAnswer> findNotAnsweredQuizAnswers(int quizId);
 
+    @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.courseExecution.id = :courseExecutionId")
+    Set<QuizAnswer>  findByExecutionCourseId(int courseExecutionId);
 }
 

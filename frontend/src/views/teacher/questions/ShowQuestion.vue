@@ -18,12 +18,14 @@ import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import MultipleChoiceView from '@/components/multiple-choice/MultipleChoiceView.vue';
 import CodeFillInView from '@/components/code-fill-in/CodeFillInView.vue';
+import CodeOrderView from '@/components/code-order/CodeOrderView.vue';
 import AnswerDetails from '@/models/management/questions/AnswerDetails';
 
 @Component({
   components: {
     multiple_choice: MultipleChoiceView,
-    code_fill_in: CodeFillInView
+    code_fill_in: CodeFillInView,
+    code_order: CodeOrderView
   }
 })
 export default class ShowQuestion extends Vue {

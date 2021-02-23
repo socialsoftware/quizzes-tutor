@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     v-model="detailDialog"
-    max-width="500px"
+    max-width="70%"
     @input="$emit('dialog', false)"
     @keydown.esc="$emit('dialog', false)"
   >

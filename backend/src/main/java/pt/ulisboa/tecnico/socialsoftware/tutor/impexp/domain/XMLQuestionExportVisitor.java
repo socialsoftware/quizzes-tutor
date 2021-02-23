@@ -135,4 +135,26 @@ public class XMLQuestionExportVisitor implements Visitor {
 
         this.currentElement.addContent(optionElement);
     }
+
+    @Override
+    public void visitQuestionDetails(CodeOrderQuestion question) {
+        this.currentElement.setAttribute("type", Question.QuestionTypes.CODE_ORDER_QUESTION);
+
+        Element codeElement = new Element("orderSlots");
+        codeElement.setAttribute("language", question.getLanguage().toString());
+        this.currentElement.addContent(codeElement);
+
+        this.currentElement = codeElement;
+        question.visitCodeOrderSlots(this);
+    }
+
+    @Override
+    public void visitCodeOrderSlot(CodeOrderSlot codeOrderSlot) {
+        Element spotElement = new Element("slot");
+
+        spotElement.setAttribute("order", String.valueOf(codeOrderSlot.getOrder()));
+        spotElement.setAttribute("sequence", String.valueOf(codeOrderSlot.getSequence()));
+        spotElement.addContent(codeOrderSlot.getContent());
+        this.currentElement.addContent(spotElement);
+    }
 }

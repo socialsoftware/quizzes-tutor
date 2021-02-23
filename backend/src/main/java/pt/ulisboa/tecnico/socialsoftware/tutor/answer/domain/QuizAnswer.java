@@ -188,8 +188,7 @@ public class QuizAnswer implements DomainEntity {
         quiz.getQuizAnswers().remove(this);
         quiz = null;
 
-        List<QuestionAnswer> questionAnswersTmp = new ArrayList(questionAnswers);
-        questionAnswersTmp.forEach(QuestionAnswer::remove);
+        questionAnswers.forEach(QuestionAnswer::remove);
     }
 
     public boolean openToAnswer() {
@@ -197,7 +196,7 @@ public class QuizAnswer implements DomainEntity {
     }
 
     public long getNumberOfAnsweredQuestions() {
-        return getQuestionAnswers().stream().filter(questionAnswer -> questionAnswer.isAnswered()).count();
+        return getQuestionAnswers().stream().filter(QuestionAnswer::isAnswered).count();
     }
 
     public long getNumberOfCorrectAnswers() {

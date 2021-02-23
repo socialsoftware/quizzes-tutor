@@ -4,9 +4,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import java.util.List;
@@ -16,6 +14,7 @@ public class AnswersXmlExportVisitor implements Visitor {
 
     private Element rootElement;
     private Element currentElement;
+    private Element currentQuestionAnswer;
 
     public String export(List<QuizAnswer> quizAnswers) {
         createHeader();
@@ -91,12 +90,12 @@ public class AnswersXmlExportVisitor implements Visitor {
         Element quizQuestionElement = new Element("quizQuestion");
         quizQuestionElement.setAttribute("key", String.valueOf(questionAnswer.getQuizQuestion().getQuiz().getNonNullKey()));
         quizQuestionElement.setAttribute(SEQUENCE, String.valueOf(questionAnswer.getQuizQuestion().getSequence()));
-        quizQuestionElement.setAttribute("type", Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION);
         questionAnswerElement.addContent(quizQuestionElement);
 
         if (questionAnswer.getAnswerDetails() != null) {
             Element tmp = this.currentElement;
             this.currentElement = questionAnswerElement;
+            this.currentQuestionAnswer = questionAnswerElement;
 
             questionAnswer.getAnswerDetails().accept(this);
 
@@ -108,11 +107,48 @@ public class AnswersXmlExportVisitor implements Visitor {
 
     @Override
     public void visitAnswerDetails(MultipleChoiceAnswer answer) {
+        this.currentQuestionAnswer.setAttribute("type", Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION);
         if (answer.getOption() != null) {
             Element optionElement = new Element("option");
-            optionElement.setAttribute("questionKey", String.valueOf(answer.getOption().getQuestionDetails().getQuestion().getKey()));
+            optionElement.setAttribute("questionKey", String.valueOf(answer.getQuestionAnswer().getQuestion().getKey()));
             optionElement.setAttribute(SEQUENCE, String.valueOf(answer.getOption().getSequence()));
             this.currentElement.addContent(optionElement);
+        }
+    }
+
+    @Override
+    public void visitAnswerDetails(CodeOrderAnswer answer) {
+        this.currentQuestionAnswer.setAttribute("type", Question.QuestionTypes.CODE_ORDER_QUESTION);
+        if (answer.isAnswered()){
+            Element slotContainerElement = new Element("slots");
+            slotContainerElement.setAttribute("questionKey", String.valueOf(answer.getQuestionAnswer().getQuestion().getKey()));
+
+            for (var slot:answer.getOrderedSlots()) {
+                Element slotElement = new Element("slot");
+                slotElement.setAttribute("sequence", String.valueOf(slot.getCodeOrderSlot().getSequence()));
+                slotElement.setAttribute("order", String.valueOf(slot.getAssignedOrder()));
+                slotContainerElement.addContent(slotElement);
+            }
+
+            this.currentElement.addContent(slotContainerElement);
+        }
+    }
+
+    @Override
+    public void visitAnswerDetails(CodeFillInAnswer answer) {
+        this.currentQuestionAnswer.setAttribute("type", Question.QuestionTypes.CODE_FILL_IN_QUESTION);
+        if (answer.isAnswered()){
+            Element spotContainerElement = new Element("fillInSpots");
+            spotContainerElement.setAttribute("questionKey", String.valueOf(answer.getQuestionAnswer().getQuestion().getKey()));
+
+            for (var spot:answer.getFillInOptions()) {
+                Element spotElement = new Element("fillInSpot");
+                spotElement.setAttribute("spotSequence", String.valueOf(spot.getFillInSpot().getSequence()));
+                spotElement.setAttribute("optionSequence", String.valueOf(spot.getSequence()));
+                spotContainerElement.addContent(spotElement);
+            }
+
+            this.currentElement.addContent(spotContainerElement);
         }
     }
 }

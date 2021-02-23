@@ -66,7 +66,9 @@ public abstract class LatexVisitor implements Visitor {
     @Override
     public void visitQuestionDetails(CodeFillInQuestion question) {
 
-        this.result += String.format("\n\tCode snippet language: %s", question.getLanguage()) + "\n" + question.getCode() + "\n\n";
+        this.result +=
+                String.format("\n\tCode snippet language: %s", question.getLanguage()) +
+                        "\n\\begin{lstlisting}\n" + question.getCode() + "\n\\end{lstlisting}\n\n";
 
         question.visitFillInSpots(this);
 
@@ -87,6 +89,24 @@ public abstract class LatexVisitor implements Visitor {
         this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
     }
 
+    @Override
+    public void visitQuestionDetails(CodeOrderQuestion question) {
+
+        this.result += String.format("\n\tCode snippet language: %s", question.getLanguage()) + "\n\n";
+        this.result += "\\begin{lstlisting}\n";
+        question.visitCodeOrderSlots(this);
+        this.result += "\\end{lstlisting}\n";
+
+        this.result = this.result + "% Answer: \n\\begin{lstlisting}\n" +
+                question.getCodeOrderSlots()
+                        .stream()
+                        .filter(x -> x.getOrder() != null)
+                        .sorted(Comparator.comparing(CodeOrderSlot::getOrder))
+                        .map(spot -> spot.getContent()
+                        ).collect(Collectors.joining("\n")) + "\n\\end{lstlisting}\n";
+
+        this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
+    }
 
     @Override
     public void visitImage(Image image) {
@@ -95,6 +115,11 @@ public abstract class LatexVisitor implements Visitor {
         imageString = imageString + "\t\\end{center}\n\t";
 
         this.questionContent = this.questionContent.replaceAll("!\\[image\\]\\[image\\]", imageString);
+    }
+
+    @Override
+    public void visitCodeOrderSlot(CodeOrderSlot slot) {
+        this.result += String.format("%s\n", slot.getContent());
     }
 
     @Override

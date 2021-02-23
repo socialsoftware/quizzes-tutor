@@ -133,7 +133,10 @@ public class TopicService {
         this.topicRepository.findTopics(courseExecutionService.getDemoCourse().getCourseId())
                 .stream()
                 .skip(5)
-                .forEach(topic -> this.topicRepository.delete(topic));
+                .forEach(topic -> {
+                    topic.remove();
+                    this.topicRepository.delete(topic);
+                });
     }
 
 }

@@ -53,10 +53,10 @@ public class User implements DomainEntity {
     private Integer numberOfCorrectInClassAnswers = 0;
     private Integer numberOfCorrectStudentAnswers = 0;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Discussion> discussions = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Reply> replies = new HashSet<>();
 
     @Column(name = "creation_date")
@@ -65,19 +65,19 @@ public class User implements DomainEntity {
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
     public AuthUser authUser;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "submitter", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "submitter", fetch = FetchType.LAZY)
     private Set<QuestionSubmission> questionSubmissions = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
 
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "participants")
+    @ManyToMany(mappedBy = "participants")
     private Set<Tournament> tournaments = new HashSet<>();
 
     public User() {
@@ -523,13 +523,27 @@ public class User implements DomainEntity {
     }
 
     public void remove() {
-        if (getAuthUser() != null && getAuthUser().isActive()) {
+        if (getAuthUser() != null && !getAuthUser().isDemoStudent() && getAuthUser().isActive()) {
                 throw new TutorException(USER_IS_ACTIVE, getUsername());
         }
 
+        if (quizAnswers.size() != 0) {
+            throw new TutorException(USER_HAS_QUIZ_ANSWERS, getUsername());
+        }
+
+        if (questionSubmissions.size() != 0) {
+            throw new TutorException(USER_HAS_QUESTION_SUBMISSIONS, getUsername());
+        }
+
+        if (discussions.size() != 0) {
+            throw new TutorException(USER_HAS_DISCUSSIONS, getUsername());
+        }
+
+        if (replies.size() != 0) {
+            throw new TutorException(USER_HAS_REPLIES, getUsername());
+        }
+
         courseExecutions.forEach(ce -> ce.getUsers().remove(this));
-        questionSubmissions.forEach(QuestionSubmission::remove);
-        discussions.forEach(Discussion::remove);
-        replies.forEach(Reply::remove);
+        courseExecutions.clear();
     }
 }

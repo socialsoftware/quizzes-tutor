@@ -407,18 +407,6 @@ public class QuizService {
                 .sorted(Comparator.comparing(Quiz::getId))
                 .skip(2)
                 .forEach(quiz -> {
-
-                    for (QuizAnswer quizAnswer : new ArrayList<>(quiz.getQuizAnswers())) {
-                        answerService.deleteQuizAnswer(quizAnswer);
-                    }
-
-                    for (QuizQuestion quizQuestion : quiz.getQuizQuestions()
-                            .stream()
-                            .filter(quizQuestion -> quizQuestion.getQuestionAnswers().isEmpty())
-                            .collect(Collectors.toList())) {
-                        questionService.deleteQuizQuestion(quizQuestion);
-                    }
-
                     quiz.remove();
                     this.quizRepository.delete(quiz);
                 });

@@ -1,20 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import org.apache.commons.lang.NotImplementedException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.time.Duration;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -31,13 +26,6 @@ public class CSVQuizExportVisitor implements Visitor {
         int lineSize = numberOfQuestions + 5;
         Map<Integer, QuizQuestion> quizQuestions = quizQuestionsList.stream()
                 .collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));
-        // TODO[is->has]: questionMap XML
-        Map<Integer, Option> options = quizQuestionsList.stream()
-                .map(QuizQuestion::getQuestion)
-                .map(Question::getQuestionDetails)
-                .filter(q -> q instanceof MultipleChoiceQuestion)
-                .flatMap(question -> ((MultipleChoiceQuestion) question).getOptions().stream())
-                .collect(Collectors.toMap(Option::getId, Function.identity()));
 
         // add header
         line = new String[lineSize];
@@ -100,8 +88,8 @@ public class CSVQuizExportVisitor implements Visitor {
         line[5] = "Time Taken";
         table.add(line);
 
-        Comparator<QuestionAnswerItem> comparator = Comparator.comparing(QuestionAnswerItem::getUsername);
-        comparator.thenComparing(QuestionAnswerItem::getAnswerDate);
+        Comparator<QuestionAnswerItem> comparator = Comparator.comparing(QuestionAnswerItem::getUsername)
+                .thenComparing(Comparator.comparing(QuestionAnswerItem::getTimeToSubmission).reversed());
         questionAnswerItems.sort(comparator);
 
         for (QuestionAnswerItem questionAnswerItem : questionAnswerItems) {
@@ -109,8 +97,8 @@ public class CSVQuizExportVisitor implements Visitor {
             Arrays.fill(line, "");
             line[0] = questionAnswerItem.getUsername();
             line[1] = String.valueOf(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getSequence()+1);
-            line[2] = questionAnswerItem.getAnswerRepresentation(options);
-            line[3] = DateHandler.toISOString(questionAnswerItem.getAnswerDate());
+            line[2] = questionAnswerItem.getAnswerRepresentation(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getQuestion().getQuestionDetails());
+            line[3] = DateHandler.toHumanReadableString(questionAnswerItem.getAnswerDate());
             line[4] = questionAnswerItem.getTimeToSubmission() != null ? convertMiliseconds(questionAnswerItem.getTimeToSubmission()) : "";
             line[5] = convertMiliseconds(questionAnswerItem.getTimeTaken());
             table.add(line);
@@ -127,8 +115,8 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitQuizAnswer(QuizAnswer quizAnswer) {
-        line[column++] = quizAnswer.getCreationDate() != null ? DateHandler.toISOString(quizAnswer.getCreationDate()) : "";
-        line[column++] = quizAnswer.getAnswerDate() != null ? DateHandler.toISOString(quizAnswer.getAnswerDate()) : "";
+        line[column++] = quizAnswer.getCreationDate() != null ? DateHandler.toHumanReadableString(quizAnswer.getCreationDate()) : "";
+        line[column++] = quizAnswer.getAnswerDate() != null ? DateHandler.toHumanReadableString(quizAnswer.getAnswerDate()) : "";
         if (quizAnswer.getAnswerDate() != null &&
                 quizAnswer.getQuiz().getConclusionDate() != null &&
                 quizAnswer.getAnswerDate().isAfter(quizAnswer.getQuiz().getConclusionDate())) {
@@ -156,6 +144,11 @@ public class CSVQuizExportVisitor implements Visitor {
     }
 
     @Override
+    public void visitAnswerDetails(CodeOrderAnswer answer){
+        line[column++] = answer.getAnswerRepresentation();
+    }
+
+    @Override
     public void visitQuizQuestion(QuizQuestion quizQuestion) {
         quizQuestion.getQuestion().accept(this);
     }
@@ -172,6 +165,11 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitQuestionDetails(CodeFillInQuestion question) {
+        line[column++] = question.getCorrectAnswerRepresentation();
+    }
+
+    @Override
+    public void visitQuestionDetails(CodeOrderQuestion question) {
         line[column++] = question.getCorrectAnswerRepresentation();
     }
 

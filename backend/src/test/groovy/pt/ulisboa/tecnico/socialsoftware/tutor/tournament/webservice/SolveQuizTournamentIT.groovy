@@ -102,7 +102,6 @@ class SolveQuizTournamentIT extends SpockTest {
         def questionDetails1 = new MultipleChoiceQuestion()
         question1.setQuestionDetails(questionDetails1)
 
-        questionDetailsRepository.save(questionDetails1)
         questionRepository.save(question1)
         topicRepository.save(topic1)
 

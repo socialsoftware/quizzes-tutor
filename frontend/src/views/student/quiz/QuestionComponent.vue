@@ -40,11 +40,13 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAnswer.vue';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import CodeFillInAnswer from '@/components/code-fill-in/CodeFillInAnswer.vue';
+import CodeOrderAnswer from '@/components/code-order/CodeOrderAnswer.vue';
 
 @Component({
   components: {
     multiple_choice: MultipleChoiceAnswer,
-    code_fill_in: CodeFillInAnswer
+    code_fill_in: CodeFillInAnswer,
+    code_order: CodeOrderAnswer
   }
 })
 export default class QuestionComponent extends Vue {

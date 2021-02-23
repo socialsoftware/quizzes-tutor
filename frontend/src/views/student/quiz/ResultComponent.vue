@@ -49,11 +49,13 @@ import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 import Image from '@/models/management/Image';
 import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAnswer.vue';
 import CodeFillInAnswerResult from '@/components/code-fill-in/CodeFillInAnswerResult.vue';
+import CodeOrderAnswerResult from '@/components/code-order/CodeOrderAnswerResult.vue';
 
 @Component({
   components: {
     multiple_choice: MultipleChoiceAnswer,
-    code_fill_in: CodeFillInAnswerResult
+    code_fill_in: CodeFillInAnswerResult,
+    code_order: CodeOrderAnswerResult
   }
 })
 export default class ResultComponent extends Vue {

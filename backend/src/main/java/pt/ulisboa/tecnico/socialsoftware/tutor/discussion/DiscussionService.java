@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
@@ -18,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
@@ -26,6 +28,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import java.sql.SQLException;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -51,6 +54,9 @@ public class DiscussionService {
 
     @Autowired
     public QuestionAnswerRepository questionAnswerRepository;
+
+    @Autowired
+    private CourseExecutionService courseExecutionService;
 
     @Retryable(
             value = { SQLException.class },
@@ -135,5 +141,16 @@ public class DiscussionService {
          return discussionRepository.findById(discussionId)
                  .map(discussion -> new DiscussionDto(discussion, deep))
                  .orElse(null);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void resetDemoDiscussions() {
+        List<Discussion> discussions = discussionRepository.findByExecutionCourseId(courseExecutionService.getDemoCourse().getCourseExecutionId());
+
+        discussions.forEach(discussion -> {
+            discussion.remove();
+            discussionRepository.delete(discussion);
+        });
+
     }
 }

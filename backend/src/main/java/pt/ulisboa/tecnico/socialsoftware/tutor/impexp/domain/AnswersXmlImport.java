@@ -10,20 +10,15 @@ import org.jdom2.xpath.XPathFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionDetailsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -34,6 +29,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -71,6 +68,10 @@ public class AnswersXmlImport {
 
     private Map<Integer, Map<Integer, Integer>> multipleChoiceQuestionMap;
 
+    private Map<Integer, CodeFillInQuestion> codeFillInQuestionMap;
+
+    private Map<Integer, CodeOrderQuestion> codeOrderQuestionMap;
+
     public void importAnswers(InputStream inputStream) {
 
         SAXBuilder builder = new SAXBuilder();
@@ -102,6 +103,12 @@ public class AnswersXmlImport {
                 .collect(Collectors.toMap(questionDetails -> questionDetails.getQuestion().getKey(),
                         questionDetails -> questionDetails.getOptions().stream()
                                 .collect(Collectors.toMap(Option::getSequence, Option::getId))));
+        codeFillInQuestionMap = questionDetailsRepository.findCodeFillInQuestionDetails().stream()
+                .collect(Collectors.toMap(questionDetails -> questionDetails.getQuestion().getKey(),
+                        questionDetails -> questionDetails));
+        codeOrderQuestionMap = questionDetailsRepository.findCodeOrderQuestionDetails().stream()
+                .collect(Collectors.toMap(questionDetails -> questionDetails.getQuestion().getKey(),
+                        questionDetails -> questionDetails));
     }
 
     public void importAnswers(String answersXml) {
@@ -188,11 +195,81 @@ public class AnswersXmlImport {
                 case Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION:
                     importMultipleChoiceXmlImport(questionAnswerElement, questionAnswer);
                     break;
+                case Question.QuestionTypes.CODE_FILL_IN_QUESTION:
+                    importCodeFillInXmlImport(questionAnswerElement, questionAnswer);
+                    break;
+                case Question.QuestionTypes.CODE_ORDER_QUESTION:
+                    importCodeOrderXmlImport(questionAnswerElement, questionAnswer);
+                    break;
                 default:
                     throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionType);
             }
 
             questionAnswerRepository.save(questionAnswer);
+        }
+    }
+
+    private void importCodeOrderXmlImport(Element questionAnswerElement, QuestionAnswer questionAnswer) {
+        var slotsElement = questionAnswerElement.getChild("slots");
+        if (slotsElement != null){
+            Integer questionKey = Integer.valueOf(slotsElement.getAttributeValue("questionKey"));
+            CodeOrderQuestion codeOrderQuestion = codeOrderQuestionMap.get(questionKey);
+
+            CodeOrderStatementAnswerDetailsDto codeOrderStatementAnswerDetailsDto = new CodeOrderStatementAnswerDetailsDto();
+            for (var slot: slotsElement.getChildren("slot")) {
+                var sequence = Integer.valueOf(slot.getAttributeValue("sequence"));
+                var order = Integer.valueOf(slot.getAttributeValue("order"));
+
+                var slotId = codeOrderQuestion.getCodeOrderSlots()
+                        .stream()
+                        .filter(x -> x.getSequence().equals(sequence))
+                        .findAny()
+                        .get().getId();
+                codeOrderStatementAnswerDetailsDto.getOrderedSlots().add(new CodeOrderSlotStatementAnswerDetailsDto(slotId, order));
+            }
+            CodeOrderAnswer answer = new CodeOrderAnswer(questionAnswer);
+            answer.setOrderedSlots(codeOrderQuestion, codeOrderStatementAnswerDetailsDto);
+            questionAnswer.setAnswerDetails(answer);
+            answerDetailsRepository.save(answer);
+        }
+        else{
+            questionAnswer.setAnswerDetails((AnswerDetails) null);
+        }
+    }
+
+
+    private void importCodeFillInXmlImport(Element questionAnswerElement, QuestionAnswer questionAnswer) {
+        var slotsElement = questionAnswerElement.getChild("fillInSpots");
+        if (slotsElement != null){
+            Integer questionKey = Integer.valueOf(slotsElement.getAttributeValue("questionKey"));
+            var codeFillInQuestion = codeFillInQuestionMap.get(questionKey);
+
+            CodeFillInStatementAnswerDetailsDto codeFillInStatementAnswerDetailsDto = new CodeFillInStatementAnswerDetailsDto();
+            for (var slot: slotsElement.getChildren("fillInSpot")) {
+                var slotSequence = Integer.valueOf(slot.getAttributeValue("spotSequence"));
+                var optionSequence = Integer.valueOf(slot.getAttributeValue("optionSequence"));
+
+
+                var optionId = codeFillInQuestion.getFillInSpots().stream()
+                        .filter(x -> x.getSequence().equals(slotSequence))
+                        .flatMap(s -> s.getOptions().stream()
+                                .filter(op -> op.getSequence().equals(optionSequence))
+                                .map(CodeFillInOption::getId)
+                        ).findAny().get();
+
+                var selectOption = new CodeFillInOptionStatementAnswerDto();
+                selectOption.setSequence(slotSequence);
+                selectOption.setOptionSequence(optionSequence);
+                selectOption.setOptionId(optionId);
+                codeFillInStatementAnswerDetailsDto.getSelectedOptions().add(selectOption);
+            }
+            CodeFillInAnswer answer = new CodeFillInAnswer(questionAnswer);
+            answer.setFillInOptions(codeFillInQuestion, codeFillInStatementAnswerDetailsDto);
+            questionAnswer.setAnswerDetails(answer);
+            answerDetailsRepository.save(answer);
+        }
+        else{
+            questionAnswer.setAnswerDetails((AnswerDetails) null);
         }
     }
 

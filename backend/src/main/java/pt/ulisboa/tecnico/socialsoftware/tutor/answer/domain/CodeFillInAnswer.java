@@ -13,17 +13,18 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInStatementAns
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
 
 import javax.persistence.*;
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
 
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInAnswer extends AnswerDetails {
-
-    @ManyToMany(mappedBy = "questionAnswers", fetch = FetchType.EAGER, cascade = CascadeType.ALL)
+    @ManyToMany(mappedBy = "questionAnswers")
     private Set<CodeFillInOption> codeFillInOptions = new HashSet<>();
 
     public CodeFillInAnswer() {
@@ -32,7 +33,6 @@ public class CodeFillInAnswer extends AnswerDetails {
 
     public CodeFillInAnswer(QuestionAnswer questionAnswer) {
         super(questionAnswer);
-
     }
 
     public Set<CodeFillInOption> getFillInOptions() {
@@ -64,10 +64,19 @@ public class CodeFillInAnswer extends AnswerDetails {
     }
 
     public String getAnswerRepresentation() {
-        var correctAnswers = this.getFillInOptions().stream().filter(CodeFillInOption::isCorrect).count();
-        // TODO: Might be relevant for answer details to know about the respective question answers.
-        var questionOptions = ((CodeFillInQuestion) this.getQuestionAnswer().getQuestion().getQuestionDetails()).getFillInSpots().size();
-        return String.format("%d/%d", correctAnswers, questionOptions);
+        var fillInSpots = ((CodeFillInQuestion) this.getQuestionAnswer().getQuestion().getQuestionDetails()).getFillInSpots();
+        var answers = new ArrayList<String>();
+        for (var spot:fillInSpots) {
+            var option = this.getFillInOptions().stream().filter(x -> x.getFillInSpot().getId().equals(spot.getId())).findAny();
+            if (option.isPresent()){
+                Integer humanSequence = option.get().getSequence();
+                answers.add(humanSequence.toString());
+            }
+            else {
+                answers.add("-");
+            }
+        }
+        return String.join(" | ", answers);
     }
 
     @Override
@@ -77,17 +86,20 @@ public class CodeFillInAnswer extends AnswerDetails {
 
     @Override
     public void remove() {
-        if (this.codeFillInOptions != null) {
-            this.codeFillInOptions.forEach(x -> x.getQuestionAnswers().remove(this));
-            this.codeFillInOptions.clear();
+        if (codeFillInOptions != null) {
+            codeFillInOptions.forEach(codeFillInOption-> codeFillInOption.getQuestionAnswers().remove(this));
+            codeFillInOptions.clear();
         }
     }
 
     public void setFillInOptions(CodeFillInQuestion question, CodeFillInStatementAnswerDetailsDto codeFillInStatementAnswerDetailsDto) {
-        this.codeFillInOptions.clear();
+        codeFillInOptions.clear();
         if (!codeFillInStatementAnswerDetailsDto.emptyAnswer()) {
             for (CodeFillInOptionStatementAnswerDto option : codeFillInStatementAnswerDetailsDto.getSelectedOptions()) {
 
+                if(option.getOptionId() == null){
+                    continue;
+                }
                 CodeFillInOption codeFillInOption = question.getFillInSpots().stream()
                         .map(CodeFillInSpot::getOptions)
                         .flatMap(Collection::stream)

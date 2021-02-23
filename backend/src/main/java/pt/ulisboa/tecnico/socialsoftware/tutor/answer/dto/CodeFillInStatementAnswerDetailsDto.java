@@ -7,11 +7,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestio
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 public class CodeFillInStatementAnswerDetailsDto extends StatementAnswerDetailsDto {
-    private List<CodeFillInOptionStatementAnswerDto> selectedOptions;
+    private List<CodeFillInOptionStatementAnswerDto> selectedOptions = new ArrayList<>();
 
     public CodeFillInStatementAnswerDetailsDto() {
     }

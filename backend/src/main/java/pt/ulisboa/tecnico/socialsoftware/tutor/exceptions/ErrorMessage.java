@@ -1,6 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
 public enum ErrorMessage {
+    USER_HAS_QUIZ_ANSWERS("User %s has quiz answers"),
+    USER_HAS_QUESTION_SUBMISSIONS("User %s has question submissions"),
+    USER_HAS_DISCUSSIONS("User %s has discussions"),
+    USER_HAS_REPLIES("User %s has replies"),
 
     INVALID_ACADEMIC_TERM_FOR_COURSE_EXECUTION("Invalid academic term for course execution"),
     INVALID_ACRONYM_FOR_COURSE_EXECUTION("Invalid acronym for course execution"),
@@ -32,12 +36,15 @@ public enum ErrorMessage {
     INVALID_ROLE("The Role %s is invalid."),
     OPTION_NOT_FOUND("Option not found with id %d"),
     FILL_IN_SPOT_NOT_FOUND("Fill in spot not found with id %d"),
+    ORDER_SLOT_NOT_FOUND("Order slot not found with id %d"),
+    QUESTION_ANSWER_HAS_DISCUSSION("Question answers has discussion"),
     QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),
     QUESTION_NOT_FOUND("Question not found with id %d"),
     QUESTION_TYPE_NOT_IMPLEMENTED("Question type %s not implemented"),
     QUIZ_ANSWER_NOT_FOUND("Quiz answer not found with id %d"),
     QUIZ_NOT_FOUND("Quiz not found with id %d"),
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
+    QUIZ_HAS_TOURNAMENT("Quiz has tournament"),
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     TOPIC_NOT_FOUND("Topic not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
@@ -52,6 +59,7 @@ public enum ErrorMessage {
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
 
     QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
+    QUESTION_ORDER_SLOT_MISMATCH("Question %d does not have slot %d"),
 
     DUPLICATE_TOPIC("Duplicate topic: %s"),
     DUPLICATE_USER("Duplicate user: %s"),
@@ -93,6 +101,7 @@ public enum ErrorMessage {
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),
     NOT_ENOUGH_QUESTIONS_TOURNAMENT("Not enough questions to create a quiz. One of the selected topics might not be available now. Please go check it"),
     AT_LEAST_ONE_OPTION_NEEDED("Questions need to have at least one option."),
+    AT_LEAST_THREE_SLOTS_NEEDED("Order questions need to have at least 3 used slots."),
     ONE_CORRECT_OPTION_NEEDED("Questions need to have 1 and only 1 correct option"),
     CANNOT_CHANGE_ANSWERED_QUESTION("Can not change answered question"),
     QUIZ_HAS_ANSWERS("Quiz already has answers"),

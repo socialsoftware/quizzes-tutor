@@ -15,16 +15,29 @@ export default class CodeFillInAnswerType extends AnswerDetails {
     }
   }
 
-  isCorrect(): boolean {
+  isCorrect(questionDetails: CodeFillInQuestionDetails): boolean {
     return (
-      this.options.length > 0 &&
+      this.options.length === questionDetails.fillInSpots.length &&
       this.options.filter(op => !op.correct).length == 0
     );
   }
 
   answerRepresentation(questionDetails: CodeFillInQuestionDetails): string {
-    let correct = this.options.filter(op => op.correct).length;
-    let all = questionDetails.fillInSpots.length;
-    return `${correct}/${all}`;
+    let answerRepr = [];
+    for (const spot of questionDetails.fillInSpots) {
+      let inserted = false;
+      for (const option of this.options) {
+        let optionInSpot = spot.options.filter(op => op.id == option.id);
+        if (optionInSpot.length > 0) {
+          answerRepr.push((optionInSpot[0]?.sequence || 0) + 1);
+          inserted = true;
+          continue;
+        }
+      }
+      if (!inserted) {
+        answerRepr.push('-');
+      }
+    }
+    return answerRepr.join(' | ');
   }
 }

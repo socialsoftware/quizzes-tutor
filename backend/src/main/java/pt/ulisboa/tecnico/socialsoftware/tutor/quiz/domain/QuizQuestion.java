@@ -27,7 +27,7 @@ public class QuizQuestion implements DomainEntity {
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizQuestion", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(mappedBy = "quizQuestion", fetch=FetchType.LAZY)
     private Set<QuestionAnswer> questionAnswers = new HashSet<>();
 
     private Integer sequence;
