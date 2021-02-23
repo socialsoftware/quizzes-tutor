@@ -29,6 +29,8 @@ const sanitizeParams = {
     'pre',
     'strike',
     'strong',
+    'sub',
+    'sup',
     'table',
     'tbody',
     'td',

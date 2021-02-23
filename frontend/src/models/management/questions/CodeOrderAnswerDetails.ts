@@ -25,6 +25,9 @@ export default class CodeOrderAnswerDetails extends AnswerDetails {
   }
 
   answerRepresentation(questionDetails: CodeOrderQuestionDetails): string {
-    return this.orderedSlots.map(x => '' + ((x.sequence || 0) + 1)).join(' | ') || '-';
+    return (
+      this.orderedSlots.map(x => '' + ((x.sequence || 0) + 1)).join(' | ') ||
+      '-'
+    );
   }
 }
