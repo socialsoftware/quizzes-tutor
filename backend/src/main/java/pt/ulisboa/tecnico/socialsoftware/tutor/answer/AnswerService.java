@@ -441,10 +441,7 @@ public class AnswerService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoAnswers() {
         Set<QuizAnswer> quizAnswers = quizAnswerRepository.findByExecutionCourseId(courseExecutionService.getDemoCourse().getCourseExecutionId());
-
-        System.out.println(quizAnswers.size());
-        System.out.println(quizAnswers.stream().filter(quizAnswer -> quizAnswer.getUser().getAuthUser().isDemoStudent()).count());
-
+        
         quizAnswers.forEach(quizAnswer -> {
                 quizAnswer.remove();
                 quizAnswerRepository.delete(quizAnswer);
