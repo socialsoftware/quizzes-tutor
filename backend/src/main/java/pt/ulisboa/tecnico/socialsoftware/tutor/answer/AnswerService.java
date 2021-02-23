@@ -408,7 +408,7 @@ public class AnswerService {
             throw new TutorException(QUIZ_NO_LONGER_AVAILABLE);
         }
 
-        Optional<QuizAnswer> optionalQuizAnswer = quizAnswerRepository.findQuizAnswer(quizId, user.getId());
+        Optional<QuizAnswer> optionalQuizAnswer = quizAnswerRepository.findQuizAnswer(quizId, userId);
 
         if (!optionalQuizAnswer.isPresent() && quiz.isQrCodeOnly()) {
             throw new TutorException(CANNOT_START_QRCODE_QUIZ);
@@ -441,9 +441,6 @@ public class AnswerService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoAnswers() {
         Set<QuizAnswer> quizAnswers = quizAnswerRepository.findByExecutionCourseId(courseExecutionService.getDemoCourse().getCourseExecutionId());
-
-        System.out.println(quizAnswers.size());
-        System.out.println(quizAnswers.stream().filter(quizAnswer -> quizAnswer.getUser().getAuthUser().isDemoStudent()).count());
 
         quizAnswers.forEach(quizAnswer -> {
                 quizAnswer.remove();
