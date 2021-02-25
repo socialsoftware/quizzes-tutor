@@ -18,7 +18,7 @@ public class TournamentDto implements Serializable {
     private Integer numberOfQuestions;
     private boolean isCanceled;
     private Set<TopicDto> topicsDto = new HashSet<>();
-    private StudentDto creator;
+    private TournamentCreatorDto creator;
     private List<TournamentParticipantDto> participants = new ArrayList<>();
     private boolean privateTournament = false;
     private String password = "";
@@ -39,7 +39,7 @@ public class TournamentDto implements Serializable {
         this.topicsDto = tournament.getTopics().stream()
                 .map(TopicDto::new)
                 .collect(Collectors.toSet());
-        this.creator = new StudentDto(tournament.getCreator());
+        this.creator = new TournamentCreatorDto(tournament.getCreator());
         this.participants = tournament.getParticipants().stream()
                 .map(user -> new TournamentParticipantDto(user, tournament.getQuiz()))
                 .sorted(Comparator.comparing(TournamentParticipantDto::getScore).reversed())
@@ -114,11 +114,11 @@ public class TournamentDto implements Serializable {
         this.topicsDto = topicsDto;
     }
 
-    public StudentDto getCreator() {
+    public TournamentCreatorDto getCreator() {
         return creator;
     }
 
-    public void setCreator(StudentDto creator) {
+    public void setCreator(TournamentCreatorDto creator) {
         this.creator = creator;
     }
 

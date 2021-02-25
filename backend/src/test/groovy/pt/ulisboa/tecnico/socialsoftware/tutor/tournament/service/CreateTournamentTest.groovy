@@ -41,7 +41,9 @@ class CreateTournamentTest extends TournamentTest {
         result.getTopics() == [topic2, topic1] as Set
         result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
         result.isCanceled() == false
-        result.getCreator() == user1
+        result.getCreator().getId() == creator1.getId()
+        result.getCreator().getUsername() == creator1.getUsername()
+        result.getCreator().getName() == creator1.getName()
         result.getCourseExecution() == externalCourseExecution
 
         where:
@@ -71,7 +73,9 @@ class CreateTournamentTest extends TournamentTest {
         result.getTopics() == [topic2, topic1] as Set
         result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
         result.isCanceled() == false
-        result.getCreator() == user1
+        result.getCreator().getId() == creator1.getId()
+        result.getCreator().getUsername() == creator1.getUsername()
+        result.getCreator().getName() == creator1.getName()
         result.getCourseExecution() == externalCourseExecution
         result.isPrivateTournament() == true
         result.getPassword() == '123'

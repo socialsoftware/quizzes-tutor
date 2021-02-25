@@ -30,9 +30,8 @@ public class Tournament  {
     @Column(name = "number_of_questions")
     private Integer numberOfQuestions;
 
-    @ManyToOne
-    @JoinColumn(name = "user_id")
-    private User creator;
+    @Embedded
+    private TournamentCreator creator;
 
     @Column(name = "is_canceled")
     private boolean isCanceled;
@@ -106,9 +105,9 @@ public class Tournament  {
 
     public Integer getNumberOfQuestions() { return numberOfQuestions; }
 
-    public User getCreator() { return creator; }
+    public TournamentCreator getCreator() { return creator; }
 
-    public void setCreator(User user) { this.creator = user; }
+    public void setCreator(User user) { this.creator = new TournamentCreator(user.getId(), user.getUsername(), user.getName()); }
 
     public boolean isCreator(User user) { return creator.getId().equals(user.getId()); }
 

@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCreator
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
@@ -31,9 +32,11 @@ class TournamentTest extends SpockTest {
     def topics = new HashSet<Integer>()
     def topicsList = new HashSet<Topic>()
     def user1
+    def creator1
 
     def setup() {
         user1 = createUser(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, externalCourseExecution)
+        creator1 = createTournamentCreator(user1.getId(),  user1.getUsername(), user1.getName())
 
         def topicDto1 = new TopicDto()
         topicDto1.setName(TOPIC_1_NAME)
@@ -136,6 +139,10 @@ class TournamentTest extends SpockTest {
         options.add(optionDto)
         question.getQuestionDetails().setOptions(options)
         questionRepository.save(question)
+    }
+
+    def createTournamentCreator(Integer id, String username, String name) {
+        return new TournamentCreator(id, username, name )
     }
 
     @TestConfiguration
