@@ -8,7 +8,7 @@ export default class StatementQuestion {
   content: string | null = null;
   image: Image | null = null;
 
-  questionDetails: StatementQuestionDetails | null = null;
+  questionDetails: StatementQuestionDetails = new MultipleChoiceStatementQuestionDetails();
   questionId!: number;
 
   constructor(jsonObj?: StatementQuestion) {
