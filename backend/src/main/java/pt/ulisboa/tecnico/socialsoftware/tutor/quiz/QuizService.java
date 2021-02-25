@@ -128,7 +128,7 @@ public class QuizService {
 
         if (quizDto.getQuestions() != null) {
             quizDto.getQuestions().stream().sorted(Comparator.comparing(QuestionDto::getSequence))
-                    .forEach( questionDto -> {
+                    .forEach(questionDto -> {
                         Question question = questionRepository.findById(questionDto.getId())
                                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionDto.getId()));
                         new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());

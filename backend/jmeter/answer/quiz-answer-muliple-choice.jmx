@@ -386,6 +386,7 @@
 	],&#xd;
 	&quot;title&quot;:&quot;12345&quot;,&#xd;
 	&quot;availableDate&quot;:&quot;2019-05-01T19:58:00+01:00&quot;,&#xd;
+	&quot;oneWay&quot;: true,&#xd;
 	&quot;timed&quot;:true,&#xd;
 	&quot;conclusionDate&quot;:&quot;2021-08-29T22:59:00+01:00&quot;&#xd;
 }</stringProp>
@@ -636,9 +637,9 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option ids" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].questionDetails.options[0].optionId</stringProp>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get question ids" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">question_id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].questionId</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
@@ -658,6 +659,40 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
               <boolProp name="CounterConfig.reset_on_tg_iteration">true</boolProp>
             </CounterConfig>
             <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get question" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">&#xd;
+</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.domain">${server}</stringProp>
+              <stringProp name="HTTPSampler.port">${port}</stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
+              <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
+              <stringProp name="HTTPSampler.path">${prefix}/quizzes/${__property(quiz_id)}/question/${__V(question_id_${question_number})}</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+              <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.questionDetails.options[0].optionId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Submit answer" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
@@ -666,7 +701,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">{&#xd;
 	&quot;answerDetails&quot;: {&#xd;
-		&quot;optionId&quot;:${__V(option_id_${question_number})},&#xd;
+		&quot;optionId&quot;:${option_id_1},&#xd;
 		&quot;type&quot;: &quot;multiple_choice&quot;&#xd;
 	},&#xd;
 	&quot;timeTaken&quot;:1278,&#xd;

@@ -61,9 +61,6 @@ public class AnswerService {
     private QuestionAnswerItemRepository questionAnswerItemRepository;
 
     @Autowired
-    private QuestionAnswerRepository questionAnswerRepository;
-
-    @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
@@ -226,7 +223,7 @@ public class AnswerService {
 
         quizRepository.save(quiz);
 
-        return new StatementQuizDto(quizAnswer);
+        return new StatementQuizDto(quizAnswer, false);
     }
 
     @Retryable(
@@ -272,7 +269,7 @@ public class AnswerService {
 
         quizRepository.save(quiz);
 
-        return new StatementQuizDto(quizAnswer);
+        return new StatementQuizDto(quizAnswer, false);
     }
 
     @Retryable(
@@ -309,7 +306,7 @@ public class AnswerService {
             if (quizAnswer.getCreationDate() == null) {
                 quizAnswer.setCreationDate(DateHandler.now());
             }
-            return new StatementQuizDto(quizAnswer);
+            return new StatementQuizDto(quizAnswer, false);
 
             // Send timer
         } else {
@@ -352,6 +349,13 @@ public class AnswerService {
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public StatementQuestionDto getQuestionForQuizAnswer(Integer quizId, Integer questionId) {
+            Question question = questionRepository.findById(questionId)
+                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+            return new StatementQuestionDto(question);
     }
 
     @Retryable(
@@ -428,7 +432,7 @@ public class AnswerService {
             quizAnswer.setCreationDate(DateHandler.now());
         }
 
-        return new StatementQuizDto(quizAnswer);
+        return new StatementQuizDto(quizAnswer, false);
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {

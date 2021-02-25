@@ -26,7 +26,7 @@ public class StatementQuizDto implements Serializable {
 
     public StatementQuizDto() {}
 
-    public StatementQuizDto(QuizAnswer quizAnswer) {
+    public StatementQuizDto(QuizAnswer quizAnswer, boolean complete) {
         this.id = quizAnswer.getQuiz().getId();
         this.quizAnswerId = quizAnswer.getId();
         this.title = quizAnswer.getQuiz().getTitle();
@@ -39,8 +39,9 @@ public class StatementQuizDto implements Serializable {
             this.timeToSubmission = ChronoUnit.MILLIS.between(DateHandler.now(), quizAnswer.getQuiz().getConclusionDate());
         }
 
+        boolean ghost = this.oneWay && !complete;
         this.questions = quizAnswer.getQuestionAnswers().stream()
-                .map(StatementQuestionDto::new)
+                .map(questionAnswer -> new StatementQuestionDto(questionAnswer, ghost))
                 .sorted(Comparator.comparing(StatementQuestionDto::getSequence))
                 .collect(Collectors.toList());
 
