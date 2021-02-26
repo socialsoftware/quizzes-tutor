@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
@@ -289,11 +290,11 @@ public class Question implements DomainEntity {
             throw new TutorException(QUESTION_IS_USED_IN_QUIZ, getQuizQuestions().iterator().next().getQuiz().getTitle());
         }
 
-        getCourse().getQuestions().remove(this);
+        this.course.getQuestions().remove(this);
         course = null;
 
-        getTopics().forEach(topic -> topic.getQuestions().remove(this));
-        getTopics().clear();
+        this.topics.forEach(topic -> topic.getQuestions().remove(this));
+        this.topics.clear();
     }
 
     @Override
@@ -313,11 +314,11 @@ public class Question implements DomainEntity {
     }
 
     public CorrectAnswerDetailsDto getCorrectAnswerDetailsDto() {
-        return this.getQuestionDetails().getCorrectAnswerDetailsDto();
+        return this.questionDetails.getCorrectAnswerDetailsDto();
     }
 
     public StatementQuestionDetailsDto getStatementQuestionDetailsDto() {
-        return this.getQuestionDetails().getStatementQuestionDetailsDto();
+        return this.questionDetails.getStatementQuestionDetailsDto();
     }
 
     public AnswerDetailsDto getEmptyAnswerDetailsDto() {
@@ -325,7 +326,7 @@ public class Question implements DomainEntity {
     }
 
     public StatementAnswerDetailsDto getEmptyStatementAnswerDetailsDto() {
-        return this.getQuestionDetails().getEmptyStatementAnswerDetailsDto();
+        return this.questionDetails.getEmptyStatementAnswerDetailsDto();
     }
 
     public QuestionDetailsDto getQuestionDetailsDto() {
