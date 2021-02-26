@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 
@@ -19,14 +20,17 @@ public class TournamentParticipantDto implements Serializable {
     public TournamentParticipantDto() {
     }
 
-    public TournamentParticipantDto(User user, Quiz quiz) {
-        QuizAnswer quizAnswer = user.getQuizAnswer(quiz);
+    public TournamentParticipantDto(TournamentParticipant user, Quiz quiz) {
+        //QuizAnswer quizAnswer = user.getQuizAnswer(quiz);
         this.userId = user.getId();
         this.name = user.getName();
         this.username = user.getUsername();
-        this.answered = quizAnswer != null;
-        this.numberOfAnswered = quizAnswer != null ? Math.toIntExact(quizAnswer.getNumberOfAnsweredQuestions()) : 0;
-        this.numberOfCorrect = quizAnswer != null ? Math.toIntExact(quizAnswer.getNumberOfCorrectAnswers()) : 0;
+        //this.answered = quizAnswer != null;
+        this.answered = user.isAnswered();
+        //this.numberOfAnswered = quizAnswer != null ? Math.toIntExact(quizAnswer.getNumberOfAnsweredQuestions()) : 0;
+        this.numberOfAnswered = user.getNumberOfAnswered();
+        //this.numberOfCorrect = quizAnswer != null ? Math.toIntExact(quizAnswer.getNumberOfCorrectAnswers()) : 0;
+        this.numberOfCorrect = user.getNumberOfCorrect();
         this.score = numberOfCorrect - (numberOfAnswered - numberOfCorrect) * 0.3;
     }
 
