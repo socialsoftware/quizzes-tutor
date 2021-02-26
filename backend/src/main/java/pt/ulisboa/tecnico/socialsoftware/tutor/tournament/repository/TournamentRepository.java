@@ -27,4 +27,7 @@ public interface TournamentRepository extends JpaRepository<Tournament, Integer>
     
     @Query(value = "SELECT t.course_execution_id FROM tournaments t WHERE t.id = :id", nativeQuery = true)
     Optional<Integer> findCourseExecutionIdByTournamentId(int id);
+
+    @Query(value = "select count(*) from tournament_participants tp where tp.participant_id = :userId and tp.tournament_id = :tournamentId", nativeQuery = true)
+    Integer countUserTournamentPairById(int userId, int tournamentId);
 }

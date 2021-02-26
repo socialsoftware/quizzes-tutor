@@ -77,8 +77,8 @@ public class User implements DomainEntity {
     @ManyToMany
     private Set<CourseExecution> courseExecutions = new HashSet<>();
 
-    @ManyToMany(mappedBy = "participants")
-    private Set<Tournament> tournaments = new HashSet<>();
+    /*@ManyToMany(mappedBy = "participants")
+    private Set<Tournament> tournaments = new HashSet<>();*/
 
     public User() {
     }
@@ -209,7 +209,7 @@ public class User implements DomainEntity {
         return courseExecutions;
     }
 
-    public Set<Tournament> getTournaments() { return tournaments; }
+    //public Set<Tournament> getTournaments() { return tournaments; }
 
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
@@ -454,13 +454,13 @@ public class User implements DomainEntity {
         course.addUser(this);
     }
 
-    public void addTournament(Tournament tournament) {
+    /*public void addTournament(Tournament tournament) {
         this.tournaments.add(tournament);
     }
 
     public void removeTournament(Tournament tournament) {
         this.tournaments.remove(tournament);
-    }
+    }*/
 
     public void addQuestionSubmission(QuestionSubmission questionSubmission) {
         questionSubmissions.add(questionSubmission);

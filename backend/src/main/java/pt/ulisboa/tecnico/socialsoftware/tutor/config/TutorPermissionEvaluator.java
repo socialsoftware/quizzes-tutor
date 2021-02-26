@@ -168,7 +168,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     }
 
     private boolean userParticipatesInTournament(int userId, int tournamentId) {
-        return userRepository.countUserTournamentPairById(userId, tournamentId) == 1;
+        return tournamentRepository.countUserTournamentPairById(userId, tournamentId) == 1;
     }
 
     @Override

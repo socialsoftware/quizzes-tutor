@@ -7,6 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentParticipantDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
@@ -136,7 +138,7 @@ public class TournamentService {
         if (!tournament.hasQuiz()) {
             createQuiz(tournament);
         }
-
+        // TODO: Receive event with correct answers number and answers number
         return answerService.startQuiz(userId, tournament.getQuiz().getId());
     }
 
@@ -198,13 +200,13 @@ public class TournamentService {
         tournamentRepository.delete(tournament);
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    /*@Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<StudentDto> getTournamentParticipants(TournamentDto tournamentDto) {
+    public List<TournamentParticipantDto> getTournamentParticipants(TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
 
-        return tournament.getParticipants().stream().map(StudentDto::new).collect(Collectors.toList());
-    }
+        return tournament.getParticipants().stream().map(TournamentParticipantDto::new).collect(Collectors.toList());
+    }*/
 
     private void checkInput(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
         if (userId == null) {
@@ -247,7 +249,9 @@ public class TournamentService {
     public void resetDemoTournaments() {
         tournamentRepository.getTournamentsForCourseExecution(courseExecutionService.getDemoCourse().getCourseExecutionId())
             .forEach(tournament -> {
-                tournament.getParticipants().forEach(user -> user.removeTournament(tournament));
+                /*tournament.getParticipants().forEach(user ->
+                        userRepository.findById(user.getId()).get().removeTournament(tournament)
+                );*/
                 if (tournament.getQuiz() != null) {
                     tournament.getQuiz().setTournament(null);
                 }

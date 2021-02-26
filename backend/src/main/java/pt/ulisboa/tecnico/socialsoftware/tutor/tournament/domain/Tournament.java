@@ -36,8 +36,9 @@ public class Tournament  {
     @Column(name = "is_canceled")
     private boolean isCanceled;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<User> participants = new HashSet<>();
+    @ElementCollection
+    @CollectionTable(name = "tournament_participants")
+    private Set<TournamentParticipant> participants = new HashSet<>();
 
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
@@ -128,7 +129,7 @@ public class Tournament  {
         this.quiz = quiz;
     }
 
-    public Set<User> getParticipants() { return participants; }
+    public Set<TournamentParticipant> getParticipants() { return participants; }
 
     public void setCourseExecution(CourseExecution courseExecution) { this.courseExecution = courseExecution; }
 
@@ -161,7 +162,10 @@ public class Tournament  {
     }
 
     public void checkIsParticipant(User user) {
-        if (!getParticipants().contains(user)) {
+        // TODO: Apply anti-corruption layer for conversion
+        TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
+
+        if (!getParticipants().contains(participant)) {
             throw new TutorException(USER_NOT_JOINED, user.getId());
         }
 
@@ -171,6 +175,9 @@ public class Tournament  {
     }
 
     public void addParticipant(User user, String password) {
+        // TODO: Apply anti-corruption layer for conversion
+        TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
+
         if (DateHandler.now().isAfter(getEndTime())) {
             throw new TutorException(TOURNAMENT_NOT_OPEN, getId());
         }
@@ -179,8 +186,8 @@ public class Tournament  {
             throw new TutorException(TOURNAMENT_CANCELED, getId());
         }
 
-        if (getParticipants().contains(user)) {
-            throw new TutorException(DUPLICATE_TOURNAMENT_PARTICIPANT, user.getUsername());
+        if (getParticipants().contains(participant)) {
+            throw new TutorException(DUPLICATE_TOURNAMENT_PARTICIPANT, participant.getUsername());
         }
 
         if (!user.getCourseExecutions().contains(getCourseExecution())) {
@@ -191,14 +198,17 @@ public class Tournament  {
             throw new TutorException(WRONG_TOURNAMENT_PASSWORD, getId());
         }
 
-        this.participants.add(user);
-        user.addTournament(this);
+        this.participants.add(participant);
+        //user.addTournament(this);
     }
 
     public void removeParticipant(User user) {
+        // TODO: Apply anti-corruption layer for conversion
+        TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
+
         checkIsParticipant(user);
-        this.participants.remove(user);
-        user.removeTournament(this);
+        this.participants.remove(participant);
+        //user.removeTournament(this);
     }
 
     public boolean hasQuiz() { return getQuiz() != null; }
@@ -212,7 +222,7 @@ public class Tournament  {
         getTopics().forEach(topic -> topic.getTournaments().remove(this));
         getTopics().clear();
 
-        getParticipants().forEach(participant -> participant.getTournaments().remove(this));
+        //getParticipants().forEach(participant -> participant.getTournaments().remove(this));
         getParticipants().clear();
 
         if (this.quiz != null) {
