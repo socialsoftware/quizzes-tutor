@@ -19,8 +19,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 @EnableJpaRepositories
 @EnableTransactionManagement
 @EnableJpaAuditing
-@SpringBootApplication
 @EnableScheduling
+@SpringBootApplication
 public class TutorApplication extends SpringBootServletInitializer implements InitializingBean {
     public static void main(String[] args) {
         SpringApplication.run(TutorApplication.class, args);
