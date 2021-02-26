@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Set;
 
 @Repository
 public interface QuestionAnswerItemRepository extends JpaRepository<QuestionAnswerItem, Integer> {
@@ -33,4 +34,7 @@ public interface QuestionAnswerItemRepository extends JpaRepository<QuestionAnsw
     @Query(value = "UPDATE question_answer_items SET username = :newUsername WHERE username = :oldUsername",
             nativeQuery = true)
     void updateQuestionAnswerItemUsername(String oldUsername, String newUsername);
+
+    @Query(value = "SELECT qai FROM QuestionAnswerItem qai WHERE qai.username LIKE 'Demo-Stu%' OR qai.username LIKE 'demo-stu%'")
+    Set<QuestionAnswerItem> findDemoStudentQuestionAnswerItems();
 }
