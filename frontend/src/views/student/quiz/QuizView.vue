@@ -168,12 +168,31 @@ export default class QuizView extends Vue {
     if (!this.statementQuiz?.id) {
       await this.$router.push({ name: 'create-quiz' });
     }
+    await this.setCurrentQuestion(0);
+  }
+
+  async setCurrentQuestion(order: number) {
+    if (
+      this.statementQuiz != null &&
+      !this.statementQuiz.questions[order].content
+    ) {
+      const question = await RemoteServices.getQuestion(
+        this.statementQuiz.id,
+        this.statementQuiz.questions[order].questionId
+      );
+      this.statementQuiz.questions[order].content = question.content;
+      this.statementQuiz.questions[order].image = question.image;
+      this.statementQuiz.questions[order].questionDetails =
+        question.questionDetails;
+    }
+
+    this.questionOrder = order;
   }
 
   increaseOrder(): void {
     if (this.questionOrder + 1 < +this.statementQuiz!.questions.length) {
       this.calculateTime();
-      this.questionOrder += 1;
+      this.setCurrentQuestion(this.questionOrder + 1);
     }
     this.nextConfirmationDialog = false;
   }
@@ -181,7 +200,7 @@ export default class QuizView extends Vue {
   decreaseOrder(): void {
     if (this.questionOrder > 0 && !this.statementQuiz?.oneWay) {
       this.calculateTime();
-      this.questionOrder -= 1;
+      this.setCurrentQuestion(this.questionOrder - 1);
     }
   }
 
@@ -189,7 +208,7 @@ export default class QuizView extends Vue {
     if (!this.statementQuiz?.oneWay) {
       if (newOrder >= 0 && newOrder < +this.statementQuiz!.questions.length) {
         this.calculateTime();
-        this.questionOrder = newOrder;
+        this.setCurrentQuestion(newOrder);
       }
     }
   }

@@ -15,19 +15,26 @@ public class StatementQuestionDto implements Serializable {
 
     private StatementQuestionDetailsDto questionDetails;
 
-    public StatementQuestionDto() {
-    }
-
-    public StatementQuestionDto(QuestionAnswer questionAnswer) {
+    public StatementQuestionDto(QuestionAnswer questionAnswer, boolean ghost) {
         Question question = questionAnswer.getQuizQuestion().getQuestion();
-        this.content = question.getContent();
-        if (question.getImage() != null) {
-            this.image = new ImageDto(question.getImage());
+        if (!ghost) {
+            this.content = question.getContent();
+            if (question.getImage() != null) {
+                this.image = new ImageDto(question.getImage());
+            }
+
+            this.questionDetails = question.getStatementQuestionDetailsDto();
         }
 
-        this.questionId = questionAnswer.getQuizQuestion().getQuestion().getId();
-
         this.sequence = questionAnswer.getSequence();
+        this.questionId = question.getId();
+    }
+
+    public StatementQuestionDto(Question question) {
+        this.content = question.getContent();
+        if (question.getImage() != null)
+            this.image = new ImageDto(question.getImage());
+
         this.questionDetails = question.getStatementQuestionDetailsDto();
     }
 

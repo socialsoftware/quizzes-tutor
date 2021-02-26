@@ -19,7 +19,7 @@ public class SolvedQuizDto implements Serializable {
     }
 
     public SolvedQuizDto(QuizAnswer quizAnswer) {
-        this.statementQuiz = new StatementQuizDto(quizAnswer);
+        this.statementQuiz = new StatementQuizDto(quizAnswer, true);
 
         this.correctAnswers = quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(QuestionAnswer::getSequence))

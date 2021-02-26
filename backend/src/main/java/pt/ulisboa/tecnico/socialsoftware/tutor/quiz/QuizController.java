@@ -86,11 +86,4 @@ public class QuizController {
         answerService.writeQuizAnswers(quizId);
         return this.quizService.getQuizAnswers(quizId);
     }
-
-    // only used from JMeter test
-    @PostMapping("/quizzes/{quizId}/write")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public void writeQuizAnswers(@PathVariable Integer quizId) {
-        this.answerService.writeQuizAnswers(quizId);
-    }
 }

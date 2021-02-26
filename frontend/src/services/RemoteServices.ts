@@ -20,6 +20,7 @@ import Tournament from '@/models/user/Tournament';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
+import StatementQuestion from '@/models/statement/StatementQuestion';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -730,6 +731,20 @@ export default class RemoteServices {
       .get(`/quizzes/${quizId}/start`)
       .then(response => {
         return new StatementQuiz(response.data);
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getQuestion(
+    quizId: number,
+    questionId: number
+  ): Promise<StatementQuestion> {
+    return httpClient
+      .get(`/quizzes/${quizId}/question/${questionId}`)
+      .then(response => {
+        return new StatementQuestion(response.data);
       })
       .catch(async error => {
         throw Error(await this.errorMessage(error));

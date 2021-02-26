@@ -20,7 +20,9 @@ import java.util.List;
         },
         indexes = {
                 @Index(name = "quiz_answers_indx_0", columnList = "user_id"),
-                @Index(name = "quiz_answers_indx_1", columnList = "quiz_id")
+                @Index(name = "quiz_answers_indx_1", columnList = "quiz_id"),
+                @Index(name = "quiz_answers_indx_2", columnList = "user_id, quiz_id"),
+                @Index(name = "quiz_answers_indx_3", columnList = "quiz_id, user_id")
         })
 public class QuizAnswer implements DomainEntity {
     @Id

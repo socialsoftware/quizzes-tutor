@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4.1">
   <hashTree>
-    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Quiz Answer (Code Fill In)" enabled="true">
+    <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Test Plan" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
       <boolProp name="TestPlan.functional_mode">false</boolProp>
       <boolProp name="TestPlan.tearDown_on_shutdown">true</boolProp>
@@ -61,14 +61,150 @@
           </elementProp>
           <elementProp name="number_of_questions" elementType="Argument">
             <stringProp name="Argument.name">number_of_questions</stringProp>
-            <stringProp name="Argument.value">40</stringProp>
+            <stringProp name="Argument.value">5</stringProp>
+            <stringProp name="Argument.metadata">=</stringProp>
+          </elementProp>
+          <elementProp name="number_of_students" elementType="Argument">
+            <stringProp name="Argument.name">number_of_students</stringProp>
+            <stringProp name="Argument.value">300</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
       </Arguments>
       <hashTree/>
-      <SetupThreadGroup guiclass="SetupThreadGroupGui" testclass="SetupThreadGroup" testname="setUp Thread Create Quiz" enabled="true">
-        <stringProp name="ThreadGroup.on_sample_error">stoptestnow</stringProp>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Students login" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
+        <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <boolProp name="LoopController.continue_forever">false</boolProp>
+          <stringProp name="LoopController.loops">1</stringProp>
+        </elementProp>
+        <stringProp name="ThreadGroup.num_threads">${number_of_students}</stringProp>
+        <stringProp name="ThreadGroup.ramp_time">1</stringProp>
+        <boolProp name="ThreadGroup.scheduler">false</boolProp>
+        <stringProp name="ThreadGroup.duration"></stringProp>
+        <stringProp name="ThreadGroup.delay"></stringProp>
+        <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
+      </ThreadGroup>
+      <hashTree>
+        <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Strudent counter" enabled="true">
+          <stringProp name="CounterConfig.start">1</stringProp>
+          <stringProp name="CounterConfig.end">${number_of_students}</stringProp>
+          <stringProp name="CounterConfig.incr">1</stringProp>
+          <stringProp name="CounterConfig.name">student_number</stringProp>
+          <stringProp name="CounterConfig.format"></stringProp>
+          <boolProp name="CounterConfig.per_user">false</boolProp>
+        </CounterConfig>
+        <hashTree/>
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as student" enabled="true">
+          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
+            <collectionProp name="Arguments.arguments"/>
+          </elementProp>
+          <stringProp name="HTTPSampler.domain">${server}</stringProp>
+          <stringProp name="HTTPSampler.port">${port}</stringProp>
+          <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
+          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
+          <stringProp name="HTTPSampler.path">${prefix}/auth/demo/student?createNew=true</stringProp>
+          <stringProp name="HTTPSampler.method">GET</stringProp>
+          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+          <stringProp name="HTTPSampler.response_timeout"></stringProp>
+        </HTTPSamplerProxy>
+        <hashTree>
+          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get token" enabled="true">
+            <stringProp name="JSONPostProcessor.referenceNames">token</stringProp>
+            <stringProp name="JSONPostProcessor.jsonPathExprs">$.token</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+          </JSONPostProcessor>
+          <hashTree/>
+          <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="Store tokens" enabled="true">
+            <stringProp name="filename"></stringProp>
+            <stringProp name="parameters"></stringProp>
+            <boolProp name="resetInterpreter">false</boolProp>
+            <stringProp name="script">props.put(&quot;Token_${student_number}&quot;, &quot;${token}&quot;);</stringProp>
+          </BeanShellPostProcessor>
+          <hashTree/>
+        </hashTree>
+        <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
+          <boolProp name="ResultCollector.error_logging">false</boolProp>
+          <objProp>
+            <name>saveConfig</name>
+            <value class="SampleSaveConfiguration">
+              <time>true</time>
+              <latency>true</latency>
+              <timestamp>true</timestamp>
+              <success>true</success>
+              <label>true</label>
+              <code>true</code>
+              <message>true</message>
+              <threadName>true</threadName>
+              <dataType>true</dataType>
+              <encoding>false</encoding>
+              <assertions>true</assertions>
+              <subresults>true</subresults>
+              <responseData>false</responseData>
+              <samplerData>false</samplerData>
+              <xml>false</xml>
+              <fieldNames>true</fieldNames>
+              <responseHeaders>false</responseHeaders>
+              <requestHeaders>false</requestHeaders>
+              <responseDataOnError>false</responseDataOnError>
+              <saveAssertionResultsFailureMessage>true</saveAssertionResultsFailureMessage>
+              <assertionsResultsToSave>0</assertionsResultsToSave>
+              <bytes>true</bytes>
+              <sentBytes>true</sentBytes>
+              <url>true</url>
+              <threadCounts>true</threadCounts>
+              <idleTime>true</idleTime>
+              <connectTime>true</connectTime>
+            </value>
+          </objProp>
+          <stringProp name="filename"></stringProp>
+        </ResultCollector>
+        <hashTree/>
+      </hashTree>
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Teacher creates quiz" enabled="true">
+        <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
@@ -79,7 +215,7 @@
         <stringProp name="ThreadGroup.duration"></stringProp>
         <stringProp name="ThreadGroup.delay"></stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
-      </SetupThreadGroup>
+      </ThreadGroup>
       <hashTree>
         <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as teacher" enabled="true">
           <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
@@ -153,7 +289,7 @@
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Create Questions" enabled="true">
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Create questions" enabled="true">
             <boolProp name="LoopController.continue_forever">true</boolProp>
             <stringProp name="LoopController.loops">${number_of_questions}</stringProp>
           </LoopController>
@@ -174,42 +310,24 @@
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">{&#xd;
-  &quot;id&quot;: null,&#xd;
-  &quot;title&quot;: &quot;Code Fill In Test&quot;,&#xd;
-  &quot;status&quot;: &quot;AVAILABLE&quot;,&#xd;
-  &quot;content&quot;: &quot;This is the actual question&quot;,&#xd;
-  &quot;image&quot;: null,&#xd;
-  &quot;sequence&quot;: null,&#xd;
-  &quot;questionDetailsDto&quot;: {&#xd;
-    &quot;type&quot;: &quot;code_fill_in&quot;,&#xd;
-    &quot;language&quot;: &quot;Java&quot;,&#xd;
-    &quot;code&quot;: &quot;package pt.ulisboa.tecnico.socialsoftware.tutor.statement;\n\nimport org.springframework.data.jpa.repository.JpaRepository;\nimport org.springframework.data.jpa.repository.Query;\nimport org.springframework.stereotype.Repository;\nimport pt.ulisboa.tecnico.socialsoftware.tutor.statement.domain.QuizAnswerItem;\n\nimport java.util.List;\nimport java.util.Set;\n\n{{slot-1}}\npublic interface QuizAnswerItemRepository extends JpaRepository&lt;QuizAnswerItem, Integer&gt; {\n    @Query(value = \&quot;SELECT qai.quizId FROM QuizAnswerItem qai\&quot;)\n    Set&lt;Integer&gt; findQuizzesToWrite();\n\n    @Query(value = \&quot;SELECT qaq FROM QuizAnswerItem qaq WHERE qaq.quizId = :quizId\&quot;)\n    List&lt;QuizAnswerItem&gt; findQuizAnswerItemsByQuizId(Integer quizId);\n}\n&quot;,&#xd;
-    &quot;fillInSpots&quot;: [&#xd;
-      {&#xd;
-        &quot;id&quot;: null,&#xd;
-        &quot;sequence&quot;: 1,&#xd;
-        &quot;options&quot;: [&#xd;
-          {&#xd;
-            &quot;id&quot;: null,&#xd;
-            &quot;content&quot;: &quot;@Repository&quot;,&#xd;
-            &quot;correct&quot;: true&#xd;
-          },&#xd;
-          {&#xd;
-            &quot;id&quot;: null,&#xd;
-            &quot;content&quot;: &quot;@Query&quot;,&#xd;
-            &quot;correct&quot;: false&#xd;
-          },&#xd;
-          {&#xd;
-            &quot;id&quot;: null,&#xd;
-            &quot;content&quot;: &quot;@JpaRepository&quot;,&#xd;
-            &quot;correct&quot;: false&#xd;
-          }&#xd;
-        ]&#xd;
-      }&#xd;
-    ]&#xd;
-  },&#xd;
-  &quot;topics&quot;: [],&#xd;
-  &quot;creationDate&quot;: &quot;-&quot;&#xd;
+	&quot;id&quot;:null,&#xd;
+	&quot;title&quot;:&quot;Question Title ${counter_value}&quot;,&#xd;
+	&quot;status&quot;:&quot;AVAILABLE&quot;,&#xd;
+	&quot;content&quot;:&quot;Question Content ${counter_value}&quot;,&#xd;
+	&quot;image&quot;:null,&#xd;
+	&quot;sequence&quot;:null,&#xd;
+	&quot;questionDetailsDto&quot;:&#xd;
+	{&#xd;
+	&quot;options&quot;:[&#xd;
+		{&quot;id&quot;:null,&quot;content&quot;:&quot;Option A&quot;,&quot;correct&quot;:true},&#xd;
+		{&quot;id&quot;:null,&quot;content&quot;:&quot;Option B&quot;,&quot;correct&quot;:false},&#xd;
+		{&quot;id&quot;:null,&quot;content&quot;:&quot;Option C&quot;,&quot;correct&quot;:false},&#xd;
+		{&quot;id&quot;:null,&quot;content&quot;:&quot;Option D&quot;,&quot;correct&quot;:false}&#xd;
+	],&#xd;
+	&quot;type&quot;: &quot;multiple_choice&quot;&#xd;
+	},&#xd;
+	&quot;topics&quot;:[],&#xd;
+	&quot;creationDate&quot;:&quot;-&quot;&#xd;
 }</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
@@ -268,6 +386,7 @@
 	],&#xd;
 	&quot;title&quot;:&quot;12345&quot;,&#xd;
 	&quot;availableDate&quot;:&quot;2019-05-01T19:58:00+01:00&quot;,&#xd;
+	&quot;oneWay&quot;: true,&#xd;
 	&quot;timed&quot;:true,&#xd;
 	&quot;conclusionDate&quot;:&quot;2021-08-29T22:59:00+01:00&quot;&#xd;
 }</stringProp>
@@ -424,13 +543,13 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Group Answer Quiz" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Students Answer quiz" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">stoptestnow</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">300</stringProp>
+        <stringProp name="ThreadGroup.num_threads">${number_of_students}</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -438,54 +557,25 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
         <boolProp name="ThreadGroup.same_user_on_next_iteration">true</boolProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as student" enabled="true">
-          <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
-            <collectionProp name="Arguments.arguments"/>
-          </elementProp>
-          <stringProp name="HTTPSampler.domain">${server}</stringProp>
-          <stringProp name="HTTPSampler.port">${port}</stringProp>
-          <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
-          <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-          <stringProp name="HTTPSampler.path">${prefix}/auth/demo/student?createNew=true</stringProp>
-          <stringProp name="HTTPSampler.method">GET</stringProp>
-          <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-          <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-          <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-          <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-          <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-          <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-          <stringProp name="HTTPSampler.response_timeout"></stringProp>
-        </HTTPSamplerProxy>
-        <hashTree>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get token" enabled="true">
-            <stringProp name="JSONPostProcessor.referenceNames">token</stringProp>
-            <stringProp name="JSONPostProcessor.jsonPathExprs">$.token</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-          </JSONPostProcessor>
-          <hashTree/>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get course id" enabled="true">
-            <stringProp name="JSONPostProcessor.referenceNames">course_id</stringProp>
-            <stringProp name="JSONPostProcessor.jsonPathExprs">$.user.courses..[0].courseId</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-          </JSONPostProcessor>
-          <hashTree/>
-          <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get course execution id" enabled="true">
-            <stringProp name="JSONPostProcessor.referenceNames">course_execution_id</stringProp>
-            <stringProp name="JSONPostProcessor.jsonPathExprs">$.user.courses..[0].courseExecutionId</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
-          </JSONPostProcessor>
-          <hashTree/>
-        </hashTree>
         <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Authenticated Student Requests" enabled="true">
           <boolProp name="LoopController.continue_forever">true</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </LoopController>
         <hashTree>
+          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Strudent counter" enabled="true">
+            <stringProp name="CounterConfig.start">1</stringProp>
+            <stringProp name="CounterConfig.end">${number_of_students}</stringProp>
+            <stringProp name="CounterConfig.incr">1</stringProp>
+            <stringProp name="CounterConfig.name">student_number</stringProp>
+            <stringProp name="CounterConfig.format"></stringProp>
+            <boolProp name="CounterConfig.per_user">false</boolProp>
+          </CounterConfig>
+          <hashTree/>
           <HeaderManager guiclass="HeaderPanel" testclass="HeaderManager" testname="HTTP Header Manager" enabled="true">
             <collectionProp name="HeaderManager.headers">
               <elementProp name="Authorization" elementType="Header">
                 <stringProp name="Header.name">Authorization</stringProp>
-                <stringProp name="Header.value">Bearer ${token}</stringProp>
+                <stringProp name="Header.value">Bearer ${__property(${__eval(Token_${student_number})})}</stringProp>
               </elementProp>
               <elementProp name="Accept-Language" elementType="Header">
                 <stringProp name="Header.name">Accept-Language</stringProp>
@@ -510,31 +600,6 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
-            <boolProp name="LoopController.continue_forever">true</boolProp>
-            <stringProp name="LoopController.loops">1</stringProp>
-          </LoopController>
-          <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get quizzes available" enabled="true">
-              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
-                <collectionProp name="Arguments.arguments"/>
-              </elementProp>
-              <stringProp name="HTTPSampler.domain">${server}</stringProp>
-              <stringProp name="HTTPSampler.port">${port}</stringProp>
-              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
-              <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-              <stringProp name="HTTPSampler.path">${prefix}/executions/${course_execution_id}/quizzes/available</stringProp>
-              <stringProp name="HTTPSampler.method">GET</stringProp>
-              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-              <stringProp name="HTTPSampler.response_timeout"></stringProp>
-            </HTTPSamplerProxy>
-            <hashTree/>
-          </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Start quiz" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -572,28 +637,62 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option ids" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].questionDetails.fillInSpots[0].options[0].optionId</stringProp>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get question ids" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">question_id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].questionId</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
           </hashTree>
-          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
+          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Answer questions" enabled="true">
             <boolProp name="LoopController.continue_forever">true</boolProp>
             <stringProp name="LoopController.loops">${number_of_questions}</stringProp>
           </LoopController>
           <hashTree>
-            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
+            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Questions counter" enabled="true">
               <stringProp name="CounterConfig.start">1</stringProp>
               <stringProp name="CounterConfig.end">${number_of_questions}</stringProp>
               <stringProp name="CounterConfig.incr">1</stringProp>
-              <stringProp name="CounterConfig.name">counter_value</stringProp>
+              <stringProp name="CounterConfig.name">question_number</stringProp>
               <stringProp name="CounterConfig.format"></stringProp>
               <boolProp name="CounterConfig.per_user">true</boolProp>
               <boolProp name="CounterConfig.reset_on_tg_iteration">true</boolProp>
             </CounterConfig>
             <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get question" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">&#xd;
+</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.domain">${server}</stringProp>
+              <stringProp name="HTTPSampler.port">${port}</stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
+              <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
+              <stringProp name="HTTPSampler.path">${prefix}/quizzes/${__property(quiz_id)}/question/${__V(question_id_${question_number})}</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+              <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.questionDetails.options[0].optionId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Submit answer" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
@@ -601,22 +700,18 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">{&#xd;
-  &quot;timeTaken&quot;: 1278,&#xd;
-  &quot;timeToSubmission&quot;: 12345,&#xd;
-  &quot;answerDetails&quot;: {&#xd;
-    &quot;type&quot;: &quot;code_fill_in&quot;,&#xd;
-    &quot;selectedOptions&quot;: [&#xd;
-      {&#xd;
-        &quot;optionId&quot;: ${__V(option_id_${counter_value})},&#xd;
-        &quot;sequence&quot;: 1&#xd;
-      }&#xd;
-    ]&#xd;
-  },&#xd;
-	&quot;questionAnswerId&quot;:${__V(question_answer_id_${counter_value})},&#xd;
-	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${counter_value})},&#xd;
-	&quot;sequence&quot;:${counter_value},&#xd;
-  &quot;userDiscussion&quot;: null&#xd;
-}</stringProp>
+	&quot;answerDetails&quot;: {&#xd;
+		&quot;optionId&quot;:${option_id_1},&#xd;
+		&quot;type&quot;: &quot;multiple_choice&quot;&#xd;
+	},&#xd;
+	&quot;timeTaken&quot;:1278,&#xd;
+	&quot;questionAnswerId&quot;:${__V(question_answer_id_${question_number})},&#xd;
+	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${question_number})},&#xd;
+	&quot;sequence&quot;:${question_number},&#xd;
+	&quot;timeToSubmission&quot;: 12345&#xd;
+}&#xd;
+&#xd;
+</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -891,7 +986,7 @@ vars.put(&quot;answers&quot;, result.toString());</stringProp>
         </ResultCollector>
         <hashTree/>
       </hashTree>
-      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Thread Process Results" enabled="true">
+      <ThreadGroup guiclass="ThreadGroupGui" testclass="ThreadGroup" testname="Process and get quiz results" enabled="true">
         <stringProp name="ThreadGroup.on_sample_error">continue</stringProp>
         <elementProp name="ThreadGroup.main_controller" elementType="LoopController" guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
           <boolProp name="LoopController.continue_forever">false</boolProp>
@@ -986,7 +1081,7 @@ vars.put(&quot;answers&quot;, result.toString());</stringProp>
             <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
             <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
             <stringProp name="HTTPSampler.path">${prefix}/quizzes/${__property(quiz_id)}/answers</stringProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
