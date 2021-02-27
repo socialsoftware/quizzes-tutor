@@ -18,7 +18,7 @@ public class TournamentDto implements Serializable {
     private String endTime;
     private Integer numberOfQuestions;
     private boolean isCanceled;
-    private Set<TopicDto> topicsDto = new HashSet<>();
+    private Set<TournamentTopicDto> topicsDto = new HashSet<>();
     private TournamentCreatorDto creator;
     private List<TournamentParticipantDto> participants = new ArrayList<>();
     private boolean privateTournament = false;
@@ -38,11 +38,11 @@ public class TournamentDto implements Serializable {
         this.numberOfQuestions = tournament.getNumberOfQuestions();
         this.isCanceled = tournament.isCanceled();
         this.topicsDto = tournament.getTopics().stream()
-                .map(TopicDto::new)
+                .map(TournamentTopicDto::new)
                 .collect(Collectors.toSet());
         this.creator = new TournamentCreatorDto(tournament.getCreator());
         this.participants = tournament.getParticipants().stream()
-                .map(user -> new TournamentParticipantDto(user, tournament.getQuiz()))
+                .map(TournamentParticipantDto::new)
                 .sorted(Comparator.comparing(TournamentParticipantDto::getScore).reversed())
                 .collect(Collectors.toList());
         this.privateTournament = tournament.isPrivateTournament();
@@ -107,11 +107,11 @@ public class TournamentDto implements Serializable {
         isCanceled = canceled;
     }
 
-    public Set<TopicDto> getTopicsDto() {
+    public Set<TournamentTopicDto> getTopicsDto() {
         return topicsDto;
     }
 
-    public void setTopicsDto(Set<TopicDto> topicsDto) {
+    public void setTopicsDto(Set<TournamentTopicDto> topicsDto) {
         this.topicsDto = topicsDto;
     }
 

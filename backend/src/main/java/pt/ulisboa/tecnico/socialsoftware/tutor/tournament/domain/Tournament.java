@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
@@ -44,8 +43,9 @@ public class Tournament  {
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
-    @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Topic> topics = new HashSet<>();
+    @ElementCollection
+    @CollectionTable(name = "tournament_topics")
+    private Set<TournamentTopic> topics = new HashSet<>();
 
     @OneToOne
     @JoinColumn(name = "quiz_id")
@@ -60,7 +60,7 @@ public class Tournament  {
     public Tournament() {
     }
 
-    public Tournament(User user, CourseExecution courseExecution, Set<Topic> topics, TournamentDto tournamentDto) {
+    public Tournament(User user, CourseExecution courseExecution, Set<TournamentTopic> topics, TournamentDto tournamentDto) {
         setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
         setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
         setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
@@ -135,34 +135,38 @@ public class Tournament  {
 
     public CourseExecution getCourseExecution() { return courseExecution; }
 
-    public Set<Topic> getTopics() { return topics; }
+    public Set<TournamentTopic> getTopics() { return topics; }
 
-    public void setTopics(Set<Topic> topics) {
-        for (Topic topic: topics) {
+    public void setTopics(Set<TournamentTopic> topics) {
+        Set<TournamentTopic> topicsList = new HashSet<>();
+        for (TournamentTopic topic: topics) {
             checkTopicCourse(topic);
+            topicsList.add(topic);
         }
 
-        this.topics = topics;
+        this.topics = topicsList;
     }
 
-    public void updateTopics(Set<Topic> newTopics) {
+    public void updateTopics(Set<TournamentTopic> newTopics) {
         if (newTopics.isEmpty()) throw new TutorException(TOURNAMENT_MUST_HAVE_ONE_TOPIC);
 
-        for (Topic topic : newTopics) {
+        Set<TournamentTopic> topicsList = new HashSet<>();
+
+        for (TournamentTopic topic : newTopics) {
             checkTopicCourse(topic);
+            topicsList.add(topic);
         }
 
-        this.topics = newTopics;
+        this.topics = topicsList;
     }
 
-    public void checkTopicCourse(Topic topic) {
-        if (topic.getCourse() != courseExecution.getCourse()) {
+    public void checkTopicCourse(TournamentTopic topic) {
+        if (!topic.getCourseId().equals(courseExecution.getCourse().getId())) {
             throw new TutorException(TOURNAMENT_TOPIC_COURSE);
         }
     }
 
     public void checkIsParticipant(User user) {
-        // TODO: Apply anti-corruption layer for conversion
         TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
 
         if (!getParticipants().contains(participant)) {
@@ -175,7 +179,6 @@ public class Tournament  {
     }
 
     public void addParticipant(User user, String password) {
-        // TODO: Apply anti-corruption layer for conversion
         TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
 
         if (DateHandler.now().isAfter(getEndTime())) {
@@ -203,7 +206,6 @@ public class Tournament  {
     }
 
     public void removeParticipant(User user) {
-        // TODO: Apply anti-corruption layer for conversion
         TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
 
         checkIsParticipant(user);
@@ -219,7 +221,7 @@ public class Tournament  {
         creator = null;
         courseExecution = null;
 
-        getTopics().forEach(topic -> topic.getTournaments().remove(this));
+        //getTopics().forEach(topic -> topic.getTournaments().remove(this));
         getTopics().clear();
 
         //getParticipants().forEach(participant -> participant.getTournaments().remove(this));
@@ -247,7 +249,7 @@ public class Tournament  {
         }
     }
 
-    public void updateTournament(TournamentDto tournamentDto, Set<Topic> topics) {
+    public void updateTournament(TournamentDto tournamentDto, Set<TournamentTopic> topics) {
         checkCanChange();
 
         if (DateHandler.isValidDateFormat(tournamentDto.getStartTime())) {

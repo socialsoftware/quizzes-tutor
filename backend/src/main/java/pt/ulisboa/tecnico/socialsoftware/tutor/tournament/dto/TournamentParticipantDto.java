@@ -1,10 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-
 
 import java.io.Serializable;
 
@@ -20,7 +16,7 @@ public class TournamentParticipantDto implements Serializable {
     public TournamentParticipantDto() {
     }
 
-    public TournamentParticipantDto(TournamentParticipant user, Quiz quiz) {
+    public TournamentParticipantDto(TournamentParticipant user) {
         //QuizAnswer quizAnswer = user.getQuizAnswer(quiz);
         this.userId = user.getId();
         this.name = user.getName();

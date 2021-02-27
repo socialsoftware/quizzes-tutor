@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCreator
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
@@ -29,8 +30,10 @@ class TournamentTest extends SpockTest {
     def assessment
     def topic1
     def topic2
+    def tournamentTopic1
+    def tournamentTopic2
     def topics = new HashSet<Integer>()
-    def topicsList = new HashSet<Topic>()
+    def topicsList = new HashSet<TournamentTopic>()
     def user1
     def creator1
 
@@ -42,17 +45,19 @@ class TournamentTest extends SpockTest {
         topicDto1.setName(TOPIC_1_NAME)
         topic1 = new Topic(externalCourse, topicDto1)
         topicRepository.save(topic1)
+        tournamentTopic1 = new TournamentTopic(topic1.getId(), topic1.getName(), topic1.getCourse().getId())
 
         def topicDto2 = new TopicDto()
         topicDto2.setName(TOPIC_2_NAME)
         topic2 = new Topic(externalCourse, topicDto2)
         topicRepository.save(topic2)
+        tournamentTopic2 = new TournamentTopic(topic2.getId(), topic2.getName(), topic2.getCourse().getId())
 
         topics.add(topic1.getId())
         topics.add(topic2.getId())
 
-        topicsList.add(topic1)
-        topicsList.add(topic2)
+        topicsList.add(tournamentTopic1)
+        topicsList.add(tournamentTopic2)
 
         STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
     }

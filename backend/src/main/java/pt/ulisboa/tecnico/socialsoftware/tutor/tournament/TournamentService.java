@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentParticipantDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
@@ -63,7 +64,7 @@ public class TournamentService {
 
     @Autowired
     private UserRepository userRepository;
-
+    //TODO: Implement anti corruption layer for conversion of types
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament(Integer userId, Integer executionId, Set<Integer> topicsId, TournamentDto tournamentDto) {
@@ -71,12 +72,12 @@ public class TournamentService {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
-        Set<Topic> topics = new HashSet<>();
+        Set<TournamentTopic> topics = new HashSet<>();
         for (Integer topicId : topicsId) {
             Topic topic = topicRepository.findById(topicId)
                     .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
-            topics.add(topic);
+            topics.add(new TournamentTopic(topic.getId(), topic.getName(), topic.getCourse().getId()));
         }
 
         if (topics.isEmpty()) {
@@ -158,11 +159,11 @@ public class TournamentService {
     public TournamentDto updateTournament(Set<Integer> topicsId, TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
 
-        Set<Topic> topics = new HashSet<>();
+        Set<TournamentTopic> topics = new HashSet<>();
         for (Integer topicId : topicsId) {
             Topic topic = topicRepository.findById(topicId)
                     .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
-            topics.add(topic);
+            topics.add(new TournamentTopic(topic.getId(), topic.getName(), topic.getCourse().getId()));
         }
 
         tournament.updateTournament(tournamentDto, topics);
@@ -200,13 +201,13 @@ public class TournamentService {
         tournamentRepository.delete(tournament);
     }
 
-    /*@Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentParticipantDto> getTournamentParticipants(TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
 
         return tournament.getParticipants().stream().map(TournamentParticipantDto::new).collect(Collectors.toList());
-    }*/
+    }
 
     private void checkInput(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
         if (userId == null) {
