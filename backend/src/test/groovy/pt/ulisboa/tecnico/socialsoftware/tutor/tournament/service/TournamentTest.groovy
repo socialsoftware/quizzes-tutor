@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCreator
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
@@ -38,22 +39,24 @@ class TournamentTest extends SpockTest {
     def user1
     def creator1
     def tournamentExternalCourseExecution
+    def participant1
 
     def setup() {
         user1 = createUser(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, externalCourseExecution)
-        creator1 = createTournamentCreator(user1.getId(),  user1.getUsername(), user1.getName())
+        creator1 = createTournamentCreator(user1)
+        participant1 = createTournamentParticipant(user1)
 
         def topicDto1 = new TopicDto()
         topicDto1.setName(TOPIC_1_NAME)
         topic1 = new Topic(externalCourse, topicDto1)
         topicRepository.save(topic1)
-        tournamentTopic1 = new TournamentTopic(topic1.getId(), topic1.getName(), topic1.getCourse().getId())
+        tournamentTopic1 = createTournamentTopic(topic1)
 
         def topicDto2 = new TopicDto()
         topicDto2.setName(TOPIC_2_NAME)
         topic2 = new Topic(externalCourse, topicDto2)
         topicRepository.save(topic2)
-        tournamentTopic2 = new TournamentTopic(topic2.getId(), topic2.getName(), topic2.getCourse().getId())
+        tournamentTopic2 = createTournamentTopic(topic2)
 
         topics.add(topic1.getId())
         topics.add(topic2.getId())
@@ -63,10 +66,7 @@ class TournamentTest extends SpockTest {
 
         STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
 
-        tournamentExternalCourseExecution = new TournamentCourseExecution(externalCourseExecution.getId(),
-        externalCourseExecution.getCourse().getId(),
-                TournamentCourseExecution.Status.valueOf(externalCourseExecution.getStatus().toString()),
-        externalCourseExecution.getAcronym())
+        tournamentExternalCourseExecution = createTournamentCourseExecution(externalCourseExecution)
     }
 
     def createUser(String name, String username, String email, User.Role role, CourseExecution courseExecution) {
@@ -77,13 +77,13 @@ class TournamentTest extends SpockTest {
         return user
     }
 
-    def createTournament(User user, String startTime, String endTime, Integer numberOfQuestions, boolean isCanceled) {
+    def createTournament(TournamentCreator creator, String startTime, String endTime, Integer numberOfQuestions, boolean isCanceled) {
         def tournament = new Tournament()
         tournament.setStartTime(DateHandler.toLocalDateTime(startTime))
         tournament.setEndTime(DateHandler.toLocalDateTime(endTime))
         tournament.setNumberOfQuestions(numberOfQuestions)
         tournament.setCanceled(isCanceled)
-        tournament.setCreator(user)
+        tournament.setCreator(creator)
         tournament.setCourseExecution(tournamentExternalCourseExecution)
         tournament.setTopics(topicsList)
         tournament.setPassword('')
@@ -93,13 +93,13 @@ class TournamentTest extends SpockTest {
         return new TournamentDto(tournament)
     }
 
-    def createPrivateTournament(User user, String startTime, String endTime, Integer numberOfQuestions, boolean isCanceled, String password) {
+    def createPrivateTournament(TournamentCreator creator, String startTime, String endTime, Integer numberOfQuestions, boolean isCanceled, String password) {
         def tournament = new Tournament()
         tournament.setStartTime(DateHandler.toLocalDateTime(startTime))
         tournament.setEndTime(DateHandler.toLocalDateTime(endTime))
         tournament.setNumberOfQuestions(numberOfQuestions)
         tournament.setCanceled(isCanceled)
-        tournament.setCreator(user)
+        tournament.setCreator(creator)
         tournament.setCourseExecution(tournamentExternalCourseExecution)
         tournament.setTopics(topicsList)
         tournament.setPassword(password)
@@ -153,8 +153,23 @@ class TournamentTest extends SpockTest {
         questionRepository.save(question)
     }
 
-    def createTournamentCreator(Integer id, String username, String name) {
-        return new TournamentCreator(id, username, name )
+    def createTournamentCreator(User user) {
+        return new TournamentCreator(user.getId(),  user.getUsername(), user.getName())
+    }
+
+    def createTournamentTopic(Topic topic) {
+        return new TournamentTopic(topic.getId(), topic.getName(), topic.getCourse().getId())
+    }
+
+    def createTournamentCourseExecution(CourseExecution courseExecution) {
+        return new TournamentCourseExecution(courseExecution.getId(),
+                courseExecution.getCourse().getId(),
+                TournamentCourseExecution.Status.valueOf(courseExecution.getStatus().toString()),
+                courseExecution.getAcronym())
+    }
+
+    def createTournamentParticipant(User user) {
+        return new TournamentParticipant(user.getId(), user.getUsername(), user.getName())
     }
 
     @TestConfiguration

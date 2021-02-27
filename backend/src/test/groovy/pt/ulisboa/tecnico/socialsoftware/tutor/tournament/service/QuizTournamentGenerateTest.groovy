@@ -17,7 +17,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
     def tournamentDto
 
     def setup() {
-        tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        tournamentDto = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         createAssessmentWithTopicConjunction(ASSESSMENT_1_TITLE, Assessment.Status.AVAILABLE, externalCourseExecution)
 
@@ -26,7 +26,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
 
     def "generate a quiz with 1 student solving" () {
         given:
-        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
 
         when:
         tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
@@ -44,9 +44,10 @@ class QuizTournamentGenerateTest extends TournamentTest {
     def "generate a quiz with 2 student solving" () {
         given:
         def user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, externalCourseExecution)
+        def participant2 = createTournamentParticipant(user2)
         and:
-        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
-        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user2, "")
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant2, "")
 
         when: 'both students solve the quiz'
         tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
@@ -65,7 +66,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
 
     def "disabling assessment for already created tournament" () {
         given:
-        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
         and:
         assessment.setStatus(Assessment.Status.DISABLED)
 

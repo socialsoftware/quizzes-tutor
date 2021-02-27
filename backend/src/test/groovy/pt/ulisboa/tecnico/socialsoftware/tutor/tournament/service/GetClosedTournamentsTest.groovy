@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 class GetClosedTournamentsTest extends TournamentTest {
     def "create 1 tournament on time and get closed tournaments"() {
         given: 'a tournamentDto'
-        def tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         when:
         def result = tournamentService.getClosedTournamentsForCourseExecution(externalCourseExecution.getId())
@@ -19,7 +19,7 @@ class GetClosedTournamentsTest extends TournamentTest {
 
     def "create 1 canceled tournament and get closed tournaments"() {
         given: 'a tournamentDto'
-        def tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, true)
+        def tournamentDto = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, true)
 
         when:
         def result = tournamentService.getClosedTournamentsForCourseExecution(externalCourseExecution.getId())
@@ -30,9 +30,9 @@ class GetClosedTournamentsTest extends TournamentTest {
 
     def "create 2 tournaments on time and get closed tournaments"() {
         given: 'a tournamentDto1'
-        def tournamentDto1 = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto1 = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
         and: 'a tournamentDto2'
-        def tournamentDto2 = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto2 = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         when:
         def result = tournamentService.getClosedTournamentsForCourseExecution(externalCourseExecution.getId())
@@ -43,11 +43,11 @@ class GetClosedTournamentsTest extends TournamentTest {
 
     def "create 2 tournaments out of time and 1 on time and get closed tournaments"() {
         given: 'a tournamentDto1'
-        def tournamentDto1 = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto1 = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
         and: 'a tournamentDto2'
-        def tournamentDto2 = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto2 = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
         and: 'a tournamentDto3'
-        def tournamentDto3 = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto3 = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         when:
         def result = tournamentService.getClosedTournamentsForCourseExecution(externalCourseExecution.getId())
@@ -58,11 +58,11 @@ class GetClosedTournamentsTest extends TournamentTest {
 
     def "create 3 tournaments out of time and 1 canceled and get closed tournaments"() {
         given: 'a tournamentDto1'
-        def tournamentDto1 = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto1 = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
         and: 'a tournamentDto2'
-        def tournamentDto2 = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto2 = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
         and: 'a tournamentDto3'
-        def tournamentDto3 = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, true)
+        def tournamentDto3 = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, true)
 
         when:
         def result = tournamentService.getClosedTournamentsForCourseExecution(externalCourseExecution.getId())

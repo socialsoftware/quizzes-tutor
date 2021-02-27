@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentParticipantDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
@@ -24,12 +22,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementTournamentCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -86,7 +82,10 @@ public class TournamentService {
         }
         TournamentCourseExecution tournamentCourseExecution = new TournamentCourseExecution(courseExecution.getId(),
                 courseExecution.getCourse().getId(), TournamentCourseExecution.Status.valueOf(courseExecution.getStatus().toString()), courseExecution.getAcronym());
-        Tournament tournament = new Tournament(user, tournamentCourseExecution, topics, tournamentDto);
+
+        TournamentCreator creator = new TournamentCreator(user.getId(), user.getUsername(), user.getName());
+
+        Tournament tournament = new Tournament(creator, tournamentCourseExecution, topics, tournamentDto);
         tournamentRepository.save(tournament);
 
         return new TournamentDto(tournament);
@@ -129,8 +128,8 @@ public class TournamentService {
     public void joinTournament(Integer userId, Integer tournamentId, String password) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Tournament tournament = checkTournament(tournamentId);
-
-        tournament.addParticipant(user, password);
+        TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
+        tournament.addParticipant(participant, password);
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -150,8 +149,8 @@ public class TournamentService {
     public void leaveTournament(Integer userId, Integer tournamentId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Tournament tournament = checkTournament(tournamentId);
-
-        tournament.removeParticipant(user);
+        TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
+        tournament.removeParticipant(participant);
     }
 
     @Retryable(

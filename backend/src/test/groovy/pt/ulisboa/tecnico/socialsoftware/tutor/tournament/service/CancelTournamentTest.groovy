@@ -21,7 +21,7 @@ class CancelTournamentTest extends TournamentTest {
 
     def "user that created tournament cancels it"() {
         given:
-        def tournamentDto = createTournament(user1, STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto = createTournament(creator1, STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         when:
         tournamentService.cancelTournament(tournamentDto.getId())
@@ -34,7 +34,7 @@ class CancelTournamentTest extends TournamentTest {
 
     def "user that created an open tournament tries to cancel it"() {
         given:
-        def tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         when:
         tournamentService.cancelTournament(tournamentDto.getId())
@@ -47,7 +47,7 @@ class CancelTournamentTest extends TournamentTest {
 
     def "user that created tournament tries to cancel it after has ended with no answers"() {
         given:
-        def tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
 
         when:
         tournamentService.cancelTournament(tournamentDto.getId())
@@ -60,9 +60,9 @@ class CancelTournamentTest extends TournamentTest {
 
     def "user that created tournament tries to cancel it with answers"() {
         given:
-        def tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        def tournamentDto = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
         and: "join a tournament"
-        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
         and: "solve a tournament"
         tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
         and: "is now closed"

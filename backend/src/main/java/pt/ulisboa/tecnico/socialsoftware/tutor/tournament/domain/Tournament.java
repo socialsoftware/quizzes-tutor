@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 
 import javax.persistence.*;
@@ -58,12 +57,12 @@ public class Tournament  {
     public Tournament() {
     }
 
-    public Tournament(User user, TournamentCourseExecution courseExecution, Set<TournamentTopic> topics, TournamentDto tournamentDto) {
+    public Tournament(TournamentCreator creator, TournamentCourseExecution courseExecution, Set<TournamentTopic> topics, TournamentDto tournamentDto) {
         setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
         setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
         setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
         setCanceled(tournamentDto.isCanceled());
-        setCreator(user);
+        setCreator(creator);
         setCourseExecution(courseExecution);
         setTopics(topics);
         setPassword(tournamentDto.getPassword());
@@ -104,11 +103,15 @@ public class Tournament  {
 
     public Integer getNumberOfQuestions() { return numberOfQuestions; }
 
-    public TournamentCreator getCreator() { return creator; }
+    public TournamentCreator getCreator() {
+        return creator;
+    }
 
-    public void setCreator(User user) { this.creator = new TournamentCreator(user.getId(), user.getUsername(), user.getName()); }
+    public void setCreator(TournamentCreator creator) {
+        this.creator = creator;
+    }
 
-    public boolean isCreator(User user) { return creator.getId().equals(user.getId()); }
+    public boolean isCreator(Integer creatorId) { return creator.getId().equals(creatorId); }
 
     public void setCanceled(boolean isCanceled) { this.isCanceled = isCanceled; }
 
@@ -168,21 +171,17 @@ public class Tournament  {
         }
     }
 
-    public void checkIsParticipant(User user) {
-        TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
-
+    public void checkIsParticipant(TournamentParticipant participant) {
         if (!getParticipants().contains(participant)) {
-            throw new TutorException(USER_NOT_JOINED, user.getId());
+            throw new TutorException(USER_NOT_JOINED, participant.getId());
         }
-
-        if (user.getQuizAnswer(getQuiz()) != null) {
-            throw new TutorException(USER_ALREDAY_ANSWERED_TOURNAMENT_QUIZ, user.getId());
-        }
+        // TODO: has to receive event with confirmation
+        /*if (user.getQuizAnswer(getQuiz()) != null) {
+            throw new TutorException(USER_ALREDAY_ANSWERED_TOURNAMENT_QUIZ, participant.getId());
+        }*/
     }
 
-    public void addParticipant(User user, String password) {
-        TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
-
+    public void addParticipant(TournamentParticipant participant, String password) {
         if (DateHandler.now().isAfter(getEndTime())) {
             throw new TutorException(TOURNAMENT_NOT_OPEN, getId());
         }
@@ -207,10 +206,8 @@ public class Tournament  {
         //user.addTournament(this);
     }
 
-    public void removeParticipant(User user) {
-        TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
-
-        checkIsParticipant(user);
+    public void removeParticipant(TournamentParticipant participant) {
+        checkIsParticipant(participant);
         this.participants.remove(participant);
         //user.removeTournament(this);
     }

@@ -14,9 +14,9 @@ class JoinTournamentTest extends TournamentTest {
     def privateTournamentDto
 
     def setup() {
-        tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        tournamentDto = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
-        privateTournamentDto = createPrivateTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false, '123')
+        privateTournamentDto = createPrivateTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false, '123')
 
         createMultipleChoiceQuestion(LOCAL_DATE_TODAY, QUESTION_1_CONTENT, QUESTION_1_TITLE, Question.Status.AVAILABLE, externalCourse)
     }
@@ -35,7 +35,7 @@ class JoinTournamentTest extends TournamentTest {
 
     def "Student tries to join canceled tournament" () {
         given: 'a canceled tournament'
-        def canceledTournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, true)
+        def canceledTournamentDto = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, true)
 
         when:
         tournamentService.joinTournament(user1.getId(), canceledTournamentDto.getId(), "")
@@ -50,7 +50,7 @@ class JoinTournamentTest extends TournamentTest {
 
     def "Student tries to join not open tournament" () {
         given: 'a not open tournament'
-        def notOpenTournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
+        def notOpenTournamentDto = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_TODAY, NUMBER_OF_QUESTIONS, false)
 
         when:
         tournamentService.joinTournament(user1.getId(), notOpenTournamentDto.getId(), "")
@@ -65,7 +65,7 @@ class JoinTournamentTest extends TournamentTest {
 
     def "Student tries to join tournament twice" () {
         given:
-        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
 
         when:
         tournamentService.joinTournament(user1.getId(), tournamentDto.getId(), "")

@@ -17,14 +17,14 @@ class LeaveTournamentTest extends TournamentTest {
     def setup() {
         user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, externalCourseExecution)
 
-        tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        tournamentDto = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         createMultipleChoiceQuestion(LOCAL_DATE_TODAY, QUESTION_1_CONTENT, QUESTION_1_TITLE, Question.Status.AVAILABLE, externalCourse)
     }
 
     def "Student leaves the tournament" () {
         given: 'user joins'
-        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
 
         when:
         tournamentService.leaveTournament(user1.getId(), tournamentDto.getId())
