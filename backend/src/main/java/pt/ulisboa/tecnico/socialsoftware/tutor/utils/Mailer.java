@@ -15,8 +15,8 @@ public class Mailer {
 
     public static String QUIZZES_TUTOR_SUBJECT =  "Quizzes Tutor: ";
 
-    @Value("${spring.profiles.active}")
-    private String activeProfile;
+    @Value("${spring.mail.host}")
+    private String host;
 
     @Autowired
     private JavaMailSender mailSender;
@@ -28,12 +28,12 @@ public class Mailer {
         simpleMailMessage.setSubject(subject);
         simpleMailMessage.setText(body);
 
-        if (!activeProfile.equals("dev") && (to != null && to.trim().length() != 0)) {
+        if (!host.equals("fake-host") && (to != null && to.trim().length() != 0)) {
             mailSender.send(simpleMailMessage);
         } else if (to == null || to.trim().length() == 0) {
             logger.info("email address was null or empty: {}, {}, {}, {}", from, to, subject, body);
-        } else if (activeProfile.equals("dev")) {
-            logger.info("email no sent because in dev mode: {}, {}, {}, {}", from, to, subject, body);
+        } else if (host.equals("fake-host")) {
+            logger.info("email not send due to fake host configuration: {}, {}, {}, {}", from, to, subject, body);
         }
     }
 
