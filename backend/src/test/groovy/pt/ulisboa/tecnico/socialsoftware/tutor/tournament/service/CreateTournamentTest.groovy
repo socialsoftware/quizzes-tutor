@@ -47,7 +47,7 @@ class CreateTournamentTest extends TournamentTest {
         result.getCreator().getId() == creator1.getId()
         result.getCreator().getUsername() == creator1.getUsername()
         result.getCreator().getName() == creator1.getName()
-        result.getCourseExecution() == externalCourseExecution
+        result.getCourseExecution().equals(tournamentExternalCourseExecution)
 
         where:
         startTime            | endTime              | numberOfQuestions
@@ -82,7 +82,7 @@ class CreateTournamentTest extends TournamentTest {
         result.getCreator().getId() == creator1.getId()
         result.getCreator().getUsername() == creator1.getUsername()
         result.getCreator().getName() == creator1.getName()
-        result.getCourseExecution() == externalCourseExecution
+        result.getCourseExecution().equals(tournamentExternalCourseExecution)
         result.isPrivateTournament() == true
         result.getPassword() == '123'
     }

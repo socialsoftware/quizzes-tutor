@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
@@ -39,9 +38,8 @@ public class Tournament  {
     @CollectionTable(name = "tournament_participants")
     private Set<TournamentParticipant> participants = new HashSet<>();
 
-    @ManyToOne
-    @JoinColumn(name = "course_execution_id")
-    private CourseExecution courseExecution;
+    @Embedded
+    private TournamentCourseExecution courseExecution;
 
     @ElementCollection
     @CollectionTable(name = "tournament_topics")
@@ -60,7 +58,7 @@ public class Tournament  {
     public Tournament() {
     }
 
-    public Tournament(User user, CourseExecution courseExecution, Set<TournamentTopic> topics, TournamentDto tournamentDto) {
+    public Tournament(User user, TournamentCourseExecution courseExecution, Set<TournamentTopic> topics, TournamentDto tournamentDto) {
         setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
         setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
         setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
@@ -131,9 +129,13 @@ public class Tournament  {
 
     public Set<TournamentParticipant> getParticipants() { return participants; }
 
-    public void setCourseExecution(CourseExecution courseExecution) { this.courseExecution = courseExecution; }
+    public TournamentCourseExecution getCourseExecution() {
+        return courseExecution;
+    }
 
-    public CourseExecution getCourseExecution() { return courseExecution; }
+    public void setCourseExecution(TournamentCourseExecution courseExecution) {
+        this.courseExecution = courseExecution;
+    }
 
     public Set<TournamentTopic> getTopics() { return topics; }
 
@@ -161,7 +163,7 @@ public class Tournament  {
     }
 
     public void checkTopicCourse(TournamentTopic topic) {
-        if (!topic.getCourseId().equals(courseExecution.getCourse().getId())) {
+        if (!topic.getCourseId().equals(courseExecution.getCourseId())) {
             throw new TutorException(TOURNAMENT_TOPIC_COURSE);
         }
     }
@@ -192,10 +194,10 @@ public class Tournament  {
         if (getParticipants().contains(participant)) {
             throw new TutorException(DUPLICATE_TOURNAMENT_PARTICIPANT, participant.getUsername());
         }
-
-        if (!user.getCourseExecutions().contains(getCourseExecution())) {
+        // TODO: has to receive event with confirmation
+        /*if (!user.getCourseExecutions().contains(getCourseExecution())) {
             throw new TutorException(STUDENT_NO_COURSE_EXECUTION, user.getId());
-        }
+        }*/
 
         if (isPrivateTournament() && !password.equals(getPassword())) {
             throw new TutorException(WRONG_TOURNAMENT_PASSWORD, getId());

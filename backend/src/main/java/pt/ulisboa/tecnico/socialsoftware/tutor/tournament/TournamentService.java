@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentParticipantDto;
@@ -83,8 +84,9 @@ public class TournamentService {
         if (topics.isEmpty()) {
             throw new TutorException(TOURNAMENT_MISSING_TOPICS);
         }
-
-        Tournament tournament = new Tournament(user, courseExecution, topics, tournamentDto);
+        TournamentCourseExecution tournamentCourseExecution = new TournamentCourseExecution(courseExecution.getId(),
+                courseExecution.getCourse().getId(), TournamentCourseExecution.Status.valueOf(courseExecution.getStatus().toString()), courseExecution.getAcronym());
+        Tournament tournament = new Tournament(user, tournamentCourseExecution, topics, tournamentDto);
         tournamentRepository.save(tournament);
 
         return new TournamentDto(tournament);
