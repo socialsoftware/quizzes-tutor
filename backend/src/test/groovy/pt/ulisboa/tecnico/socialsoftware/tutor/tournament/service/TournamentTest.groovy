@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCreator
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
@@ -36,6 +37,7 @@ class TournamentTest extends SpockTest {
     def topicsList = new HashSet<TournamentTopic>()
     def user1
     def creator1
+    def tournamentExternalCourseExecution
 
     def setup() {
         user1 = createUser(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, externalCourseExecution)
@@ -60,6 +62,11 @@ class TournamentTest extends SpockTest {
         topicsList.add(tournamentTopic2)
 
         STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
+
+        tournamentExternalCourseExecution = new TournamentCourseExecution(externalCourseExecution.getId(),
+        externalCourseExecution.getCourse().getId(),
+                TournamentCourseExecution.Status.valueOf(externalCourseExecution.getStatus().toString()),
+        externalCourseExecution.getAcronym())
     }
 
     def createUser(String name, String username, String email, User.Role role, CourseExecution courseExecution) {
@@ -77,7 +84,7 @@ class TournamentTest extends SpockTest {
         tournament.setNumberOfQuestions(numberOfQuestions)
         tournament.setCanceled(isCanceled)
         tournament.setCreator(user)
-        tournament.setCourseExecution(externalCourseExecution)
+        tournament.setCourseExecution(tournamentExternalCourseExecution)
         tournament.setTopics(topicsList)
         tournament.setPassword('')
         tournament.setPrivateTournament(false)
@@ -93,7 +100,7 @@ class TournamentTest extends SpockTest {
         tournament.setNumberOfQuestions(numberOfQuestions)
         tournament.setCanceled(isCanceled)
         tournament.setCreator(user)
-        tournament.setCourseExecution(externalCourseExecution)
+        tournament.setCourseExecution(tournamentExternalCourseExecution)
         tournament.setTopics(topicsList)
         tournament.setPassword(password)
         tournament.setPrivateTournament(true)

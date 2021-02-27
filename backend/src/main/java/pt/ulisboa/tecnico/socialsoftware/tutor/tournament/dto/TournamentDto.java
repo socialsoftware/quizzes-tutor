@@ -31,7 +31,7 @@ public class TournamentDto implements Serializable {
 
     public TournamentDto(Tournament tournament) {
         this.id = tournament.getId();
-        this.courseAcronym = tournament.getCourseExecution().getAcronym();
+        this.courseAcronym = tournament.getCourseExecution().getCourseAcronym();
         if (tournament.hasQuiz()) this.quizId = tournament.getQuiz().getId();
         this.startTime = DateHandler.toISOString(tournament.getStartTime());
         this.endTime = DateHandler.toISOString(tournament.getEndTime());
