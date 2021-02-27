@@ -1,32 +1,21 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
+package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic;
 
 import java.io.Serializable;
 
-public class TopicDto implements Serializable {
+public class TournamentTopicDto implements Serializable {
     private Integer id;
     private String name;
-    private Integer numberOfQuestions;
+    //private Integer numberOfQuestions;
 
-    public TopicDto() {
+    public TournamentTopicDto() {
     }
 
-    public TopicDto(Topic topic) {
+    public TournamentTopicDto(TournamentTopic topic) {
         this.id = topic.getId();
         this.name = topic.getName();
-        this.numberOfQuestions = topic.getQuestions().size();
-    }
-    // TODO: Implement anti-corruption layer
-    public TopicDto(TournamentTopic topic) {
-        this.id = topic.getId();
-        this.name = topic.getName();
-        this.numberOfQuestions = 0;
-    }
-
-    public TopicDto(TopicDto topicDto) {
+        //this.numberOfQuestions = topic.getQuestions().size();
     }
 
     public Integer getId() {
@@ -41,13 +30,13 @@ public class TopicDto implements Serializable {
         this.name = name;
     }
 
-    public Integer getNumberOfQuestions() {
+    /*public Integer getNumberOfQuestions() {
         return numberOfQuestions;
     }
 
     public void setNumberOfQuestions(Integer numberOfQuestions) {
         this.numberOfQuestions = numberOfQuestions;
-    }
+    }*/
 
     @Override
     public String toString() {

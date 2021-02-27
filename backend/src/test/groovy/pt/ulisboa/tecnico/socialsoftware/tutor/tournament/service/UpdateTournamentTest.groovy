@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
@@ -20,6 +21,7 @@ class UpdateTournamentTest extends TournamentTest {
     def topic3
     def tournamentDto
     def user2
+    def tournamentTopic3
 
     def setup() {
         user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, externalCourseExecution)
@@ -28,6 +30,7 @@ class UpdateTournamentTest extends TournamentTest {
         topicDto3.setName(TOPIC_3_NAME)
         topic3 = new Topic(externalCourse, topicDto3)
         topicRepository.save(topic3)
+        tournamentTopic3 = new TournamentTopic(topic3.getId(), topic3.getName(), topic3.getCourse().getId())
 
         tournamentDto = new TournamentDto()
         tournamentDto.setStartTime(STRING_DATE_TOMORROW)
@@ -102,7 +105,11 @@ class UpdateTournamentTest extends TournamentTest {
         then:
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
-        result.getTopics() == [topic2, topic3, topic1]  as Set
+        //TODO : Improve this
+        //result.getTopics() == [tournamentTopic2, tournamentTopic3, tournamentTopic1]  as Set
+        result.getTopics().getAt(0).equals(tournamentTopic2)
+        result.getTopics().getAt(1).equals(tournamentTopic3)
+        result.getTopics().getAt(2).equals(tournamentTopic1)
     }
 
     def "user that created tournament adds topic of different course"() {
@@ -123,7 +130,10 @@ class UpdateTournamentTest extends TournamentTest {
         exception.getErrorMessage() == TOURNAMENT_TOPIC_COURSE
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
-        result.getTopics() == [topic2, topic1]  as Set
+        //TODO : Improve this
+        //result.getTopics() == [tournamentTopic2, tournamentTopic1]  as Set
+        result.getTopics().getAt(0).equals(tournamentTopic2)
+        result.getTopics().getAt(1).equals(tournamentTopic1)
     }
 
     def "user that created tournament removes existing topic from tournament that contains that topic"() {
@@ -138,7 +148,9 @@ class UpdateTournamentTest extends TournamentTest {
         then:
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
-        result.getTopics() == [topic1] as Set
+        //TODO : Improve this
+        //result.getTopics() == [tournamentTopic1] as Set
+        result.getTopics().getAt(0).equals(tournamentTopic1)
     }
 
     def "user that created an open tournament tries to change it"() {
