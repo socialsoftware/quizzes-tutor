@@ -30,7 +30,7 @@ class RemoveTournamentTest extends TournamentTest {
     def "user that created tournament removes it"() {
         given:
         tournamentDto.setStartTime(STRING_DATE_TOMORROW)
-        tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
+        tournamentDto = tournamentService.createTournament(creator1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         when:
         tournamentService.removeTournament(tournamentDto.getId())
@@ -42,7 +42,7 @@ class RemoveTournamentTest extends TournamentTest {
     def "user that created an open tournament tries to remove it"() {
         given: "a tournament"
         tournamentDto.setStartTime(STRING_DATE_TODAY)
-        tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
+        tournamentDto = tournamentService.createTournament(creator1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         when:
         tournamentService.removeTournament(tournamentDto.getId())
@@ -57,7 +57,7 @@ class RemoveTournamentTest extends TournamentTest {
         given: "a tournament"
         tournamentDto.setStartTime(STRING_DATE_TODAY)
         tournamentDto.setEndTime(STRING_DATE_TODAY)
-        tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
+        tournamentDto = tournamentService.createTournament(creator1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         when:
         tournamentService.removeTournament(tournamentDto.getId())
@@ -69,11 +69,11 @@ class RemoveTournamentTest extends TournamentTest {
     def "user that created tournament tries to remove it with answers"() {
         given: "a tournament"
         tournamentDto.setStartTime(STRING_DATE_TODAY)
-        tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
+        tournamentDto = tournamentService.createTournament(creator1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
         and: "join a tournament"
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
         and: "solve a tournament"
-        tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
+        tournamentService.solveQuiz(participant1.getId(), tournamentDto.getId())
         and: "is now closed"
         tournamentDto.setEndTime(STRING_DATE_TODAY)
 

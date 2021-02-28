@@ -64,7 +64,7 @@ class CancelTournamentTest extends TournamentTest {
         and: "join a tournament"
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
         and: "solve a tournament"
-        tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
+        tournamentService.solveQuiz(creator1.getId(), tournamentDto.getId())
         and: "is now closed"
         tournamentDto.setEndTime(STRING_DATE_TODAY)
 

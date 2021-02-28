@@ -27,7 +27,7 @@ class LeaveTournamentTest extends TournamentTest {
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
 
         when:
-        tournamentService.leaveTournament(user1.getId(), tournamentDto.getId())
+        tournamentService.leaveTournament(participant1.getId(), tournamentDto.getId())
 
         then: "the tournament has no participants"
         def result = tournamentRepository.findById(tournamentDto.getId()).orElse(null)

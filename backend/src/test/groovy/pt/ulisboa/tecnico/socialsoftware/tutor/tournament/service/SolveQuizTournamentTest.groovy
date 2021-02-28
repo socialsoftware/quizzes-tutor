@@ -24,7 +24,7 @@ class SolveQuizTournamentTest extends TournamentTest {
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
 
         when:
-        def result = tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
+        def result = tournamentService.solveQuiz(participant1.getId(), tournamentDto.getId())
 
         then: "solved it"
         result != null
@@ -39,8 +39,8 @@ class SolveQuizTournamentTest extends TournamentTest {
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant2, "")
 
         when:
-        def result1 = tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
-        def result2 = tournamentService.solveQuiz(user2.getId(), tournamentDto.getId())
+        def result1 = tournamentService.solveQuiz(participant1.getId(), tournamentDto.getId())
+        def result2 = tournamentService.solveQuiz(participant2.getId(), tournamentDto.getId())
 
         then: "solved it"
         result1 != null

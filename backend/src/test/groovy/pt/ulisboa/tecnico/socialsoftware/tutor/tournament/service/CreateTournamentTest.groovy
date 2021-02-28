@@ -30,7 +30,7 @@ class CreateTournamentTest extends TournamentTest {
         tournamentDto.setCanceled(false)
 
         when:
-        tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
+        tournamentService.createTournament(creator1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         then: "the correct tournament is inside the repository"
         tournamentRepository.count() == 1L
@@ -65,7 +65,7 @@ class CreateTournamentTest extends TournamentTest {
         tournamentDto.setPassword('123')
 
         when:
-        tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
+        tournamentService.createTournament(creator1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         then: "the correct tournament is inside the repository"
         tournamentRepository.count() == 1L
@@ -90,7 +90,7 @@ class CreateTournamentTest extends TournamentTest {
     def createTournament(String userType, String topicsType) {
         def userId
         if (userType == 'good one') {
-            userId = user1.getId()
+            userId = creator1.getId()
         }
         else if (userType != null) {
             userId = Integer.parseInt(userType)
@@ -164,7 +164,7 @@ class CreateTournamentTest extends TournamentTest {
         topics.add(topic3.getId())
 
         when:
-        tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
+        tournamentService.createTournament(creator1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
 
         then:
         def exception = thrown(TutorException)

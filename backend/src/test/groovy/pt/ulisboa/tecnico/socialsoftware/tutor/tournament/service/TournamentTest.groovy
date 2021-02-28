@@ -58,8 +58,8 @@ class TournamentTest extends SpockTest {
         topicRepository.save(topic2)
         tournamentTopic2 = createTournamentTopic(topic2)
 
-        topics.add(topic1.getId())
-        topics.add(topic2.getId())
+        topics.add(tournamentTopic1.getId())
+        topics.add(tournamentTopic2.getId())
 
         topicsList.add(tournamentTopic1)
         topicsList.add(tournamentTopic2)
