@@ -141,7 +141,7 @@ public class TournamentService {
             createQuiz(tournament);
         }
         // TODO: Receive event with correct answers number and answers number
-        return answerService.startQuiz(userId, tournament.getQuiz().getId());
+        return answerService.startQuiz(userId, tournament.getQuizId());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -237,11 +237,10 @@ public class TournamentService {
         StatementTournamentCreationDto quizForm = new StatementTournamentCreationDto(tournament);
 
         StatementQuizDto statementQuizDto = answerService.generateTournamentQuiz(tournament.getCreator().getId(),
-                tournament.getCourseExecution().getId(), quizForm, tournament);
+                tournament.getCourseExecution().getId(), quizForm);
+        //Quiz quiz = quizRepository.findById(statementQuizDto.getId()).orElse(null);
 
-        Quiz quiz = quizRepository.findById(statementQuizDto.getId()).orElse(null);
-
-        tournament.setQuiz(quiz);
+        tournament.setQuizId(statementQuizDto.getId());
     }
 
     @Retryable(
@@ -254,9 +253,9 @@ public class TournamentService {
                 /*tournament.getParticipants().forEach(user ->
                         userRepository.findById(user.getId()).get().removeTournament(tournament)
                 );*/
-                if (tournament.getQuiz() != null) {
+                /*if (tournament.getQuiz() != null) {
                     tournament.getQuiz().setTournament(null);
-                }
+                }*/
 
                 tournamentRepository.delete(tournament);
             });

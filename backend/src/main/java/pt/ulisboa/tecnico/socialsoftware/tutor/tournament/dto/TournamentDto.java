@@ -1,10 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 
 import java.io.Serializable;
 import java.util.*;
@@ -32,7 +29,7 @@ public class TournamentDto implements Serializable {
     public TournamentDto(Tournament tournament) {
         this.id = tournament.getId();
         this.courseAcronym = tournament.getCourseExecution().getCourseAcronym();
-        if (tournament.hasQuiz()) this.quizId = tournament.getQuiz().getId();
+        if (tournament.hasQuiz()) this.quizId = tournament.getQuizId();
         this.startTime = DateHandler.toISOString(tournament.getStartTime());
         this.endTime = DateHandler.toISOString(tournament.getEndTime());
         this.numberOfQuestions = tournament.getNumberOfQuestions();

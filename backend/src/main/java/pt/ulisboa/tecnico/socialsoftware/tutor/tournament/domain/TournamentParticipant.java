@@ -34,7 +34,7 @@ public class TournamentParticipant {
         this.name = name;
         this.answered = false;
         this.numberOfAnswered = 0;
-        this.numberOfAnswered = 0;
+        this.numberOfCorrect = 0;
     }
 
     public Integer getId() {

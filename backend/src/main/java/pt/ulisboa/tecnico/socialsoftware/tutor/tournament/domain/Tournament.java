@@ -2,7 +2,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
 
 import javax.persistence.*;
@@ -34,19 +33,18 @@ public class Tournament  {
     private boolean isCanceled;
 
     @ElementCollection
-    @CollectionTable(name = "tournament_participants")
+    @CollectionTable(name = "tournaments_participants")
     private Set<TournamentParticipant> participants = new HashSet<>();
 
     @Embedded
     private TournamentCourseExecution courseExecution;
 
     @ElementCollection
-    @CollectionTable(name = "tournament_topics")
+    @CollectionTable(name = "tournaments_topics")
     private Set<TournamentTopic> topics = new HashSet<>();
 
-    @OneToOne
-    @JoinColumn(name = "quiz_id")
-    private Quiz quiz;
+    @Column(name = "quiz_id")
+    private Integer quizId;
 
     @Column(name = "privateTournament")
     private boolean privateTournament;
@@ -122,12 +120,12 @@ public class Tournament  {
         this.isCanceled = true;
     }
 
-    public Quiz getQuiz() {
-        return quiz;
+    public Integer getQuizId() {
+        return quizId;
     }
 
-    public void setQuiz(Quiz quiz) {
-        this.quiz = quiz;
+    public void setQuizId(Integer quizId) {
+        this.quizId = quizId;
     }
 
     public Set<TournamentParticipant> getParticipants() { return participants; }
@@ -212,7 +210,7 @@ public class Tournament  {
         //user.removeTournament(this);
     }
 
-    public boolean hasQuiz() { return getQuiz() != null; }
+    public boolean hasQuiz() { return getQuizId() != null; }
 
     public void remove() {
         checkCanChange();
@@ -226,16 +224,18 @@ public class Tournament  {
         //getParticipants().forEach(participant -> participant.getTournaments().remove(this));
         getParticipants().clear();
 
-        if (this.quiz != null) {
+        // TODO: Send event to remove
+        /*if (this.quizId != null) {
             this.quiz.remove();
-        }
+        }*/
     }
 
     public void checkCanChange() {
         int numberOfAnswers = 0;
-        if (this.quiz != null) {
+        // TODO: Send event to get answers number
+        /*if (this.quizId != null) {
             numberOfAnswers = this.quiz.getQuizAnswers() != null ? this.quiz.getQuizAnswers().size() : 0;
-        }
+        }*/
 
         LocalDateTime now = DateHandler.now();
 

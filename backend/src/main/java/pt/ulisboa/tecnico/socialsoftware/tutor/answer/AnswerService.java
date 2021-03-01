@@ -23,7 +23,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
@@ -230,7 +229,7 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuizDto generateTournamentQuiz(int userId, int executionId, StatementTournamentCreationDto quizDetails, Tournament tournament) {
+    public StatementQuizDto generateTournamentQuiz(int userId, int executionId, StatementTournamentCreationDto quizDetails) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         Quiz quiz = new Quiz();
@@ -259,12 +258,12 @@ public class AnswerService {
 
         quiz.setCourseExecution(courseExecution);
 
-        if (DateHandler.now().isBefore(tournament.getStartTime())) {
-            quiz.setAvailableDate(tournament.getStartTime());
+        if (DateHandler.now().isBefore(quizDetails.getStartTime())) {
+            quiz.setAvailableDate(quizDetails.getStartTime());
         }
-        quiz.setConclusionDate(tournament.getEndTime());
-        quiz.setResultsDate(tournament.getEndTime());
-        quiz.setTitle("Tournament " + tournament.getId() + " Quiz");
+        quiz.setConclusionDate(quizDetails.getEndTime());
+        quiz.setResultsDate(quizDetails.getEndTime());
+        quiz.setTitle("Tournament " + quizDetails.getId() + " Quiz");
         quiz.setType(Quiz.QuizType.TOURNAMENT.toString());
 
         quizRepository.save(quiz);

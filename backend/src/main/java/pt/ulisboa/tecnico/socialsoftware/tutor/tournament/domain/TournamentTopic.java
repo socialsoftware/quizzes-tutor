@@ -7,13 +7,13 @@ import java.util.Objects;
 @Embeddable
 public class TournamentTopic {
 
-    @Column(name = "tournament_topic_id")
+    @Column(name = "topics_id")
     private Integer id;
 
-    @Column(name = "tournament_topic_name")
+    @Column(name = "topics_name")
     private String name;
 
-    @Column(name = "tournament_topic_course_id")
+    @Column(name = "topics_course_id")
     private Integer courseId;
 
     public TournamentTopic() {
