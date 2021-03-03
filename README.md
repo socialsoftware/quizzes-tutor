@@ -100,7 +100,7 @@ sudo su -l postgres
 dropdb tutordb
 createdb tutordb
 ```
-* **Create user to access db and load dump**
+* **Create user to access db**
 ```
 psql tutordb
 CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
