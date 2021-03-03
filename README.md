@@ -115,7 +115,7 @@ psql tutordb < dump.sql
 cd backend
 mvn clean spring-boot:run
 ```
-* **See documentation on http://localhost:8080/swagger**
+* **See documentation on http://localhost:8080/swagger-ui.html**
 * **Rename `frontend/example.env` to `.env` and fill its fields**
 * **Run frontend**
 ```
