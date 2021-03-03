@@ -74,7 +74,7 @@ public class StatsService {
                 .count();
 
         int uniqueCorrectAnswers = (int) user.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId) && quizAnswer.getAnswerDate() != null)
                 .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
