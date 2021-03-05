@@ -85,7 +85,9 @@ public class JwtTokenProvider {
         } catch (UnsupportedJwtException ex) {
             logger.error("Unsupported JWT token");
         } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
+            logger.error("JWT claims string is empty");
+        } catch (SignatureException ex) {
+            logger.error("JWT signature does not match locally computed signature. JWT validity cannot be asserted and should not be trusted");
         }
         throw new TutorException(AUTHENTICATION_ERROR);
     }
