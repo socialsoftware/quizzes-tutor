@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import javax.persistence.EnumType;
@@ -8,7 +10,6 @@ import java.util.Objects;
 
 @Embeddable
 public class TournamentCourseExecution {
-    public enum Status {ACTIVE, INACTIVE, HISTORIC}
 
     @Column(name = "course_execution_id")
     private Integer id;
@@ -17,7 +18,7 @@ public class TournamentCourseExecution {
     private Integer courseId;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private CourseExecutionStatus status;
 
     @Column(name = "course_acronym")
     private String courseAcronym;
@@ -25,7 +26,7 @@ public class TournamentCourseExecution {
     public TournamentCourseExecution() {
     }
 
-    public TournamentCourseExecution(Integer id, Integer courseId, Status status, String courseAcronym) {
+    public TournamentCourseExecution(Integer id, Integer courseId, CourseExecutionStatus status, String courseAcronym) {
         this.id = id;
         this.courseId = courseId;
         this.status = status;
@@ -40,7 +41,7 @@ public class TournamentCourseExecution {
         return courseId;
     }
 
-    public Status getStatus() {
+    public CourseExecutionStatus getStatus() {
         return status;
     }
 

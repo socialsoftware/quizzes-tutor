@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -84,7 +85,7 @@ public class CourseExecutionService {
 
         CourseExecution courseExecution = course.getCourseExecution(courseExecutionDto.getAcronym(), courseExecutionDto.getAcademicTerm(), courseExecutionDto.getCourseExecutionType())
                 .orElseGet(() -> createCourseExecution(course, courseExecutionDto));
-        courseExecution.setStatus(CourseExecution.Status.ACTIVE);
+        courseExecution.setStatus(CourseExecutionStatus.ACTIVE);
         return new CourseExecutionDto(courseExecution);
     }
 
@@ -110,7 +111,7 @@ public class CourseExecutionService {
 
         CourseExecution courseExecution = createCourseExecution(course, courseExecutionDto);
 
-        courseExecution.setStatus(CourseExecution.Status.ACTIVE);
+        courseExecution.setStatus(CourseExecutionStatus.ACTIVE);
         return new CourseExecutionDto(courseExecution);
     }
 

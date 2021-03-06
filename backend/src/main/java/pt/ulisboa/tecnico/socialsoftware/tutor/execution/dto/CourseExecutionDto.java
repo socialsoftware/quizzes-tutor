@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
@@ -12,7 +13,7 @@ import java.util.List;
 public class CourseExecutionDto implements Serializable {
     private Course.Type courseExecutionType;
     private Course.Type courseType;
-    private CourseExecution.Status status;
+    private CourseExecutionStatus status;
     private String endDate;
     private String academicTerm;
     private String acronym;
@@ -180,11 +181,11 @@ public class CourseExecutionDto implements Serializable {
         this.academicTerm = academicTerm;
     }
 
-    public CourseExecution.Status getStatus() {
+    public CourseExecutionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(CourseExecution.Status status) {
+    public void setStatus(CourseExecutionStatus status) {
         this.status = status;
     }
 

@@ -11,8 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
@@ -103,10 +102,10 @@ class UpdateTournamentTest extends TournamentTest {
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
         //TODO : Improve this
-        //result.getTopics() == [tournamentTopic2, tournamentTopic3, tournamentTopic1]  as Set
-        result.getTopics().getAt(0).equals(tournamentTopic2)
-        result.getTopics().getAt(1).equals(tournamentTopic3)
-        result.getTopics().getAt(2).equals(tournamentTopic1)
+        result.getTopics() == [tournamentTopic1, tournamentTopic2, tournamentTopic3]  as Set
+        /*result.getTopics().getAt(0).equals(tournamentTopic1)
+        result.getTopics().getAt(1).equals(tournamentTopic2)
+        result.getTopics().getAt(2).equals(tournamentTopic3)*/
     }
 
     def "user that created tournament adds topic of different course"() {
@@ -128,9 +127,9 @@ class UpdateTournamentTest extends TournamentTest {
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
         //TODO : Improve this
-        //result.getTopics() == [tournamentTopic2, tournamentTopic1]  as Set
-        result.getTopics().getAt(0).equals(tournamentTopic2)
-        result.getTopics().getAt(1).equals(tournamentTopic1)
+        result.getTopics() == [tournamentTopic1, tournamentTopic2]  as Set
+        /*result.getTopics().getAt(0).equals(tournamentTopic1)
+        result.getTopics().getAt(1).equals(tournamentTopic2)*/
     }
 
     def "user that created tournament removes existing topic from tournament that contains that topic"() {
@@ -146,8 +145,8 @@ class UpdateTournamentTest extends TournamentTest {
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
         //TODO : Improve this
-        //result.getTopics() == [tournamentTopic1] as Set
-        result.getTopics().getAt(0).equals(tournamentTopic1)
+        result.getTopics() == [tournamentTopic1] as Set
+        //result.getTopics().getAt(0).equals(tournamentTopic1)
     }
 
     def "user that created an open tournament tries to change it"() {

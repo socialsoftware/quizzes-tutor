@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,15 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification;
@@ -26,7 +22,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
@@ -43,7 +38,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Random;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -181,18 +175,18 @@ public class UserService {
                 if (userInfo.length == 3) {
                     auxRole = User.Role.STUDENT;
                 } else if (userInfo.length == 4 && (userInfo[3].equalsIgnoreCase("student")
-                            || userInfo[3].equalsIgnoreCase("teacher"))) {
+                        || userInfo[3].equalsIgnoreCase("teacher"))) {
                     auxRole = User.Role.valueOf(userInfo[3].toUpperCase());
                 } else {
-                    notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber), 
-                        new TutorException(INVALID_CSV_FILE_FORMAT));
+                    notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber),
+                            new TutorException(INVALID_CSV_FILE_FORMAT));
                     lineNumber++;
                     continue;
                 }
 
                 if (userInfo[0].length() == 0 || !userInfo[0].matches(MAIL_FORMAT) || userInfo[1].length() == 0) {
                     notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber),
-                        new TutorException(INVALID_CSV_FILE_FORMAT));
+                            new TutorException(INVALID_CSV_FILE_FORMAT));
                     lineNumber++;
                     continue;
                 }
@@ -260,9 +254,9 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserDto findUserByUsername(String username) {
         return  authUserRepository.findAuthUserByUsername(username)
-                    .filter(authUser -> authUser.getUser() != null)
-                    .map(authUser -> new UserDto(authUser.getUser()))
-                    .orElse(null);
+                .filter(authUser -> authUser.getUser() != null)
+                .map(authUser -> new UserDto(authUser.getUser()))
+                .orElse(null);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

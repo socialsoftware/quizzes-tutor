@@ -42,11 +42,20 @@ public class TournamentTopic {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TournamentTopic that = (TournamentTopic) o;
-        return name.equals(that.name) && courseId.equals(that.courseId);
+        return id.equals(that.id) && name.equals(that.name) && courseId.equals(that.courseId);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(name, courseId);
+        return Objects.hash(id, name, courseId);
+    }
+
+    @Override
+    public String toString() {
+        return "TournamentTopic{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", courseId=" + courseId +
+                '}';
     }
 }

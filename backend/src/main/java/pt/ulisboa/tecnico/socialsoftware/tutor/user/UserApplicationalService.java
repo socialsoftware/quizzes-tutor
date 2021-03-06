@@ -30,7 +30,7 @@ public class UserApplicationalService {
     public ExternalUserDto registerExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         ExternalUserDto user = userService.registerExternalUserTransactional(courseExecutionId, externalUserDto);
         if (!user.isActive()) {
-             sendConfirmationEmailTo(user.getUsername(), user.getEmail(), user.getConfirmationToken());
+            sendConfirmationEmailTo(user.getUsername(), user.getEmail(), user.getConfirmationToken());
         }
 
         return user;

@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto;
 
 import javax.persistence.*;
 import java.util.*;
@@ -225,9 +225,9 @@ public class Tournament  {
         getParticipants().clear();
 
         // TODO: Send event to remove
-        /*if (this.quizId != null) {
-            this.quiz.remove();
-        }*/
+        if (this.quizId != null) {
+            //deleteTournamentQuiz(this.quizId);
+        }
     }
 
     public void checkCanChange() {

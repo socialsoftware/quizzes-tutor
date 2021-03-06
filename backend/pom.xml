@@ -336,6 +336,19 @@
             <version>1.20</version>
         </dependency>
 
+        <!-- Apache Isis -->
+        <!--<dependency>
+            <groupId>org.apache.isis.mavendeps</groupId>
+            <artifactId>isis-mavendeps-jdk11</artifactId>
+            <version>2.0.0-M4</version>
+            <type>pom</type>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.isis.mavendeps</groupId>
+            <artifactId>isis-mavendeps-webapp</artifactId>
+            <version>2.0.0-M4</version>
+            <type>pom</type>
+        </dependency>-->
     </dependencies>
 
     <build>

@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.question.dtos.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
@@ -20,8 +21,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -139,5 +142,30 @@ public class TopicService {
                 });
     }
 
+    /*@Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public TopicWithCourseDto findTopicById(Integer topicId) {
+        return topicRepository.findById(topicId)
+                .filter(topic -> topic != null)
+                .map(TopicWithCourseDto::new)
+                .orElse(null);
+    }*/
+
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<TopicWithCourseDto> findTopicById(Set<Integer> topicsList) {
+        List<TopicWithCourseDto> topicWithCourseDtoList = new ArrayList<>();
+        for (Integer topicId : topicsList) {
+            TopicWithCourseDto topicWithCourseDto = topicRepository.findById(topicId).map(TopicWithCourseDto::new)
+                    .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
+            topicWithCourseDtoList.add(topicWithCourseDto);
+        }
+        return topicWithCourseDtoList;
+    }
 }
 

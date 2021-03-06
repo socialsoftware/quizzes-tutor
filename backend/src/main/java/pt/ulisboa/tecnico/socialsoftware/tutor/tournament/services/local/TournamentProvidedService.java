@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
+package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.local;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
@@ -6,30 +6,19 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentParticipantDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentParticipantDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote.TournamentRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementTournamentCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.StatementTournamentCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -37,53 +26,27 @@ import java.util.stream.Collectors;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
-public class TournamentService {
-    @Autowired
-    private CourseExecutionRepository courseExecutionRepository;
-
-    @Autowired
-    private QuizService quizService;
-
-    @Autowired
-    private CourseExecutionService courseExecutionService;
-
-    @Autowired
-    private QuizRepository quizRepository;
-
-    @Autowired
-    private AnswerService answerService;
-
-    @Autowired
-    private TopicRepository topicRepository;
+public class TournamentProvidedService {
 
     @Autowired
     private TournamentRepository tournamentRepository;
 
     @Autowired
-    private UserRepository userRepository;
-    //TODO: Implement anti corruption layer for conversion of types
+    private TournamentRequiredService tournamentRequiredService;
+
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament(Integer userId, Integer executionId, Set<Integer> topicsId, TournamentDto tournamentDto) {
         checkInput(userId, topicsId, tournamentDto);
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
-        Set<TournamentTopic> topics = new HashSet<>();
-        for (Integer topicId : topicsId) {
-            Topic topic = topicRepository.findById(topicId)
-                    .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
+        TournamentCreator creator = tournamentRequiredService.getTournamentCreator(userId);
+        TournamentCourseExecution tournamentCourseExecution = tournamentRequiredService.getTournamentCourseExecution(executionId);
 
-            topics.add(new TournamentTopic(topic.getId(), topic.getName(), topic.getCourse().getId()));
-        }
+        Set<TournamentTopic> topics = tournamentRequiredService.getTournamentTopics(topicsId);
 
         if (topics.isEmpty()) {
             throw new TutorException(TOURNAMENT_MISSING_TOPICS);
         }
-        TournamentCourseExecution tournamentCourseExecution = new TournamentCourseExecution(courseExecution.getId(),
-                courseExecution.getCourse().getId(), TournamentCourseExecution.Status.valueOf(courseExecution.getStatus().toString()), courseExecution.getAcronym());
-
-        TournamentCreator creator = new TournamentCreator(user.getId(), user.getUsername(), user.getName());
 
         Tournament tournament = new Tournament(creator, tournamentCourseExecution, topics, tournamentDto);
         tournamentRepository.save(tournament);
@@ -114,7 +77,6 @@ public class TournamentService {
                 .collect(Collectors.toList());
     }
 
-
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto getTournament(Integer tournamentId) {
@@ -126,9 +88,10 @@ public class TournamentService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void joinTournament(Integer userId, Integer tournamentId, String password) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Tournament tournament = checkTournament(tournamentId);
-        TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
+
+        TournamentParticipant participant = tournamentRequiredService.getTournamentParticipant(userId);
+
         tournament.addParticipant(participant, password);
     }
 
@@ -141,15 +104,17 @@ public class TournamentService {
             createQuiz(tournament);
         }
         // TODO: Receive event with correct answers number and answers number
-        return answerService.startQuiz(userId, tournament.getQuizId());
+        //return answerService.startQuiz(userId, tournament.getQuizId());
+        return tournamentRequiredService.startTournamentQuiz(userId, tournament.getQuizId());
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void leaveTournament(Integer userId, Integer tournamentId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Tournament tournament = checkTournament(tournamentId);
-        TournamentParticipant participant = new TournamentParticipant(user.getId(), user.getUsername(), user.getName());
+
+        TournamentParticipant participant = tournamentRequiredService.getTournamentParticipant(userId);
+
         tournament.removeParticipant(participant);
     }
 
@@ -160,23 +125,19 @@ public class TournamentService {
     public TournamentDto updateTournament(Set<Integer> topicsId, TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
 
-        Set<TournamentTopic> topics = new HashSet<>();
-        for (Integer topicId : topicsId) {
-            Topic topic = topicRepository.findById(topicId)
-                    .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
-            topics.add(new TournamentTopic(topic.getId(), topic.getName(), topic.getCourse().getId()));
-        }
+        Set<TournamentTopic> topics = tournamentRequiredService.getTournamentTopics(topicsId);
 
         tournament.updateTournament(tournamentDto, topics);
 
         if (tournament.hasQuiz()) { // update current Quiz
-            Quiz quiz = quizRepository.findById(tournamentDto.getQuizId())
+            /*Quiz quiz = quizRepository.findById(tournamentDto.getQuizId())
                     .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, tournamentDto.getQuizId()));
 
-            QuizDto quizDto = quizService.findById(tournamentDto.getQuizId());
+            QuizDto quizDto = quizService.findById(tournamentDto.getQuizId());*/
+            QuizDto quizDto = tournamentRequiredService.getQuiz(tournamentDto.getQuizId());
             quizDto.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
 
-            quizService.updateQuiz(quiz.getId(), quizDto);
+            tournamentRequiredService.updateQuiz(quizDto);
         }
 
         return new TournamentDto(tournament);
@@ -235,12 +196,9 @@ public class TournamentService {
 
     private void createQuiz(Tournament tournament) {
         StatementTournamentCreationDto quizForm = new StatementTournamentCreationDto(tournament);
-
-        StatementQuizDto statementQuizDto = answerService.generateTournamentQuiz(tournament.getCreator().getId(),
+        Integer quizId = tournamentRequiredService.getQuizId(tournament.getCreator().getId(),
                 tournament.getCourseExecution().getId(), quizForm);
-        //Quiz quiz = quizRepository.findById(statementQuizDto.getId()).orElse(null);
-
-        tournament.setQuizId(statementQuizDto.getId());
+        tournament.setQuizId(quizId);
     }
 
     @Retryable(
@@ -248,7 +206,9 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoTournaments() {
-        tournamentRepository.getTournamentsForCourseExecution(courseExecutionService.getDemoCourse().getCourseExecutionId())
+        Integer demoCourseExecutionId = tournamentRequiredService.getDemoCourseExecutionId();
+
+        tournamentRepository.getTournamentsForCourseExecution(demoCourseExecutionId)
             .forEach(tournament -> {
                 /*tournament.getParticipants().forEach(user ->
                         userRepository.findById(user.getId()).get().removeTournament(tournament)
@@ -256,7 +216,7 @@ public class TournamentService {
                 /*if (tournament.getQuiz() != null) {
                     tournament.getQuiz().setTournament(null);
                 }*/
-
+                // TODO: Delete quiz?
                 tournamentRepository.delete(tournament);
             });
     }

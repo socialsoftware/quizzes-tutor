@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
@@ -74,9 +74,9 @@ class CreateTournamentTest extends TournamentTest {
         DateHandler.toISOString(result.getStartTime()) == STRING_DATE_TODAY
         DateHandler.toISOString(result.getEndTime()) == STRING_DATE_LATER
         //TODO : Improve this
-        //result.getTopics() == [tournamentTopic2, tournamentTopic1] as Set
-        result.getTopics().getAt(0).equals(tournamentTopic2)
-        result.getTopics().getAt(1).equals(tournamentTopic1)
+        result.getTopics() == [tournamentTopic1, tournamentTopic2] as Set
+        /*result.getTopics().getAt(1).equals(tournamentTopic2)
+        result.getTopics().getAt(0).equals(tournamentTopic1)*/
         result.getNumberOfQuestions() == NUMBER_OF_QUESTIONS
         result.isCanceled() == false
         result.getCreator().getId() == creator1.getId()

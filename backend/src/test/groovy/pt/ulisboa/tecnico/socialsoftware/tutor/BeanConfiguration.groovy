@@ -9,15 +9,17 @@ import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.TournamentACL
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote.TournamentRequiredService
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.local.TournamentProvidedService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
@@ -105,8 +107,18 @@ class BeanConfiguration {
     }
 
     @Bean
-    TournamentService tournamentService() {
-        return new TournamentService()
+    TournamentProvidedService TournamentProvidedService() {
+        return new TournamentProvidedService()
+    }
+
+    @Bean
+    TournamentRequiredService TournamentRequiredService() {
+        return new TournamentRequiredService()
+    }
+
+    @Bean
+    TournamentACL TournamentACL() {
+        return new TournamentACL()
     }
 
     @Bean

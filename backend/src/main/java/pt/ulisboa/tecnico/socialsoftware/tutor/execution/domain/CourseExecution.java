@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.question.dtos.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
@@ -7,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
@@ -24,7 +25,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "course_executions")
 public class CourseExecution implements DomainEntity {
-    public enum Status {ACTIVE, INACTIVE, HISTORIC}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,7 @@ public class CourseExecution implements DomainEntity {
     private String academicTerm;
 
     @Enumerated(EnumType.STRING)
-    private Status status;
+    private CourseExecutionStatus status;
 
     @Column(name = "end_date")
     private LocalDateTime endDate;
@@ -73,7 +73,7 @@ public class CourseExecution implements DomainEntity {
         setCourse(course);
         setAcronym(acronym);
         setAcademicTerm(academicTerm);
-        setStatus(Status.ACTIVE);
+        setStatus(CourseExecutionStatus.ACTIVE);
         setEndDate(endDate);
 
     }
@@ -119,11 +119,11 @@ public class CourseExecution implements DomainEntity {
         this.academicTerm = academicTerm;
     }
 
-    public Status getStatus() {
+    public CourseExecutionStatus getStatus() {
         return status;
     }
 
-    public void setStatus(Status status) {
+    public void setStatus(CourseExecutionStatus status) {
         this.status = status;
     }
 
@@ -263,9 +263,9 @@ public class CourseExecution implements DomainEntity {
         return getAvailableAssessments().stream().flatMap(assessment -> assessment.getTopics().stream()).collect(Collectors.toSet());
     }
 
-    public List<Question> filterQuestionsByTopics(List<Question> questions, Set<TopicDto> topics) {
+    public List<Question> filterQuestionsByTopics(List<Question> questions, Set<TopicWithCourseDto> topics) {
         Set<Integer> availableTopicsIds = findAvailableTopics().stream().map(Topic::getId).collect(Collectors.toSet());
-        Set<Integer> topicsIds = topics.stream().map(TopicDto::getId).filter(topicId -> availableTopicsIds.contains(topicId)).collect(Collectors.toSet());
+        Set<Integer> topicsIds = topics.stream().map(TopicWithCourseDto::getId).filter(topicId -> availableTopicsIds.contains(topicId)).collect(Collectors.toSet());
 
         return questions.stream()
                 .filter(question -> question.hasTopics(topicsIds))

@@ -35,9 +35,6 @@ public class Topic implements DomainEntity {
     @JoinColumn(name = "course_id")
     private Course course;
 
-    /*@ManyToMany(mappedBy = "topics")
-    private Set<Tournament> tournaments = new HashSet<>();*/
-
     public Topic() {
     }
 
@@ -69,10 +66,6 @@ public class Topic implements DomainEntity {
     public Set<Question> getQuestions() {
         return questions;
     }
-
-    /*public Set<Tournament> getTournaments() {
-        return tournaments;
-    }*/
 
     public void addQuestion(Question question) {
         this.questions.add(question);
@@ -125,8 +118,5 @@ public class Topic implements DomainEntity {
 
         topicConjunctions.forEach(topicConjunction -> topicConjunction.getTopics().remove(this));
         topicConjunctions.clear();
-
-        /*tournaments.forEach(tournament -> tournament.getTopics().remove(this));
-        tournaments.clear();*/
     }
 }

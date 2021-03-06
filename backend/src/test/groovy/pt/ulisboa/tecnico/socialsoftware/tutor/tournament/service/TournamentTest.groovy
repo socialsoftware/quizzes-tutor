@@ -4,6 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCreator
@@ -20,7 +21,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 import java.time.LocalDateTime
@@ -154,7 +155,7 @@ class TournamentTest extends SpockTest {
     }
 
     def createTournamentCreator(User user) {
-        return new TournamentCreator(user.getId(),  user.getUsername(), user.getName())
+        return new TournamentCreator(user.getId(), user.getUsername(), user.getName())
     }
 
     def createTournamentTopic(Topic topic) {
@@ -164,7 +165,7 @@ class TournamentTest extends SpockTest {
     def createTournamentCourseExecution(CourseExecution courseExecution) {
         return new TournamentCourseExecution(courseExecution.getId(),
                 courseExecution.getCourse().getId(),
-                TournamentCourseExecution.Status.valueOf(courseExecution.getStatus().toString()),
+                CourseExecutionStatus.valueOf(courseExecution.getStatus().toString()),
                 courseExecution.getAcronym())
     }
 

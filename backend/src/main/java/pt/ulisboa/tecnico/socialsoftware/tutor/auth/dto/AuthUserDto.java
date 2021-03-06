@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 
@@ -110,7 +110,7 @@ public class AuthUserDto implements Serializable {
                 .forEach(courseDto -> {
                     if (courseExecutions.stream().noneMatch(c -> c.getAcronym().equals(courseDto.getAcronym()) && c.getAcademicTerm().equals(courseDto.getAcademicTerm()))) {
                         if (courseDto.getStatus() == null) {
-                            courseDto.setStatus(CourseExecution.Status.INACTIVE);
+                            courseDto.setStatus(CourseExecutionStatus.INACTIVE);
                         }
                         courseExecutions.add(courseDto);
                     }
