@@ -17,7 +17,6 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND;
 
 @Component
@@ -76,18 +75,7 @@ public class JwtTokenProvider {
         return "";
     }
     static int getUserId(String token) {
-        try {
-            return Integer.parseInt(Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody().getSubject());
-        } catch (MalformedJwtException ex) {
-            logger.error("Invalkey JWT token");
-        } catch (ExpiredJwtException ex) {
-            logger.error("Expired JWT token");
-        } catch (UnsupportedJwtException ex) {
-            logger.error("Unsupported JWT token");
-        } catch (IllegalArgumentException ex) {
-            logger.error("JWT claims string is empty.");
-        }
-        throw new TutorException(AUTHENTICATION_ERROR);
+        return Integer.parseInt(Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody().getSubject());
     }
 
     Authentication getAuthentication(String token) {

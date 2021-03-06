@@ -21,6 +21,7 @@ import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
 import StatementQuestion from '@/models/statement/StatementQuestion';
+import router from '@/router';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -1217,13 +1218,14 @@ export default class RemoteServices {
   static async errorMessage(error: any): Promise<string> {
     if (error.message === 'Network Error') {
       return 'Unable to connect to server';
+    } else if (error.message === 'Request failed with status code 403') {
+      await Store.dispatch('logout');
+      await router.push({ path: '/' });
+      return 'Unauthorized access or expired token';
     } else if (error.message.split(' ')[0] === 'timeout') {
       return 'Request timeout - Server took too long to respond';
     } else if (error.response) {
       return error.response.data.message;
-    } else if (error.message === 'Request failed with status code 403') {
-      await Store.dispatch('logout');
-      return 'Unauthorized access or Expired token';
     } else {
       console.log(error);
       return 'Unknown Error - Contact admin';
