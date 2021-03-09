@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.StatementTournamentCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
@@ -22,7 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
@@ -110,6 +111,8 @@ public class AnswerService {
                 QuizAnswerItem quizAnswerItem = new QuizAnswerItem(statementQuizDto);
                 quizAnswerItemRepository.save(quizAnswerItem);
             } else {
+                // TODO: Send correct answers number, answers number and answered to true
+
                 quizAnswer.setAnswerDate(DateHandler.now());
 
                 for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {

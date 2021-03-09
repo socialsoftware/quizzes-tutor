@@ -101,11 +101,7 @@ class UpdateTournamentTest extends TournamentTest {
         then:
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
-        //TODO : Improve this
         result.getTopics() == [tournamentTopic1, tournamentTopic2, tournamentTopic3]  as Set
-        /*result.getTopics().getAt(0).equals(tournamentTopic1)
-        result.getTopics().getAt(1).equals(tournamentTopic2)
-        result.getTopics().getAt(2).equals(tournamentTopic3)*/
     }
 
     def "user that created tournament adds topic of different course"() {
@@ -126,10 +122,7 @@ class UpdateTournamentTest extends TournamentTest {
         exception.getErrorMessage() == TOURNAMENT_TOPIC_COURSE
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
-        //TODO : Improve this
         result.getTopics() == [tournamentTopic1, tournamentTopic2]  as Set
-        /*result.getTopics().getAt(0).equals(tournamentTopic1)
-        result.getTopics().getAt(1).equals(tournamentTopic2)*/
     }
 
     def "user that created tournament removes existing topic from tournament that contains that topic"() {
@@ -144,9 +137,7 @@ class UpdateTournamentTest extends TournamentTest {
         then:
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
-        //TODO : Improve this
         result.getTopics() == [tournamentTopic1] as Set
-        //result.getTopics().getAt(0).equals(tournamentTopic1)
     }
 
     def "user that created an open tournament tries to change it"() {

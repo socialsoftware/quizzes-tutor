@@ -6,7 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

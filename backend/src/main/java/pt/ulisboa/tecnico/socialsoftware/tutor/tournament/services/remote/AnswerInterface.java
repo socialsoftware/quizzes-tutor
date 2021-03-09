@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.StatementTournamentCreationDto;
 
 public interface AnswerInterface {

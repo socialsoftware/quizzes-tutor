@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dt
 import javax.persistence.*;
 import java.util.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -173,10 +174,13 @@ public class Tournament  {
         if (!getParticipants().contains(participant)) {
             throw new TutorException(USER_NOT_JOINED, participant.getId());
         }
-        // TODO: has to receive event with confirmation
+        // Check locally answered flag
         /*if (user.getQuizAnswer(getQuiz()) != null) {
             throw new TutorException(USER_ALREDAY_ANSWERED_TOURNAMENT_QUIZ, participant.getId());
         }*/
+        if (participant.hasAnswered()) {
+            throw new TutorException(USER_ALREDAY_ANSWERED_TOURNAMENT_QUIZ, participant.getId());
+        }
     }
 
     public void addParticipant(TournamentParticipant participant, String password) {
@@ -191,7 +195,7 @@ public class Tournament  {
         if (getParticipants().contains(participant)) {
             throw new TutorException(DUPLICATE_TOURNAMENT_PARTICIPANT, participant.getUsername());
         }
-        // TODO: has to receive event with confirmation
+        // TODO: Verificacao repetida
         /*if (!user.getCourseExecutions().contains(getCourseExecution())) {
             throw new TutorException(STUDENT_NO_COURSE_EXECUTION, user.getId());
         }*/
@@ -212,7 +216,7 @@ public class Tournament  {
 
     public boolean hasQuiz() { return getQuizId() != null; }
 
-    public void remove() {
+    public void removeAntigo() {
         checkCanChange();
 
         creator = null;
@@ -224,18 +228,26 @@ public class Tournament  {
         //getParticipants().forEach(participant -> participant.getTournaments().remove(this));
         getParticipants().clear();
 
-        // TODO: Send event to remove
         if (this.quizId != null) {
             //deleteTournamentQuiz(this.quizId);
         }
     }
 
+    public void remove() {
+        creator = null;
+        courseExecution = null;
+
+        getTopics().clear();
+        getParticipants().clear();
+    }
+
     public void checkCanChange() {
         int numberOfAnswers = 0;
-        // TODO: Send event to get answers number
-        /*if (this.quizId != null) {
-            numberOfAnswers = this.quiz.getQuizAnswers() != null ? this.quiz.getQuizAnswers().size() : 0;
-        }*/
+        // QuizService call -> Count participants answers
+        if (this.quizId != null) {
+            //numberOfAnswers = this.quiz.getQuizAnswers() != null ? this.quiz.getQuizAnswers().size() : 0;
+            numberOfAnswers = Math.toIntExact(this.getParticipants().stream().filter(TournamentParticipant::hasAnswered).count());
+        }
 
         LocalDateTime now = DateHandler.now();
 
@@ -274,4 +286,7 @@ public class Tournament  {
 
     public void setPassword(String password) { this.password = password; }
 
+    public TournamentParticipant getParticipant(Integer userId) {
+        return this.getParticipants().stream().filter(participant -> participant.getId().equals(userId)).findAny().get();
+    }
 }

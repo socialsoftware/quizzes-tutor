@@ -25,7 +25,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.UserQuesti
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
@@ -55,9 +54,6 @@ public class QuestionSubmissionService {
 
     @Autowired
     private QuestionSubmissionRepository questionSubmissionRepository;
-
-    @Autowired
-    private TournamentRepository tournamentRepository;
 
     @Autowired
     private ReviewRepository reviewRepository;

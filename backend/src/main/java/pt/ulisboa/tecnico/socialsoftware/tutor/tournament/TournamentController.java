@@ -6,7 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.local.TournamentProvidedService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 

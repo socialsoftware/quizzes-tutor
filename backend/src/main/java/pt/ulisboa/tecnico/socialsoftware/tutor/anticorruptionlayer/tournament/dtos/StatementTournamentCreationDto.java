@@ -1,9 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.question.dtos.TopicWithCourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic;
 
 import java.io.Serializable;
 import java.time.LocalDateTime;

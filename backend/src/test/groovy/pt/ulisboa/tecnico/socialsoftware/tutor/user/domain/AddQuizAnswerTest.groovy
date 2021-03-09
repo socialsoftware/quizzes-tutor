@@ -14,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto
 
 @DataJpaTest
 class AddQuizAnswerTest extends SpockTest {

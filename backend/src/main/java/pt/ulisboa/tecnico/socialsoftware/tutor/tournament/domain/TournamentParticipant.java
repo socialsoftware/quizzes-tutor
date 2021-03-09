@@ -49,7 +49,7 @@ public class TournamentParticipant {
         return name;
     }
 
-    public boolean isAnswered() {
+    public boolean hasAnswered() {
         return answered;
     }
 

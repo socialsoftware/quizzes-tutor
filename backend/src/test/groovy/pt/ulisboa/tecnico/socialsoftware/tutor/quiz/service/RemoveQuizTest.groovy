@@ -38,6 +38,7 @@ class RemoveQuizTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setCourseExecution(externalCourseExecution)
+        quiz.setType(Quiz.QuizType.PROPOSED.toString())
         quizRepository.save(quiz)
 
         quizQuestion = new QuizQuestion()

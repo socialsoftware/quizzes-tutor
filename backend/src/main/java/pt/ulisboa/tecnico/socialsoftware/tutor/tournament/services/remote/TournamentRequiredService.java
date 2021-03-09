@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.StatementTournamentCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.TournamentACL;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -12,7 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.question.dtos.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCreator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant;
@@ -51,7 +51,7 @@ public class TournamentRequiredService implements UserInterface, CourseExecution
     public TournamentCreator getTournamentCreator(Integer userId) {
         //User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         UserDto userDto = userService.findUserById(userId);
-        if(userDto != null) {
+        if (userDto != null) {
             return tournamentACL.userToTournamentCreator(userDto);
         }
         else{
@@ -63,7 +63,7 @@ public class TournamentRequiredService implements UserInterface, CourseExecution
     public TournamentParticipant getTournamentParticipant(Integer userId) {
         //User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         UserDto userDto = userService.findUserById(userId);
-        if(userDto != null) {
+        if (userDto != null) {
             return tournamentACL.userToTournamentParticipant(userDto);
         }
         else{
@@ -129,5 +129,10 @@ public class TournamentRequiredService implements UserInterface, CourseExecution
     @Override
     public void updateQuiz(QuizDto quizDto) {
         quizService.updateQuiz(quizDto.getId(), quizDto);
+    }
+
+    @Override
+    public void deleteQuiz(Integer quizId) {
+        quizService.removeQuiz(quizId);
     }
 }

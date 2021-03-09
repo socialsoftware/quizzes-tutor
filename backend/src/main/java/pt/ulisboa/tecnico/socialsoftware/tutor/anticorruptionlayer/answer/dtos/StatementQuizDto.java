@@ -1,6 +1,8 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
+package pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 

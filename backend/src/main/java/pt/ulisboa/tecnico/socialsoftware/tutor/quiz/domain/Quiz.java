@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -331,10 +331,14 @@ public class Quiz implements DomainEntity {
 
     public void remove() {
         checkCanChange();
-        // TODO: Receive event with confirmation
+        // TODO: Confirmar
         /*if (this.tournament != null) {
             throw new TutorException(QUIZ_HAS_TOURNAMENT);
         }*/
+
+        if(this.getType().equals(QuizType.TOURNAMENT)) {
+            throw new TutorException(QUIZ_HAS_TOURNAMENT);
+        }
 
         this.courseExecution.getQuizzes().remove(this);
         this.courseExecution = null;

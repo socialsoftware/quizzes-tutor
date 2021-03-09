@@ -11,8 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote.TournamentRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.StatementTournamentCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto;
@@ -103,7 +103,7 @@ public class TournamentProvidedService {
         if (!tournament.hasQuiz()) {
             createQuiz(tournament);
         }
-        // TODO: Receive event with correct answers number and answers number
+
         //return answerService.startQuiz(userId, tournament.getQuizId());
         return tournamentRequiredService.startTournamentQuiz(userId, tournament.getQuizId());
     }
@@ -153,13 +153,28 @@ public class TournamentProvidedService {
         return new TournamentDto(tournament);
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    /*@Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
 
         tournament.remove();
 
+        tournamentRepository.delete(tournament);
+    }*/
+    // TODO: Confirmar
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeTournament(Integer tournamentId) {
+        Tournament tournament = checkTournament(tournamentId);
+        tournament.checkCanChange();
+
+        // Pessimistic view e commutative updates
+        if(tournament.getQuizId() != null) {
+            tournamentRequiredService.deleteQuiz(tournament.getQuizId());
+        }
+
+        tournament.remove();
         tournamentRepository.delete(tournament);
     }
 
@@ -216,7 +231,6 @@ public class TournamentProvidedService {
                 /*if (tournament.getQuiz() != null) {
                     tournament.getQuiz().setTournament(null);
                 }*/
-                // TODO: Delete quiz?
                 tournamentRepository.delete(tournament);
             });
     }

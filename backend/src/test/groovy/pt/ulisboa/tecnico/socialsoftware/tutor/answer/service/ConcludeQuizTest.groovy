@@ -15,7 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 

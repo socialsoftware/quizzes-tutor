@@ -22,7 +22,7 @@ public class TournamentParticipantDto implements Serializable {
         this.name = user.getName();
         this.username = user.getUsername();
         //this.answered = quizAnswer != null;
-        this.answered = user.isAnswered();
+        this.answered = user.hasAnswered();
         //this.numberOfAnswered = quizAnswer != null ? Math.toIntExact(quizAnswer.getNumberOfAnsweredQuestions()) : 0;
         this.numberOfAnswered = user.getNumberOfAnswered();
         //this.numberOfCorrect = quizAnswer != null ? Math.toIntExact(quizAnswer.getNumberOfCorrectAnswers()) : 0;
