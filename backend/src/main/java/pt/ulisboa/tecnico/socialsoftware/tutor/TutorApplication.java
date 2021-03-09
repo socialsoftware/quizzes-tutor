@@ -12,6 +12,8 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
+import pt.ulisboa.tecnico.socialsoftware.tutor.events.EventBusFactory;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.subscriptions.TournamentSubscriptions;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 
 
@@ -39,6 +41,8 @@ public class TutorApplication extends SpringBootServletInitializer implements In
         answerService.writeQuizAnswersAndCalculateStatistics();
 
         demoUtils.resetDemoInfo();
+
+        EventBusFactory.getEventBus().register(new TournamentSubscriptions());
     }
 
 }

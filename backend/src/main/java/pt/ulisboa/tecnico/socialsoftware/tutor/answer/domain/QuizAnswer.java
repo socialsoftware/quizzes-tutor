@@ -161,7 +161,7 @@ public class QuizAnswer implements DomainEntity {
     public boolean canResultsBePublic(Integer courseExecutionId) {
         return isCompleted() &&
                 getQuiz().getCourseExecution().getId().equals(courseExecutionId) &&
-                ((!getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && !getQuiz().getType().equals(Quiz.QuizType.TOURNAMENT))
+                ((!getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && !getQuiz().getType().equals(Quiz.QuizType.EXTERNAL_QUIZ))
                         || getQuiz().getResultsDate().isBefore(DateHandler.now()));
     }
 

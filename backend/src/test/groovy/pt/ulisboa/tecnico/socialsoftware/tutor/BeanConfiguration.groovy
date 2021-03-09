@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor
 
+import com.google.common.eventbus.EventBus
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -144,6 +145,11 @@ class BeanConfiguration {
     @Bean
     Mailer mailer() {
         return new Mailer()
+    }
+
+    @Bean
+    EventBus eventBus() {
+        return new EventBus();
     }
 
     @Bean

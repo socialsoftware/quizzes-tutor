@@ -222,6 +222,23 @@ public class QuizService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void removeExternalQuiz(Integer quizId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        quiz.removeExternalQuiz();
+
+        Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
+
+        quizQuestions.forEach(QuizQuestion::remove);
+        quizQuestions.forEach(quizQuestion -> quizQuestionRepository.delete(quizQuestion));
+
+        quizRepository.delete(quiz);
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizAnswersDto getQuizAnswers(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         QuizAnswersDto quizAnswersDto = new QuizAnswersDto();

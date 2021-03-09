@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
 
+import com.google.common.eventbus.EventBus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -11,6 +12,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.StatementTournamentCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.events.EventBusFactory;
+import pt.ulisboa.tecnico.socialsoftware.tutor.events.TournamentQuizSolvedEvent;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
@@ -73,6 +76,9 @@ public class AnswerService {
     @Autowired
     private CourseExecutionService courseExecutionService;
 
+    @Autowired
+    private EventBus eventBus;
+
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
@@ -111,17 +117,27 @@ public class AnswerService {
                 QuizAnswerItem quizAnswerItem = new QuizAnswerItem(statementQuizDto);
                 quizAnswerItemRepository.save(quizAnswerItem);
             } else {
-                // TODO: Send correct answers number, answers number and answered to true
-
                 quizAnswer.setAnswerDate(DateHandler.now());
 
                 for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
                     writeQuestionAnswer(questionAnswer, statementQuizDto.getAnswers());
                 }
-                return quizAnswer.getQuestionAnswers().stream()
+
+                List<CorrectAnswerDto> correctAnswerDtoList = quizAnswer.getQuestionAnswers().stream()
                         .sorted(Comparator.comparing(QuestionAnswer::getSequence))
                         .map(CorrectAnswerDto::new)
                         .collect(Collectors.toList());
+
+                // TODO: Confirmar
+                if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.EXTERNAL_QUIZ)) {
+                    TournamentQuizSolvedEvent event = new TournamentQuizSolvedEvent(quizAnswer.getQuiz().getId(),
+                            quizAnswer.getUser().getId(), quizAnswer.getNumberOfAnsweredQuestions(),
+                            quizAnswer.getNumberOfCorrectAnswers());
+
+                    eventBus.post(event);
+                }
+
+                return correctAnswerDtoList;
             }
         }
         return new ArrayList<>();
@@ -268,7 +284,7 @@ public class AnswerService {
         quiz.setConclusionDate(quizDetails.getEndTime());
         quiz.setResultsDate(quizDetails.getEndTime());
         quiz.setTitle("Tournament " + quizDetails.getId() + " Quiz");
-        quiz.setType(Quiz.QuizType.TOURNAMENT.toString());
+        quiz.setType(Quiz.QuizType.EXTERNAL_QUIZ.toString());
 
         quizRepository.save(quiz);
 

@@ -153,21 +153,10 @@ public class TournamentProvidedService {
         return new TournamentDto(tournament);
     }
 
-    /*@Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void removeTournament(Integer tournamentId) {
-        Tournament tournament = checkTournament(tournamentId);
-
-        tournament.remove();
-
-        tournamentRepository.delete(tournament);
-    }*/
-    // TODO: Confirmar
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
-        tournament.checkCanChange();
 
         // Pessimistic view e commutative updates
         if(tournament.getQuizId() != null) {
@@ -175,6 +164,7 @@ public class TournamentProvidedService {
         }
 
         tournament.remove();
+
         tournamentRepository.delete(tournament);
     }
 

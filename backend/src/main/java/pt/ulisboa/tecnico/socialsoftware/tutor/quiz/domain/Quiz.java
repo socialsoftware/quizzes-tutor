@@ -26,7 +26,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         })
 public class Quiz implements DomainEntity {
     public enum QuizType {
-        EXAM, TEST, GENERATED, PROPOSED, IN_CLASS, TOURNAMENT
+        EXAM, TEST, GENERATED, PROPOSED, IN_CLASS, EXTERNAL_QUIZ
     }
 
     @Id
@@ -142,7 +142,7 @@ public class Quiz implements DomainEntity {
         this.qrCodeOnly = qrCodeOnly;
     }
 
-    public boolean isTournamentQuiz() { return type == QuizType.TOURNAMENT; }
+    public boolean isExternalQuiz() { return type == QuizType.EXTERNAL_QUIZ; }
 
     public boolean isOneWay() {
         return oneWay;
@@ -331,14 +331,17 @@ public class Quiz implements DomainEntity {
 
     public void remove() {
         checkCanChange();
-        // TODO: Confirmar
-        /*if (this.tournament != null) {
-            throw new TutorException(QUIZ_HAS_TOURNAMENT);
-        }*/
 
-        if(this.getType().equals(QuizType.TOURNAMENT)) {
-            throw new TutorException(QUIZ_HAS_TOURNAMENT);
+        if(this.getType().equals(QuizType.EXTERNAL_QUIZ)) {
+            throw new TutorException(EXTERNAL_CANNOT_BE_REMOVED);
         }
+
+        this.courseExecution.getQuizzes().remove(this);
+        this.courseExecution = null;
+    }
+
+    public void removeExternalQuiz() {
+        checkCanChange();
 
         this.courseExecution.getQuizzes().remove(this);
         this.courseExecution = null;

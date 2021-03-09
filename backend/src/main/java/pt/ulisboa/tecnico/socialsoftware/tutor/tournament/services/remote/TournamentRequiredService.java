@@ -133,6 +133,6 @@ public class TournamentRequiredService implements UserInterface, CourseExecution
 
     @Override
     public void deleteQuiz(Integer quizId) {
-        quizService.removeQuiz(quizId);
+        quizService.removeExternalQuiz(quizId);
     }
 }

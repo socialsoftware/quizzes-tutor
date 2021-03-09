@@ -44,7 +44,7 @@ public enum ErrorMessage {
     QUIZ_ANSWER_NOT_FOUND("Quiz answer not found with id %d"),
     QUIZ_NOT_FOUND("Quiz not found with id %d"),
     QUIZ_QUESTION_NOT_FOUND("Quiz question not found with id %d"),
-    QUIZ_HAS_TOURNAMENT("Quiz has tournament"),
+    EXTERNAL_CANNOT_BE_REMOVED("External quiz cannot be removed by this operation"),
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     TOPIC_NOT_FOUND("Topic not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
@@ -96,6 +96,7 @@ public enum ErrorMessage {
     USER_NOT_JOINED("User has not joined tournament: %s"),
     USER_ALREDAY_ANSWERED_TOURNAMENT_QUIZ("User has already answered quiz of tournament: %s"),
     WRONG_TOURNAMENT_PASSWORD("Wrong tournament password for private tournament %d"),
+    NO_TOURNAMENT_WITH_QUIZ_ID("Tournament with quiz id %s not found"),
 
     NO_CORRECT_OPTION("Question does not have a correct option"),
     NOT_ENOUGH_QUESTIONS("Not enough questions to create a quiz"),

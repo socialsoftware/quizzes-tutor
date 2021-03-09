@@ -36,7 +36,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         def result = quizRepository.findAll().get(0)
         result.getId() != null
         result.getTitle() == ("Tournament " + tournamentDto.getId() + " Quiz")
-        result.getType() == Quiz.QuizType.TOURNAMENT
+        result.getType() == Quiz.QuizType.EXTERNAL_QUIZ
         DateHandler.toISOString(result.getConclusionDate()) == STRING_DATE_LATER
         result.getQuizQuestionsNumber() == NUMBER_OF_QUESTIONS
     }
@@ -59,7 +59,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         def result = quizRepository.findAll().get(0)
         result.getId() != null
         result.getTitle() == ("Tournament " + tournamentDto.getId() + " Quiz")
-        result.getType() == Quiz.QuizType.TOURNAMENT
+        result.getType() == Quiz.QuizType.EXTERNAL_QUIZ
         DateHandler.toISOString(result.getConclusionDate()) == STRING_DATE_LATER
         result.getQuizQuestionsNumber() == NUMBER_OF_QUESTIONS
     }

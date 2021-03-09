@@ -174,10 +174,7 @@ public class Tournament  {
         if (!getParticipants().contains(participant)) {
             throw new TutorException(USER_NOT_JOINED, participant.getId());
         }
-        // Check locally answered flag
-        /*if (user.getQuizAnswer(getQuiz()) != null) {
-            throw new TutorException(USER_ALREDAY_ANSWERED_TOURNAMENT_QUIZ, participant.getId());
-        }*/
+
         if (participant.hasAnswered()) {
             throw new TutorException(USER_ALREDAY_ANSWERED_TOURNAMENT_QUIZ, participant.getId());
         }
@@ -195,45 +192,24 @@ public class Tournament  {
         if (getParticipants().contains(participant)) {
             throw new TutorException(DUPLICATE_TOURNAMENT_PARTICIPANT, participant.getUsername());
         }
-        // TODO: Verificacao repetida
-        /*if (!user.getCourseExecutions().contains(getCourseExecution())) {
-            throw new TutorException(STUDENT_NO_COURSE_EXECUTION, user.getId());
-        }*/
 
         if (isPrivateTournament() && !password.equals(getPassword())) {
             throw new TutorException(WRONG_TOURNAMENT_PASSWORD, getId());
         }
 
         this.participants.add(participant);
-        //user.addTournament(this);
     }
 
     public void removeParticipant(TournamentParticipant participant) {
         checkIsParticipant(participant);
         this.participants.remove(participant);
-        //user.removeTournament(this);
     }
 
     public boolean hasQuiz() { return getQuizId() != null; }
 
-    public void removeAntigo() {
+    public void remove() {
         checkCanChange();
 
-        creator = null;
-        courseExecution = null;
-
-        //getTopics().forEach(topic -> topic.getTournaments().remove(this));
-        getTopics().clear();
-
-        //getParticipants().forEach(participant -> participant.getTournaments().remove(this));
-        getParticipants().clear();
-
-        if (this.quizId != null) {
-            //deleteTournamentQuiz(this.quizId);
-        }
-    }
-
-    public void remove() {
         creator = null;
         courseExecution = null;
 
@@ -243,9 +219,8 @@ public class Tournament  {
 
     public void checkCanChange() {
         int numberOfAnswers = 0;
-        // QuizService call -> Count participants answers
+
         if (this.quizId != null) {
-            //numberOfAnswers = this.quiz.getQuizAnswers() != null ? this.quiz.getQuizAnswers().size() : 0;
             numberOfAnswers = Math.toIntExact(this.getParticipants().stream().filter(TournamentParticipant::hasAnswered).count());
         }
 
@@ -288,5 +263,23 @@ public class Tournament  {
 
     public TournamentParticipant getParticipant(Integer userId) {
         return this.getParticipants().stream().filter(participant -> participant.getId().equals(userId)).findAny().get();
+    }
+
+    @Override
+    public String toString() {
+        return "Tournament{" +
+                "id=" + id +
+                ", startTime=" + startTime +
+                ", endTime=" + endTime +
+                ", numberOfQuestions=" + numberOfQuestions +
+                ", creator=" + creator +
+                ", isCanceled=" + isCanceled +
+                ", participants=" + participants +
+                ", courseExecution=" + courseExecution +
+                ", topics=" + topics +
+                ", quizId=" + quizId +
+                ", privateTournament=" + privateTournament +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

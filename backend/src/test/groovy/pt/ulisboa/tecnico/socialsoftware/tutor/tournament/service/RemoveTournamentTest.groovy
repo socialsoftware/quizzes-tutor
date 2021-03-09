@@ -82,7 +82,7 @@ class RemoveTournamentTest extends TournamentTest {
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == TOURNAMENT_IS_OPEN
+        exception.getErrorMessage() == QUIZ_HAS_ANSWERS
         tournamentRepository.count() == 1L
     }
 
