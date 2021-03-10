@@ -47,16 +47,9 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public String getAnswerRepresentation() {
-        int counter = 1;
-        var slots = new ArrayList<>(((CodeOrderQuestion) this.getQuestionAnswer().getQuestion().getQuestionDetails()).getCodeOrderSlots());
-        slots.sort(Comparator.comparing(CodeOrderSlot::getId));
-        var slotsSequence = new HashMap<Integer, Integer>();
-        for (var codeOrderSlot : slots) {
-            slotsSequence.put(codeOrderSlot.getId(),counter++);
-        }
         return this.getOrderedSlots().stream()
                 .sorted(Comparator.comparing(CodeOrderAnswerSlot::getAssignedOrder))
-                .map(x -> slotsSequence.get(x.getCodeOrderSlot().getId()).toString())
+                .map(x -> x.getCodeOrderSlot().getSequence().toString())
                 .collect(Collectors.joining(" | "));
     }
 
