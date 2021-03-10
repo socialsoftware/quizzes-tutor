@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentParticipantDto;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
@@ -32,6 +34,15 @@ public class TournamentParticipant {
         this.id = userId;
         this.username = username;
         this.name = name;
+        this.answered = false;
+        this.numberOfAnswered = 0;
+        this.numberOfCorrect = 0;
+    }
+
+    public TournamentParticipant(TournamentParticipantDto tournamentParticipantDto) {
+        this.id = tournamentParticipantDto.getUserId();
+        this.username = tournamentParticipantDto.getUsername();
+        this.name = tournamentParticipantDto.getName();
         this.answered = false;
         this.numberOfAnswered = 0;
         this.numberOfCorrect = 0;
@@ -78,11 +89,11 @@ public class TournamentParticipant {
         if (this == o) return true;
         if (o == null || getClass() != o.getClass()) return false;
         TournamentParticipant that = (TournamentParticipant) o;
-        return answered == that.answered && id.equals(that.id) && username.equals(that.username) && name.equals(that.name);
+        return id.equals(that.id) && username.equals(that.username) && name.equals(that.name);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, username, name, answered);
+        return Objects.hash(id, username, name);
     }
 }

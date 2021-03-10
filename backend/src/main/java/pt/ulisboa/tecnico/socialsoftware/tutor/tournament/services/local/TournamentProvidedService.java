@@ -113,7 +113,7 @@ public class TournamentProvidedService {
     public void leaveTournament(Integer userId, Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
 
-        TournamentParticipant participant = tournamentRequiredService.getTournamentParticipant(userId);
+        TournamentParticipant participant = tournament.findParticipant(userId);
 
         tournament.removeParticipant(participant);
     }

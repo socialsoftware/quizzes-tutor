@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentCreatorDto;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 
@@ -22,6 +24,12 @@ public class TournamentCreator {
         this.id = id;
         this.username = username;
         this.name = name;
+    }
+
+    public TournamentCreator(TournamentCreatorDto tournamentCreatorDto) {
+        this.id = tournamentCreatorDto.getId();
+        this.username = tournamentCreatorDto.getUsername();
+        this.name = tournamentCreatorDto.getName();
     }
 
     public Integer getId() {

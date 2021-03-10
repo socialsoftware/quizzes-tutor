@@ -139,7 +139,7 @@ class BeanConfiguration {
 
     @Bean
     DemoUtils demoUtils() {
-        return new DemoUtils();
+        return new DemoUtils()
     }
 
     @Bean
@@ -149,7 +149,12 @@ class BeanConfiguration {
 
     @Bean
     EventBus eventBus() {
-        return new EventBus();
+        return new EventBus()
+    }
+
+    @Bean
+    MonolithService monolithService() {
+        return new MonolithService()
     }
 
     @Bean

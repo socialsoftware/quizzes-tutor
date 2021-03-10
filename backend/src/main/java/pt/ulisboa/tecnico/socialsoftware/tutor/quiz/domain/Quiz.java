@@ -340,7 +340,7 @@ public class Quiz implements DomainEntity {
         this.courseExecution = null;
     }
 
-    public void removeExternalQuiz() {
+    public void removeExternal() {
         checkCanChange();
 
         this.courseExecution.getQuizzes().remove(this);

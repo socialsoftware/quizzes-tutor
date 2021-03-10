@@ -16,6 +16,13 @@ public class TournamentCourseExecutionDto {
         this.courseAcronym = tournamentCourseExecution.getCourseAcronym();
     }
 
+    public TournamentCourseExecutionDto(Integer id, Integer courseId, CourseExecutionStatus status, String courseAcronym) {
+        this.id = id;
+        this.courseId = courseId;
+        this.status = status;
+        this.courseAcronym = courseAcronym;
+    }
+
     public Integer getId() {
         return id;
     }

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
+package pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.user.dtos;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import java.io.Serializable;

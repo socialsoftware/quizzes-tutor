@@ -225,7 +225,7 @@ public class QuizService {
     public void removeExternalQuiz(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        quiz.removeExternalQuiz();
+        quiz.removeExternal();
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 
@@ -424,7 +424,7 @@ public class QuizService {
                 .sorted(Comparator.comparing(Quiz::getId))
                 .skip(2)
                 .forEach(quiz -> {
-                    quiz.remove();
+                    quiz.removeExternal();
                     this.quizRepository.delete(quiz);
                 });
 

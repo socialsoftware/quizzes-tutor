@@ -12,8 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.StatementTournamentCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.events.EventBusFactory;
-import pt.ulisboa.tecnico.socialsoftware.tutor.events.TournamentQuizSolvedEvent;
+import pt.ulisboa.tecnico.socialsoftware.tutor.events.ExternalQuizSolvedEvent;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
@@ -130,7 +129,7 @@ public class AnswerService {
 
                 // TODO: Confirmar
                 if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.EXTERNAL_QUIZ)) {
-                    TournamentQuizSolvedEvent event = new TournamentQuizSolvedEvent(quizAnswer.getQuiz().getId(),
+                    ExternalQuizSolvedEvent event = new ExternalQuizSolvedEvent(quizAnswer.getQuiz().getId(),
                             quizAnswer.getUser().getId(), quizAnswer.getNumberOfAnsweredQuestions(),
                             quizAnswer.getNumberOfCorrectAnswers());
 

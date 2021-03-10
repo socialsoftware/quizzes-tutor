@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentCourseExecutionDto;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -31,6 +32,13 @@ public class TournamentCourseExecution {
         this.courseId = courseId;
         this.status = status;
         this.courseAcronym = courseAcronym;
+    }
+
+    public TournamentCourseExecution(TournamentCourseExecutionDto tournamentCourseExecutionDto) {
+        this.id = tournamentCourseExecutionDto.getId();
+        this.courseId = tournamentCourseExecutionDto.getCourseId();
+        this.status = tournamentCourseExecutionDto.getStatus();
+        this.courseAcronym = tournamentCourseExecutionDto.getCourseAcronym();
     }
 
     public Integer getId() {

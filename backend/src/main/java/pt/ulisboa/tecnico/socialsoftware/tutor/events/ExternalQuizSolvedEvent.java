@@ -1,13 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.events;
 
-public class TournamentQuizSolvedEvent {
+public class ExternalQuizSolvedEvent {
 
     private Integer quizId;
     private Integer participantId;
     private Integer numberOfAnswered;
     private Integer numberOfCorrect;
 
-    public TournamentQuizSolvedEvent(Integer quizId, Integer participantId, long numberOfAnswered, long numberOfCorrect) {
+    public ExternalQuizSolvedEvent(Integer quizId, Integer participantId, long numberOfAnswered, long numberOfCorrect) {
         this.quizId = quizId;
         this.participantId = participantId;
         this.numberOfAnswered = Math.toIntExact(numberOfAnswered);

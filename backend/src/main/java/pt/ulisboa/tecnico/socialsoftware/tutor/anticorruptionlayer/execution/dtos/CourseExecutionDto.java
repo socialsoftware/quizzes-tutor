@@ -1,10 +1,10 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto;
+package pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.execution.dtos;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.user.dtos.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.user.dtos.UserDto;
 
 import java.io.Serializable;
 import java.util.ArrayList;

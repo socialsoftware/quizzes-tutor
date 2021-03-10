@@ -30,6 +30,12 @@ public class TournamentParticipantDto implements Serializable {
         this.score = numberOfCorrect - (numberOfAnswered - numberOfCorrect) * 0.3;
     }
 
+    public TournamentParticipantDto(Integer userId, String name, String username) {
+        this.userId = userId;
+        this.name = name;
+        this.username = username;
+    }
+
     public Integer getUserId() {
         return userId;
     }

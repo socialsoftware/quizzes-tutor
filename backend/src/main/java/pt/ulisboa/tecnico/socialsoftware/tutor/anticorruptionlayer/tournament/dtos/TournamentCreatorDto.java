@@ -18,6 +18,12 @@ public class TournamentCreatorDto implements Serializable {
         this.name = creator.getName();
     }
 
+    public TournamentCreatorDto(Integer id, String username, String name) {
+        this.id = id;
+        this.username = username;
+        this.name = name;
+    }
+
     public Integer getId() {
         return id;
     }
