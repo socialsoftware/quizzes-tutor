@@ -1,0 +1,10 @@
+package pt.ulisboa.tecnico.socialsoftware.tutor.api;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.question.dtos.TopicWithCourseDto;
+
+import java.util.List;
+import java.util.Set;
+
+public interface TopicInterface {
+    List<TopicWithCourseDto> findTopics(Set<Integer> topicsList);
+}

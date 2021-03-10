@@ -1,12 +1,11 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote;
+package pt.ulisboa.tecnico.socialsoftware.tutor.api;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto;
 
 public interface QuizInterface {
-
-    QuizDto getQuiz(Integer quizId);
+    QuizDto findQuizById(Integer quizId);
 
     void updateQuiz(QuizDto quizDto);
 
-    void deleteQuiz(Integer quizId);
+    void deleteExternalQuiz(Integer quizId);
 }

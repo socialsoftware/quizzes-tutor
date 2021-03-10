@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.StatementTournamentCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto;
 
@@ -200,7 +200,7 @@ public class TournamentProvidedService {
     }
 
     private void createQuiz(Tournament tournament) {
-        StatementTournamentCreationDto quizForm = new StatementTournamentCreationDto(tournament);
+        ExternalStatementCreationDto quizForm = new ExternalStatementCreationDto(tournament);
         Integer quizId = tournamentRequiredService.getQuizId(tournament.getCreator().getId(),
                 tournament.getCourseExecution().getId(), quizForm);
         tournament.setQuizId(quizId);

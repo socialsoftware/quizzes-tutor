@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.StatementTournamentCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.events.ExternalQuizSolvedEvent;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
@@ -248,7 +248,7 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuizDto generateTournamentQuiz(int userId, int executionId, StatementTournamentCreationDto quizDetails) {
+    public StatementQuizDto generateTournamentQuiz(int userId, int executionId, ExternalStatementCreationDto quizDetails) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         Quiz quiz = new Quiz();

@@ -9,16 +9,16 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-public class StatementTournamentCreationDto implements Serializable {
+public class ExternalStatementCreationDto implements Serializable {
     private Integer id;
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer numberOfQuestions;
     private Set<TopicWithCourseDto> topics = new HashSet<>();
 
-    public StatementTournamentCreationDto() {}
+    public ExternalStatementCreationDto() {}
 
-    public StatementTournamentCreationDto(Tournament tournament) {
+    public ExternalStatementCreationDto(Tournament tournament) {
         setNumberOfQuestions(tournament.getNumberOfQuestions());
         setTopics(tournament.getTopics().stream().map(TopicWithCourseDto::new).collect(Collectors.toSet()));
         setStartTime(tournament.getStartTime());

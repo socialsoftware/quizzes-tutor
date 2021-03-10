@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import pt.ulisboa.tecnico.socialsoftware.tutor.MonolithService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.api.MonolithService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.TournamentACL;
@@ -23,7 +23,7 @@ import java.util.Set;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
-public class TournamentRequiredService implements UserInterface, CourseExecutionInterface, TopicInterface, AnswerInterface, QuizInterface{
+public class TournamentRequiredService {
 
     @Autowired
     private MonolithService monolithService;
@@ -31,7 +31,6 @@ public class TournamentRequiredService implements UserInterface, CourseExecution
     @Autowired
     private TournamentACL tournamentACL;
 
-    @Override
     public TournamentCreator getTournamentCreator(Integer userId) {
         //User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         UserDto userDto = monolithService.findUserById(userId);
@@ -44,7 +43,6 @@ public class TournamentRequiredService implements UserInterface, CourseExecution
         }
     }
 
-    @Override
     public TournamentParticipant getTournamentParticipant(Integer userId) {
         //User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         UserDto userDto = monolithService.findUserById(userId);
@@ -57,7 +55,6 @@ public class TournamentRequiredService implements UserInterface, CourseExecution
         }
     }
 
-    @Override
     public TournamentCourseExecution getTournamentCourseExecution(Integer courseExecutionId) {
         //CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
         CourseExecutionDto courseExecutionDto = monolithService.getCourseExecutionById(courseExecutionId);
@@ -65,12 +62,10 @@ public class TournamentRequiredService implements UserInterface, CourseExecution
         return new TournamentCourseExecution(tournamentCourseExecutionDto);
     }
 
-    @Override
     public Integer getDemoCourseExecutionId() {
         return monolithService.getDemoCourseExecutionId();
     }
 
-    @Override
     public Set<TournamentTopic> getTournamentTopics(Set<Integer> topicsList) {
         List<TopicWithCourseDto> topicWithCourseDtoList = monolithService.findTopics(topicsList);
         Set<TournamentTopic> topics = new HashSet<>();
@@ -94,17 +89,14 @@ public class TournamentRequiredService implements UserInterface, CourseExecution
         return topics;
     }
 
-    @Override
-    public Integer getQuizId(Integer creatorId, Integer courseExecutionId, StatementTournamentCreationDto quizDetails) {
+    public Integer getQuizId(Integer creatorId, Integer courseExecutionId, ExternalStatementCreationDto quizDetails) {
         return monolithService.generateQuizAndGetId(creatorId, courseExecutionId, quizDetails);
     }
 
-    @Override
     public StatementQuizDto startTournamentQuiz(Integer userId, Integer quizId) {
         return monolithService.startQuiz(userId, quizId);
     }
 
-    @Override
     public QuizDto getQuiz(Integer quizId) {
         /*Quiz quiz = quizRepository.findById(quizId)
                 .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));*/
@@ -112,12 +104,10 @@ public class TournamentRequiredService implements UserInterface, CourseExecution
         return monolithService.findQuizById(quizId);
     }
 
-    @Override
     public void updateQuiz(QuizDto quizDto) {
         monolithService.updateQuiz(quizDto);
     }
 
-    @Override
     public void deleteQuiz(Integer quizId) {
         monolithService.deleteExternalQuiz(quizId);
     }
