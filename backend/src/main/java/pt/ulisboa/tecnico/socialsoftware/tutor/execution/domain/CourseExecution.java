@@ -264,12 +264,22 @@ public class CourseExecution implements DomainEntity {
     }
 
     public List<Question> filterQuestionsByTopics(List<Question> questions, Set<TopicDto> topics) {
-        Set<Integer> availableTopicsIds = findAvailableTopics().stream().map(Topic::getId).collect(Collectors.toSet());
-        Set<Integer> topicsIds = topics.stream().map(TopicDto::getId).filter(topicId -> availableTopicsIds.contains(topicId)).collect(Collectors.toSet());
+        Set<Integer> topicIds = topics.stream().map(TopicDto::getId).collect(Collectors.toSet());
+        Set<Assessment> availableAssessments = getAvailableAssessments().stream()
+                .filter(assessment -> topicIds.containsAll(assessment.getTopics().stream().map(Topic::getId).collect(Collectors.toSet())))
+                .collect(Collectors.toSet());
 
-        return questions.stream()
-                .filter(question -> question.hasTopics(topicsIds))
-                .collect(Collectors.toList());
+        List<Question> result = new ArrayList<>();
+        for (Question question : questions) {
+            for (Assessment assessment : availableAssessments) {
+                if (question.belongsToAssessment(assessment)) {
+                    result.add(question);
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
     public Set<User> getTeachers() {
