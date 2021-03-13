@@ -4,11 +4,11 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 @DataJpaTest
 class RemoveCourseExecutionsTest extends SpockTest {
@@ -21,7 +21,7 @@ class RemoveCourseExecutionsTest extends SpockTest {
 
         courseExecutionTecnico = externalCourseExecution
 
-        courseExecutionExternal = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
+        courseExecutionExternal = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecutionExternal)
      }
 
@@ -31,10 +31,10 @@ class RemoveCourseExecutionsTest extends SpockTest {
 
         then: "the returned data are correct"
         courseExecutionRepository.findAll().size() == existingCourseExecutions
-        def tecnicoExecutionCourse = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO.name()).get()
+        def tecnicoExecutionCourse = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.TECNICO.name()).get()
         tecnicoExecutionCourse.acronym == COURSE_1_ACRONYM
         tecnicoExecutionCourse.academicTerm == COURSE_1_ACADEMIC_TERM
-        tecnicoExecutionCourse.type == Course.Type.TECNICO
+        tecnicoExecutionCourse.type == CourseType.TECNICO
     }
 
     def "cannot delete a execution course with quizzes"() {

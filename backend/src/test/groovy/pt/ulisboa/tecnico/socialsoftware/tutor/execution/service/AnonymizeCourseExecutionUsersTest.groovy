@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 import java.util.stream.Collectors
 
 @DataJpaTest
@@ -23,9 +23,9 @@ class AnonymizeCourseExecutionUsersTest extends SpockTest {
     def answerItemsIds
 
     def setup() {
-        tecnicoCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
+        tecnicoCourse = new Course(COURSE_1_NAME, CourseType.TECNICO)
         courseRepository.save(tecnicoCourse)
-        tecnicoCourseExecution = new CourseExecution(tecnicoCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TOMORROW)
+        tecnicoCourseExecution = new CourseExecution(tecnicoCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, CourseType.TECNICO, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(tecnicoCourseExecution)
 
         user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)

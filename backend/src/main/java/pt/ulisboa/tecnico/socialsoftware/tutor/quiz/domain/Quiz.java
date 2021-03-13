@@ -1,14 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -25,9 +26,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
                 @Index(name = "quizzes_indx_0", columnList = "course_execution_id")
         })
 public class Quiz implements DomainEntity {
-    public enum QuizType {
-        EXAM, TEST, GENERATED, PROPOSED, IN_CLASS, EXTERNAL_QUIZ
-    }
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -98,8 +96,6 @@ public class Quiz implements DomainEntity {
         setResultsDate(DateHandler.toLocalDateTime(quizDto.getResultsDate()));
         setSeries(quizDto.getSeries());
         setVersion(quizDto.getVersion());
-
-
     }
 
     @Override
@@ -362,5 +358,37 @@ public class Quiz implements DomainEntity {
         setCreationDate(DateHandler.now());
         setType(QuizType.GENERATED.toString());
         setTitle("Generated Quiz");
+    }
+
+    public QuizDto getDto(boolean deepCopy) {
+        QuizDto dto = new QuizDto();
+        dto.setId(getId());
+        dto.setKey(getKey());
+        dto.setScramble(getScramble());
+        dto.setQrCodeOnly(isQrCodeOnly());
+        dto.setOneWay(isOneWay());
+        dto.setTitle(getTitle());
+        dto.setTimed(getType().equals(QuizType.IN_CLASS));
+        dto.setType(getType().toString());
+        dto.setSeries(getSeries());
+        dto.setVersion(getVersion());
+        dto.setNumberOfQuestions(getQuizQuestionsNumber());
+        dto.setNumberOfAnswers(getQuizAnswers().size());
+        dto.setCreationDate(DateHandler.toISOString(getCreationDate()));
+        dto.setAvailableDate(DateHandler.toISOString(getAvailableDate()));
+        dto.setConclusionDate(DateHandler.toISOString(getConclusionDate()));
+        dto.setResultsDate(DateHandler.toISOString(getResultsDate()));
+
+        if (deepCopy) {
+            dto.setQuestions(getQuizQuestions().stream()
+                    .map(quizQuestion -> {
+                        QuestionDto questionDto = quizQuestion.getQuestion().getDto();
+                        questionDto.setSequence(quizQuestion.getSequence());
+                        return questionDto;
+                    })
+                    .collect(Collectors.toList()));
+        }
+
+        return dto;
     }
 }

@@ -9,7 +9,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 @DataJpaTest
 class CreateAssessmentTest extends SpockTest {
@@ -21,7 +22,7 @@ class CreateAssessmentTest extends SpockTest {
         topic = topicRepository.save(topic)
 
         def topicList = new ArrayList()
-        topicList.add(new TopicDto(topic))
+        topicList.add(topic.getDto())
 
         def topicConjunction = new TopicConjunctionDto()
         topicConjunction.setTopics(topicList)
@@ -40,7 +41,7 @@ class CreateAssessmentTest extends SpockTest {
         then: "the correct assessment is inside the repository"
         assessmentRepository.count() == 1L
         topicRepository.count() == 1L
-        def result = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO.name())
+        def result = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.TECNICO.name())
                 .get().getAssessments().stream().findAny().get()
         result.getId() != null
         result.getStatus() == Assessment.Status.AVAILABLE

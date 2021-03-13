@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
 
 import java.io.Serializable;
 
@@ -14,7 +14,7 @@ public class QuestionAnswerDto implements Serializable {
     }
 
     public QuestionAnswerDto(QuestionAnswer questionAnswer) {
-        this.question = new QuestionDto(questionAnswer.getQuizQuestion().getQuestion());
+        this.question = questionAnswer.getQuizQuestion().getQuestion().getDto();
         if (questionAnswer.getAnswerDetails() == null) {
             this.answerDetails = questionAnswer.getQuizQuestion().getQuestion().getEmptyAnswerDetailsDto();
         } else {

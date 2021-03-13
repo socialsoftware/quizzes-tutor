@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 @DataJpaTest
 class RegisterExternalUserTest extends SpockTest {
@@ -27,9 +28,9 @@ class RegisterExternalUserTest extends SpockTest {
     Mailer mailerMock
 
     def setup() {
-        externalCourse = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
+        externalCourse = new Course(COURSE_1_NAME, CourseType.EXTERNAL)
         courseRepository.save(externalCourse)
-        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
+        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(externalCourseExecution)
 
         previousNumberUser = userRepository.findAll().size()
@@ -142,14 +143,14 @@ class RegisterExternalUserTest extends SpockTest {
 
         where:
         executionType         | email             | role                     || errorMessage
-        Course.Type.TECNICO   | USER_1_EMAIL      | User.Role.STUDENT        || ErrorMessage.COURSE_EXECUTION_NOT_EXTERNAL
-        Course.Type.EXTERNAL  | null              | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
-        Course.Type.EXTERNAL  | ""                | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
-        Course.Type.EXTERNAL  | "test.mail.com"   | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
-        Course.Type.EXTERNAL  | "test@"           | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
-        Course.Type.EXTERNAL  | USER_1_EMAIL      | null                     || ErrorMessage.INVALID_ROLE
-        Course.Type.EXTERNAL  | USER_1_EMAIL      | User.Role.ADMIN          || ErrorMessage.INVALID_ROLE
-        Course.Type.EXTERNAL  | USER_1_EMAIL      | User.Role.DEMO_ADMIN     || ErrorMessage.INVALID_ROLE
+        CourseType.TECNICO   | USER_1_EMAIL      | User.Role.STUDENT        || ErrorMessage.COURSE_EXECUTION_NOT_EXTERNAL
+        CourseType.EXTERNAL  | null              | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
+        CourseType.EXTERNAL  | ""                | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
+        CourseType.EXTERNAL  | "test.mail.com"   | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
+        CourseType.EXTERNAL  | "test@"           | User.Role.STUDENT        || ErrorMessage.INVALID_EMAIL
+        CourseType.EXTERNAL  | USER_1_EMAIL      | null                     || ErrorMessage.INVALID_ROLE
+        CourseType.EXTERNAL  | USER_1_EMAIL      | User.Role.ADMIN          || ErrorMessage.INVALID_ROLE
+        CourseType.EXTERNAL  | USER_1_EMAIL      | User.Role.DEMO_ADMIN     || ErrorMessage.INVALID_ROLE
 
     }
 

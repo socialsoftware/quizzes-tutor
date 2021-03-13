@@ -33,6 +33,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
@@ -261,18 +262,18 @@ class SpockTest extends Specification {
     RESTClient restClient
 
     def setup() {
-        externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
+        externalCourse = new Course(COURSE_1_NAME, CourseType.TECNICO)
         courseRepository.save(externalCourse)
 
-        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TODAY)
+        externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.TECNICO, LOCAL_DATE_TODAY)
         courseExecutionRepository.save(externalCourseExecution)
     }
 
     def persistentCourseCleanup() {
         Course c
         CourseExecution ce
-        if(courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO as String).isPresent()){
-            ce = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO as String).get()
+        if(courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.TECNICO as String).isPresent()){
+            ce = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.TECNICO as String).get()
             c = ce.getCourse()
             courseExecutionRepository.dissociateCourseExecutionUsers(ce.getId())
             courseExecutionRepository.deleteById(ce.getId())

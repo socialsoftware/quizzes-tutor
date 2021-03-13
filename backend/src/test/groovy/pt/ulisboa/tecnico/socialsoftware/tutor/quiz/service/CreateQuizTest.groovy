@@ -8,10 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto
 import spock.lang.Unroll
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
@@ -39,7 +38,7 @@ class CreateQuizTest extends SpockTest {
         questionDetailsRepository.save(questionDetails)
         questionRepository.save(question)
 
-        questionDto = new QuestionDto(question)
+        questionDto = question.getDto()
         questionDto.setKey(1)
         questionDto.setSequence(1)
 
@@ -82,12 +81,12 @@ class CreateQuizTest extends SpockTest {
 
         where:
         quizType                | title      | availableDate               | conclusionDate       | resultsDate
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TODAY           | STRING_DATE_TOMORROW | STRING_DATE_LATER
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | "2020-04-22T02:03:00+01:00" | STRING_DATE_TOMORROW | STRING_DATE_LATER
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TODAY           | null                 | STRING_DATE_LATER
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TODAY           | null                 | null
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TODAY           | null                 | STRING_DATE_LATER
-        Quiz.QuizType.IN_CLASS  | QUIZ_TITLE | STRING_DATE_TODAY           | STRING_DATE_TOMORROW | null
+        QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TODAY           | STRING_DATE_TOMORROW | STRING_DATE_LATER
+        QuizType.PROPOSED  | QUIZ_TITLE | "2020-04-22T02:03:00+01:00" | STRING_DATE_TOMORROW | STRING_DATE_LATER
+        QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TODAY           | null                 | STRING_DATE_LATER
+        QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TODAY           | null                 | null
+        QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TODAY           | null                 | STRING_DATE_LATER
+        QuizType.IN_CLASS  | QUIZ_TITLE | STRING_DATE_TODAY           | STRING_DATE_TOMORROW | null
     }
 
     @Unroll
@@ -112,19 +111,19 @@ class CreateQuizTest extends SpockTest {
         null                    | QUIZ_TITLE | STRING_DATE_TODAY    | STRING_DATE_TOMORROW | STRING_DATE_LATER    || INVALID_TYPE_FOR_QUIZ
         "   "                   | QUIZ_TITLE | STRING_DATE_TODAY    | STRING_DATE_TOMORROW | STRING_DATE_LATER    || INVALID_TYPE_FOR_QUIZ
         "Açores"                | QUIZ_TITLE | STRING_DATE_TODAY    | STRING_DATE_TOMORROW | STRING_DATE_LATER    || INVALID_TYPE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | null       | STRING_DATE_TODAY    | STRING_DATE_TOMORROW | STRING_DATE_LATER    || INVALID_TITLE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | "        " | STRING_DATE_TODAY    | STRING_DATE_TOMORROW | STRING_DATE_LATER    || INVALID_TITLE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | null                 | STRING_DATE_TOMORROW | STRING_DATE_LATER    || INVALID_AVAILABLE_DATE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TOMORROW | STRING_DATE_TODAY    | STRING_DATE_LATER    || INVALID_CONCLUSION_DATE_FOR_QUIZ
-        Quiz.QuizType.IN_CLASS  | QUIZ_TITLE | STRING_DATE_TODAY    | null                 | STRING_DATE_TOMORROW || INVALID_CONCLUSION_DATE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TODAY    | STRING_DATE_LATER    | STRING_DATE_TOMORROW || INVALID_RESULTS_DATE_FOR_QUIZ
-        Quiz.QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TOMORROW | STRING_DATE_LATER    | STRING_DATE_TODAY    || INVALID_RESULTS_DATE_FOR_QUIZ
+        QuizType.PROPOSED  | null       | STRING_DATE_TODAY    | STRING_DATE_TOMORROW | STRING_DATE_LATER    || INVALID_TITLE_FOR_QUIZ
+        QuizType.PROPOSED  | "        " | STRING_DATE_TODAY    | STRING_DATE_TOMORROW | STRING_DATE_LATER    || INVALID_TITLE_FOR_QUIZ
+        QuizType.PROPOSED  | QUIZ_TITLE | null                 | STRING_DATE_TOMORROW | STRING_DATE_LATER    || INVALID_AVAILABLE_DATE_FOR_QUIZ
+        QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TOMORROW | STRING_DATE_TODAY    | STRING_DATE_LATER    || INVALID_CONCLUSION_DATE_FOR_QUIZ
+        QuizType.IN_CLASS  | QUIZ_TITLE | STRING_DATE_TODAY    | null                 | STRING_DATE_TOMORROW || INVALID_CONCLUSION_DATE_FOR_QUIZ
+        QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TODAY    | STRING_DATE_LATER    | STRING_DATE_TOMORROW || INVALID_RESULTS_DATE_FOR_QUIZ
+        QuizType.PROPOSED  | QUIZ_TITLE | STRING_DATE_TOMORROW | STRING_DATE_LATER    | STRING_DATE_TODAY    || INVALID_RESULTS_DATE_FOR_QUIZ
     }
 
     def "create quiz with wrong question sequence"() {
         given: 'createQuiz a quiz'
         quizDto.setTitle(QUIZ_TITLE)
-        quizDto.setType(Quiz.QuizType.GENERATED.toString())
+        quizDto.setType(QuizType.GENERATED.toString())
         questionDto.setSequence(3)
 
         when:

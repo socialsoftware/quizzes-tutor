@@ -1,7 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -16,7 +17,7 @@ public class TopicConjunctionDto implements Serializable {
 
     public TopicConjunctionDto(TopicConjunction topicConjunction) {
         this.id = topicConjunction.getId();
-        this.topics = topicConjunction.getTopics().stream().map(TopicDto::new).collect(Collectors.toList());
+        this.topics = topicConjunction.getTopics().stream().map(Topic::getDto).collect(Collectors.toList());
     }
 
     public Integer getId() {

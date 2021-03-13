@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 
 @DataJpaTest
 class FindQuestionsTest extends SpockTest {
@@ -65,7 +66,7 @@ class FindQuestionsTest extends SpockTest {
         optionRepository.save(optionKO)
 
         Quiz quiz = new Quiz()
-        quiz.setType(Quiz.QuizType.PROPOSED.toString())
+        quiz.setType(QuizType.PROPOSED.toString())
         quiz.setKey(1)
         quiz.setCourseExecution(externalCourseExecution)
         quizRepository.save(quiz)

@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
@@ -60,7 +60,7 @@ class UpdateQuestionSubmissionTest extends SpockTest{
 
     def "edit a question submission"(){
         given: "an edited questionDto"
-        def questionDto = new QuestionDto(question)
+        def questionDto = question.getDto()
         questionDto.setTitle(QUESTION_2_TITLE)
         questionDto.setContent(QUESTION_2_CONTENT)
         and: "a questionSubmissionDto"
@@ -86,7 +86,7 @@ class UpdateQuestionSubmissionTest extends SpockTest{
     @Unroll
     def "edit a question with invalid input"() {
         given: "an edited questionDto"
-        def questionDto = new QuestionDto(question)
+        def questionDto = question.getDto()
         questionDto.setTitle(title)
         questionDto.setContent(content)
         and: "a questionSubmissionDto"
@@ -113,7 +113,7 @@ class UpdateQuestionSubmissionTest extends SpockTest{
         given: "a question submission not in revision"
         questionSubmission.setStatus(status)
         and: "an edited questionDto"
-        def questionDto = new QuestionDto(question)
+        def questionDto = question.getDto()
         questionDto.setTitle(QUESTION_2_TITLE)
         questionDto.setContent(QUESTION_2_CONTENT)
         and: "a questionSubmissionDto"

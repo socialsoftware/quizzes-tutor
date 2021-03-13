@@ -14,9 +14,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SolveQuizTournamentIT extends SpockTest {
@@ -40,9 +41,9 @@ class SolveQuizTournamentIT extends SpockTest {
     def setup() {
         restClient = new RESTClient("http://localhost:" + port)
 
-        course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
+        course = new Course(COURSE_1_NAME, CourseType.EXTERNAL)
         courseRepository.save(course)
-        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
+        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
         user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
@@ -65,7 +66,7 @@ class SolveQuizTournamentIT extends SpockTest {
         topicDto1.setName(TOPIC_1_NAME)
         def topic1 = new Topic(course, topicDto1);
         topicRepository.save(topic1)
-        topicDto1 = new TopicDto(topic1)
+        topicDto1 = topic1.getDto()
 
         def topics = new HashSet<Integer>()
         topics.add(topicDto1.getId())

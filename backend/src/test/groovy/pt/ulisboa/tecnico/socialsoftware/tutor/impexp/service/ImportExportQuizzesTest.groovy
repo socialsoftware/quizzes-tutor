@@ -8,9 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 
 @DataJpaTest
 class ImportExportQuizzesTest extends SpockTest {
@@ -50,7 +50,7 @@ class ImportExportQuizzesTest extends SpockTest {
         quizDto.setCreationDate(DateHandler.toISOString(creationDate))
         quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
         quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
-        quizDto.setType(Quiz.QuizType.EXAM.toString())
+        quizDto.setType(QuizType.EXAM.toString())
         quiz = quizService.createQuiz(externalCourseExecution.getId(), quizDto)
 
         quizService.addQuestionToQuiz(questionDto.getId(), quiz.getId())
@@ -78,7 +78,7 @@ class ImportExportQuizzesTest extends SpockTest {
         quizResult.getCreationDate() == creationDate
         quizResult.getAvailableDate() == availableDate
         quizResult.getConclusionDate() == conclusionDate
-        quizResult.getType() == Quiz.QuizType.EXAM
+        quizResult.getType() == QuizType.EXAM
         quizResult.getQuizQuestionsNumber() == 1
         def quizQuestionResult =  quizResult.getQuizQuestions().stream().findAny().orElse(null)
         quizQuestionResult.getSequence() == 0

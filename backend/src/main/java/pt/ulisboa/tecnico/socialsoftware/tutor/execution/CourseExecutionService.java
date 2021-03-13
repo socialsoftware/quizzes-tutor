@@ -6,14 +6,15 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.user.dtos.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.execution.dtos.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -21,7 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerI
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.user.dtos.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.user.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 
@@ -54,7 +55,7 @@ public class CourseExecutionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto getCourseExecutionById(int courseExecutionId) {
         return courseExecutionRepository.findById(courseExecutionId)
-                .map(CourseExecutionDto::new)
+                .map(CourseExecution::getDto)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
     }
 
@@ -66,7 +67,7 @@ public class CourseExecutionService {
         return courseExecutionRepository.findAll().stream()
                 .filter(courseExecution -> role.equals(User.Role.ADMIN) ||
                         (role.equals(User.Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(DemoUtils.COURSE_NAME)))
-                .map(CourseExecutionDto::new)
+                .map(CourseExecution::getDto)
                 .sorted(Comparator
                         .comparing(CourseExecutionDto::getName)
                         .thenComparing(CourseExecutionDto::getAcademicTerm))
@@ -78,15 +79,15 @@ public class CourseExecutionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto createTecnicoCourseExecution(CourseExecutionDto courseExecutionDto) {
-        courseExecutionDto.setCourseExecutionType(Course.Type.TECNICO);
-        courseExecutionDto.setCourseType(Course.Type.TECNICO);
+        courseExecutionDto.setCourseExecutionType(CourseType.TECNICO);
+        courseExecutionDto.setCourseType(CourseType.TECNICO);
 
-        Course course = getCourse(courseExecutionDto.getName(), Course.Type.TECNICO);
+        Course course = getCourse(courseExecutionDto.getName(), CourseType.TECNICO);
 
         CourseExecution courseExecution = course.getCourseExecution(courseExecutionDto.getAcronym(), courseExecutionDto.getAcademicTerm(), courseExecutionDto.getCourseExecutionType())
                 .orElseGet(() -> createCourseExecution(course, courseExecutionDto));
         courseExecution.setStatus(CourseExecutionStatus.ACTIVE);
-        return new CourseExecutionDto(courseExecution);
+        return courseExecution.getDto();
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -105,14 +106,14 @@ public class CourseExecutionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto createExternalCourseExecution(CourseExecutionDto courseExecutionDto) {
-        courseExecutionDto.setCourseExecutionType(Course.Type.EXTERNAL);
+        courseExecutionDto.setCourseExecutionType(CourseType.EXTERNAL);
 
         Course course = getCourse(courseExecutionDto.getName(), courseExecutionDto.getCourseType());
 
         CourseExecution courseExecution = createCourseExecution(course, courseExecutionDto);
 
         courseExecution.setStatus(CourseExecutionStatus.ACTIVE);
-        return new CourseExecutionDto(courseExecution);
+        return courseExecution.getDto();
     }
 
     @Retryable(
@@ -161,7 +162,7 @@ public class CourseExecutionService {
         return courseExecution.getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
                 .sorted(Comparator.comparing(User::getName))
-                .map(StudentDto::new)
+                .map(User::getStudentDto)
                 .collect(Collectors.toList());
     }
 
@@ -173,11 +174,11 @@ public class CourseExecutionService {
         }
         return courseExecution.getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.TEACHER))
-                .map(UserDto::new)
+                .map(User::getUserDto)
                 .collect(Collectors.toList());
     }
 
-    private Course getCourse(String name, Course.Type type) {
+    private Course getCourse(String name, CourseType type) {
         if (type == null)
             throw new TutorException(INVALID_TYPE_FOR_COURSE);
 
@@ -196,18 +197,18 @@ public class CourseExecutionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto getDemoCourse() {
-        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, Course.Type.TECNICO.toString()).orElse(null);
+        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElse(null);
 
         if (courseExecution == null) {
             return createTecnicoCourseExecution(new CourseExecutionDto(DemoUtils.COURSE_NAME, DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM));
         }
-        return new CourseExecutionDto(courseExecution);
+        return courseExecution.getDto();
     }
 
     public CourseExecution getDemoCourseExecution() {
-        return this.courseExecutionRepository.findByFields(DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, Course.Type.TECNICO.toString()).orElseGet(() -> {
-            Course course = getCourse(DemoUtils.COURSE_NAME, Course.Type.TECNICO);
-            CourseExecution courseExecution = new CourseExecution(course, DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, Course.Type.TECNICO, DateHandler.now().plusDays(1));
+        return this.courseExecutionRepository.findByFields(DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElseGet(() -> {
+            Course course = getCourse(DemoUtils.COURSE_NAME, CourseType.TECNICO);
+            CourseExecution courseExecution = new CourseExecution(course, DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO, DateHandler.now().plusDays(1));
             return courseExecutionRepository.save(courseExecution);
         });
     }
@@ -224,7 +225,7 @@ public class CourseExecutionService {
     public CourseExecutionDto deleteExternalInactiveUsers(Integer courseExecutionId, List<Integer> usersId){
         CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
         deleteUsersOfUserIds(usersId, courseExecution);
-        return new CourseExecutionDto(courseExecution);
+        return courseExecution.getDto();
     }
 
     @Retryable(
@@ -234,7 +235,7 @@ public class CourseExecutionService {
     public List<TopicDto> findAvailableTopicsByCourseExecution(int courseExecutionId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        return courseExecution.findAvailableTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
+        return courseExecution.findAvailableTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(Topic::getDto).collect(Collectors.toList());
     }
 
     private void deleteUsersOfUserIds(List<Integer> usersId, CourseExecution courseExecution) {
@@ -262,7 +263,7 @@ public class CourseExecutionService {
     }
 
     private void checkExternalExecution(CourseExecution courseExecution) {
-        if (!courseExecution.getType().equals(Course.Type.EXTERNAL)) {
+        if (!courseExecution.getType().equals(CourseType.EXTERNAL)) {
             throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL);
         }
     }

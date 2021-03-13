@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 @DataJpaTest
 class CreateCourseExecutionsTest extends SpockTest {
@@ -14,15 +15,15 @@ class CreateCourseExecutionsTest extends SpockTest {
         given: "a course"
         def course = Mock(Course)
         and: "it does not have course executions"
-        course.existsCourseExecution(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL) >> false
+        course.existsCourseExecution(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL) >> false
 
         when:
-        def courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
+        def courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
 
         then: "the object is correctly created"
         courseExecution.acronym == COURSE_1_ACRONYM
         courseExecution.academicTerm == COURSE_1_ACADEMIC_TERM
-        courseExecution.type == Course.Type.EXTERNAL
+        courseExecution.type == CourseType.EXTERNAL
         1 * course.addCourseExecution(_)
     }
 
@@ -30,10 +31,10 @@ class CreateCourseExecutionsTest extends SpockTest {
         given: "a course"
         def course = Mock(Course)
         and: "course execution already exists"
-        course.existsCourseExecution(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL) >> true
+        course.existsCourseExecution(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL) >> true
 
         when:
-        new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
+        new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
 
         then: "the returned data are correct"
         thrown(TutorException)

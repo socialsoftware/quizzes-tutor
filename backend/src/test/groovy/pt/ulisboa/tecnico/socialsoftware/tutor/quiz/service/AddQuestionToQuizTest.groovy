@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 
 @DataJpaTest
 class AddQuestionToQuizTest extends SpockTest {
@@ -15,7 +16,7 @@ class AddQuestionToQuizTest extends SpockTest {
         Quiz quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(Quiz.QuizType.PROPOSED.toString())
+        quiz.setType(QuizType.PROPOSED.toString())
         quiz.setAvailableDate(LOCAL_DATE_BEFORE)
         quiz.setCourseExecution(externalCourseExecution)
         quiz.setOneWay(true)

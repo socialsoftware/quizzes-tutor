@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.execution.dtos.CourseExecutionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import spock.lang.Unroll
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 
 @DataJpaTest
 class GetSolvedQuizzesTest extends SpockTest {
@@ -28,7 +29,7 @@ class GetSolvedQuizzesTest extends SpockTest {
     def quizQuestion
 
     def setup() {
-        courseDto = new CourseExecutionDto(externalCourseExecution)
+        courseDto = externalCourseExecution.getDto()
 
         user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         user.addCourse(externalCourseExecution)
@@ -107,10 +108,10 @@ class GetSolvedQuizzesTest extends SpockTest {
 
         where:
         quizType                 | conclusionDate    | resultsDate
-        Quiz.QuizType.GENERATED  | null              | null
-        Quiz.QuizType.PROPOSED   | null              | null
-        Quiz.QuizType.IN_CLASS   | LOCAL_DATE_BEFORE | LOCAL_DATE_YESTERDAY
-        Quiz.QuizType.IN_CLASS   | LOCAL_DATE_BEFORE | null
+        QuizType.GENERATED  | null              | null
+        QuizType.PROPOSED   | null              | null
+        QuizType.IN_CLASS   | LOCAL_DATE_BEFORE | LOCAL_DATE_YESTERDAY
+        QuizType.IN_CLASS   | LOCAL_DATE_BEFORE | null
     }
 
     @Unroll
@@ -157,8 +158,8 @@ class GetSolvedQuizzesTest extends SpockTest {
 
         where:
         quizType                | conclusionDate      | resultsDate
-        Quiz.QuizType.IN_CLASS  | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER
-        Quiz.QuizType.IN_CLASS  | LOCAL_DATE_TOMORROW | null
+        QuizType.IN_CLASS  | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER
+        QuizType.IN_CLASS  | LOCAL_DATE_TOMORROW | null
     }
 
     @TestConfiguration

@@ -7,13 +7,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 @DataJpaTest
 class GetCourseExecutionsPerformanceTest extends SpockTest {
 
     def "performance testing to get 1000 course executions"() {
         1.upto(1, {
-            courseExecutionRepository.save(new CourseExecution(externalCourse, COURSE_1_ACRONYM + it, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TOMORROW))
+            courseExecutionRepository.save(new CourseExecution(externalCourse, COURSE_1_ACRONYM + it, COURSE_1_ACADEMIC_TERM, CourseType.TECNICO, LOCAL_DATE_TOMORROW))
         })
 
         when:

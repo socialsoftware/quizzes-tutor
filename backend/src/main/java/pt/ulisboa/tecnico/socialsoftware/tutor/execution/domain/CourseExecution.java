@@ -1,8 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.question.dtos.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -11,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
@@ -31,7 +34,7 @@ public class CourseExecution implements DomainEntity {
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    private Course.Type type;
+    private CourseType type;
 
     private String acronym;
     private String academicTerm;
@@ -64,7 +67,7 @@ public class CourseExecution implements DomainEntity {
     public CourseExecution() {
     }
 
-    public CourseExecution(Course course, String acronym, String academicTerm, Course.Type type, LocalDateTime endDate) {
+    public CourseExecution(Course course, String acronym, String academicTerm, CourseType type, LocalDateTime endDate) {
         if (course.existsCourseExecution(acronym, academicTerm, type)) {
             throw new TutorException(DUPLICATE_COURSE_EXECUTION, acronym + academicTerm);
         }
@@ -87,11 +90,11 @@ public class CourseExecution implements DomainEntity {
         return id;
     }
 
-    public Course.Type getType() {
+    public CourseType getType() {
         return type;
     }
 
-    public void setType(Course.Type type) {
+    public void setType(CourseType type) {
         if (type == null)
             throw new TutorException(INVALID_TYPE_FOR_COURSE_EXECUTION);
         this.type = type;
@@ -265,7 +268,7 @@ public class CourseExecution implements DomainEntity {
 
     public List<Question> filterQuestionsByTopics(List<Question> questions, Set<TopicWithCourseDto> topics) {
         Set<Integer> availableTopicsIds = findAvailableTopics().stream().map(Topic::getId).collect(Collectors.toSet());
-        Set<Integer> topicsIds = topics.stream().map(TopicWithCourseDto::getId).filter(topicId -> availableTopicsIds.contains(topicId)).collect(Collectors.toSet());
+        Set<Integer> topicsIds = topics.stream().map(TopicWithCourseDto::getId).filter(availableTopicsIds::contains).collect(Collectors.toSet());
 
         return questions.stream()
                 .filter(question -> question.hasTopics(topicsIds))
@@ -276,5 +279,36 @@ public class CourseExecution implements DomainEntity {
         return getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.TEACHER))
                 .collect(Collectors.toSet());
+    }
+
+    public CourseExecutionDto getDto() {
+        CourseExecutionDto dto = new CourseExecutionDto();
+        dto.setAcademicTerm(getAcademicTerm());
+        dto.setAcronym(getAcronym());
+        dto.setCourseExecutionId(getId());
+        dto.setCourseExecutionType(getType());
+        dto.setCourseId(getCourse().getId());
+        dto.setCourseType(getCourse().getType());
+        dto.setName(getCourse().getName());
+        dto.setStatus(getStatus());
+        dto.setNumberOfActiveTeachers(getNumberOfActiveTeachers());
+        dto.setNumberOfInactiveTeachers(getNumberofInactiveTeachers());
+        dto.setNumberOfActiveStudents(getNumberOfActiveStudents());
+        dto.setNumberOfInactiveStudents(getNumberOfInactiveStudents());
+        dto.setNumberOfQuizzes(getNumberOfQuizzes());
+        dto.setNumberOfQuestions(getNumberOfQuestions());
+        if(getType().equals(CourseType.EXTERNAL)) {
+            dto.setCourseExecutionUsers(new ArrayList<>());
+            getUsers().stream().forEach(user -> {
+                if (user.isStudent()) {
+                    dto.getCourseExecutionUsers().add(user.getStudentDto());
+                } else {
+                    dto.getCourseExecutionUsers().add(user.getUserDto());
+                }
+            });
+            //dto.setCourseExecutionUsers(courseExecutionUsers);
+        }
+
+        return dto;
     }
 }

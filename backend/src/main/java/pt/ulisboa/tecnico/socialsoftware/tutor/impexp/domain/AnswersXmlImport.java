@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
@@ -145,7 +146,7 @@ public class AnswersXmlImport {
         String academicTerm = quizElement.getAttributeValue("academicTerm");
         Course course = courseRepository.findByNameType(courseName, courseType)
                 .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName + ":" + courseType));
-        CourseExecution courseExecution = course.getCourseExecution(acronym, academicTerm, Course.Type.valueOf(courseExecutionType))
+        CourseExecution courseExecution = course.getCourseExecution(acronym, academicTerm, CourseType.valueOf(courseExecutionType))
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, acronym));
 
         Integer quizKey = Integer.valueOf(quizElement.getAttributeValue("key"));

@@ -6,6 +6,7 @@ import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RegisterExternalUserWebServiceIT extends SpockTest {
@@ -19,9 +20,9 @@ class RegisterExternalUserWebServiceIT extends SpockTest {
     
     def setup(){
         restClient = new RESTClient("http://localhost:" + port)
-        course1 = new Course("Demo Course", Course.Type.EXTERNAL)
+        course1 = new Course("Demo Course", CourseType.EXTERNAL)
         courseRepository.save(course1)
-        courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
+        courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution1)
         demoAdminLogin()
     }

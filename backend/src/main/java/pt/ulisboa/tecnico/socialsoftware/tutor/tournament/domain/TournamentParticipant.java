@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentParticipantDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentParticipantDto;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -95,5 +95,17 @@ public class TournamentParticipant {
     @Override
     public int hashCode() {
         return Objects.hash(id, username, name);
+    }
+
+    public TournamentParticipantDto getDto() {
+        TournamentParticipantDto dto = new TournamentParticipantDto();
+        dto.setUserId(getId());
+        dto.setName(getName());
+        dto.setUsername(getUsername());
+        dto.setAnswered(hasAnswered());
+        dto.setNumberOfAnswered(getNumberOfAnswered());
+        dto.setNumberOfCorrect(getNumberOfCorrect());
+        dto.setScore(getNumberOfCorrect() - (getNumberOfAnswered() - getNumberOfCorrect()) * 0.3);
+        return dto;
     }
 }

@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
@@ -16,14 +18,13 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 @Entity
 @Table(name = "courses")
 public class Course implements DomainEntity {
-    public enum Type {TECNICO, EXTERNAL}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     @Enumerated(EnumType.STRING)
-    private Type type;
+    private CourseType type;
 
     @Column(nullable = false)
     private String name;
@@ -39,7 +40,7 @@ public class Course implements DomainEntity {
 
     public Course() {}
 
-    public Course(String name, Course.Type type) {
+    public Course(String name, CourseType type) {
         setType(type);
         setName(name);
     }
@@ -89,11 +90,11 @@ public class Course implements DomainEntity {
         topics.add(topic);
     }
 
-    public Type getType() {
+    public CourseType getType() {
         return type;
     }
 
-    public void setType(Type type) {
+    public void setType(CourseType type) {
         if (type == null)
             throw new TutorException(INVALID_TYPE_FOR_COURSE);
 
@@ -110,7 +111,7 @@ public class Course implements DomainEntity {
                 '}';
     }
 
-    public Optional<CourseExecution> getCourseExecution(String acronym, String academicTerm, Course.Type type) {
+    public Optional<CourseExecution> getCourseExecution(String acronym, String academicTerm, CourseType type) {
         return getCourseExecutions().stream()
                 .filter(courseExecution -> courseExecution.getType().equals(type)
                         && courseExecution.getAcronym().equals(acronym)
@@ -118,7 +119,15 @@ public class Course implements DomainEntity {
                 .findAny();
     }
 
-    public boolean existsCourseExecution(String acronym, String academicTerm, Course.Type type) {
+    public boolean existsCourseExecution(String acronym, String academicTerm, CourseType type) {
         return getCourseExecution(acronym, academicTerm, type).isPresent();
+    }
+
+    public CourseExecutionDto getCourseExecutionDto() {
+        CourseExecutionDto dto = new CourseExecutionDto();
+        dto.setCourseId(getId());
+        dto.setCourseType(getType());
+        dto.setName(getName());
+        return dto;
     }
 }

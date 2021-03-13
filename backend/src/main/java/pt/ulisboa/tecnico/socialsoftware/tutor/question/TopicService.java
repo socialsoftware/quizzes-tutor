@@ -8,7 +8,8 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.question.dtos.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
@@ -16,8 +17,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 
 import java.sql.SQLException;
@@ -55,7 +56,7 @@ public class TopicService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<TopicDto> findTopics(int courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-        return topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
+        return topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(Topic::getDto).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -72,7 +73,7 @@ public class TopicService {
 
         Topic topic = new Topic(course, topicDto);
         topicRepository.save(topic);
-        return new TopicDto(topic);
+        return topic.getDto();
     }
 
     @Retryable(
@@ -82,7 +83,7 @@ public class TopicService {
     public List<QuestionDto> getTopicQuestions(Integer topicId) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
-        return topic.getQuestions().stream().map(QuestionDto::new).collect(Collectors.toList());
+        return topic.getQuestions().stream().map(Question::getDto).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -93,7 +94,7 @@ public class TopicService {
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
         topic.setName(topicDto.getName());
-        return new TopicDto(topic);
+        return topic.getDto();
     }
 
     @Retryable(
@@ -161,7 +162,7 @@ public class TopicService {
     public List<TopicWithCourseDto> findTopicById(Set<Integer> topicsList) {
         List<TopicWithCourseDto> topicWithCourseDtoList = new ArrayList<>();
         for (Integer topicId : topicsList) {
-            TopicWithCourseDto topicWithCourseDto = topicRepository.findById(topicId).map(TopicWithCourseDto::new)
+            TopicWithCourseDto topicWithCourseDto = topicRepository.findById(topicId).map(Topic::getTopicWithCourseDto)
                     .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
             topicWithCourseDtoList.add(topicWithCourseDto);
         }

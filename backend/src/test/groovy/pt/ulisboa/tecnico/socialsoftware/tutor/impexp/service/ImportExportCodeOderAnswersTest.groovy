@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 
 @DataJpaTest
 class ImportExportCodeOderAnswersTest extends SpockTest {
@@ -49,13 +50,13 @@ class ImportExportCodeOderAnswersTest extends SpockTest {
         Quiz quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)
-        quiz.setType(Quiz.QuizType.GENERATED.toString())
+        quiz.setType(QuizType.GENERATED.toString())
         quiz.setCourseExecution(externalCourseExecution)
 
         quiz.setCreationDate(DateHandler.now())
         quiz.setAvailableDate(DateHandler.now())
         quiz.setConclusionDate(DateHandler.now())
-        quiz.setType(Quiz.QuizType.EXAM.toString())
+        quiz.setType(QuizType.EXAM.toString())
         quizRepository.save(quiz)
 
         QuizQuestion quizQuestion= new QuizQuestion()

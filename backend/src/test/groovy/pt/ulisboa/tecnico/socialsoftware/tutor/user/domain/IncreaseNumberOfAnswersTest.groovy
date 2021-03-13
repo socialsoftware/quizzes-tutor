@@ -11,11 +11,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto
 import spock.lang.Unroll
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 
 @DataJpaTest
 class IncreaseNumberOfAnswersTest extends SpockTest{
@@ -47,7 +48,7 @@ class IncreaseNumberOfAnswersTest extends SpockTest{
         option.setCorrect(true)
         question.getQuestionDetails().addOption(option)
 
-        QuestionDto questionDto = new QuestionDto(question)
+        QuestionDto questionDto = question.getDto()
         questionDto.setKey(1)
         questionDto.setSequence(1)
 
@@ -80,11 +81,11 @@ class IncreaseNumberOfAnswersTest extends SpockTest{
 
         where:
         type                    || nTeacherAnswers  | nStudentAnswers | nInClassAnswers
-        Quiz.QuizType.PROPOSED  || 1                | 0               | 0
-        Quiz.QuizType.GENERATED || 0                | 1               | 0
-        Quiz.QuizType.IN_CLASS  || 0                | 0               | 1
-        Quiz.QuizType.TEST      || 0                | 0               | 0
-        Quiz.QuizType.EXAM      || 0                | 0               | 0
+        QuizType.PROPOSED  || 1                | 0               | 0
+        QuizType.GENERATED || 0                | 1               | 0
+        QuizType.IN_CLASS  || 0                | 0               | 1
+        QuizType.TEST      || 0                | 0               | 0
+        QuizType.EXAM      || 0                | 0               | 0
     }
 
     @TestConfiguration

@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 
 class DiscussionFixtureSpockTest extends SpockTest {
     def student
@@ -68,7 +69,7 @@ class DiscussionFixtureSpockTest extends SpockTest {
 
         def quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setType(Quiz.QuizType.IN_CLASS.toString())
+        quiz.setType(QuizType.IN_CLASS.toString())
         quiz.setCourseExecution(courseExecution)
         quizRepository.save(quiz)
         createdQuiz = quizRepository.findAll().get(0)

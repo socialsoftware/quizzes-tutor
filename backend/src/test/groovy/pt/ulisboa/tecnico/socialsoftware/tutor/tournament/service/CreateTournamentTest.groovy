@@ -7,9 +7,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentDto
 import spock.lang.Unroll
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
@@ -148,7 +149,7 @@ class CreateTournamentTest extends TournamentTest {
         tournamentDto.setNumberOfQuestions(NUMBER_OF_QUESTIONS)
         tournamentDto.setCanceled(false)
         and: "new course"
-        def differentCourse = new Course(COURSE_2_NAME, Course.Type.TECNICO)
+        def differentCourse = new Course(COURSE_2_NAME, CourseType.TECNICO)
         courseRepository.save(differentCourse)
         and: "new topic"
         def topicDto3 = new TopicDto()

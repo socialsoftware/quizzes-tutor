@@ -1,12 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentParticipantDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentDto;
 
 import javax.persistence.*;
 import java.util.*;
 import java.time.LocalDateTime;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -281,5 +284,39 @@ public class Tournament  {
                 ", privateTournament=" + privateTournament +
                 ", password='" + password + '\'' +
                 '}';
+    }
+
+    public TournamentDto getDto() {
+        TournamentDto dto = new TournamentDto();
+        dto.setId(getId());
+        dto.setCourseAcronym(getCourseExecution().getCourseAcronym());
+        if (hasQuiz()) dto.setQuizId(getQuizId());
+        dto.setStartTime(DateHandler.toISOString(getStartTime()));
+        dto.setEndTime(DateHandler.toISOString(getEndTime()));
+        dto.setNumberOfQuestions(getNumberOfQuestions());
+        dto.setCanceled(isCanceled());
+        dto.setTopicsDto(getTopics().stream()
+                .map(TournamentTopic::getDto)
+                .collect(Collectors.toSet()));
+        dto.setCreator(getCreator().getDto());
+        dto.setParticipants(getParticipants().stream()
+                .map(TournamentParticipant::getDto)
+                .sorted(Comparator.comparing(TournamentParticipantDto::getScore).reversed())
+                .collect(Collectors.toList()));
+        dto.setPrivateTournament(isPrivateTournament());
+        dto.setPassword(getPassword());
+        dto.setOpened(getStartTime().isBefore(DateHandler.now()) && getEndTime().isAfter(DateHandler.now()));
+        dto.setClosed(getEndTime().isBefore(DateHandler.now()));
+        return dto;
+    }
+
+    public ExternalStatementCreationDto getExternalStatementCreationDto() {
+        ExternalStatementCreationDto dto = new ExternalStatementCreationDto();
+        dto.setNumberOfQuestions(getNumberOfQuestions());
+        dto.setTopics(getTopics().stream().map(TournamentTopic::getTopicWithCourseDto).collect(Collectors.toSet()));
+        dto.setStartTime(getStartTime());
+        dto.setEndTime(getEndTime());
+        dto.setId(getId());
+        return dto;
     }
 }

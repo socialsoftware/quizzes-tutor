@@ -15,11 +15,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 
 @DataJpaTest
 class UpdateQuestionTest extends SpockTest {
@@ -72,7 +72,7 @@ class UpdateQuestionTest extends SpockTest {
 
     def "update a question"() {
         given: "a changed question"
-        def questionDto = new QuestionDto(question)
+        def questionDto = question.getDto()
         questionDto.setTitle(QUESTION_2_TITLE)
         questionDto.setContent(QUESTION_2_CONTENT)
         questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
@@ -114,7 +114,7 @@ class UpdateQuestionTest extends SpockTest {
 
     def "update question with missing data"() {
         given: 'a question'
-        def questionDto = new QuestionDto(question)
+        def questionDto = question.getDto()
         questionDto.setTitle('     ')
 
         when:
@@ -127,7 +127,7 @@ class UpdateQuestionTest extends SpockTest {
 
     def "update question with two options true"() {
         given: 'a question'
-        def questionDto = new QuestionDto(question)
+        def questionDto = question.getDto()
         questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
 
         def optionDto = new OptionDto(optionOK)
@@ -153,7 +153,7 @@ class UpdateQuestionTest extends SpockTest {
         given: "a question with answers"
         Quiz quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setType(Quiz.QuizType.GENERATED.toString())
+        quiz.setType(QuizType.GENERATED.toString())
         quiz.setCourseExecution(externalCourseExecution)
         quizRepository.save(quiz)
 
@@ -185,7 +185,7 @@ class UpdateQuestionTest extends SpockTest {
         answerDetailsRepository.save(answerDetails)
 
 
-        def questionDto = new QuestionDto(question)
+        def questionDto = question.getDto()
         questionDto.setTitle(QUESTION_2_TITLE)
         questionDto.setContent(QUESTION_2_CONTENT)
         questionDto.setStatus(Question.Status.DISABLED.name())

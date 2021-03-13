@@ -15,8 +15,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuestionExport
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.XMLQuestionExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
@@ -73,7 +73,7 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuestionDto findQuestionById(Integer questionId) {
-        return questionRepository.findById(questionId).map(QuestionDto::new)
+        return questionRepository.findById(questionId).map(Question::getDto)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
     }
 
@@ -90,7 +90,7 @@ public class QuestionService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuestionDto findQuestionByKey(Integer key) {
-        return questionRepository.findByKey(key).map(QuestionDto::new)
+        return questionRepository.findByKey(key).map(Question::getDto)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, key));
     }
 
@@ -99,7 +99,7 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().filter(q -> !q.isInSubmission()).map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findQuestions(courseId).stream().filter(q -> !q.isInSubmission()).map(Question::getDto).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -107,7 +107,7 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findAvailableQuestions(int courseId) {
-        return questionRepository.findAvailableQuestions(courseId).stream().map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findAvailableQuestions(courseId).stream().map(Question::getDto).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -119,7 +119,7 @@ public class QuestionService {
                 .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         Question question = new Question(course, questionDto);
         questionRepository.save(question);
-        return new QuestionDto(question);
+        return question.getDto();
     }
 
 
@@ -132,7 +132,7 @@ public class QuestionService {
                 .findById(questionId)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.update(questionDto);
-        return new QuestionDto(question);
+        return question.getDto();
     }
 
     @Retryable(

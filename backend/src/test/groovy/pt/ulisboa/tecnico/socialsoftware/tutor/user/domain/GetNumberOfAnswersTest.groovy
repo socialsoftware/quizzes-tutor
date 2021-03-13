@@ -11,10 +11,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto
 import spock.lang.Unroll
 
 @DataJpaTest
@@ -48,7 +48,7 @@ class GetNumberOfAnswersTest extends SpockTest{
         option.setCorrect(true)
         question.getQuestionDetails().addOption(option)
 
-        QuestionDto questionDto = new QuestionDto(question)
+        QuestionDto questionDto = question.getDto()
         questionDto.setKey(1)
         questionDto.setSequence(1)
 
@@ -57,7 +57,7 @@ class GetNumberOfAnswersTest extends SpockTest{
         quizDto.setQuestions(questions)
 
         quiz = new Quiz(quizDto)
-        quiz.setCourseExecution(externalCourseExecution);
+        quiz.setCourseExecution(externalCourseExecution)
         quizRepository.save(quiz)
 
         QuizQuestion quizQuestion = new QuizQuestion(quiz, question, 1)

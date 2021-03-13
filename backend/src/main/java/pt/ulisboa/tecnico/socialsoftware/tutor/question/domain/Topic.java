@@ -1,10 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto;
 
 import javax.persistence.*;
 import java.util.*;
@@ -14,9 +15,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 @Entity
 @Table(name = "topics")
 public class Topic implements DomainEntity {
-    public enum Status {
-        DISABLED, REMOVED, AVAILABLE
-    }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -118,5 +116,21 @@ public class Topic implements DomainEntity {
 
         topicConjunctions.forEach(topicConjunction -> topicConjunction.getTopics().remove(this));
         topicConjunctions.clear();
+    }
+
+    public TopicWithCourseDto getTopicWithCourseDto() {
+        TopicWithCourseDto dto = new TopicWithCourseDto();
+        dto.setId(getId());
+        dto.setName(getName());
+        dto.setCourseId(getCourse().getId());
+        return dto;
+    }
+
+    public TopicDto getDto() {
+        TopicDto dto = new TopicDto();
+        dto.setId(getId());
+        dto.setName(getName());
+        dto.setNumberOfQuestions(getQuestions().size());
+        return dto;
     }
 }

@@ -7,9 +7,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
@@ -36,7 +35,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         def result = quizRepository.findAll().get(0)
         result.getId() != null
         result.getTitle() == ("Tournament " + tournamentDto.getId() + " Quiz")
-        result.getType() == Quiz.QuizType.EXTERNAL_QUIZ
+        result.getType() == QuizType.EXTERNAL_QUIZ
         DateHandler.toISOString(result.getConclusionDate()) == STRING_DATE_LATER
         result.getQuizQuestionsNumber() == NUMBER_OF_QUESTIONS
     }
@@ -59,7 +58,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         def result = quizRepository.findAll().get(0)
         result.getId() != null
         result.getTitle() == ("Tournament " + tournamentDto.getId() + " Quiz")
-        result.getType() == Quiz.QuizType.EXTERNAL_QUIZ
+        result.getType() == QuizType.EXTERNAL_QUIZ
         DateHandler.toISOString(result.getConclusionDate()) == STRING_DATE_LATER
         result.getQuizQuestionsNumber() == NUMBER_OF_QUESTIONS
     }

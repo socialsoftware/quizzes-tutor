@@ -8,7 +8,7 @@ import java.util.stream.Collectors;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DISCUSSION_MISSING_QUESTION;
 
@@ -35,7 +35,7 @@ public class DiscussionDto implements Serializable {
         }
 
         if (deep) {
-            this.question = new QuestionDto(discussion.getQuestion());
+            this.question = discussion.getQuestion().getDto();
         }
 
 

@@ -15,9 +15,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_YET_AVAILABLE
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NO_LONGER_AVAILABLE
@@ -41,7 +42,7 @@ class ConcludeQuizTest extends SpockTest {
         quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle("Quiz Title")
-        quiz.setType(Quiz.QuizType.PROPOSED.toString())
+        quiz.setType(QuizType.PROPOSED.toString())
         quiz.setCourseExecution(externalCourseExecution)
         quiz.setAvailableDate(DateHandler.now())
         quizRepository.save(quiz)
@@ -112,7 +113,7 @@ class ConcludeQuizTest extends SpockTest {
     def 'conclude quiz IN_CLASS without answering, before conclusionDate'() {
         given: 'an IN_CLASS quiz with future conclusionDate'
         quiz.setConclusionDate(DateHandler.now().plusDays(2))
-        quiz.setType(Quiz.QuizType.IN_CLASS.toString())
+        quiz.setType(QuizType.IN_CLASS.toString())
         and: 'an empty answer'
         def statementQuizDto = new StatementQuizDto()
         statementQuizDto.id = quiz.getId()
@@ -197,7 +198,7 @@ class ConcludeQuizTest extends SpockTest {
 
     def 'conclude quiz without answering, after conclusionDate'() {
         given: 'an IN_CLASS quiz with conclusionDate before now in days'
-        quiz.setType(Quiz.QuizType.IN_CLASS.toString())
+        quiz.setType(QuizType.IN_CLASS.toString())
         quiz.setAvailableDate(DateHandler.now().minusDays(2))
         quiz.setConclusionDate(DateHandler.now().minusDays(1))
         and: 'an empty answer'
@@ -215,7 +216,7 @@ class ConcludeQuizTest extends SpockTest {
 
     def 'conclude quiz without answering, 9 minutes after conclusionDate'() {
         given: 'an IN_CLASS quiz with conclusionDate before now in days'
-        quiz.setType(Quiz.QuizType.IN_CLASS.toString())
+        quiz.setType(QuizType.IN_CLASS.toString())
         quiz.setAvailableDate(DateHandler.now().minusDays(2))
         quiz.setConclusionDate(DateHandler.now().minusMinutes(9))
         and: 'an empty answer'

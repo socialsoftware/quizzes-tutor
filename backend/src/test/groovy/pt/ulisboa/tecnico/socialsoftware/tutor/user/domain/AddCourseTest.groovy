@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 @DataJpaTest
 class AddCourseTest extends SpockTest {
@@ -19,9 +20,9 @@ class AddCourseTest extends SpockTest {
 
     def "addCourse" () {
         given:
-        def course = new Course(COURSE_2_NAME, Course.Type.TECNICO)
+        def course = new Course(COURSE_2_NAME, CourseType.TECNICO)
         courseRepository.save(course)
-        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TOMORROW)
+        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, CourseType.TECNICO, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
         def previousNumberOfUsers = courseExecution.getUsers().size()
         def previousNumberOfCourses = user.getCourseExecutions().size()

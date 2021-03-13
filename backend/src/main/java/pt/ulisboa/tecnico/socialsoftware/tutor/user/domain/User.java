@@ -2,7 +2,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.user.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
@@ -229,7 +232,7 @@ public class User implements DomainEntity {
         if (this.numberOfTeacherQuizzes == null)
             this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(QuizType.PROPOSED))
                     .count();
 
         return numberOfTeacherQuizzes;
@@ -243,7 +246,7 @@ public class User implements DomainEntity {
         if (this.numberOfStudentQuizzes == null)
             this.numberOfStudentQuizzes = (int) getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(QuizType.GENERATED))
                     .count();
 
         return numberOfStudentQuizzes;
@@ -257,7 +260,7 @@ public class User implements DomainEntity {
         if (this.numberOfInClassQuizzes == null)
             this.numberOfInClassQuizzes = (int) getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(QuizType.IN_CLASS))
                     .count();
 
         return numberOfInClassQuizzes;
@@ -271,7 +274,7 @@ public class User implements DomainEntity {
         if (this.numberOfTeacherAnswers == null)
             this.numberOfTeacherAnswers = getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(QuizType.PROPOSED))
                     .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestionsNumber())
                     .sum();
 
@@ -286,7 +289,7 @@ public class User implements DomainEntity {
         if (this.numberOfInClassAnswers == null)
             this.numberOfInClassAnswers = getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(QuizType.IN_CLASS))
                     .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestionsNumber())
                     .sum();
             return numberOfInClassAnswers;
@@ -300,7 +303,7 @@ public class User implements DomainEntity {
         if (this.numberOfStudentAnswers == null) {
             this.numberOfStudentAnswers = getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(QuizType.GENERATED))
                     .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestionsNumber())
                     .sum();
         }
@@ -316,7 +319,7 @@ public class User implements DomainEntity {
         if (this.numberOfCorrectTeacherAnswers == null)
             this.numberOfCorrectTeacherAnswers = (int) this.getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(QuizType.PROPOSED))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                     .filter(QuestionAnswer::isCorrect)
                     .count();
@@ -332,7 +335,7 @@ public class User implements DomainEntity {
         if (this.numberOfCorrectInClassAnswers == null)
             this.numberOfCorrectInClassAnswers = (int) this.getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(QuizType.IN_CLASS))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                     .filter(QuestionAnswer::isCorrect)
                     .count();
@@ -349,7 +352,7 @@ public class User implements DomainEntity {
         if (this.numberOfCorrectStudentAnswers == null)
             this.numberOfCorrectStudentAnswers = (int) this.getQuizAnswers().stream()
                     .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(QuizType.GENERATED))
                     .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                     .filter(QuestionAnswer::isCorrect)
                     .count();
@@ -391,7 +394,7 @@ public class User implements DomainEntity {
                 '}';
     }
 
-    public void increaseNumberOfQuizzes(Quiz.QuizType type) {
+    public void increaseNumberOfQuizzes(QuizType type) {
         switch (type) {
             case PROPOSED:
                 this.numberOfTeacherQuizzes = getNumberOfTeacherQuizzes() + 1;
@@ -407,7 +410,7 @@ public class User implements DomainEntity {
         }
     }
 
-    public void increaseNumberOfAnswers(Quiz.QuizType type) {
+    public void increaseNumberOfAnswers(QuizType type) {
         switch (type) {
             case PROPOSED:
                 this.numberOfTeacherAnswers = getNumberOfTeacherAnswers() + 1;
@@ -423,7 +426,7 @@ public class User implements DomainEntity {
         }
     }
 
-    public void increaseNumberOfCorrectAnswers(Quiz.QuizType type) {
+    public void increaseNumberOfCorrectAnswers(QuizType type) {
         switch (type) {
             case PROPOSED:
                 this.numberOfCorrectTeacherAnswers = getNumberOfCorrectTeacherAnswers() + 1;
@@ -531,5 +534,50 @@ public class User implements DomainEntity {
 
         courseExecutions.forEach(ce -> ce.getUsers().remove(this));
         courseExecutions.clear();
+    }
+
+    public UserDto getUserDto() {
+        UserDto dto = new UserDto();
+        dto.setId(getId());
+        dto.setUsername(getUsername());
+        dto.setEmail(getAuthUser().getEmail());
+        dto.setName(getName());
+        dto.setRole(getRole().toString());
+        dto.setActive(getAuthUser().isActive());
+        dto.setCreationDate(DateHandler.toISOString(getCreationDate()));
+        dto.setLastAccess(DateHandler.toISOString(getAuthUser().getLastAccess()));
+        return dto;
+    }
+
+    public StudentDto getStudentDto() {
+        UserDto userDto = getUserDto();
+        StudentDto studentDto = new StudentDto();
+
+        studentDto.setId(userDto.getId());
+        studentDto.setUsername(userDto.getUsername());
+        studentDto.setEmail(userDto.getEmail());
+        studentDto.setName(userDto.getName());
+        studentDto.setRole(userDto.getRole());
+        studentDto.setActive(userDto.isActive());
+        studentDto.setCreationDate(userDto.getCreationDate());
+        studentDto.setLastAccess(userDto.getLastAccess());
+
+        studentDto.setNumberOfInClassQuizzes(getNumberOfInClassQuizzes());
+        studentDto.setNumberOfStudentQuizzes(getNumberOfStudentQuizzes());
+        studentDto.setNumberOfAnswers(getNumberOfTeacherAnswers() + getNumberOfInClassAnswers() + getNumberOfStudentAnswers());
+        studentDto.setNumberOfTeacherAnswers(getNumberOfTeacherAnswers());
+        studentDto.setNumberOfInClassAnswers(getNumberOfInClassAnswers());
+        studentDto.setNumberOfStudentAnswers(getNumberOfStudentAnswers());
+
+        if (this.numberOfTeacherAnswers != 0)
+            studentDto.setPercentageOfCorrectTeacherAnswers(getNumberOfCorrectTeacherAnswers() * 100 / getNumberOfTeacherAnswers());
+        if (this.numberOfInClassAnswers != 0)
+            studentDto.setPercentageOfCorrectInClassAnswers(getNumberOfCorrectInClassAnswers() * 100 / getNumberOfInClassAnswers());
+        if (this.numberOfStudentAnswers != 0)
+            studentDto.setPercentageOfCorrectStudentAnswers(getNumberOfCorrectStudentAnswers() * 100 / getNumberOfStudentAnswers());
+        if (studentDto.getNumberOfAnswers() != 0)
+            studentDto.setPercentageOfCorrectAnswers((getNumberOfCorrectTeacherAnswers() + getNumberOfCorrectInClassAnswers() + getNumberOfCorrectStudentAnswers())  * 100 / studentDto.getNumberOfAnswers());
+
+        return studentDto;
     }
 }

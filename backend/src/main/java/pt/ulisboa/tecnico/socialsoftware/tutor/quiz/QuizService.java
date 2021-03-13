@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
@@ -24,12 +25,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
@@ -92,7 +93,7 @@ public class QuizService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto findById(Integer quizId) {
-        return this.quizRepository.findById(quizId).map(quiz -> new QuizDto(quiz, true))
+        return this.quizRepository.findById(quizId).map(quiz -> quiz.getDto(true))
                 .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
     }
 
@@ -107,9 +108,9 @@ public class QuizService {
                 .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
 
         return quizRepository.findQuizzesOfExecution(executionId).stream()
-                .filter(quiz -> !quiz.getType().equals(Quiz.QuizType.GENERATED))
+                .filter(quiz -> !quiz.getType().equals(QuizType.GENERATED))
                 .sorted(comparator)
-                .map(quiz -> new QuizDto(quiz, false))
+                .map(quiz -> quiz.getDto(false))
                 .collect(Collectors.toList());
     }
 
@@ -137,7 +138,7 @@ public class QuizService {
 
         quizRepository.save(quiz);
 
-        return new QuizDto(quiz, true);
+        return quiz.getDto(true);
     }
 
 
@@ -162,9 +163,9 @@ public class QuizService {
         quiz.setOneWay(quizDto.isOneWay());
 
         if (quizDto.isTimed())
-            quiz.setType(Quiz.QuizType.IN_CLASS.toString());
+            quiz.setType(QuizType.IN_CLASS.toString());
         else
-            quiz.setType(Quiz.QuizType.PROPOSED.toString());
+            quiz.setType(QuizType.PROPOSED.toString());
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 
@@ -181,7 +182,7 @@ public class QuizService {
                     });
         }
 
-        return new QuizDto(quiz, true);
+        return quiz.getDto(true);
     }
 
 
@@ -450,7 +451,7 @@ public class QuizService {
             }
         }
 
-        return new QuizDto(quiz, false);
+        return quiz.getDto(false);
     }
 
     @Retryable(
@@ -464,6 +465,6 @@ public class QuizService {
             answerService.deleteQuizAnswer(quizAnswer);
         }
 
-        return new QuizDto(quiz, false);
+        return quiz.getDto(false);
     }
 }

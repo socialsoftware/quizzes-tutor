@@ -1,7 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.execution.dtos.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 
@@ -105,7 +106,7 @@ public class AuthUserDto implements Serializable {
     }
 
     private Map<String, List<CourseExecutionDto>> getActiveAndInactiveCourses(User user, List<CourseExecutionDto> courses) {
-        List<CourseExecutionDto> courseExecutions = user.getCourseExecutions().stream().map(CourseExecutionDto::new).collect(Collectors.toList());
+        List<CourseExecutionDto> courseExecutions = user.getCourseExecutions().stream().map(CourseExecution::getDto).collect(Collectors.toList());
         courses.stream()
                 .forEach(courseDto -> {
                     if (courseExecutions.stream().noneMatch(c -> c.getAcronym().equals(courseDto.getAcronym()) && c.getAcademicTerm().equals(courseDto.getAcademicTerm()))) {

@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 
 import java.io.Serializable;
@@ -21,7 +21,7 @@ public class QuestionSubmissionDto implements Serializable {
         setId(questionSubmission.getId());
         setCourseExecutionId(questionSubmission.getCourseExecution().getId());
         if (questionSubmission.getQuestion() != null)
-            setQuestion(new QuestionDto(questionSubmission.getQuestion()));
+            setQuestion(questionSubmission.getQuestion().getDto());
         setStatus(questionSubmission.getStatus().name());
         setSubmitterId(questionSubmission.getSubmitter().getId());
         setName(questionSubmission.getSubmitter().getName());

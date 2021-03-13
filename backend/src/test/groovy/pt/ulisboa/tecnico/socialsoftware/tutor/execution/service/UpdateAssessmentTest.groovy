@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto
 
 @DataJpaTest
 class UpdateAssessmentTest extends SpockTest {
@@ -43,7 +43,7 @@ class UpdateAssessmentTest extends SpockTest {
         topicRepository.save(topic)
 
         def topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.addTopic(new TopicDto(topic))
+        topicConjunctionDto.addTopic(topic.getDto())
 
         def topicConjunctionList = new ArrayList()
         topicConjunctionList.add(topicConjunctionDto)
@@ -90,7 +90,7 @@ class UpdateAssessmentTest extends SpockTest {
         topicRepository.save(topic)
 
         def topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.addTopic(new TopicDto(topic))
+        topicConjunctionDto.addTopic(topic.getDto())
 
         def topicConjunctionList = new ArrayList()
         topicConjunctionList.add(new TopicConjunctionDto())

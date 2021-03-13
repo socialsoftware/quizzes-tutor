@@ -6,16 +6,16 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentParticipantDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentParticipantDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote.TournamentRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentDto;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -51,13 +51,13 @@ public class TournamentProvidedService {
         Tournament tournament = new Tournament(creator, tournamentCourseExecution, topics, tournamentDto);
         tournamentRepository.save(tournament);
 
-        return new TournamentDto(tournament);
+        return tournament.getDto();
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getTournamentsForCourseExecution(Integer executionId) {
-        return tournamentRepository.getTournamentsForCourseExecution(executionId).stream().map(TournamentDto::new)
+        return tournamentRepository.getTournamentsForCourseExecution(executionId).stream().map(Tournament::getDto)
                 .collect(Collectors.toList());
     }
 
@@ -65,7 +65,7 @@ public class TournamentProvidedService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getOpenedTournamentsForCourseExecution(Integer executionId) {
         LocalDateTime now = DateHandler.now();
-        return tournamentRepository.getOpenedTournamentsForCourseExecution(executionId, now).stream().map(TournamentDto::new)
+        return tournamentRepository.getOpenedTournamentsForCourseExecution(executionId, now).stream().map(Tournament::getDto)
                 .collect(Collectors.toList());
     }
 
@@ -73,7 +73,7 @@ public class TournamentProvidedService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getClosedTournamentsForCourseExecution(Integer executionId) {
         LocalDateTime now = DateHandler.now();
-        return tournamentRepository.getClosedTournamentsForCourseExecution(executionId, now).stream().map(TournamentDto::new)
+        return tournamentRepository.getClosedTournamentsForCourseExecution(executionId, now).stream().map(Tournament::getDto)
                 .collect(Collectors.toList());
     }
 
@@ -81,7 +81,7 @@ public class TournamentProvidedService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto getTournament(Integer tournamentId) {
         return tournamentRepository.findById(tournamentId)
-                .map(TournamentDto::new)
+                .map(Tournament::getDto)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 
@@ -140,7 +140,7 @@ public class TournamentProvidedService {
             tournamentRequiredService.updateQuiz(quizDto);
         }
 
-        return new TournamentDto(tournament);
+        return tournament.getDto();
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -150,7 +150,7 @@ public class TournamentProvidedService {
 
         tournament.cancel();
 
-        return new TournamentDto(tournament);
+        return tournament.getDto();
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -173,7 +173,7 @@ public class TournamentProvidedService {
     public List<TournamentParticipantDto> getTournamentParticipants(TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
 
-        return tournament.getParticipants().stream().map(TournamentParticipantDto::new).collect(Collectors.toList());
+        return tournament.getParticipants().stream().map(TournamentParticipant::getDto).collect(Collectors.toList());
     }
 
     private void checkInput(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
@@ -200,7 +200,7 @@ public class TournamentProvidedService {
     }
 
     private void createQuiz(Tournament tournament) {
-        ExternalStatementCreationDto quizForm = new ExternalStatementCreationDto(tournament);
+        ExternalStatementCreationDto quizForm = tournament.getExternalStatementCreationDto();
         Integer quizId = tournamentRequiredService.getQuizId(tournament.getCreator().getId(),
                 tournament.getCourseExecution().getId(), quizForm);
         tournament.setQuizId(quizId);

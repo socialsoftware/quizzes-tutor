@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
@@ -11,7 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDetailsDto;
@@ -256,7 +257,7 @@ public class Question implements DomainEntity {
     public boolean hasTopics(Set<Integer> chosenTopicsIds) {
         return !getTopics().isEmpty()
                 && chosenTopicsIds.containsAll(getTopics().stream()
-                .map(topic -> topic.getId())
+                .map(Topic::getId)
                 .collect(Collectors.toList()));
     }
 
@@ -355,5 +356,34 @@ public class Question implements DomainEntity {
 
     public boolean isInSubmission() {
         return status == Status.SUBMITTED;
+    }
+
+    public QuestionDto getDto() {
+        QuestionDto dto = new QuestionDto();
+        dto.setId(getId());
+        dto.setTitle(getTitle());
+        dto.setContent(getContent());
+        dto.setDifficulty(getDifficulty());
+        dto.setNumberOfAnswers(getNumberOfAnswers());
+        dto.setNumberOfCorrect(getNumberOfCorrect());
+        dto.setStatus(getStatus().name());
+        dto.setTopics(getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(Topic::getDto).collect(Collectors.toList()));
+        dto.setCreationDate(DateHandler.toISOString(getCreationDate()));
+
+        if (!getQuizQuestions().isEmpty()) {
+            dto.setNumberOfGeneratedQuizzes((int) getQuizQuestions().stream()
+                    .map(QuizQuestion::getQuiz)
+                    .filter(quiz -> quiz.getType().equals(QuizType.GENERATED))
+                    .count());
+        }
+
+        dto.setNumberOfNonGeneratedQuizzes(getQuizQuestions().size() - dto.getNumberOfGeneratedQuizzes());
+
+        if (getImage() != null) {
+            dto.setImage(getImage().getDto());
+        }
+
+        dto.setQuestionDetailsDto(getQuestionDetailsDto());
+        return dto;
     }
 }

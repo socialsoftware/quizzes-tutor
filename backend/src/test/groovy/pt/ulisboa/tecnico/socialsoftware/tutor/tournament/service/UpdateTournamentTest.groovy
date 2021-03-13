@@ -10,8 +10,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
@@ -108,7 +109,7 @@ class UpdateTournamentTest extends TournamentTest {
         given: "a tournament"
         tournamentDto = tournamentService.createTournament(creator1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
         and: "new course"
-        def differentCourse = new Course(COURSE_2_NAME, Course.Type.TECNICO)
+        def differentCourse = new Course(COURSE_2_NAME, CourseType.TECNICO)
         courseRepository.save(differentCourse)
         and: "a new topics list"
         topic3.setCourse(differentCourse)

@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
 
 @DataJpaTest
 class CreateQuizAnswerTest extends SpockTest {
@@ -19,7 +20,7 @@ class CreateQuizAnswerTest extends SpockTest {
 
         Quiz quiz = new Quiz()
         quiz.setKey(1)
-        quiz.setType(Quiz.QuizType.GENERATED.toString())
+        quiz.setType(QuizType.GENERATED.toString())
         quiz.setCourseExecution(externalCourseExecution)
         quiz.setAvailableDate(DateHandler.now())
         quizRepository.save(quiz)

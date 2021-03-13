@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.ImageDto;
 
 import javax.persistence.*;
 
@@ -79,5 +79,13 @@ public class Image implements DomainEntity {
                 ", url='" + url + '\'' +
                 ", width=" + width +
                 '}';
+    }
+
+    public ImageDto getDto() {
+        ImageDto dto = new ImageDto();
+        dto.setId(getId());
+        dto.setUrl(getUrl());
+        dto.setWidth(getWidth());
+        return dto;
     }
 }

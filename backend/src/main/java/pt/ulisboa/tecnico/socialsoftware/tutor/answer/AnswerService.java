@@ -10,8 +10,9 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.events.ExternalQuizSolvedEvent;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
@@ -25,7 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
@@ -112,7 +113,7 @@ public class AnswerService {
         if (!quizAnswer.isCompleted()) {
             quizAnswer.setCompleted(true);
 
-            if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS)) {
+            if (quizAnswer.getQuiz().getType().equals(QuizType.IN_CLASS)) {
                 QuizAnswerItem quizAnswerItem = new QuizAnswerItem(statementQuizDto);
                 quizAnswerItemRepository.save(quizAnswerItem);
             } else {
@@ -128,7 +129,7 @@ public class AnswerService {
                         .collect(Collectors.toList());
 
                 // TODO: Confirmar
-                if (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.EXTERNAL_QUIZ)) {
+                if (quizAnswer.getQuiz().getType().equals(QuizType.EXTERNAL_QUIZ)) {
                     ExternalQuizSolvedEvent event = new ExternalQuizSolvedEvent(quizAnswer.getQuiz().getId(),
                             quizAnswer.getUser().getId(), quizAnswer.getNumberOfAnsweredQuestions(),
                             quizAnswer.getNumberOfCorrectAnswers());
@@ -214,7 +215,7 @@ public class AnswerService {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         Quiz quiz = new Quiz();
-        quiz.setType(Quiz.QuizType.GENERATED.toString());
+        quiz.setType(QuizType.GENERATED.toString());
         quiz.setCreationDate(DateHandler.now());
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
@@ -252,7 +253,7 @@ public class AnswerService {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         Quiz quiz = new Quiz();
-        quiz.setType(Quiz.QuizType.GENERATED.toString());
+        quiz.setType(QuizType.GENERATED.toString());
         quiz.setCreationDate(DateHandler.now());
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
@@ -283,7 +284,7 @@ public class AnswerService {
         quiz.setConclusionDate(quizDetails.getEndTime());
         quiz.setResultsDate(quizDetails.getEndTime());
         quiz.setTitle("Tournament " + quizDetails.getId() + " Quiz");
-        quiz.setType(Quiz.QuizType.EXTERNAL_QUIZ.toString());
+        quiz.setType(QuizType.EXTERNAL_QUIZ.toString());
 
         quizRepository.save(quiz);
 
@@ -348,7 +349,7 @@ public class AnswerService {
                 openQuizzes.stream())
                 .filter(quiz -> !answeredQuizIds.contains(quiz.getId()))
                 .distinct()
-                .map(quiz -> new QuizDto(quiz, false))
+                .map(quiz -> quiz.getDto(false))
                 .sorted(Comparator.comparing(QuizDto::getAvailableDate, Comparator.nullsLast(Comparator.naturalOrder())))
                 .collect(Collectors.toList());
 

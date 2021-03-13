@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 import java.time.LocalDateTime;
 
 @DataJpaTest
@@ -30,9 +30,9 @@ class ConfirmRegistrationTest extends SpockTest {
     Mailer mailerMock
 
     def setup(){
-        course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
+        course = new Course(COURSE_1_NAME, CourseType.EXTERNAL)
         courseRepository.save(course)
-        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
+        courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
         def executionId = courseExecution.getId()

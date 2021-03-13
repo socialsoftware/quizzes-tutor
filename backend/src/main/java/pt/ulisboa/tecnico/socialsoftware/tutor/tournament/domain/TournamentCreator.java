@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentCreatorDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentCreatorDto;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -42,5 +42,13 @@ public class TournamentCreator {
 
     public String getName() {
         return name;
+    }
+
+    public TournamentCreatorDto getDto() {
+        TournamentCreatorDto dto = new TournamentCreatorDto();
+        dto.setId(getId());
+        dto.setName(getName());
+        dto.setUsername(getUsername());
+        return dto;
     }
 }

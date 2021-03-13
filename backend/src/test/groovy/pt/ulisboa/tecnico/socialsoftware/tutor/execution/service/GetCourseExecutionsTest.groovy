@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
 
 @DataJpaTest
 class GetCourseExecutionsTest extends SpockTest {
@@ -29,10 +30,10 @@ class GetCourseExecutionsTest extends SpockTest {
         result.size() == existingCourses
         def tecnicoCourse = result.get(0)
         tecnicoCourse.name == COURSE_1_NAME
-        tecnicoCourse.courseType == Course.Type.TECNICO
+        tecnicoCourse.courseType == CourseType.TECNICO
         tecnicoCourse.acronym == COURSE_1_ACRONYM
         tecnicoCourse.academicTerm == COURSE_1_ACADEMIC_TERM
-        tecnicoCourse.courseExecutionType == Course.Type.TECNICO
+        tecnicoCourse.courseExecutionType == CourseType.TECNICO
         tecnicoCourse.numberOfQuestions == 0
         tecnicoCourse.numberOfQuizzes == 0
         tecnicoCourse.numberOfActiveTeachers == 0
@@ -46,10 +47,10 @@ class GetCourseExecutionsTest extends SpockTest {
         courseExecutionRepository.deleteAll()
         courseRepository.deleteAll()
 
-        externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
+        externalCourse = new Course(COURSE_1_NAME, CourseType.TECNICO)
         courseRepository.save(externalCourse)
 
-        def courseExecution = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
+        def courseExecution = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
         def teacher = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, false, AuthUser.Type.TECNICO)
@@ -73,10 +74,10 @@ class GetCourseExecutionsTest extends SpockTest {
         result.size() == 1
         def externalCourse = result.get(0)
         externalCourse.name == COURSE_1_NAME
-        externalCourse.courseType == Course.Type.TECNICO
+        externalCourse.courseType == CourseType.TECNICO
         externalCourse.acronym == COURSE_2_ACRONYM
         externalCourse.academicTerm == COURSE_2_ACADEMIC_TERM
-        externalCourse.courseExecutionType == Course.Type.EXTERNAL
+        externalCourse.courseExecutionType == CourseType.EXTERNAL
         externalCourse.numberOfQuestions == 1
         externalCourse.numberOfQuizzes == 1
         externalCourse.numberOfActiveTeachers == 1

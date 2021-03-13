@@ -4,7 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionStatus
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCreator
@@ -19,9 +19,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 import java.time.LocalDateTime
@@ -91,7 +91,7 @@ class TournamentTest extends SpockTest {
         tournament.setPrivateTournament(false)
         tournamentRepository.save(tournament)
 
-        return new TournamentDto(tournament)
+        return tournament.getDto()
     }
 
     def createPrivateTournament(TournamentCreator creator, String startTime, String endTime, Integer numberOfQuestions, boolean isCanceled, String password) {
@@ -107,7 +107,7 @@ class TournamentTest extends SpockTest {
         tournament.setPrivateTournament(true)
         tournamentRepository.save(tournament)
 
-        return new TournamentDto(tournament)
+        return tournament.getDto()
     }
 
     def createAssessmentWithTopicConjunction(String title, Assessment.Status status, CourseExecution courseExecution) {

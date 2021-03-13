@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.ImageDto;
 
 import java.io.Serializable;
 
@@ -20,7 +20,7 @@ public class StatementQuestionDto implements Serializable {
         if (!ghost) {
             this.content = question.getContent();
             if (question.getImage() != null) {
-                this.image = new ImageDto(question.getImage());
+                this.image = question.getImage().getDto();
             }
 
             this.questionDetails = question.getStatementQuestionDetailsDto();
@@ -33,7 +33,7 @@ public class StatementQuestionDto implements Serializable {
     public StatementQuestionDto(Question question) {
         this.content = question.getContent();
         if (question.getImage() != null)
-            this.image = new ImageDto(question.getImage());
+            this.image = question.getImage().getDto();
 
         this.questionDetails = question.getStatementQuestionDetailsDto();
     }

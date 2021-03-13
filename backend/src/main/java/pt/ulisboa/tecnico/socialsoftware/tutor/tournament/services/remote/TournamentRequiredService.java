@@ -3,18 +3,17 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.tutor.api.MonolithService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.answer.dtos.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.TournamentACL;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentACL;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.execution.dtos.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.question.dtos.TopicWithCourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.quiz.dtos.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCreator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.user.dtos.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.user.UserDto;
 
 import java.util.HashSet;
 import java.util.List;
@@ -35,8 +34,7 @@ public class TournamentRequiredService {
         //User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         UserDto userDto = monolithService.findUserById(userId);
         if (userDto != null) {
-            TournamentCreatorDto tournamentCreatorDto = tournamentACL.userToTournamentCreator(userDto);
-            return new TournamentCreator(tournamentCreatorDto);
+            return tournamentACL.userToTournamentCreator(userDto);
         }
         else {
             throw new TutorException(USER_NOT_FOUND, userId);
@@ -47,8 +45,7 @@ public class TournamentRequiredService {
         //User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         UserDto userDto = monolithService.findUserById(userId);
         if (userDto != null) {
-            TournamentParticipantDto tournamentParticipantDto = tournamentACL.userToTournamentParticipant(userDto);
-            return new TournamentParticipant(tournamentParticipantDto);
+            return tournamentACL.userToTournamentParticipant(userDto);
         }
         else {
             throw new TutorException(USER_NOT_FOUND, userId);
@@ -58,8 +55,7 @@ public class TournamentRequiredService {
     public TournamentCourseExecution getTournamentCourseExecution(Integer courseExecutionId) {
         //CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
         CourseExecutionDto courseExecutionDto = monolithService.getCourseExecutionById(courseExecutionId);
-        TournamentCourseExecutionDto tournamentCourseExecutionDto = tournamentACL.courseExecutionToTournamentCourseExecution(courseExecutionDto);
-        return new TournamentCourseExecution(tournamentCourseExecutionDto);
+        return tournamentACL.courseExecutionToTournamentCourseExecution(courseExecutionDto);
     }
 
     public Integer getDemoCourseExecutionId() {
@@ -81,9 +77,7 @@ public class TournamentRequiredService {
         }*/
 
         for (TopicWithCourseDto topicWithCourseDto : topicWithCourseDtoList) {
-            TournamentTopicWithCourseDto tournamentTopicWithCourseDto = tournamentACL.topicToTournamentTopic(topicWithCourseDto);
-            topics.add(new TournamentTopic(tournamentTopicWithCourseDto.getId(), tournamentTopicWithCourseDto.getName(),
-                    tournamentTopicWithCourseDto.getCourseId()));
+            topics.add(tournamentACL.topicToTournamentTopic(topicWithCourseDto));
         }
 
         return topics;

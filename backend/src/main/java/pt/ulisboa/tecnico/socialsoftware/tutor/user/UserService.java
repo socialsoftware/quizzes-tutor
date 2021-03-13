@@ -8,11 +8,11 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.execution.dtos.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
@@ -21,7 +21,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.user.dtos.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
@@ -156,7 +156,7 @@ public class UserService {
         });
 
         CourseExecutionDto courseExecutionDto = courseExecutionRepository.findById(courseExecutionId)
-                .map(CourseExecutionDto::new)
+                .map(CourseExecution::getDto)
                 .get();
 
         return new NotificationResponse<>(notification, courseExecutionDto);
@@ -255,7 +255,7 @@ public class UserService {
     public UserDto findUserByUsername(String username) {
         return  authUserRepository.findAuthUserByUsername(username)
                 .filter(authUser -> authUser.getUser() != null)
-                .map(authUser -> new UserDto(authUser.getUser()))
+                .map(authUser -> authUser.getUser().getUserDto())
                 .orElse(null);
     }
 
@@ -263,7 +263,7 @@ public class UserService {
     public UserDto findUserById(Integer id) {
         return  userRepository.findById(id)
                 .filter(user -> user != null)
-                .map(user -> new UserDto(user))
+                .map(User::getUserDto)
                 .orElse(null);
     }
 
@@ -288,7 +288,7 @@ public class UserService {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        if (!courseExecution.getType().equals(Course.Type.EXTERNAL)) {
+        if (!courseExecution.getType().equals(CourseType.EXTERNAL)) {
             throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
         }
         return courseExecution;

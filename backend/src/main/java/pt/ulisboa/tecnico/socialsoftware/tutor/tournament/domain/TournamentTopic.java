@@ -1,5 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentTopicDto;
+
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
 import java.util.Objects;
@@ -57,5 +60,20 @@ public class TournamentTopic {
                 ", name='" + name + '\'' +
                 ", courseId=" + courseId +
                 '}';
+    }
+
+    public TournamentTopicDto getDto() {
+        TournamentTopicDto dto = new TournamentTopicDto();
+        dto.setId(getId());
+        dto.setName(getName());
+        return dto;
+    }
+
+    public TopicWithCourseDto getTopicWithCourseDto() {
+        TopicWithCourseDto dto = new TopicWithCourseDto();
+        dto.setId(getId());
+        dto.setName(getName());
+        dto.setCourseId(getCourseId());
+        return dto;
     }
 }

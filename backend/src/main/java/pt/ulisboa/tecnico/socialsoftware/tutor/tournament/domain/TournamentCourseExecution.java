@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.CourseExecutionStatus;
-import pt.ulisboa.tecnico.socialsoftware.tutor.anticorruptionlayer.tournament.dtos.TournamentCourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentCourseExecutionDto;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -68,5 +68,14 @@ public class TournamentCourseExecution {
     @Override
     public int hashCode() {
         return Objects.hash(courseId, status, courseAcronym);
+    }
+
+    public TournamentCourseExecutionDto getDto() {
+        TournamentCourseExecutionDto dto = new TournamentCourseExecutionDto();
+        dto.setId(getId());
+        dto.setCourseId(getCourseId());
+        dto.setStatus(getStatus());
+        dto.setCourseAcronym(getCourseAcronym());
+        return dto;
     }
 }
