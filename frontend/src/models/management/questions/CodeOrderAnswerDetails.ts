@@ -17,6 +17,11 @@ export default class CodeOrderAnswerDetails extends AnswerDetails {
   }
 
   isCorrect(questionDetails: CodeOrderQuestionDetails): boolean {
+    console.log(
+      this.orderedSlots.length ===
+        questionDetails.codeOrderSlots.filter(os => os.order != null).length &&
+      this.orderedSlots.filter(os => !os.correct).length == 0
+    )
     return (
       this.orderedSlots.length ===
         questionDetails.codeOrderSlots.filter(os => os.order != null).length &&

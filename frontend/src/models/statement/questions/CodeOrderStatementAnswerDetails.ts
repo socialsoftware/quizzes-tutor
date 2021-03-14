@@ -20,6 +20,7 @@ export default class CodeOrderStatementAnswerDetails extends StatementAnswerDeta
   isAnswerCorrect(
     correctAnswerDetails: CodeOrderStatementCorrectAnswerDetails
   ): boolean {
+
     for (const key in correctAnswerDetails.correctOrder) {
       let correct = correctAnswerDetails.correctOrder[key];
       if (!this.orderedSlots[key] && correct.order != null) {
@@ -31,6 +32,9 @@ export default class CodeOrderStatementAnswerDetails extends StatementAnswerDeta
         return false;
       }
     }
-    return true;
+    return (
+      this.orderedSlots.length ===
+      correctAnswerDetails.correctOrder.filter(os => os.order != null).length
+    );
   }
 }
