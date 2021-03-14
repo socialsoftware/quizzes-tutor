@@ -1,11 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
 
 import javax.persistence.*;
 import java.util.*;

@@ -6,11 +6,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.MultipleChoiceQuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.MultipleChoiceQuestionDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
 
 @DataJpaTest
 class ImportExportQuizzesTest extends SpockTest {

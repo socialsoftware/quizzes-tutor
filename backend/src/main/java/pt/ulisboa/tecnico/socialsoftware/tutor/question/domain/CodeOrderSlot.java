@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerSlot;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.CodeOrderSlotDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.CodeOrderSlotDto;
 
 import javax.persistence.*;
 import java.util.HashSet;

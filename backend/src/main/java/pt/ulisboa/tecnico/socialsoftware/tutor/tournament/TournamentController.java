@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.local.TournamentProvidedService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.validation.Valid;

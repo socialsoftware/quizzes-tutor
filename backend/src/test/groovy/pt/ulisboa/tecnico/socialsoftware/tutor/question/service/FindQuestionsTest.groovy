@@ -15,7 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
 
 @DataJpaTest
 class FindQuestionsTest extends SpockTest {

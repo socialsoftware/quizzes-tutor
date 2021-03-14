@@ -6,8 +6,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
 
 import javax.validation.Valid;
 import java.util.List;

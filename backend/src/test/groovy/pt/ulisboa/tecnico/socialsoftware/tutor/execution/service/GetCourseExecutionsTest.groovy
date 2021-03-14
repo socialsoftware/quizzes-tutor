@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
 
 @DataJpaTest
 class GetCourseExecutionsTest extends SpockTest {

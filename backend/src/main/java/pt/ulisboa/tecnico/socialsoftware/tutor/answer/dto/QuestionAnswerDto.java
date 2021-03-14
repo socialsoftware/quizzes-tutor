@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
 
 import java.io.Serializable;
 

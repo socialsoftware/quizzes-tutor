@@ -14,10 +14,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SolveQuizTournamentIT extends SpockTest {

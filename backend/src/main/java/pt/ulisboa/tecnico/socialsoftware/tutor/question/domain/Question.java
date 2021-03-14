@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType;
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;

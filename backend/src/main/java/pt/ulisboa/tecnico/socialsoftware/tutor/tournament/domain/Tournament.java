@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.ExternalStatementCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentParticipantDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentParticipantDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto;
 
 import javax.persistence.*;
 import java.util.*;

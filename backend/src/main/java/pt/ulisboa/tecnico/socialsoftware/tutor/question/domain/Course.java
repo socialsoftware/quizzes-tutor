@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;

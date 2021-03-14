@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
 
 @DataJpaTest
 class RemoveCourseExecutionsTest extends SpockTest {

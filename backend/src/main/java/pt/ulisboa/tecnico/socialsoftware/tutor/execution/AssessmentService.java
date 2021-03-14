@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.TopicConjunctionRepository;

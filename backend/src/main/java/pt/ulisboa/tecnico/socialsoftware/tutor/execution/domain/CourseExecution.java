@@ -1,10 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionStatus;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -13,7 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;

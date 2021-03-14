@@ -1,7 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.MultipleChoiceQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;

@@ -7,7 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
 
 @DataJpaTest
 class CreateTopicTest extends SpockTest {

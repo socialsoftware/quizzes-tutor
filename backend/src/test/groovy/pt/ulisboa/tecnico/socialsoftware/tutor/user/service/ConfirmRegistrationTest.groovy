@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
 import java.time.LocalDateTime;
 
 @DataJpaTest

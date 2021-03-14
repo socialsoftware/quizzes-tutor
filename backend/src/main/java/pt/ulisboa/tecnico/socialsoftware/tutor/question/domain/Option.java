@@ -4,7 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswe
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto;
 
 import javax.persistence.*;
 import java.util.HashSet;

@@ -5,10 +5,10 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.MultipleChoiceQuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.MultipleChoiceQuestionDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
 
 @DataJpaTest
 class ImportExportTopicsTest extends SpockTest {

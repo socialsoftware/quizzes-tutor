@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.user.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer;
 
 import java.util.ArrayList;

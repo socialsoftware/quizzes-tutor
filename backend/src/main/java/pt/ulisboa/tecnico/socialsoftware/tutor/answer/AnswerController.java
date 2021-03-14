@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.validation.Valid;

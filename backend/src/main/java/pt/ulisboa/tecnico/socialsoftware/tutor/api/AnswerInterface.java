@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.api;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.ExternalStatementCreationDto;
 
 public interface AnswerInterface {
 

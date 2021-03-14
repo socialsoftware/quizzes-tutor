@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament;
 
 import org.springframework.stereotype.Component;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionStatus;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.user.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCreator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant;

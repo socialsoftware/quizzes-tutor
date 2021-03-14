@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TopicWithCourseDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentTopicDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentTopicDto;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;

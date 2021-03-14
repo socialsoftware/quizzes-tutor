@@ -15,8 +15,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuestionExport
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.XMLQuestionExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;

@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto
 
 @DataJpaTest
 class UpdateAssessmentTest extends SpockTest {

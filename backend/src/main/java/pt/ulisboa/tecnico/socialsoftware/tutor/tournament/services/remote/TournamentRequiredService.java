@@ -2,18 +2,19 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.api.MonolithService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentACL;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.execution.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCreator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.user.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.user.UserDto;
 
 import java.util.HashSet;
 import java.util.List;

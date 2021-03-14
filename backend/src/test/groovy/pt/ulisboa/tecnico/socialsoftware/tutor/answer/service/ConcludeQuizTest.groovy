@@ -18,7 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_YET_AVAILABLE
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NO_LONGER_AVAILABLE

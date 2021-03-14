@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto;
 
 public class MultipleChoiceAnswerDto extends AnswerDetailsDto {
     private OptionDto option;
