@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor;
+package pt.ulisboa.tecnico.socialsoftware;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;

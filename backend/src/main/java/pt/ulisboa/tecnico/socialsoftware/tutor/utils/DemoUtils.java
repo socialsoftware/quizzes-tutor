@@ -3,13 +3,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.utils;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.local.TournamentProvidedService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 @Component
@@ -42,15 +42,15 @@ public class DemoUtils {
     @Autowired
     private DiscussionService discussionService;
 
-    @Autowired
-    private TournamentProvidedService tournamentProvidedService;
+    /*@Autowired
+    private TournamentProvidedService tournamentProvidedService;*/
 
     public void resetDemoInfo() {
         assessmentService.resetDemoAssessments();
         topicService.resetDemoTopics();
         discussionService.resetDemoDiscussions();
         answerService.resetDemoAnswers();
-        tournamentProvidedService.resetDemoTournaments();
+        //tournamentProvidedService.resetDemoTournaments();
         quizService.resetDemoQuizzes();
         questionSubmissionService.resetDemoQuestionSubmissions();
         userService.resetDemoStudents();

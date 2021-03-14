@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain;
+package pt.ulisboa.tecnico.socialsoftware.tournament.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentTopicDto;

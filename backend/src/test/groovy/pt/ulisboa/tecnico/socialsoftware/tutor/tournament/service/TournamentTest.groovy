@@ -6,10 +6,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentCreator
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentTopic
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCreator
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentParticipant
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
@@ -20,7 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 import java.time.LocalDateTime

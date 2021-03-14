@@ -20,8 +20,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;

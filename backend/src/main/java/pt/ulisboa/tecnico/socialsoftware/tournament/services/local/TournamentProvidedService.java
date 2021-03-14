@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.local;
+package pt.ulisboa.tecnico.socialsoftware.tournament.services.local;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
@@ -7,14 +7,14 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentParticipantDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote.TournamentRequiredService;
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.ExternalStatementCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto;
 
 import java.sql.SQLException;

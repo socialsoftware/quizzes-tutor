@@ -1,15 +1,15 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.subscriptions;
+package pt.ulisboa.tecnico.socialsoftware.tournament.subscriptions;
 
 import com.google.common.eventbus.Subscribe;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.events.ExternalQuizSolvedEvent;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.TournamentParticipant;
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentParticipant;
+import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.NO_TOURNAMENT_WITH_QUIZ_ID;
 

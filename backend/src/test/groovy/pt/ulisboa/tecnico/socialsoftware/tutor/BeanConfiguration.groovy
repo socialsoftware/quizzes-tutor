@@ -10,18 +10,18 @@ import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentACL
+import pt.ulisboa.tecnico.socialsoftware.tournament.TournamentACL
 import pt.ulisboa.tecnico.socialsoftware.tutor.api.MonolithService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.remote.TournamentRequiredService
+import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.services.local.TournamentProvidedService
+import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
