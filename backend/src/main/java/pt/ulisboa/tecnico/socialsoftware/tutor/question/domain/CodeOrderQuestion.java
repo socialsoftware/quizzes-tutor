@@ -64,10 +64,13 @@ public class CodeOrderQuestion extends QuestionDetails {
         // Ensures some randomization when creating the slots ids.
         Collections.shuffle(codeOrderSlots);
 
-        var sequence = getCodeOrderSlots().size();
+        var sequence = 1;
 
         for (var codeOrderSlotDto : codeOrderSlots) {
+
+            // The codeOrderSlotDto.getSequence() is specially relevant for exp-imp process.
             int newSequence = codeOrderSlotDto.getSequence() != null ? codeOrderSlotDto.getSequence() : sequence++;
+
             if (codeOrderSlotDto.getId() == null) {
                 CodeOrderSlot codeOrderSlot = new CodeOrderSlot(codeOrderSlotDto);
                 codeOrderSlot.setQuestionDetails(this);
@@ -130,9 +133,9 @@ public class CodeOrderQuestion extends QuestionDetails {
     @Override
     public String getCorrectAnswerRepresentation() {
         return this.codeOrderSlots.stream()
-                .filter(x-> x.getOrder() != null)
+                .filter(codeOrderSlot -> codeOrderSlot.getOrder() != null)
                 .sorted(Comparator.comparing(CodeOrderSlot::getOrder))
-                .map(x -> String.valueOf(x.getSequence() + 1))
+                .map(codeOrderSlot -> String.valueOf(codeOrderSlot.getSequence()))
                 .collect(Collectors.joining(" | "));
     }
 
@@ -163,7 +166,7 @@ public class CodeOrderQuestion extends QuestionDetails {
     @Override
     public String getAnswerRepresentation(List<Integer> selectedIds) {
         return selectedIds.stream()
-                .map(x -> String.valueOf(this.codeOrderSlots.stream().filter(co -> co.getId().equals(x)).findAny().get().getSequence() + 1))
+                .map(x -> String.valueOf(this.codeOrderSlots.stream().filter(co -> co.getId().equals(x)).findAny().get().getSequence()))
                 .collect(Collectors.joining(" | "));
     }
 }
