@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.apigateway;
+package pt.ulisboa.tecnico.socialsoftware.apigateway;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.apigateway;
+package pt.ulisboa.tecnico.socialsoftware.apigateway;
 
 import com.google.common.eventbus.EventBus;
 import com.google.common.eventbus.Subscribe;
