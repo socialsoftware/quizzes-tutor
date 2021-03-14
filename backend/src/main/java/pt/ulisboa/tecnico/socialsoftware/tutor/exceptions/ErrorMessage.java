@@ -27,6 +27,8 @@ public enum ErrorMessage {
     INVALID_QUESTION_SEQUENCE_FOR_QUIZ("Invalid question sequence for quiz"),
     INVALID_TYPE_FOR_AUTH_USER("Invalid type for auth user"),
     INVALID_AUTH_USERNAME("Username: %s, belongs to a different authentication method"),
+    INVALID_QUESTION_DETAILS("Invalid question details type: %s"),
+    INVALID_QUESTION_DETAILS_DTO("Invalid question details dto type: %s"),
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),

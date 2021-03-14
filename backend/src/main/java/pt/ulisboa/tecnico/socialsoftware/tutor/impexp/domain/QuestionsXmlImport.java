@@ -12,9 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Languages;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.Languages;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -102,13 +100,13 @@ public class QuestionsXmlImport {
 
         QuestionDetailsDto questionDetailsDto;
         switch (type) {
-            case Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION:
+            case QuestionTypes.MULTIPLE_CHOICE_QUESTION:
                 questionDetailsDto = importMultipleChoiceQuestion(questionElement);
                 break;
-            case Question.QuestionTypes.CODE_FILL_IN_QUESTION:
+            case QuestionTypes.CODE_FILL_IN_QUESTION:
                 questionDetailsDto = importCodeFillInQuestion(questionElement);
                 break;
-            case Question.QuestionTypes.CODE_ORDER_QUESTION:
+            case QuestionTypes.CODE_ORDER_QUESTION:
                 questionDetailsDto = importCodeOrderQuestion(questionElement);
                 break;
             default:

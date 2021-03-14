@@ -2,9 +2,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.MultipleChoiceQuestionDto;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionTypes.*;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

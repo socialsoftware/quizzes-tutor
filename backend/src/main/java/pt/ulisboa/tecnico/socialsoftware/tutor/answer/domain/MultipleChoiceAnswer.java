@@ -1,11 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionTypes;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -15,7 +15,7 @@ import javax.persistence.ManyToOne;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
 
 @Entity
-@DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
+@DiscriminatorValue(QuestionTypes.MULTIPLE_CHOICE_QUESTION)
 public class MultipleChoiceAnswer extends AnswerDetails {
     @ManyToOne
     @JoinColumn(name = "option_id")
@@ -99,4 +99,5 @@ public class MultipleChoiceAnswer extends AnswerDetails {
     public void accept(Visitor visitor) {
         visitor.visitAnswerDetails(this);
     }
+
 }

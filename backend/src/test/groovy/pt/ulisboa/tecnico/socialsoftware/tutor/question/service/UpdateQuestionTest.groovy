@@ -13,8 +13,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.MultipleChoiceQuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
@@ -78,11 +78,11 @@ class UpdateQuestionTest extends SpockTest {
         questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
         and: '2 changed options'
         def options = new ArrayList<OptionDto>()
-        def optionDto = new OptionDto(optionOK)
+        def optionDto = optionOK.getDto()
         optionDto.setContent(OPTION_2_CONTENT)
         optionDto.setCorrect(false)
         options.add(optionDto)
-        optionDto = new OptionDto(optionKO)
+        optionDto = optionKO.getDto()
         optionDto.setCorrect(true)
         options.add(optionDto)
         questionDto.getQuestionDetailsDto().setOptions(options)
@@ -130,12 +130,12 @@ class UpdateQuestionTest extends SpockTest {
         def questionDto = question.getDto()
         questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
 
-        def optionDto = new OptionDto(optionOK)
+        def optionDto = optionOK.getDto()
         optionDto.setContent(OPTION_2_CONTENT)
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
-        optionDto = new OptionDto(optionKO)
+        optionDto = optionKO.getDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         options.add(optionDto)
@@ -194,13 +194,13 @@ class UpdateQuestionTest extends SpockTest {
         questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
 
         and: 'a optionId'
-        def optionDto = new OptionDto(optionOK)
+        def optionDto = optionOK.getDto()
         optionDto.setContent(OPTION_2_CONTENT)
         optionDto.setCorrect(false)
 
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
-        optionDto = new OptionDto(optionKO)
+        optionDto = optionKO.getDto()
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         options.add(optionDto)

@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionTypes;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
@@ -13,7 +13,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Entity
-@DiscriminatorValue(Question.QuestionTypes.CODE_ORDER_QUESTION)
+@DiscriminatorValue(QuestionTypes.CODE_ORDER_QUESTION)
 public class CodeOrderAnswerItem extends QuestionAnswerItem {
 
     @ElementCollection

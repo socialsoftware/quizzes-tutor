@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;

@@ -1,12 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
@@ -16,7 +14,7 @@ import java.util.stream.Collectors;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
-@DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
+@DiscriminatorValue(QuestionTypes.MULTIPLE_CHOICE_QUESTION)
 public class MultipleChoiceQuestion extends QuestionDetails {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails", fetch = FetchType.EAGER, orphanRemoval = true)
@@ -71,9 +69,10 @@ public class MultipleChoiceQuestion extends QuestionDetails {
                 .orElse(null);
     }
 
+    /*@Override
     public void update(MultipleChoiceQuestionDto questionDetails) {
         setOptions(questionDetails.getOptions());
-    }
+    }*/
 
     @Override
     public void update(Updator updator) {
@@ -118,7 +117,7 @@ public class MultipleChoiceQuestion extends QuestionDetails {
 
     @Override
     public QuestionDetailsDto getQuestionDetailsDto() {
-        return new MultipleChoiceQuestionDto(this);
+        return this.getDto();
     }
 
     public Integer getCorrectAnswer() {
@@ -136,6 +135,17 @@ public class MultipleChoiceQuestion extends QuestionDetails {
             option.remove();
         }
         this.options.clear();
+    }
+
+    @Override
+    public void update(QuestionDetailsDto questionDetailsDto) {
+        if (questionDetailsDto instanceof MultipleChoiceQuestionDto) {
+            MultipleChoiceQuestionDto multipleChoiceQuestionDto = (MultipleChoiceQuestionDto) questionDetailsDto;
+            setOptions(multipleChoiceQuestionDto.getOptions());
+        }
+        else {
+            throw new TutorException(INVALID_QUESTION_DETAILS_DTO, questionDetailsDto.getClass().getName());
+        }
     }
 
     @Override
@@ -157,5 +167,11 @@ public class MultipleChoiceQuestion extends QuestionDetails {
                 .map(x -> convertSequenceToLetter(x.getSequence()))
                 .collect(Collectors.joining("|"));
         return !result.isEmpty() ? result : "-";
+    }
+
+    public MultipleChoiceQuestionDto getDto() {
+        MultipleChoiceQuestionDto dto = new MultipleChoiceQuestionDto();
+        dto.setOptions(getOptions().stream().map(Option::getDto).collect(Collectors.toList()));
+        return dto;
     }
 }

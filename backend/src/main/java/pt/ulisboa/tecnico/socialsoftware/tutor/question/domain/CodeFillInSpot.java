@@ -4,16 +4,16 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInSpotDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.CodeFillInSpotDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.OptionDto;
 
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.NO_CORRECT_OPTION;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OPTION_NOT_FOUND;
 
 @Entity
 @Table(name = "code_fill_in_spot",
@@ -106,5 +106,13 @@ public class CodeFillInSpot implements DomainEntity {
             option.delete();
         }
         this.options.clear();
+    }
+
+    public CodeFillInSpotDto getDto() {
+        CodeFillInSpotDto dto = new CodeFillInSpotDto();
+        dto.setId(getId());
+        dto.setSequence(getSequence());
+        dto.setOptions(getOptions().stream().map(CodeFillInOption::getDto).collect(Collectors.toList()));
+        return dto;
     }
 }

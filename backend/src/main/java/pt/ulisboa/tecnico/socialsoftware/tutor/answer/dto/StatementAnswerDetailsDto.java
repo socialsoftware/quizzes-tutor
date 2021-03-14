@@ -7,7 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionTypes.*;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

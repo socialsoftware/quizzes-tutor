@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRe
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionTypes;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
@@ -184,19 +185,19 @@ public class AnswersXmlImport {
             questionAnswer.setTimeTaken(timeTaken);
 
 
-            String questionType = Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION;
+            String questionType = QuestionTypes.MULTIPLE_CHOICE_QUESTION;
             if (questionAnswerElement.getChild("quizQuestion") != null) {
                 questionType = Optional.ofNullable(questionAnswerElement.getChild("quizQuestion").getAttributeValue("type")).orElse(questionType);
             }
 
             switch (questionType) {
-                case Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION:
+                case QuestionTypes.MULTIPLE_CHOICE_QUESTION:
                     importMultipleChoiceXmlImport(questionAnswerElement, questionAnswer);
                     break;
-                case Question.QuestionTypes.CODE_FILL_IN_QUESTION:
+                case QuestionTypes.CODE_FILL_IN_QUESTION:
                     importCodeFillInXmlImport(questionAnswerElement, questionAnswer);
                     break;
-                case Question.QuestionTypes.CODE_ORDER_QUESTION:
+                case QuestionTypes.CODE_ORDER_QUESTION:
                     importCodeOrderXmlImport(questionAnswerElement, questionAnswer);
                     break;
                 default:

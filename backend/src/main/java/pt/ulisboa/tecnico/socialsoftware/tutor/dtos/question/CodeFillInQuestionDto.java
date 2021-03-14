@@ -1,13 +1,7 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Languages;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
+package pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CodeFillInQuestionDto extends QuestionDetailsDto {
     private Languages language;
@@ -17,14 +11,6 @@ public class CodeFillInQuestionDto extends QuestionDetailsDto {
     private List<CodeFillInSpotDto> fillInSpots = new ArrayList<>();
 
     public CodeFillInQuestionDto() {
-    }
-
-    public CodeFillInQuestionDto(CodeFillInQuestion question) {
-        this.language = question.getLanguage();
-        this.code = question.getCode();
-        this.fillInSpots = question.getFillInSpots()
-                .stream().map(CodeFillInSpotDto::new)
-                .collect(Collectors.toList());
     }
 
     public Languages getLanguage() {
@@ -60,13 +46,8 @@ public class CodeFillInQuestionDto extends QuestionDetailsDto {
                 '}';
     }
 
-    @Override
-    public QuestionDetails getQuestionDetails(Question question) {
-        return new CodeFillInQuestion(question, this);
-    }
-
-    @Override
+    /*@Override
     public void update(CodeFillInQuestion question) {
         question.update(this);
-    }
+    }*/
 }

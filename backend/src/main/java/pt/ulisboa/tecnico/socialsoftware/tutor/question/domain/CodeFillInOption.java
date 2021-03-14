@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.OptionDto;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -94,5 +94,14 @@ public class CodeFillInOption implements DomainEntity {
     public void delete() {
         this.codeFillInSpot = null;
         this.questionAnswers.clear();
+    }
+
+    public OptionDto getDto() {
+        OptionDto dto = new OptionDto();
+        dto.setId(getId());
+        dto.setSequence(getSequence());
+        dto.setContent(getContent());
+        dto.setCorrect(isCorrect());
+        return dto;
     }
 }

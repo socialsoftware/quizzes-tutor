@@ -4,13 +4,18 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.CodeFillInQuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.CodeFillInSpotDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.CodeOrderQuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.CodeOrderSlotDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.ImageDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.MultipleChoiceQuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*
 import spock.lang.Unroll
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage

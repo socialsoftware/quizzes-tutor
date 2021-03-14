@@ -4,6 +4,7 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionTypes;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 
@@ -64,7 +65,7 @@ public class XMLQuestionExportVisitor implements Visitor {
 
     @Override
     public void visitQuestionDetails(MultipleChoiceQuestion question) {
-        this.currentElement.setAttribute("type", Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION);
+        this.currentElement.setAttribute("type", QuestionTypes.MULTIPLE_CHOICE_QUESTION);
 
         Element optionsElement = new Element("options");
         this.currentElement.addContent(optionsElement);
@@ -75,7 +76,7 @@ public class XMLQuestionExportVisitor implements Visitor {
 
     @Override
     public void visitQuestionDetails(CodeFillInQuestion question) {
-        this.currentElement.setAttribute("type", Question.QuestionTypes.CODE_FILL_IN_QUESTION);
+        this.currentElement.setAttribute("type", QuestionTypes.CODE_FILL_IN_QUESTION);
 
         Element codeElement = new Element("code");
         codeElement.setAttribute("language", question.getLanguage().toString());
@@ -138,7 +139,7 @@ public class XMLQuestionExportVisitor implements Visitor {
 
     @Override
     public void visitQuestionDetails(CodeOrderQuestion question) {
-        this.currentElement.setAttribute("type", Question.QuestionTypes.CODE_ORDER_QUESTION);
+        this.currentElement.setAttribute("type", QuestionTypes.CODE_ORDER_QUESTION);
 
         Element codeElement = new Element("orderSlots");
         codeElement.setAttribute("language", question.getLanguage().toString());

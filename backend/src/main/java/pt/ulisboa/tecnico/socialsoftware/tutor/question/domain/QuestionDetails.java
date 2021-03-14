@@ -4,7 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDetailsDto;
 
@@ -17,7 +17,7 @@ import java.util.List;
 @DiscriminatorColumn(name = "question_type",
         columnDefinition = "varchar(32) not null default 'multiple_choice'",
         discriminatorType = DiscriminatorType.STRING)
-public abstract class QuestionDetails implements DomainEntity {
+public abstract class QuestionDetails implements DomainEntity, Updator {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -59,6 +59,8 @@ public abstract class QuestionDetails implements DomainEntity {
         this.question.setQuestionDetails(null);
         this.question = null;
     }
+
+    public abstract void update(QuestionDetailsDto questionDetailsDto);
 
     public abstract void update(Updator updator);
 

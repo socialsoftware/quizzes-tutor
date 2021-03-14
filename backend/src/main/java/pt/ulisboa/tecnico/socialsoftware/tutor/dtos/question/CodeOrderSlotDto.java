@@ -1,6 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
+package pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question;
 
 import java.io.Serializable;
 
@@ -11,13 +9,6 @@ public class CodeOrderSlotDto implements Serializable {
     private Integer sequence;
 
     public CodeOrderSlotDto() {
-    }
-
-    public CodeOrderSlotDto(CodeOrderSlot codeOrderSlot) {
-        this.id = codeOrderSlot.getId();
-        this.content = codeOrderSlot.getContent();
-        this.order = codeOrderSlot.getOrder();
-        this.sequence = codeOrderSlot.getSequence();
     }
 
     public Integer getId() {

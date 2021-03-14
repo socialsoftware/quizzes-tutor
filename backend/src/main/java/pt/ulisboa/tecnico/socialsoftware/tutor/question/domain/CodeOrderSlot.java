@@ -3,13 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerSlot;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderSlotDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.CodeOrderSlotDto;
 
 import javax.persistence.*;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "code_order_slot")
@@ -93,5 +91,14 @@ public class CodeOrderSlot implements DomainEntity {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitCodeOrderSlot(this);
+    }
+
+    public CodeOrderSlotDto getDto() {
+        CodeOrderSlotDto dto = new CodeOrderSlotDto();
+        dto.setId(getId());
+        dto.setContent(getContent());
+        dto.setOrder(getOrder());
+        dto.setSequence(getSequence());
+        return dto;
     }
 }

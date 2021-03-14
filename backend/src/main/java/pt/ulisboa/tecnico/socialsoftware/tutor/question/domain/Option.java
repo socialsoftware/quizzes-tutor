@@ -4,7 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswe
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.OptionDto;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -117,5 +117,14 @@ public class Option implements DomainEntity {
     public void remove() {
         this.questionDetails = null;
         this.questionAnswers.clear();
+    }
+
+    public OptionDto getDto() {
+        OptionDto dto = new OptionDto();
+        dto.setId(getId());
+        dto.setSequence(getSequence());
+        dto.setContent(getContent());
+        dto.setCorrect(isCorrect());
+        return dto;
     }
 }

@@ -5,6 +5,7 @@ import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionTypes;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import java.util.List;
@@ -107,7 +108,7 @@ public class AnswersXmlExportVisitor implements Visitor {
 
     @Override
     public void visitAnswerDetails(MultipleChoiceAnswer answer) {
-        this.currentQuestionAnswer.setAttribute("type", Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION);
+        this.currentQuestionAnswer.setAttribute("type", QuestionTypes.MULTIPLE_CHOICE_QUESTION);
         if (answer.getOption() != null) {
             Element optionElement = new Element("option");
             optionElement.setAttribute("questionKey", String.valueOf(answer.getQuestionAnswer().getQuestion().getKey()));
@@ -118,7 +119,7 @@ public class AnswersXmlExportVisitor implements Visitor {
 
     @Override
     public void visitAnswerDetails(CodeOrderAnswer answer) {
-        this.currentQuestionAnswer.setAttribute("type", Question.QuestionTypes.CODE_ORDER_QUESTION);
+        this.currentQuestionAnswer.setAttribute("type", QuestionTypes.CODE_ORDER_QUESTION);
         if (answer.isAnswered()){
             Element slotContainerElement = new Element("slots");
             slotContainerElement.setAttribute("questionKey", String.valueOf(answer.getQuestionAnswer().getQuestion().getKey()));
@@ -136,7 +137,7 @@ public class AnswersXmlExportVisitor implements Visitor {
 
     @Override
     public void visitAnswerDetails(CodeFillInAnswer answer) {
-        this.currentQuestionAnswer.setAttribute("type", Question.QuestionTypes.CODE_FILL_IN_QUESTION);
+        this.currentQuestionAnswer.setAttribute("type", QuestionTypes.CODE_FILL_IN_QUESTION);
         if (answer.isAnswered()){
             Element spotContainerElement = new Element("fillInSpots");
             spotContainerElement.setAttribute("questionKey", String.valueOf(answer.getQuestionAnswer().getQuestion().getKey()));

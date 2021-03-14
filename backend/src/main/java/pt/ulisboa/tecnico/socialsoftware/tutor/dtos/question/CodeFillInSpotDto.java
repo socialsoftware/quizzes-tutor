@@ -1,11 +1,8 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInSpot;
+package pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class CodeFillInSpotDto implements Serializable {
     private Integer id;
@@ -13,12 +10,6 @@ public class CodeFillInSpotDto implements Serializable {
     private List<OptionDto> options = new ArrayList<>();
 
     public CodeFillInSpotDto() {
-    }
-
-    public CodeFillInSpotDto(CodeFillInSpot option) {
-        this.id = option.getId();
-        this.sequence = option.getSequence();
-        this.options = option.getOptions().stream().map(OptionDto::new).collect(Collectors.toList());
     }
 
     public Integer getId() {

@@ -1,7 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInOption;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -15,7 +16,7 @@ public class CodeFillInAnswerDto extends AnswerDetailsDto {
 
     public CodeFillInAnswerDto(CodeFillInAnswer answer) {
         if (answer.getFillInOptions() != null)
-            this.options = answer.getFillInOptions().stream().map(OptionDto::new).collect(Collectors.toList());
+            this.options = answer.getFillInOptions().stream().map(CodeFillInOption::getDto).collect(Collectors.toList());
     }
 
     public List<OptionDto> getOptions() {

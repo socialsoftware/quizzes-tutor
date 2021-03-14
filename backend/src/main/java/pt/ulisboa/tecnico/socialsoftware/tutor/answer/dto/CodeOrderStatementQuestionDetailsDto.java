@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Languages;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.Languages;
 
 import java.util.Collections;
 import java.util.List;

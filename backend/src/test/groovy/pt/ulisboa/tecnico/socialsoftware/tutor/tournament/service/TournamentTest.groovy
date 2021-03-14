@@ -18,10 +18,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQue
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.tournament.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 import java.time.LocalDateTime

@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionTypes.*;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

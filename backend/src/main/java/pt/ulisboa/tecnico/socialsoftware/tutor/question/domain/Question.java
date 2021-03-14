@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
@@ -11,8 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDetailsDto;
@@ -32,12 +31,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class Question implements DomainEntity {
     public enum Status {
         DISABLED, REMOVED, AVAILABLE, SUBMITTED
-    }
-
-    public static class QuestionTypes {
-        public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
-        public static final String CODE_FILL_IN_QUESTION = "code_fill_in";
-        public static final String CODE_ORDER_QUESTION = "code_order";
     }
 
     @Id
@@ -97,7 +90,8 @@ public class Question implements DomainEntity {
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
 
-        setQuestionDetails(questionDto.getQuestionDetailsDto().getQuestionDetails(this));
+        //setQuestionDetails(questionDto.getQuestionDetailsDto().getQuestionDetails(this));
+        setQuestionDetails(getQuestionDetails(this, questionDto.getQuestionDetailsDto()));
     }
 
     public Integer getId() {
@@ -302,6 +296,21 @@ public class Question implements DomainEntity {
 
     public QuestionDetails getQuestionDetails() {
         return questionDetails;
+    }
+
+    public QuestionDetails getQuestionDetails(Question question, QuestionDetailsDto questionDetailsDto) {
+        if (questionDetailsDto instanceof MultipleChoiceQuestionDto) {
+            return new MultipleChoiceQuestion(question, (MultipleChoiceQuestionDto) questionDetailsDto);
+        }
+        else if (questionDetailsDto instanceof CodeFillInQuestionDto) {
+            return new CodeFillInQuestion(question, (CodeFillInQuestionDto) questionDetailsDto);
+        }
+        else if (questionDetailsDto instanceof CodeOrderQuestionDto) {
+            return new CodeOrderQuestion(question, (CodeOrderQuestionDto) questionDetailsDto);
+        }
+        else {
+            throw new TutorException(INVALID_QUESTION_DETAILS, question.getClass().getName());
+        }
     }
 
     public void setQuestionDetails(QuestionDetails question) {

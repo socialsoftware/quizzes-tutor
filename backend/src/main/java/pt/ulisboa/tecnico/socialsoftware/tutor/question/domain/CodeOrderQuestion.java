@@ -4,12 +4,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderCorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderSlotDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderStatementQuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
@@ -22,7 +20,7 @@ import java.util.stream.Collectors;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
-@DiscriminatorValue(Question.QuestionTypes.CODE_ORDER_QUESTION)
+@DiscriminatorValue(QuestionTypes.CODE_ORDER_QUESTION)
 public class CodeOrderQuestion extends QuestionDetails {
 
     private Languages language;
@@ -86,9 +84,17 @@ public class CodeOrderQuestion extends QuestionDetails {
         }
     }
 
-    public void update(CodeOrderQuestionDto questionDetails) {
-        setLanguage(questionDetails.getLanguage());
-        setCodeOrderSlots(questionDetails.getCodeOrderSlots());
+    @Override
+    public void update(QuestionDetailsDto questionDetailsDto) {
+        if (questionDetailsDto instanceof CodeOrderQuestionDto) {
+            CodeOrderQuestionDto codeOrderQuestionDto = (CodeOrderQuestionDto) questionDetailsDto;
+            setLanguage(codeOrderQuestionDto.getLanguage());
+            setCodeOrderSlots(codeOrderQuestionDto.getCodeOrderSlots());
+        }
+        else {
+            throw new TutorException(INVALID_QUESTION_DETAILS_DTO, questionDetailsDto.getClass().getName());
+        }
+
     }
 
 
@@ -114,7 +120,7 @@ public class CodeOrderQuestion extends QuestionDetails {
 
     @Override
     public QuestionDetailsDto getQuestionDetailsDto() {
-        return new CodeOrderQuestionDto(this);
+        return this.getDto();
     }
 
     @Override
@@ -164,5 +170,17 @@ public class CodeOrderQuestion extends QuestionDetails {
         return selectedIds.stream()
                 .map(x -> String.valueOf(this.codeOrderSlots.stream().filter(co -> co.getId().equals(x)).findAny().get().getSequence() + 1))
                 .collect(Collectors.joining(" | "));
+    }
+
+    public CodeOrderQuestionDto getDto() {
+        CodeOrderQuestionDto dto = new CodeOrderQuestionDto();
+        dto.setLanguage(getLanguage());
+        dto.setCodeOrderSlots(
+                getCodeOrderSlots()
+                .stream()
+                .map(CodeOrderSlot::getDto)
+                .collect(Collectors.toList()));
+        dto.getCodeOrderSlots().sort(Comparator.comparing(CodeOrderSlotDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
+        return dto;
     }
 }

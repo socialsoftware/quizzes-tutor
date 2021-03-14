@@ -4,12 +4,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInCorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dtos.question.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInSpotDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeFillInStatementQuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
@@ -21,11 +19,10 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AT_LEAST_ONE_OPTION_NEEDED;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FILL_IN_SPOT_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
-@DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
+@DiscriminatorValue(QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInQuestion extends QuestionDetails {
 
     private Languages language;
@@ -111,7 +108,7 @@ public class CodeFillInQuestion extends QuestionDetails {
 
     @Override
     public QuestionDetailsDto getQuestionDetailsDto() {
-        return new CodeFillInQuestionDto(this);
+        return this.getDto();
     }
 
     @Override
@@ -136,10 +133,17 @@ public class CodeFillInQuestion extends QuestionDetails {
                 .collect(Collectors.joining(" | "));
     }
 
-    public void update(CodeFillInQuestionDto questionDetails) {
-        setCode(questionDetails.getCode());
-        setLanguage(questionDetails.getLanguage());
-        setFillInSpots(questionDetails.getFillInSpots());
+    @Override
+    public void update(QuestionDetailsDto questionDetailsDto) {
+        if (questionDetailsDto instanceof CodeFillInQuestionDto) {
+            CodeFillInQuestionDto codeFillInQuestionDto = (CodeFillInQuestionDto) questionDetailsDto;
+            setCode(codeFillInQuestionDto.getCode());
+            setLanguage(codeFillInQuestionDto.getLanguage());
+            setFillInSpots(codeFillInQuestionDto.getFillInSpots());
+        }
+        else {
+            throw new TutorException(INVALID_QUESTION_DETAILS_DTO, questionDetailsDto.getClass().getName());
+        }
     }
 
     @Override
@@ -172,5 +176,15 @@ public class CodeFillInQuestion extends QuestionDetails {
             }
         }
         return String.join(" | ", result);
+    }
+
+    public CodeFillInQuestionDto getDto() {
+        CodeFillInQuestionDto dto = new CodeFillInQuestionDto();
+        dto.setLanguage(getLanguage());
+        dto.setCode(getCode());
+        dto.setFillInSpots(getFillInSpots()
+                .stream().map(CodeFillInSpot::getDto)
+                .collect(Collectors.toList()));
+        return dto;
     }
 }
