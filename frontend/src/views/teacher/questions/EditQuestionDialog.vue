@@ -81,12 +81,10 @@
 import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
-import Option from '@/models/management/Option';
-import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
 import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 import CodeFillInCreate from '@/components/code-fill-in/CodeFillInCreate.vue';
 import CodeOrderCreate from '@/components/code-order/CodeOrderCreate.vue';
-import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers.ts';
+import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers';
 
 @Component({
   components: {

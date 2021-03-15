@@ -160,7 +160,7 @@ export default new Vuex.Store({
       // localStorage.setItem("userRole", authResponse.user.role);
     },
     logout({ commit }) {
-      return new Promise(resolve => {
+      return new Promise<void>(resolve => {
         commit('logout');
         // localStorage.removeItem("token");
         // localStorage.removeItem("userRole");
