@@ -20,7 +20,9 @@
                     :class="course.status.toLowerCase()"
                   >
                     <v-list-item-content>
-                      <v-list-item-title v-text="course.academicTerm" />
+                      <v-list-item-title>
+                        {{ course.academicTerm }} ({{ course.acronym }})
+                      </v-list-item-title>
                     </v-list-item-content>
 
                     <v-list-item-action>

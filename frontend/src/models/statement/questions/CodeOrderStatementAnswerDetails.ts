@@ -20,7 +20,6 @@ export default class CodeOrderStatementAnswerDetails extends StatementAnswerDeta
   isAnswerCorrect(
     correctAnswerDetails: CodeOrderStatementCorrectAnswerDetails
   ): boolean {
-
     for (const key in correctAnswerDetails.correctOrder) {
       let correct = correctAnswerDetails.correctOrder[key];
       if (!this.orderedSlots[key] && correct.order != null) {

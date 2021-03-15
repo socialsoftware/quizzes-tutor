@@ -71,7 +71,9 @@ export default class CodeOrderAnswerResult extends Vue {
 
   isCorrect(element: CodeOrderSlotStatementAnswerDetails, index: number) {
     let correctPlaced = this.correctAnswerDetails.correctOrder[index];
-    return element.slotId == correctPlaced.slotId && correctPlaced.order != null;
+    return (
+      element.slotId == correctPlaced.slotId && correctPlaced.order != null
+    );
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {

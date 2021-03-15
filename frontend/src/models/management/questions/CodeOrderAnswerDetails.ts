@@ -20,8 +20,8 @@ export default class CodeOrderAnswerDetails extends AnswerDetails {
     console.log(
       this.orderedSlots.length ===
         questionDetails.codeOrderSlots.filter(os => os.order != null).length &&
-      this.orderedSlots.filter(os => !os.correct).length == 0
-    )
+        this.orderedSlots.filter(os => !os.correct).length == 0
+    );
     return (
       this.orderedSlots.length ===
         questionDetails.codeOrderSlots.filter(os => os.order != null).length &&
@@ -31,8 +31,7 @@ export default class CodeOrderAnswerDetails extends AnswerDetails {
 
   answerRepresentation(questionDetails: CodeOrderQuestionDetails): string {
     return (
-      this.orderedSlots.map(x => '' + (x.sequence || 0)).join(' | ') ||
-      '-'
+      this.orderedSlots.map(x => '' + (x.sequence || 0)).join(' | ') || '-'
     );
   }
 }
