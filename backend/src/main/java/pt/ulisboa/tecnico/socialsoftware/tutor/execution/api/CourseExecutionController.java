@@ -5,10 +5,13 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TarGZip;
@@ -113,7 +116,7 @@ public class CourseExecutionController {
     }
 
     @GetMapping(value = "/executions/{executionId}/export")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS')) or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public void exportCourseExecutionInfo(HttpServletResponse response, @PathVariable Integer executionId) throws IOException {
         List<Quiz> courseExecutionQuizzes = quizRepository.findQuizzesOfExecution(executionId);
         response.setHeader("Content-Disposition", "attachment; filename=file.tar.gz");
@@ -132,6 +135,12 @@ public class CourseExecutionController {
 
         deleteDirectory(file);
         deleteDirectory(new File(sourceFolder + ".tar.gz"));
+    }
+
+    @PostMapping("/executions/{executionId}/import/questions")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<QuestionDto> importQuestions(@PathVariable Integer executionId, @RequestParam("file") MultipartFile file) throws IOException {
+        return courseExecutionService.importQuestions(file.getInputStream(), executionId);
     }
 
     @GetMapping("/executions/{courseExecutionId}/topics/available")

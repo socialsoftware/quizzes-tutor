@@ -6,7 +6,11 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
@@ -24,6 +28,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -32,6 +37,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class CourseExecutionService {
+    @Autowired
+    private QuestionService questionService;
+
     @Autowired
     private CourseRepository courseRepository;
 
@@ -174,6 +182,15 @@ public class CourseExecutionService {
                 .filter(user -> user.getRole().equals(User.Role.TEACHER))
                 .map(UserDto::new)
                 .collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuestionDto> importQuestions(InputStream inputStream, Integer executionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
+
+        QuestionsXmlImport questionsXmlImport = new QuestionsXmlImport();
+
+        return questionsXmlImport.importQuestions(inputStream, this.questionService, this.courseRepository, courseExecution);
     }
 
     private Course getCourse(String name, Course.Type type) {

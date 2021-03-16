@@ -50,6 +50,7 @@ public enum ErrorMessage {
     USER_NOT_FOUND("User not found with id %d"),
     EXTERNAL_USER_NOT_FOUND("User not found with username %s"),
     COURSE_NOT_FOUND("Course not found with name %s"),
+    INVALID_COURSE("This is not an execution of course %s"),
     USER_ALREADY_ACTIVE("User is already active with username %s"),
     USER_IS_ACTIVE("User state is active: username %s"),
     INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),
@@ -58,6 +59,7 @@ public enum ErrorMessage {
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
 
+    QUESTION_KEY_ALREADY_EXISTS("Questions already exists with key %d"),
     QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
     QUESTION_ORDER_SLOT_MISMATCH("Question %d does not have slot %d"),
 
