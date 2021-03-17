@@ -31,6 +31,9 @@
           <v-btn color="primary" dark @click="exportCourseQuestions"
             >Export Questions</v-btn
           >
+          <v-btn color="primary" dark @click="importCourseQuestions"
+            >Import Questions</v-btn
+          >
         </v-card-title>
       </template>
 
@@ -153,6 +156,12 @@
       <v-icon class="mr-2 action-button">mouse</v-icon>Right-click on question's
       title to edit it.
     </footer>
+    <upload-questions-dialog
+      v-if="uploadQuestionsDialog"
+      v-model="uploadQuestionsDialog"
+      v-on:questions-uploaded="onQuestionsUploaded"
+      v-on:close-dialog="onCloseUploadQuestionsDialog"
+    />
     <edit-question-dialog
       v-if="currentQuestion && editQuestionDialog"
       v-model="editQuestionDialog"
@@ -184,9 +193,11 @@ import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue
 import EditQuestionDialog from '@/views/teacher/questions/EditQuestionDialog.vue';
 import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
 import ShowClarificationDialog from '../discussions/ShowClarificationDialog.vue';
+import UploadQuestionsDialog from '@/views/teacher/questions/UploadQuestionsDialog.vue';
 
 @Component({
   components: {
+    'upload-questions-dialog': UploadQuestionsDialog,
     'show-question-dialog': ShowQuestionDialog,
     'show-clarification-dialog': ShowClarificationDialog,
     'edit-question-dialog': EditQuestionDialog,
@@ -199,6 +210,7 @@ export default class QuestionsView extends Vue {
   currentQuestion: Question | null = null;
   editQuestionDialog: boolean = false;
   questionDialog: boolean = false;
+  uploadQuestionsDialog: boolean = false;
   clarificationDialog: boolean = false;
   search: string = '';
   statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
@@ -392,6 +404,19 @@ export default class QuestionsView extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+  }
+
+  importCourseQuestions() {
+    this.uploadQuestionsDialog = true;
+  }
+
+  onQuestionsUploaded(questions: Question[]) {
+    this.uploadQuestionsDialog = false;
+    this.questions = [...questions, ...this.questions];
+  }
+
+  onCloseUploadQuestionsDialog() {
+    this.uploadQuestionsDialog = false;
   }
 
   async deleteQuestion(toDeletequestion: Question) {

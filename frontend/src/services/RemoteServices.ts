@@ -214,6 +214,29 @@ export default class RemoteServices {
       });
   }
 
+  static async importQuestions(file: File): Promise<Question[]> {
+    let formData = new FormData();
+    formData.append('file', file);
+    return httpClient
+      .post(
+        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/import/questions`,
+        formData,
+        {
+          headers: {
+            'Content-Type': 'multipart/form-data'
+          }
+        }
+      )
+      .then(response => {
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
+      })
+      .catch(async error => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getAvailableQuestions(): Promise<Question[]> {
     return httpClient
       .get(
