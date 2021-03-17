@@ -15,9 +15,9 @@ export default class StatementManager {
   }
 
   async getQuizStatement() {
-    let params = {
+    const params = {
       assessment: this.assessment,
-      numberOfQuestions: +this.numberOfQuestions
+      numberOfQuestions: +this.numberOfQuestions,
     };
 
     this.statementQuiz = await RemoteServices.generateStatementQuiz(params);

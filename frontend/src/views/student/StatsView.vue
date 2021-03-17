@@ -76,7 +76,7 @@ import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
 
 @Component({
-  components: { AnimatedNumber }
+  components: { AnimatedNumber },
 })
 export default class StatsView extends Vue {
   stats: StudentStats | null = null;

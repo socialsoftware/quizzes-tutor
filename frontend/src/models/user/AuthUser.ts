@@ -21,8 +21,8 @@ export default class AuthUser {
       this.role = jsonObj.role;
       this.admin = jsonObj.admin;
 
-      for (let [term, courses] of Object.entries(jsonObj.courses)) {
-        this.courses[term] = courses.map(course => new Course(course));
+      for (const [term, courses] of Object.entries(jsonObj.courses)) {
+        this.courses[term] = courses.map((course) => new Course(course));
         this.coursesNumber += this.courses[term].length;
       }
     }

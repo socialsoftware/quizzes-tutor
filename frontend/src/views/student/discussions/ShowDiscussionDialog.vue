@@ -21,7 +21,7 @@
             <div class="discussion">
               <ul>
                 <li
-                  style="margin-bottom: 25px !important;"
+                  style="margin-bottom: 25px !important"
                   :key="discussion.message"
                 >
                   <div style="display: inline-flex; width: 100%">
@@ -38,8 +38,8 @@
                     <v-switch
                       v-if="
                         discussion.replies.length > 0 &&
-                          ((user.role === 'STUDENT' && discussion.closed) ||
-                            user.role === 'TEACHER')
+                        ((user.role === 'STUDENT' && discussion.closed) ||
+                          user.role === 'TEACHER')
                       "
                       style="width: 12%"
                       v-model="discussion.closed"
@@ -78,8 +78,8 @@ import RemoteServices from '@/services/RemoteServices';
 @Component({
   components: {
     'show-question': ShowQuestion,
-    'reply-component': ReplyComponent
-  }
+    'reply-component': ReplyComponent,
+  },
 })
 export default class ShowDiscussionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;

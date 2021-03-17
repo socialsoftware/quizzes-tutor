@@ -23,11 +23,11 @@ import '@/assets/css/_question.scss';
 require('typeface-roboto');
 
 @Component({
-  components: { TopBar, ErrorMessage, Notification, Loading }
+  components: { TopBar, ErrorMessage, Notification, Loading },
 })
 export default class App extends Vue {
   created() {
-    axios.interceptors.response.use(undefined, err => {
+    axios.interceptors.response.use(undefined, (err) => {
       return new Promise(() => {
         if (err.status === 401 && err.config && !err.config.__isRetryRequest) {
           this.$store.dispatch('logout');

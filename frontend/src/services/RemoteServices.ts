@@ -29,7 +29,7 @@ httpClient.defaults.baseURL =
   process.env.VUE_APP_ROOT_API || 'http://localhost:8080';
 httpClient.defaults.headers.post['Content-Type'] = 'application/json';
 httpClient.interceptors.request.use(
-  config => {
+  (config) => {
     if (!config.headers.Authorization) {
       const token = Store.getters.getToken;
 
@@ -39,10 +39,10 @@ httpClient.interceptors.request.use(
     }
     return config;
   },
-  error => Promise.reject(error)
+  (error) => Promise.reject(error)
 );
 httpClient.interceptors.response.use(
-  response => {
+  (response) => {
     if (response.data.notification) {
       if (response.data.notification.errorMessages.length)
         Store.dispatch(
@@ -53,7 +53,7 @@ httpClient.interceptors.response.use(
     }
     return response;
   },
-  error => Promise.reject(error)
+  (error) => Promise.reject(error)
 );
 
 export default class RemoteServices {
@@ -62,10 +62,10 @@ export default class RemoteServices {
   static async fenixLogin(code: string): Promise<AuthDto> {
     return httpClient
       .get(`/auth/fenix?code=${code}`)
-      .then(response => {
+      .then((response) => {
         return new AuthDto(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -76,10 +76,10 @@ export default class RemoteServices {
   ): Promise<AuthDto> {
     return httpClient
       .get(`/auth/external?email=${email}&password=${password}`)
-      .then(response => {
+      .then((response) => {
         return new AuthDto(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -87,10 +87,10 @@ export default class RemoteServices {
   static async demoStudentLogin(createNew: boolean): Promise<AuthDto> {
     return httpClient
       .get(`/auth/demo/student?createNew=${createNew}`)
-      .then(response => {
+      .then((response) => {
         return new AuthDto(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -98,10 +98,10 @@ export default class RemoteServices {
   static async demoTeacherLogin(): Promise<AuthDto> {
     return httpClient
       .get('/auth/demo/teacher')
-      .then(response => {
+      .then((response) => {
         return new AuthDto(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -109,10 +109,10 @@ export default class RemoteServices {
   static async demoAdminLogin(): Promise<AuthDto> {
     return httpClient
       .get('/auth/demo/admin')
-      .then(response => {
+      .then((response) => {
         return new AuthDto(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -125,10 +125,10 @@ export default class RemoteServices {
   ): Promise<ExternalUser> {
     return httpClient
       .post(`/users/register/${executionId}`, externalUser)
-      .then(response => {
+      .then((response) => {
         return new ExternalUser(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -137,18 +137,18 @@ export default class RemoteServices {
     file: File,
     executionId: number
   ): Promise<Course> {
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('file', file);
     return httpClient
       .post(`/users/register/${executionId}/csv`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       })
-      .then(response => {
+      .then((response) => {
         return new Course(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -158,10 +158,10 @@ export default class RemoteServices {
   ): Promise<ExternalUser> {
     return httpClient
       .post('/users/register/confirm', externalUser)
-      .then(response => {
+      .then((response) => {
         return new ExternalUser(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -173,10 +173,10 @@ export default class RemoteServices {
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/stats`
       )
-      .then(response => {
+      .then((response) => {
         return new StudentStats(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -186,12 +186,12 @@ export default class RemoteServices {
   static async getQuestions(): Promise<Question[]> {
     return httpClient
       .get(`/courses/${Store.getters.getCurrentCourse.courseId}/questions`)
-      .then(response => {
+      .then((response) => {
         return response.data.map((question: any) => {
           return new Question(question);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -201,21 +201,21 @@ export default class RemoteServices {
       .get(
         `/courses/${Store.getters.getCurrentCourse.courseId}/questions/export`,
         {
-          responseType: 'blob'
+          responseType: 'blob',
         }
       )
-      .then(response => {
+      .then((response) => {
         return new Blob([response.data], {
-          type: 'application/zip, application/octet-stream'
+          type: 'application/zip, application/octet-stream',
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
 
   static async importQuestions(file: File): Promise<Question[]> {
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('file', file);
     return httpClient
       .post(
@@ -223,16 +223,16 @@ export default class RemoteServices {
         formData,
         {
           headers: {
-            'Content-Type': 'multipart/form-data'
-          }
+            'Content-Type': 'multipart/form-data',
+          },
         }
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((question: any) => {
           return new Question(question);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -242,12 +242,12 @@ export default class RemoteServices {
       .get(
         `/courses/${Store.getters.getCurrentCourse.courseId}/questions/available`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((question: any) => {
           return new Question(question);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -258,10 +258,10 @@ export default class RemoteServices {
         `/courses/${Store.getters.getCurrentCourse.courseId}/questions/`,
         question
       )
-      .then(response => {
+      .then((response) => {
         return new Question(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -269,18 +269,20 @@ export default class RemoteServices {
   static async updateQuestion(question: Question): Promise<Question> {
     return httpClient
       .put(`/questions/${question.id}`, question)
-      .then(response => {
+      .then((response) => {
         return new Question(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
 
   static async deleteQuestion(questionId: number) {
-    return httpClient.delete(`/questions/${questionId}`).catch(async error => {
-      throw Error(await this.errorMessage(error));
-    });
+    return httpClient
+      .delete(`/questions/${questionId}`)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async setQuestionStatus(
@@ -289,27 +291,27 @@ export default class RemoteServices {
   ): Promise<Question> {
     return httpClient
       .post(`/questions/${questionId}/set-status`, status, {})
-      .then(response => {
+      .then((response) => {
         return new Question(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
 
   static async uploadImage(file: File, questionId: number): Promise<string> {
-    let formData = new FormData();
+    const formData = new FormData();
     formData.append('file', file);
     return httpClient
       .put(`/questions/${questionId}/image`, formData, {
         headers: {
-          'Content-Type': 'multipart/form-data'
-        }
+          'Content-Type': 'multipart/form-data',
+        },
       })
-      .then(response => {
+      .then((response) => {
         return response.data as string;
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -323,12 +325,12 @@ export default class RemoteServices {
   static async getTopics(): Promise<Topic[]> {
     return httpClient
       .get(`/courses/${Store.getters.getCurrentCourse.courseId}/topics`)
-      .then(response => {
+      .then((response) => {
         return response.data.map((topic: any) => {
           return new Topic(topic);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -339,10 +341,10 @@ export default class RemoteServices {
         `/courses/${Store.getters.getCurrentCourse.courseId}/topics/`,
         topic
       )
-      .then(response => {
+      .then((response) => {
         return new Topic(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -350,16 +352,16 @@ export default class RemoteServices {
   static async updateTopic(topic: Topic): Promise<Topic> {
     return httpClient
       .put(`/topics/${topic.id}`, topic)
-      .then(response => {
+      .then((response) => {
         return new Topic(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
 
   static async deleteTopic(topic: Topic) {
-    return httpClient.delete(`/topics/${topic.id}`).catch(async error => {
+    return httpClient.delete(`/topics/${topic.id}`).catch(async (error) => {
       throw Error(await this.errorMessage(error));
     });
   }
@@ -367,12 +369,12 @@ export default class RemoteServices {
   static async getTopicQuestions(topicId: number): Promise<Question[]> {
     return httpClient
       .get(`/topics/${topicId}/questions`)
-      .then(response => {
+      .then((response) => {
         return response.data.map((question: any) => {
           return new Question(question);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -382,12 +384,12 @@ export default class RemoteServices {
   static getCourses(): Promise<Course[]> {
     return httpClient
       .get('/executions')
-      .then(response => {
+      .then((response) => {
         return response.data.map((course: any) => {
           return new Course(course);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -395,10 +397,10 @@ export default class RemoteServices {
   static async createExternalCourse(course: Course): Promise<Course> {
     return httpClient
       .post('/executions/external', course)
-      .then(response => {
+      .then((response) => {
         return new Course(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -406,7 +408,7 @@ export default class RemoteServices {
   static async deleteCourseExecution(courseExecutionId: number | undefined) {
     return httpClient
       .delete(`/executions/${courseExecutionId}`)
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -414,10 +416,10 @@ export default class RemoteServices {
   static async activateCourseExecution(course: Course): Promise<Course> {
     return httpClient
       .post('/executions/activate', course)
-      .then(response => {
+      .then((response) => {
         return new Course(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -425,7 +427,7 @@ export default class RemoteServices {
   static async anonymizeCourse(courseExecutionId: number | undefined) {
     return httpClient
       .get(`/executions/${courseExecutionId}/anonymize`)
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -433,12 +435,12 @@ export default class RemoteServices {
   static async getCourseStudents(course: Course) {
     return httpClient
       .get(`/executions/${course.courseExecutionId}/students`)
-      .then(response => {
+      .then((response) => {
         return response.data.map((student: any) => {
           return new Student(student);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -452,10 +454,10 @@ export default class RemoteServices {
         `/executions/${courseExecution.courseExecutionId}/users/delete`,
         userIdList
       )
-      .then(response => {
+      .then((response) => {
         return new Course(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -463,14 +465,14 @@ export default class RemoteServices {
   static async exportCourseExecutionInfo(executionId: number): Promise<Blob> {
     return httpClient
       .get(`/executions/${executionId}/export`, {
-        responseType: 'blob'
+        responseType: 'blob',
       })
-      .then(response => {
+      .then((response) => {
         return new Blob([response.data], {
-          type: 'application/tar.gz, application/octet-stream'
+          type: 'application/tar.gz, application/octet-stream',
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -480,12 +482,12 @@ export default class RemoteServices {
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/topics/available`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((topic: any) => {
           return new Topic(topic);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -497,12 +499,12 @@ export default class RemoteServices {
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((assessment: any) => {
           return new Assessment(assessment);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -512,12 +514,12 @@ export default class RemoteServices {
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments/available`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((assessment: any) => {
           return new Assessment(assessment);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -526,10 +528,10 @@ export default class RemoteServices {
     if (assessment.id) {
       return httpClient
         .put(`/assessments/${assessment.id}`, assessment)
-        .then(response => {
+        .then((response) => {
           return new Assessment(response.data);
         })
-        .catch(async error => {
+        .catch(async (error) => {
           throw Error(await this.errorMessage(error));
         });
     } else {
@@ -538,10 +540,10 @@ export default class RemoteServices {
           `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/assessments`,
           assessment
         )
-        .then(response => {
+        .then((response) => {
           return new Assessment(response.data);
         })
-        .catch(async error => {
+        .catch(async (error) => {
           throw Error(await this.errorMessage(error));
         });
     }
@@ -550,7 +552,7 @@ export default class RemoteServices {
   static async deleteAssessment(assessmentId: number) {
     return httpClient
       .delete(`/assessments/${assessmentId}`)
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -562,13 +564,13 @@ export default class RemoteServices {
     return httpClient
       .post(`/assessments/${assessmentId}/set-status`, status, {
         headers: {
-          'Content-Type': 'text/html'
-        }
+          'Content-Type': 'text/html',
+        },
       })
-      .then(response => {
+      .then((response) => {
         return new Assessment(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -576,12 +578,12 @@ export default class RemoteServices {
   static async getAssessmentQuestions(assessmentId: number) {
     return httpClient
       .get(`/assessments/${assessmentId}/questions`)
-      .then(response => {
+      .then((response) => {
         return response.data.map((question: any) => {
           return new Question(question);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -593,12 +595,12 @@ export default class RemoteServices {
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/non-generated`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((quiz: any) => {
           return new Quiz(quiz);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -606,10 +608,10 @@ export default class RemoteServices {
   static async getQuiz(quizId: number): Promise<Quiz> {
     return httpClient
       .get(`/quizzes/${quizId}`)
-      .then(response => {
+      .then((response) => {
         return new Quiz(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -618,10 +620,10 @@ export default class RemoteServices {
     if (quiz.id) {
       return httpClient
         .put(`/quizzes/${quiz.id}`, quiz)
-        .then(response => {
+        .then((response) => {
           return new Quiz(response.data);
         })
-        .catch(async error => {
+        .catch(async (error) => {
           throw Error(await this.errorMessage(error));
         });
     } else {
@@ -630,17 +632,17 @@ export default class RemoteServices {
           `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes`,
           quiz
         )
-        .then(response => {
+        .then((response) => {
           return new Quiz(response.data);
         })
-        .catch(async error => {
+        .catch(async (error) => {
           throw Error(await this.errorMessage(error));
         });
     }
   }
 
   static async deleteQuiz(quizId: number) {
-    return httpClient.delete(`/quizzes/${quizId}`).catch(async error => {
+    return httpClient.delete(`/quizzes/${quizId}`).catch(async (error) => {
       throw Error(await this.errorMessage(error));
     });
   }
@@ -648,14 +650,14 @@ export default class RemoteServices {
   static async exportQuiz(quizId: number): Promise<Blob> {
     return httpClient
       .get(`/quizzes/${quizId}/export`, {
-        responseType: 'blob'
+        responseType: 'blob',
       })
-      .then(response => {
+      .then((response) => {
         return new Blob([response.data], {
-          type: 'application/zip, application/octet-stream'
+          type: 'application/zip, application/octet-stream',
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -663,10 +665,10 @@ export default class RemoteServices {
   static async populateWithQuizAnswers(quizId: number): Promise<Quiz> {
     return httpClient
       .post(`/quizzes/${quizId}/populate`)
-      .then(response => {
+      .then((response) => {
         return new Quiz(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -674,10 +676,10 @@ export default class RemoteServices {
   static async removeNonAnsweredQuizAnswers(quizId: number): Promise<Quiz> {
     return httpClient
       .post(`/quizzes/${quizId}/unpopulate`)
-      .then(response => {
+      .then((response) => {
         return new Quiz(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -685,10 +687,10 @@ export default class RemoteServices {
   static async getQuizAnswers(quizId: number): Promise<QuizAnswers> {
     return httpClient
       .get(`/quizzes/${quizId}/answers`)
-      .then(response => {
+      .then((response) => {
         return new QuizAnswers(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -700,12 +702,12 @@ export default class RemoteServices {
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/available`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((statementQuiz: any) => {
           return new StatementQuiz(statementQuiz);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -716,10 +718,10 @@ export default class RemoteServices {
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/generate`,
         params
       )
-      .then(response => {
+      .then((response) => {
         return new StatementQuiz(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -729,12 +731,12 @@ export default class RemoteServices {
       .get(
         `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/solved`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((solvedQuiz: any) => {
           return new SolvedQuiz(solvedQuiz);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -742,10 +744,10 @@ export default class RemoteServices {
   static async getQuizByQRCode(quizId: number): Promise<StatementQuiz> {
     return httpClient
       .get(`/quizzes/${quizId}/byqrcode`)
-      .then(response => {
+      .then((response) => {
         return new StatementQuiz(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -753,10 +755,10 @@ export default class RemoteServices {
   static async startQuiz(quizId: number): Promise<StatementQuiz> {
     return httpClient
       .get(`/quizzes/${quizId}/start`)
-      .then(response => {
+      .then((response) => {
         return new StatementQuiz(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -767,16 +769,16 @@ export default class RemoteServices {
   ): Promise<StatementQuestion> {
     return httpClient
       .get(`/quizzes/${quizId}/question/${questionId}`)
-      .then(response => {
+      .then((response) => {
         return new StatementQuestion(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
 
   static submitAnswer(quizId: number, answer: StatementAnswer) {
-    httpClient.post(`/quizzes/${quizId}/submit`, answer).catch(error => {
+    httpClient.post(`/quizzes/${quizId}/submit`, answer).catch((error) => {
       console.debug(error);
     });
   }
@@ -784,17 +786,17 @@ export default class RemoteServices {
   static async concludeQuiz(
     statementQuiz: StatementQuiz
   ): Promise<StatementCorrectAnswer[]> {
-    let sendStatement = { ...statementQuiz, questions: [] };
+    const sendStatement = { ...statementQuiz, questions: [] };
     return httpClient
       .post(`/quizzes/${statementQuiz.id}/conclude`, sendStatement)
-      .then(response => {
+      .then((response) => {
         if (response.data) {
           return response.data.map((answer: any) => {
             return new StatementCorrectAnswer(answer);
           });
         }
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -805,13 +807,13 @@ export default class RemoteServices {
     return httpClient
       .get('/admin/export', {
         timeout: 1000000,
-        responseType: 'blob'
+        responseType: 'blob',
       })
-      .then(response => {
+      .then((response) => {
         const url = window.URL.createObjectURL(new Blob([response.data]));
         const link = document.createElement('a');
         link.href = url;
-        let dateTime = new Date();
+        const dateTime = new Date();
         link.setAttribute(
           'download',
           `export-${dateTime.toLocaleString()}.zip`
@@ -819,7 +821,7 @@ export default class RemoteServices {
         document.body.appendChild(link);
         link.click();
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -834,10 +836,10 @@ export default class RemoteServices {
         `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}`,
         questionSubmission
       )
-      .then(response => {
+      .then((response) => {
         return new QuestionSubmission(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -847,10 +849,10 @@ export default class RemoteServices {
   ): Promise<QuestionSubmission> {
     return httpClient
       .put(`/submissions/${questionSubmission.id}`, questionSubmission)
-      .then(response => {
+      .then((response) => {
         return new QuestionSubmission(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -858,7 +860,7 @@ export default class RemoteServices {
   static async deleteSubmittedQuestion(questionSubmissionId: number) {
     return httpClient
       .delete(`/submissions/${questionSubmissionId}`)
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -866,10 +868,10 @@ export default class RemoteServices {
   static async createReview(review: Review): Promise<Review> {
     return httpClient
       .post(`/submissions/${review.questionSubmissionId}/reviews`, review)
-      .then(response => {
+      .then((response) => {
         return new Review(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -889,12 +891,12 @@ export default class RemoteServices {
       .get(
         `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/student`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((questionSubmission: any) => {
           return new QuestionSubmission(questionSubmission);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -906,12 +908,12 @@ export default class RemoteServices {
       .get(
         `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/execution`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((questionSubmission: any) => {
           return new QuestionSubmission(questionSubmission);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -921,12 +923,12 @@ export default class RemoteServices {
   ): Promise<Review[]> {
     return httpClient
       .get(`/submissions/${questionSubmissionId}/reviews`)
-      .then(response => {
+      .then((response) => {
         return response.data.map((review: any) => {
           return new Review(review);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -938,12 +940,12 @@ export default class RemoteServices {
       .get(
         `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/all`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((userSubmissionsInfo: any) => {
           return new UserQuestionSubmissionInfo(userSubmissionsInfo);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -956,7 +958,7 @@ export default class RemoteServices {
       .put(
         `/submissions/${questionSubmissionId}/toggle-notification-student?hasRead=${hasRead}`
       )
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -969,7 +971,7 @@ export default class RemoteServices {
       .put(
         `/submissions/${questionSubmissionId}/toggle-notification-teacher?hasRead=${hasRead}`
       )
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -981,16 +983,16 @@ export default class RemoteServices {
     tournament: Tournament
   ): Promise<Tournament> {
     let path: string = `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}?`;
-    for (let topicId of topicsId) {
+    for (const topicId of topicsId) {
       path += 'topicsId=' + topicId + '&';
     }
     path = path.substring(0, path.length - 1);
     return httpClient
       .post(path, tournament)
-      .then(response => {
+      .then((response) => {
         return new Tournament(response.data, Store.getters.getUser);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1000,12 +1002,12 @@ export default class RemoteServices {
       .get(
         `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getTournaments`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament, Store.getters.getUser);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1015,12 +1017,12 @@ export default class RemoteServices {
       .get(
         `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getOpenTournaments`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament, Store.getters.getUser);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1030,12 +1032,12 @@ export default class RemoteServices {
       .get(
         `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getClosedTournaments`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((tournament: any) => {
           return new Tournament(tournament, Store.getters.getUser);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1045,10 +1047,10 @@ export default class RemoteServices {
       .get(
         `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/tournament/${tournamentId}`
       )
-      .then(response => {
+      .then((response) => {
         return new Tournament(response.data, Store.getters.getUser);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1059,7 +1061,7 @@ export default class RemoteServices {
         `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/joinTournament/${tournamentId}?password=` +
           password
       )
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1069,10 +1071,10 @@ export default class RemoteServices {
       .put(
         `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/solveQuiz/${tournamentId}`
       )
-      .then(response => {
+      .then((response) => {
         return new StatementQuiz(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1082,7 +1084,7 @@ export default class RemoteServices {
       .put(
         `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/leaveTournament/${tournamentId}`
       )
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1092,16 +1094,16 @@ export default class RemoteServices {
     tournament: Tournament
   ): Promise<Tournament> {
     let path: string = `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/updateTournament?`;
-    for (let topicId of topicsId) {
+    for (const topicId of topicsId) {
       path += 'topicsId=' + topicId + '&';
     }
     path = path.substring(0, path.length - 1);
     return httpClient
       .put(path, tournament)
-      .then(response => {
+      .then((response) => {
         return new Tournament(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1111,7 +1113,7 @@ export default class RemoteServices {
       .put(
         `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/cancelTournament/${tournamentId}`
       )
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1121,7 +1123,7 @@ export default class RemoteServices {
       .delete(
         `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/removeTournament/${tournamentId}`
       )
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1133,12 +1135,12 @@ export default class RemoteServices {
       .get(
         `/discussions/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((discussion: any) => {
           return new Discussion(discussion);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1148,12 +1150,12 @@ export default class RemoteServices {
       .get(
         `/discussions/open/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((discussion: any) => {
           return new Discussion(discussion);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1161,10 +1163,10 @@ export default class RemoteServices {
   static async changeDiscussionStatus(id: number): Promise<Discussion> {
     return httpClient
       .put('/discussions/' + id + '/status')
-      .then(response => {
+      .then((response) => {
         return new Discussion(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1172,12 +1174,12 @@ export default class RemoteServices {
   static async getClarificationsByQuestionId(id: number): Promise<Reply[]> {
     return httpClient
       .get('/discussions/clarifications/questions/' + id)
-      .then(response => {
+      .then((response) => {
         return response.data.map((reply: any) => {
           return new Reply(reply);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1187,12 +1189,12 @@ export default class RemoteServices {
       .get(
         `/discussions/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}/users`
       )
-      .then(response => {
+      .then((response) => {
         return response.data.map((discussion: any) => {
           return new Discussion(discussion);
         });
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1200,10 +1202,10 @@ export default class RemoteServices {
   static async addReply(reply: Reply, discussionId: number): Promise<Reply> {
     return httpClient
       .post('/discussions/' + discussionId + '/replies/add', reply)
-      .then(response => {
+      .then((response) => {
         return new Reply(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1211,10 +1213,10 @@ export default class RemoteServices {
   static async changeReplyAvailability(id: number): Promise<Discussion> {
     return httpClient
       .put('/discussions/replies/' + id + '/availability')
-      .then(response => {
+      .then((response) => {
         return new Discussion(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
@@ -1228,10 +1230,10 @@ export default class RemoteServices {
         `/discussions/create?questionAnswerId=${questionAnswerId}`,
         discussion
       )
-      .then(response => {
+      .then((response) => {
         return new Discussion(response.data);
       })
-      .catch(async error => {
+      .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }

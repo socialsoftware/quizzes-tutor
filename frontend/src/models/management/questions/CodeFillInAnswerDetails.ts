@@ -18,16 +18,16 @@ export default class CodeFillInAnswerType extends AnswerDetails {
   isCorrect(questionDetails: CodeFillInQuestionDetails): boolean {
     return (
       this.options.length === questionDetails.fillInSpots.length &&
-      this.options.filter(op => !op.correct).length == 0
+      this.options.filter((op) => !op.correct).length == 0
     );
   }
 
   answerRepresentation(questionDetails: CodeFillInQuestionDetails): string {
-    let answerRepr = [];
+    const answerRepr = [];
     for (const spot of questionDetails.fillInSpots) {
       let inserted = false;
       for (const option of this.options) {
-        let optionInSpot = spot.options.filter(op => op.id == option.id);
+        const optionInSpot = spot.options.filter((op) => op.id == option.id);
         if (optionInSpot.length > 0) {
           answerRepr.push((optionInSpot[0]?.sequence || 0) + 1);
           inserted = true;

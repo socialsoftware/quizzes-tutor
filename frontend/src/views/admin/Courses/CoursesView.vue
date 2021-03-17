@@ -22,7 +22,7 @@
           >
         </v-card-title>
       </template>
-      <template v-slot:item.action="{ item }">
+      <template v-slot:[`item.action`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -158,8 +158,8 @@ import User from '../../../models/user/User';
     'upload-users-dialog': UploadUsersDialog,
     'edit-course-dialog': EditCourseDialog,
     'add-user-dialog': AddUserDialog,
-    'view-users-dialog': ViewUsersDialog
-  }
+    'view-users-dialog': ViewUsersDialog,
+  },
 })
 export default class CoursesView extends Vue {
   courses: Course[] = [];
@@ -176,75 +176,75 @@ export default class CoursesView extends Vue {
       value: 'action',
       align: 'left',
       sortable: false,
-      width: '25%'
+      width: '25%',
     },
     {
       text: 'Course Type',
       value: 'courseType',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     { text: 'Name', value: 'name', align: 'left', width: '25%' },
     {
       text: 'Execution Type',
       value: 'courseExecutionType',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Acronym',
       value: 'acronym',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Academic Term',
       value: 'academicTerm',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Number of Active Teachers',
       value: 'numberOfActiveTeachers',
       align: 'center',
-      width: '5%'
+      width: '5%',
     },
     {
       text: 'Number of Inactive Teachers',
       value: 'numberOfInactiveTeachers',
       align: 'center',
-      width: '5%'
+      width: '5%',
     },
     {
       text: 'Number of Active Students',
       value: 'numberOfActiveStudents',
       align: 'center',
-      width: '5%'
+      width: '5%',
     },
     {
       text: 'Number of Inactive Students',
       value: 'numberOfInactiveStudents',
       align: 'center',
-      width: '5%'
+      width: '5%',
     },
     {
       text: 'Number of Questions',
       value: 'numberOfQuestions',
       align: 'center',
-      width: '5%'
+      width: '5%',
     },
     {
       text: 'Number of Quizzes',
       value: 'numberOfQuizzes',
       align: 'center',
-      width: '5%'
+      width: '5%',
     },
     {
       text: 'Status',
       value: 'status',
       align: 'center',
-      width: '5%'
-    }
+      width: '5%',
+    },
   ];
 
   async created() {
@@ -285,10 +285,10 @@ export default class CoursesView extends Vue {
   updateUserNumbers(course: Course) {
     if (!!course && !!course.courseExecutionUsers) {
       course.numberOfInactiveTeachers = course.courseExecutionUsers.filter(
-        user => user.role === 'TEACHER' && !user.active
+        (user) => user.role === 'TEACHER' && !user.active
       ).length;
       course.numberOfInactiveStudents = course.courseExecutionUsers.filter(
-        user => user.role === 'STUDENT' && !user.active
+        (user) => user.role === 'STUDENT' && !user.active
       ).length;
     }
   }
@@ -311,7 +311,7 @@ export default class CoursesView extends Vue {
       this.currentCourse.courseExecutionUsers.unshift(user);
       let index: number = this.courses.indexOf(
         this.courses.filter(
-          course =>
+          (course) =>
             course.courseExecutionId == this.currentCourse?.courseExecutionId
         )[0]
       );
@@ -333,7 +333,8 @@ export default class CoursesView extends Vue {
           courseToDelete.courseExecutionId
         );
         this.courses = this.courses.filter(
-          course => course.courseExecutionId != courseToDelete.courseExecutionId
+          (course) =>
+            course.courseExecutionId != courseToDelete.courseExecutionId
         );
       } catch (error) {
         await this.$store.dispatch('error', error);
@@ -379,7 +380,7 @@ export default class CoursesView extends Vue {
     this.uploadUsersDialog = false;
     await this.$store.dispatch('loading');
     this.courses = this.courses.filter(
-      course => course.courseExecutionId !== updatedCourse.courseExecutionId
+      (course) => course.courseExecutionId !== updatedCourse.courseExecutionId
     );
     this.courses.unshift(updatedCourse);
     await this.$store.dispatch('clearLoading');
@@ -392,11 +393,11 @@ export default class CoursesView extends Vue {
       try {
         course = await RemoteServices.deleteExternalInactiveUsers(
           this.currentCourse,
-          users.flatMap(user => (user.id ? [user.id] : []))
+          users.flatMap((user) => (user.id ? [user.id] : []))
         );
         let index: number = this.courses.indexOf(
           this.courses.filter(
-            course =>
+            (course) =>
               course.courseExecutionId == this.currentCourse?.courseExecutionId
           )[0]
         );

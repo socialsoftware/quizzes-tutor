@@ -28,7 +28,7 @@
           v-for="index in +statementQuiz.questions.length"
           v-bind:class="[
             'question-button',
-            index === questionOrder + 1 ? 'current-question-button' : ''
+            index === questionOrder + 1 ? 'current-question-button' : '',
           ]"
           :key="index"
           @click="changeOrder(index - 1)"
@@ -149,8 +149,8 @@ import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
 @Component({
   components: {
-    'question-component': QuestionComponent
-  }
+    'question-component': QuestionComponent,
+  },
 })
 export default class QuizView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;

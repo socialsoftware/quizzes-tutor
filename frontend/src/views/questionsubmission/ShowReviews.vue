@@ -21,7 +21,7 @@
       </span>
       {{ review.comment }}
     </v-container>
-    <hr v-if="reviews.length !== 0" style="border: .5px lightgrey solid" />
+    <hr v-if="reviews.length !== 0" style="border: 0.5px lightgrey solid" />
   </v-container>
 </template>
 

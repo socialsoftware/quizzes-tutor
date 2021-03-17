@@ -43,7 +43,7 @@ Vue.use(Router);
 
 const APP_NAME = process.env.VUE_APP_NAME || '';
 
-let router = new Router({
+const router = new Router({
   mode: 'history',
   base: process.env.BASE_URL,
   routes: [
@@ -51,7 +51,7 @@ let router = new Router({
       path: '/',
       name: 'home',
       component: HomeView,
-      meta: { title: APP_NAME, requiredAuth: 'None' }
+      meta: { title: APP_NAME, requiredAuth: 'None' },
     },
     {
       path: '/login',
@@ -59,8 +59,8 @@ let router = new Router({
       component: LoginView,
       meta: {
         requiredAuth: 'None',
-        title: APP_NAME + ' - Login Fenix'
-      }
+        title: APP_NAME + ' - Login Fenix',
+      },
     },
     {
       path: '/login/external',
@@ -68,8 +68,8 @@ let router = new Router({
       component: ExternalLoginView,
       meta: {
         requiredAuth: 'None',
-        title: APP_NAME + ' - Login External'
-      }
+        title: APP_NAME + ' - Login External',
+      },
     },
     {
       path: '/registration/confirmation',
@@ -77,8 +77,8 @@ let router = new Router({
       component: RegistrationConfirmationView,
       meta: {
         title: APP_NAME + ' - Registration Confirmation',
-        requiredAuth: 'None'
-      }
+        requiredAuth: 'None',
+      },
     },
     {
       path: '/courses',
@@ -86,8 +86,8 @@ let router = new Router({
       component: CourseSelectionView,
       meta: {
         title: APP_NAME + ' - Course Selection',
-        requiredAuth: 'None'
-      }
+        requiredAuth: 'None',
+      },
     },
     {
       path: '/management',
@@ -100,8 +100,8 @@ let router = new Router({
           component: QuestionsView,
           meta: {
             title: APP_NAME + ' - Questions',
-            requiredAuth: 'Teacher'
-          }
+            requiredAuth: 'Teacher',
+          },
         },
         {
           path: 'topics',
@@ -109,8 +109,8 @@ let router = new Router({
           component: TopicsView,
           meta: {
             title: APP_NAME + ' - Topics',
-            requiredAuth: 'Teacher'
-          }
+            requiredAuth: 'Teacher',
+          },
         },
         {
           path: 'tournaments',
@@ -118,8 +118,8 @@ let router = new Router({
           component: TournamentsView,
           meta: {
             title: APP_NAME + ' - Tournaments',
-            requiredAuth: 'Teacher'
-          }
+            requiredAuth: 'Teacher',
+          },
         },
         {
           path: 'quizzes',
@@ -127,8 +127,8 @@ let router = new Router({
           component: QuizzesView,
           meta: {
             title: APP_NAME + ' - Quizzes',
-            requiredAuth: 'Teacher'
-          }
+            requiredAuth: 'Teacher',
+          },
         },
         {
           path: 'assessments',
@@ -136,8 +136,8 @@ let router = new Router({
           component: AssessmentsView,
           meta: {
             title: APP_NAME + ' - Assessment Topics',
-            requiredAuth: 'Teacher'
-          }
+            requiredAuth: 'Teacher',
+          },
         },
         {
           path: 'students',
@@ -145,8 +145,8 @@ let router = new Router({
           component: StudentsView,
           meta: {
             title: APP_NAME + ' - Students',
-            requiredAuth: 'Teacher'
-          }
+            requiredAuth: 'Teacher',
+          },
         },
         {
           path: 'export',
@@ -154,8 +154,8 @@ let router = new Router({
           component: ExportCourseView,
           meta: {
             title: APP_NAME + ' - Export',
-            requiredAuth: 'Teacher'
-          }
+            requiredAuth: 'Teacher',
+          },
         },
         {
           path: 'submissions/students',
@@ -163,8 +163,8 @@ let router = new Router({
           component: SortQuestionSubmissionsByStudentView,
           meta: {
             title: APP_NAME + ' - Sort by Student Submissions',
-            requiredAuth: 'Teacher'
-          }
+            requiredAuth: 'Teacher',
+          },
         },
         {
           path: 'submissions',
@@ -172,8 +172,8 @@ let router = new Router({
           component: QuestionSubmissionView,
           meta: {
             title: APP_NAME + ' - Submissions',
-            requiredAuth: 'Teacher'
-          }
+            requiredAuth: 'Teacher',
+          },
         },
         {
           path: 'discussions',
@@ -181,10 +181,10 @@ let router = new Router({
           component: TeacherDiscussionsView,
           meta: {
             title: APP_NAME + ' - Discussions',
-            requiredAuth: 'Teacher'
-          }
-        }
-      ]
+            requiredAuth: 'Teacher',
+          },
+        },
+      ],
     },
     {
       path: '/student',
@@ -197,8 +197,8 @@ let router = new Router({
           component: AvailableQuizzesView,
           meta: {
             title: APP_NAME + ' - Available Quizzes',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'create',
@@ -206,8 +206,8 @@ let router = new Router({
           component: CreateQuizzesView,
           meta: {
             title: APP_NAME + ' - Create Quizzes',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'solved',
@@ -215,8 +215,8 @@ let router = new Router({
           component: SolvedQuizzesView,
           meta: {
             title: APP_NAME + ' - Solved Quizzes',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'quiz',
@@ -224,8 +224,8 @@ let router = new Router({
           component: QuizView,
           meta: {
             title: APP_NAME + ' - Quiz',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'results',
@@ -233,8 +233,8 @@ let router = new Router({
           component: ResultsView,
           meta: {
             title: APP_NAME + ' - Results',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'stats',
@@ -242,8 +242,8 @@ let router = new Router({
           component: StatsView,
           meta: {
             title: APP_NAME + ' - Stats',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'scan',
@@ -251,8 +251,8 @@ let router = new Router({
           component: ScanView,
           meta: {
             title: APP_NAME + ' - Scan',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'discussions',
@@ -260,8 +260,8 @@ let router = new Router({
           component: StudentDiscussionsView,
           meta: {
             title: APP_NAME + ' - Discussion',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'code',
@@ -269,8 +269,8 @@ let router = new Router({
           component: CodeView,
           meta: {
             title: APP_NAME + ' - Code',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'tournaments/open',
@@ -279,8 +279,8 @@ let router = new Router({
           props: { type: 'OPEN' },
           meta: {
             title: APP_NAME + ' - Tournament',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'tournaments/closed',
@@ -289,18 +289,18 @@ let router = new Router({
           props: { type: 'CLOSED' },
           meta: {
             title: APP_NAME + ' - Tournament',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'tournament',
           name: 'tournament-participants',
           component: TournamentResultsView,
-          props: route => ({ id: route.query.id }),
+          props: (route) => ({ id: route.query.id }),
           meta: {
             title: APP_NAME + ' - Tournament Participants',
-            requiredAuth: 'Student'
-          }
+            requiredAuth: 'Student',
+          },
         },
         {
           path: 'submissions',
@@ -308,20 +308,20 @@ let router = new Router({
           component: QuestionSubmissionView,
           meta: {
             title: APP_NAME + ' - Submissions',
-            requiredAuth: 'Student'
-          }
-        }
-      ]
+            requiredAuth: 'Student',
+          },
+        },
+      ],
     },
     {
       path: '/teacher/tournament',
       name: 'tournament-dashboard',
       component: TournamentResultsView,
-      props: route => ({ id: route.query.id }),
+      props: (route) => ({ id: route.query.id }),
       meta: {
         title: APP_NAME + ' - Tournament Dashboard',
-        requiredAuth: 'Teacher'
-      }
+        requiredAuth: 'Teacher',
+      },
     },
     {
       path: '/admin',
@@ -334,8 +334,8 @@ let router = new Router({
           component: CoursesView,
           meta: {
             title: APP_NAME + ' - Manage Courses',
-            requiredAuth: 'Admin'
-          }
+            requiredAuth: 'Admin',
+          },
         },
         {
           path: 'export',
@@ -343,18 +343,18 @@ let router = new Router({
           component: ExportAllView,
           meta: {
             title: APP_NAME + ' - Manage Courses',
-            requiredAuth: 'Admin'
-          }
-        }
-      ]
+            requiredAuth: 'Admin',
+          },
+        },
+      ],
     },
     {
       path: '**',
       name: 'not-found',
       component: NotFoundView,
-      meta: { title: 'Page Not Found', requiredAuth: 'None' }
-    }
-  ]
+      meta: { title: 'Page Not Found', requiredAuth: 'None' },
+    },
+  ],
 });
 
 router.beforeEach(async (to, from, next) => {

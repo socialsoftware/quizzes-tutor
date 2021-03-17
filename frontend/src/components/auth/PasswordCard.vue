@@ -23,7 +23,7 @@
           :type="showConfirmPassword ? 'text' : 'password'"
           label="Confirm Password"
           required
-          :rules="[v => v == password || 'Passwords don\'t match']"
+          :rules="[(v) => v == password || 'Passwords don\'t match']"
           @click:append="showConfirmPassword = !showConfirmPassword"
         ></v-text-field>
         <v-btn

@@ -21,7 +21,7 @@ export default class CodeOrderStatementAnswerDetails extends StatementAnswerDeta
     correctAnswerDetails: CodeOrderStatementCorrectAnswerDetails
   ): boolean {
     for (const key in correctAnswerDetails.correctOrder) {
-      let correct = correctAnswerDetails.correctOrder[key];
+      const correct = correctAnswerDetails.correctOrder[key];
       if (!this.orderedSlots[key] && correct.order != null) {
         return false;
       } else if (
@@ -33,7 +33,7 @@ export default class CodeOrderStatementAnswerDetails extends StatementAnswerDeta
     }
     return (
       this.orderedSlots.length ===
-      correctAnswerDetails.correctOrder.filter(os => os.order != null).length
+      correctAnswerDetails.correctOrder.filter((os) => os.order != null).length
     );
   }
 }

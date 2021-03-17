@@ -21,7 +21,7 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item.percentageOfCorrectAnswers="{ item }">
+      <template v-slot:[`item.percentageOfCorrectAnswers`]="{ item }">
         <v-chip
           :color="getPercentageColor(item.percentageOfCorrectAnswers)"
           dark
@@ -29,7 +29,7 @@
         >
       </template>
 
-      <template v-slot:item.percentageOfCorrectTeacherAnswers="{ item }">
+      <template v-slot:[`item.percentageOfCorrectTeacherAnswers`]="{ item }">
         <v-chip
           :color="getPercentageColor(item.percentageOfCorrectTeacherAnswers)"
           dark
@@ -57,38 +57,38 @@ export default class StudentsView extends Vue {
       text: 'Teacher Quizzes',
       value: 'numberOfTeacherQuizzes',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Generated Quizzes',
       value: 'numberOfStudentQuizzes',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Total Answers',
       value: 'numberOfAnswers',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Correct Answers',
       value: 'percentageOfCorrectAnswers',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Answers Teacher Quiz',
       value: 'numberOfTeacherAnswers',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Correct Answers Teacher Quiz',
       value: 'percentageOfCorrectTeacherAnswers',
       align: 'center',
-      width: '10%'
-    }
+      width: '10%',
+    },
   ];
 
   async created() {

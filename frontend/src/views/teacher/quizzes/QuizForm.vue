@@ -126,7 +126,7 @@
           </v-container>
         </template>
 
-        <template v-slot:item.title="{ item }">
+        <template v-slot:[`item.title`]="{ item }">
           <div
             @click="showQuestionDialog(item)"
             @contextmenu="rightClickEditQuestion($event, item)"
@@ -136,13 +136,13 @@
           </div>
         </template>
 
-        <template v-slot:item.topics="{ item }">
+        <template v-slot:[`item.topics`]="{ item }">
           <span v-for="topic in item.topics" :key="topic.id">
             {{ topic.name }}
           </span>
         </template>
 
-        <template v-slot:item.action="{ item }">
+        <template v-slot:[`item.action`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ on }">
               <v-icon
@@ -308,8 +308,8 @@ Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 @Component({
   components: {
     'show-question-dialog': ShowQuestionDialog,
-    'show-quiz-dialog': ShowQuizDialog
-  }
+    'show-quiz-dialog': ShowQuizDialog,
+  },
 })
 export default class QuizForm extends Vue {
   @Prop(Quiz) readonly quiz!: Quiz;
@@ -330,28 +330,33 @@ export default class QuizForm extends Vue {
       value: 'action',
       align: 'left',
       width: '5px',
-      sortable: false
+      sortable: false,
     },
     {
       text: 'Sequence',
       value: 'sequence',
       align: 'center',
-      width: '5px'
+      width: '5px',
     },
     {
       text: 'Title',
       value: 'title',
       align: 'left',
       width: '60%',
-      sortable: false
+      sortable: false,
     },
     {
       text: 'Topics',
       value: 'topics',
       align: 'left',
-      width: '40%'
+      width: '40%',
     },
-    { text: 'Answers', value: 'numberOfAnswers', align: 'center', width: '5px' }
+    {
+      text: 'Answers',
+      value: 'numberOfAnswers',
+      align: 'center',
+      width: '5px',
+    },
   ];
 
   async created() {
@@ -368,19 +373,19 @@ export default class QuizForm extends Vue {
   onQuizChange() {
     let questionIds: number[] = [];
     if (this.quiz && this.quiz.questions) {
-      this.quiz.questions.forEach(question => {
+      this.quiz.questions.forEach((question) => {
         if (!this.quizQuestions.includes(question) && question.id) {
           questionIds.push(question.id);
         }
       });
     }
 
-    this.questions.forEach(question => {
+    this.questions.forEach((question) => {
       if (
         question.id &&
         questionIds.includes(question.id) &&
         !this.quizQuestions
-          .map(quizQuestion => quizQuestion.id)
+          .map((quizQuestion) => quizQuestion.id)
           .includes(question.id)
       ) {
         question.sequence = questionIds.indexOf(question.id) + 1;
@@ -418,9 +423,8 @@ export default class QuizForm extends Vue {
     // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (
       search != null &&
-      JSON.stringify(question)
-        .toLowerCase()
-        .indexOf(search.toLowerCase()) !== -1
+      JSON.stringify(question).toLowerCase().indexOf(search.toLowerCase()) !==
+        -1
     );
   }
 
@@ -526,7 +530,7 @@ export default class QuizForm extends Vue {
   }
 
   cleanQuizQuestions() {
-    this.quizQuestions.forEach(question => {
+    this.quizQuestions.forEach((question) => {
       question.sequence = null;
     });
     this.quizQuestions = [];

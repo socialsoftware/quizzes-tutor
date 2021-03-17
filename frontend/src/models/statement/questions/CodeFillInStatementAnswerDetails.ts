@@ -20,13 +20,13 @@ export default class CodeFillInStatementAnswerDetails extends StatementAnswerDet
   isAnswerCorrect(
     correctAnswerDetails: CodeFillInStatementCorrectAnswerDetails
   ): boolean {
-    var x =
+    const x =
       this.selectedOptions.length ===
         correctAnswerDetails.correctOptions.length &&
       !correctAnswerDetails.correctOptions.some(
-        op =>
+        (op) =>
           !this.selectedOptions.some(
-            s => s.optionId === op.optionId && s.sequence === op.sequence
+            (s) => s.optionId === op.optionId && s.sequence === op.sequence
           )
       );
     return x;

@@ -54,8 +54,8 @@ import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
 @Component({
   components: {
-    BaseCodeEditor
-  }
+    BaseCodeEditor,
+  },
 })
 export default class CodeOrderAnswerResult extends Vue {
   @Prop(CodeOrderStatementQuestionDetails)
@@ -66,7 +66,7 @@ export default class CodeOrderAnswerResult extends Vue {
   readonly correctAnswerDetails!: CodeOrderStatementCorrectAnswerDetails;
 
   slotById(slotId: number) {
-    return this.questionDetails.orderSlots.find(x => x.id == slotId);
+    return this.questionDetails.orderSlots.find((x) => x.id == slotId);
   }
 
   isCorrect(element: CodeOrderSlotStatementAnswerDetails, index: number) {

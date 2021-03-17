@@ -19,7 +19,7 @@ export default class CodeOrderQuestionDetails extends QuestionDetails {
   }
 
   setAsNew(): void {
-    this.codeOrderSlots.forEach(slot => {
+    this.codeOrderSlots.forEach((slot) => {
       slot.setAsNew();
     });
   }

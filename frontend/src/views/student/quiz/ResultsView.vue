@@ -17,7 +17,7 @@
               statementManager.correctAnswers[index - 1]
             )
               ? 'incorrect'
-              : ''
+              : '',
           ]"
           :key="index"
           @click="changeOrder(index - 1)"
@@ -72,8 +72,8 @@ import RemoteServices from '@/services/RemoteServices';
 @Component({
   components: {
     'result-component': ResultComponent,
-    'discussion-component': DiscussionComponent
-  }
+    'discussion-component': DiscussionComponent,
+  },
 })
 export default class ResultsView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;

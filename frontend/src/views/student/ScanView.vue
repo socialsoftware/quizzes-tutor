@@ -19,8 +19,8 @@ import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
 @Component({
   components: {
-    'qrcode-stream': QrcodeStream
-  }
+    'qrcode-stream': QrcodeStream,
+  },
 })
 export default class ScanView extends Vue {
   quizId: number | null = null;

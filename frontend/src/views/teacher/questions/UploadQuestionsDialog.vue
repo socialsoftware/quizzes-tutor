@@ -8,9 +8,7 @@
   >
     <v-card>
       <v-card-title>
-        <span class="headline">
-          Import Questions
-        </span>
+        <span class="headline"> Import Questions </span>
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-icon color="blue darken-1" dark v-bind="attrs" v-on="on"

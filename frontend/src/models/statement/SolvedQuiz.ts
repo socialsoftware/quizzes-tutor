@@ -12,7 +12,7 @@ export default class SolvedQuiz {
       this.answerDate = ISOtoString(jsonObj.answerDate);
       this.statementQuiz = new StatementQuiz(jsonObj.statementQuiz);
 
-      this.correctAnswers = jsonObj.correctAnswers.map(correctAnswer => {
+      this.correctAnswers = jsonObj.correctAnswers.map((correctAnswer) => {
         return new StatementCorrectAnswer(correctAnswer);
       });
     }

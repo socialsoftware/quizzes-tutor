@@ -1,6 +1,6 @@
 <template>
   <div class="questionDetails-container" v-if="questionDetails">
-    <div class="code-container" style="position:relative; text-align:left">
+    <div class="code-container" style="position: relative; text-align: left">
       <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
@@ -22,30 +22,24 @@ import {
   Model,
   Emit,
   Watch,
-  PropSync
+  PropSync,
 } from 'vue-property-decorator';
 import CodeFillInStatementQuestionDetails from '@/models/statement/questions/CodeFillInStatementQuestionDetails';
-import Image from '@/models/management/Image';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import CodeFillInSpotStatement from '@/models/statement/questions/CodeFillInSpotStatement';
 import CodeFillInStatementAnswerDetails from '@/models/statement/questions/CodeFillInStatementAnswerDetails';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/clike/clike.js';
-//
 import 'codemirror/theme/eclipse.css';
 import 'codemirror/theme/monokai.css';
 import 'codemirror/addon/mode/overlay.js';
 import CodeMirror from 'codemirror';
 import { codemirror } from 'vue-codemirror';
-import CodeFillInSpotAnswerStatement from '@/models/statement/questions/CodeFillInSpotAnswerStatement';
-import StatementQuestionDetails from '@/models/statement/questions/StatementQuestionDetails';
 import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
-import Option from '@/models/management/Option';
 import StatementFillInSpot from '@/models/statement/questions/CodeFillInSpotStatement';
 
-CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
+CodeMirror.defineMode('mustache', function (config: any, parserConfig: any) {
   const mustacheOverlay = {
-    token: function(stream: any) {
+    token: function (stream: any) {
       let ch;
       if (stream.match('{{slot-')) {
         while ((ch = stream.next()) != null) {
@@ -59,7 +53,7 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
         // empty
       }
       return null;
-    }
+    },
   };
   return CodeMirror.overlayMode(
     CodeMirror.getMode(config, parserConfig.backdrop || 'text/x-java'),
@@ -69,8 +63,8 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
 
 @Component({
   components: {
-    codemirror
-  }
+    codemirror,
+  },
 })
 export default class CodeFillInAnswer extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
@@ -89,7 +83,7 @@ export default class CodeFillInAnswer extends Vue {
     theme: 'eclipse',
     lineNumbers: true,
     line: true,
-    readOnly: true
+    readOnly: true,
   };
   CodemirrorUpdated: boolean = false;
   @Emit()
@@ -109,7 +103,7 @@ export default class CodeFillInAnswer extends Vue {
       this.replaceDropdowns();
       document.body.addEventListener(
         'mousedown',
-        function(evt: Event) {
+        function (evt: Event) {
           if (
             evt &&
             evt.target &&
@@ -129,7 +123,7 @@ export default class CodeFillInAnswer extends Vue {
       name: number,
       options: CodeFillInSpotStatement[]
     ): StatementFillInSpot {
-      const result = options.find(el => el.sequence === name);
+      const result = options.find((el) => el.sequence === name);
       return result || new StatementFillInSpot();
     }
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
@@ -142,16 +136,18 @@ export default class CodeFillInAnswer extends Vue {
       const option = document.createElement('option');
       var something = getOptions(Number(num), this.questionDetails.fillInSpots);
       var optionAnswered = this.answerDetailsSynced.selectedOptions.find(
-        el => el.sequence === num
+        (el) => el.sequence === num
       );
       var optionAnsweredQuestion =
         optionAnswered &&
-        something.options.find(el => el.optionId === optionAnswered?.optionId);
+        something.options.find(
+          (el) => el.optionId === optionAnswered?.optionId
+        );
       var correctOption = this.correctAnswerDetails.correctOptions.find(
-        el => el.sequence === num
+        (el) => el.sequence === num
       );
       var correctOptionQuestion = something.options.find(
-        el => el.optionId === correctOption?.optionId
+        (el) => el.optionId === correctOption?.optionId
       );
       var text;
       if (
@@ -167,7 +163,7 @@ export default class CodeFillInAnswer extends Vue {
         d.appendChild(correctOption);
       }
 
-      something.options.forEach(element => {
+      something.options.forEach((element) => {
         if (
           !(
             element.optionId === optionAnswered?.optionId ||

@@ -17,15 +17,15 @@ Used on:
       <span
         v-if="
           isReadonly &&
-            correctAnswerDetails.correctOptionId ===
-              questionDetails.options[index].optionId
+          correctAnswerDetails.correctOptionId ===
+            questionDetails.options[index].optionId
         "
         class="fas fa-check option-letter"
       />
       <span
         v-else-if="
           isReadonly &&
-            answerDetails.optionId === questionDetails.options[index].optionId
+          answerDetails.optionId === questionDetails.options[index].optionId
         "
         class="fas fa-times option-letter"
       />

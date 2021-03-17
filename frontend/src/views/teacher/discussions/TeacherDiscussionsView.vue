@@ -32,8 +32,8 @@ import DiscussionListComponent from '@/views/student/discussions/DiscussionListC
 
 @Component({
   components: {
-    'discussion-list-component': DiscussionListComponent
-  }
+    'discussion-list-component': DiscussionListComponent,
+  },
 })
 export default class TeacherDiscussionsView extends Vue {
   discussions: Discussion[] = [];

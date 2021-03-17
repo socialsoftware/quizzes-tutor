@@ -29,7 +29,7 @@ export default class QuestionSubmission {
       value: 'action',
       align: 'left',
       width: '5px',
-      sortable: false
+      sortable: false,
     },
     { text: 'Number', value: 'id', align: 'center', width: '5%' },
     { text: 'Title', value: 'question.title', align: 'center', width: '30%' },
@@ -37,21 +37,21 @@ export default class QuestionSubmission {
       text: 'Status',
       value: 'status',
       align: 'center',
-      width: '150px'
+      width: '150px',
     },
     {
       text: 'Topics',
       value: 'question.topics',
       align: 'center',
       sortable: false,
-      width: '35%'
+      width: '35%',
     },
     {
       text: 'Creation Date',
       value: 'question.creationDate',
       width: '150px',
-      align: 'center'
-    }
+      align: 'center',
+    },
   ];
 
   prepareQuestionSubmission(

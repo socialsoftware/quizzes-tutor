@@ -25,7 +25,7 @@ const state: State = {
   errorMessage: '',
   notification: false,
   notificationMessageList: [],
-  loading: false
+  loading: false,
 };
 
 Vue.use(Vuex);
@@ -87,7 +87,7 @@ export default new Vuex.Store({
     currentCourse(state, currentCourse: Course) {
       localStorage.setItem('currentCourse', JSON.stringify(currentCourse));
       state.currentCourse = currentCourse;
-    }
+    },
   },
   actions: {
     error({ commit }, errorMessage) {
@@ -160,7 +160,7 @@ export default new Vuex.Store({
       // localStorage.setItem("userRole", authResponse.user.role);
     },
     logout({ commit }) {
-      return new Promise<void>(resolve => {
+      return new Promise<void>((resolve) => {
         commit('logout');
         // localStorage.removeItem("token");
         // localStorage.removeItem("userRole");
@@ -169,7 +169,7 @@ export default new Vuex.Store({
     },
     currentCourse({ commit }, currentCourse) {
       commit('currentCourse', currentCourse);
-    }
+    },
   },
   getters: {
     isLoggedIn(state): boolean {
@@ -215,6 +215,6 @@ export default new Vuex.Store({
     },
     getLoading(state): boolean {
       return state.loading;
-    }
-  }
+    },
+  },
 });

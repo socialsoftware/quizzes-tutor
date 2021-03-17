@@ -11,7 +11,7 @@ import ExternalUser from '@/models/user/ExternalUser';
 import RemoteServices from '../../services/RemoteServices';
 
 @Component({
-  components: { LoginCard }
+  components: { LoginCard },
 })
 export default class ExternalLoginView extends Vue {
   async created() {}

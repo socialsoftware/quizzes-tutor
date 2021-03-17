@@ -16,7 +16,7 @@ import Question from '@/models/management/Question';
 import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
 @Component({
-  components: { 'show-question': ShowQuestion }
+  components: { 'show-question': ShowQuestion },
 })
 export default class ShowQuestionList extends Vue {
   @Prop({ type: Array, required: true }) readonly questions!: Question[];

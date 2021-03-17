@@ -62,17 +62,15 @@
                 >
                 </v-autocomplete>
               </template>
-              <template v-slot:item.topics="{ item }">
+              <template v-slot:[`item.topics`]="{ item }">
                 <div v-if="item.topics.length > 0">
                   <v-chip v-for="topic in item.topics" :key="topic.id">
                     {{ topic.name }}
                   </v-chip>
                 </div>
-                <div v-else>
-                  No Topic
-                </div>
+                <div v-else>No Topic</div>
               </template>
-              <template v-slot:item.action="{ item }">
+              <template v-slot:[`item.action`]="{ item }">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
@@ -132,22 +130,18 @@
                 >
                 </v-autocomplete>
               </template>
-              <template v-slot:item.topics="{ item }">
+              <template v-slot:[`item.topics`]="{ item }">
                 <div v-if="item.topics.length > 0">
                   <div v-if="item.topics">
                     <v-chip v-for="topic in item.topics" :key="topic.id">
                       {{ topic.name }}
                     </v-chip>
                   </div>
-                  <div v-else>
-                    No Topic
-                  </div>
+                  <div v-else>No Topic</div>
                 </div>
-                <div v-else>
-                  No Topic
-                </div>
+                <div v-else>No Topic</div>
               </template>
-              <template v-slot:item.action="{ item }">
+              <template v-slot:[`item.action`]="{ item }">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
@@ -207,7 +201,7 @@ import Topic from '@/models/management/Topic';
 import ShowQuestionListDialog from '@/views/teacher/questions/ShowQuestionListDialog.vue';
 
 @Component({
-  components: { ShowQuestionListDialog }
+  components: { ShowQuestionListDialog },
 })
 export default class AssessmentForm extends Vue {
   @Prop({ type: Assessment, required: true }) readonly assessment!: Assessment;
@@ -230,14 +224,14 @@ export default class AssessmentForm extends Vue {
       value: 'action',
       align: 'left',
       width: '5px',
-      sortable: false
+      sortable: false,
     },
     {
       text: 'Topics',
       value: 'topics',
       align: 'left',
-      sortable: false
-    }
+      sortable: false,
+    },
   ];
 
   async created() {
@@ -245,7 +239,7 @@ export default class AssessmentForm extends Vue {
     try {
       [this.allQuestions, this.allTopics] = await Promise.all([
         RemoteServices.getQuestions(),
-        RemoteServices.getTopics()
+        RemoteServices.getTopics(),
       ]);
       this.calculateTopicCombinations();
     } catch (error) {
@@ -275,7 +269,7 @@ export default class AssessmentForm extends Vue {
   // Checks if the topics of one topicConjunction has an exact match to the topicArray
   contains(topicConjunctions: TopicConjunction[], topicArray: Topic[]) {
     return (
-      topicConjunctions.filter(topicConjunction =>
+      topicConjunctions.filter((topicConjunction) =>
         _.isEqual(
           topicConjunction.topics.sort((a, b) => (a.name > b.name ? 1 : -1)),
           topicArray.sort((a, b) => (a.name > b.name ? 1 : -1))
@@ -295,7 +289,7 @@ export default class AssessmentForm extends Vue {
       return searchTopics
         .map((searchTopic: Topic) => searchTopic.name)
         .every((t: string) =>
-          topicConjunction.topics.map(topic => topic.name).includes(t)
+          topicConjunction.topics.map((topic) => topic.name).includes(t)
         );
     }
     return true;
@@ -326,13 +320,13 @@ export default class AssessmentForm extends Vue {
 
   showQuestionsDialog(topicConjunction: TopicConjunction) {
     if (topicConjunction !== null) {
-      this.questionsToShow = this.allQuestions.filter(question => {
+      this.questionsToShow = this.allQuestions.filter((question) => {
         return _.isEqual(topicConjunction.topics, question.topics);
       });
     } else {
-      this.questionsToShow = this.allQuestions.filter(question => {
+      this.questionsToShow = this.allQuestions.filter((question) => {
         return (
-          this.assessment.topicConjunctions.filter(topicConjunction => {
+          this.assessment.topicConjunctions.filter((topicConjunction) => {
             return _.isEqual(topicConjunction.topics, question.topics);
           }).length !== 0
         );
@@ -349,25 +343,25 @@ export default class AssessmentForm extends Vue {
   removeTopicConjunction(topicConjuntion: TopicConjunction) {
     this.topicConjunctions.push(topicConjuntion);
     this.assessment.topicConjunctions = this.assessment.topicConjunctions.filter(
-      tc => tc.sequence != topicConjuntion.sequence
+      (tc) => tc.sequence != topicConjuntion.sequence
     );
   }
 
   addTopicConjunction(topicConjuntion: TopicConjunction) {
     this.assessment.topicConjunctions.push(topicConjuntion);
     this.topicConjunctions = this.topicConjunctions.filter(
-      tc => tc.sequence !== topicConjuntion.sequence
+      (tc) => tc.sequence !== topicConjuntion.sequence
     );
   }
 
   @Watch('assessment.topicConjunctions', { deep: true })
   recalculateQuestionList() {
     if (this.assessment) {
-      this.selectedQuestions = this.allQuestions.filter(question => {
-        return this.assessment.topicConjunctions.find(topicConjunction => {
+      this.selectedQuestions = this.allQuestions.filter((question) => {
+        return this.assessment.topicConjunctions.find((topicConjunction) => {
           return (
-            String(question.topics.map(topic => topic.id).sort()) ===
-            String(topicConjunction.topics.map(topic => topic.id).sort())
+            String(question.topics.map((topic) => topic.id).sort()) ===
+            String(topicConjunction.topics.map((topic) => topic.id).sort())
           );
         });
       });

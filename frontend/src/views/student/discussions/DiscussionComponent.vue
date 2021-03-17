@@ -43,7 +43,7 @@
           <div class="discussion">
             <ul>
               <li
-                style="margin-bottom: 25px !important;"
+                style="margin-bottom: 25px !important"
                 :key="userDiscussion.message"
               >
                 <div style="display: inline-flex; width: 100%">
@@ -91,8 +91,8 @@ import User from '@/models/user/User';
 @Component({
   components: {
     'reply-component': ReplyComponent,
-    'clarification-component': ClarificationComponent
-  }
+    'clarification-component': ClarificationComponent,
+  },
 })
 export default class DiscussionComponent extends Vue {
   @Prop() readonly question!: StatementQuestion;

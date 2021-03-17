@@ -6,7 +6,7 @@
       !answer.isQuestionAnswered() ? 'unanswered' : '',
       answer.isQuestionAnswered() && answer.isAnswerCorrect(correctAnswer)
         ? 'correct-question'
-        : 'incorrect-question'
+        : 'incorrect-question',
     ]"
   >
     <div class="question">
@@ -55,8 +55,8 @@ import CodeOrderAnswerResult from '@/components/code-order/CodeOrderAnswerResult
   components: {
     multiple_choice: MultipleChoiceAnswer,
     code_fill_in: CodeFillInAnswerResult,
-    code_order: CodeOrderAnswerResult
-  }
+    code_order: CodeOrderAnswerResult,
+  },
 })
 export default class ResultComponent extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;

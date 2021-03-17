@@ -84,12 +84,8 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="secondary" text @click="unselectCourse">
-            Cancel
-          </v-btn>
-          <v-btn color="primary" text @click="activateCourse">
-            I'm sure
-          </v-btn>
+          <v-btn color="secondary" text @click="unselectCourse"> Cancel </v-btn>
+          <v-btn color="primary" text @click="activateCourse"> I'm sure </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>

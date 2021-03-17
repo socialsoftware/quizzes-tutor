@@ -96,7 +96,7 @@
             v-bind:style="{
               'border-top': questionSubmission.isInDiscussion()
                 ? '1px solid lightgrey'
-                : ''
+                : '',
             }"
             data-cy="ReviewLog"
           >
@@ -139,8 +139,8 @@ import ShowReviews from '@/views/questionsubmission/ShowReviews.vue';
 @Component({
   components: {
     'show-question': ShowQuestion,
-    'show-reviews': ShowReviews
-  }
+    'show-reviews': ShowReviews,
+  },
 })
 export default class ShowQuestionSubmissionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;

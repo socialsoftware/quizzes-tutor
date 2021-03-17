@@ -22,16 +22,16 @@
           />
         </v-card-title>
       </template>
-      <template v-slot:item.closed="{ item }">
+      <template v-slot:[`item.closed`]="{ item }">
         <v-chip v-if="item.closed === true" :color="'green'" dark>Yes</v-chip>
         <v-chip v-else :color="'red'" dark>No</v-chip>
       </template>
-      <template v-slot:item.replies.length="{ item }">
+      <template v-slot:[`item.replies.length`]="{ item }">
         <v-chip v-if="item.replies === null" :color="'grey'" dark>0</v-chip>
         <v-chip v-else :color="'grey'" dark>{{ item.replies.length }}</v-chip>
       </template>
 
-      <template v-slot:item.action="{ item }">
+      <template v-slot:[`item.action`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -64,8 +64,8 @@ import ShowDiscussionDialog from '@/views/student/discussions/ShowDiscussionDial
 
 @Component({
   components: {
-    'show-discussion-dialog': ShowDiscussionDialog
-  }
+    'show-discussion-dialog': ShowDiscussionDialog,
+  },
 })
 export default class DiscussionListComponent extends Vue {
   @Prop({ type: Array, required: true }) readonly discussions!: Discussion[];
@@ -79,21 +79,21 @@ export default class DiscussionListComponent extends Vue {
       value: 'action',
       align: 'left',
       width: '5px',
-      sortable: false
+      sortable: false,
     },
     {
       text: 'Discussion Number',
-      value: 'id'
+      value: 'id',
     },
     {
       text: 'Question Title',
-      value: 'question.title'
+      value: 'question.title',
     },
     { text: 'Question Content', value: 'question.content' },
     { text: 'Message', value: 'message' },
     { text: 'Last Reply Date', value: 'lastReplyDate' },
     { text: 'Closed', value: 'closed' },
-    { text: 'Replies', value: 'replies.length' }
+    { text: 'Replies', value: 'replies.length' },
   ];
 
   showDiscussionDialog(discussion: Discussion) {

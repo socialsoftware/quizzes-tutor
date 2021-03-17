@@ -14,7 +14,7 @@ export default class Review {
     { text: 'Comment', value: 'COMMENT' },
     { text: 'Request Changes', value: 'REQUEST_CHANGES', color: 'yellow' },
     { text: 'Approve', value: 'APPROVE', color: 'green' },
-    { text: 'Reject', value: 'REJECT', color: 'red' }
+    { text: 'Reject', value: 'REJECT', color: 'red' },
   ];
 
   constructor(jsonObj?: Review) {

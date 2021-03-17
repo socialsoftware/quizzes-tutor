@@ -37,7 +37,7 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item.title="{ item }">
+      <template v-slot:[`item.title`]="{ item }">
         <div
           @click="showQuestionDialog(item)"
           @contextmenu="editQuestion(item, $event)"
@@ -48,7 +48,7 @@
         </div>
       </template>
 
-      <template v-slot:item.topics="{ item }">
+      <template v-slot:[`item.topics`]="{ item }">
         <edit-question-topics
           :question="item"
           :topics="topics"
@@ -56,7 +56,7 @@
         />
       </template>
 
-      <template v-slot:item.difficulty="{ item }">
+      <template v-slot:[`item.difficulty`]="{ item }">
         <v-chip
           v-if="item.difficulty"
           :color="getDifficultyColor(item.difficulty)"
@@ -65,7 +65,7 @@
         >
       </template>
 
-      <template v-slot:item.status="{ item }">
+      <template v-slot:[`item.status`]="{ item }">
         <v-select
           v-model="item.status"
           :items="statusList"
@@ -80,7 +80,7 @@
         </v-select>
       </template>
 
-      <template v-slot:item.image="{ item }">
+      <template v-slot:[`item.image`]="{ item }">
         <v-file-input
           show-size
           dense
@@ -90,7 +90,7 @@
         />
       </template>
 
-      <template v-slot:item.action="{ item }">
+      <template v-slot:[`item.action`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -201,8 +201,8 @@ import UploadQuestionsDialog from '@/views/teacher/questions/UploadQuestionsDial
     'show-question-dialog': ShowQuestionDialog,
     'show-clarification-dialog': ShowClarificationDialog,
     'edit-question-dialog': EditQuestionDialog,
-    'edit-question-topics': EditQuestionTopics
-  }
+    'edit-question-topics': EditQuestionTopics,
+  },
 })
 export default class QuestionsView extends Vue {
   questions: Question[] = [];
@@ -221,7 +221,7 @@ export default class QuestionsView extends Vue {
       value: 'action',
       align: 'left',
       width: '5px',
-      sortable: false
+      sortable: false,
     },
     { text: 'Title', value: 'title', width: '50%', align: 'left' },
     {
@@ -229,7 +229,7 @@ export default class QuestionsView extends Vue {
       value: 'topics',
       width: '30%',
       align: 'center',
-      sortable: false
+      sortable: false,
     },
     { text: 'Status', value: 'status', width: '150px', align: 'left' },
     {
@@ -237,33 +237,33 @@ export default class QuestionsView extends Vue {
       value: 'image',
       width: '10%',
       align: 'center',
-      sortable: false
+      sortable: false,
     },
     { text: 'Difficulty', value: 'difficulty', width: '5px', align: 'center' },
     {
       text: 'Answers',
       value: 'numberOfAnswers',
       width: '5px',
-      align: 'center'
+      align: 'center',
     },
     {
       text: 'Nº of generated quizzes',
       value: 'numberOfGeneratedQuizzes',
       width: '5px',
-      align: 'center'
+      align: 'center',
     },
     {
       text: 'Nº of non generated quizzes',
       value: 'numberOfNonGeneratedQuizzes',
       width: '5px',
-      align: 'center'
+      align: 'center',
     },
     {
       text: 'Creation Date',
       value: 'creationDate',
       width: '150px',
-      align: 'center'
-    }
+      align: 'center',
+    },
   ];
 
   @Watch('editQuestionDialog')
@@ -278,7 +278,7 @@ export default class QuestionsView extends Vue {
     try {
       [this.topics, this.questions] = await Promise.all([
         RemoteServices.getTopics(),
-        RemoteServices.getQuestions()
+        RemoteServices.getQuestions(),
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -290,9 +290,8 @@ export default class QuestionsView extends Vue {
     // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
     return (
       search != null &&
-      JSON.stringify(question)
-        .toLowerCase()
-        .indexOf(search.toLowerCase()) !== -1
+      JSON.stringify(question).toLowerCase().indexOf(search.toLowerCase()) !==
+        -1
     );
   }
 
@@ -316,7 +315,7 @@ export default class QuestionsView extends Vue {
     try {
       await RemoteServices.setQuestionStatus(questionId, status);
       let question = this.questions.find(
-        question => question.id === questionId
+        (question) => question.id === questionId
       );
       if (question) {
         question.status = status;
@@ -385,7 +384,7 @@ export default class QuestionsView extends Vue {
   }
 
   async onSaveQuestion(question: Question) {
-    this.questions = this.questions.filter(q => q.id !== question.id);
+    this.questions = this.questions.filter((q) => q.id !== question.id);
     this.questions.unshift(question);
     this.editQuestionDialog = false;
     this.currentQuestion = null;
@@ -427,7 +426,7 @@ export default class QuestionsView extends Vue {
       try {
         await RemoteServices.deleteQuestion(toDeletequestion.id);
         this.questions = this.questions.filter(
-          question => question.id != toDeletequestion.id
+          (question) => question.id != toDeletequestion.id
         );
       } catch (error) {
         await this.$store.dispatch('error', error);

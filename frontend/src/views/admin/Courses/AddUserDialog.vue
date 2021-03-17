@@ -19,14 +19,14 @@
             v-model="user.name"
             label="Name"
             data-cy="userNameInput"
-            :rules="[value => !!value || 'Name is required']"
+            :rules="[(value) => !!value || 'Name is required']"
             required
           />
           <v-text-field
             v-model="user.username"
             label="Username"
             data-cy="userUsernameInput"
-            :rules="[value => !!value || 'Username is required']"
+            :rules="[(value) => !!value || 'Username is required']"
             required
           />
           <v-text-field
@@ -34,8 +34,8 @@
             label="Email"
             data-cy="userEmailInput"
             :rules="[
-              value => !!value || 'E-mail is required',
-              value => validateEmail(value) || 'E-mail must be valid'
+              (value) => !!value || 'E-mail is required',
+              (value) => validateEmail(value) || 'E-mail must be valid',
             ]"
             required
           />

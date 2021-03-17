@@ -2,7 +2,7 @@
   <div class="discussion" v-if="clarifications.length > 0">
     <ul>
       <li
-        style="margin-bottom: 25px !important;"
+        style="margin-bottom: 25px !important"
         v-for="clarification in clarifications"
         :key="clarification.id"
       >
@@ -17,9 +17,7 @@
     </ul>
   </div>
   <div v-else>
-    <v-card-text class="text-center">
-      No clarifications yet
-    </v-card-text>
+    <v-card-text class="text-center"> No clarifications yet </v-card-text>
   </div>
 </template>
 

@@ -27,8 +27,8 @@ import ShowQuestionList from '@/views/teacher/questions/ShowQuestionList.vue';
 
 @Component({
   components: {
-    'show-question-list': ShowQuestionList
-  }
+    'show-question-list': ShowQuestionList,
+  },
 })
 export default class ShowQuizDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;

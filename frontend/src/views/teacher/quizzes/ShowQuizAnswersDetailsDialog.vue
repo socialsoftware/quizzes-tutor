@@ -14,7 +14,7 @@
           @click="previousQuestion()"
           v-bind:class="[
             'navigation-button',
-            currentQuestion === 0 ? 'disabled' : ''
+            currentQuestion === 0 ? 'disabled' : '',
           ]"
           >fas x-small fa-chevron-left</v-icon
         >
@@ -27,7 +27,7 @@
             'navigation-button',
             currentQuestion < quizAnswer.questionAnswers.length - 1
               ? ''
-              : 'disabled'
+              : 'disabled',
           ]"
           >fas x-small fa-chevron-right</v-icon
         >
@@ -39,9 +39,7 @@
         />
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" text @click="dialog2 = false">
-          Close
-        </v-btn>
+        <v-btn color="primary" text @click="dialog2 = false"> Close </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -56,8 +54,8 @@ import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
 @Component({
   components: {
-    ShowQuestion
-  }
+    ShowQuestion,
+  },
 })
 export default class ShowQuizAnswersDetailsDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;

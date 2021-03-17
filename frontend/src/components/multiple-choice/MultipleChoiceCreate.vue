@@ -1,9 +1,7 @@
 <template>
   <div class="multiple-choice-options">
     <v-row>
-      <v-col cols="1" offset="10">
-        Correct
-      </v-col>
+      <v-col cols="1" offset="10"> Correct </v-col>
     </v-row>
 
     <v-row

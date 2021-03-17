@@ -36,20 +36,20 @@ export default class UserQuestionSubmissionInfo {
       this.numQuestionSubmissions = {
         approved: {
           num: jsonObj.numApprovedQuestionSubmissions,
-          color: 'green'
+          color: 'green',
         },
         rejected: {
           num: jsonObj.numRejectedQuestionSubmissions,
-          color: 'red'
+          color: 'red',
         },
         in_review: {
           num: jsonObj.numInReviewQuestionSubmissions,
-          color: 'blue'
+          color: 'blue',
         },
         in_revision: {
           num: jsonObj.numInRevisionQuestionSubmissions,
-          color: 'yellow'
-        }
+          color: 'yellow',
+        },
       };
 
       this.questionSubmissions = jsonObj.questionSubmissions.map(

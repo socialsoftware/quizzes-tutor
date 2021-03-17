@@ -17,7 +17,7 @@ import ExternalUser from '@/models/user/ExternalUser';
 import RemoteServices from '../../services/RemoteServices';
 
 @Component({
-  components: { PasswordCard }
+  components: { PasswordCard },
 })
 export default class RegistrationConfirmationView extends Vue {
   TITLE = 'Registration Confirmation';

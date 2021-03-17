@@ -1,6 +1,6 @@
 <template>
   <div class="questionDetails-container" v-if="questionDetails">
-    <div class="code-container" style="position:relative; text-align:left">
+    <div class="code-container" style="position: relative; text-align: left">
       <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
@@ -22,7 +22,7 @@ import {
   Model,
   Emit,
   Watch,
-  PropSync
+  PropSync,
 } from 'vue-property-decorator';
 import CodeFillInStatementQuestionDetails from '@/models/statement/questions/CodeFillInStatementQuestionDetails';
 import Image from '@/models/management/Image';
@@ -31,7 +31,6 @@ import CodeFillInSpotStatement from '@/models/statement/questions/CodeFillInSpot
 import CodeFillInStatementAnswerDetails from '@/models/statement/questions/CodeFillInStatementAnswerDetails';
 import 'codemirror/lib/codemirror.css';
 import 'codemirror/mode/clike/clike.js';
-//
 import 'codemirror/theme/eclipse.css';
 import 'codemirror/theme/monokai.css';
 import 'codemirror/addon/mode/overlay.js';
@@ -39,9 +38,9 @@ import CodeMirror from 'codemirror';
 import { codemirror } from 'vue-codemirror';
 import CodeFillInSpotAnswerStatement from '@/models/statement/questions/CodeFillInSpotAnswerStatement';
 
-CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
+CodeMirror.defineMode('mustache', function (config: any, parserConfig: any) {
   const mustacheOverlay = {
-    token: function(stream: any) {
+    token: function (stream: any) {
       let ch;
       if (stream.match('{{slot-')) {
         while ((ch = stream.next()) != null) {
@@ -55,7 +54,7 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
         // empty
       }
       return null;
-    }
+    },
   };
   return CodeMirror.overlayMode(
     CodeMirror.getMode(config, parserConfig.backdrop || 'text/x-java'),
@@ -65,8 +64,8 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
 
 @Component({
   components: {
-    codemirror
-  }
+    codemirror,
+  },
 })
 export default class CodeFillInAnswer extends Vue {
   @Model('questionOrder', Number) questionOrder: number | undefined;
@@ -84,7 +83,7 @@ export default class CodeFillInAnswer extends Vue {
     theme: 'eclipse',
     lineNumbers: true,
     line: true,
-    readOnly: true
+    readOnly: true,
   };
   CodemirrorUpdated: boolean = false;
   @Emit()
@@ -104,7 +103,7 @@ export default class CodeFillInAnswer extends Vue {
       this.replaceDropdowns();
       document.body.addEventListener(
         'mousedown',
-        function(evt: Event) {
+        function (evt: Event) {
           if (
             evt &&
             evt.target &&
@@ -158,7 +157,7 @@ export default class CodeFillInAnswer extends Vue {
     }
     function addOptions(select: any, options: any) {
       const data = that.answerDetailsSynced.selectedOptions?.find(
-        el => el.sequence === options.sequence
+        (el) => el.sequence === options.sequence
       );
       select.appendChild(creatBlankOptionChild(!data));
       options.options.forEach((opt: any, i: any) => {
@@ -168,7 +167,7 @@ export default class CodeFillInAnswer extends Vue {
       });
     }
     function getOptions(name: number, options: CodeFillInSpotStatement[]) {
-      const result = options.find(el => el.sequence === name);
+      const result = options.find((el) => el.sequence === name);
       return result;
     }
     document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
@@ -190,10 +189,10 @@ export default class CodeFillInAnswer extends Vue {
     var num = Number((event.target as any).name.match(/\d+/)[0]);
     var selectIndex = (event.target as any).selectedIndex - 1;
     var dataQuestion = this.questionDetails.fillInSpots.find(
-      el => el.sequence === num
+      (el) => el.sequence === num
     );
     var data = this.answerDetailsSynced.selectedOptions?.find(
-      el => el.sequence === num
+      (el) => el.sequence === num
     );
     if (data) {
       data.optionId = dataQuestion?.options[selectIndex]?.optionId;

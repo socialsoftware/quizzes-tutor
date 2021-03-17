@@ -39,8 +39,8 @@ import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
 @Component({
   components: {
-    'show-question': ShowQuestion
-  }
+    'show-question': ShowQuestion,
+  },
 })
 export default class ShowQuestionListDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;

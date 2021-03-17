@@ -50,7 +50,7 @@ export default class Tournament {
 
       if (user) {
         this.enrolled = this.participants.some(
-          pUser => pUser.username === user.username
+          (pUser) => pUser.username === user.username
         );
       }
     }
@@ -95,7 +95,7 @@ export default class Tournament {
 
   isAnswered() {
     return this.participants.find(
-      participant => participant.userId === Store.getters.getUser.id
+      (participant) => participant.userId === Store.getters.getUser.id
     )?.answered;
   }
 

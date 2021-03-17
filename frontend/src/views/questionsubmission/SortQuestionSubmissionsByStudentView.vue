@@ -144,8 +144,8 @@ import EditQuestionSubmissionTopics from '@/views/questionsubmission/EditQuestio
 @Component({
   components: {
     'show-question-submission-dialog': ShowQuestionSubmissionDialog,
-    'edit-question-submission-topics': EditQuestionSubmissionTopics
-  }
+    'edit-question-submission-topics': EditQuestionSubmissionTopics,
+  },
 })
 export default class SortQuestionSubmissionsByStudentView extends Vue {
   userQuestionSubmissionsInfo: UserQuestionSubmissionInfo[] = [];
@@ -159,38 +159,38 @@ export default class SortQuestionSubmissionsByStudentView extends Vue {
       text: 'Student',
       value: 'name',
       align: 'center',
-      width: '50%'
+      width: '50%',
     },
     {
       text: 'Approved',
       value: 'numApprovedQuestionSubmissions',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Rejected',
       value: 'numRejectedQuestionSubmissions',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'In Review',
       value: 'numInReviewQuestionSubmissions',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'In Revision',
       value: 'numInRevisionQuestionSubmissions',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Total',
       value: 'totalQuestionSubmissions',
       align: 'center',
-      width: '10%'
-    }
+      width: '10%',
+    },
   ];
 
   async created() {
@@ -202,7 +202,7 @@ export default class SortQuestionSubmissionsByStudentView extends Vue {
     try {
       [this.userQuestionSubmissionsInfo, this.topics] = await Promise.all([
         RemoteServices.getAllStudentsSubmissionsInfo(),
-        RemoteServices.getTopics()
+        RemoteServices.getTopics(),
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);

@@ -21,7 +21,7 @@ export default class CodeFillInQuestionDetails extends QuestionDetails {
   }
 
   setAsNew(): void {
-    this.fillInSpots.forEach(fill => {
+    this.fillInSpots.forEach((fill) => {
       fill.setAsNew();
     });
   }

@@ -41,7 +41,6 @@
 <script lang="ts">
 import { Component, Vue, Watch, Prop, PropSync } from 'vue-property-decorator';
 import CodeFillInQuestionDetails from '@/models/management/questions/CodeFillInQuestionDetails';
-import Question from '@/models/management/Question';
 import FillInOptions from '@/components/code-fill-in/CodeFillInOptions.vue';
 import Option from '@/models/management/Option';
 import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
@@ -50,8 +49,8 @@ import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 @Component({
   components: {
     BaseCodeEditor,
-    FillInOptions
-  }
+    FillInOptions,
+  },
 })
 export default class CodeFillInQuestionEdit extends Vue {
   @PropSync('questionDetails', { type: CodeFillInQuestionDetails })
@@ -73,7 +72,7 @@ export default class CodeFillInQuestionEdit extends Vue {
     return (
       (Math.max.apply(
         Math,
-        this.sQuestionDetails.fillInSpots.map(function(o) {
+        this.sQuestionDetails.fillInSpots.map(function (o) {
           return o.sequence;
         })
       ) |

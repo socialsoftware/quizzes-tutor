@@ -27,8 +27,8 @@ import QuizList from '@/views/teacher/quizzes/QuizList.vue';
 @Component({
   components: {
     QuizForm,
-    QuizList
-  }
+    QuizList,
+  },
 })
 export default class QuizzesView extends Vue {
   quizzes: Quiz[] = [];
@@ -64,14 +64,14 @@ export default class QuizzesView extends Vue {
   }
 
   updateQuiz(updatedQuiz: Quiz) {
-    this.quizzes = this.quizzes.filter(quiz => quiz.id !== updatedQuiz.id);
+    this.quizzes = this.quizzes.filter((quiz) => quiz.id !== updatedQuiz.id);
     this.quizzes.unshift(updatedQuiz);
     this.editMode = false;
     this.quiz = null;
   }
 
   deleteQuiz(quizId: number) {
-    this.quizzes = this.quizzes.filter(quiz => quiz.id !== quizId);
+    this.quizzes = this.quizzes.filter((quiz) => quiz.id !== quizId);
   }
 
   newQuiz() {

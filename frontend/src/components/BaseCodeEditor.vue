@@ -1,5 +1,5 @@
 <template>
-  <div class="base-code-editor" style="position:relative">
+  <div class="base-code-editor" style="position: relative">
     <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
       <v-progress-circular indeterminate size="40" color="primary" />
     </v-overlay>
@@ -14,7 +14,7 @@ import {
   Watch,
   Prop,
   PropSync,
-  Emit
+  Emit,
 } from 'vue-property-decorator';
 
 import { codemirror } from 'vue-codemirror';
@@ -28,9 +28,9 @@ import 'codemirror/addon/mode/overlay.js';
 import 'codemirror/addon/scroll/simplescrollbars.js';
 import { Dictionary } from 'vue-router/types/router';
 
-CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
+CodeMirror.defineMode('mustache', function (config: any, parserConfig: any) {
   const mustacheOverlay = {
-    token: function(stream: any) {
+    token: function (stream: any) {
       let ch;
       if (stream.match('{{slot-')) {
         while ((ch = stream.next()) != null) {
@@ -42,7 +42,7 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
       }
       while (stream.next() != null && !stream.match('{{', false)) {}
       return null;
-    }
+    },
   };
   return CodeMirror.overlayMode(
     CodeMirror.getMode(config, parserConfig.backdrop || 'text/x-java'),
@@ -52,8 +52,8 @@ CodeMirror.defineMode('mustache', function(config: any, parserConfig: any) {
 
 @Component({
   components: {
-    codemirror
-  }
+    codemirror,
+  },
 })
 export default class BaseCodeEditor extends Vue {
   @PropSync('code', { type: String, required: true }) syncedCode!: string;
@@ -72,7 +72,7 @@ export default class BaseCodeEditor extends Vue {
     Java: 'text/x-java',
     Javascript: 'text/javascript',
     Python: 'text/x-python',
-    CSharp: 'text/x-csharp'
+    CSharp: 'text/x-csharp',
   };
   @Watch('language')
   onLanguageUpdate() {}
@@ -92,7 +92,7 @@ export default class BaseCodeEditor extends Vue {
       lineNumbers: !this.simple,
       dragDrop: false,
       readOnly: !this.editable,
-      scrollbarStyle: 'overlay'
+      scrollbarStyle: 'overlay',
     };
   }
   get languageCode() {
