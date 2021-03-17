@@ -116,8 +116,8 @@ public class AuthUserDto implements Serializable {
                     }
                 });
 
-        return courseExecutions.stream().sorted(Comparator.comparing(CourseExecutionDto::getName).thenComparing(CourseExecutionDto::getAcademicTerm).reversed())
-                .collect(Collectors.groupingBy(CourseExecutionDto::getName,
+        return courseExecutions.stream().sorted(Comparator.comparing(CourseExecutionDto::getName))
+                .collect(Collectors.groupingBy(CourseExecutionDto::getAcademicTerm,
                         Collectors.mapping(courseDto -> courseDto, Collectors.toList())));
     }
 }

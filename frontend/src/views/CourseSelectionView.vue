@@ -3,13 +3,16 @@
     <h2>Select Course</h2>
 
     <div v-if="courseExecutions">
-      <div v-for="name in Object.keys(courseExecutions)" :key="name">
+      <div
+        v-for="term in Object.keys(courseExecutions).sort(compareTerm)"
+        :key="term"
+      >
         <v-card class="mx-auto" elevation="10">
           <v-list rounded>
-            <v-subheader class="title">{{ name }}</v-subheader>
+            <v-subheader class="title">{{ term }}</v-subheader>
             <v-list-item-group color="primary">
               <v-tooltip
-                v-for="course in courseExecutions[name]"
+                v-for="course in courseExecutions[term]"
                 :key="course.acronym + course.academicTerm"
                 bottom
               >
@@ -21,7 +24,7 @@
                   >
                     <v-list-item-content>
                       <v-list-item-title>
-                        {{ course.academicTerm }} ({{ course.acronym }})
+                        {{ course.name }} ({{ course.acronym }})
                       </v-list-item-title>
                     </v-list-item-content>
 
@@ -141,6 +144,16 @@ export default class CourseSelectionView extends Vue {
   unselectCourse() {
     this.selectedCourse = null;
     this.confirmationDialog = false;
+  }
+
+  compareTerm(term1: string, term2: string) {
+    let yearCompare = term2
+      .substr(term2.length - 9)
+      .localeCompare(term1.substr(term1.length - 9));
+
+    if (yearCompare !== 0) return yearCompare;
+
+    return term2.localeCompare(term1);
   }
 }
 </script>
