@@ -1,33 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor
 
-import com.google.common.eventbus.EventBus
+
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.PropertySource
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.api.MonolithService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.utils.Mailer
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserApplicationalService
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.DemoUtils
-
 
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")

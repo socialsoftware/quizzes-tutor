@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.DemoUtils;
+import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -68,7 +68,7 @@ public class CourseExecutionService {
     public List<CourseExecutionDto> getCourseExecutions(User.Role role) {
         return courseExecutionRepository.findAll().stream()
                 .filter(courseExecution -> role.equals(User.Role.ADMIN) ||
-                        (role.equals(User.Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(DemoUtils.COURSE_NAME)))
+                        (role.equals(User.Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(TutorDemoUtils.COURSE_NAME)))
                 .map(CourseExecution::getDto)
                 .sorted(Comparator
                         .comparing(CourseExecutionDto::getName)
@@ -199,18 +199,18 @@ public class CourseExecutionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto getDemoCourse() {
-        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElse(null);
+        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElse(null);
 
         if (courseExecution == null) {
-            return createTecnicoCourseExecution(new CourseExecutionDto(DemoUtils.COURSE_NAME, DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM));
+            return createTecnicoCourseExecution(new CourseExecutionDto(TutorDemoUtils.COURSE_NAME, TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM));
         }
         return courseExecution.getDto();
     }
 
     public CourseExecution getDemoCourseExecution() {
-        return this.courseExecutionRepository.findByFields(DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElseGet(() -> {
-            Course course = getCourse(DemoUtils.COURSE_NAME, CourseType.TECNICO);
-            CourseExecution courseExecution = new CourseExecution(course, DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO, DateHandler.now().plusDays(1));
+        return this.courseExecutionRepository.findByFields(TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElseGet(() -> {
+            Course course = getCourse(TutorDemoUtils.COURSE_NAME, CourseType.TECNICO);
+            CourseExecution courseExecution = new CourseExecution(course, TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO, DateHandler.now().plusDays(1));
             return courseExecutionRepository.save(courseExecution);
         });
     }

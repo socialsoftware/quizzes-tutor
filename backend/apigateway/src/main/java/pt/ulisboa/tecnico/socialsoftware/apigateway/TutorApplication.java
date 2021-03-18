@@ -13,10 +13,11 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import pt.ulisboa.tecnico.socialsoftware.tournament.config.TournamentModuleConfiguration;
+import pt.ulisboa.tecnico.socialsoftware.tournament.demoutils.TournamentDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.TutorModuleConfiguration;
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.DemoUtils;
+import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.utils.config.UtilsModuleConfiguration;
 
 
@@ -37,15 +38,18 @@ public class TutorApplication extends SpringBootServletInitializer implements In
     private AnswerService answerService;
 
     @Autowired
-    private DemoUtils demoUtils;
+    private TutorDemoUtils tutorDemoUtils;
+
+    @Autowired
+    private TournamentDemoUtils tournamentDemoUtils;
 
     @Override
     public void afterPropertiesSet() {
         // Run on startup
         JwtTokenProvider.generateKeys();
         answerService.writeQuizAnswersAndCalculateStatistics();
-
-        demoUtils.resetDemoInfo();
+        tournamentDemoUtils.resetDemoInfo();
+        tutorDemoUtils.resetDemoInfo();
 
         //EventBusFactory.getEventBus().register(new TournamentSubscriptions());
     }

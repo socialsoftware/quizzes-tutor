@@ -20,7 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.DemoUtils;
+import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
 
 import java.sql.SQLException;
@@ -212,24 +212,24 @@ public class AuthUserService {
     }
 
     private AuthUser getDemoTeacher() {
-        return authUserRepository.findAuthUserByUsername(DemoUtils.TEACHER_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Teacher", DemoUtils.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.DEMO);
+        return authUserRepository.findAuthUserByUsername(TutorDemoUtils.TEACHER_USERNAME).orElseGet(() -> {
+            AuthUser authUser = userService.createUserWithAuth("Demo Teacher", TutorDemoUtils.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseExecutionService.getDemoCourseExecution());
             return authUser;
         });
     }
 
     private AuthUser getDemoStudent() {
-        return authUserRepository.findAuthUserByUsername(DemoUtils.STUDENT_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Student", DemoUtils.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
+        return authUserRepository.findAuthUserByUsername(TutorDemoUtils.STUDENT_USERNAME).orElseGet(() -> {
+            AuthUser authUser = userService.createUserWithAuth("Demo Student", TutorDemoUtils.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseExecutionService.getDemoCourseExecution());
             return authUser;
         });
     }
 
     private AuthUser getDemoAdmin() {
-        return authUserRepository.findAuthUserByUsername(DemoUtils.ADMIN_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Admin", DemoUtils.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.DEMO);
+        return authUserRepository.findAuthUserByUsername(TutorDemoUtils.ADMIN_USERNAME).orElseGet(() -> {
+            AuthUser authUser = userService.createUserWithAuth("Demo Admin", TutorDemoUtils.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseExecutionService.getDemoCourseExecution());
             return authUser;
         });

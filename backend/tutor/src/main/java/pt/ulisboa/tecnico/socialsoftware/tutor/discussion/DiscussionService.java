@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -19,7 +17,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
@@ -32,7 +29,6 @@ import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
 
 @Service
 public class DiscussionService {
-    private static final Logger logger = LoggerFactory.getLogger(TopicController.class);
 
     @Autowired
     public DiscussionRepository discussionRepository;

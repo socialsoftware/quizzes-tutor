@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemR
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.DemoUtils
+import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository
@@ -244,7 +244,7 @@ class SpockTest extends Specification {
     ReplyRepository replyRepository
 
     @Autowired
-    DemoUtils demoUtils
+    TutorDemoUtils demoUtils
 
     Course externalCourse
     @Shared

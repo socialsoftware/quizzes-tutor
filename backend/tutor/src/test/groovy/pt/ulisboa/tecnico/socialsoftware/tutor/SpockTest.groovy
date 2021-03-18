@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor
 import groovyx.net.http.RESTClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
-import org.springframework.boot.autoconfigure.SpringBootApplication
 import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository
@@ -20,7 +19,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository
-import pt.ulisboa.tecnico.socialsoftware.utils.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
@@ -38,7 +36,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmis
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.DemoUtils
+import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
 import spock.lang.Shared
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
@@ -245,7 +243,7 @@ class SpockTest extends Specification {
     ReplyRepository replyRepository
 
     @Autowired
-    DemoUtils demoUtils
+    TutorDemoUtils demoUtils
 
     Course externalCourse
     @Shared
