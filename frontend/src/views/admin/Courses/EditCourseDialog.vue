@@ -8,9 +8,7 @@
   >
     <v-card>
       <v-card-title>
-        <span class="headline">
-          New Course
-        </span>
+        <span class="headline"> New Course </span>
       </v-card-title>
 
       <v-card-text class="text-left" v-if="editCourse">

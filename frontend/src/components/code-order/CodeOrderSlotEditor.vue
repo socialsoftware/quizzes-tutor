@@ -39,8 +39,8 @@ import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
 @Component({
   components: {
-    BaseCodeEditor
-  }
+    BaseCodeEditor,
+  },
 })
 export default class CodeOrderSlotEditor extends Vue {
   @PropSync('questionSlot', { type: CodeOrderSlot })

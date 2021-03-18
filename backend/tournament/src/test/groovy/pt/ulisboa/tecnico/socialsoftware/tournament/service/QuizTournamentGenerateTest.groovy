@@ -2,25 +2,28 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
 import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
 
 @DataJpaTest
 class QuizTournamentGenerateTest extends TournamentTest {
     def tournamentDto
+    def question
 
     def setup() {
         tournamentDto = createTournament(creator1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 
         createAssessmentWithTopicConjunction(ASSESSMENT_1_TITLE, Assessment.Status.AVAILABLE, externalCourseExecution)
 
-        createMultipleChoiceQuestion(LOCAL_DATE_TODAY, QUESTION_1_CONTENT, QUESTION_1_TITLE, Question.Status.AVAILABLE, externalCourse)
+        question = createMultipleChoiceQuestion(LOCAL_DATE_TODAY, QUESTION_1_CONTENT, QUESTION_1_TITLE, Question.Status.AVAILABLE, externalCourse)
     }
 
     def "generate a quiz with 1 student solving" () {
@@ -38,6 +41,42 @@ class QuizTournamentGenerateTest extends TournamentTest {
         result.getType() == QuizType.EXTERNAL_QUIZ
         DateHandler.toISOString(result.getConclusionDate()) == STRING_DATE_LATER
         result.getQuizQuestionsNumber() == NUMBER_OF_QUESTIONS
+    }
+
+    def "generate a quiz with 1 student solving and question with less one topic" () {
+        given: 'a participant'
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
+        and: 'remove topic from question'
+        question.getTopics().remove(topic2)
+        topic2.getQuestions().remove(question)
+
+        when:
+        tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
+
+        then:
+        def error = thrown(TutorException)
+        error.errorMessage == NOT_ENOUGH_QUESTIONS_TOURNAMENT
+        quizRepository.count() == 0L
+    }
+
+    def "generate a quiz with 1 student solving and question with more one topic" () {
+        given: 'a participant'
+        tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")
+        and: 'a new topic'
+        def topicDto1 = new TopicDto()
+        topicDto1.setName(TOPIC_3_NAME)
+        def topic3 = new Topic(externalCourse, topicDto1)
+        topicRepository.save(topic3)
+        and: 'add topic to question'
+        question.addTopic(topic3)
+
+        when:
+        tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
+
+        then:
+        def error = thrown(TutorException)
+        error.errorMessage == NOT_ENOUGH_QUESTIONS_TOURNAMENT
+        quizRepository.count() == 0L
     }
 
     def "generate a quiz with 2 student solving" () {

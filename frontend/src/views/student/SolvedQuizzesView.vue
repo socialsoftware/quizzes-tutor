@@ -2,7 +2,7 @@
   <div class="container">
     <h2>Solved Quizzes</h2>
     <ul data-cy="solvedQuizzesList">
-      <li class="list-header ">
+      <li class="list-header">
         <div class="col">Title</div>
         <div class="col">Solved Date</div>
         <div class="col">Score</div>

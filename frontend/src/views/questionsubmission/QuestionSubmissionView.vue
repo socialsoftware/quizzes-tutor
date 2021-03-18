@@ -73,7 +73,7 @@
                 <v-icon
                   :class="[
                     'action-button',
-                    { 'unread-icon': hasUnreadReviews(item) }
+                    { 'unread-icon': hasUnreadReviews(item) },
                   ]"
                   v-on="on"
                   @click="editQuestionSubmission(item)"
@@ -92,7 +92,7 @@
                 <v-icon
                   v-bind:class="[
                     'action-button',
-                    { 'unread-icon': hasUnreadReviews(item) }
+                    { 'unread-icon': hasUnreadReviews(item) },
                   ]"
                   v-on="on"
                   color="red"
@@ -179,8 +179,8 @@ import Review from '@/models/management/Review';
   components: {
     'show-question-submission-dialog': ShowQuestionSubmissionDialog,
     'edit-question-submission-topics': EditQuestionSubmissionTopics,
-    'edit-question-submission-dialog': EditQuestionSubmissionDialog
-  }
+    'edit-question-submission-dialog': EditQuestionSubmissionDialog,
+  },
 })
 export default class QuestionSubmissionView extends Vue {
   questionSubmissions: QuestionSubmission[] = [];
@@ -205,7 +205,7 @@ export default class QuestionSubmissionView extends Vue {
         text: 'Submitted by',
         value: 'name',
         align: 'center',
-        width: '10%'
+        width: '10%',
       });
     }
     await this.getQuestionSubmissions();
@@ -217,11 +217,11 @@ export default class QuestionSubmissionView extends Vue {
       [this.questionSubmissions, this.topics] = this.$store.getters.isStudent
         ? await Promise.all([
             RemoteServices.getStudentQuestionSubmissions(),
-            RemoteServices.getTopics()
+            RemoteServices.getTopics(),
           ])
         : await Promise.all([
             RemoteServices.getCourseExecutionQuestionSubmissions(),
-            RemoteServices.getTopics()
+            RemoteServices.getTopics(),
           ]);
       this.topicsComponentKey += 1;
     } catch (error) {
@@ -233,9 +233,8 @@ export default class QuestionSubmissionView extends Vue {
   customFilter(value: string, search: string, question: Question) {
     return (
       search != null &&
-      JSON.stringify(question)
-        .toLowerCase()
-        .indexOf(search.toLowerCase()) !== -1
+      JSON.stringify(question).toLowerCase().indexOf(search.toLowerCase()) !==
+        -1
     );
   }
 
@@ -259,7 +258,7 @@ export default class QuestionSubmissionView extends Vue {
 
   onSaveQuestionSubmission(questionSubmission: QuestionSubmission) {
     this.questionSubmissions = this.questionSubmissions.filter(
-      qs => qs.id !== questionSubmission.id
+      (qs) => qs.id !== questionSubmission.id
     );
     this.questionSubmissions.unshift(questionSubmission);
     this.editQuestionSubmissionDialog = false;
@@ -346,7 +345,7 @@ export default class QuestionSubmissionView extends Vue {
           toDeleteQuestionSubmission.id
         );
         this.questionSubmissions = this.questionSubmissions.filter(
-          questionSubmission =>
+          (questionSubmission) =>
             questionSubmission.question.id !=
             toDeleteQuestionSubmission.question.id
         );

@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
@@ -36,7 +35,7 @@ public class Topic implements DomainEntity {
     public Topic() {
     }
 
-    public Topic(Course course, TopicDto topicDto) {
+    public Topic(Course course, pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto topicDto) {
         setName(topicDto.getName());
         setCourse(course);
     }
@@ -126,8 +125,8 @@ public class Topic implements DomainEntity {
         return dto;
     }
 
-    public TopicDto getDto() {
-        TopicDto dto = new TopicDto();
+    public pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto getDto() {
+        pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto dto = new pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto();
         dto.setId(getId());
         dto.setName(getName());
         dto.setNumberOfQuestions(getQuestions().size());

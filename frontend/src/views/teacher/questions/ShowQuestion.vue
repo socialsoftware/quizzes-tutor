@@ -25,8 +25,8 @@ import AnswerDetails from '@/models/management/questions/AnswerDetails';
   components: {
     multiple_choice: MultipleChoiceView,
     code_fill_in: CodeFillInView,
-    code_order: CodeOrderView
-  }
+    code_order: CodeOrderView,
+  },
 })
 export default class ShowQuestion extends Vue {
   @Prop({ type: Question, required: true }) readonly question!: Question;

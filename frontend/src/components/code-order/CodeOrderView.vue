@@ -6,10 +6,10 @@
       :class="{
         'not-used': el.order == null,
         student: !!answerDetails,
-        correct: !!answerDetails && studentAnswerCorrect(el)
+        correct: !!answerDetails && studentAnswerCorrect(el),
       }"
     >
-      <b style="padding-right:10px">{{
+      <b style="padding-right: 10px">{{
         el.order == null ? null : el.order + 1
       }}</b>
       <BaseCodeEditor
@@ -37,8 +37,8 @@ import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
 @Component({
   components: {
-    BaseCodeEditor
-  }
+    BaseCodeEditor,
+  },
 })
 export default class CodeOrderView extends Vue {
   @Prop() readonly questionDetails!: CodeOrderQuestionDetails;
@@ -49,12 +49,16 @@ export default class CodeOrderView extends Vue {
   }
 
   studentAnswerCorrect(el: CodeOrderSlot): boolean {
-    let answer = this.answerDetails?.orderedSlots.find(x => x.slotId == el.id);
+    let answer = this.answerDetails?.orderedSlots.find(
+      (x) => x.slotId == el.id
+    );
     return !!answer ? answer.correct : el.order == null;
   }
 
   studentAnswer(el: CodeOrderSlot): string {
-    let answer = this.answerDetails?.orderedSlots.find(x => x.slotId == el.id);
+    let answer = this.answerDetails?.orderedSlots.find(
+      (x) => x.slotId == el.id
+    );
     return `S[${!!answer ? (answer?.order || 0) + 1 : 'Not Used'}][${
       this.studentAnswerCorrect(el) ? '✔' : '✖'
     }]`;

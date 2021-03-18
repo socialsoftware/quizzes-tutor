@@ -264,6 +264,7 @@ public class AnswerService {
 
         if (quizDetails.getTopics() != null) {
             availableQuestions = courseExecution.filterQuestionsByTopics(availableQuestions, quizDetails.getTopics());
+            System.out.println("availableQuestions " + availableQuestions.size());
         } else {
             availableQuestions = new ArrayList<>();
         }

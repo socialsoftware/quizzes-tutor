@@ -1,4 +1,4 @@
-<template> <div></div> </template>
+<template><div></div></template>
 
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';

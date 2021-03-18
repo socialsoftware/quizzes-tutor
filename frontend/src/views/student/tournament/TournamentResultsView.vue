@@ -1,15 +1,20 @@
 <template>
   <v-container
     fluid
-    style="height: 100%; position: relative; display: flex; flex-direction: column"
+    style="
+      height: 100%;
+      position: relative;
+      display: flex;
+      flex-direction: column;
+    "
   >
     <h2>Tournament</h2>
-    <v-container fluid style="position: relative; max-height: 100%; flex: 1;">
+    <v-container fluid style="position: relative; max-height: 100%; flex: 1">
       <v-row style="width: 100%; height: 100%">
         <v-col>
           <v-card class="dashCard">
             <v-card-title class="justify-center">Tournament Info</v-card-title>
-            <div class="text-left" style="padding-left: 25px;">
+            <div class="text-left" style="padding-left: 25px">
               <b style="color: #1976d2">Course: </b>
               <span data-cy="Course">{{
                 selectedTournament !== null
@@ -37,8 +42,8 @@
                 <ul
                   v-if="
                     selectedTournament !== null &&
-                      selectedTournament.topics !== null &&
-                      selectedTournament.topics.length
+                    selectedTournament.topics !== null &&
+                    selectedTournament.topics.length
                   "
                 >
                   <div
@@ -138,7 +143,7 @@ import AnimatedNumber from '@/components/AnimatedNumber.vue';
 import TournamentParticipant from '@/models/user/TournamentParticipant';
 
 @Component({
-  components: { AnimatedNumber }
+  components: { AnimatedNumber },
 })
 export default class TournamentResultsView extends Vue {
   @Prop({ type: String, required: true }) id!: number;
@@ -153,9 +158,9 @@ export default class TournamentResultsView extends Vue {
     {
       text: 'Number of Correct Answers',
       value: 'numberOfCorrect',
-      align: 'center'
+      align: 'center',
     },
-    { text: 'Score', value: 'score', align: 'center' }
+    { text: 'Score', value: 'score', align: 'center' },
   ];
 
   async created() {

@@ -23,7 +23,7 @@ import CodeOrderStatementCorrectAnswerDetails from '@/models/statement/questions
 export enum QuestionTypes {
   MultipleChoice = 'multiple_choice',
   CodeFillIn = 'code_fill_in',
-  CodeOrder = 'code_order'
+  CodeOrder = 'code_order',
 }
 
 export function convertToLetter(number: number | null) {

@@ -313,7 +313,7 @@ public class Tournament  {
     public ExternalStatementCreationDto getExternalStatementCreationDto() {
         ExternalStatementCreationDto dto = new ExternalStatementCreationDto();
         dto.setNumberOfQuestions(getNumberOfQuestions());
-        dto.setTopics(getTopics().stream().map(TournamentTopic::getTopicWithCourseDto).collect(Collectors.toSet()));
+        dto.setTopics(getTopics().stream().map(TournamentTopic::getTopicDto).collect(Collectors.toSet()));
         dto.setStartTime(getStartTime());
         dto.setEndTime(getEndTime());
         dto.setId(getId());

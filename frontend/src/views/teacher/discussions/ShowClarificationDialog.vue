@@ -30,8 +30,8 @@ import ClarificationComponent from '@/views/student/discussions/ClarificationCom
 
 @Component({
   components: {
-    'clarification-component': ClarificationComponent
-  }
+    'clarification-component': ClarificationComponent,
+  },
 })
 export default class ShowClarificationDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
@@ -42,7 +42,7 @@ export default class ShowClarificationDialog extends Vue {
     await this.$store.dispatch('loading');
     try {
       [this.clarifications] = await Promise.all([
-        RemoteServices.getClarificationsByQuestionId(this.question.id!)
+        RemoteServices.getClarificationsByQuestionId(this.question.id!),
       ]);
     } catch (error) {
       await this.$store.dispatch('error', error);

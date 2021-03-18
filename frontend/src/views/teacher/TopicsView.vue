@@ -31,7 +31,7 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item.action="{ item }">
+      <template v-slot:[`item.action`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -69,7 +69,10 @@
           <span>Delete Topic</span>
         </v-tooltip>
       </template>
-      <template v-slot:item.name="{ item }" style="background: rebeccapurple">
+      <template
+        v-slot:[`item.name`]="{ item }"
+        style="background: rebeccapurple"
+      >
         <div
           @click="showQuestionsDialog(item.id)"
           @contextmenu="editTopic(item, $event)"
@@ -122,7 +125,7 @@ import ShowQuestionListDialog from '@/views/teacher/questions/ShowQuestionListDi
 import Question from '@/models/management/Question';
 
 @Component({
-  components: { ShowQuestionListDialog }
+  components: { ShowQuestionListDialog },
 })
 export default class TopicsView extends Vue {
   topics: Topic[] = [];
@@ -137,15 +140,15 @@ export default class TopicsView extends Vue {
       value: 'action',
       align: 'left',
       width: '5px',
-      sortable: false
+      sortable: false,
     },
     { text: 'Name', value: 'name', align: 'left' },
     {
       text: 'Questions',
       value: 'numberOfQuestions',
       align: 'center',
-      width: '115px'
-    }
+      width: '115px',
+    },
   ];
 
   async created() {
@@ -191,7 +194,7 @@ export default class TopicsView extends Vue {
       try {
         await RemoteServices.deleteTopic(toDeleteTopic);
         this.topics = this.topics.filter(
-          topic => topic.id !== toDeleteTopic.id
+          (topic) => topic.id !== toDeleteTopic.id
         );
       } catch (error) {
         await this.$store.dispatch('error', error);
@@ -204,7 +207,7 @@ export default class TopicsView extends Vue {
       if (this.editedTopic.id) {
         this.editedTopic = await RemoteServices.updateTopic(this.editedTopic);
         this.topics = this.topics.filter(
-          topic => topic.id !== this.editedTopic.id
+          (topic) => topic.id !== this.editedTopic.id
         );
       } else if (this.editedTopic) {
         this.editedTopic = await RemoteServices.createTopic(this.editedTopic);

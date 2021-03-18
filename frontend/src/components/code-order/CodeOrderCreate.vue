@@ -14,9 +14,7 @@
             >New Slot</v-btn
           >
         </template>
-        <span>
-          Click to add new slots for the order problem.
-        </span>
+        <span> Click to add new slots for the order problem. </span>
       </v-tooltip>
     </v-card-actions>
     <draggable
@@ -54,8 +52,8 @@ import CodeOrderSlot from '@/models/management/questions/CodeOrderSlot';
 @Component({
   components: {
     CodeOrderSlotEditor,
-    draggable
-  }
+    draggable,
+  },
 })
 export default class CodeOrderCreate extends Vue {
   @PropSync('questionDetails', { type: CodeOrderQuestionDetails })

@@ -104,7 +104,6 @@ public class TournamentProvidedService {
             createQuiz(tournament);
         }
 
-        //return answerService.startQuiz(userId, tournament.getQuizId());
         return tournamentRequiredService.startTournamentQuiz(userId, tournament.getQuizId());
     }
 
@@ -129,11 +128,7 @@ public class TournamentProvidedService {
 
         tournament.updateTournament(tournamentDto, topics);
 
-        if (tournament.hasQuiz()) { // update current Quiz
-            /*Quiz quiz = quizRepository.findById(tournamentDto.getQuizId())
-                    .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, tournamentDto.getQuizId()));
-
-            QuizDto quizDto = quizService.findById(tournamentDto.getQuizId());*/
+        if (tournament.hasQuiz()) {
             QuizDto quizDto = tournamentRequiredService.getQuiz(tournamentDto.getQuizId());
             quizDto.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
 
@@ -158,7 +153,6 @@ public class TournamentProvidedService {
     public void removeTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
 
-        // Pessimistic view e commutative updates
         if(tournament.getQuizId() != null) {
             tournamentRequiredService.deleteQuiz(tournament.getQuizId());
         }
@@ -214,15 +208,7 @@ public class TournamentProvidedService {
         Integer demoCourseExecutionId = tournamentRequiredService.getDemoCourseExecutionId();
 
         tournamentRepository.getTournamentsForCourseExecution(demoCourseExecutionId)
-            .forEach(tournament -> {
-                /*tournament.getParticipants().forEach(user ->
-                        userRepository.findById(user.getId()).get().removeTournament(tournament)
-                );*/
-                /*if (tournament.getQuiz() != null) {
-                    tournament.getQuiz().setTournament(null);
-                }*/
-                tournamentRepository.delete(tournament);
-            });
+            .forEach(tournament -> tournamentRepository.delete(tournament));
     }
 
 }

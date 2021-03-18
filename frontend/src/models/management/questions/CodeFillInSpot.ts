@@ -17,7 +17,7 @@ export default class CodeFillInSpot {
 
   setAsNew(): void {
     this.id = null;
-    this.options.forEach(option => {
+    this.options.forEach((option) => {
       option.id = null;
     });
   }

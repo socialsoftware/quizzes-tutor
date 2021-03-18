@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.user.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.user.UserDto;
@@ -17,15 +18,18 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerI
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
 
+import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -36,6 +40,9 @@ import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
 
 @Service
 public class CourseExecutionService {
+    @Autowired
+    private QuestionService questionService;
+
     @Autowired
     private CourseRepository courseRepository;
 
@@ -180,8 +187,17 @@ public class CourseExecutionService {
                 .collect(Collectors.toList());
     }
 
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuestionDto> importQuestions(InputStream inputStream, Integer executionId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
+
+        QuestionsXmlImport questionsXmlImport = new QuestionsXmlImport();
+
+        return questionsXmlImport.importQuestions(inputStream, this.questionService, this.courseRepository, courseExecution);
+    }
+
     private Course getCourse(String name, CourseType type) {
-        if (type == null)
+      if (type == null)
             throw new TutorException(INVALID_TYPE_FOR_COURSE);
 
         return courseRepository.findByNameType(name, type.toString())

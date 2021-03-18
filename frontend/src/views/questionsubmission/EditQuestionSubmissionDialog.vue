@@ -23,7 +23,7 @@
             <v-row>
               <v-select
                 v-model="questionType"
-                :rules="[v => !!v || 'Question type is required']"
+                :rules="[(v) => !!v || 'Question type is required']"
                 label="Question Type"
                 required
                 :items="questionTypesOptions"
@@ -34,7 +34,7 @@
             <v-row>
               <v-text-field
                 v-model="editQuestionSubmission.question.title"
-                :rules="[v => !!v || 'Question title is required']"
+                :rules="[(v) => !!v || 'Question title is required']"
                 data-cy="QuestionTitle"
                 label="Title"
                 required
@@ -44,7 +44,7 @@
             <v-row>
               <v-textarea
                 v-model="editQuestionSubmission.question.content"
-                :rules="[v => !!v || 'Question content is required']"
+                :rules="[(v) => !!v || 'Question content is required']"
                 auto-grow
                 data-cy="QuestionContent"
                 label="Question"
@@ -98,9 +98,7 @@
     </v-dialog>
     <v-dialog v-model="dialog2" max-width="500px">
       <v-card>
-        <v-card-title>
-          Dialog 2
-        </v-card-title>
+        <v-card-title> Dialog 2 </v-card-title>
         <v-card-text>
           <v-btn color="primary" dark @click="dialog3 = !dialog3">
             Open Dialog 3
@@ -112,9 +110,7 @@
           ></v-select>
         </v-card-text>
         <v-card-actions>
-          <v-btn color="primary" text @click="dialog2 = false">
-            Close
-          </v-btn>
+          <v-btn color="primary" text @click="dialog2 = false"> Close </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -125,19 +121,17 @@
 import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import QuestionSubmission from '../../models/management/QuestionSubmission';
-import Review from '@/models/management/Review';
 import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 import CodeFillInCreate from '@/components/code-fill-in/CodeFillInCreate.vue';
 import CodeOrderCreate from '@/components/code-order/CodeOrderCreate.vue';
-import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
-import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers.ts';
+import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers';
 
 @Component({
   components: {
     multiple_choice: MultipleChoiceCreate,
     code_fill_in: CodeFillInCreate,
-    code_order: CodeOrderCreate
-  }
+    code_order: CodeOrderCreate,
+  },
 })
 export default class EditQuestionSubmissionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
@@ -152,9 +146,9 @@ export default class EditQuestionSubmissionDialog extends Vue {
     .type;
 
   get questionTypesOptions() {
-    return Object.values(QuestionTypes).map(qt => ({
+    return Object.values(QuestionTypes).map((qt) => ({
       text: qt.replace(/_/g, ' '),
-      value: qt
+      value: qt,
     }));
   }
 

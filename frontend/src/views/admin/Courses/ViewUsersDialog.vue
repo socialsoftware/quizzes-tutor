@@ -8,9 +8,7 @@
   >
     <v-card>
       <v-card-title>
-        <span class="headline">
-          Users
-        </span>
+        <span class="headline"> Users </span>
       </v-card-title>
       <v-card-text>
         <v-data-table
@@ -77,14 +75,14 @@ export default class ViewUsersDialog extends Vue {
       text: 'Role',
       value: 'role',
       align: 'left',
-      width: '15%'
+      width: '15%',
     },
     {
       text: 'Active',
       value: 'active',
       align: 'left',
-      width: '15%'
-    }
+      width: '15%',
+    },
   ];
 
   async created() {}

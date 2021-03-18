@@ -38,19 +38,19 @@ const sanitizeParams = {
     'thead',
     'tr',
     'ul',
-    'u'
+    'u',
   ],
   disallowedTagsMode: 'discard',
   allowedAttributes: {
     a: ['href', 'name', 'target'],
     img: ['src'],
-    '*': ['id', 'name', 'class', 'title', 'style']
+    '*': ['id', 'name', 'class', 'title', 'style'],
   },
   selfClosing: ['img', 'br', 'hr', 'area', 'base', 'basefont'],
   allowedSchemes: ['http', 'https', 'ftp', 'mailto'],
   allowedSchemesByTag: {},
   allowedSchemesAppliedToAttributes: ['href', 'src', 'cite'],
-  allowProtocolRelative: true
+  allowProtocolRelative: true,
 };
 const converter = new showdown.Converter({
   literalMidWordUnderscores: true,
@@ -59,7 +59,7 @@ const converter = new showdown.Converter({
   openLinksInNewWindow: true,
   tables: true,
   underline: true,
-  backslashEscapesHTMLTags: true
+  backslashEscapesHTMLTags: true,
 });
 
 export function convertMarkDown(

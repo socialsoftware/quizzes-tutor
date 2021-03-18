@@ -30,7 +30,7 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item.actions="{ item }">
+      <template v-slot:[`item.actions`]="{ item }">
         <v-tooltip bottom v-if="item.canChange()">
           <template v-slot:activator="{ on }">
             <v-icon
@@ -140,35 +140,35 @@
         </v-tooltip>
       </template>
 
-      <template v-slot:item.id="{ item }">
+      <template v-slot:[`item.id`]="{ item }">
         <v-chip color="primary" small @click="openTournamentDashboard(item)">
           <span> {{ item.id }} </span>
         </v-chip>
       </template>
 
-      <template v-slot:item.creator="{ item }">
+      <template v-slot:[`item.creator`]="{ item }">
         <v-chip small>
           <span> {{ item.creator.name }} </span>
         </v-chip>
       </template>
 
-      <template v-slot:item.topics="{ item }">
+      <template v-slot:[`item.topics`]="{ item }">
         <view-tournament-topics :tournament="item" />
       </template>
 
-      <template v-slot:item.state="{ item }">
+      <template v-slot:[`item.state`]="{ item }">
         <v-chip :color="item.getStateColor()">
           {{ item.getStateName() }}
         </v-chip>
       </template>
 
-      <template v-slot:item.privateTournament="{ item }">
+      <template v-slot:[`item.privateTournament`]="{ item }">
         <v-chip :color="item.getPrivateColor()">
           {{ item.getPrivateName() }}
         </v-chip>
       </template>
 
-      <template v-slot:item.times="{ item }">
+      <template v-slot:[`item.times`]="{ item }">
         <v-chip x-small>
           {{ item.startTime }}
         </v-chip>
@@ -177,7 +177,7 @@
         </v-chip>
       </template>
 
-      <template v-slot:item.enrolled="{ item }">
+      <template v-slot:[`item.enrolled`]="{ item }">
         <v-chip :color="item.getEnrolledColor()">
           {{ item.getEnrolledName() }}
         </v-chip>
@@ -229,8 +229,8 @@ import EditTournamentDialog from '@/views/student/tournament/TournamentForm.vue'
     'create-tournament-dialog': CreateTournamentDialog,
     'edit-password-dialog': EditPasswordDialog,
     'edit-tournament-dialog': EditTournamentDialog,
-    'view-tournament-topics': ViewTournamentTopics
-  }
+    'view-tournament-topics': ViewTournamentTopics,
+  },
 })
 export default class TournamentsListView extends Vue {
   @Prop({ type: String, required: true }) type!: string;
@@ -248,56 +248,56 @@ export default class TournamentsListView extends Vue {
       value: 'actions',
       align: 'center',
       sortable: false,
-      width: '40%'
+      width: '40%',
     },
     {
       text: 'Tournament Number',
       value: 'id',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Creator',
       value: 'creator',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Topics',
       value: 'topics',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'State',
       value: 'state',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Privacy',
       value: 'privateTournament',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Start/End Time',
       value: 'times',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Number of Questions',
       value: 'numberOfQuestions',
       align: 'center',
-      width: '10%'
+      width: '10%',
     },
     {
       text: 'Enrolled',
       value: 'enrolled',
       align: 'center',
-      width: '10%'
-    }
+      width: '10%',
+    },
   ];
 
   async created() {
@@ -328,7 +328,7 @@ export default class TournamentsListView extends Vue {
     if (tournament)
       await this.$router.push({
         path: '/student/tournament',
-        query: { id: tournament.id.toString() }
+        query: { id: tournament.id.toString() },
       });
   }
 
@@ -448,7 +448,7 @@ export default class TournamentsListView extends Vue {
         if (tournamentToRemove.id)
           await RemoteServices.removeTournament(tournamentToRemove.id);
         this.tournaments = this.tournaments.filter(
-          tournament => tournament.id !== tournamentToRemove.id
+          (tournament) => tournament.id !== tournamentToRemove.id
         );
       } catch (error) {
         await this.$store.dispatch('error', error);

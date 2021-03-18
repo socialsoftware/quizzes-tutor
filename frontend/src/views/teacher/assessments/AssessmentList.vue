@@ -24,7 +24,7 @@
           >
         </v-card-title>
       </template>
-      <template v-slot:item.status="{ item }">
+      <template v-slot:[`item.status`]="{ item }">
         <v-select
           v-model="item.status"
           :items="statusList"
@@ -38,7 +38,7 @@
           </template>
         </v-select>
       </template>
-      <template v-slot:item.action="{ item }">
+      <template v-slot:[`item.action`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -74,7 +74,7 @@
           <span>Delete Assessment</span>
         </v-tooltip>
       </template>
-      <template v-slot:item.title="{ item }">
+      <template v-slot:[`item.title`]="{ item }">
         <div
           @click="showQuestionsDialog(item.id)"
           @contextmenu="editAssessment(item.id, $event)"
@@ -109,7 +109,7 @@ import Question from '@/models/management/Question';
 import ShowQuestionListDialog from '@/views/teacher/questions/ShowQuestionListDialog.vue';
 
 @Component({
-  components: { ShowQuestionListDialog }
+  components: { ShowQuestionListDialog },
 })
 export default class AssessmentList extends Vue {
   @Prop({ type: Array, required: true }) readonly assessments!: Assessment[];
@@ -124,7 +124,7 @@ export default class AssessmentList extends Vue {
       value: 'action',
       align: 'left',
       sortable: false,
-      width: '5px'
+      width: '5px',
     },
     { text: 'Order', value: 'sequence', align: 'center', width: '5px' },
     { text: 'Title', value: 'title', width: '80%', align: 'left' },
@@ -132,16 +132,16 @@ export default class AssessmentList extends Vue {
       text: 'Number of questions',
       value: 'numberOfQuestions',
       align: 'center',
-      width: '5px'
+      width: '5px',
     },
-    { text: 'Status', value: 'status', align: 'center', width: '5px' }
+    { text: 'Status', value: 'status', align: 'center', width: '5px' },
   ];
 
   async setStatus(assessmentId: number, status: string) {
     try {
       await RemoteServices.setAssessmentStatus(assessmentId, status);
       let assessment = this.assessments.find(
-        assessment => assessment.id === assessmentId
+        (assessment) => assessment.id === assessmentId
       );
       if (assessment) {
         assessment.status = status;

@@ -32,7 +32,6 @@ public class TournamentRequiredService {
     private TournamentACL tournamentACL;
 
     public TournamentCreator getTournamentCreator(Integer userId) {
-        //User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         UserDto userDto = monolithService.findUserById(userId);
         if (userDto != null) {
             return tournamentACL.userToTournamentCreator(userDto);
@@ -43,7 +42,6 @@ public class TournamentRequiredService {
     }
 
     public TournamentParticipant getTournamentParticipant(Integer userId) {
-        //User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         UserDto userDto = monolithService.findUserById(userId);
         if (userDto != null) {
             return tournamentACL.userToTournamentParticipant(userDto);
@@ -54,7 +52,6 @@ public class TournamentRequiredService {
     }
 
     public TournamentCourseExecution getTournamentCourseExecution(Integer courseExecutionId) {
-        //CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
         CourseExecutionDto courseExecutionDto = monolithService.getCourseExecutionById(courseExecutionId);
         return tournamentACL.courseExecutionToTournamentCourseExecution(courseExecutionDto);
     }
@@ -66,16 +63,6 @@ public class TournamentRequiredService {
     public Set<TournamentTopic> getTournamentTopics(Set<Integer> topicsList) {
         List<TopicWithCourseDto> topicWithCourseDtoList = monolithService.findTopics(topicsList);
         Set<TournamentTopic> topics = new HashSet<>();
-
-        /*for (Integer topicId : topicsList) {
-            TopicWithCourseDto topic = topicService.findTopicById(topicId);
-            if(topic != null) {
-                topics.add(tournamentACL.topicToTournamentTopic(topic));
-            }
-            else{
-                throw new TutorException(TOPIC_NOT_FOUND, topicId);
-            }
-        }*/
 
         for (TopicWithCourseDto topicWithCourseDto : topicWithCourseDtoList) {
             topics.add(tournamentACL.topicToTournamentTopic(topicWithCourseDto));
@@ -93,9 +80,6 @@ public class TournamentRequiredService {
     }
 
     public QuizDto getQuiz(Integer quizId) {
-        /*Quiz quiz = quizRepository.findById(quizId)
-                .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));*/
-
         return monolithService.findQuizById(quizId);
     }
 

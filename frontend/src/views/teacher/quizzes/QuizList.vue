@@ -30,7 +30,7 @@
         </v-card-title>
       </template>
 
-      <template v-slot:item.action="{ item }">
+      <template v-slot:[`item.action`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ on }">
             <v-icon
@@ -120,7 +120,7 @@
         </v-tooltip>
       </template>
 
-      <template v-slot:item.title="{ item }">
+      <template v-slot:[`item.title`]="{ item }">
         <div
           @click="showQuizDialog(item.id)"
           @contextmenu="editQuiz(item, $event)"
@@ -129,13 +129,13 @@
           {{ item.title }}
         </div>
       </template>
-      <template v-slot:item.id="{ item }">
+      <template v-slot:[`item.id`]="{ item }">
         <div v-if="item.qrCodeOnly">
           {{ item.id }}
         </div>
       </template>
 
-      <template v-slot:item.options="{ item }">
+      <template v-slot:[`item.options`]="{ item }">
         <v-tooltip bottom v-if="item.timed">
           <template v-slot:activator="{ on }">
             <v-icon class="mr-2 action-button" v-on="on">timer</v-icon>
@@ -203,8 +203,8 @@ import { QuizAnswers } from '@/models/management/QuizAnswers';
   components: {
     'show-quiz-answers-dialog': ShowQuizAnswersDialog,
     'show-quiz-dialog': ShowQuizDialog,
-    'vue-qrcode': VueQrcode
-  }
+    'vue-qrcode': VueQrcode,
+  },
 })
 export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
@@ -225,52 +225,52 @@ export default class QuizList extends Vue {
       value: 'action',
       align: 'left',
       width: '150px',
-      sortable: false
+      sortable: false,
     },
     { text: 'Title', value: 'title', align: 'left', width: '30%' },
     {
       text: 'Code',
       value: 'id',
       align: 'center',
-      width: '150px'
+      width: '150px',
     },
     {
       text: 'Available Date',
       value: 'availableDate',
       align: 'center',
-      width: '150px'
+      width: '150px',
     },
     {
       text: 'Conclusion Date',
       value: 'conclusionDate',
       align: 'center',
-      width: '150px'
+      width: '150px',
     },
     {
       text: 'Results Date',
       value: 'resultsDate',
       align: 'center',
-      width: '150px'
+      width: '150px',
     },
     { text: 'Options', value: 'options', align: 'center', width: '150px' },
     {
       text: 'Questions',
       value: 'numberOfQuestions',
       width: '5px',
-      align: 'center'
+      align: 'center',
     },
     {
       text: 'Answers',
       value: 'numberOfAnswers',
       width: '5px',
-      align: 'center'
+      align: 'center',
     },
     {
       text: 'Creation Date',
       value: 'creationDate',
       width: '150px',
-      align: 'center'
-    }
+      align: 'center',
+    },
   ];
 
   async showQuizDialog(quizId: number) {
@@ -305,7 +305,7 @@ export default class QuizList extends Vue {
 
   async exportQuiz(quizId: number) {
     let fileName =
-      this.quizzes.filter(quiz => quiz.id == quizId)[0].title + '.zip';
+      this.quizzes.filter((quiz) => quiz.id == quizId)[0].title + '.zip';
     try {
       let result = await RemoteServices.exportQuiz(quizId);
       const url = window.URL.createObjectURL(result);

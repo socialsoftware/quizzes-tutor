@@ -8,7 +8,7 @@
   >
     <v-card>
       <v-card-title>
-        <span class="headline"> Upload Users </span>
+        <span class="headline"> Import Questions </span>
         <v-tooltip bottom>
           <template v-slot:activator="{ on, attrs }">
             <v-icon color="blue darken-1" dark v-bind="attrs" v-on="on"
@@ -16,11 +16,7 @@
             >
           </template>
           <v-card-text>
-            <div>The file to upload must follow the rule:</div>
-            <div>email,name,['student'|'teacher']</div>
-            <div>
-              When omitted the third column, by default is considered a student
-            </div>
+            <div>The questions will be created in this course</div>
           </v-card-text>
         </v-tooltip>
       </v-card-title>
@@ -29,9 +25,9 @@
         show-size
         dense
         small-chips
-        label="Select a .csv file"
+        label="Select a .xml file"
         v-model="chosenFile"
-        accept=".csv"
+        accept=".xml"
       />
 
       <v-card-actions>
@@ -44,7 +40,7 @@
         >
         <v-btn
           color="green darken-1"
-          @click="uploadUsers(course)"
+          @click="uploadQuestions()"
           data-cy="uploadFileButton"
           >Upload File</v-btn
         >
@@ -59,26 +55,24 @@ import RemoteServices from '@/services/RemoteServices';
 import Course from '@/models/user/Course';
 
 @Component
-export default class UploadUsersDialog extends Vue {
+export default class UploadQuestionsDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Course, required: true }) readonly course!: Course;
 
   chosenFile: File | null = null;
 
-  async uploadUsers(course: Course) {
+  async uploadQuestions() {
     try {
-      if (course.courseExecutionId != null && this.chosenFile != null) {
-        let updatedCourse = await RemoteServices.registerExternalUsersCsvFile(
-          this.chosenFile,
-          course.courseExecutionId
+      if (this.chosenFile != null) {
+        let uploadedQuestions = await RemoteServices.importQuestions(
+          this.chosenFile
         );
         confirm('File was uploaded!');
 
-        this.$emit('users-uploaded', updatedCourse);
+        this.$emit('questions-uploaded', uploadedQuestions);
       } else {
         await this.$store.dispatch(
           'error',
-          'In order to upload users, it must be selected a file'
+          'In order to import questions, it must be selected a file'
         );
       }
     } catch (error) {

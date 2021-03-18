@@ -66,7 +66,7 @@ public class CodeFillInAnswer extends AnswerDetails {
         for (var spot:fillInSpots) {
             var option = this.getFillInOptions().stream().filter(x -> x.getFillInSpot().getId().equals(spot.getId())).findAny();
             if (option.isPresent()){
-                Integer humanSequence = option.get().getSequence();
+                Integer humanSequence = option.get().getSequence() + 1;
                 answers.add(humanSequence.toString());
             }
             else {

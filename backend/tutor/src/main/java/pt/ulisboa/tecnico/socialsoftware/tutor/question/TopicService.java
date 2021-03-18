@@ -7,10 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlImport;
@@ -19,7 +17,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -32,8 +29,6 @@ import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
 
 @Service
 public class TopicService {
-    @Autowired
-    private AssessmentService assessmentService;
 
     @Autowired
     private QuestionService questionService;
@@ -45,16 +40,13 @@ public class TopicService {
     private CourseRepository courseRepository;
 
     @Autowired
-    private CourseExecutionRepository courseExecutionRepository;
-
-    @Autowired
     private TopicRepository topicRepository;
 
     @Retryable(
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<TopicDto> findTopics(int courseId) {
+    public List<pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto> findTopics(int courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         return topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(Topic::getDto).collect(Collectors.toList());
     }
@@ -63,7 +55,7 @@ public class TopicService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public TopicDto createTopic(int courseId, TopicDto topicDto) {
+    public pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto createTopic(int courseId, pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto topicDto) {
 
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
@@ -90,7 +82,7 @@ public class TopicService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public TopicDto updateTopic(Integer topicId, TopicDto topicDto) {
+    public pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto updateTopic(Integer topicId, pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto topicDto) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
         topic.setName(topicDto.getName());
@@ -142,18 +134,6 @@ public class TopicService {
                     this.topicRepository.delete(topic);
                 });
     }
-
-    /*@Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public TopicWithCourseDto findTopicById(Integer topicId) {
-        return topicRepository.findById(topicId)
-                .filter(topic -> topic != null)
-                .map(TopicWithCourseDto::new)
-                .orElse(null);
-    }*/
-
 
     @Retryable(
             value = {SQLException.class},

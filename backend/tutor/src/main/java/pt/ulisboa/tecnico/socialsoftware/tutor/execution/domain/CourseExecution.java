@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain;
 import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus;
-import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
@@ -266,13 +266,24 @@ public class CourseExecution implements DomainEntity {
         return getAvailableAssessments().stream().flatMap(assessment -> assessment.getTopics().stream()).collect(Collectors.toSet());
     }
 
-    public List<Question> filterQuestionsByTopics(List<Question> questions, Set<TopicWithCourseDto> topics) {
-        Set<Integer> availableTopicsIds = findAvailableTopics().stream().map(Topic::getId).collect(Collectors.toSet());
-        Set<Integer> topicsIds = topics.stream().map(TopicWithCourseDto::getId).filter(availableTopicsIds::contains).collect(Collectors.toSet());
 
-        return questions.stream()
-                .filter(question -> question.hasTopics(topicsIds))
-                .collect(Collectors.toList());
+    public List<Question> filterQuestionsByTopics(List<Question> questions, Set<TopicDto> topics) {
+        Set<Integer> topicIds = topics.stream().map(TopicDto::getId).collect(Collectors.toSet());
+        Set<Assessment> availableAssessments = getAvailableAssessments().stream()
+                .filter(assessment -> topicIds.containsAll(assessment.getTopics().stream().map(Topic::getId).collect(Collectors.toSet())))
+                .collect(Collectors.toSet());
+
+        List<Question> result = new ArrayList<>();
+        for (Question question : questions) {
+            for (Assessment assessment : availableAssessments) {
+                if (question.belongsToAssessment(assessment)) {
+                    result.add(question);
+                    break;
+                }
+            }
+        }
+
+        return result;
     }
 
     public Set<User> getTeachers() {
@@ -306,7 +317,6 @@ public class CourseExecution implements DomainEntity {
                     dto.getCourseExecutionUsers().add(user.getUserDto());
                 }
             });
-            //dto.setCourseExecutionUsers(courseExecutionUsers);
         }
 
         return dto;

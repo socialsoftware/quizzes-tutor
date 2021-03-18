@@ -15,7 +15,7 @@ export default class MultipleChoiceQuestionDetails extends QuestionDetails {
   }
 
   setAsNew(): void {
-    this.options.forEach(option => {
+    this.options.forEach((option) => {
       option.id = null;
     });
   }

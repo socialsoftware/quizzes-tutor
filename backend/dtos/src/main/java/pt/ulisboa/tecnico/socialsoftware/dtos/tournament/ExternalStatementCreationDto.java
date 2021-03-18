@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.dtos.tournament;
 
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
+
 import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.HashSet;
@@ -10,7 +12,7 @@ public class ExternalStatementCreationDto implements Serializable {
     private LocalDateTime startTime;
     private LocalDateTime endTime;
     private Integer numberOfQuestions;
-    private Set<TopicWithCourseDto> topics = new HashSet<>();
+    private Set<TopicDto> topics = new HashSet<>();
 
     public ExternalStatementCreationDto() {}
 
@@ -22,11 +24,11 @@ public class ExternalStatementCreationDto implements Serializable {
         this.numberOfQuestions = numberOfQuestions;
     }
 
-    public Set<TopicWithCourseDto> getTopics() {
+    public Set<TopicDto> getTopics() {
         return topics;
     }
 
-    public void setTopics(Set<TopicWithCourseDto> topics) {
+    public void setTopics(Set<TopicDto> topics) {
         this.topics = topics;
     }
 

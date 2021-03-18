@@ -34,12 +34,12 @@ export default class StatementQuiz {
       this.timeToAvailability = jsonObj.timeToAvailability;
       this.timeToSubmission = jsonObj.timeToSubmission;
 
-      this.questions = jsonObj.questions.map(question => {
+      this.questions = jsonObj.questions.map((question) => {
         return new StatementQuestion(question);
       });
 
       if (jsonObj.answers) {
-        this.answers = jsonObj.answers.map(answer => {
+        this.answers = jsonObj.answers.map((answer) => {
           return new StatementAnswer(answer);
         });
       }
@@ -77,6 +77,6 @@ export default class StatementQuiz {
   }
 
   unansweredQuestions(): number {
-    return this.answers.filter(x => !x.isQuestionAnswered()).length;
+    return this.answers.filter((x) => !x.isQuestionAnswered()).length;
   }
 }

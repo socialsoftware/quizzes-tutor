@@ -36,7 +36,7 @@
                 new Date(conclusionDate).getTime() <
               0
                 ? 'green'
-                : 'red darken-4'
+                : 'red darken-4',
             ]"
           >
             {{
@@ -58,7 +58,7 @@
                 questionAnswer.question.questionDetailsDto
               )
                 ? 'correct'
-                : 'incorrect'
+                : 'incorrect',
             ]"
             @click="openAnswerDetailsDialog(item, index)"
             >{{
@@ -71,9 +71,7 @@
 
         <template v-slot:[`body.append`]>
           <tr>
-            <td colspan="4">
-              Correct key:
-            </td>
+            <td colspan="4">Correct key:</td>
             <td>
               <span
                 v-for="(sequence, index) in quizAnswers.correctSequence"
@@ -106,8 +104,8 @@ import ShowQuizAnswersDetailsDialog from '@/views/teacher/quizzes/ShowQuizAnswer
 
 @Component({
   components: {
-    ShowQuizAnswersDetailsDialog
-  }
+    ShowQuizAnswersDetailsDialog,
+  },
 })
 export default class ShowStudentAnswersDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
@@ -126,26 +124,26 @@ export default class ShowStudentAnswersDialog extends Vue {
       text: 'Username',
       value: 'username',
       align: 'center',
-      width: '5%'
+      width: '5%',
     },
     {
       text: 'Start Date',
       value: 'creationDate',
       align: 'center',
-      width: '5%'
+      width: '5%',
     },
     {
       text: 'Submission Lag',
       value: 'submissionLag',
       align: 'center',
-      width: '5%'
+      width: '5%',
     },
     {
       text: 'Answers',
       value: 'answers',
       align: 'center',
-      width: '15%'
-    }
+      width: '15%',
+    },
   ];
 
   convertToHHMMSS(time: number | undefined | null): string {

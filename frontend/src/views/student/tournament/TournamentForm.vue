@@ -67,7 +67,11 @@
                   </p>
                   <div
                     class="switchContainer"
-                    style="display: flex; flex-direction: row; position: relative;"
+                    style="
+                      display: flex;
+                      flex-direction: row;
+                      position: relative;
+                    "
                   >
                     <v-switch
                       data-cy="SwitchPrivacy"
@@ -152,10 +156,10 @@
                 >
                 </v-autocomplete>
               </template>
-              <template v-slot:item.topicsCreate="{ item }">
+              <template v-slot:[`item.topicsCreate`]="{ item }">
                 {{ item.name }}
               </template>
-              <template v-slot:item.action="{ item }">
+              <template v-slot:[`item.action`]="{ item }">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
@@ -205,10 +209,10 @@
                 >
                 </v-autocomplete>
               </template>
-              <template v-slot:item.topicsCreate="{ item }">
+              <template v-slot:[`item.topicsCreate`]="{ item }">
                 {{ item.name }}
               </template>
-              <template v-slot:item.action="{ item }">
+              <template v-slot:[`item.action`]="{ item }">
                 <v-tooltip bottom>
                   <template v-slot:activator="{ on }">
                     <v-icon
@@ -287,15 +291,15 @@ export default class TournamentForm extends Vue {
       text: 'Topics',
       value: 'topicsCreate',
       align: 'left',
-      sortable: false
+      sortable: false,
     },
     {
       text: 'Actions',
       value: 'action',
       align: 'center',
       width: '150px',
-      sortable: false
-    }
+      sortable: false,
+    },
   ];
 
   async created() {
@@ -334,8 +338,8 @@ export default class TournamentForm extends Vue {
   }
 
   async updateCurrentTopics() {
-    this.editTournament.topics!.forEach(topicName => {
-      this.availableTopics!.forEach(topic => {
+    this.editTournament.topics!.forEach((topicName) => {
+      this.availableTopics!.forEach((topic) => {
         if (topic.name.valueOf() === topicName.valueOf()) {
           this.addTopic(topic);
         }
@@ -401,7 +405,7 @@ export default class TournamentForm extends Vue {
       this.editTournament.canceled = false;
       this.editTournament.password = this.password;
 
-      this.topicsId = this.currentTopics.map(topic => {
+      this.topicsId = this.currentTopics.map((topic) => {
         return topic.id;
       });
 
@@ -421,7 +425,7 @@ export default class TournamentForm extends Vue {
       this.editTournament &&
       this.editTournament.id != null
     ) {
-      let topicsList = this.currentTopics.map(topic => {
+      let topicsList = this.currentTopics.map((topic) => {
         return topic.id;
       });
 
@@ -434,7 +438,7 @@ export default class TournamentForm extends Vue {
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
-      this.editTournament.topics = this.currentTopics.map(topic => {
+      this.editTournament.topics = this.currentTopics.map((topic) => {
         return topic.name;
       });
     }
@@ -475,7 +479,7 @@ export default class TournamentForm extends Vue {
       let result = a.name.localeCompare(b.name);
       return result === 0 ? 0 : result > 0 ? 1 : -1;
     });
-    this.currentTopics = this.currentTopics.filter(t => t.id != topic.id);
+    this.currentTopics = this.currentTopics.filter((t) => t.id != topic.id);
   }
 
   addTopic(topic: Topic) {
@@ -484,7 +488,7 @@ export default class TournamentForm extends Vue {
       let result = a.name.localeCompare(b.name);
       return result === 0 ? 0 : result > 0 ? 1 : -1;
     });
-    this.availableTopics = this.availableTopics.filter(t => t.id != topic.id);
+    this.availableTopics = this.availableTopics.filter((t) => t.id != topic.id);
   }
 }
 </script>

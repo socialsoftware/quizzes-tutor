@@ -22,7 +22,7 @@
           <v-row>
             <v-select
               v-model="questionType"
-              :rules="[v => !!v || 'Question type is required']"
+              :rules="[(v) => !!v || 'Question type is required']"
               label="Question Type"
               required
               :items="questionTypesOptions"
@@ -34,7 +34,7 @@
           <v-row>
             <v-text-field
               v-model="editQuestion.title"
-              :rules="[v => !!v || 'Question title is required']"
+              :rules="[(v) => !!v || 'Question title is required']"
               label="Title"
               required
               data-cy="questionTitleTextArea"
@@ -45,7 +45,7 @@
             <v-textarea
               v-model="editQuestion.content"
               label="Question"
-              :rules="[v => !!v || 'Question content is required']"
+              :rules="[(v) => !!v || 'Question content is required']"
               auto-grow
               required
               data-cy="questionQuestionTextArea"
@@ -81,19 +81,17 @@
 import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
-import Option from '@/models/management/Option';
-import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
 import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 import CodeFillInCreate from '@/components/code-fill-in/CodeFillInCreate.vue';
 import CodeOrderCreate from '@/components/code-order/CodeOrderCreate.vue';
-import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers.ts';
+import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers';
 
 @Component({
   components: {
     multiple_choice: MultipleChoiceCreate,
     code_fill_in: CodeFillInCreate,
-    code_order: CodeOrderCreate
-  }
+    code_order: CodeOrderCreate,
+  },
 })
 export default class EditQuestionDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
@@ -103,9 +101,9 @@ export default class EditQuestionDialog extends Vue {
   questionType: string = this.editQuestion.questionDetailsDto.type;
 
   get questionTypesOptions() {
-    return Object.values(QuestionTypes).map(qt => ({
+    return Object.values(QuestionTypes).map((qt) => ({
       text: qt.replace(/_/g, ' '),
-      value: qt
+      value: qt,
     }));
   }
 

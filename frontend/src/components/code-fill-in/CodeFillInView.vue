@@ -12,19 +12,17 @@
 <script lang="ts">
 import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import CodeFillInQuestionDetails from '@/models/management/questions/CodeFillInQuestionDetails';
 import CodeFillInAnswerDetails from '@/models/management/questions/CodeFillInAnswerDetails';
-import FillInOptions from '@/components/questions/FillInOptions.vue';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
 import Option from '@/models/management/Option';
 
 @Component({
   components: {
-    BaseCodeEditor
-  }
+    BaseCodeEditor,
+  },
 })
 export default class ShowCodeFillInQuestion extends Vue {
   @Prop({ type: CodeFillInQuestionDetails, required: true })
@@ -42,7 +40,7 @@ export default class ShowCodeFillInQuestion extends Vue {
   studentAnswered(option: Option): boolean {
     return (
       (this.answerDetails &&
-        this.answerDetails.options.some(x => x.id === option.id)) ||
+        this.answerDetails.options.some((x) => x.id === option.id)) ||
       false
     );
   }
@@ -72,7 +70,7 @@ export default class ShowCodeFillInQuestion extends Vue {
   }
 
   getOptions(name: number, options: CodeFillInSpot[]): Option[] {
-    const result = options.find(el => el.sequence === name);
+    const result = options.find((el) => el.sequence === name);
     return result?.options || [];
   }
 
@@ -104,7 +102,7 @@ export default class ShowCodeFillInQuestion extends Vue {
     this.baseCodeEditorInstance.CodemirrorUpdated = true;
     document.body.addEventListener(
       'mousedown',
-      function(evt: Event) {
+      function (evt: Event) {
         let htmlTarget = evt?.target as HTMLElement;
         if (htmlTarget?.className === 'code-dropdown') {
           evt.stopPropagation();

@@ -27,8 +27,8 @@ import AssessmentList from '@/views/teacher/assessments/AssessmentList.vue';
 @Component({
   components: {
     AssessmentForm,
-    AssessmentList
-  }
+    AssessmentList,
+  },
 })
 export default class AssessmentsView extends Vue {
   assessments: Assessment[] = [];
@@ -57,7 +57,7 @@ export default class AssessmentsView extends Vue {
   async editAssessment(assessmentId: number) {
     try {
       let assessment = this.assessments.find(
-        assessment => assessment.id === assessmentId
+        (assessment) => assessment.id === assessmentId
       );
       if (assessment) {
         this.assessment = assessment;
@@ -70,7 +70,7 @@ export default class AssessmentsView extends Vue {
 
   updateAssessment(updatedAssessment: Assessment) {
     this.assessments = this.assessments.filter(
-      assessment => assessment.id !== updatedAssessment.id
+      (assessment) => assessment.id !== updatedAssessment.id
     );
     this.assessments.unshift(updatedAssessment);
     this.editMode = false;
@@ -84,7 +84,7 @@ export default class AssessmentsView extends Vue {
 
   deleteAssessment(assessmentId: number) {
     this.assessments = this.assessments.filter(
-      assessment => assessment.id !== assessmentId
+      (assessment) => assessment.id !== assessmentId
     );
   }
 }

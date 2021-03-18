@@ -19,7 +19,7 @@
         v-for="(el, index) in questionDetails.orderSlots"
         :key="index"
         :class="{
-          dragable: !answerDetails.orderedSlots.find(x => x.slotId == el.id)
+          dragable: !answerDetails.orderedSlots.find((x) => x.slotId == el.id),
         }"
       >
         <i class="fa fa-align-justify handle"></i>
@@ -39,9 +39,7 @@
       group="answer"
       draggable="li"
     >
-      <h4 class="code-order-header" slot="header">
-        Reponse:
-      </h4>
+      <h4 class="code-order-header" slot="header">Reponse:</h4>
       <li
         v-for="(el, index) in answerDetails.orderedSlots"
         :key="index"
@@ -52,7 +50,7 @@
           class="content"
           ref="codeEditor"
           :code.sync="
-            questionDetails.orderSlots.find(x => x.id == el.slotId).content
+            questionDetails.orderSlots.find((x) => x.id == el.slotId).content
           "
           :language.sync="questionDetails.language"
           :editable="false"
@@ -80,8 +78,8 @@ import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 @Component({
   components: {
     BaseCodeEditor,
-    draggable
-  }
+    draggable,
+  },
 })
 export default class CodeOrderAnswer extends Vue {
   @Prop(CodeOrderStatementQuestionDetails)
@@ -105,7 +103,7 @@ export default class CodeOrderAnswer extends Vue {
   cloneAnswerFromQuestion(element: CodeOrderSlotStatementQuestionDetails) {
     return new CodeOrderSlotStatementAnswerDetails({
       slotId: element.id,
-      order: null
+      order: null,
     });
   }
 

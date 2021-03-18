@@ -63,7 +63,7 @@ export default class EditQuestionTopics extends Vue {
 
   removeTopic(topic: Topic) {
     this.questionTopics = this.questionTopics.filter(
-      element => element.id != topic.id
+      (element) => element.id != topic.id
     );
     this.saveTopics();
   }
