@@ -1,0 +1,131 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Option.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.question.domain</a> &gt; <span class="el_source">Option.java</span></div><h1>Option.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+
+import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_CONTENT_FOR_OPTION;
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_OPTION;
+
+@Entity
+@Table(name = &quot;options&quot;)
+public class Option implements DomainEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(nullable = false)
+    private Integer sequence;
+
+    @Column(columnDefinition = &quot;boolean default false&quot;, nullable = false)
+    private boolean correct;
+
+    @Column(columnDefinition = &quot;TEXT&quot;, nullable = false)
+    private String content;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = &quot;question_details_id&quot;)
+    private MultipleChoiceQuestion questionDetails;
+
+<span class="fc" id="L37">    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;option&quot;, fetch = FetchType.LAZY, orphanRemoval = true)</span>
+    private final Set&lt;MultipleChoiceAnswer&gt; questionAnswers = new HashSet&lt;&gt;();
+
+<span class="fc" id="L40">    public Option() {</span>
+<span class="fc" id="L41">    }</span>
+
+<span class="fc" id="L43">    public Option(OptionDto option) {</span>
+<span class="fc" id="L44">        setSequence(option.getSequence());</span>
+<span class="fc" id="L45">        setContent(option.getContent());</span>
+<span class="fc" id="L46">        setCorrect(option.isCorrect());</span>
+<span class="fc" id="L47">    }</span>
+
+    @Override
+    public void accept(Visitor visitor) {
+<span class="fc" id="L51">        visitor.visitOption(this);</span>
+<span class="fc" id="L52">    }</span>
+
+    public Integer getId() {
+<span class="fc" id="L55">        return id;</span>
+    }
+
+    public Integer getSequence() {
+<span class="fc" id="L59">        return sequence;</span>
+    }
+
+    public void setSequence(Integer sequence) {
+<span class="pc bpc" id="L63" title="2 of 4 branches missed.">        if (sequence == null || sequence &lt; 0)</span>
+<span class="nc" id="L64">            throw new TutorException(INVALID_SEQUENCE_FOR_OPTION);</span>
+
+<span class="fc" id="L66">        this.sequence = sequence;</span>
+<span class="fc" id="L67">    }</span>
+
+    public boolean isCorrect() {
+<span class="fc" id="L70">        return correct;</span>
+    }
+
+    public void setCorrect(boolean correct) {
+<span class="fc" id="L74">        this.correct = correct;</span>
+<span class="fc" id="L75">    }</span>
+
+    public String getContent() {
+<span class="fc" id="L78">        return content;</span>
+    }
+
+    public void setContent(String content) {
+<span class="pc bpc" id="L82" title="2 of 4 branches missed.">        if (content == null || content.isBlank())</span>
+<span class="nc" id="L83">            throw new TutorException(INVALID_CONTENT_FOR_OPTION);</span>
+
+<span class="fc" id="L85">        this.content = content;</span>
+<span class="fc" id="L86">    }</span>
+
+    public MultipleChoiceQuestion getQuestionDetails() {
+<span class="nc" id="L89">        return questionDetails;</span>
+    }
+
+    public void setQuestionDetails(MultipleChoiceQuestion question) {
+<span class="fc" id="L93">        this.questionDetails = question;</span>
+<span class="fc" id="L94">        question.addOption(this);</span>
+<span class="fc" id="L95">    }</span>
+
+    public Set&lt;MultipleChoiceAnswer&gt; getQuestionAnswers() {
+<span class="fc" id="L98">        return questionAnswers;</span>
+    }
+
+    public void addQuestionAnswer(MultipleChoiceAnswer questionAnswer) {
+<span class="fc" id="L102">        questionAnswers.add(questionAnswer);</span>
+<span class="fc" id="L103">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L107">        return &quot;Option{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, sequence=&quot; + sequence +
+                &quot;, correct=&quot; + correct +
+                &quot;, content='&quot; + content + '\'' +
+<span class="nc" id="L112">                &quot;, question=&quot; + questionDetails.getId() +</span>
+                &quot;, questionAnswers=&quot; + questionAnswers +
+                '}';
+    }
+
+    public void remove() {
+<span class="nc" id="L118">        this.questionDetails = null;</span>
+<span class="nc" id="L119">        this.questionAnswers.clear();</span>
+<span class="nc" id="L120">    }</span>
+
+    public OptionDto getDto() {
+<span class="fc" id="L123">        OptionDto dto = new OptionDto();</span>
+<span class="fc" id="L124">        dto.setId(getId());</span>
+<span class="fc" id="L125">        dto.setSequence(getSequence());</span>
+<span class="fc" id="L126">        dto.setContent(getContent());</span>
+<span class="fc" id="L127">        dto.setCorrect(isCorrect());</span>
+<span class="fc" id="L128">        return dto;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: pt.ulisboa.tecnico.socialsoftware.tutor.execution.service.RemoveCourseExecutionsTest
+-------------------------------------------------------------------------------
+Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.952 s - in pt.ulisboa.tecnico.socialsoftware.tutor.execution.service.RemoveCourseExecutionsTest

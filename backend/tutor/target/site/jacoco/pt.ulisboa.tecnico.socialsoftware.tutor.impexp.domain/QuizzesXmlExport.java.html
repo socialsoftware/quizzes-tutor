@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>QuizzesXmlExport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain</a> &gt; <span class="el_source">QuizzesXmlExport.java</span></div><h1>QuizzesXmlExport.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.output.Format;
+import org.jdom2.output.XMLOutputter;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import java.util.Comparator;
+import java.util.List;
+
+<span class="fc" id="L14">public class QuizzesXmlExport {</span>
+	public String export(List&lt;Quiz&gt; quizzes) {
+<span class="fc" id="L16">		Element element = createHeader();</span>
+
+<span class="fc" id="L18">		exportQuizzes(element, quizzes);</span>
+
+<span class="fc" id="L20">		XMLOutputter xml = new XMLOutputter();</span>
+<span class="fc" id="L21">		xml.setFormat(Format.getPrettyFormat());</span>
+
+<span class="fc" id="L23">		return xml.outputString(element);</span>
+	}
+
+	public Element createHeader() {
+<span class="fc" id="L27">		Document jdomDoc = new Document();</span>
+<span class="fc" id="L28">		Element rootElement = new Element(&quot;quizzes&quot;);</span>
+
+<span class="fc" id="L30">		jdomDoc.setRootElement(rootElement);</span>
+<span class="fc" id="L31">		return rootElement;</span>
+	}
+
+	private void exportQuizzes(Element element, List&lt;Quiz&gt; quizzes) {
+<span class="fc bfc" id="L35" title="All 2 branches covered.">		for (Quiz quiz : quizzes) {</span>
+<span class="fc" id="L36">			exportQuiz(element, quiz, quiz.getQuizQuestions());</span>
+<span class="fc" id="L37">		}</span>
+<span class="fc" id="L38">	}</span>
+
+	private void exportQuiz(Element element, Quiz quiz, List&lt;QuizQuestion&gt; quizQuestions) {
+<span class="fc" id="L41">		Element quizElement = new Element(&quot;quiz&quot;);</span>
+<span class="fc" id="L42">		quizElement.setAttribute(&quot;courseName&quot;,quiz.getCourseExecution().getCourse().getName());</span>
+<span class="fc" id="L43">		quizElement.setAttribute(&quot;courseType&quot;,quiz.getCourseExecution().getCourse().getType().name());</span>
+<span class="fc" id="L44">		quizElement.setAttribute(&quot;courseExecutionType&quot;,quiz.getCourseExecution().getType().name());</span>
+<span class="fc" id="L45">		quizElement.setAttribute(&quot;acronym&quot;,quiz.getCourseExecution().getAcronym());</span>
+<span class="fc" id="L46">        quizElement.setAttribute(&quot;academicTerm&quot;,quiz.getCourseExecution().getAcademicTerm());</span>
+<span class="fc" id="L47">        quizElement.setAttribute(&quot;key&quot;, String.valueOf(quiz.getNonNullKey()));</span>
+<span class="fc" id="L48">		quizElement.setAttribute(&quot;scramble&quot;, String.valueOf(quiz.getScramble()));</span>
+<span class="fc" id="L49">		quizElement.setAttribute(&quot;qrCodeOnly&quot;, String.valueOf(quiz.isQrCodeOnly()));</span>
+<span class="fc" id="L50">		quizElement.setAttribute(&quot;oneWay&quot;, String.valueOf(quiz.isOneWay()));</span>
+<span class="fc" id="L51">		quizElement.setAttribute(&quot;type&quot;, quiz.getType().name());</span>
+<span class="fc" id="L52">		quizElement.setAttribute(&quot;title&quot;, quiz.getTitle());</span>
+
+<span class="pc bpc" id="L54" title="1 of 2 branches missed.">		if (quiz.getCreationDate() != null)</span>
+<span class="fc" id="L55">			quizElement.setAttribute(&quot;creationDate&quot;, DateHandler.toISOString(quiz.getCreationDate()));</span>
+<span class="pc bpc" id="L56" title="1 of 2 branches missed.">		if (quiz.getAvailableDate() != null)</span>
+<span class="fc" id="L57">			quizElement.setAttribute(&quot;availableDate&quot;, DateHandler.toISOString(quiz.getAvailableDate()));</span>
+<span class="pc bpc" id="L58" title="1 of 2 branches missed.">        if (quiz.getConclusionDate() != null)</span>
+<span class="fc" id="L59">            quizElement.setAttribute(&quot;conclusionDate&quot;, DateHandler.toISOString(quiz.getConclusionDate()));</span>
+<span class="pc bpc" id="L60" title="1 of 2 branches missed.">		if (quiz.getSeries() != null)</span>
+<span class="nc" id="L61">			quizElement.setAttribute(&quot;series&quot;, String.valueOf(quiz.getSeries()));</span>
+<span class="pc bpc" id="L62" title="1 of 2 branches missed.">		if (quiz.getVersion() != null)</span>
+<span class="nc" id="L63">			quizElement.setAttribute(&quot;version&quot;, quiz.getVersion());</span>
+
+<span class="fc" id="L65">		exportQuizQuestions(quizElement, quizQuestions);</span>
+
+<span class="fc" id="L67">		element.addContent(quizElement);</span>
+<span class="fc" id="L68">	}</span>
+
+	private void exportQuizQuestions(Element questionElement, List&lt;QuizQuestion&gt; quizQuestions) {
+<span class="fc" id="L71">		Element quizQuestionsElement = new Element(&quot;quizQuestions&quot;);</span>
+
+<span class="fc" id="L73">		quizQuestions.stream()</span>
+<span class="fc" id="L74">			.sorted(Comparator.comparing(QuizQuestion::getSequence))</span>
+<span class="fc" id="L75">			.forEach(quizQuestion -&gt; exportQuizQuestion(quizQuestionsElement, quizQuestion));</span>
+
+<span class="fc" id="L77">		questionElement.addContent(quizQuestionsElement);</span>
+<span class="fc" id="L78">	}</span>
+
+	private void exportQuizQuestion(Element optionsElement, QuizQuestion quizQuestion) {
+<span class="fc" id="L81">		Element optionElement = new Element(&quot;quizQuestion&quot;);</span>
+
+<span class="fc" id="L83">		optionElement.setAttribute(&quot;sequence&quot;, String.valueOf(quizQuestion.getSequence()));</span>
+<span class="fc" id="L84">		optionElement.setAttribute(&quot;questionKey&quot;, String.valueOf(quizQuestion.getQuestion().getKey()));</span>
+
+<span class="fc" id="L86">		optionsElement.addContent(optionElement);</span>
+<span class="fc" id="L87">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

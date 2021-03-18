@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthExternalUser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain</a> &gt; <span class="el_source">AuthExternalUser.java</span></div><h1>AuthExternalUser.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain;
+
+import org.springframework.security.crypto.keygen.KeyGenerators;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+
+import javax.persistence.Column;
+import javax.persistence.DiscriminatorValue;
+import javax.persistence.Entity;
+import java.time.LocalDateTime;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+
+@Entity
+@DiscriminatorValue(&quot;EXTERNAL&quot;)
+public class AuthExternalUser extends AuthUser {
+
+    @Column(columnDefinition = &quot;boolean default false&quot;)
+    private Boolean active;
+
+<span class="fc" id="L23">    private String confirmationToken = &quot;&quot;;</span>
+
+    private LocalDateTime tokenGenerationDate;
+
+<span class="fc" id="L27">    public AuthExternalUser() {}</span>
+
+    public AuthExternalUser(User user, String username, String email) {
+<span class="fc" id="L30">        super(user, username, email);</span>
+<span class="fc" id="L31">        setActive(false);</span>
+<span class="fc" id="L32">        checkRole(isActive());</span>
+<span class="fc" id="L33">    }</span>
+
+    public void setActive(boolean active) {
+<span class="fc" id="L36">        this.active = active;</span>
+<span class="fc" id="L37">    }</span>
+
+    @Override
+    public boolean isActive() {
+<span class="fc" id="L41">        return active;</span>
+    }
+
+    public String getConfirmationToken() {
+<span class="fc" id="L45">        return confirmationToken;</span>
+    }
+
+    public void setConfirmationToken(String confirmationToken) {
+<span class="fc" id="L49">        this.confirmationToken = confirmationToken;</span>
+<span class="fc" id="L50">    }</span>
+
+    public LocalDateTime getTokenGenerationDate() {
+<span class="fc" id="L53">        return tokenGenerationDate;</span>
+    }
+
+    public void setTokenGenerationDate(LocalDateTime tokenGenerationDate) {
+<span class="fc" id="L57">        this.tokenGenerationDate = tokenGenerationDate;</span>
+<span class="fc" id="L58">    }</span>
+
+    public void confirmRegistration(PasswordEncoder passwordEncoder, String confirmationToken, String password) {
+<span class="fc" id="L61">        checkConfirmationToken(confirmationToken);</span>
+<span class="fc" id="L62">        setPassword(passwordEncoder.encode(password));</span>
+<span class="fc" id="L63">        setActive(true);</span>
+<span class="fc" id="L64">    }</span>
+
+    public void checkConfirmationToken(String token) {
+<span class="fc bfc" id="L67" title="All 2 branches covered.">        if (isActive()) {</span>
+<span class="fc" id="L68">            throw new TutorException(USER_ALREADY_ACTIVE, getUsername());</span>
+        }
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (!token.equals(getConfirmationToken()))</span>
+<span class="fc" id="L71">            throw new TutorException(INVALID_CONFIRMATION_TOKEN);</span>
+<span class="fc bfc" id="L72" title="All 2 branches covered.">        if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))</span>
+<span class="fc" id="L73">            throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);</span>
+<span class="fc" id="L74">    }</span>
+
+    @Override
+<span class="fc" id="L77">    public Type getType() {return Type.EXTERNAL;}</span>
+
+    public String generateConfirmationToken() {
+<span class="fc" id="L80">        String token = KeyGenerators.string().generateKey();</span>
+<span class="fc" id="L81">        setTokenGenerationDate(LocalDateTime.now());</span>
+<span class="fc" id="L82">        setConfirmationToken(token);</span>
+<span class="fc" id="L83">        return token;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

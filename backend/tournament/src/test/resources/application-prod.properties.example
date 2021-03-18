@@ -1,0 +1,28 @@
+## Datasource
+spring.datasource.url=jdbc:postgresql://<DATABASE HOST>:<DATABASE PORT>/<DATABASE NAME>
+spring.datasource.username= <DATABASE USERNAME>
+spring.datasource.password= <DATABASE PASSWORD>
+
+## Jpa
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect
+
+## Resources
+figures.dir=${maven.basedir}/../data/images/
+export.dir=${maven.basedir}/../data/export/
+load.dir=${maven.basedir}/../data/load/
+
+## Fenix oauth
+oauth.consumer.key=<FENIX CLIENT KEY>
+oauth.consumer.secret=<FENIX SECRET>
+callback.url=<URL FENIX REDIRECTS TO>
+base.url=https://fenix.tecnico.ulisboa.pt
+
+# Send eamails
+spring.mail.host=smtp.tecnico.ulisboa.pt
+spring.mail.port=25
+spring.mail.username=no-reply@quizzes-tutor.tecnico.ulisboa.pt
+spring.mail.password=
+spring.mail.properties.mail.transport.protocol="smtp"
+spring.mail.properties.mail.smtp.auth=false
+spring.mail.properties.mail.smtp.starttls.enable=true
+

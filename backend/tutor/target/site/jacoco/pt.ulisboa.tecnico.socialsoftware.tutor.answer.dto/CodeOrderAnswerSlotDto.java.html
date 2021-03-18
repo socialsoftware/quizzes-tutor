@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CodeOrderAnswerSlotDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto</a> &gt; <span class="el_source">CodeOrderAnswerSlotDto.java</span></div><h1>CodeOrderAnswerSlotDto.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerSlot;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
+
+public class CodeOrderAnswerSlotDto {
+    private Integer slotId;
+    private Integer order;
+    private boolean correct;
+    private Integer sequence;
+
+<span class="nc" id="L12">    public CodeOrderAnswerSlotDto(CodeOrderSlot correctSlot) {</span>
+<span class="nc" id="L13">        slotId = correctSlot.getId();</span>
+<span class="nc" id="L14">        order = correctSlot.getOrder();</span>
+<span class="nc" id="L15">        correct = true;</span>
+<span class="nc" id="L16">    }</span>
+
+<span class="nc" id="L18">    public CodeOrderAnswerSlotDto(CodeOrderAnswerSlot answerOrderedSlot) {</span>
+<span class="nc" id="L19">        slotId = answerOrderedSlot.getCodeOrderSlot().getId();</span>
+<span class="nc" id="L20">        order = answerOrderedSlot.getAssignedOrder();</span>
+<span class="nc" id="L21">        correct = answerOrderedSlot.isCorrect();</span>
+<span class="nc" id="L22">        sequence = answerOrderedSlot.getCodeOrderSlot().getSequence();</span>
+<span class="nc" id="L23">    }</span>
+
+    public Integer getSlotId() {
+<span class="nc" id="L26">        return slotId;</span>
+    }
+
+    public void setSlotId(Integer slotId) {
+<span class="nc" id="L30">        this.slotId = slotId;</span>
+<span class="nc" id="L31">    }</span>
+
+    public Integer getOrder() {
+<span class="nc" id="L34">        return order;</span>
+    }
+
+    public void setOrder(Integer order) {
+<span class="nc" id="L38">        this.order = order;</span>
+<span class="nc" id="L39">    }</span>
+
+    public boolean isCorrect() {
+<span class="nc" id="L42">        return correct;</span>
+    }
+
+    public void setCorrect(boolean correct) {
+<span class="nc" id="L46">        this.correct = correct;</span>
+<span class="nc" id="L47">    }</span>
+
+    public Integer getSequence() {
+<span class="nc" id="L50">        return sequence;</span>
+    }
+
+    public void setSequence(Integer sequence) {
+<span class="nc" id="L54">        this.sequence = sequence;</span>
+<span class="nc" id="L55">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

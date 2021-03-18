@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>DemoUtils.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.demoutils</a> &gt; <span class="el_source">DemoUtils.java</span></div><h1>DemoUtils.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.demoutils;
+
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+
+@Component
+<span class="fc" id="L15">public class DemoUtils {</span>
+    public static final String COURSE_NAME = &quot;Demo Course&quot;;
+    public static final String COURSE_ACRONYM = &quot;DemoCourse&quot;;
+    public static final String COURSE_ACADEMIC_TERM = &quot;1st Semester&quot;;
+    public static final String STUDENT_USERNAME = &quot;demo-student&quot;;
+    public static final String TEACHER_USERNAME = &quot;demo-teacher&quot;;
+    public static final String ADMIN_USERNAME = &quot;demo-admin&quot;;
+
+    @Autowired
+    private UserService userService;
+
+    @Autowired
+    private QuizService quizService;
+
+    @Autowired
+    private TopicService topicService;
+
+    @Autowired
+    private AssessmentService assessmentService;
+
+    @Autowired
+    private AnswerService answerService;
+
+    @Autowired
+    private QuestionSubmissionService questionSubmissionService;
+
+    @Autowired
+    private DiscussionService discussionService;
+
+    /*@Autowired
+    private TournamentProvidedService tournamentProvidedService;*/
+
+    public void resetDemoInfo() {
+<span class="nc" id="L48">        assessmentService.resetDemoAssessments();</span>
+<span class="nc" id="L49">        topicService.resetDemoTopics();</span>
+<span class="nc" id="L50">        discussionService.resetDemoDiscussions();</span>
+<span class="nc" id="L51">        answerService.resetDemoAnswers();</span>
+        //tournamentProvidedService.resetDemoTournaments();
+<span class="nc" id="L53">        quizService.resetDemoQuizzes();</span>
+<span class="nc" id="L54">        questionSubmissionService.resetDemoQuestionSubmissions();</span>
+<span class="nc" id="L55">        userService.resetDemoStudents();</span>
+<span class="nc" id="L56">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

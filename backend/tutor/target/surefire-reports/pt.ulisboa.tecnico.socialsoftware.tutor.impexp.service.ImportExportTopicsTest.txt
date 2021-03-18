@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service.ImportExportTopicsTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.908 s - in pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service.ImportExportTopicsTest

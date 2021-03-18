@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>QuizAnswer.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain</a> &gt; <span class="el_source">QuizAnswer.java</span></div><h1>QuizAnswer.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+
+@Entity
+@Table(name = &quot;quiz_answers&quot;,
+        uniqueConstraints={
+        @UniqueConstraint(columnNames = {&quot;quiz_id&quot;, &quot;user_id&quot;})
+        },
+        indexes = {
+                @Index(name = &quot;quiz_answers_indx_0&quot;, columnList = &quot;user_id&quot;),
+                @Index(name = &quot;quiz_answers_indx_1&quot;, columnList = &quot;quiz_id&quot;),
+                @Index(name = &quot;quiz_answers_indx_2&quot;, columnList = &quot;user_id, quiz_id&quot;),
+                @Index(name = &quot;quiz_answers_indx_3&quot;, columnList = &quot;quiz_id, user_id&quot;)
+        })
+public class QuizAnswer implements DomainEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = &quot;creation_date&quot;)
+    private LocalDateTime creationDate;
+
+    @Column(name = &quot;answer_date&quot;)
+    private LocalDateTime answerDate;
+
+    private boolean completed;
+
+    @Column(columnDefinition = &quot;boolean default false&quot;)
+    private boolean usedInStatistics;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
+    @JoinColumn(name = &quot;user_id&quot;)
+    private User user;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional=false)
+    @JoinColumn(name = &quot;quiz_id&quot;)
+    private Quiz quiz;
+
+<span class="fc" id="L52">    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;quizAnswer&quot;, fetch = FetchType.LAZY, orphanRemoval = true)</span>
+    private List&lt;QuestionAnswer&gt; questionAnswers = new ArrayList&lt;&gt;();
+
+<span class="fc" id="L55">    public QuizAnswer() {</span>
+<span class="fc" id="L56">    }</span>
+
+<span class="fc" id="L58">    public QuizAnswer(User user, Quiz quiz) {</span>
+<span class="fc" id="L59">        setCompleted(false);</span>
+<span class="fc" id="L60">        setUsedInStatistics(false);</span>
+<span class="fc" id="L61">        setUser(user);</span>
+<span class="fc" id="L62">        setQuiz(quiz);</span>
+
+<span class="fc" id="L64">        List&lt;QuizQuestion&gt; quizQuestions = new ArrayList&lt;&gt;(quiz.getQuizQuestions());</span>
+<span class="pc bpc" id="L65" title="1 of 2 branches missed.">        if (quiz.getScramble()) {</span>
+<span class="nc" id="L66">            Collections.shuffle(quizQuestions);</span>
+        }
+
+<span class="fc bfc" id="L69" title="All 2 branches covered.">        for (int i = 0; i &lt; quizQuestions.size(); i++) {</span>
+<span class="fc" id="L70">            new QuestionAnswer(this, quizQuestions.get(i), i);</span>
+        }
+<span class="fc" id="L72">    }</span>
+
+    @Override
+    public void accept(Visitor visitor) {
+<span class="fc" id="L76">        visitor.visitQuizAnswer(this);</span>
+<span class="fc" id="L77">    }</span>
+
+    public Integer getId() {
+<span class="fc" id="L80">        return id;</span>
+    }
+
+    public LocalDateTime getCreationDate() {
+<span class="fc" id="L84">        return creationDate;</span>
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+<span class="fc" id="L88">        this.creationDate = creationDate;</span>
+<span class="fc" id="L89">    }</span>
+
+    public LocalDateTime getAnswerDate() {
+<span class="fc" id="L92">        return answerDate;</span>
+    }
+
+    public void setAnswerDate(LocalDateTime answerDate) {
+<span class="fc" id="L96">        this.answerDate = answerDate;</span>
+<span class="fc" id="L97">    }</span>
+
+    public boolean isCompleted() {
+<span class="fc" id="L100">        return completed;</span>
+    }
+
+    public void setCompleted(boolean completed) {
+<span class="fc" id="L104">        this.completed = completed;</span>
+<span class="fc" id="L105">    }</span>
+
+    public boolean isUsedInStatistics() {
+<span class="nc" id="L108">        return usedInStatistics;</span>
+    }
+
+    public void setUsedInStatistics(boolean usedInStatistics) {
+<span class="fc" id="L112">        this.usedInStatistics = usedInStatistics;</span>
+<span class="fc" id="L113">    }</span>
+
+    public User getUser() {
+<span class="fc" id="L116">        return user;</span>
+    }
+
+    public void setUser(User user) {
+<span class="fc" id="L120">        this.user = user;</span>
+<span class="fc" id="L121">        user.addQuizAnswer(this);</span>
+<span class="fc" id="L122">    }</span>
+
+    public Quiz getQuiz() {
+<span class="fc" id="L125">        return quiz;</span>
+    }
+
+    public void setQuiz(Quiz quiz) {
+<span class="fc" id="L129">        this.quiz = quiz;</span>
+<span class="fc" id="L130">        quiz.addQuizAnswer(this);</span>
+<span class="fc" id="L131">    }</span>
+
+    public void setQuestionAnswers(List&lt;QuestionAnswer&gt; questionAnswers) {
+<span class="nc" id="L134">        this.questionAnswers = questionAnswers;</span>
+<span class="nc" id="L135">    }</span>
+
+    public List&lt;QuestionAnswer&gt; getQuestionAnswers() {
+<span class="pc bpc" id="L138" title="1 of 2 branches missed.">        if (questionAnswers == null) {</span>
+<span class="nc" id="L139">            questionAnswers = new ArrayList&lt;&gt;();</span>
+        }
+<span class="fc" id="L141">        return questionAnswers;</span>
+    }
+
+    public void addQuestionAnswer(QuestionAnswer questionAnswer) {
+<span class="pc bpc" id="L145" title="1 of 2 branches missed.">        if (questionAnswers == null) {</span>
+<span class="nc" id="L146">            questionAnswers = new ArrayList&lt;&gt;();</span>
+        }
+<span class="fc" id="L148">        questionAnswers.add(questionAnswer);</span>
+<span class="fc" id="L149">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L153">        return &quot;QuizAnswer{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, creationDate=&quot; + creationDate +
+                &quot;, answerDate=&quot; + answerDate +
+                &quot;, completed=&quot; + completed +
+                &quot;, usedInStatistics=&quot; + usedInStatistics +
+                '}';
+    }
+
+    public boolean canResultsBePublic(Integer courseExecutionId) {
+<span class="pc bpc" id="L163" title="1 of 2 branches missed.">        return isCompleted() &amp;&amp;</span>
+<span class="pc bpc" id="L164" title="1 of 2 branches missed.">                getQuiz().getCourseExecution().getId().equals(courseExecutionId) &amp;&amp;</span>
+<span class="pc bpc" id="L165" title="1 of 4 branches missed.">                ((!getQuiz().getType().equals(QuizType.IN_CLASS) &amp;&amp; !getQuiz().getType().equals(QuizType.EXTERNAL_QUIZ))</span>
+<span class="fc bfc" id="L166" title="All 2 branches covered.">                        || getQuiz().getResultsDate().isBefore(DateHandler.now()));</span>
+    }
+
+    public void calculateStatistics() {
+<span class="nc bnc" id="L170" title="All 2 branches missed.">        if (!this.usedInStatistics) {</span>
+<span class="nc" id="L171">            user.increaseNumberOfQuizzes(getQuiz().getType());</span>
+
+<span class="nc" id="L173">            getQuestionAnswers().forEach(questionAnswer -&gt; {</span>
+<span class="nc" id="L174">                user.increaseNumberOfAnswers(getQuiz().getType());</span>
+<span class="nc bnc" id="L175" title="All 2 branches missed.">                if (questionAnswer.isCorrect()) {</span>
+<span class="nc" id="L176">                    user.increaseNumberOfCorrectAnswers(getQuiz().getType());</span>
+                }
+<span class="nc" id="L178">            });</span>
+
+<span class="nc" id="L180">            getQuestionAnswers().forEach(questionAnswer -&gt;</span>
+<span class="nc" id="L181">                    questionAnswer.getQuizQuestion().getQuestion().addAnswerStatistics(questionAnswer));</span>
+
+<span class="nc" id="L183">            this.usedInStatistics = true;</span>
+        }
+<span class="nc" id="L185">    }</span>
+
+    public void remove() {
+<span class="fc" id="L188">        user.getQuizAnswers().remove(this);</span>
+<span class="fc" id="L189">        user = null;</span>
+
+<span class="fc" id="L191">        quiz.getQuizAnswers().remove(this);</span>
+<span class="fc" id="L192">        quiz = null;</span>
+
+<span class="fc" id="L194">        questionAnswers.forEach(QuestionAnswer::remove);</span>
+<span class="fc" id="L195">    }</span>
+
+    public boolean openToAnswer() {
+<span class="fc bfc" id="L198" title="All 6 branches covered.">        return !isCompleted() &amp;&amp; !(getQuiz().isOneWay() &amp;&amp; getCreationDate() != null);</span>
+    }
+
+    public long getNumberOfAnsweredQuestions() {
+<span class="nc" id="L202">        return getQuestionAnswers().stream().filter(QuestionAnswer::isAnswered).count();</span>
+    }
+
+    public long getNumberOfCorrectAnswers() {
+<span class="nc" id="L206">        return getQuestionAnswers().stream().filter(QuestionAnswer::isCorrect).count();</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.auth</a> &gt; <span class="el_source">AuthController.java</span></div><h1>AuthController.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_LOGIN_CREDENTIALS;
+
+@RestController
+<span class="fc" id="L14">public class AuthController {</span>
+    @Autowired
+    private AuthUserService authUserService;
+
+    @Value(&quot;${base.url}&quot;)
+    private String baseUrl;
+
+    @Value(&quot;${oauth.consumer.key}&quot;)
+    private String oauthConsumerKey;
+
+    @Value(&quot;${oauth.consumer.secret}&quot;)
+    private String oauthConsumerSecret;
+
+    @Value(&quot;${callback.url}&quot;)
+    private String callbackUrl;
+
+    @GetMapping(&quot;/auth/fenix&quot;)
+    public AuthDto fenixAuth(@RequestParam String code) {
+<span class="nc" id="L32">        FenixEduInterface fenix = new FenixEduInterface(baseUrl, oauthConsumerKey, oauthConsumerSecret, callbackUrl);</span>
+<span class="nc" id="L33">        fenix.authenticate(code);</span>
+<span class="nc" id="L34">        return this.authUserService.fenixAuth(fenix);</span>
+    }
+
+    @GetMapping(&quot;/auth/external&quot;)
+    public AuthDto externalUserAuth(@RequestParam String email, @RequestParam String password) {
+        try {
+<span class="nc" id="L40">            return authUserService.externalUserAuth(email, password);</span>
+<span class="nc" id="L41">        } catch (TutorException e) {</span>
+<span class="nc" id="L42">            throw new TutorException(INVALID_LOGIN_CREDENTIALS);</span>
+        }
+    }
+
+    @GetMapping(&quot;/auth/demo/student&quot;)
+    public AuthDto demoStudentAuth(@RequestParam Boolean createNew) {
+<span class="nc" id="L48">        return this.authUserService.demoStudentAuth(createNew);</span>
+    }
+
+    @GetMapping(&quot;/auth/demo/teacher&quot;)
+    public AuthDto demoTeacherAuth() {
+<span class="nc" id="L53">        return this.authUserService.demoTeacherAuth();</span>
+    }
+
+    @GetMapping(&quot;/auth/demo/admin&quot;)
+    public AuthDto demoAdminAuth() {
+<span class="nc" id="L58">        return this.authUserService.demoAdminAuth();</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

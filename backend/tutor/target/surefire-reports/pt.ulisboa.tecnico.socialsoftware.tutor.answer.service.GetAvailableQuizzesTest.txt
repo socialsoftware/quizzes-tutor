@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: pt.ulisboa.tecnico.socialsoftware.tutor.answer.service.GetAvailableQuizzesTest
+-------------------------------------------------------------------------------
+Tests run: 53, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.875 s - in pt.ulisboa.tecnico.socialsoftware.tutor.answer.service.GetAvailableQuizzesTest

@@ -1,0 +1,173 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TopicService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.question</a> &gt; <span class="el_source">TopicService.java</span></div><h1>TopicService.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.question;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+@Service
+<span class="fc" id="L34">public class TopicService {</span>
+    @Autowired
+    private AssessmentService assessmentService;
+
+    @Autowired
+    private QuestionService questionService;
+
+    @Autowired
+    private CourseExecutionService courseExecutionService;
+
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private TopicRepository topicRepository;
+
+    @Retryable(
+      value = { SQLException.class },
+      backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List&lt;TopicDto&gt; findTopics(int courseId) {
+<span class="nc" id="L58">        Course course = courseRepository.findById(courseId).orElseThrow(() -&gt; new TutorException(COURSE_NOT_FOUND, courseId));</span>
+<span class="nc" id="L59">        return topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(Topic::getDto).collect(Collectors.toList());</span>
+    }
+
+    @Retryable(
+      value = { SQLException.class },
+      backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public TopicDto createTopic(int courseId, TopicDto topicDto) {
+
+<span class="pc" id="L68">        Course course = courseRepository.findById(courseId).orElseThrow(() -&gt; new TutorException(COURSE_NOT_FOUND, courseId));</span>
+
+<span class="fc bfc" id="L70" title="All 2 branches covered.">        if (topicRepository.findTopicByName(course.getId(), topicDto.getName()) != null) {</span>
+<span class="fc" id="L71">            throw new TutorException(DUPLICATE_TOPIC, topicDto.getName());</span>
+        }
+
+<span class="fc" id="L74">        Topic topic = new Topic(course, topicDto);</span>
+<span class="fc" id="L75">        topicRepository.save(topic);</span>
+<span class="fc" id="L76">        return topic.getDto();</span>
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List&lt;QuestionDto&gt; getTopicQuestions(Integer topicId) {
+<span class="nc" id="L84">        Topic topic = topicRepository.findById(topicId).orElseThrow(() -&gt; new TutorException(TOPIC_NOT_FOUND, topicId));</span>
+
+<span class="nc" id="L86">        return topic.getQuestions().stream().map(Question::getDto).collect(Collectors.toList());</span>
+    }
+
+    @Retryable(
+      value = { SQLException.class },
+      backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public TopicDto updateTopic(Integer topicId, TopicDto topicDto) {
+<span class="nc" id="L94">        Topic topic = topicRepository.findById(topicId).orElseThrow(() -&gt; new TutorException(TOPIC_NOT_FOUND, topicId));</span>
+
+<span class="nc" id="L96">        topic.setName(topicDto.getName());</span>
+<span class="nc" id="L97">        return topic.getDto();</span>
+    }
+
+    @Retryable(
+      value = { SQLException.class },
+      backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void removeTopic(Integer topicId) {
+<span class="fc" id="L105">        Topic topic = topicRepository.findById(topicId)</span>
+<span class="pc" id="L106">                .orElseThrow(() -&gt; new TutorException(TOPIC_NOT_FOUND, topicId));</span>
+
+<span class="fc" id="L108">        topic.remove();</span>
+<span class="fc" id="L109">        topicRepository.delete(topic);</span>
+<span class="fc" id="L110">    }</span>
+
+    @Retryable(
+      value = { SQLException.class },
+      backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public String exportTopics() {
+<span class="fc" id="L117">        TopicsXmlExport xmlExport = new TopicsXmlExport();</span>
+
+<span class="fc" id="L119">        return xmlExport.export(topicRepository.findAll());</span>
+    }
+
+    @Retryable(
+      value = { SQLException.class },
+      backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void importTopics(String topicsXML) {
+<span class="fc" id="L127">        TopicsXmlImport xmlImporter = new TopicsXmlImport();</span>
+
+<span class="fc" id="L129">        xmlImporter.importTopics(topicsXML, this, questionService, courseRepository);</span>
+<span class="fc" id="L130">    }</span>
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void resetDemoTopics() {
+<span class="nc" id="L137">        this.topicRepository.findTopics(courseExecutionService.getDemoCourse().getCourseId())</span>
+<span class="nc" id="L138">                .stream()</span>
+<span class="nc" id="L139">                .skip(5)</span>
+<span class="nc" id="L140">                .forEach(topic -&gt; {</span>
+<span class="nc" id="L141">                    topic.remove();</span>
+<span class="nc" id="L142">                    this.topicRepository.delete(topic);</span>
+<span class="nc" id="L143">                });</span>
+<span class="nc" id="L144">    }</span>
+
+    /*@Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public TopicWithCourseDto findTopicById(Integer topicId) {
+        return topicRepository.findById(topicId)
+                .filter(topic -&gt; topic != null)
+                .map(TopicWithCourseDto::new)
+                .orElse(null);
+    }*/
+
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List&lt;TopicWithCourseDto&gt; findTopicById(Set&lt;Integer&gt; topicsList) {
+<span class="nc" id="L163">        List&lt;TopicWithCourseDto&gt; topicWithCourseDtoList = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        for (Integer topicId : topicsList) {</span>
+<span class="nc" id="L165">            TopicWithCourseDto topicWithCourseDto = topicRepository.findById(topicId).map(Topic::getTopicWithCourseDto)</span>
+<span class="nc" id="L166">                    .orElseThrow(() -&gt; new TutorException(TOPIC_NOT_FOUND, topicId));</span>
+<span class="nc" id="L167">            topicWithCourseDtoList.add(topicWithCourseDto);</span>
+<span class="nc" id="L168">        }</span>
+<span class="nc" id="L169">        return topicWithCourseDtoList;</span>
+    }
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

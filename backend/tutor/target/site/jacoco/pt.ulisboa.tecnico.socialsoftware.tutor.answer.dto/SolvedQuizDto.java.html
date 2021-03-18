@@ -1,0 +1,65 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>SolvedQuizDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto</a> &gt; <span class="el_source">SolvedQuizDto.java</span></div><h1>SolvedQuizDto.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class SolvedQuizDto implements Serializable {
+    private StatementQuizDto statementQuiz;
+<span class="pc" id="L15">    private List&lt;CorrectAnswerDto&gt; correctAnswers = new ArrayList&lt;&gt;();</span>
+    private String answerDate;
+
+<span class="nc" id="L18">    public SolvedQuizDto() {</span>
+<span class="nc" id="L19">    }</span>
+
+<span class="fc" id="L21">    public SolvedQuizDto(QuizAnswer quizAnswer) {</span>
+<span class="fc" id="L22">        this.statementQuiz = new StatementQuizDto(quizAnswer, true);</span>
+
+<span class="fc" id="L24">        this.correctAnswers = quizAnswer.getQuestionAnswers().stream()</span>
+<span class="fc" id="L25">                .sorted(Comparator.comparing(QuestionAnswer::getSequence))</span>
+<span class="fc" id="L26">                .map(CorrectAnswerDto::new)</span>
+<span class="fc" id="L27">                .collect(Collectors.toList());</span>
+
+<span class="fc" id="L29">        this.answerDate = DateHandler.toISOString(quizAnswer.getAnswerDate());</span>
+<span class="fc" id="L30">    }</span>
+
+    public StatementQuizDto getStatementQuiz() {
+<span class="fc" id="L33">        return statementQuiz;</span>
+    }
+
+    public void setStatementQuiz(StatementQuizDto statementQuiz) {
+<span class="nc" id="L37">        this.statementQuiz = statementQuiz;</span>
+<span class="nc" id="L38">    }</span>
+
+    public List&lt;CorrectAnswerDto&gt; getCorrectAnswers() {
+<span class="fc" id="L41">        return correctAnswers;</span>
+    }
+
+    public void setCorrectAnswers(List&lt;CorrectAnswerDto&gt; correctAnswers) {
+<span class="nc" id="L45">        this.correctAnswers = correctAnswers;</span>
+<span class="nc" id="L46">    }</span>
+
+    public String getAnswerDate() {
+<span class="nc" id="L49">        return answerDate;</span>
+    }
+
+    public void setAnswerDate(String answerDate) {
+<span class="nc" id="L53">        this.answerDate = answerDate;</span>
+<span class="nc" id="L54">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L58">        return &quot;SolvedQuizDto{&quot; +</span>
+                &quot;statementQuiz=&quot; + statementQuiz +
+                &quot;, correctAnswers=&quot; + correctAnswers +
+                &quot;, answerDate='&quot; + answerDate + '\'' +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,193 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CSVQuizExportVisitor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain</a> &gt; <span class="el_source">CSVQuizExportVisitor.java</span></div><h1>CSVQuizExportVisitor.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import java.time.Duration;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import java.util.function.Function;
+import java.util.stream.Collectors;
+
+<span class="nc" id="L19">public class CSVQuizExportVisitor implements Visitor {</span>
+    private String[] line;
+    private int column;
+<span class="nc" id="L22">    private final List&lt;String[]&gt; table = new ArrayList&lt;&gt;();</span>
+
+    public String export(Quiz quiz, List&lt;QuestionAnswerItem&gt; questionAnswerItems) {
+<span class="nc" id="L25">        int numberOfQuestions = quiz.getQuizQuestionsNumber();</span>
+<span class="nc" id="L26">        List&lt;QuizQuestion&gt; quizQuestionsList = new ArrayList&lt;&gt;(quiz.getQuizQuestions());</span>
+<span class="nc" id="L27">        int lineSize = numberOfQuestions + 5;</span>
+<span class="nc" id="L28">        Map&lt;Integer, QuizQuestion&gt; quizQuestions = quizQuestionsList.stream()</span>
+<span class="nc" id="L29">                .collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));</span>
+
+        // add header
+<span class="nc" id="L32">        line = new String[lineSize];</span>
+<span class="nc" id="L33">        Arrays.fill(line, &quot;&quot;);</span>
+<span class="nc" id="L34">        line[0] = &quot;Username&quot;;</span>
+<span class="nc" id="L35">        line[1] = &quot;Name&quot;;</span>
+<span class="nc" id="L36">        line[2] = &quot;Start&quot;;</span>
+<span class="nc" id="L37">        line[3] = &quot;Delivered&quot;;</span>
+<span class="nc" id="L38">        line[4] = &quot;Delay in Seconds&quot;;</span>
+<span class="nc" id="L39">        column = 4;</span>
+
+<span class="nc" id="L41">        quizQuestionsList.stream()</span>
+<span class="nc" id="L42">                .forEach(quizQuestion -&gt; {</span>
+<span class="nc" id="L43">                    line[++column] = String.valueOf(quizQuestion.getSequence()+1);</span>
+<span class="nc" id="L44">                });</span>
+
+<span class="nc" id="L46">        table.add(line);</span>
+
+        // add student answer
+<span class="nc bnc" id="L49" title="All 2 branches missed.">        for (QuizAnswer quizAnswer : quiz.getQuizAnswers()) {</span>
+<span class="nc" id="L50">            line = new String[lineSize];</span>
+<span class="nc" id="L51">            Arrays.fill(line, &quot;&quot;);</span>
+<span class="nc" id="L52">            column = 0;</span>
+<span class="nc" id="L53">            quizAnswer.getUser().accept(this);</span>
+
+<span class="nc" id="L55">            quizAnswer.accept(this);</span>
+
+<span class="nc" id="L57">            quizAnswer.getQuestionAnswers().stream()</span>
+<span class="nc" id="L58">                    .sorted(Comparator.comparing(questionAnswer -&gt; questionAnswer.getQuizQuestion().getSequence()))</span>
+<span class="nc" id="L59">                    .collect(Collectors.toList())</span>
+<span class="nc" id="L60">                    .forEach(questionAnswer -&gt; questionAnswer.accept(this));</span>
+
+<span class="nc" id="L62">            table.add(line);</span>
+<span class="nc" id="L63">        }</span>
+
+        // add key
+<span class="nc" id="L66">        line = new String[lineSize];</span>
+<span class="nc" id="L67">        Arrays.fill(line, &quot;&quot;);</span>
+<span class="nc" id="L68">        line[4] = &quot;KEYS&quot;;</span>
+<span class="nc" id="L69">        column = 5;</span>
+<span class="nc" id="L70">        quizQuestionsList.stream()</span>
+<span class="nc" id="L71">                .forEach(quizQuestion -&gt; quizQuestion.accept(this));</span>
+<span class="nc" id="L72">        table.add(line);</span>
+
+        // add log of question answers
+<span class="nc" id="L75">        line = new String[lineSize];</span>
+<span class="nc" id="L76">        Arrays.fill(line, &quot;&quot;);</span>
+<span class="nc" id="L77">        table.add(line);</span>
+<span class="nc" id="L78">        line = new String[lineSize];</span>
+<span class="nc" id="L79">        Arrays.fill(line, &quot;&quot;);</span>
+<span class="nc" id="L80">        table.add(line);</span>
+
+<span class="nc" id="L82">        line = new String[lineSize];</span>
+<span class="nc" id="L83">        Arrays.fill(line, &quot;&quot;);</span>
+<span class="nc" id="L84">        line[0] = &quot;Username&quot;;</span>
+<span class="nc" id="L85">        line[1] = &quot;Question&quot;;</span>
+<span class="nc" id="L86">        line[2] = &quot;Option&quot;;</span>
+<span class="nc" id="L87">        line[3] = &quot;Answer Date&quot;;</span>
+<span class="nc" id="L88">        line[4] = &quot;Time To Submission&quot;;</span>
+<span class="nc" id="L89">        line[5] = &quot;Time Taken&quot;;</span>
+<span class="nc" id="L90">        table.add(line);</span>
+
+<span class="nc" id="L92">        Comparator&lt;QuestionAnswerItem&gt; comparator = Comparator.comparing(QuestionAnswerItem::getUsername)</span>
+<span class="nc" id="L93">                .thenComparing(Comparator.comparing(QuestionAnswerItem::getTimeToSubmission).reversed());</span>
+<span class="nc" id="L94">        questionAnswerItems.sort(comparator);</span>
+
+<span class="nc bnc" id="L96" title="All 2 branches missed.">        for (QuestionAnswerItem questionAnswerItem : questionAnswerItems) {</span>
+<span class="nc" id="L97">            line = new String[lineSize];</span>
+<span class="nc" id="L98">            Arrays.fill(line, &quot;&quot;);</span>
+<span class="nc" id="L99">            line[0] = questionAnswerItem.getUsername();</span>
+<span class="nc" id="L100">            line[1] = String.valueOf(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getSequence()+1);</span>
+<span class="nc" id="L101">            line[2] = questionAnswerItem.getAnswerRepresentation(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getQuestion().getQuestionDetails());</span>
+<span class="nc" id="L102">            line[3] = DateHandler.toHumanReadableString(questionAnswerItem.getAnswerDate());</span>
+<span class="nc bnc" id="L103" title="All 2 branches missed.">            line[4] = questionAnswerItem.getTimeToSubmission() != null ? convertMiliseconds(questionAnswerItem.getTimeToSubmission()) : &quot;&quot;;</span>
+<span class="nc" id="L104">            line[5] = convertMiliseconds(questionAnswerItem.getTimeTaken());</span>
+<span class="nc" id="L105">            table.add(line);</span>
+<span class="nc" id="L106">        }</span>
+
+<span class="nc" id="L108">        return table.stream().map(this::convertToCSV).collect(Collectors.joining(&quot;\n&quot;));</span>
+    }
+
+    @Override
+    public void visitUser(User user) {
+<span class="nc bnc" id="L113" title="All 2 branches missed.">        line[column++] = user.getUsername() != null ? user.getUsername() : &quot;&quot;;</span>
+<span class="nc bnc" id="L114" title="All 2 branches missed.">        line[column++] = user.getName() != null ? user.getName() : &quot;&quot;;</span>
+<span class="nc" id="L115">    }</span>
+
+    @Override
+    public void visitQuizAnswer(QuizAnswer quizAnswer) {
+<span class="nc bnc" id="L119" title="All 2 branches missed.">        line[column++] = quizAnswer.getCreationDate() != null ? DateHandler.toHumanReadableString(quizAnswer.getCreationDate()) : &quot;&quot;;</span>
+<span class="nc bnc" id="L120" title="All 2 branches missed.">        line[column++] = quizAnswer.getAnswerDate() != null ? DateHandler.toHumanReadableString(quizAnswer.getAnswerDate()) : &quot;&quot;;</span>
+<span class="nc bnc" id="L121" title="All 2 branches missed.">        if (quizAnswer.getAnswerDate() != null &amp;&amp;</span>
+<span class="nc bnc" id="L122" title="All 2 branches missed.">                quizAnswer.getQuiz().getConclusionDate() != null &amp;&amp;</span>
+<span class="nc bnc" id="L123" title="All 2 branches missed.">                quizAnswer.getAnswerDate().isAfter(quizAnswer.getQuiz().getConclusionDate())) {</span>
+<span class="nc" id="L124">            Duration duration = Duration.between(quizAnswer.getAnswerDate(), quizAnswer.getQuiz().getConclusionDate());</span>
+<span class="nc" id="L125">            line[column++] = String.valueOf(Math.abs(duration.toSeconds()));</span>
+<span class="nc" id="L126">        } else</span>
+<span class="nc" id="L127">            line[column++] = &quot;&quot;;</span>
+<span class="nc" id="L128">    }</span>
+
+    @Override
+    public void visitQuestionAnswer(QuestionAnswer questionAnswer) {
+<span class="nc bnc" id="L132" title="All 2 branches missed.">        if (questionAnswer.getAnswerDetails() != null) {</span>
+<span class="nc" id="L133">            questionAnswer.getAnswerDetails().accept(this);</span>
+        }
+<span class="nc" id="L135">    }</span>
+
+    @Override
+    public void visitAnswerDetails(MultipleChoiceAnswer answer) {
+<span class="nc" id="L139">        line[column++] = answer.getAnswerRepresentation();</span>
+<span class="nc" id="L140">    }</span>
+
+    @Override
+    public void visitAnswerDetails(CodeFillInAnswer answer) {
+<span class="nc" id="L144">        line[column++] = answer.getAnswerRepresentation();</span>
+<span class="nc" id="L145">    }</span>
+
+    @Override
+    public void visitAnswerDetails(CodeOrderAnswer answer){
+<span class="nc" id="L149">        line[column++] = answer.getAnswerRepresentation();</span>
+<span class="nc" id="L150">    }</span>
+
+    @Override
+    public void visitQuizQuestion(QuizQuestion quizQuestion) {
+<span class="nc" id="L154">        quizQuestion.getQuestion().accept(this);</span>
+<span class="nc" id="L155">    }</span>
+
+    @Override
+    public void visitQuestion(Question question) {
+<span class="nc" id="L159">        question.getQuestionDetails().accept(this);</span>
+<span class="nc" id="L160">    }</span>
+
+    @Override
+    public void visitQuestionDetails(MultipleChoiceQuestion question) {
+<span class="nc" id="L164">        line[column++] = question.getCorrectAnswerRepresentation();</span>
+<span class="nc" id="L165">    }</span>
+
+    @Override
+    public void visitQuestionDetails(CodeFillInQuestion question) {
+<span class="nc" id="L169">        line[column++] = question.getCorrectAnswerRepresentation();</span>
+<span class="nc" id="L170">    }</span>
+
+    @Override
+    public void visitQuestionDetails(CodeOrderQuestion question) {
+<span class="nc" id="L174">        line[column++] = question.getCorrectAnswerRepresentation();</span>
+<span class="nc" id="L175">    }</span>
+
+    private String convertToCSV(String[] data) {
+<span class="nc" id="L178">        return String.join(&quot;,&quot;, data);</span>
+    }
+
+    private String convertMiliseconds(int millis) {
+<span class="nc" id="L182">       return  String.format(&quot;%02d:%02d:%02d&quot;,</span>
+<span class="nc" id="L183">               TimeUnit.MILLISECONDS.toHours(millis),</span>
+<span class="nc" id="L184">               TimeUnit.MILLISECONDS.toMinutes(millis)  -</span>
+<span class="nc" id="L185">                       TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),</span>
+<span class="nc" id="L186">                TimeUnit.MILLISECONDS.toSeconds(millis) -</span>
+<span class="nc" id="L187">                        TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))</span>
+        );
+    }
+
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

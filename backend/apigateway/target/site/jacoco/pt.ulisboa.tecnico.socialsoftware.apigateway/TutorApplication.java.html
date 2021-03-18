@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TutorApplication.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">apigateway</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.apigateway</a> &gt; <span class="el_source">TutorApplication.java</span></div><h1>TutorApplication.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.apigateway;
+
+import org.springframework.beans.factory.InitializingBean;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.SpringApplication;
+import org.springframework.boot.autoconfigure.SpringBootApplication;
+import org.springframework.boot.autoconfigure.domain.EntityScan;
+import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
+import org.springframework.context.annotation.Import;
+import org.springframework.context.annotation.PropertySource;
+import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
+import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
+import org.springframework.scheduling.annotation.EnableScheduling;
+import org.springframework.transaction.annotation.EnableTransactionManagement;
+import pt.ulisboa.tecnico.socialsoftware.tournament.config.TournamentModuleConfiguration;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.TutorModuleConfiguration;
+import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.DemoUtils;
+import pt.ulisboa.tecnico.socialsoftware.utils.config.UtilsModuleConfiguration;
+
+
+@PropertySource({&quot;classpath:application.properties&quot; })
+@EnableJpaRepositories({&quot;pt.ulisboa.tecnico.socialsoftware.tutor&quot;,&quot;pt.ulisboa.tecnico.socialsoftware.tournament&quot;})
+@EnableTransactionManagement
+@EnableJpaAuditing
+@EnableScheduling
+@SpringBootApplication
+@EntityScan({&quot;pt.ulisboa.tecnico.socialsoftware.tutor&quot;,&quot;pt.ulisboa.tecnico.socialsoftware.tournament&quot;, &quot;pt.ulisboa.tecnico.socialsoftware.exceptions&quot;})
+@Import({TutorModuleConfiguration.class, TournamentModuleConfiguration.class, UtilsModuleConfiguration.class})
+<span class="nc" id="L31">public class TutorApplication extends SpringBootServletInitializer implements InitializingBean {</span>
+    public static void main(String[] args) {
+<span class="nc" id="L33">        SpringApplication.run(TutorApplication.class, args);</span>
+<span class="nc" id="L34">    }</span>
+
+    @Autowired
+    private AnswerService answerService;
+
+    @Autowired
+    private DemoUtils demoUtils;
+
+    @Override
+    public void afterPropertiesSet() {
+        // Run on startup
+<span class="nc" id="L45">        JwtTokenProvider.generateKeys();</span>
+<span class="nc" id="L46">        answerService.writeQuizAnswersAndCalculateStatistics();</span>
+
+<span class="nc" id="L48">        demoUtils.resetDemoInfo();</span>
+
+        //EventBusFactory.getEventBus().register(new TournamentSubscriptions());
+<span class="nc" id="L51">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: pt.ulisboa.tecnico.socialsoftware.tournament.tournament.service.CancelTournamentTest
+-------------------------------------------------------------------------------
+Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 13.664 s - in pt.ulisboa.tecnico.socialsoftware.tournament.tournament.service.CancelTournamentTest

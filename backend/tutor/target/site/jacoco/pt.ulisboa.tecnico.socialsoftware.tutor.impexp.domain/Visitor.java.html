@@ -1,0 +1,63 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Visitor.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain</a> &gt; <span class="el_source">Visitor.java</span></div><h1>Visitor.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+
+public interface Visitor {
+<span class="nc" id="L15">    default void visitQuestion(Question question) {}</span>
+
+<span class="nc" id="L17">    default void visitImage(Image image) {}</span>
+
+<span class="nc" id="L19">    default void visitOption(Option option) {}</span>
+
+<span class="nc" id="L21">    default void visitQuiz(Quiz quiz) {}</span>
+
+<span class="nc" id="L23">    default void visitQuizQuestion(QuizQuestion quizQuestion) {}</span>
+
+<span class="nc" id="L25">    default void visitUser(User user) {}</span>
+
+<span class="nc" id="L27">    default void visitAuthUser(AuthUser authUser) {}</span>
+
+<span class="nc" id="L29">    default void visitQuizAnswer(QuizAnswer quizAnswer) {}</span>
+
+<span class="nc" id="L31">    default void visitQuestionAnswer(QuestionAnswer questionAnswer) {}</span>
+
+<span class="nc" id="L33">    default void visitTopic(Topic topic) {}</span>
+
+<span class="nc" id="L35">    default void visitCourse(Course course) {}</span>
+
+<span class="nc" id="L37">    default void visitAssessment(Assessment assessment) {}</span>
+
+<span class="nc" id="L39">    default void visitCourseExecution(CourseExecution courseExecution) {}</span>
+
+<span class="nc" id="L41">    default void visitAnswerDetails(MultipleChoiceAnswer answer){}</span>
+
+<span class="nc" id="L43">    default void visitQuestionDetails(MultipleChoiceQuestion question) {}</span>
+
+<span class="nc" id="L45">    default void visitAnswerDetails(CodeFillInAnswer answer){}</span>
+
+<span class="nc" id="L47">    default void visitQuestionDetails(CodeFillInQuestion question) {}</span>
+
+<span class="nc" id="L49">    default void visitFillInSpot(CodeFillInSpot spot) {}</span>
+
+<span class="nc" id="L51">    default void visitFillInOption(CodeFillInOption spot) {}</span>
+
+<span class="nc" id="L53">    default void visitDiscussion(Discussion discussion) {}</span>
+
+<span class="nc" id="L55">    default void visitReply(Reply reply) {}</span>
+
+<span class="nc" id="L57">    default void visitAnswerDetails(CodeOrderAnswer answer){}</span>
+
+<span class="nc" id="L59">    default void visitQuestionDetails(CodeOrderQuestion codeOrderQuestion) {}</span>
+
+<span class="nc" id="L61">    default void visitCodeOrderSlot(CodeOrderSlot codeOrderSlot) {}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

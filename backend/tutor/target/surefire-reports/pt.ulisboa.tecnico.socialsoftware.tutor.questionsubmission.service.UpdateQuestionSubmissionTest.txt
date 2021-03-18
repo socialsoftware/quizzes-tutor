@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.service.UpdateQuestionSubmissionTest
+-------------------------------------------------------------------------------
+Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.901 s - in pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.service.UpdateQuestionSubmissionTest

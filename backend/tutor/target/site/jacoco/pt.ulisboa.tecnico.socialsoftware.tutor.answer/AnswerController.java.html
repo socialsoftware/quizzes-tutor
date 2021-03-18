@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AnswerController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.answer</a> &gt; <span class="el_source">AnswerController.java</span></div><h1>AnswerController.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+
+import javax.validation.Valid;
+import java.security.Principal;
+import java.util.List;
+
+@RestController
+<span class="fc" id="L19">public class AnswerController {</span>
+<span class="fc" id="L20">    private static final Logger logger = LoggerFactory.getLogger(TopicController.class);</span>
+
+    @Autowired
+    private AnswerService answerService;
+
+    @GetMapping(&quot;/executions/{executionId}/quizzes/available&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public List&lt;QuizDto&gt; getAvailableQuizzes(Principal principal, @PathVariable int executionId) {
+<span class="nc" id="L28">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+
+<span class="nc" id="L30">        return answerService.getAvailableQuizzes(user.getId(), executionId);</span>
+    }
+
+    @PostMapping(&quot;/executions/{executionId}/quizzes/generate&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public StatementQuizDto getNewQuiz(Principal principal, @PathVariable int executionId, @RequestBody StatementCreationDto quizDetails) {
+<span class="nc" id="L36">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+
+<span class="nc" id="L38">        return answerService.generateStudentQuiz(user.getId(), executionId, quizDetails);</span>
+    }
+
+    @GetMapping(&quot;/executions/{executionId}/quizzes/solved&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public List&lt;SolvedQuizDto&gt; getSolvedQuizzes(Principal principal, @PathVariable int executionId) {
+<span class="nc" id="L44">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+
+<span class="nc" id="L46">        return answerService.getSolvedQuizzes(user.getId(), executionId);</span>
+    }
+
+    @GetMapping(&quot;/quizzes/{quizId}/byqrcode&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')&quot;)
+    public StatementQuizDto getQuizByQRCode(Principal principal, @PathVariable int quizId) {
+<span class="nc" id="L52">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+
+<span class="nc" id="L54">        return answerService.getQuizByQRCode(user.getId(), quizId);</span>
+    }
+
+    @GetMapping(&quot;/quizzes/{quizId}/start&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')&quot;)
+    public StatementQuizDto startQuiz(Principal principal, @PathVariable int quizId) {
+<span class="nc" id="L60">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+
+<span class="nc" id="L62">        return answerService.startQuiz(user.getId(), quizId);</span>
+    }
+
+    @GetMapping(&quot;/quizzes/{quizId}/question/{questionId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')&quot;)
+    public StatementQuestionDto getQuestionForQuizAnswer(@PathVariable int quizId, @PathVariable int questionId) {
+<span class="nc" id="L68">        return answerService.getQuestionForQuizAnswer(quizId, questionId);</span>
+    }
+
+    @PostMapping(&quot;/quizzes/{quizId}/submit&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')&quot;)
+    public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
+<span class="nc" id="L74">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+
+<span class="nc" id="L76">        answerService.submitAnswer(user.getUsername(), quizId, answer);</span>
+<span class="nc" id="L77">    }</span>
+
+    @PostMapping(&quot;/quizzes/{quizId}/conclude&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')&quot;)
+    public List&lt;CorrectAnswerDto&gt; concludeQuiz(@PathVariable int quizId, @RequestBody StatementQuizDto statementQuizDto) {
+<span class="nc" id="L82">        return answerService.concludeQuiz(statementQuizDto);</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

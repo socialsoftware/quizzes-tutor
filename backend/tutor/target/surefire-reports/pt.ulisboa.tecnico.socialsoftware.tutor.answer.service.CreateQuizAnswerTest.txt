@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: pt.ulisboa.tecnico.socialsoftware.tutor.answer.service.CreateQuizAnswerTest
+-------------------------------------------------------------------------------
+Tests run: 1, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.619 s - in pt.ulisboa.tecnico.socialsoftware.tutor.answer.service.CreateQuizAnswerTest

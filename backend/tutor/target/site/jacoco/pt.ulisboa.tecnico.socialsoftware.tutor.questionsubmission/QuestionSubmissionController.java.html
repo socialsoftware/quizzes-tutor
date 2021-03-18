@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>QuestionSubmissionController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission</a> &gt; <span class="el_source">QuestionSubmissionController.java</span></div><h1>QuestionSubmissionController.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.UserQuestionSubmissionInfoDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+
+import javax.validation.Valid;
+import java.security.Principal;
+import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
+
+@RestController
+<span class="fc" id="L21">public class QuestionSubmissionController {</span>
+    @Autowired
+    private QuestionSubmissionService questionSubmissionService;
+
+    @Autowired
+    private QuestionSubmissionApplicationalService questionSubmissionApplicationalService;
+
+    @PostMapping(value = &quot;/submissions/{executionId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public QuestionSubmissionDto createQuestionSubmission(@PathVariable int executionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
+<span class="nc" id="L31">        return questionSubmissionService.createQuestionSubmission(questionSubmissionDto);</span>
+    }
+
+    @PutMapping(&quot;/submissions/{questionSubmissionId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')&quot;)
+    public QuestionSubmissionDto updateQuestionSubmission(@PathVariable int questionSubmissionId, @Valid @RequestBody QuestionSubmissionDto questionSubmissionDto) {
+<span class="nc" id="L37">        return this.questionSubmissionService.updateQuestionSubmission(questionSubmissionId, questionSubmissionDto);</span>
+    }
+
+    @DeleteMapping(&quot;/submissions/{questionSubmissionId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')&quot;)
+    public void removeSubmittedQuestion(@PathVariable Integer questionSubmissionId) {
+<span class="nc" id="L43">        questionSubmissionService.removeSubmittedQuestion(questionSubmissionId);</span>
+<span class="nc" id="L44">    }</span>
+
+    @PostMapping(&quot;/submissions/{questionSubmissionId}/reviews&quot;)
+    @PreAuthorize(&quot;(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionSubmissionId,'SUBMISSION.ACCESS')&quot;)
+    public ReviewDto createReview(Authentication authentication, @PathVariable int questionSubmissionId, @Valid @RequestBody ReviewDto reviewDto) {
+<span class="nc" id="L49">        User user = (User) authentication.getPrincipal();</span>
+
+<span class="nc" id="L51">        return questionSubmissionApplicationalService.createReview(user, reviewDto);</span>
+    }
+
+    @PutMapping(&quot;/submissions/{questionSubmissionId}/topics&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')&quot;)
+    public void updateQuestionSubmissionTopics(@PathVariable Integer questionSubmissionId, @RequestBody TopicDto[] topics) {
+<span class="nc" id="L57">        questionSubmissionService.updateQuestionSubmissionTopics(questionSubmissionId, topics);</span>
+<span class="nc" id="L58">    }</span>
+
+    @GetMapping(value = &quot;/submissions/{executionId}/student&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public List&lt;QuestionSubmissionDto&gt; getStudentQuestionSubmissions(Principal principal, @Valid @PathVariable int executionId) {
+<span class="nc" id="L63">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+
+<span class="nc bnc" id="L65" title="All 2 branches missed.">        if (user == null)</span>
+<span class="nc" id="L66">            throw new TutorException(AUTHENTICATION_ERROR);</span>
+
+<span class="nc" id="L68">        return questionSubmissionService.getStudentQuestionSubmissions(user.getId(), executionId);</span>
+    }
+
+    @GetMapping(&quot;/submissions/{executionId}/execution&quot;)
+    @PreAuthorize(&quot;(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public List&lt;QuestionSubmissionDto&gt; getCourseExecutionQuestionSubmissions(@Valid @PathVariable int executionId) {
+<span class="nc" id="L74">        return questionSubmissionService.getCourseExecutionQuestionSubmissions(executionId);</span>
+    }
+
+    @GetMapping(&quot;/submissions/{questionSubmissionId}/reviews&quot;)
+    @PreAuthorize(&quot;(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')&quot;)
+    public List&lt;ReviewDto&gt; getQuestionSubmissionReviews(@PathVariable int questionSubmissionId) {
+<span class="nc" id="L80">        return questionSubmissionService.getQuestionSubmissionReviews(questionSubmissionId);</span>
+    }
+
+    @GetMapping(value = &quot;/submissions/{executionId}/all&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public List&lt;UserQuestionSubmissionInfoDto&gt; getAllStudentsQuestionSubmissionsInfo(@Valid @PathVariable int executionId) {
+<span class="nc" id="L86">        return questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(executionId);</span>
+    }
+
+    @PutMapping(&quot;/submissions/{questionSubmissionId}/toggle-notification-student&quot;)
+    @PreAuthorize(&quot;(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')&quot;)
+    public void toggleStudentNotificationRead(@Valid @PathVariable int questionSubmissionId, @Valid @RequestParam boolean hasRead) {
+<span class="nc" id="L92">        questionSubmissionService.toggleStudentNotificationRead(questionSubmissionId, hasRead);</span>
+<span class="nc" id="L93">    }</span>
+
+    @PutMapping(&quot;/submissions/{questionSubmissionId}/toggle-notification-teacher&quot;)
+    @PreAuthorize(&quot;(hasRole('ROLE_STUDENT') or hasRole('ROLE_TEACHER')) and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')&quot;)
+    public void toggleTeacherNotificationRead(@Valid @PathVariable int questionSubmissionId, @Valid @RequestParam boolean hasRead) {
+<span class="nc" id="L98">        questionSubmissionService.toggleTeacherNotificationRead(questionSubmissionId, hasRead);</span>
+<span class="nc" id="L99">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

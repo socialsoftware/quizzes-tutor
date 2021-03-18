@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>QuestionSubmissionDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto</a> &gt; <span class="el_source">QuestionSubmissionDto.java</span></div><h1>QuestionSubmissionDto.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto;
+
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
+
+import java.io.Serializable;
+
+public class QuestionSubmissionDto implements Serializable {
+    private Integer id;
+    private Integer courseExecutionId;
+    private QuestionDto question;
+    private Integer submitterId;
+    private String status;
+    private String name;
+    private boolean studentRead;
+    private boolean teacherRead;
+
+<span class="fc" id="L18">    public QuestionSubmissionDto(){}</span>
+
+<span class="fc" id="L20">    public QuestionSubmissionDto(QuestionSubmission questionSubmission){</span>
+<span class="fc" id="L21">        setId(questionSubmission.getId());</span>
+<span class="fc" id="L22">        setCourseExecutionId(questionSubmission.getCourseExecution().getId());</span>
+<span class="pc bpc" id="L23" title="1 of 2 branches missed.">        if (questionSubmission.getQuestion() != null)</span>
+<span class="fc" id="L24">            setQuestion(questionSubmission.getQuestion().getDto());</span>
+<span class="fc" id="L25">        setStatus(questionSubmission.getStatus().name());</span>
+<span class="fc" id="L26">        setSubmitterId(questionSubmission.getSubmitter().getId());</span>
+<span class="fc" id="L27">        setName(questionSubmission.getSubmitter().getName());</span>
+<span class="fc" id="L28">        setStudentRead(questionSubmission.hasStudentRead());</span>
+<span class="fc" id="L29">        setTeacherRead(questionSubmission.hasTeacherRead());</span>
+<span class="fc" id="L30">    }</span>
+
+<span class="fc" id="L32">    public Integer getId() { return id; }</span>
+
+<span class="fc" id="L34">    public void setId(Integer id) { this.id = id; }</span>
+
+<span class="fc" id="L36">    public Integer getCourseExecutionId() { return courseExecutionId; }</span>
+
+<span class="fc" id="L38">    public void setCourseExecutionId(Integer courseExecutionId) { this.courseExecutionId = courseExecutionId; }</span>
+
+<span class="fc" id="L40">    public QuestionDto getQuestion() { return question; }</span>
+
+<span class="fc" id="L42">    public void setQuestion(QuestionDto question) { this.question = question; }</span>
+
+<span class="fc" id="L44">    public Integer getSubmitterId() { return submitterId; }</span>
+
+<span class="fc" id="L46">    public void setSubmitterId(Integer submitterId) { this.submitterId = submitterId; }</span>
+
+<span class="fc" id="L48">    public String getStatus() { return status; }</span>
+
+<span class="fc" id="L50">    public void setStatus(String status) { this.status = status; }</span>
+
+<span class="nc" id="L52">    public String getName() { return name; }</span>
+
+<span class="fc" id="L54">    public void setName(String name) { this.name = name; }</span>
+
+<span class="nc" id="L56">    public boolean isStudentRead() { return studentRead; }</span>
+
+<span class="fc" id="L58">    public void setStudentRead(boolean studentRead) { this.studentRead = studentRead; }</span>
+
+<span class="nc" id="L60">    public boolean isTeacherRead() { return teacherRead; }</span>
+
+<span class="fc" id="L62">    public void setTeacherRead(boolean teacherRead) { this.teacherRead = teacherRead; }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L66">        return &quot;QuestionSubmissionDto{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, courseExecutionId=&quot; + courseExecutionId +
+                &quot;, submitterId=&quot; + submitterId +
+                &quot;, status=&quot; + status +
+                &quot;, name=&quot; + name +
+                &quot;, questionDto=&quot; + question +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

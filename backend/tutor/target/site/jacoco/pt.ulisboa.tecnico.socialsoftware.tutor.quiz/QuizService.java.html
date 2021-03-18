@@ -1,0 +1,470 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>QuizService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.quiz</a> &gt; <span class="el_source">QuizService.java</span></div><h1>QuizService.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
+
+import org.apache.commons.io.IOUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import java.io.*;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.time.temporal.ChronoUnit;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.zip.ZipEntry;
+import java.util.zip.ZipOutputStream;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+@Service
+<span class="fc" id="L53">public class QuizService {</span>
+    @SuppressWarnings(&quot;unused&quot;)
+<span class="fc" id="L55">    private static final Logger logger = LoggerFactory.getLogger(QuizService.class);</span>
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private QuizRepository quizRepository;
+
+    @Autowired
+    private QuestionAnswerItemRepository questionAnswerItemRepository;
+
+    @Autowired
+    private QuizAnswerRepository quizAnswerRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private QuestionSubmissionRepository questionSubmissionRepository;
+
+    @Autowired
+    private QuizQuestionRepository quizQuestionRepository;
+
+    @Autowired
+    private AnswerService answerService;
+
+    @Autowired
+    private QuestionService questionService;
+
+    @Autowired
+    private CourseExecutionService courseExecutionService;
+
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public QuizDto findById(Integer quizId) {
+<span class="nc" id="L95">        return this.quizRepository.findById(quizId).map(quiz -&gt; quiz.getDto(true))</span>
+<span class="nc" id="L96">                .orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, quizId));</span>
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List&lt;QuizDto&gt; findNonGeneratedQuizzes(int executionId) {
+<span class="nc" id="L105">        Comparator&lt;Quiz&gt; comparator = Comparator.comparing(Quiz::getAvailableDate, Comparator.nullsFirst(Comparator.reverseOrder()))</span>
+<span class="nc" id="L106">                .thenComparing(Quiz::getSeries, Comparator.nullsFirst(Comparator.reverseOrder()))</span>
+<span class="nc" id="L107">                .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));</span>
+
+<span class="nc" id="L109">        return quizRepository.findQuizzesOfExecution(executionId).stream()</span>
+<span class="nc bnc" id="L110" title="All 2 branches missed.">                .filter(quiz -&gt; !quiz.getType().equals(QuizType.GENERATED))</span>
+<span class="nc" id="L111">                .sorted(comparator)</span>
+<span class="nc" id="L112">                .map(quiz -&gt; quiz.getDto(false))</span>
+<span class="nc" id="L113">                .collect(Collectors.toList());</span>
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public QuizDto createQuiz(int executionId, QuizDto quizDto) {
+<span class="pc" id="L121">        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -&gt; new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));</span>
+<span class="fc" id="L122">        Quiz quiz = new Quiz(quizDto);</span>
+
+<span class="fc bfc" id="L124" title="All 2 branches covered.">        if (quizDto.getCreationDate() == null) {</span>
+<span class="fc" id="L125">            quiz.setCreationDate(DateHandler.now());</span>
+        }
+<span class="fc" id="L127">        quiz.setCourseExecution(courseExecution);</span>
+
+<span class="pc bpc" id="L129" title="1 of 2 branches missed.">        if (quizDto.getQuestions() != null) {</span>
+<span class="fc" id="L130">            quizDto.getQuestions().stream().sorted(Comparator.comparing(QuestionDto::getSequence))</span>
+<span class="fc" id="L131">                    .forEach(questionDto -&gt; {</span>
+<span class="fc" id="L132">                        Question question = questionRepository.findById(questionDto.getId())</span>
+<span class="pc" id="L133">                                .orElseThrow(() -&gt; new TutorException(QUESTION_NOT_FOUND, questionDto.getId()));</span>
+<span class="fc" id="L134">                        new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());</span>
+<span class="fc" id="L135">                    });</span>
+        }
+
+<span class="fc" id="L138">        quizRepository.save(quiz);</span>
+
+<span class="fc" id="L140">        return quiz.getDto(true);</span>
+    }
+
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public QuizDto updateQuiz(Integer quizId, QuizDto quizDto) {
+<span class="nc" id="L149">        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, quizId));</span>
+
+<span class="nc" id="L151">        quiz.checkCanChange();</span>
+
+<span class="nc" id="L153">        quiz.setTitle(quizDto.getTitle());</span>
+<span class="nc bnc" id="L154" title="All 2 branches missed.">        if (DateHandler.isValidDateFormat(quizDto.getAvailableDate()))</span>
+<span class="nc" id="L155">            quiz.setAvailableDate(DateHandler.toLocalDateTime(quizDto.getAvailableDate()));</span>
+<span class="nc bnc" id="L156" title="All 2 branches missed.">        if (DateHandler.isValidDateFormat(quizDto.getConclusionDate()))</span>
+<span class="nc" id="L157">            quiz.setConclusionDate(DateHandler.toLocalDateTime(quizDto.getConclusionDate()));</span>
+<span class="nc bnc" id="L158" title="All 2 branches missed.">        if (DateHandler.isValidDateFormat(quizDto.getResultsDate()))</span>
+<span class="nc" id="L159">            quiz.setResultsDate(DateHandler.toLocalDateTime(quizDto.getResultsDate()));</span>
+<span class="nc" id="L160">        quiz.setScramble(quizDto.isScramble());</span>
+<span class="nc" id="L161">        quiz.setQrCodeOnly(quizDto.isQrCodeOnly());</span>
+<span class="nc" id="L162">        quiz.setOneWay(quizDto.isOneWay());</span>
+
+<span class="nc bnc" id="L164" title="All 2 branches missed.">        if (quizDto.isTimed())</span>
+<span class="nc" id="L165">            quiz.setType(QuizType.IN_CLASS.toString());</span>
+        else
+<span class="nc" id="L167">            quiz.setType(QuizType.PROPOSED.toString());</span>
+
+<span class="nc" id="L169">        Set&lt;QuizQuestion&gt; quizQuestions = new HashSet&lt;&gt;(quiz.getQuizQuestions());</span>
+
+<span class="nc" id="L171">        quizQuestions.forEach(QuizQuestion::remove);</span>
+<span class="nc" id="L172">        quizQuestions.forEach(quizQuestion -&gt; quizQuestionRepository.delete(quizQuestion));</span>
+
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (quizDto.getQuestions() != null) {</span>
+<span class="nc" id="L175">            quizDto.getQuestions().stream().sorted(Comparator.comparing(QuestionDto::getSequence))</span>
+<span class="nc" id="L176">                    .forEach(questionDto -&gt; {</span>
+<span class="nc" id="L177">                        Question question = questionRepository.findById(questionDto.getId())</span>
+<span class="nc" id="L178">                                .orElseThrow(() -&gt; new TutorException(QUESTION_NOT_FOUND, questionDto.getId()));</span>
+<span class="nc" id="L179">                        QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());</span>
+<span class="nc" id="L180">                        quizQuestionRepository.save(quizQuestion);</span>
+<span class="nc" id="L181">                    });</span>
+        }
+
+<span class="nc" id="L184">        return quiz.getDto(true);</span>
+    }
+
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public QuizQuestionDto addQuestionToQuiz(int questionId, int quizId) {
+<span class="pc" id="L193">        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, quizId));</span>
+<span class="pc" id="L194">        Question question = questionRepository.findById(questionId).orElseThrow(() -&gt; new TutorException(QUESTION_NOT_FOUND, questionId));</span>
+
+<span class="fc" id="L196">        QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());</span>
+
+<span class="fc" id="L198">        quizQuestionRepository.save(quizQuestion);</span>
+
+<span class="fc" id="L200">        return new QuizQuestionDto(quizQuestion);</span>
+    }
+
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void removeQuiz(Integer quizId) {
+<span class="pc" id="L209">        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, quizId));</span>
+
+<span class="fc" id="L211">        quiz.remove();</span>
+
+<span class="fc" id="L213">        Set&lt;QuizQuestion&gt; quizQuestions = new HashSet&lt;&gt;(quiz.getQuizQuestions());</span>
+
+<span class="fc" id="L215">        quizQuestions.forEach(QuizQuestion::remove);</span>
+<span class="fc" id="L216">        quizQuestions.forEach(quizQuestion -&gt; quizQuestionRepository.delete(quizQuestion));</span>
+
+<span class="fc" id="L218">        quizRepository.delete(quiz);</span>
+<span class="fc" id="L219">    }</span>
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void removeExternalQuiz(Integer quizId) {
+<span class="nc" id="L226">        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, quizId));</span>
+
+<span class="nc" id="L228">        quiz.removeExternal();</span>
+
+<span class="nc" id="L230">        Set&lt;QuizQuestion&gt; quizQuestions = new HashSet&lt;&gt;(quiz.getQuizQuestions());</span>
+
+<span class="nc" id="L232">        quizQuestions.forEach(QuizQuestion::remove);</span>
+<span class="nc" id="L233">        quizQuestions.forEach(quizQuestion -&gt; quizQuestionRepository.delete(quizQuestion));</span>
+
+<span class="nc" id="L235">        quizRepository.delete(quiz);</span>
+<span class="nc" id="L236">    }</span>
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public QuizAnswersDto getQuizAnswers(Integer quizId) {
+<span class="nc" id="L243">        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, quizId));</span>
+<span class="nc" id="L244">        QuizAnswersDto quizAnswersDto = new QuizAnswersDto();</span>
+
+<span class="nc" id="L246">        quizAnswersDto.setCorrectSequence(</span>
+<span class="nc" id="L247">                quiz.getQuizQuestions().stream()</span>
+<span class="nc" id="L248">                        .map(quizQuestion -&gt; quizQuestion.getQuestion().getCorrectAnswerRepresentation()</span>
+<span class="nc" id="L249">                ).collect(Collectors.toList()));</span>
+
+<span class="nc" id="L251">        quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));</span>
+<span class="nc bnc" id="L252" title="All 4 branches missed.">        if (quiz.getConclusionDate() != null &amp;&amp; quiz.getConclusionDate().isAfter(DateHandler.now())) {</span>
+<span class="nc" id="L253">            quizAnswersDto.setTimeToSubmission(ChronoUnit.MILLIS.between(DateHandler.now(), quiz.getConclusionDate()));</span>
+        }
+
+<span class="nc" id="L256">        return quizAnswersDto;</span>
+    }
+
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public String exportQuizzesToXml() {
+<span class="fc" id="L265">        QuizzesXmlExport xmlExport = new QuizzesXmlExport();</span>
+
+<span class="fc" id="L267">        return xmlExport.export(quizRepository.findAll());</span>
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void importQuizzesFromXml(String quizzesXml) {
+<span class="fc" id="L275">        QuizzesXmlImport xmlImport = new QuizzesXmlImport();</span>
+
+<span class="fc" id="L277">        xmlImport.importQuizzes(quizzesXml, this, questionRepository, quizQuestionRepository, courseRepository);</span>
+<span class="fc" id="L278">    }</span>
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public String exportQuizzesToLatex(int quizId) {
+<span class="pc" id="L285">        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, quizId));</span>
+
+<span class="fc" id="L287">        LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();</span>
+
+<span class="fc" id="L289">        return latexExport.export(quiz);</span>
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public ByteArrayOutputStream exportQuiz(int quizId) {
+<span class="nc" id="L294">        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, quizId));</span>
+
+<span class="nc" id="L296">        List&lt;QuestionAnswerItem&gt; questionAnswerItems = questionAnswerItemRepository.findQuestionAnswerItemsByQuizId(quizId);</span>
+
+<span class="nc" id="L298">        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();</span>
+<span class="nc" id="L299">             ZipOutputStream zos = new ZipOutputStream(baos)) {</span>
+
+<span class="nc" id="L301">            List&lt;Quiz&gt; quizzes = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L302">            quizzes.add(quiz);</span>
+
+<span class="nc" id="L304">            CSVQuizExportVisitor csvExport = new CSVQuizExportVisitor();</span>
+<span class="nc" id="L305">            zos.putNextEntry(new ZipEntry(quizId + &quot;.csv&quot;));</span>
+<span class="nc" id="L306">            InputStream in = IOUtils.toInputStream(csvExport.export(quiz, questionAnswerItems), StandardCharsets.UTF_8);</span>
+<span class="nc" id="L307">            copyToZipStream(zos, in);</span>
+<span class="nc" id="L308">            zos.closeEntry();</span>
+
+<span class="nc" id="L310">            LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();</span>
+<span class="nc" id="L311">            zos.putNextEntry(new ZipEntry(quizId + &quot;.tex&quot;));</span>
+<span class="nc" id="L312">            in = IOUtils.toInputStream(latexExport.export(quiz), StandardCharsets.UTF_8);</span>
+<span class="nc" id="L313">            copyToZipStream(zos, in);</span>
+<span class="nc" id="L314">            zos.closeEntry();</span>
+
+<span class="nc" id="L316">            XMLQuestionExportVisitor questionsXmlExport = new XMLQuestionExportVisitor();</span>
+<span class="nc" id="L317">            in = IOUtils.toInputStream(questionsXmlExport.export(</span>
+<span class="nc" id="L318">                    quizzes.get(0).getQuizQuestions().stream()</span>
+<span class="nc" id="L319">                            .map(QuizQuestion::getQuestion)</span>
+<span class="nc" id="L320">                            .collect(Collectors.toList())),</span>
+                    StandardCharsets.UTF_8);
+<span class="nc" id="L322">            zos.putNextEntry(new ZipEntry(&quot;questions-&quot; + quizId + &quot;.xml&quot;));</span>
+<span class="nc" id="L323">            copyToZipStream(zos, in);</span>
+<span class="nc" id="L324">            zos.closeEntry();</span>
+
+<span class="nc" id="L326">            QuizzesXmlExport quizzesXmlExport = new QuizzesXmlExport();</span>
+<span class="nc" id="L327">            in = IOUtils.toInputStream(quizzesXmlExport.export(quizzes), StandardCharsets.UTF_8);</span>
+<span class="nc" id="L328">            zos.putNextEntry(new ZipEntry(&quot;quiz-&quot; + quizId + &quot;.xml&quot;));</span>
+<span class="nc" id="L329">            copyToZipStream(zos, in);</span>
+<span class="nc" id="L330">            zos.closeEntry();</span>
+
+<span class="nc" id="L332">            AnswersXmlExportVisitor answersXmlExport = new AnswersXmlExportVisitor();</span>
+<span class="nc" id="L333">            in = IOUtils.toInputStream(answersXmlExport.export(</span>
+<span class="nc" id="L334">                    quizzes.get(0).getQuizAnswers().stream()</span>
+<span class="nc" id="L335">                            .sorted(Comparator.comparing(quizAnswer -&gt; quizAnswer.getUser().getId()))</span>
+<span class="nc" id="L336">                            .collect(Collectors.toList())),</span>
+                    StandardCharsets.UTF_8);
+<span class="nc" id="L338">            zos.putNextEntry(new ZipEntry(&quot;answers-&quot; + quizId + &quot;.xml&quot;));</span>
+<span class="nc" id="L339">            copyToZipStream(zos, in);</span>
+<span class="nc" id="L340">            zos.closeEntry();</span>
+
+<span class="nc" id="L342">            baos.flush();</span>
+
+<span class="nc" id="L344">            return baos;</span>
+<span class="nc" id="L345">        } catch (IOException ex) {</span>
+<span class="nc" id="L346">            throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);</span>
+        }
+    }
+
+    private void copyToZipStream(ZipOutputStream zos, InputStream in) throws IOException {
+<span class="nc" id="L351">        byte[] buffer = new byte[1024];</span>
+        int len;
+<span class="nc bnc" id="L353" title="All 2 branches missed.">        while ((len = in.read(buffer)) &gt; 0) {</span>
+<span class="nc" id="L354">            zos.write(buffer, 0, len);</span>
+        }
+<span class="nc" id="L356">        in.close();</span>
+<span class="nc" id="L357">    }</span>
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void createQuizXmlDirectory(int quizId, String path) throws IOException {
+<span class="nc" id="L364">        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, quizId));</span>
+<span class="nc" id="L365">        String directoryPath = path + &quot;/&quot; + quiz.getId();</span>
+<span class="nc" id="L366">        File file = new File(directoryPath);</span>
+<span class="nc" id="L367">        file.mkdir();</span>
+
+<span class="nc" id="L369">        List&lt;QuestionAnswerItem&gt; questionAnswerItems = questionAnswerItemRepository.findQuestionAnswerItemsByQuizId(quizId);</span>
+<span class="nc" id="L370">        CSVQuizExportVisitor csvExport = new CSVQuizExportVisitor();</span>
+<span class="nc" id="L371">        File myObj = new File(directoryPath + &quot;/&quot; + quiz.getId() + &quot;.csv&quot;);</span>
+<span class="nc bnc" id="L372" title="All 2 branches missed.">        if (myObj.createNewFile()) {</span>
+<span class="nc" id="L373">            FileWriter myWriter = new FileWriter(myObj);</span>
+<span class="nc" id="L374">            myWriter.write(csvExport.export(quiz, questionAnswerItems));</span>
+<span class="nc" id="L375">            myWriter.close();</span>
+        }
+
+<span class="nc" id="L378">        LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();</span>
+<span class="nc" id="L379">        myObj = new File(directoryPath + &quot;/&quot; + quiz.getId() + &quot;.tex&quot;);</span>
+<span class="nc bnc" id="L380" title="All 2 branches missed.">        if (myObj.createNewFile()) {</span>
+<span class="nc" id="L381">            FileWriter myWriter = new FileWriter(myObj);</span>
+<span class="nc" id="L382">            myWriter.write(latexExport.export(quiz));</span>
+<span class="nc" id="L383">            myWriter.close();</span>
+        }
+
+<span class="nc" id="L386">        QuizzesXmlExport xmlExport = new QuizzesXmlExport();</span>
+<span class="nc" id="L387">        List&lt;Quiz&gt; quizzes = new ArrayList&lt;&gt;();</span>
+<span class="nc" id="L388">        quizzes.add(quiz);</span>
+<span class="nc" id="L389">        myObj = new File(directoryPath + &quot;/&quot; + &quot;quizzes-&quot; + quiz.getId() + &quot;.xml&quot;);</span>
+<span class="nc bnc" id="L390" title="All 2 branches missed.">        if (myObj.createNewFile()) {</span>
+<span class="nc" id="L391">            FileWriter myWriter = new FileWriter(myObj);</span>
+<span class="nc" id="L392">            myWriter.write(xmlExport.export(quizzes));</span>
+<span class="nc" id="L393">            myWriter.close();</span>
+        }
+
+<span class="nc" id="L396">        XMLQuestionExportVisitor questionsXmlExport = new XMLQuestionExportVisitor();</span>
+<span class="nc" id="L397">        myObj = new File(directoryPath + &quot;/&quot; + &quot;questions-&quot; + quiz.getId() + &quot;.xml&quot;);</span>
+<span class="nc bnc" id="L398" title="All 2 branches missed.">        if (myObj.createNewFile()) {</span>
+<span class="nc" id="L399">            FileWriter myWriter = new FileWriter(myObj);</span>
+<span class="nc" id="L400">            myWriter.write(questionsXmlExport.export(quiz.getQuizQuestions().stream()</span>
+<span class="nc" id="L401">                            .map(QuizQuestion::getQuestion)</span>
+<span class="nc" id="L402">                            .collect(Collectors.toList())));</span>
+<span class="nc" id="L403">            myWriter.close();</span>
+        }
+
+<span class="nc" id="L406">        AnswersXmlExportVisitor answersXmlExport = new AnswersXmlExportVisitor();</span>
+<span class="nc" id="L407">        myObj = new File(directoryPath + &quot;/&quot; + &quot;answers-&quot; + quiz.getId() + &quot;.xml&quot;);</span>
+<span class="nc bnc" id="L408" title="All 2 branches missed.">        if (myObj.createNewFile()) {</span>
+<span class="nc" id="L409">            FileWriter myWriter = new FileWriter(myObj);</span>
+<span class="nc" id="L410">            myWriter.write(answersXmlExport.export(quiz.getQuizAnswers().stream()</span>
+<span class="nc" id="L411">                    .sorted(Comparator.comparing(quizAnswer -&gt; quizAnswer.getUser().getId()))</span>
+<span class="nc" id="L412">                    .collect(Collectors.toList())));</span>
+<span class="nc" id="L413">            myWriter.close();</span>
+        }
+<span class="nc" id="L415">    }</span>
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void resetDemoQuizzes() {
+<span class="nc" id="L422">        quizRepository.findQuizzesOfExecution(courseExecutionService.getDemoCourse().getCourseExecutionId())</span>
+<span class="nc" id="L423">                .stream()</span>
+<span class="nc" id="L424">                .sorted(Comparator.comparing(Quiz::getId))</span>
+<span class="nc" id="L425">                .skip(2)</span>
+<span class="nc" id="L426">                .forEach(quiz -&gt; {</span>
+<span class="nc" id="L427">                    quiz.removeExternal();</span>
+<span class="nc" id="L428">                    this.quizRepository.delete(quiz);</span>
+<span class="nc" id="L429">                });</span>
+
+        // remove questions that weren't in any quiz and are not submitted
+<span class="nc" id="L432">        for (Question question : questionRepository.findQuestions(courseExecutionService.getDemoCourse().getCourseId())</span>
+<span class="nc" id="L433">                .stream()</span>
+<span class="nc bnc" id="L434" title="All 4 branches missed.">                .filter(question -&gt; question.getQuizQuestions().isEmpty() &amp;&amp; questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId()) == null)</span>
+<span class="nc bnc" id="L435" title="All 2 branches missed.">                .collect(Collectors.toList())) {</span>
+<span class="nc" id="L436">            questionService.removeQuestion(question.getId());</span>
+<span class="nc" id="L437">        }</span>
+<span class="nc" id="L438">    }</span>
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public QuizDto populateWithQuizAnswers(Integer quizId) {
+<span class="nc" id="L445">        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, quizId));</span>
+
+<span class="nc bnc" id="L447" title="All 2 branches missed.">        for (User student : quiz.getCourseExecution().getStudents()) {</span>
+<span class="nc bnc" id="L448" title="All 2 branches missed.">            if (student.getQuizAnswer(quiz) == null) {</span>
+<span class="nc" id="L449">                answerService.createQuizAnswer(student.getId(), quizId);</span>
+            }
+<span class="nc" id="L451">        }</span>
+
+<span class="nc" id="L453">        return quiz.getDto(false);</span>
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public QuizDto removeNonFilledQuizAnswers(Integer quizId) {
+<span class="nc" id="L461">        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, quizId));</span>
+
+<span class="nc bnc" id="L463" title="All 2 branches missed.">        for (QuizAnswer quizAnswer : quizAnswerRepository.findNotAnsweredQuizAnswers(quizId)) {</span>
+<span class="nc" id="L464">            answerService.deleteQuizAnswer(quizAnswer);</span>
+<span class="nc" id="L465">        }</span>
+
+<span class="nc" id="L467">        return quiz.getDto(false);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StatementQuestionDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto</a> &gt; <span class="el_source">StatementQuestionDto.java</span></div><h1>StatementQuestionDto.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
+
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.ImageDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+
+import java.io.Serializable;
+
+
+public class StatementQuestionDto implements Serializable {
+    private String content;
+    private ImageDto image;
+    private Integer sequence;
+    private Integer questionId;
+
+    private StatementQuestionDetailsDto questionDetails;
+
+<span class="fc" id="L18">    public StatementQuestionDto(QuestionAnswer questionAnswer, boolean ghost) {</span>
+<span class="fc" id="L19">        Question question = questionAnswer.getQuizQuestion().getQuestion();</span>
+<span class="fc bfc" id="L20" title="All 2 branches covered.">        if (!ghost) {</span>
+<span class="fc" id="L21">            this.content = question.getContent();</span>
+<span class="pc bpc" id="L22" title="1 of 2 branches missed.">            if (question.getImage() != null) {</span>
+<span class="nc" id="L23">                this.image = question.getImage().getDto();</span>
+            }
+
+<span class="fc" id="L26">            this.questionDetails = question.getStatementQuestionDetailsDto();</span>
+        }
+
+<span class="fc" id="L29">        this.sequence = questionAnswer.getSequence();</span>
+<span class="fc" id="L30">        this.questionId = question.getId();</span>
+<span class="fc" id="L31">    }</span>
+
+<span class="nc" id="L33">    public StatementQuestionDto(Question question) {</span>
+<span class="nc" id="L34">        this.content = question.getContent();</span>
+<span class="nc bnc" id="L35" title="All 2 branches missed.">        if (question.getImage() != null)</span>
+<span class="nc" id="L36">            this.image = question.getImage().getDto();</span>
+
+<span class="nc" id="L38">        this.questionDetails = question.getStatementQuestionDetailsDto();</span>
+<span class="nc" id="L39">    }</span>
+
+    public String getContent() {
+<span class="fc" id="L42">        return content;</span>
+    }
+
+    public void setContent(String content) {
+<span class="nc" id="L46">        this.content = content;</span>
+<span class="nc" id="L47">    }</span>
+
+    public ImageDto getImage() {
+<span class="nc" id="L50">        return image;</span>
+    }
+
+    public void setImage(ImageDto image) {
+<span class="nc" id="L54">        this.image = image;</span>
+<span class="nc" id="L55">    }</span>
+
+    public Integer getSequence() {
+<span class="fc" id="L58">        return sequence;</span>
+    }
+
+    public void setSequence(Integer sequence) {
+<span class="nc" id="L62">        this.sequence = sequence;</span>
+<span class="nc" id="L63">    }</span>
+
+    public StatementQuestionDetailsDto getQuestionDetails() {
+<span class="nc" id="L66">        return questionDetails;</span>
+    }
+
+    public void setQuestionDetails(StatementQuestionDetailsDto questionDetails) {
+<span class="nc" id="L70">        this.questionDetails = questionDetails;</span>
+<span class="nc" id="L71">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L75">        return &quot;StatementQuestionDto{&quot; +</span>
+                &quot;content='&quot; + content + '\'' +
+                &quot;, image=&quot; + image +
+                &quot;, sequence=&quot; + sequence +
+                &quot;, questionDetails=&quot; + questionDetails +
+                '}';
+    }
+
+    public Integer getQuestionId() {
+<span class="nc" id="L84">        return questionId;</span>
+    }
+
+    public void setQuestionId(Integer questionId) {
+<span class="nc" id="L88">        this.questionId = questionId;</span>
+<span class="nc" id="L89">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

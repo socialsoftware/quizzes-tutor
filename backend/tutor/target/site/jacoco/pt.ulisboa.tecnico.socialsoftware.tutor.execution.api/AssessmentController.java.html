@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AssessmentController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.execution.api</a> &gt; <span class="el_source">AssessmentController.java</span></div><h1>AssessmentController.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.execution.api;
+
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto;
+
+import javax.validation.Valid;
+import java.util.List;
+
+@RestController
+public class AssessmentController {
+    private AssessmentService assessmentService;
+    
+<span class="fc" id="L17">    AssessmentController(AssessmentService assessmentService) {</span>
+<span class="fc" id="L18">        this.assessmentService = assessmentService;</span>
+<span class="fc" id="L19">    }</span>
+
+    @GetMapping(&quot;/executions/{executionId}/assessments&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public List&lt;AssessmentDto&gt; getExecutionCourseAssessments(@PathVariable int executionId) {
+<span class="nc" id="L24">        return this.assessmentService.findAssessments(executionId);</span>
+    }
+
+    @GetMapping(&quot;/executions/{executionId}/assessments/available&quot;)
+    @PreAuthorize(&quot;(hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')) &quot; +
+            &quot;or (hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))&quot;)
+    public List&lt;AssessmentDto&gt; getAvailableAssessments(@PathVariable int executionId) {
+<span class="nc" id="L31">        return this.assessmentService.findAvailableAssessments(executionId);</span>
+    }
+
+    @PostMapping(&quot;/executions/{executionId}/assessments&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public AssessmentDto createAssessment(@PathVariable int executionId, @Valid @RequestBody AssessmentDto assessment) {
+<span class="nc" id="L37">        return this.assessmentService.createAssessment(executionId, assessment);</span>
+    }
+
+    @PutMapping(&quot;/assessments/{assessmentId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#assessmentId, 'ASSESSMENT.ACCESS')&quot;)
+    public AssessmentDto updateAssessment(@PathVariable Integer assessmentId, @Valid @RequestBody AssessmentDto assessment) {
+<span class="nc" id="L43">        return this.assessmentService.updateAssessment(assessmentId, assessment);</span>
+    }
+
+    @DeleteMapping(&quot;/assessments/{assessmentId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#assessmentId, 'ASSESSMENT.ACCESS')&quot;)
+    public void removeAssessment(@PathVariable Integer assessmentId) {
+<span class="nc" id="L49">        assessmentService.removeAssessment(assessmentId);</span>
+<span class="nc" id="L50">    }</span>
+
+    @PostMapping(&quot;/assessments/{assessmentId}/set-status&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#assessmentId, 'ASSESSMENT.ACCESS')&quot;)
+    public void assessmentSetStatus(@PathVariable Integer assessmentId, @Valid @RequestBody String status) {
+<span class="nc" id="L55">        assessmentService.assessmentSetStatus(assessmentId, Assessment.Status.valueOf(status));</span>
+<span class="nc" id="L56">    }</span>
+
+    @GetMapping(&quot;/assessments/{assessmentId}/questions&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#assessmentId, 'ASSESSMENT.ACCESS')&quot;)
+    public List&lt;QuestionDto&gt; getAssessmentQuestions(@PathVariable Integer assessmentId) {
+<span class="nc" id="L61">        return this.assessmentService.getAssessmentQuestions(assessmentId);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

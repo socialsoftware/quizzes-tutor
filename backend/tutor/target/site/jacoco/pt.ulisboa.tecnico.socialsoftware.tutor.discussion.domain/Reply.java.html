@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Reply.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain</a> &gt; <span class="el_source">Reply.java</span></div><h1>Reply.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.REPLY_MISSING_MESSAGE;
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.REPLY_UNAUTHORIZED_USER;
+
+@Entity
+@Table(name = &quot;replies&quot;)
+public class Reply implements DomainEntity {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private int id;
+
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    private Discussion discussion;
+
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    private User user;
+
+    @NotNull
+    @Column(name=&quot;message&quot;, columnDefinition=&quot;text&quot;)
+    private String message;
+
+    @Column(name=&quot;date&quot;)
+    private LocalDateTime date;
+
+    @Column(columnDefinition = &quot;boolean default false&quot;)
+    private boolean isPublic;
+
+<span class="fc" id="L40">    public Reply(){}</span>
+
+<span class="fc" id="L42">    public Reply(User user, ReplyDto replyDto, Discussion discussion){</span>
+<span class="fc" id="L43">        checkReplyAuthorization(user, discussion);</span>
+<span class="fc" id="L44">        setUser(user);</span>
+<span class="fc" id="L45">        setDate(DateHandler.toLocalDateTime(replyDto.getDate()));</span>
+<span class="fc" id="L46">        setMessage(replyDto.getMessage());</span>
+<span class="fc" id="L47">        setDiscussion(discussion);</span>
+<span class="fc" id="L48">        setPublic(replyDto.isPublic());</span>
+<span class="fc" id="L49">    }</span>
+
+    public int getId() {
+<span class="fc" id="L52">        return id;</span>
+    }
+
+    public void setId(int id) {
+<span class="nc" id="L56">        this.id = id;</span>
+<span class="nc" id="L57">    }</span>
+
+    public Discussion getDiscussion() {
+<span class="fc" id="L60">        return discussion;</span>
+    }
+
+    public void setDiscussion(Discussion discussion) {
+<span class="fc" id="L64">        this.discussion = discussion;</span>
+<span class="fc" id="L65">        discussion.addReply(this);</span>
+<span class="fc" id="L66">    }</span>
+
+    public String getMessage() {
+<span class="fc" id="L69">        return message;</span>
+    }
+
+    public void setMessage(String message) {
+<span class="fc bfc" id="L73" title="All 4 branches covered.">        if (message == null || message.trim().length() == 0) {</span>
+<span class="fc" id="L74">            throw new TutorException(REPLY_MISSING_MESSAGE);</span>
+        }
+
+<span class="fc" id="L77">        this.message = message;</span>
+<span class="fc" id="L78">    }</span>
+
+    public LocalDateTime getDate() {
+<span class="fc" id="L81">        return date;</span>
+    }
+
+    public void setDate(LocalDateTime date) {
+<span class="fc" id="L85">        this.date = date;</span>
+<span class="fc" id="L86">    }</span>
+
+    public User getUser() {
+<span class="fc" id="L89">        return user;</span>
+    }
+
+    public void setUser(User user) {
+<span class="fc" id="L93">        this.user = user;</span>
+<span class="fc" id="L94">        user.addReply(this);</span>
+<span class="fc" id="L95">    }</span>
+
+    public void remove() {
+<span class="nc" id="L98">        user.removeReply(this);</span>
+<span class="nc" id="L99">        user = null;</span>
+<span class="nc" id="L100">    }</span>
+
+    @Override
+    public void accept(Visitor visitor) {
+<span class="nc" id="L104">        visitor.visitReply(this);</span>
+<span class="nc" id="L105">    }</span>
+
+    public boolean isPublic() {
+<span class="fc" id="L108">        return isPublic;</span>
+    }
+
+    public void setPublic(boolean aPublic) {
+<span class="fc" id="L112">        isPublic = aPublic;</span>
+<span class="fc" id="L113">    }</span>
+
+    public void changeAvailability() {
+<span class="fc bfc" id="L116" title="All 2 branches covered.">        this.isPublic = !this.isPublic;</span>
+<span class="fc" id="L117">    }</span>
+
+    private void checkReplyAuthorization(User user, Discussion discussion) {
+<span class="fc bfc" id="L120" title="All 4 branches covered.">        if (user.getRole() != User.Role.TEACHER &amp;&amp; !user.getId().equals(discussion.getUser().getId())) {</span>
+<span class="fc" id="L121">            throw new TutorException(REPLY_UNAUTHORIZED_USER);</span>
+        }
+<span class="fc" id="L123">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L127">        return &quot;Reply{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, discussion=&quot; + discussion +
+                &quot;, user=&quot; + user +
+                &quot;, message='&quot; + message + '\'' +
+                &quot;, date=&quot; + date +
+                &quot;, isPublic=&quot; + isPublic +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

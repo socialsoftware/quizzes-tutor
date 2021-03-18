@@ -1,0 +1,274 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CourseExecutionService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.execution</a> &gt; <span class="el_source">CourseExecutionService.java</span></div><h1>CourseExecutionService.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.execution;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.user.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.user.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.DemoUtils;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+@Service
+<span class="fc" id="L38">public class CourseExecutionService {</span>
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AuthUserRepository authUserRepository;
+
+    @Autowired
+    private QuestionAnswerItemRepository questionAnswerItemRepository;
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseExecutionDto getCourseExecutionById(int courseExecutionId) {
+<span class="nc" id="L59">        return courseExecutionRepository.findById(courseExecutionId)</span>
+<span class="nc" id="L60">                .map(CourseExecution::getDto)</span>
+<span class="nc" id="L61">                .orElseThrow(() -&gt; new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));</span>
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List&lt;CourseExecutionDto&gt; getCourseExecutions(User.Role role) {
+<span class="fc" id="L69">        return courseExecutionRepository.findAll().stream()</span>
+<span class="pc bpc" id="L70" title="1 of 2 branches missed.">                .filter(courseExecution -&gt; role.equals(User.Role.ADMIN) ||</span>
+<span class="pc bnc" id="L71" title="All 4 branches missed.">                        (role.equals(User.Role.DEMO_ADMIN) &amp;&amp; courseExecution.getCourse().getName().equals(DemoUtils.COURSE_NAME)))</span>
+<span class="fc" id="L72">                .map(CourseExecution::getDto)</span>
+<span class="fc" id="L73">                .sorted(Comparator</span>
+<span class="fc" id="L74">                        .comparing(CourseExecutionDto::getName)</span>
+<span class="fc" id="L75">                        .thenComparing(CourseExecutionDto::getAcademicTerm))</span>
+<span class="fc" id="L76">                .collect(Collectors.toList());</span>
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseExecutionDto createTecnicoCourseExecution(CourseExecutionDto courseExecutionDto) {
+<span class="fc" id="L84">        courseExecutionDto.setCourseExecutionType(CourseType.TECNICO);</span>
+<span class="fc" id="L85">        courseExecutionDto.setCourseType(CourseType.TECNICO);</span>
+
+<span class="fc" id="L87">        Course course = getCourse(courseExecutionDto.getName(), CourseType.TECNICO);</span>
+
+<span class="fc" id="L89">        CourseExecution courseExecution = course.getCourseExecution(courseExecutionDto.getAcronym(), courseExecutionDto.getAcademicTerm(), courseExecutionDto.getCourseExecutionType())</span>
+<span class="fc" id="L90">                .orElseGet(() -&gt; createCourseExecution(course, courseExecutionDto));</span>
+<span class="fc" id="L91">        courseExecution.setStatus(CourseExecutionStatus.ACTIVE);</span>
+<span class="fc" id="L92">        return courseExecution.getDto();</span>
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void addUserToTecnicoCourseExecution(String username, int courseExecutionId) {
+<span class="nc" id="L97">        CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);</span>
+<span class="nc" id="L98">        User user = this.authUserRepository.findAuthUserByUsername(username).map(AuthUser::getUser).orElse(null);</span>
+
+<span class="nc bnc" id="L100" title="All 4 branches missed.">        if (user != null &amp;&amp; courseExecution != null) {</span>
+<span class="nc" id="L101">            courseExecution.addUser(user);</span>
+<span class="nc" id="L102">            user.addCourse(courseExecution);</span>
+        }
+<span class="nc" id="L104">    }</span>
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseExecutionDto createExternalCourseExecution(CourseExecutionDto courseExecutionDto) {
+<span class="fc" id="L111">        courseExecutionDto.setCourseExecutionType(CourseType.EXTERNAL);</span>
+
+<span class="fc" id="L113">        Course course = getCourse(courseExecutionDto.getName(), courseExecutionDto.getCourseType());</span>
+
+<span class="fc" id="L115">        CourseExecution courseExecution = createCourseExecution(course, courseExecutionDto);</span>
+
+<span class="fc" id="L117">        courseExecution.setStatus(CourseExecutionStatus.ACTIVE);</span>
+<span class="fc" id="L118">        return courseExecution.getDto();</span>
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeCourseExecution(int courseExecutionId) {
+<span class="fc" id="L126">        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)</span>
+<span class="pc" id="L127">                .orElseThrow(() -&gt; new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));</span>
+
+<span class="fc" id="L129">        courseExecution.remove();</span>
+
+<span class="fc" id="L131">        courseExecutionRepository.delete(courseExecution);</span>
+<span class="fc" id="L132">    }</span>
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void anonymizeCourseExecutionUsers(int executionId) {
+<span class="pc" id="L139">        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -&gt; new TutorException(COURSE_EXECUTION_NOT_FOUND));</span>
+<span class="fc bfc" id="L140" title="All 2 branches covered.">        for (User user : courseExecution.getUsers()) {</span>
+<span class="pc bpc" id="L141" title="1 of 2 branches missed.">            if (user.getAuthUser() != null) {</span>
+<span class="fc" id="L142">                String oldUsername = user.getUsername();</span>
+<span class="fc" id="L143">                AuthUser authUser = user.getAuthUser();</span>
+<span class="fc" id="L144">                authUser.remove();</span>
+<span class="fc" id="L145">                authUserRepository.delete(authUser);</span>
+<span class="fc" id="L146">                String newUsername = user.getUsername();</span>
+<span class="fc" id="L147">                questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);</span>
+<span class="fc" id="L148">                String role = user.getRole().toString();</span>
+<span class="fc" id="L149">                String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();</span>
+<span class="fc" id="L150">                user.setName(String.format(&quot;%s %s&quot;, roleCapitalized, user.getId()));</span>
+            }
+<span class="fc" id="L152">        }</span>
+<span class="fc" id="L153">    }</span>
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List&lt;StudentDto&gt; getStudents(int executionId) {
+<span class="nc" id="L160">        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElse(null);</span>
+<span class="nc bnc" id="L161" title="All 2 branches missed.">        if (courseExecution == null) {</span>
+<span class="nc" id="L162">            return new ArrayList&lt;&gt;();</span>
+        }
+<span class="nc" id="L164">        return courseExecution.getUsers().stream()</span>
+<span class="nc" id="L165">                .filter(user -&gt; user.getRole().equals(User.Role.STUDENT))</span>
+<span class="nc" id="L166">                .sorted(Comparator.comparing(User::getName))</span>
+<span class="nc" id="L167">                .map(User::getStudentDto)</span>
+<span class="nc" id="L168">                .collect(Collectors.toList());</span>
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List&lt;UserDto&gt; getTeachers(Integer courseExecutionId) {
+<span class="nc" id="L173">        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElse(null);</span>
+<span class="nc bnc" id="L174" title="All 2 branches missed.">        if (courseExecution == null) {</span>
+<span class="nc" id="L175">            return new ArrayList&lt;&gt;();</span>
+        }
+<span class="nc" id="L177">        return courseExecution.getUsers().stream()</span>
+<span class="nc" id="L178">                .filter(user -&gt; user.getRole().equals(User.Role.TEACHER))</span>
+<span class="nc" id="L179">                .map(User::getUserDto)</span>
+<span class="nc" id="L180">                .collect(Collectors.toList());</span>
+    }
+
+    private Course getCourse(String name, CourseType type) {
+<span class="fc bfc" id="L184" title="All 2 branches covered.">        if (type == null)</span>
+<span class="fc" id="L185">            throw new TutorException(INVALID_TYPE_FOR_COURSE);</span>
+
+<span class="fc" id="L187">        return courseRepository.findByNameType(name, type.toString())</span>
+<span class="fc" id="L188">                .orElseGet(() -&gt; courseRepository.save(new Course(name, type)));</span>
+    }
+
+    private CourseExecution createCourseExecution(Course existingCourse, CourseExecutionDto courseExecutionDto) {
+<span class="fc" id="L192">        CourseExecution courseExecution = new CourseExecution(existingCourse, courseExecutionDto.getAcronym(), courseExecutionDto.getAcademicTerm(), courseExecutionDto.getCourseExecutionType(), DateHandler.toLocalDateTime(courseExecutionDto.getEndDate()));</span>
+<span class="fc" id="L193">        courseExecutionRepository.save(courseExecution);</span>
+<span class="fc" id="L194">        return courseExecution;</span>
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseExecutionDto getDemoCourse() {
+<span class="nc" id="L202">        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElse(null);</span>
+
+<span class="nc bnc" id="L204" title="All 2 branches missed.">        if (courseExecution == null) {</span>
+<span class="nc" id="L205">            return createTecnicoCourseExecution(new CourseExecutionDto(DemoUtils.COURSE_NAME, DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM));</span>
+        }
+<span class="nc" id="L207">        return courseExecution.getDto();</span>
+    }
+
+    public CourseExecution getDemoCourseExecution() {
+<span class="fc" id="L211">        return this.courseExecutionRepository.findByFields(DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElseGet(() -&gt; {</span>
+<span class="fc" id="L212">            Course course = getCourse(DemoUtils.COURSE_NAME, CourseType.TECNICO);</span>
+<span class="fc" id="L213">            CourseExecution courseExecution = new CourseExecution(course, DemoUtils.COURSE_ACRONYM, DemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO, DateHandler.now().plusDays(1));</span>
+<span class="fc" id="L214">            return courseExecutionRepository.save(courseExecution);</span>
+        });
+    }
+
+    private CourseExecution getExternalCourseExecution(Integer courseExecutionId) {
+<span class="fc" id="L219">        CourseExecution execution = courseExecutionRepository</span>
+<span class="fc" id="L220">                .findById(courseExecutionId)</span>
+<span class="fc" id="L221">                .orElseThrow(() -&gt; new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));</span>
+<span class="fc" id="L222">        checkExternalExecution(execution);</span>
+<span class="fc" id="L223">        return execution;</span>
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public CourseExecutionDto deleteExternalInactiveUsers(Integer courseExecutionId, List&lt;Integer&gt; usersId){
+<span class="fc" id="L228">        CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);</span>
+<span class="fc" id="L229">        deleteUsersOfUserIds(usersId, courseExecution);</span>
+<span class="fc" id="L230">        return courseExecution.getDto();</span>
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List&lt;TopicDto&gt; findAvailableTopicsByCourseExecution(int courseExecutionId) {
+<span class="nc" id="L238">        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -&gt; new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));</span>
+
+<span class="nc" id="L240">        return courseExecution.findAvailableTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(Topic::getDto).collect(Collectors.toList());</span>
+    }
+
+    private void deleteUsersOfUserIds(List&lt;Integer&gt; usersId, CourseExecution courseExecution) {
+<span class="fc" id="L244">        usersId = getExecutionFilteredIds(usersId, courseExecution);</span>
+<span class="fc" id="L245">        deleteUsers(usersId);</span>
+<span class="fc" id="L246">    }</span>
+
+    private void deleteUsers(List&lt;Integer&gt; usersId) {
+<span class="fc bfc" id="L249" title="All 2 branches covered.">        for (Integer id : usersId) {</span>
+<span class="fc" id="L250">            User user = userRepository</span>
+<span class="fc" id="L251">                    .findById(id)</span>
+<span class="pc" id="L252">                    .orElseThrow(() -&gt; new TutorException((USER_NOT_FOUND)));</span>
+<span class="fc" id="L253">            user.remove();</span>
+<span class="fc" id="L254">            userRepository.delete(user);</span>
+<span class="fc" id="L255">        }</span>
+<span class="fc" id="L256">    }</span>
+
+    private List&lt;Integer&gt; getExecutionFilteredIds(List&lt;Integer&gt; usersId, CourseExecution courseExecution) {
+<span class="fc" id="L259">        List&lt;Integer&gt; executionUserIdList = courseExecution.getUsers().stream()</span>
+<span class="fc" id="L260">                .map(User::getId)</span>
+<span class="fc" id="L261">                .collect(Collectors.toList());</span>
+<span class="fc" id="L262">        return usersId.stream()</span>
+<span class="fc" id="L263">                .filter(executionUserIdList::contains)</span>
+<span class="fc" id="L264">                .collect(Collectors.toList());</span>
+    }
+
+    private void checkExternalExecution(CourseExecution courseExecution) {
+<span class="fc bfc" id="L268" title="All 2 branches covered.">        if (!courseExecution.getType().equals(CourseType.EXTERNAL)) {</span>
+<span class="fc" id="L269">            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL);</span>
+        }
+<span class="fc" id="L271">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

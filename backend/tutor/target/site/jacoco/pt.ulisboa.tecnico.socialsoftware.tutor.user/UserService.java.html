@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UserService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.user</a> &gt; <span class="el_source">UserService.java</span></div><h1>UserService.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.user;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Propagation;
+import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.user.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.Notification;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.NotificationResponse;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.nio.charset.StandardCharsets;
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+@Service
+<span class="fc" id="L46">public class UserService {</span>
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private AuthUserRepository authUserRepository;
+
+    @Autowired
+    private CourseRepository courseRepository;
+
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private CourseExecutionService courseExecutionService;
+
+    @Autowired
+    public AuthUserService authUserService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    public static final String MAIL_FORMAT = &quot;^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$&quot;;
+    public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = &quot;Password Confirmation&quot;;
+    public static final String PASSWORD_CONFIRMATION_MAIL_BODY = &quot;Link to password confirmation page&quot;;
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public User createUser(String name, User.Role role) {
+<span class="fc" id="L74">        User user = new User(name, role, false);</span>
+<span class="fc" id="L75">        userRepository.save(user);</span>
+<span class="fc" id="L76">        return user;</span>
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public AuthUser createUserWithAuth(String name, String username, String email, User.Role role, AuthUser.Type type) {
+<span class="pc bpc" id="L81" title="1 of 2 branches missed.">        if (authUserRepository.findAuthUserByUsername(username).isPresent()) {</span>
+<span class="nc" id="L82">            throw new TutorException(DUPLICATE_USER, username);</span>
+        }
+
+<span class="fc" id="L85">        User user = new User(name, username, email, role, false, type);</span>
+<span class="fc" id="L86">        userRepository.save(user);</span>
+<span class="fc" id="L87">        return user.getAuthUser();</span>
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public String getEnrolledCoursesAcronyms(int userId) {
+<span class="nc" id="L92">        User user = userRepository.findById(userId).orElseThrow(() -&gt; new TutorException(USER_NOT_FOUND, userId));</span>
+<span class="nc" id="L93">        AuthUser authUser = user.getAuthUser();</span>
+<span class="nc" id="L94">        return authUser.getEnrolledCoursesAcronyms();</span>
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public boolean userHasAnExecutionOfCourse(int userId, int courseId) {
+<span class="nc" id="L99">        return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -&gt; new TutorException(COURSE_NOT_FOUND, courseId))</span>
+<span class="nc" id="L100">                .getCourseExecutions()</span>
+<span class="nc" id="L101">                .stream()</span>
+<span class="nc bnc" id="L102" title="All 2 branches missed.">                .anyMatch(courseExecution -&gt;  userRepository.countUserCourseExecutionsPairById(userId, courseExecution.getId()) == 1);</span>
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void addCourseExecution(int userId, int executionId) {
+<span class="pc" id="L107">        User user = userRepository.findById(userId).orElseThrow(() -&gt; new TutorException(USER_NOT_FOUND, userId));</span>
+
+<span class="pc" id="L109">        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -&gt; new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));</span>
+
+<span class="fc" id="L111">        user.addCourse(courseExecution);</span>
+<span class="fc" id="L112">    }</span>
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public AuthUser createDemoStudent() {
+<span class="fc" id="L116">        String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();</span>
+<span class="fc" id="L117">        AuthUser authUser = createUserWithAuth(&quot;Demo-Student-&quot; + birthDate, &quot;Demo-Student-&quot; + birthDate, &quot;demo_student@mail.com&quot;, User.Role.STUDENT, AuthUser.Type.DEMO);</span>
+<span class="fc" id="L118">        CourseExecution courseExecution = courseExecutionService.getDemoCourseExecution();</span>
+<span class="pc bpc" id="L119" title="1 of 2 branches missed.">        if (courseExecution != null) {</span>
+<span class="fc" id="L120">            courseExecution.addUser(authUser.getUser());</span>
+<span class="fc" id="L121">            authUser.getUser().addCourse(courseExecution);</span>
+        }
+<span class="fc" id="L123">        return authUser;</span>
+    }
+
+    public String exportUsers() {
+<span class="fc" id="L127">        UsersXmlExport xmlExporter = new UsersXmlExport();</span>
+<span class="fc" id="L128">        return xmlExporter.export(userRepository.findAll());</span>
+    }
+
+    public void importUsers(String usersXML) {
+<span class="fc" id="L132">        UsersXmlImport xmlImporter = new UsersXmlImport();</span>
+<span class="fc" id="L133">        xmlImporter.importUsers(usersXML, this);</span>
+<span class="fc" id="L134">    }</span>
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void resetDemoStudents() {
+<span class="fc" id="L141">        userRepository.findAll()</span>
+<span class="fc" id="L142">                .stream()</span>
+<span class="fc" id="L143">                .filter(user -&gt; user.getAuthUser().isDemoStudent())</span>
+<span class="fc" id="L144">                .forEach(user -&gt; {</span>
+<span class="fc" id="L145">                    user.remove();</span>
+<span class="fc" id="L146">                    this.userRepository.delete(user);</span>
+<span class="fc" id="L147">                });</span>
+<span class="fc" id="L148">    }</span>
+
+    @Transactional(isolation = Isolation.READ_COMMITTED,
+            propagation = Propagation.REQUIRED)
+    public NotificationResponse&lt;CourseExecutionDto&gt; registerListOfUsersTransactional(InputStream stream, int courseExecutionId) {
+<span class="fc" id="L153">        Notification notification = new Notification();</span>
+<span class="fc" id="L154">        extractUserDtos(stream, notification).forEach(userDto -&gt; {</span>
+<span class="fc" id="L155">            registerExternalUserTransactional(courseExecutionId, userDto);</span>
+<span class="fc" id="L156">        });</span>
+
+<span class="fc" id="L158">        CourseExecutionDto courseExecutionDto = courseExecutionRepository.findById(courseExecutionId)</span>
+<span class="fc" id="L159">                .map(CourseExecution::getDto)</span>
+<span class="fc" id="L160">                .get();</span>
+
+<span class="fc" id="L162">        return new NotificationResponse&lt;&gt;(notification, courseExecutionDto);</span>
+    }
+
+    private List&lt;ExternalUserDto&gt; extractUserDtos(InputStream stream, Notification notification) {
+<span class="fc" id="L166">        List&lt;ExternalUserDto&gt; userDtos = new ArrayList&lt;&gt;();</span>
+<span class="fc" id="L167">        String line = &quot;&quot;;</span>
+<span class="fc" id="L168">        String cvsSplitBy = &quot;,&quot;;</span>
+        User.Role auxRole;
+<span class="fc" id="L170">        int lineNumber = 1;</span>
+<span class="fc" id="L171">        InputStreamReader isr = new InputStreamReader(stream, StandardCharsets.UTF_8);</span>
+<span class="fc" id="L172">        try (BufferedReader br = new BufferedReader(isr)) {</span>
+<span class="fc bfc" id="L173" title="All 2 branches covered.">            while ((line = br.readLine()) != null) {</span>
+<span class="fc" id="L174">                String[] userInfo = line.split(cvsSplitBy);</span>
+<span class="fc bfc" id="L175" title="All 2 branches covered.">                if (userInfo.length == 3) {</span>
+<span class="fc" id="L176">                    auxRole = User.Role.STUDENT;</span>
+<span class="fc bfc" id="L177" title="All 4 branches covered.">                } else if (userInfo.length == 4 &amp;&amp; (userInfo[3].equalsIgnoreCase(&quot;student&quot;)</span>
+<span class="fc bfc" id="L178" title="All 2 branches covered.">                        || userInfo[3].equalsIgnoreCase(&quot;teacher&quot;))) {</span>
+<span class="fc" id="L179">                    auxRole = User.Role.valueOf(userInfo[3].toUpperCase());</span>
+                } else {
+<span class="fc" id="L181">                    notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber),</span>
+                            new TutorException(INVALID_CSV_FILE_FORMAT));
+<span class="fc" id="L183">                    lineNumber++;</span>
+<span class="fc" id="L184">                    continue;</span>
+                }
+
+<span class="pc bpc" id="L187" title="3 of 6 branches missed.">                if (userInfo[0].length() == 0 || !userInfo[0].matches(MAIL_FORMAT) || userInfo[1].length() == 0) {</span>
+<span class="nc" id="L188">                    notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber),</span>
+                            new TutorException(INVALID_CSV_FILE_FORMAT));
+<span class="nc" id="L190">                    lineNumber++;</span>
+<span class="nc" id="L191">                    continue;</span>
+                }
+
+<span class="fc" id="L194">                ExternalUserDto userDto = new ExternalUserDto();</span>
+<span class="fc" id="L195">                userDto.setEmail(userInfo[0]);</span>
+<span class="fc" id="L196">                userDto.setUsername(userInfo[1]);</span>
+<span class="fc" id="L197">                userDto.setName(userInfo[2]);</span>
+<span class="fc" id="L198">                userDto.setRole(auxRole);</span>
+<span class="fc" id="L199">                userDtos.add(userDto);</span>
+<span class="fc" id="L200">                lineNumber++;</span>
+<span class="fc" id="L201">            }</span>
+<span class="nc" id="L202">        } catch (IOException ex) {</span>
+<span class="nc" id="L203">            throw new TutorException(CANNOT_OPEN_FILE);</span>
+<span class="fc" id="L204">        }</span>
+
+<span class="fc bfc" id="L206" title="All 2 branches covered.">        if (notification.hasErrors())</span>
+<span class="fc" id="L207">            return new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L209">        return userDtos;</span>
+    }
+
+
+    @Transactional(isolation = Isolation.READ_COMMITTED,
+            propagation = Propagation.REQUIRED)
+    public ExternalUserDto registerExternalUserTransactional(Integer courseExecutionId, ExternalUserDto externalUserDto) {
+<span class="fc" id="L216">        CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);</span>
+<span class="fc" id="L217">        AuthExternalUser authUser = getOrCreateUser(externalUserDto);</span>
+
+<span class="fc bfc" id="L219" title="All 2 branches covered.">        if (authUser.getUser().getCourseExecutions().contains(courseExecution)) {</span>
+<span class="fc" id="L220">            throw new TutorException(DUPLICATE_USER, authUser.getUsername());</span>
+        }
+
+<span class="fc" id="L223">        authUser.getUser().addCourse(courseExecution);</span>
+<span class="fc" id="L224">        authUser.generateConfirmationToken();</span>
+<span class="fc" id="L225">        return new ExternalUserDto(authUser);</span>
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public ExternalUserDto confirmRegistrationTransactional(ExternalUserDto externalUserDto) {
+<span class="fc" id="L230">        AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findAuthUserByUsername(externalUserDto.getUsername()).orElse(null);</span>
+
+<span class="fc bfc" id="L232" title="All 2 branches covered.">        if (authUser == null) {</span>
+<span class="fc" id="L233">            throw new TutorException(EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());</span>
+        }
+
+<span class="fc bfc" id="L236" title="All 4 branches covered.">        if (externalUserDto.getPassword() == null || externalUserDto.getPassword().isEmpty()) {</span>
+<span class="fc" id="L237">            throw new TutorException(INVALID_PASSWORD);</span>
+        }
+
+        try {
+<span class="fc" id="L241">            authUser.confirmRegistration(passwordEncoder, externalUserDto.getConfirmationToken(),</span>
+<span class="fc" id="L242">                    externalUserDto.getPassword());</span>
+        }
+<span class="fc" id="L244">        catch (TutorException e) {</span>
+<span class="fc bfc" id="L245" title="All 2 branches covered.">            if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {</span>
+<span class="fc" id="L246">                authUser.generateConfirmationToken();</span>
+            }
+<span class="fc" id="L248">            else throw new TutorException(e.getErrorMessage());</span>
+<span class="fc" id="L249">        }</span>
+
+<span class="fc" id="L251">        return new ExternalUserDto(authUser);</span>
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public UserDto findUserByUsername(String username) {
+<span class="nc" id="L256">        return  authUserRepository.findAuthUserByUsername(username)</span>
+<span class="nc bnc" id="L257" title="All 2 branches missed.">                .filter(authUser -&gt; authUser.getUser() != null)</span>
+<span class="nc" id="L258">                .map(authUser -&gt; authUser.getUser().getUserDto())</span>
+<span class="nc" id="L259">                .orElse(null);</span>
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public UserDto findUserById(Integer id) {
+<span class="nc" id="L264">        return  userRepository.findById(id)</span>
+<span class="nc bnc" id="L265" title="All 2 branches missed.">                .filter(user -&gt; user != null)</span>
+<span class="nc" id="L266">                .map(User::getUserDto)</span>
+<span class="nc" id="L267">                .orElse(null);</span>
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public boolean existsUserWithKey(Integer key) {
+<span class="fc" id="L272">        return userRepository.findByKey(key).isPresent();</span>
+    }
+
+    private AuthExternalUser getOrCreateUser(ExternalUserDto externalUserDto) {
+<span class="fc bfc" id="L276" title="All 2 branches covered.">        String username = externalUserDto.getUsername() != null ? externalUserDto.getUsername() : externalUserDto.getEmail();</span>
+<span class="fc" id="L277">        return (AuthExternalUser) authUserRepository.findAuthUserByUsername(username)</span>
+<span class="fc" id="L278">                .orElseGet(() -&gt; {</span>
+<span class="fc" id="L279">                    User user = new User(externalUserDto.getName(),</span>
+<span class="fc" id="L280">                            username, externalUserDto.getEmail(),</span>
+<span class="fc" id="L281">                            externalUserDto.getRole(), false, AuthUser.Type.EXTERNAL);</span>
+<span class="fc" id="L282">                    userRepository.save(user);</span>
+<span class="fc" id="L283">                    return user.getAuthUser();</span>
+                });
+    }
+
+    private CourseExecution getExternalCourseExecution(Integer courseExecutionId) {
+<span class="fc" id="L288">        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)</span>
+<span class="fc" id="L289">                .orElseThrow(() -&gt; new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));</span>
+
+<span class="fc bfc" id="L291" title="All 2 branches covered.">        if (!courseExecution.getType().equals(CourseType.EXTERNAL)) {</span>
+<span class="fc" id="L292">            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);</span>
+        }
+<span class="fc" id="L294">        return courseExecution;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

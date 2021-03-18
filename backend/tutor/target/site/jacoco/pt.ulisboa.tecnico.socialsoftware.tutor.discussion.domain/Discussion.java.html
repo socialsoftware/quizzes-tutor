@@ -1,0 +1,204 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Discussion.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain</a> &gt; <span class="el_source">Discussion.java</span></div><h1>Discussion.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import javax.persistence.*;
+import javax.validation.constraints.NotNull;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+
+@Entity
+@Table(name = &quot;discussions&quot;)
+public class Discussion implements DomainEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @OneToOne(optional=false, fetch = FetchType.EAGER)
+    @JoinColumn(name=&quot;questionAnswer_id&quot;)
+    private QuestionAnswer questionAnswer;
+
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @JoinColumn(name=&quot;user_id&quot;)
+    private User user;
+
+    @NotNull
+    @Column(name=&quot;message&quot;, columnDefinition=&quot;text&quot;)
+    private String message;
+
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @JoinColumn(name=&quot;question_id&quot;)
+    private Question question;
+
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @JoinColumn(name=&quot;course_execution_id&quot;)
+    private CourseExecution courseExecution;
+
+<span class="fc" id="L50">    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;discussion&quot;, orphanRemoval = true)</span>
+    private List&lt;Reply&gt; replies = new ArrayList&lt;&gt;();
+
+    private LocalDateTime date;
+
+    @Column(columnDefinition = &quot;boolean default false&quot;)
+    private boolean closed;
+
+<span class="fc" id="L58">    public Discussion(){}</span>
+
+<span class="fc" id="L60">    public Discussion(QuestionAnswer questionAnswer, DiscussionDto discussionDto) {</span>
+<span class="fc" id="L61">        checkConsistentDiscussion(discussionDto);</span>
+<span class="fc" id="L62">        checkExistingDiscussion(questionAnswer);</span>
+<span class="fc" id="L63">        setUser(questionAnswer.getQuizAnswer().getUser());</span>
+<span class="fc" id="L64">        setMessage(discussionDto.getMessage());</span>
+<span class="fc" id="L65">        setDate(DateHandler.toLocalDateTime(discussionDto.getDate()));</span>
+<span class="fc" id="L66">        setQuestion(questionAnswer.getQuizQuestion().getQuestion());</span>
+<span class="fc" id="L67">        setCourseExecution(questionAnswer.getQuizAnswer().getQuiz().getCourseExecution());</span>
+<span class="fc" id="L68">        setClosed(discussionDto.isClosed());</span>
+<span class="fc" id="L69">        setQuestionAnswer(questionAnswer);</span>
+<span class="fc" id="L70">    }</span>
+
+    public Integer getId() {
+<span class="fc" id="L73">        return id;</span>
+    }
+
+    public QuestionAnswer getQuestionAnswer() {
+<span class="nc" id="L77">        return questionAnswer;</span>
+    }
+
+    public void setQuestionAnswer(QuestionAnswer questionAnswer) {
+<span class="fc" id="L81">        this.questionAnswer = questionAnswer;</span>
+<span class="pc bpc" id="L82" title="1 of 2 branches missed.">        if (questionAnswer != null) {</span>
+<span class="fc" id="L83">            this.questionAnswer.setDiscussion(this);</span>
+        }
+<span class="fc" id="L85">    }</span>
+
+    public User getUser() {
+<span class="fc" id="L88">        return user;</span>
+    }
+
+    public void setUser(User user) {
+<span class="fc" id="L92">        this.user = user;</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">        if (user != null) {</span>
+<span class="fc" id="L94">            this.user.addDiscussion(this);</span>
+        }
+<span class="fc" id="L96">    }</span>
+
+    public String getMessage() {
+<span class="fc" id="L99">        return message;</span>
+    }
+
+    public void setMessage(String message) {
+<span class="fc" id="L103">        this.message = message;</span>
+<span class="fc" id="L104">    }</span>
+
+    public Question getQuestion() {
+<span class="fc" id="L107">        return question;</span>
+    }
+
+    public void setQuestion(Question question) {
+<span class="fc" id="L111">        this.question = question;</span>
+<span class="fc" id="L112">        this.question.addDiscussion(this);</span>
+<span class="fc" id="L113">    }</span>
+
+    public CourseExecution getCourseExecution() {
+<span class="fc" id="L116">        return courseExecution;</span>
+    }
+
+    public void setCourseExecution(CourseExecution courseExecution) {
+<span class="fc" id="L120">        this.courseExecution = courseExecution;</span>
+<span class="fc" id="L121">        this.courseExecution.addDiscussion(this);</span>
+<span class="fc" id="L122">    }</span>
+
+    public List&lt;Reply&gt; getReplies() {
+<span class="fc" id="L125">        return replies;</span>
+    }
+
+    public void setReplies(List&lt;Reply&gt; replies) {
+<span class="nc" id="L129">        this.replies = replies;</span>
+<span class="nc" id="L130">    }</span>
+
+    public LocalDateTime getDate() {
+<span class="fc" id="L133">        return date;</span>
+    }
+
+    public void setDate(LocalDateTime date) {
+<span class="fc" id="L137">        this.date = date;</span>
+<span class="fc" id="L138">    }</span>
+
+    public void setClosed(boolean closed) {
+<span class="fc" id="L141">        this.closed = closed;</span>
+<span class="fc" id="L142">    }</span>
+
+    public boolean isClosed() {
+<span class="fc" id="L145">        return closed;</span>
+    }
+
+    public void addReply(Reply reply){
+<span class="fc" id="L149">        this.replies.add(reply);</span>
+<span class="fc" id="L150">    }</span>
+
+    public void removeReply(Reply reply){
+<span class="nc" id="L153">        this.replies.remove(reply);</span>
+<span class="nc" id="L154">    }</span>
+
+    private void checkConsistentDiscussion(DiscussionDto discussionDto) {
+<span class="fc bfc" id="L157" title="All 4 branches covered.">        if (discussionDto.getMessage() == null || discussionDto.getMessage().trim().length() == 0){</span>
+<span class="fc" id="L158">            throw new TutorException(DISCUSSION_MISSING_MESSAGE);</span>
+        }
+<span class="pc bpc" id="L160" title="2 of 4 branches missed.">        if (discussionDto.getDate() == null || discussionDto.getDate().trim().length() == 0){</span>
+<span class="nc" id="L161">            throw new TutorException(DISCUSSION_DATE_MISSING);</span>
+        }
+<span class="fc" id="L163">    }</span>
+
+    public void changeStatus() {
+<span class="pc bpc" id="L166" title="2 of 6 branches missed.">        if ((getReplies().isEmpty() || getReplies() == null) &amp;&amp; !isClosed()){</span>
+<span class="fc" id="L167">            throw new TutorException(CLOSE_NOT_POSSIBLE);</span>
+        }
+
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        this.closed = !this.closed;</span>
+<span class="fc" id="L171">    }</span>
+
+    public boolean teacherAnswered() {
+<span class="nc" id="L174">        return this.getReplies().stream().anyMatch(reply -&gt; reply.getUser().isTeacher());</span>
+    }
+
+    public void remove() {
+<span class="nc" id="L178">        user.getDiscussions().remove(this);</span>
+<span class="nc" id="L179">        user = null;</span>
+
+<span class="nc" id="L181">        courseExecution.getDiscussions().remove(this);</span>
+<span class="nc" id="L182">        courseExecution = null;</span>
+
+<span class="nc" id="L184">        question.getDiscussions().remove(this);</span>
+<span class="nc" id="L185">        question = null;</span>
+
+<span class="nc" id="L187">        questionAnswer.setDiscussion(null);</span>
+<span class="nc" id="L188">        questionAnswer = null;</span>
+
+<span class="nc" id="L190">        replies.forEach(reply -&gt; reply.remove());</span>
+<span class="nc" id="L191">    }</span>
+
+    private void checkExistingDiscussion(QuestionAnswer questionAnswer) {
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        if (questionAnswer.getDiscussion() != null) {</span>
+<span class="fc" id="L195">            throw new TutorException(DUPLICATE_DISCUSSION);</span>
+        }
+<span class="fc" id="L197">    }</span>
+
+    @Override
+    public void accept(Visitor visitor) {
+<span class="nc" id="L201">        visitor.visitDiscussion(this);</span>
+<span class="nc" id="L202">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,13 @@
+GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament.services.local,TournamentProvidedService,76,238,1,17,15,61,7,22,6,14
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament.services.remote,TournamentRequiredService,19,93,0,6,6,19,4,10,4,7
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament.config,TournamentModuleConfiguration,0,3,0,0,0,1,0,1,0,1
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament,TournamentACL,0,50,0,0,0,6,0,5,0,5
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament,TournamentTestApplication,5,3,0,0,2,1,1,1,1,1
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament,TournamentController,123,3,8,0,26,1,16,1,12,1
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament.subscriptions,TournamentSubscriptions,51,7,0,0,10,2,2,2,2,2
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament.domain,TournamentCreator,15,43,0,0,5,15,1,6,1,6
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament.domain,TournamentParticipant,97,91,6,6,25,19,13,8,7,8
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament.domain,TournamentCourseExecution,68,60,6,6,14,15,10,6,4,6
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament.domain,Tournament,65,579,9,51,5,141,11,60,2,39
+tournament,pt.ulisboa.tecnico.socialsoftware.tournament.domain,TournamentTopic,13,109,6,6,1,24,7,9,1,9

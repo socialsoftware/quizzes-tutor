@@ -1,0 +1,54 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TopicController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.question.api</a> &gt; <span class="el_source">TopicController.java</span></div><h1>TopicController.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.question.api;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
+
+import javax.validation.Valid;
+import java.util.List;
+
+@RestController
+<span class="fc" id="L16">public class TopicController {</span>
+<span class="fc" id="L17">    private static Logger logger = LoggerFactory.getLogger(TopicController.class);</span>
+
+    @Autowired
+    private TopicService topicService;
+
+    @GetMapping(&quot;/courses/{courseId}/topics&quot;)
+    @PreAuthorize(&quot;(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseId, 'COURSE.ACCESS')&quot;)
+    public List&lt;TopicDto&gt; getCourseTopics(@PathVariable int courseId) {
+<span class="nc" id="L25">        logger.debug(&quot;courseId {}&quot;, courseId);</span>
+<span class="nc" id="L26">        return this.topicService.findTopics(courseId);</span>
+    }
+
+    @PostMapping(value = &quot;/courses/{courseId}/topics&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')&quot;)
+    public TopicDto createTopic(@PathVariable int courseId, @Valid @RequestBody TopicDto topicDto) {
+<span class="nc" id="L32">        return this.topicService.createTopic(courseId, topicDto);</span>
+    }
+
+
+    @PutMapping(value = &quot;/topics/{topicId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#topicId, 'TOPIC.ACCESS')&quot;)
+    public TopicDto updateTopic(@PathVariable Integer topicId, @Valid @RequestBody TopicDto topic) {
+<span class="nc" id="L39">        return this.topicService.updateTopic(topicId, topic);</span>
+    }
+
+    @DeleteMapping(&quot;/topics/{topicId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#topicId, 'TOPIC.ACCESS')&quot;)
+    public void removeTopic(@PathVariable Integer topicId) {
+<span class="nc" id="L45">        topicService.removeTopic(topicId);</span>
+<span class="nc" id="L46">    }</span>
+
+    @GetMapping(&quot;/topics/{topicId}/questions&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#topicId, 'TOPIC.ACCESS')&quot;)
+    public List&lt;QuestionDto&gt; getTopicQuestions(@PathVariable Integer topicId) {
+<span class="nc" id="L51">        return this.topicService.getTopicQuestions(topicId);</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

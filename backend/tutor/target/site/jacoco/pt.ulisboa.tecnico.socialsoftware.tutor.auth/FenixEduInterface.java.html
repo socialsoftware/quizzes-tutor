@@ -1,0 +1,137 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>FenixEduInterface.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.auth</a> &gt; <span class="el_source">FenixEduInterface.java</span></div><h1>FenixEduInterface.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
+
+import com.google.gson.JsonArray;
+import com.google.gson.JsonElement;
+import com.google.gson.JsonObject;
+import org.fenixedu.sdk.ApplicationConfiguration;
+import org.fenixedu.sdk.FenixEduClientImpl;
+import org.fenixedu.sdk.FenixEduUserDetails;
+import org.fenixedu.sdk.exception.FenixEduClientException;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.FENIX_CONFIGURATION_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.FENIX_ERROR;
+
+
+public class FenixEduInterface {
+
+    private static final String API_TEACHING = &quot;teaching&quot;;
+    private static final String API_ATTENDING = &quot;attending&quot;;
+
+    private static final String API_PERSON_EMAIL = &quot;email&quot;;
+    private static final String API_PERSON_USERNAME = &quot;username&quot;;
+    private static final String API_PERSON_NAME = &quot;name&quot;;
+    private static final String API_PERSON_CURRENT_TERM = &quot;currentAcademicTerm&quot;;
+
+    private static final String API_COURSE_ID = &quot;id&quot;;
+    private static final String API_COURSE_NAME = &quot;name&quot;;
+    private static final String API_COURSE_ACADEMIC_TERM = &quot;academicTerm&quot;;
+    private static final String API_COURSE_ACRONYM = &quot;acronym&quot;;
+
+    private static final String API_EVALUATION_PERIOD = &quot;evaluationPeriod&quot;;
+    private static final String API_EVALUATION_END = &quot;end&quot;;
+
+    private FenixEduClientImpl client;
+    private FenixEduUserDetails userDetails;
+    private JsonObject person;
+    private JsonObject courses;
+
+<span class="nc" id="L48">    public FenixEduInterface(String baseUrl, String oauthConsumerId, String oauthConsumerSecret, String callbackUrl) {</span>
+<span class="nc" id="L49">        ApplicationConfiguration config = new ApplicationConfiguration(baseUrl, oauthConsumerId, oauthConsumerSecret, callbackUrl);</span>
+        try {
+<span class="nc" id="L51">            client = new FenixEduClientImpl(config);</span>
+<span class="nc" id="L52">        } catch (</span>
+                FenixEduClientException e) {
+<span class="nc" id="L54">            throw new TutorException(FENIX_CONFIGURATION_ERROR);</span>
+<span class="nc" id="L55">        }</span>
+<span class="nc" id="L56">    }</span>
+
+    public void authenticate(String code) {
+        try {
+<span class="nc" id="L60">            userDetails = client.getUserDetailsFromCode(code);</span>
+<span class="nc" id="L61">        } catch (Exception e) {</span>
+<span class="nc" id="L62">            throw new TutorException(FENIX_ERROR);</span>
+<span class="nc" id="L63">        }</span>
+
+<span class="nc" id="L65">        person = client.getPerson(userDetails.getAuthorization());</span>
+<span class="nc" id="L66">    }</span>
+
+    public String getPersonName() {
+<span class="nc" id="L69">        return String.valueOf(person.get(API_PERSON_NAME)).replaceAll(&quot;^\&quot;|\&quot;$&quot;, &quot;&quot;);</span>
+    }
+
+    public String getPersonUsername() {
+<span class="nc" id="L73">        return String.valueOf(person.get(API_PERSON_USERNAME)).replaceAll(&quot;^\&quot;|\&quot;$&quot;, &quot;&quot;);</span>
+    }
+
+    private JsonObject getPersonCourses() {
+<span class="nc" id="L77">        String academicTerm = client.getAbout().get(API_PERSON_CURRENT_TERM).getAsString();</span>
+<span class="nc" id="L78">        Matcher currentYearMatcher = Pattern.compile(&quot;([0-9]+/[0-9]+)&quot;).matcher(academicTerm);</span>
+<span class="nc" id="L79">        currentYearMatcher.find();</span>
+<span class="nc" id="L80">        String currentYear = currentYearMatcher.group(1);</span>
+<span class="nc" id="L81">        return client.getPersonCourses(userDetails.getAuthorization(), currentYear);</span>
+    }
+
+    public List&lt;CourseExecutionDto&gt; getPersonAttendingCourses() {
+<span class="nc bnc" id="L85" title="All 2 branches missed.">        if (courses == null) {</span>
+<span class="nc" id="L86">            courses = getPersonCourses();</span>
+        }
+<span class="nc" id="L88">        return getCourses(API_ATTENDING);</span>
+    }
+
+    public List&lt;CourseExecutionDto&gt; getPersonTeachingCourses() {
+<span class="nc bnc" id="L92" title="All 2 branches missed.">        if (courses == null) {</span>
+<span class="nc" id="L93">            courses = getPersonCourses();</span>
+        }
+<span class="nc" id="L95">        return getCourses(API_TEACHING);</span>
+    }
+
+    public String getPersonEmail() {
+<span class="nc" id="L99">        return String.valueOf(person.get(API_PERSON_EMAIL)).replaceAll(&quot;^\&quot;|\&quot;$&quot;, &quot;&quot;);</span>
+    }
+
+    private String getCourseEndDate(JsonElement courseJson) {
+<span class="nc" id="L103">        String id = courseJson.getAsJsonObject().get(API_COURSE_ID).getAsString();</span>
+<span class="nc" id="L104">        JsonArray evaluations = client.getCourseEvaluations(id).getAsJsonArray();</span>
+<span class="nc" id="L105">        DateTimeFormatter formatter = DateTimeFormatter.ofPattern(&quot;dd/MM/yyyy HH:mm&quot;);</span>
+<span class="nc" id="L106">        LocalDateTime lastDate = null;</span>
+<span class="nc bnc" id="L107" title="All 2 branches missed.">        for (JsonElement evaluation : evaluations) {</span>
+<span class="nc" id="L108">            String endDate = evaluation.getAsJsonObject()</span>
+<span class="nc" id="L109">                                        .get(API_EVALUATION_PERIOD).getAsJsonObject()</span>
+<span class="nc" id="L110">                                        .get(API_EVALUATION_END).getAsString();</span>
+<span class="nc bnc" id="L111" title="All 2 branches missed.">            if (!endDate.isEmpty()) {</span>
+<span class="nc" id="L112">                LocalDateTime evaluationEnd = LocalDateTime.parse(endDate, formatter);</span>
+<span class="nc bnc" id="L113" title="All 4 branches missed.">                if (lastDate == null || evaluationEnd.isAfter(lastDate)) {</span>
+<span class="nc" id="L114">                    lastDate = evaluationEnd;</span>
+                }
+            }             
+<span class="nc" id="L117">        }</span>
+<span class="nc" id="L118">        return DateHandler.toISOString(lastDate);</span>
+    }
+
+    private List&lt;CourseExecutionDto&gt; getCourses(String type) {
+<span class="nc" id="L122">        JsonArray coursesJson = courses.get(type).getAsJsonArray();</span>
+<span class="nc" id="L123">        List&lt;CourseExecutionDto&gt; result = new ArrayList&lt;&gt;();</span>
+<span class="nc bnc" id="L124" title="All 2 branches missed.">        for (JsonElement courseJson : coursesJson) {</span>
+<span class="nc" id="L125">            CourseExecutionDto course = new CourseExecutionDto(courseJson.getAsJsonObject().get(API_COURSE_NAME).getAsString(),</span>
+<span class="nc" id="L126">                    courseJson.getAsJsonObject().get(API_COURSE_ACRONYM).getAsString(),</span>
+<span class="nc" id="L127">                    courseJson.getAsJsonObject().get(API_COURSE_ACADEMIC_TERM).getAsString());</span>
+<span class="nc bnc" id="L128" title="All 2 branches missed.">            if (type.equals(API_TEACHING)) {</span>
+<span class="nc" id="L129">                course.setEndDate(getCourseEndDate(courseJson));</span>
+            }
+<span class="nc" id="L131">            result.add(course);</span>
+<span class="nc" id="L132">        }</span>
+<span class="nc" id="L133">        return result;</span>
+    }
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

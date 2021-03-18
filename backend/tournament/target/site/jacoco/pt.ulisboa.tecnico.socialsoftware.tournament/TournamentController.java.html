@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TournamentController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tournament</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tournament</a> &gt; <span class="el_source">TournamentController.java</span></div><h1>TournamentController.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tournament;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import javax.validation.Valid;
+import java.security.Principal;
+import java.util.List;
+import java.util.Set;
+
+@RestController
+<span class="fc" id="L19">public class TournamentController {</span>
+
+    @Autowired
+    private TournamentProvidedService tournamentProvidedService;
+
+    @PostMapping(value = &quot;/tournaments/{executionId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public TournamentDto createTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @PathVariable int executionId, @RequestParam Set&lt;Integer&gt; topicsId) {
+<span class="nc" id="L27">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+<span class="nc" id="L28">        formatDates(tournamentDto);</span>
+
+<span class="nc" id="L30">        return tournamentProvidedService.createTournament(user.getId(), executionId, topicsId, tournamentDto);</span>
+    }
+
+    @GetMapping(value = &quot;/tournaments/{executionId}/getTournaments&quot;)
+    @PreAuthorize(&quot;(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public List&lt;TournamentDto&gt; getTournamentsForCourseExecution(@PathVariable int executionId) {
+<span class="nc" id="L36">        return tournamentProvidedService.getTournamentsForCourseExecution(executionId);</span>
+    }
+
+    @GetMapping(value = &quot;/tournaments/{executionId}/getOpenTournaments&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public List&lt;TournamentDto&gt; getOpenedTournamentsForCourseExecution(@PathVariable int executionId) {
+<span class="nc" id="L42">        return tournamentProvidedService.getOpenedTournamentsForCourseExecution(executionId);</span>
+    }
+
+    @GetMapping(value = &quot;/tournaments/{executionId}/getClosedTournaments&quot;)
+    @PreAuthorize(&quot;(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public List&lt;TournamentDto&gt; getClosedTournamentsForCourseExecution(@PathVariable int executionId) {
+<span class="nc" id="L48">        return tournamentProvidedService.getClosedTournamentsForCourseExecution(executionId);</span>
+    }
+
+    @GetMapping(value = &quot;/tournaments/{executionId}/tournament/{tournamentId}&quot;)
+    @PreAuthorize(&quot;(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public TournamentDto getTournament(@PathVariable int executionId, @PathVariable Integer tournamentId) {
+<span class="nc" id="L54">        return tournamentProvidedService.getTournament(tournamentId);</span>
+    }
+
+    @PutMapping(value = &quot;/tournaments/{executionId}/joinTournament/{tournamentId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')&quot;)
+    public void joinTournament(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId, @RequestParam String password) {
+<span class="nc" id="L60">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+
+<span class="nc" id="L62">        tournamentProvidedService.joinTournament(user.getId(), tournamentId, password);</span>
+<span class="nc" id="L63">    }</span>
+
+    @PutMapping(value = &quot;/tournaments/{executionId}/solveQuiz/{tournamentId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.PARTICIPANT')&quot;)
+    public StatementQuizDto solveQuiz(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId) {
+<span class="nc" id="L68">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+
+<span class="nc" id="L70">        return tournamentProvidedService.solveQuiz(user.getId(), tournamentId);</span>
+    }
+
+    @PutMapping(value = &quot;/tournaments/{executionId}/leaveTournament/{tournamentId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.PARTICIPANT')&quot;)
+    public void leaveTournament(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId) {
+<span class="nc" id="L76">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+
+<span class="nc" id="L78">        tournamentProvidedService.leaveTournament(user.getId(), tournamentId);</span>
+<span class="nc" id="L79">    }</span>
+
+    @PutMapping(value = &quot;/tournaments/{executionId}/updateTournament&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#tournamentDto.getId(), 'TOURNAMENT.OWNER')&quot;)
+    public void updateTournament(@Valid @RequestBody TournamentDto tournamentDto, @PathVariable int executionId, @RequestParam Set&lt;Integer&gt; topicsId) {
+<span class="nc" id="L84">        tournamentProvidedService.updateTournament(topicsId, tournamentDto);</span>
+<span class="nc" id="L85">    }</span>
+
+    @PutMapping(value = &quot;/tournaments/{executionId}/cancelTournament/{tournamentId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.OWNER')&quot;)
+    public void cancelTournament(@PathVariable int executionId, @PathVariable Integer tournamentId) {
+<span class="nc" id="L90">        tournamentProvidedService.cancelTournament(tournamentId);</span>
+<span class="nc" id="L91">    }</span>
+
+    @DeleteMapping(value = &quot;/tournaments/{executionId}/removeTournament/{tournamentId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.OWNER')&quot;)
+    public void removeTournament(@PathVariable int executionId, @PathVariable Integer tournamentId) {
+<span class="nc" id="L96">        tournamentProvidedService.removeTournament(tournamentId);</span>
+<span class="nc" id="L97">    }</span>
+
+    private void formatDates(TournamentDto tournamentDto) {
+<span class="nc bnc" id="L100" title="All 4 branches missed.">        if (tournamentDto.getStartTime() != null &amp;&amp; !DateHandler.isValidDateFormat(tournamentDto.getStartTime()))</span>
+<span class="nc" id="L101">            tournamentDto.setStartTime(DateHandler.toISOString(DateHandler.toLocalDateTime(tournamentDto.getStartTime())));</span>
+
+<span class="nc bnc" id="L103" title="All 4 branches missed.">        if (tournamentDto.getEndTime() !=null &amp;&amp; !DateHandler.isValidDateFormat(tournamentDto.getEndTime()))</span>
+<span class="nc" id="L104">            tournamentDto.setEndTime(DateHandler.toISOString(DateHandler.toLocalDateTime(tournamentDto.getEndTime())));</span>
+<span class="nc" id="L105">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

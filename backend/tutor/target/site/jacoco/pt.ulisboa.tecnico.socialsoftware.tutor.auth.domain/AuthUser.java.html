@@ -1,0 +1,185 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>AuthUser.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain</a> &gt; <span class="el_source">AuthUser.java</span></div><h1>AuthUser.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain;
+
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+@Entity
+@Table(name = &quot;auth_users&quot;,
+        indexes = {
+                @Index(name = &quot;auth_users_indx_0&quot;, columnList = &quot;username&quot;)
+        })
+@Inheritance(strategy = InheritanceType.SINGLE_TABLE)
+@DiscriminatorColumn(name=&quot;auth_type&quot;,
+        discriminatorType = DiscriminatorType.STRING)
+public abstract class AuthUser implements DomainEntity, UserDetails {
+<span class="fc" id="L29">    public enum Type { EXTERNAL, TECNICO, DEMO }</span>
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @OneToOne
+    private User user;
+
+    private String email;
+    private String password;
+
+    @Column(unique=true)
+    private String username;
+
+    @Column(name = &quot;last_access&quot;)
+    private LocalDateTime lastAccess;
+
+<span class="fc" id="L47">    public AuthUser() {}</span>
+
+<span class="fc" id="L49">    public AuthUser(User user, String username, String email) {</span>
+<span class="fc" id="L50">        setUser(user);</span>
+<span class="fc" id="L51">        setUsername(username);</span>
+<span class="fc" id="L52">        setEmail(email);</span>
+<span class="fc" id="L53">    }</span>
+
+    public static AuthUser createAuthUser(User user, String username, String email, Type type) {
+<span class="pc bpc" id="L56" title="1 of 4 branches missed.">        switch (type) {</span>
+            case EXTERNAL:
+<span class="fc" id="L58">                return new AuthExternalUser(user, username, email);</span>
+            case TECNICO:
+<span class="fc" id="L60">                return new AuthTecnicoUser(user, username, email);</span>
+            case DEMO:
+<span class="fc" id="L62">                return new AuthDemoUser(user, username, email);</span>
+            default:
+<span class="nc" id="L64">                throw new TutorException(INVALID_TYPE_FOR_AUTH_USER);</span>
+        }
+    }
+
+    public void setId(Integer id) {
+<span class="nc" id="L69">        this.id = id;</span>
+<span class="nc" id="L70">    }</span>
+
+    public Integer getId() {
+<span class="fc" id="L73">        return id;</span>
+    }
+
+    public User getUser() {
+<span class="fc" id="L77">        return user;</span>
+    }
+
+    public void setUser(User user) {
+<span class="fc" id="L81">        this.user = user;</span>
+<span class="fc" id="L82">    }</span>
+
+    @Override
+    public String getUsername() {
+<span class="fc" id="L86">        return username;</span>
+    }
+
+    public void setUsername(String username) {
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        this.username = username != null ? username.toLowerCase() : null;</span>
+<span class="fc" id="L91">    }</span>
+
+    public String getEmail() {
+<span class="fc" id="L94">        return email;</span>
+    }
+
+    public void setEmail(String email) {
+<span class="fc bfc" id="L98" title="All 4 branches covered.">        if (email == null || !email.matches(UserService.MAIL_FORMAT))</span>
+<span class="fc" id="L99">            throw new TutorException(INVALID_EMAIL, email);</span>
+
+<span class="fc" id="L101">        this.email = email.toLowerCase();</span>
+<span class="fc" id="L102">    }</span>
+
+    @Override
+    public String getPassword() {
+<span class="fc" id="L106">        return password;</span>
+    }
+
+    public void setPassword(String password) {
+<span class="fc" id="L110">        this.password = password;</span>
+<span class="fc" id="L111">    }</span>
+
+    public LocalDateTime getLastAccess() {
+<span class="fc" id="L114">        return lastAccess;</span>
+    }
+
+    public void setLastAccess(LocalDateTime lastAccess) {
+<span class="fc" id="L118">        this.lastAccess = lastAccess;</span>
+<span class="fc" id="L119">    }</span>
+
+    public boolean isActive() {
+<span class="fc" id="L122">        return true;</span>
+    }
+
+    public abstract Type getType();
+
+    public String getEnrolledCoursesAcronyms() {
+<span class="nc" id="L128">        return &quot;&quot;;</span>
+    }
+
+    public void checkRole(boolean isActive) {
+<span class="pc bpc" id="L132" title="1 of 6 branches missed.">        if (!isActive &amp;&amp; !(user.getRole().equals(User.Role.STUDENT) || user.getRole().equals(User.Role.TEACHER))) {</span>
+<span class="fc" id="L133">            throw new TutorException(INVALID_ROLE, user.getRole().toString());</span>
+        }
+<span class="fc" id="L135">    }</span>
+
+
+
+    @Override
+    public void accept(Visitor visitor) {
+<span class="nc" id="L141">        visitor.visitAuthUser(this);</span>
+<span class="nc" id="L142">    }</span>
+ 
+    public boolean isDemoStudent() {
+<span class="fc" id="L145">        return false;</span>
+    }
+
+    @Override
+    public Collection&lt;? extends GrantedAuthority&gt; getAuthorities() {
+<span class="fc" id="L150">        List&lt;GrantedAuthority&gt; list = new ArrayList&lt;&gt;();</span>
+
+<span class="fc" id="L152">        list.add(new SimpleGrantedAuthority(&quot;ROLE_&quot; + user.getRole()));</span>
+
+<span class="fc bfc" id="L154" title="All 2 branches covered.">        if (user.isAdmin())</span>
+<span class="fc" id="L155">            list.add(new SimpleGrantedAuthority(&quot;ROLE_ADMIN&quot;));</span>
+
+<span class="fc" id="L157">        return list;</span>
+    }
+
+    @Override
+    public boolean isAccountNonExpired() {
+<span class="nc" id="L162">        return true;</span>
+    }
+
+    @Override
+    public boolean isAccountNonLocked() {
+<span class="nc" id="L167">        return true;</span>
+    }
+
+    @Override
+    public boolean isCredentialsNonExpired() {
+<span class="nc" id="L172">        return true;</span>
+    }
+
+    @Override
+    public boolean isEnabled() {
+<span class="nc" id="L177">        return true;</span>
+    }
+
+    public void remove() {
+<span class="fc" id="L181">        user.setAuthUser(null);</span>
+<span class="fc" id="L182">        setUser(null);</span>
+<span class="fc" id="L183">    }</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

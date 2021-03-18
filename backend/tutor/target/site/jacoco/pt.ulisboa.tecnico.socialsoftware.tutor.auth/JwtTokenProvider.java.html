@@ -1,0 +1,87 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>JwtTokenProvider.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.auth</a> &gt; <span class="el_source">JwtTokenProvider.java</span></div><h1>JwtTokenProvider.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
+
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+
+import javax.servlet.http.HttpServletRequest;
+import java.security.KeyPair;
+import java.security.KeyPairGenerator;
+import java.security.PrivateKey;
+import java.security.PublicKey;
+import java.util.Date;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.USER_NOT_FOUND;
+
+@Component
+public class JwtTokenProvider {
+
+<span class="fc" id="L26">    private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);</span>
+    private UserRepository userRepository;
+    private static PublicKey publicKey;
+    private static PrivateKey privateKey;
+
+<span class="fc" id="L31">    public JwtTokenProvider(UserRepository userRepository) {</span>
+<span class="fc" id="L32">        this.userRepository = userRepository;</span>
+<span class="fc" id="L33">    }</span>
+
+    public static void generateKeys() {
+        try {
+<span class="fc" id="L37">            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance(&quot;RSA&quot;);</span>
+<span class="fc" id="L38">            keyPairGenerator.initialize(2048);</span>
+<span class="fc" id="L39">            KeyPair keyPair = keyPairGenerator.generateKeyPair();</span>
+<span class="fc" id="L40">            privateKey = keyPair.getPrivate();</span>
+<span class="fc" id="L41">            publicKey = keyPair.getPublic();</span>
+<span class="nc" id="L42">        } catch (Exception e) {</span>
+<span class="nc" id="L43">            logger.error(&quot;Unable to generate keys&quot;);</span>
+<span class="fc" id="L44">        }</span>
+<span class="fc" id="L45">    }</span>
+
+    static String generateToken(User user) {
+<span class="fc bfc" id="L48" title="All 2 branches covered.">        if (publicKey == null) {</span>
+<span class="fc" id="L49">            generateKeys();</span>
+        }
+
+<span class="fc" id="L52">        Claims claims = Jwts.claims().setSubject(String.valueOf(user.getId()));</span>
+<span class="fc" id="L53">        claims.put(&quot;role&quot;, user.getRole());</span>
+
+<span class="fc" id="L55">        Date now = new Date();</span>
+<span class="fc" id="L56">        Date expiryDate = new Date(now.getTime() + 1000*60*60*24);</span>
+
+<span class="fc" id="L58">        return Jwts.builder()</span>
+<span class="fc" id="L59">                .setClaims(claims)</span>
+<span class="fc" id="L60">                .setIssuedAt(new Date())</span>
+<span class="fc" id="L61">                .setExpiration(expiryDate)</span>
+<span class="fc" id="L62">                .signWith(privateKey)</span>
+<span class="fc" id="L63">                .compact();</span>
+    }
+
+    static String getToken(HttpServletRequest req) {
+<span class="nc" id="L67">        String authHeader = req.getHeader(&quot;Authorization&quot;);</span>
+
+<span class="nc bnc" id="L69" title="All 4 branches missed.">        if (authHeader != null &amp;&amp; authHeader.startsWith(&quot;Bearer &quot;)) {</span>
+<span class="nc" id="L70">            return authHeader.substring(7);</span>
+<span class="nc bnc" id="L71" title="All 4 branches missed.">        } else if (authHeader != null &amp;&amp; authHeader.startsWith(&quot;AUTH&quot;)) {</span>
+<span class="nc" id="L72">            return authHeader.substring(4);</span>
+<span class="nc bnc" id="L73" title="All 2 branches missed.">        } else if (authHeader != null) {</span>
+<span class="nc" id="L74">            return authHeader;</span>
+        }
+<span class="nc" id="L76">        return &quot;&quot;;</span>
+    }
+    static int getUserId(String token) {
+<span class="nc" id="L79">        return Integer.parseInt(Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody().getSubject());</span>
+    }
+
+    Authentication getAuthentication(String token) {
+<span class="nc" id="L83">        User user = this.userRepository.findById(getUserId(token)).orElseThrow(() -&gt; new TutorException(USER_NOT_FOUND, getUserId(token)));</span>
+<span class="nc" id="L84">        return new UsernamePasswordAuthenticationToken(user, &quot;&quot;, user.getAuthUser().getAuthorities());</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

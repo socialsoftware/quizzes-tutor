@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>UsersXmlImport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain</a> &gt; <span class="el_source">UsersXmlImport.java</span></div><h1>UsersXmlImport.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.filter.Filters;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
+import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import java.io.*;
+import java.nio.charset.Charset;
+import java.time.LocalDateTime;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.USERS_IMPORT_ERROR;
+
+@Component
+<span class="fc" id="L25">public class UsersXmlImport {</span>
+	private UserService userService;
+
+	public void importUsers(InputStream inputStream, UserService userService) {
+<span class="fc" id="L29">		this.userService = userService;</span>
+
+<span class="fc" id="L31">		SAXBuilder builder = new SAXBuilder();</span>
+<span class="fc" id="L32">		builder.setIgnoringElementContentWhitespace(true);</span>
+
+		Document doc;
+		try {
+<span class="fc" id="L36">			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());</span>
+<span class="fc" id="L37">			doc = builder.build(reader);</span>
+<span class="nc" id="L38">		} catch (FileNotFoundException e) {</span>
+<span class="nc" id="L39">			throw new TutorException(USERS_IMPORT_ERROR, &quot;File not found&quot;);</span>
+<span class="nc" id="L40">		} catch (JDOMException e) {</span>
+<span class="nc" id="L41">			throw new TutorException(USERS_IMPORT_ERROR, &quot;Coding problem&quot;);</span>
+<span class="nc" id="L42">		} catch (IOException e) {</span>
+<span class="nc" id="L43">			throw new TutorException(USERS_IMPORT_ERROR, &quot;File type or format&quot;);</span>
+<span class="fc" id="L44">		}</span>
+
+<span class="pc bpc" id="L46" title="1 of 2 branches missed.">		if (doc == null) {</span>
+<span class="nc" id="L47">			throw new TutorException(USERS_IMPORT_ERROR, &quot;File not found ot format error&quot;);</span>
+		}
+
+<span class="fc" id="L50">		importUsers(doc);</span>
+<span class="fc" id="L51">	}</span>
+
+	public void importUsers(String usersXml, UserService userService) {
+<span class="fc" id="L54">		SAXBuilder builder = new SAXBuilder();</span>
+<span class="fc" id="L55">		builder.setIgnoringElementContentWhitespace(true);</span>
+
+<span class="fc" id="L57">		InputStream stream = new ByteArrayInputStream(usersXml.getBytes());</span>
+
+<span class="fc" id="L59">		importUsers(stream, userService);</span>
+<span class="fc" id="L60">	}</span>
+
+	private void importUsers(Document doc) {
+<span class="fc" id="L63">		XPathFactory xpfac = XPathFactory.instance();</span>
+<span class="fc" id="L64">		XPathExpression&lt;Element&gt; xp = xpfac.compile(&quot;//users/user&quot;, Filters.element());</span>
+<span class="fc bfc" id="L65" title="All 2 branches covered.">		for (Element element : xp.evaluate(doc)) {</span>
+<span class="fc" id="L66">			Integer key = Integer.valueOf(element.getAttributeValue(&quot;key&quot;));</span>
+
+<span class="pc bpc" id="L68" title="1 of 2 branches missed.">			if (!userService.existsUserWithKey(key)) {</span>
+				User user;
+<span class="fc bfc" id="L70" title="All 2 branches covered.">				if (element.getChild(&quot;authUsers&quot;) != null) {</span>
+<span class="fc" id="L71">					user = importUserWithAuth(element);</span>
+				} else {
+<span class="fc" id="L73">					user = importUser(element);</span>
+				}
+<span class="fc" id="L75">				importCourseExecutions(element.getChild(&quot;courseExecutions&quot;), user);</span>
+			}
+<span class="fc" id="L77">		}</span>
+<span class="fc" id="L78">	}</span>
+
+	private User importUser(Element userElement) {
+<span class="fc" id="L81">		Integer key = Integer.valueOf(userElement.getAttributeValue(&quot;key&quot;));</span>
+<span class="fc" id="L82">		String name = userElement.getAttributeValue(&quot;name&quot;);</span>
+<span class="fc" id="L83">		LocalDateTime creationDate = DateHandler.toLocalDateTime(userElement.getAttributeValue(&quot;creationDate&quot;));</span>
+<span class="fc" id="L84">		boolean admin =  Boolean.parseBoolean(userElement.getAttributeValue(&quot;admin&quot;));</span>
+<span class="fc" id="L85">		User.Role role = getUserRole(userElement);</span>
+
+<span class="fc" id="L87">		User user = userService.createUser(name, role);</span>
+<span class="fc" id="L88">		user.setKey(key);</span>
+<span class="fc" id="L89">		user.setAdmin(admin);</span>
+<span class="fc" id="L90">		user.setCreationDate(creationDate);</span>
+<span class="fc" id="L91">		return user;</span>
+	}
+
+	private User importUserWithAuth(Element userElement) {
+<span class="fc" id="L95">		Element authUserElement = userElement.getChild(&quot;authUsers&quot;).getChild(&quot;authUser&quot;);</span>
+<span class="fc" id="L96">		Integer key = Integer.valueOf(userElement.getAttributeValue(&quot;key&quot;));</span>
+<span class="fc" id="L97">		String name = userElement.getAttributeValue(&quot;name&quot;);</span>
+<span class="fc" id="L98">		User.Role role = getUserRole(userElement);</span>
+
+<span class="fc" id="L100">		String username = authUserElement.getAttributeValue(&quot;username&quot;);</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">		if (username.trim().isEmpty()) {</span>
+<span class="nc" id="L102">			username = null;</span>
+		}
+<span class="fc" id="L104">		String email = authUserElement.getAttributeValue(&quot;email&quot;);</span>
+<span class="pc bpc" id="L105" title="1 of 2 branches missed.">		if (email.trim().isEmpty()) {</span>
+<span class="nc" id="L106">			email = null;</span>
+		}
+<span class="fc" id="L108">		AuthUser.Type type = AuthUser.Type.EXTERNAL;</span>
+<span class="fc" id="L109">		String password = null;</span>
+<span class="fc" id="L110">		Boolean isActive = null;</span>
+<span class="fc" id="L111">		LocalDateTime lastAccess = null;</span>
+<span class="fc" id="L112">		String confirmationDate = null;</span>
+<span class="fc" id="L113">		LocalDateTime tokenGenerationDate = null;</span>
+
+<span class="pc bpc" id="L115" title="1 of 2 branches missed.">		if (authUserElement.getAttributeValue(&quot;type&quot;) != null) {</span>
+<span class="fc" id="L116">			type = AuthUser.Type.valueOf(authUserElement.getAttributeValue(&quot;type&quot;));</span>
+		}
+<span class="pc bpc" id="L118" title="1 of 2 branches missed.">		if (authUserElement.getAttributeValue(&quot;password&quot;) != null) {</span>
+<span class="fc" id="L119">			 password = authUserElement.getAttributeValue(&quot;password&quot;);</span>
+		}
+<span class="pc bpc" id="L121" title="1 of 2 branches missed.">		if (authUserElement.getAttributeValue(&quot;lastAccess&quot;) != null) {</span>
+<span class="fc" id="L122">			lastAccess = DateHandler.toLocalDateTime(</span>
+<span class="fc" id="L123">					authUserElement.getAttributeValue(&quot;lastAccess&quot;));</span>
+		}
+
+<span class="fc bfc" id="L126" title="All 2 branches covered.">		if (authUserElement.getAttributeValue(&quot;confirmationToken&quot;) != null) {</span>
+<span class="fc" id="L127">			confirmationDate = authUserElement.getAttributeValue(&quot;confirmationToken&quot;);</span>
+		}
+
+<span class="fc bfc" id="L130" title="All 2 branches covered.">		if (authUserElement.getAttributeValue(&quot;tokenGenerationDate&quot;) != null) {</span>
+<span class="fc" id="L131">			tokenGenerationDate = DateHandler.toLocalDateTime(</span>
+<span class="fc" id="L132">					authUserElement.getAttributeValue(&quot;tokenGenerationDate&quot;));</span>
+
+		}
+<span class="pc bpc" id="L135" title="1 of 2 branches missed.">		if (authUserElement.getAttributeValue(&quot;isActive&quot;) != null) {</span>
+<span class="fc" id="L136">			isActive = Boolean.parseBoolean(authUserElement.getAttributeValue(&quot;isActive&quot;));</span>
+		}
+
+<span class="fc" id="L139">		AuthUser authUser = userService.createUserWithAuth(name, username, email, role, type);</span>
+<span class="fc" id="L140">		authUser.getUser().setKey(key);</span>
+<span class="fc" id="L141">		authUser.setPassword(password);</span>
+<span class="fc bfc" id="L142" title="All 2 branches covered.">		if (type == AuthUser.Type.EXTERNAL) {</span>
+<span class="fc" id="L143">			((AuthExternalUser)authUser).setActive(isActive);</span>
+<span class="fc" id="L144">			((AuthExternalUser)authUser).setConfirmationToken(confirmationDate);</span>
+<span class="fc" id="L145">			((AuthExternalUser)authUser).setTokenGenerationDate(tokenGenerationDate);</span>
+		}
+<span class="fc" id="L147">		authUser.setLastAccess(lastAccess);</span>
+
+<span class="fc" id="L149">		return authUser.getUser();</span>
+	}
+
+	private void importCourseExecutions(Element courseExecutions, User user) {
+<span class="fc bfc" id="L153" title="All 2 branches covered.">		for (Element courseExecutionElement: courseExecutions.getChildren(&quot;courseExecution&quot;)) {</span>
+<span class="fc" id="L154">			Integer executionId = Integer.valueOf(courseExecutionElement.getAttributeValue(&quot;executionId&quot;));</span>
+
+<span class="fc" id="L156">			userService.addCourseExecution(user.getId(), executionId);</span>
+<span class="fc" id="L157">		}</span>
+<span class="fc" id="L158">	}</span>
+
+	private User.Role getUserRole(Element userElement) {
+<span class="fc" id="L161">		User.Role role = null;</span>
+<span class="pc bpc" id="L162" title="1 of 2 branches missed.">		if (userElement.getAttributeValue(&quot;role&quot;) != null) {</span>
+<span class="fc" id="L163">			role = User.Role.valueOf(userElement.getAttributeValue(&quot;role&quot;));</span>
+		}
+<span class="fc" id="L165">		return role;</span>
+	}
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

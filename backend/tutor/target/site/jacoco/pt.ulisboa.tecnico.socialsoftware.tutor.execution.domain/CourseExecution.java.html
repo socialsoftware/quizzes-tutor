@@ -1,0 +1,315 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CourseExecution.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain</a> &gt; <span class="el_source">CourseExecution.java</span></div><h1>CourseExecution.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+@Entity
+@Table(name = &quot;course_executions&quot;)
+public class CourseExecution implements DomainEntity {
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Enumerated(EnumType.STRING)
+    private CourseType type;
+
+    private String acronym;
+    private String academicTerm;
+
+    @Enumerated(EnumType.STRING)
+    private CourseExecutionStatus status;
+
+    @Column(name = &quot;end_date&quot;)
+    private LocalDateTime endDate;
+
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @JoinColumn(name = &quot;course_id&quot;)
+    private Course course;
+
+<span class="fc" id="L52">    @ManyToMany(mappedBy = &quot;courseExecutions&quot;, fetch=FetchType.LAZY)</span>
+    private final Set&lt;User&gt; users = new HashSet&lt;&gt;();
+
+<span class="fc" id="L55">    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;courseExecution&quot;, fetch=FetchType.LAZY, orphanRemoval=true)</span>
+    private final Set&lt;Quiz&gt; quizzes = new HashSet&lt;&gt;();
+
+<span class="fc" id="L58">    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;courseExecution&quot;, fetch=FetchType.LAZY, orphanRemoval=true)</span>
+    private final Set&lt;Assessment&gt; assessments = new HashSet&lt;&gt;();
+
+<span class="fc" id="L61">    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;courseExecution&quot;, fetch=FetchType.LAZY, orphanRemoval=true)</span>
+    private final Set&lt;QuestionSubmission&gt; questionSubmissions = new HashSet&lt;&gt;();
+
+<span class="fc" id="L64">    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;courseExecution&quot;, fetch = FetchType.LAZY, orphanRemoval = true)</span>
+    private Set&lt;Discussion&gt; discussions = new HashSet&lt;&gt;();
+
+<span class="fc" id="L67">    public CourseExecution() {</span>
+<span class="fc" id="L68">    }</span>
+
+<span class="fc" id="L70">    public CourseExecution(Course course, String acronym, String academicTerm, CourseType type, LocalDateTime endDate) {</span>
+<span class="fc bfc" id="L71" title="All 2 branches covered.">        if (course.existsCourseExecution(acronym, academicTerm, type)) {</span>
+<span class="fc" id="L72">            throw new TutorException(DUPLICATE_COURSE_EXECUTION, acronym + academicTerm);</span>
+        }
+
+<span class="fc" id="L75">        setType(type);</span>
+<span class="fc" id="L76">        setCourse(course);</span>
+<span class="fc" id="L77">        setAcronym(acronym);</span>
+<span class="fc" id="L78">        setAcademicTerm(academicTerm);</span>
+<span class="fc" id="L79">        setStatus(CourseExecutionStatus.ACTIVE);</span>
+<span class="fc" id="L80">        setEndDate(endDate);</span>
+
+<span class="fc" id="L82">    }</span>
+
+    @Override
+    public void accept(Visitor visitor) {
+<span class="nc" id="L86">        visitor.visitCourseExecution(this);</span>
+<span class="nc" id="L87">    }</span>
+
+    public Integer getId() {
+<span class="fc" id="L90">        return id;</span>
+    }
+
+    public CourseType getType() {
+<span class="fc" id="L94">        return type;</span>
+    }
+
+    public void setType(CourseType type) {
+<span class="pc bpc" id="L98" title="1 of 2 branches missed.">        if (type == null)</span>
+<span class="nc" id="L99">            throw new TutorException(INVALID_TYPE_FOR_COURSE_EXECUTION);</span>
+<span class="fc" id="L100">        this.type = type;</span>
+<span class="fc" id="L101">    }</span>
+
+    public String getAcronym() {
+<span class="fc" id="L104">        return acronym;</span>
+    }
+
+    public void setAcronym(String acronym) {
+<span class="fc bfc" id="L108" title="All 4 branches covered.">        if (acronym == null || acronym.trim().isEmpty()) {</span>
+<span class="fc" id="L109">        throw new TutorException(INVALID_ACRONYM_FOR_COURSE_EXECUTION);</span>
+    }
+<span class="fc" id="L111">        this.acronym = acronym;</span>
+<span class="fc" id="L112">    }</span>
+
+    public String getAcademicTerm() {
+<span class="fc" id="L115">        return academicTerm;</span>
+    }
+
+    public void setAcademicTerm(String academicTerm) {
+<span class="fc bfc" id="L119" title="All 4 branches covered.">        if (academicTerm == null || academicTerm.isBlank())</span>
+<span class="fc" id="L120">            throw new TutorException(INVALID_ACADEMIC_TERM_FOR_COURSE_EXECUTION);</span>
+
+<span class="fc" id="L122">        this.academicTerm = academicTerm;</span>
+<span class="fc" id="L123">    }</span>
+
+    public CourseExecutionStatus getStatus() {
+<span class="fc" id="L126">        return status;</span>
+    }
+
+    public void setStatus(CourseExecutionStatus status) {
+<span class="fc" id="L130">        this.status = status;</span>
+<span class="fc" id="L131">    }</span>
+
+    public LocalDateTime getEndDate() {
+<span class="fc" id="L134">        return endDate;</span>
+    }
+
+    public void setEndDate(LocalDateTime endDate) {
+<span class="fc" id="L138">        this.endDate = endDate;</span>
+<span class="fc" id="L139">    }</span>
+
+    public Course getCourse() {
+<span class="fc" id="L142">        return course;</span>
+    }
+
+    public void setCourse(Course course) {
+<span class="fc" id="L146">        this.course = course;</span>
+<span class="fc" id="L147">        course.addCourseExecution(this);</span>
+<span class="fc" id="L148">    }</span>
+
+    public Set&lt;User&gt; getUsers() {
+<span class="fc" id="L151">        return users;</span>
+    }
+
+    public void addUser(User user) {
+<span class="fc" id="L155">        users.add(user);</span>
+<span class="fc" id="L156">    }</span>
+
+    public Set&lt;Quiz&gt; getQuizzes() {
+<span class="fc" id="L159">        return quizzes;</span>
+    }
+
+    public void addQuiz(Quiz quiz) {
+<span class="fc" id="L163">        quizzes.add(quiz);</span>
+<span class="fc" id="L164">    }</span>
+
+    public Set&lt;Assessment&gt; getAssessments() {
+<span class="fc" id="L167">        return assessments;</span>
+    }
+
+    public List&lt;Assessment&gt; getAvailableAssessments() {
+<span class="nc" id="L171">        return getAssessments().stream()</span>
+<span class="nc bnc" id="L172" title="All 2 branches missed.">                .filter(assessment -&gt; assessment.getStatus() == Assessment.Status.AVAILABLE)</span>
+<span class="nc" id="L173">                .collect(Collectors.toList());</span>
+    }
+
+    public void addAssessment(Assessment assessment) {
+<span class="fc" id="L177">        assessments.add(assessment);</span>
+<span class="fc" id="L178">    }</span>
+
+    public void addQuestionSubmission(QuestionSubmission questionSubmission) {
+<span class="fc" id="L181">        questionSubmissions.add(questionSubmission);</span>
+<span class="fc" id="L182">    }</span>
+
+<span class="fc" id="L184">    public Set&lt;QuestionSubmission&gt; getQuestionSubmissions() { return questionSubmissions; }</span>
+
+    public Set&lt;Discussion&gt; getDiscussions() {
+<span class="nc" id="L187">        return discussions;</span>
+    }
+
+    public void addDiscussion(Discussion discussion) {
+<span class="fc" id="L191">        discussions.add(discussion);</span>
+<span class="fc" id="L192">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L196">        return &quot;CourseExecution{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, type=&quot; + type +
+                &quot;, acronym='&quot; + acronym + '\'' +
+                &quot;, academicTerm='&quot; + academicTerm + '\'' +
+                &quot;, status=&quot; + status +
+                '}';
+    }
+
+    public void remove() {
+<span class="pc bpc" id="L206" title="5 of 6 branches missed.">        if (getCourse().getCourseExecutions().size() == 1 &amp;&amp; (!getCourse().getQuestions().isEmpty() || !getCourse().getTopics().isEmpty())) {</span>
+<span class="nc" id="L207">            throw new TutorException(CANNOT_DELETE_COURSE_EXECUTION, acronym + academicTerm);</span>
+        }
+
+<span class="fc bfc" id="L210" title="All 4 branches covered.">        if (!getQuizzes().isEmpty() || !getAssessments().isEmpty()) {</span>
+<span class="fc" id="L211">            throw new TutorException(CANNOT_DELETE_COURSE_EXECUTION, acronym + academicTerm);</span>
+        }
+
+<span class="fc" id="L214">        course.getCourseExecutions().remove(this);</span>
+<span class="pc" id="L215">        users.forEach(user -&gt; user.getCourseExecutions().remove(this));</span>
+<span class="fc" id="L216">        questionSubmissions.forEach(QuestionSubmission::remove);</span>
+<span class="fc" id="L217">    }</span>
+
+    public int getNumberOfActiveTeachers() {
+<span class="fc" id="L220">        return (int) this.users.stream()</span>
+<span class="fc" id="L221">                .filter(user -&gt;</span>
+<span class="fc bfc" id="L222" title="All 2 branches covered.">                        user.getRole().equals(User.Role.TEACHER) &amp;&amp;</span>
+<span class="pc bpc" id="L223" title="1 of 4 branches missed.">                                (user.getAuthUser() == null || user.getAuthUser().isActive()))</span>
+<span class="fc" id="L224">                .count();</span>
+    }
+
+    public int getNumberofInactiveTeachers() {
+<span class="fc" id="L228">        return (int) this.users.stream()</span>
+<span class="fc" id="L229">                .filter(user -&gt;</span>
+<span class="fc bfc" id="L230" title="All 2 branches covered.">                        user.getRole().equals(User.Role.TEACHER) &amp;&amp;</span>
+<span class="pc bpc" id="L231" title="1 of 4 branches missed.">                                (user.getAuthUser() == null || !user.getAuthUser().isActive()))</span>
+<span class="fc" id="L232">                .count();</span>
+    }
+
+    public int getNumberOfActiveStudents() {
+<span class="fc" id="L236">        return (int) this.users.stream()</span>
+<span class="fc" id="L237">                .filter(user -&gt;</span>
+<span class="fc bfc" id="L238" title="All 2 branches covered.">                        user.getRole().equals(User.Role.STUDENT) &amp;&amp;</span>
+<span class="pc bpc" id="L239" title="1 of 4 branches missed.">                                (user.getAuthUser() == null || user.getAuthUser().isActive()))</span>
+<span class="fc" id="L240">                .count();</span>
+    }
+
+    public int getNumberOfInactiveStudents() {
+<span class="fc" id="L244">        return (int) this.users.stream()</span>
+<span class="fc" id="L245">                .filter(user -&gt;</span>
+<span class="fc bfc" id="L246" title="All 2 branches covered.">                        user.getRole().equals(User.Role.STUDENT) &amp;&amp;</span>
+<span class="pc bpc" id="L247" title="1 of 4 branches missed.">                                (user.getAuthUser() == null || !user.getAuthUser().isActive()))</span>
+<span class="fc" id="L248">                .count();</span>
+    }
+
+    public int getNumberOfQuizzes() {
+<span class="fc" id="L252">        return this.quizzes.size();</span>
+    }
+
+    public int getNumberOfQuestions() {
+<span class="fc" id="L256">        return this.course.getQuestions().size();</span>
+    }
+
+    public Set&lt;User&gt; getStudents() {
+<span class="fc" id="L260">        return getUsers().stream()</span>
+<span class="fc" id="L261">                .filter(user -&gt; user.getRole().equals(User.Role.STUDENT))</span>
+<span class="fc" id="L262">                .collect(Collectors.toSet());</span>
+    }
+
+    public Set&lt;Topic&gt; findAvailableTopics() {
+<span class="nc" id="L266">        return getAvailableAssessments().stream().flatMap(assessment -&gt; assessment.getTopics().stream()).collect(Collectors.toSet());</span>
+    }
+
+    public List&lt;Question&gt; filterQuestionsByTopics(List&lt;Question&gt; questions, Set&lt;TopicWithCourseDto&gt; topics) {
+<span class="nc" id="L270">        Set&lt;Integer&gt; availableTopicsIds = findAvailableTopics().stream().map(Topic::getId).collect(Collectors.toSet());</span>
+<span class="nc" id="L271">        Set&lt;Integer&gt; topicsIds = topics.stream().map(TopicWithCourseDto::getId).filter(availableTopicsIds::contains).collect(Collectors.toSet());</span>
+
+<span class="nc" id="L273">        return questions.stream()</span>
+<span class="nc" id="L274">                .filter(question -&gt; question.hasTopics(topicsIds))</span>
+<span class="nc" id="L275">                .collect(Collectors.toList());</span>
+    }
+
+    public Set&lt;User&gt; getTeachers() {
+<span class="nc" id="L279">        return getUsers().stream()</span>
+<span class="nc" id="L280">                .filter(user -&gt; user.getRole().equals(User.Role.TEACHER))</span>
+<span class="nc" id="L281">                .collect(Collectors.toSet());</span>
+    }
+
+    public CourseExecutionDto getDto() {
+<span class="fc" id="L285">        CourseExecutionDto dto = new CourseExecutionDto();</span>
+<span class="fc" id="L286">        dto.setAcademicTerm(getAcademicTerm());</span>
+<span class="fc" id="L287">        dto.setAcronym(getAcronym());</span>
+<span class="fc" id="L288">        dto.setCourseExecutionId(getId());</span>
+<span class="fc" id="L289">        dto.setCourseExecutionType(getType());</span>
+<span class="fc" id="L290">        dto.setCourseId(getCourse().getId());</span>
+<span class="fc" id="L291">        dto.setCourseType(getCourse().getType());</span>
+<span class="fc" id="L292">        dto.setName(getCourse().getName());</span>
+<span class="fc" id="L293">        dto.setStatus(getStatus());</span>
+<span class="fc" id="L294">        dto.setNumberOfActiveTeachers(getNumberOfActiveTeachers());</span>
+<span class="fc" id="L295">        dto.setNumberOfInactiveTeachers(getNumberofInactiveTeachers());</span>
+<span class="fc" id="L296">        dto.setNumberOfActiveStudents(getNumberOfActiveStudents());</span>
+<span class="fc" id="L297">        dto.setNumberOfInactiveStudents(getNumberOfInactiveStudents());</span>
+<span class="fc" id="L298">        dto.setNumberOfQuizzes(getNumberOfQuizzes());</span>
+<span class="fc" id="L299">        dto.setNumberOfQuestions(getNumberOfQuestions());</span>
+<span class="fc bfc" id="L300" title="All 2 branches covered.">        if(getType().equals(CourseType.EXTERNAL)) {</span>
+<span class="fc" id="L301">            dto.setCourseExecutionUsers(new ArrayList&lt;&gt;());</span>
+<span class="fc" id="L302">            getUsers().stream().forEach(user -&gt; {</span>
+<span class="fc bfc" id="L303" title="All 2 branches covered.">                if (user.isStudent()) {</span>
+<span class="fc" id="L304">                    dto.getCourseExecutionUsers().add(user.getStudentDto());</span>
+                } else {
+<span class="fc" id="L306">                    dto.getCourseExecutionUsers().add(user.getUserDto());</span>
+                }
+<span class="fc" id="L308">            });</span>
+            //dto.setCourseExecutionUsers(courseExecutionUsers);
+        }
+
+<span class="fc" id="L312">        return dto;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>MultipleChoiceStatementAnswerDetailsDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto</a> &gt; <span class="el_source">MultipleChoiceStatementAnswerDetailsDto.java</span></div><h1>MultipleChoiceStatementAnswerDetailsDto.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
+
+public class MultipleChoiceStatementAnswerDetailsDto extends StatementAnswerDetailsDto {
+    private Integer optionId;
+
+<span class="fc" id="L9">    public MultipleChoiceStatementAnswerDetailsDto() {</span>
+<span class="fc" id="L10">    }</span>
+
+<span class="fc" id="L12">    public MultipleChoiceStatementAnswerDetailsDto(MultipleChoiceAnswer questionAnswer) {</span>
+<span class="pc bpc" id="L13" title="1 of 2 branches missed.">        if (questionAnswer.getOption() != null) {</span>
+<span class="fc" id="L14">            this.optionId = questionAnswer.getOption().getId();</span>
+        }
+<span class="fc" id="L16">    }</span>
+
+    public Integer getOptionId() {
+<span class="fc" id="L19">        return optionId;</span>
+    }
+
+    public void setOptionId(Integer optionId) {
+<span class="fc" id="L23">        this.optionId = optionId;</span>
+<span class="fc" id="L24">    }</span>
+
+    private MultipleChoiceAnswer createdMultipleChoiceAnswer;
+
+    @Override
+    public AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer) {
+<span class="fc" id="L30">        createdMultipleChoiceAnswer = new MultipleChoiceAnswer(questionAnswer);</span>
+<span class="fc" id="L31">        questionAnswer.getQuestion().getQuestionDetails().update(this);</span>
+<span class="fc" id="L32">        return createdMultipleChoiceAnswer;</span>
+    }
+
+    @Override
+    public boolean emptyAnswer() {
+<span class="nc bnc" id="L37" title="All 2 branches missed.">        return optionId == null;</span>
+    }
+
+    @Override
+    public QuestionAnswerItem getQuestionAnswerItem(String username, int quizId, StatementAnswerDto statementAnswerDto) {
+<span class="nc" id="L42">        return new MultipleChoiceAnswerItem(username, quizId, statementAnswerDto, this);</span>
+    }
+
+    @Override
+    public void update(MultipleChoiceQuestion question) {
+<span class="fc" id="L47">        createdMultipleChoiceAnswer.setOption(question, this);</span>
+<span class="fc" id="L48">    }</span>
+
+    @Override
+    public String toString() {
+<span class="nc" id="L52">        return &quot;MultipleChoiceStatementAnswerDto{&quot; +</span>
+                &quot;optionId=&quot; + optionId +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

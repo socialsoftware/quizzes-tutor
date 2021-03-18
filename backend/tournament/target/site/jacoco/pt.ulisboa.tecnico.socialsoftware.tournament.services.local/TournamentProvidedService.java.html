@@ -1,0 +1,229 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TournamentProvidedService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tournament</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tournament.services.local</a> &gt; <span class="el_source">TournamentProvidedService.java</span></div><h1>TournamentProvidedService.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tournament.services.local;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentParticipantDto;
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto;
+
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+@Service
+<span class="fc" id="L29">public class TournamentProvidedService {</span>
+
+    @Autowired
+    private TournamentRepository tournamentRepository;
+
+    @Autowired
+    private TournamentRequiredService tournamentRequiredService;
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto createTournament(Integer userId, Integer executionId, Set&lt;Integer&gt; topicsId, TournamentDto tournamentDto) {
+<span class="fc" id="L40">        checkInput(userId, topicsId, tournamentDto);</span>
+
+<span class="fc" id="L42">        TournamentCreator creator = tournamentRequiredService.getTournamentCreator(userId);</span>
+<span class="fc" id="L43">        TournamentCourseExecution tournamentCourseExecution = tournamentRequiredService.getTournamentCourseExecution(executionId);</span>
+
+<span class="fc" id="L45">        Set&lt;TournamentTopic&gt; topics = tournamentRequiredService.getTournamentTopics(topicsId);</span>
+
+<span class="fc bfc" id="L47" title="All 2 branches covered.">        if (topics.isEmpty()) {</span>
+<span class="fc" id="L48">            throw new TutorException(TOURNAMENT_MISSING_TOPICS);</span>
+        }
+
+<span class="fc" id="L51">        Tournament tournament = new Tournament(creator, tournamentCourseExecution, topics, tournamentDto);</span>
+<span class="fc" id="L52">        tournamentRepository.save(tournament);</span>
+
+<span class="fc" id="L54">        return tournament.getDto();</span>
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List&lt;TournamentDto&gt; getTournamentsForCourseExecution(Integer executionId) {
+<span class="fc" id="L60">        return tournamentRepository.getTournamentsForCourseExecution(executionId).stream().map(Tournament::getDto)</span>
+<span class="fc" id="L61">                .collect(Collectors.toList());</span>
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List&lt;TournamentDto&gt; getOpenedTournamentsForCourseExecution(Integer executionId) {
+<span class="fc" id="L67">        LocalDateTime now = DateHandler.now();</span>
+<span class="fc" id="L68">        return tournamentRepository.getOpenedTournamentsForCourseExecution(executionId, now).stream().map(Tournament::getDto)</span>
+<span class="fc" id="L69">                .collect(Collectors.toList());</span>
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List&lt;TournamentDto&gt; getClosedTournamentsForCourseExecution(Integer executionId) {
+<span class="fc" id="L75">        LocalDateTime now = DateHandler.now();</span>
+<span class="fc" id="L76">        return tournamentRepository.getClosedTournamentsForCourseExecution(executionId, now).stream().map(Tournament::getDto)</span>
+<span class="fc" id="L77">                .collect(Collectors.toList());</span>
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto getTournament(Integer tournamentId) {
+<span class="nc" id="L83">        return tournamentRepository.findById(tournamentId)</span>
+<span class="nc" id="L84">                .map(Tournament::getDto)</span>
+<span class="nc" id="L85">                .orElseThrow(() -&gt; new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));</span>
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void joinTournament(Integer userId, Integer tournamentId, String password) {
+<span class="fc" id="L91">        Tournament tournament = checkTournament(tournamentId);</span>
+
+<span class="fc" id="L93">        TournamentParticipant participant = tournamentRequiredService.getTournamentParticipant(userId);</span>
+
+<span class="fc" id="L95">        tournament.addParticipant(participant, password);</span>
+<span class="fc" id="L96">    }</span>
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public StatementQuizDto solveQuiz(Integer userId, Integer tournamentId) {
+<span class="fc" id="L101">        Tournament tournament = checkTournament(tournamentId);</span>
+
+<span class="fc bfc" id="L103" title="All 2 branches covered.">        if (!tournament.hasQuiz()) {</span>
+<span class="fc" id="L104">            createQuiz(tournament);</span>
+        }
+
+        //return answerService.startQuiz(userId, tournament.getQuizId());
+<span class="fc" id="L108">        return tournamentRequiredService.startTournamentQuiz(userId, tournament.getQuizId());</span>
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void leaveTournament(Integer userId, Integer tournamentId) {
+<span class="fc" id="L114">        Tournament tournament = checkTournament(tournamentId);</span>
+
+<span class="fc" id="L116">        TournamentParticipant participant = tournament.findParticipant(userId);</span>
+
+<span class="fc" id="L118">        tournament.removeParticipant(participant);</span>
+<span class="fc" id="L119">    }</span>
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public TournamentDto updateTournament(Set&lt;Integer&gt; topicsId, TournamentDto tournamentDto) {
+<span class="fc" id="L126">        Tournament tournament = checkTournament(tournamentDto.getId());</span>
+
+<span class="fc" id="L128">        Set&lt;TournamentTopic&gt; topics = tournamentRequiredService.getTournamentTopics(topicsId);</span>
+
+<span class="fc" id="L130">        tournament.updateTournament(tournamentDto, topics);</span>
+
+<span class="pc bpc" id="L132" title="1 of 2 branches missed.">        if (tournament.hasQuiz()) { // update current Quiz</span>
+            /*Quiz quiz = quizRepository.findById(tournamentDto.getQuizId())
+                    .orElseThrow(() -&gt; new TutorException(QUIZ_NOT_FOUND, tournamentDto.getQuizId()));
+
+            QuizDto quizDto = quizService.findById(tournamentDto.getQuizId());*/
+<span class="nc" id="L137">            QuizDto quizDto = tournamentRequiredService.getQuiz(tournamentDto.getQuizId());</span>
+<span class="nc" id="L138">            quizDto.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());</span>
+
+<span class="nc" id="L140">            tournamentRequiredService.updateQuiz(quizDto);</span>
+        }
+
+<span class="fc" id="L143">        return tournament.getDto();</span>
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public TournamentDto cancelTournament(Integer tournamentId) {
+<span class="fc" id="L149">        Tournament tournament = checkTournament(tournamentId);</span>
+
+<span class="fc" id="L151">        tournament.cancel();</span>
+
+<span class="fc" id="L153">        return tournament.getDto();</span>
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeTournament(Integer tournamentId) {
+<span class="fc" id="L159">        Tournament tournament = checkTournament(tournamentId);</span>
+
+        // Pessimistic view e commutative updates
+<span class="fc bfc" id="L162" title="All 2 branches covered.">        if(tournament.getQuizId() != null) {</span>
+<span class="nc" id="L163">            tournamentRequiredService.deleteQuiz(tournament.getQuizId());</span>
+        }
+
+<span class="fc" id="L166">        tournament.remove();</span>
+
+<span class="fc" id="L168">        tournamentRepository.delete(tournament);</span>
+<span class="fc" id="L169">    }</span>
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List&lt;TournamentParticipantDto&gt; getTournamentParticipants(TournamentDto tournamentDto) {
+<span class="nc" id="L174">        Tournament tournament = checkTournament(tournamentDto.getId());</span>
+
+<span class="nc" id="L176">        return tournament.getParticipants().stream().map(TournamentParticipant::getDto).collect(Collectors.toList());</span>
+    }
+
+    private void checkInput(Integer userId, Set&lt;Integer&gt; topicsId, TournamentDto tournamentDto) {
+<span class="fc bfc" id="L180" title="All 2 branches covered.">        if (userId == null) {</span>
+<span class="fc" id="L181">            throw new TutorException(TOURNAMENT_MISSING_USER);</span>
+        }
+<span class="fc bfc" id="L183" title="All 2 branches covered.">        if (topicsId == null) {</span>
+<span class="fc" id="L184">            throw new TutorException(TOURNAMENT_MISSING_TOPICS);</span>
+        }
+<span class="fc bfc" id="L186" title="All 2 branches covered.">        if (tournamentDto.getStartTime() == null) {</span>
+<span class="fc" id="L187">            throw new TutorException(TOURNAMENT_MISSING_START_TIME);</span>
+        }
+<span class="fc bfc" id="L189" title="All 2 branches covered.">        if (tournamentDto.getEndTime() == null) {</span>
+<span class="fc" id="L190">            throw new TutorException(TOURNAMENT_MISSING_END_TIME);</span>
+        }
+<span class="fc bfc" id="L192" title="All 2 branches covered.">        if (tournamentDto.getNumberOfQuestions() == null) {</span>
+<span class="fc" id="L193">            throw new TutorException(TOURNAMENT_MISSING_NUMBER_OF_QUESTIONS);</span>
+        }
+<span class="fc" id="L195">    }</span>
+
+    private Tournament checkTournament(Integer tournamentId) {
+<span class="fc" id="L198">        return tournamentRepository.findById(tournamentId)</span>
+<span class="pc" id="L199">                .orElseThrow(() -&gt; new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));</span>
+    }
+
+    private void createQuiz(Tournament tournament) {
+<span class="fc" id="L203">        ExternalStatementCreationDto quizForm = tournament.getExternalStatementCreationDto();</span>
+<span class="fc" id="L204">        Integer quizId = tournamentRequiredService.getQuizId(tournament.getCreator().getId(),</span>
+<span class="fc" id="L205">                tournament.getCourseExecution().getId(), quizForm);</span>
+<span class="fc" id="L206">        tournament.setQuizId(quizId);</span>
+<span class="fc" id="L207">    }</span>
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void resetDemoTournaments() {
+<span class="nc" id="L214">        Integer demoCourseExecutionId = tournamentRequiredService.getDemoCourseExecutionId();</span>
+
+<span class="nc" id="L216">        tournamentRepository.getTournamentsForCourseExecution(demoCourseExecutionId)</span>
+<span class="nc" id="L217">            .forEach(tournament -&gt; {</span>
+                /*tournament.getParticipants().forEach(user -&gt;
+                        userRepository.findById(user.getId()).get().removeTournament(tournament)
+                );*/
+                /*if (tournament.getQuiz() != null) {
+                    tournament.getQuiz().setTournament(null);
+                }*/
+<span class="nc" id="L224">                tournamentRepository.delete(tournament);</span>
+<span class="nc" id="L225">            });</span>
+<span class="nc" id="L226">    }</span>
+
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

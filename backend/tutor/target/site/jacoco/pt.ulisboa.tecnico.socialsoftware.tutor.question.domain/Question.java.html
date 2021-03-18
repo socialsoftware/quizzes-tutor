@@ -1,0 +1,399 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Question.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.question.domain</a> &gt; <span class="el_source">Question.java</span></div><h1>Question.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.*;
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+
+import javax.persistence.*;
+import java.time.LocalDateTime;
+import java.util.Comparator;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+@Entity
+@Table(name = &quot;questions&quot;)
+public class Question implements DomainEntity {
+<span class="fc" id="L32">    public enum Status {</span>
+<span class="fc" id="L33">        DISABLED, REMOVED, AVAILABLE, SUBMITTED</span>
+    }
+
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    private Integer key;
+
+    @Column(columnDefinition = &quot;TEXT&quot;)
+    private String content;
+
+    @Column(nullable = false)
+    private String title;
+
+<span class="fc" id="L48">    @Column(name = &quot;number_of_answers&quot;, columnDefinition = &quot;integer default 0&quot;)</span>
+<span class="fc" id="L49">    private Integer numberOfAnswers = 0;</span>
+
+<span class="fc" id="L51">    @Column(name = &quot;number_of_correct&quot;, columnDefinition = &quot;integer default 0&quot;)</span>
+<span class="fc" id="L52">    private Integer numberOfCorrect = 0;</span>
+
+<span class="fc" id="L54">    @Enumerated(EnumType.STRING)</span>
+    private Status status = Status.DISABLED;
+
+    @Column(name = &quot;creation_date&quot;)
+    private LocalDateTime creationDate;
+
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = &quot;question&quot;, fetch = FetchType.EAGER, orphanRemoval = true)
+    private Image image;
+
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
+    @JoinColumn(name = &quot;course_id&quot;)
+    private Course course;
+
+    @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = &quot;question&quot;, orphanRemoval = true)
+    private QuestionDetails questionDetails;
+
+<span class="fc" id="L70">    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;question&quot;, fetch = FetchType.LAZY, orphanRemoval = true)</span>
+    private final Set&lt;QuizQuestion&gt; quizQuestions = new HashSet&lt;&gt;();
+
+<span class="fc" id="L73">    @ManyToMany(mappedBy = &quot;questions&quot;)</span>
+    private final Set&lt;Topic&gt; topics = new HashSet&lt;&gt;();
+
+<span class="fc" id="L76">    @OneToMany(cascade = CascadeType.ALL, mappedBy = &quot;question&quot;, fetch = FetchType.LAZY, orphanRemoval = true)</span>
+    private final Set&lt;Discussion&gt; discussions = new HashSet&lt;&gt;();
+
+<span class="fc" id="L79">    public Question() {</span>
+<span class="fc" id="L80">    }</span>
+
+<span class="fc" id="L82">    public Question(Course course, QuestionDto questionDto) {</span>
+<span class="fc" id="L83">        setTitle(questionDto.getTitle());</span>
+<span class="fc" id="L84">        setKey(questionDto.getKey());</span>
+<span class="fc" id="L85">        setContent(questionDto.getContent());</span>
+<span class="fc" id="L86">        setStatus(Status.valueOf(questionDto.getStatus()));</span>
+<span class="fc" id="L87">        setCreationDate(DateHandler.toLocalDateTime(questionDto.getCreationDate()));</span>
+<span class="fc" id="L88">        setCourse(course);</span>
+
+<span class="fc bfc" id="L90" title="All 2 branches covered.">        if (questionDto.getImage() != null)</span>
+<span class="fc" id="L91">            setImage(new Image(questionDto.getImage()));</span>
+
+        //setQuestionDetails(questionDto.getQuestionDetailsDto().getQuestionDetails(this));
+<span class="fc" id="L94">        setQuestionDetails(getQuestionDetails(this, questionDto.getQuestionDetailsDto()));</span>
+<span class="fc" id="L95">    }</span>
+
+    public Integer getId() {
+<span class="fc" id="L98">        return id;</span>
+    }
+
+    public Integer getKey() {
+<span class="fc bfc" id="L102" title="All 2 branches covered.">        if (this.key == null)</span>
+<span class="fc" id="L103">            generateKeys();</span>
+
+<span class="fc" id="L105">        return key;</span>
+    }
+
+    public void setKey(Integer key) {
+<span class="fc" id="L109">        this.key = key;</span>
+<span class="fc" id="L110">    }</span>
+
+    public String getContent() {
+<span class="fc" id="L113">        return content;</span>
+    }
+
+    public void setContent(String content) {
+<span class="fc bfc" id="L117" title="All 4 branches covered.">        if (content == null || content.isBlank())</span>
+<span class="fc" id="L118">            throw new TutorException(INVALID_CONTENT_FOR_QUESTION);</span>
+
+<span class="fc" id="L120">        this.content = content;</span>
+<span class="fc" id="L121">    }</span>
+
+    public Status getStatus() {
+<span class="fc" id="L124">        return status;</span>
+    }
+
+    public void setStatus(Status status) {
+<span class="fc" id="L128">        this.status = status;</span>
+<span class="fc" id="L129">    }</span>
+
+    public Image getImage() {
+<span class="fc" id="L132">        return image;</span>
+    }
+
+    public void setImage(Image image) {
+<span class="fc" id="L136">        this.image = image;</span>
+<span class="fc" id="L137">        image.setQuestion(this);</span>
+<span class="fc" id="L138">    }</span>
+
+    public String getTitle() {
+<span class="fc" id="L141">        return title;</span>
+    }
+
+    public void setTitle(String title) {
+<span class="fc bfc" id="L145" title="All 4 branches covered.">        if (title == null || title.isBlank())</span>
+<span class="fc" id="L146">            throw new TutorException(INVALID_TITLE_FOR_QUESTION);</span>
+<span class="fc" id="L147">        this.title = title;</span>
+<span class="fc" id="L148">    }</span>
+
+    public Integer getNumberOfAnswers() {
+<span class="fc" id="L151">        return numberOfAnswers;</span>
+    }
+
+    public void setNumberOfAnswers(Integer numberOfAnswers) {
+<span class="fc" id="L155">        this.numberOfAnswers = numberOfAnswers;</span>
+<span class="fc" id="L156">    }</span>
+
+    public Integer getNumberOfCorrect() {
+<span class="fc" id="L159">        return numberOfCorrect;</span>
+    }
+
+    public void setNumberOfCorrect(Integer numberOfCorrect) {
+<span class="fc" id="L163">        this.numberOfCorrect = numberOfCorrect;</span>
+<span class="fc" id="L164">    }</span>
+
+    public LocalDateTime getCreationDate() {
+<span class="fc" id="L167">        return creationDate;</span>
+    }
+
+    public void setCreationDate(LocalDateTime creationDate) {
+<span class="pc bpc" id="L171" title="1 of 2 branches missed.">        if (this.creationDate == null) {</span>
+<span class="fc" id="L172">            this.creationDate = DateHandler.now();</span>
+        } else {
+<span class="nc" id="L174">            this.creationDate = creationDate;</span>
+        }
+<span class="fc" id="L176">    }</span>
+
+    public Set&lt;QuizQuestion&gt; getQuizQuestions() {
+<span class="fc" id="L179">        return quizQuestions;</span>
+    }
+
+    public void addQuizQuestion(QuizQuestion quizQuestion) {
+<span class="fc" id="L183">        quizQuestions.add(quizQuestion);</span>
+<span class="fc" id="L184">    }</span>
+
+    public Set&lt;Topic&gt; getTopics() {
+<span class="fc" id="L187">        return topics;</span>
+    }
+
+    public void addTopic(Topic topic) {
+<span class="fc" id="L191">        topics.add(topic);</span>
+<span class="fc" id="L192">        topic.getQuestions().add(this);</span>
+<span class="fc" id="L193">    }</span>
+
+    public Course getCourse() {
+<span class="fc" id="L196">        return course;</span>
+    }
+
+    public void setCourse(Course course) {
+<span class="fc" id="L200">        this.course = course;</span>
+<span class="fc" id="L201">        course.addQuestion(this);</span>
+<span class="fc" id="L202">    }</span>
+
+    public void setId(Integer id) {
+<span class="nc" id="L205">        this.id = id;</span>
+<span class="nc" id="L206">    }</span>
+
+    public Set&lt;Discussion&gt; getDiscussions() {
+<span class="nc" id="L209">        return discussions;</span>
+    }
+
+    public void addDiscussion(Discussion discussion) {
+<span class="fc" id="L213">        discussions.add(discussion);</span>
+<span class="fc" id="L214">    }</span>
+
+    private void generateKeys() {
+<span class="fc" id="L217">        int max = this.course.getQuestions().stream()</span>
+<span class="pc bpc" id="L218" title="1 of 2 branches missed.">                .filter(question -&gt; question.key != null)</span>
+<span class="fc" id="L219">                .map(Question::getKey)</span>
+<span class="fc" id="L220">                .max(Comparator.comparing(Integer::valueOf))</span>
+<span class="fc" id="L221">                .orElse(0);</span>
+
+<span class="fc" id="L223">        List&lt;Question&gt; nullKeyQuestions = this.course.getQuestions().stream()</span>
+<span class="pc bpc" id="L224" title="1 of 2 branches missed.">                .filter(question -&gt; question.key == null).collect(Collectors.toList());</span>
+
+<span class="fc bfc" id="L226" title="All 2 branches covered.">        for (Question question : nullKeyQuestions) {</span>
+<span class="fc" id="L227">            max = max + 1;</span>
+<span class="fc" id="L228">            question.key = max;</span>
+<span class="fc" id="L229">        }</span>
+<span class="fc" id="L230">    }</span>
+
+    public void addAnswerStatistics(QuestionAnswer questionAnswer) {
+<span class="nc" id="L233">        numberOfAnswers++;</span>
+<span class="nc bnc" id="L234" title="All 2 branches missed.">        if (questionAnswer.isCorrect()) {</span>
+<span class="nc" id="L235">            numberOfCorrect++;</span>
+        }
+<span class="nc" id="L237">    }</span>
+
+    public Integer getDifficulty() {
+<span class="fc bfc" id="L240" title="All 2 branches covered.">        if (numberOfAnswers == 0) {</span>
+<span class="fc" id="L241">            return null;</span>
+        }
+
+<span class="fc" id="L244">        return numberOfCorrect * 100 / numberOfAnswers;</span>
+    }
+
+    public boolean belongsToAssessment(Assessment chosenAssessment) {
+<span class="fc" id="L248">        return chosenAssessment.getTopicConjunctions().stream().map(TopicConjunction::getTopics).collect(Collectors.toList()).contains(this.topics);</span>
+    }
+
+    public boolean hasTopics(Set&lt;Integer&gt; chosenTopicsIds) {
+<span class="nc bnc" id="L252" title="All 2 branches missed.">        return !getTopics().isEmpty()</span>
+<span class="nc bnc" id="L253" title="All 2 branches missed.">                &amp;&amp; chosenTopicsIds.containsAll(getTopics().stream()</span>
+<span class="nc" id="L254">                .map(Topic::getId)</span>
+<span class="nc" id="L255">                .collect(Collectors.toList()));</span>
+    }
+
+    public void update(QuestionDto questionDto) {
+<span class="fc bfc" id="L259" title="All 2 branches covered.">        if (getQuizQuestions().stream().flatMap(quizQuestion -&gt; quizQuestion.getQuestionAnswers().stream()).findAny().isPresent()) {</span>
+<span class="fc" id="L260">            throw new TutorException(CANNOT_CHANGE_ANSWERED_QUESTION);</span>
+        }
+
+<span class="fc" id="L263">        setTitle(questionDto.getTitle());</span>
+<span class="fc" id="L264">        setContent(questionDto.getContent());</span>
+
+<span class="fc" id="L266">        getQuestionDetails().update(questionDto.getQuestionDetailsDto());</span>
+<span class="fc" id="L267">    }</span>
+
+    public void updateTopics(Set&lt;Topic&gt; newTopics) {
+<span class="fc bfc" id="L270" title="All 2 branches covered.">        Set&lt;Topic&gt; toRemove = this.topics.stream().filter(topic -&gt; !newTopics.contains(topic)).collect(Collectors.toSet());</span>
+
+<span class="fc" id="L272">        toRemove.forEach(topic -&gt; {</span>
+<span class="fc" id="L273">            this.topics.remove(topic);</span>
+<span class="fc" id="L274">            topic.getQuestions().remove(this);</span>
+<span class="fc" id="L275">        });</span>
+
+<span class="fc bfc" id="L277" title="All 2 branches covered.">        newTopics.stream().filter(topic -&gt; !this.topics.contains(topic)).forEach(this::addTopic);</span>
+<span class="fc" id="L278">    }</span>
+
+    public void remove() {
+<span class="fc bfc" id="L281" title="All 2 branches covered.">        if (!getQuizQuestions().isEmpty()) {</span>
+<span class="fc" id="L282">            throw new TutorException(QUESTION_IS_USED_IN_QUIZ, getQuizQuestions().iterator().next().getQuiz().getTitle());</span>
+        }
+
+<span class="fc" id="L285">        this.course.getQuestions().remove(this);</span>
+<span class="fc" id="L286">        course = null;</span>
+
+<span class="fc" id="L288">        this.topics.forEach(topic -&gt; topic.getQuestions().remove(this));</span>
+<span class="fc" id="L289">        this.topics.clear();</span>
+<span class="fc" id="L290">    }</span>
+
+    @Override
+    public void accept(Visitor visitor) {
+<span class="fc" id="L294">        visitor.visitQuestion(this);</span>
+<span class="fc" id="L295">    }</span>
+
+    public QuestionDetails getQuestionDetails() {
+<span class="fc" id="L298">        return questionDetails;</span>
+    }
+
+    public QuestionDetails getQuestionDetails(Question question, QuestionDetailsDto questionDetailsDto) {
+<span class="fc bfc" id="L302" title="All 2 branches covered.">        if (questionDetailsDto instanceof MultipleChoiceQuestionDto) {</span>
+<span class="fc" id="L303">            return new MultipleChoiceQuestion(question, (MultipleChoiceQuestionDto) questionDetailsDto);</span>
+        }
+<span class="fc bfc" id="L305" title="All 2 branches covered.">        else if (questionDetailsDto instanceof CodeFillInQuestionDto) {</span>
+<span class="fc" id="L306">            return new CodeFillInQuestion(question, (CodeFillInQuestionDto) questionDetailsDto);</span>
+        }
+<span class="pc bpc" id="L308" title="1 of 2 branches missed.">        else if (questionDetailsDto instanceof CodeOrderQuestionDto) {</span>
+<span class="fc" id="L309">            return new CodeOrderQuestion(question, (CodeOrderQuestionDto) questionDetailsDto);</span>
+        }
+        else {
+<span class="nc" id="L312">            throw new TutorException(INVALID_QUESTION_DETAILS, question.getClass().getName());</span>
+        }
+    }
+
+    public void setQuestionDetails(QuestionDetails question) {
+<span class="fc" id="L317">        this.questionDetails = question;</span>
+<span class="pc bpc" id="L318" title="1 of 2 branches missed.">        if (this.questionDetails != null) {</span>
+<span class="fc" id="L319">            this.questionDetails.setQuestion(this);</span>
+        }
+<span class="fc" id="L321">    }</span>
+
+    public CorrectAnswerDetailsDto getCorrectAnswerDetailsDto() {
+<span class="fc" id="L324">        return this.questionDetails.getCorrectAnswerDetailsDto();</span>
+    }
+
+    public StatementQuestionDetailsDto getStatementQuestionDetailsDto() {
+<span class="fc" id="L328">        return this.questionDetails.getStatementQuestionDetailsDto();</span>
+    }
+
+    public AnswerDetailsDto getEmptyAnswerDetailsDto() {
+<span class="fc" id="L332">        return this.getQuestionDetails().getEmptyAnswerDetailsDto();</span>
+    }
+
+    public StatementAnswerDetailsDto getEmptyStatementAnswerDetailsDto() {
+<span class="fc" id="L336">        return this.questionDetails.getEmptyStatementAnswerDetailsDto();</span>
+    }
+
+    public QuestionDetailsDto getQuestionDetailsDto() {
+<span class="fc" id="L340">        return this.getQuestionDetails().getQuestionDetailsDto();</span>
+    }
+
+    public String getCorrectAnswerRepresentation() {
+<span class="nc" id="L344">        return this.questionDetails.getCorrectAnswerRepresentation();</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L349">        return &quot;Question{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, key=&quot; + key +
+                &quot;, content='&quot; + content + '\'' +
+                &quot;, title='&quot; + title + '\'' +
+                &quot;, numberOfAnswers=&quot; + numberOfAnswers +
+                &quot;, numberOfCorrect=&quot; + numberOfCorrect +
+                &quot;, status=&quot; + status +
+                &quot;, creationDate=&quot; + creationDate +
+                &quot;, image=&quot; + image +
+                &quot;, quizQuestions=&quot; + quizQuestions +
+                &quot;, topics=&quot; + topics +
+                &quot;, course=&quot; + course +
+                &quot;, question=&quot; + questionDetails +
+                '}';
+    }
+
+    public boolean isInSubmission() {
+<span class="pc bpc" id="L367" title="1 of 2 branches missed.">        return status == Status.SUBMITTED;</span>
+    }
+
+    public QuestionDto getDto() {
+<span class="fc" id="L371">        QuestionDto dto = new QuestionDto();</span>
+<span class="fc" id="L372">        dto.setId(getId());</span>
+<span class="fc" id="L373">        dto.setTitle(getTitle());</span>
+<span class="fc" id="L374">        dto.setContent(getContent());</span>
+<span class="fc" id="L375">        dto.setDifficulty(getDifficulty());</span>
+<span class="fc" id="L376">        dto.setNumberOfAnswers(getNumberOfAnswers());</span>
+<span class="fc" id="L377">        dto.setNumberOfCorrect(getNumberOfCorrect());</span>
+<span class="fc" id="L378">        dto.setStatus(getStatus().name());</span>
+<span class="fc" id="L379">        dto.setTopics(getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(Topic::getDto).collect(Collectors.toList()));</span>
+<span class="fc" id="L380">        dto.setCreationDate(DateHandler.toISOString(getCreationDate()));</span>
+
+<span class="fc bfc" id="L382" title="All 2 branches covered.">        if (!getQuizQuestions().isEmpty()) {</span>
+<span class="fc" id="L383">            dto.setNumberOfGeneratedQuizzes((int) getQuizQuestions().stream()</span>
+<span class="fc" id="L384">                    .map(QuizQuestion::getQuiz)</span>
+<span class="fc" id="L385">                    .filter(quiz -&gt; quiz.getType().equals(QuizType.GENERATED))</span>
+<span class="fc" id="L386">                    .count());</span>
+        }
+
+<span class="fc" id="L389">        dto.setNumberOfNonGeneratedQuizzes(getQuizQuestions().size() - dto.getNumberOfGeneratedQuizzes());</span>
+
+<span class="fc bfc" id="L391" title="All 2 branches covered.">        if (getImage() != null) {</span>
+<span class="fc" id="L392">            dto.setImage(getImage().getDto());</span>
+        }
+
+<span class="fc" id="L395">        dto.setQuestionDetailsDto(getQuestionDetailsDto());</span>
+<span class="fc" id="L396">        return dto;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

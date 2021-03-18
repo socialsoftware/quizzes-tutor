@@ -1,0 +1,166 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>QuizzesXmlImport.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain</a> &gt; <span class="el_source">QuizzesXmlImport.java</span></div><h1>QuizzesXmlImport.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
+
+import org.jdom2.Document;
+import org.jdom2.Element;
+import org.jdom2.JDOMException;
+import org.jdom2.filter.Filters;
+import org.jdom2.input.SAXBuilder;
+import org.jdom2.xpath.XPathExpression;
+import org.jdom2.xpath.XPathFactory;
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
+
+import java.io.*;
+import java.nio.charset.Charset;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+<span class="fc" id="L28">public class QuizzesXmlImport {</span>
+	private QuizService quizService;
+	private QuestionRepository questionRepository;
+	private QuizQuestionRepository quizQuestionRepository;
+    private CourseRepository courseRepository;
+
+	public void importQuizzes(InputStream inputStream, QuizService quizService, QuestionRepository questionRepository,
+							  QuizQuestionRepository quizQuestionRepository,
+							  CourseRepository courseRepository) {
+<span class="fc" id="L37">		this.quizService = quizService;</span>
+<span class="fc" id="L38">		this.questionRepository = questionRepository;</span>
+<span class="fc" id="L39">		this.quizQuestionRepository = quizQuestionRepository;</span>
+<span class="fc" id="L40">        this.courseRepository = courseRepository;</span>
+
+<span class="fc" id="L42">		SAXBuilder builder = new SAXBuilder();</span>
+<span class="fc" id="L43">		builder.setIgnoringElementContentWhitespace(true);</span>
+
+		Document doc;
+		try {
+<span class="fc" id="L47">			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());</span>
+<span class="fc" id="L48">			doc = builder.build(reader);</span>
+<span class="nc" id="L49">		} catch (FileNotFoundException e) {</span>
+<span class="nc" id="L50">			throw new TutorException(QUIZZES_IMPORT_ERROR, &quot;File not found&quot;);</span>
+<span class="nc" id="L51">		} catch (JDOMException e) {</span>
+<span class="nc" id="L52">			throw new TutorException(QUIZZES_IMPORT_ERROR, &quot;Coding problem&quot;);</span>
+<span class="nc" id="L53">		} catch (IOException e) {</span>
+<span class="nc" id="L54">			throw new TutorException(QUIZZES_IMPORT_ERROR, &quot;File type or format&quot;);</span>
+<span class="fc" id="L55">		}</span>
+
+<span class="pc bpc" id="L57" title="1 of 2 branches missed.">		if (doc == null) {</span>
+<span class="nc" id="L58">			throw new TutorException(QUIZZES_IMPORT_ERROR, &quot;File not found ot format error&quot;);</span>
+		}
+
+<span class="fc" id="L61">		importQuizzes(doc);</span>
+<span class="fc" id="L62">	}</span>
+
+	public void importQuizzes(String quizzesXml, QuizService quizService, QuestionRepository questionRepository,
+							  QuizQuestionRepository quizQuestionRepository,
+							  CourseRepository courseRepository) {
+<span class="fc" id="L67">		SAXBuilder builder = new SAXBuilder();</span>
+<span class="fc" id="L68">		builder.setIgnoringElementContentWhitespace(true);</span>
+
+<span class="fc" id="L70">		InputStream stream = new ByteArrayInputStream(quizzesXml.getBytes());</span>
+
+<span class="fc" id="L72">		importQuizzes(stream, quizService, questionRepository, quizQuestionRepository, courseRepository);</span>
+<span class="fc" id="L73">	}</span>
+
+	private void importQuizzes(Document doc) {
+<span class="fc" id="L76">		XPathFactory xpfac = XPathFactory.instance();</span>
+<span class="fc" id="L77">		XPathExpression&lt;Element&gt; xp = xpfac.compile(&quot;//quizzes/quiz&quot;, Filters.element());</span>
+<span class="fc bfc" id="L78" title="All 2 branches covered.">		for (Element element : xp.evaluate(doc)) {</span>
+<span class="fc" id="L79">			importQuiz(element);</span>
+<span class="fc" id="L80">		}</span>
+<span class="fc" id="L81">	}</span>
+
+	private void importQuiz(Element quizElement) {
+<span class="fc" id="L84">		String courseName = quizElement.getAttributeValue(&quot;courseName&quot;);</span>
+<span class="fc" id="L85">		String courseType = quizElement.getAttributeValue(&quot;courseType&quot;);</span>
+
+<span class="fc" id="L87">		String courseExecutionType = quizElement.getAttributeValue(&quot;courseExecutionType&quot;);</span>
+<span class="fc" id="L88">        String acronym = quizElement.getAttributeValue(&quot;acronym&quot;);</span>
+<span class="fc" id="L89">        String academicTerm = quizElement.getAttributeValue(&quot;academicTerm&quot;);</span>
+
+<span class="fc" id="L91">		Integer key = Integer.valueOf(quizElement.getAttributeValue(&quot;key&quot;));</span>
+<span class="fc" id="L92">		boolean scramble = false;</span>
+<span class="pc bpc" id="L93" title="1 of 2 branches missed.">		if (quizElement.getAttributeValue(&quot;scramble&quot;) != null) {</span>
+<span class="fc" id="L94">			scramble = Boolean.parseBoolean(quizElement.getAttributeValue(&quot;scramble&quot;));</span>
+		}
+<span class="fc" id="L96">		boolean qrCodeOnly = false;</span>
+<span class="pc bpc" id="L97" title="1 of 2 branches missed.">		if (quizElement.getAttributeValue(&quot;qrCodeOnly&quot;) != null) {</span>
+<span class="fc" id="L98">			qrCodeOnly = Boolean.parseBoolean(quizElement.getAttributeValue(&quot;qrCodeOnly&quot;));</span>
+		}
+<span class="fc" id="L100">		boolean oneWay = false;</span>
+<span class="pc bpc" id="L101" title="1 of 2 branches missed.">		if (quizElement.getAttributeValue(&quot;oneWay&quot;) != null) {</span>
+<span class="fc" id="L102">			oneWay = Boolean.parseBoolean(quizElement.getAttributeValue(&quot;oneWay&quot;));</span>
+		}
+
+<span class="fc" id="L105">		String title = quizElement.getAttributeValue(&quot;title&quot;);</span>
+<span class="fc" id="L106">		String creationDate = null;</span>
+<span class="pc bpc" id="L107" title="1 of 2 branches missed.">		if (quizElement.getAttributeValue(&quot;creationDate&quot;) != null) {</span>
+<span class="fc" id="L108">            creationDate = quizElement.getAttributeValue(&quot;creationDate&quot;);</span>
+		}
+
+<span class="fc" id="L111">		String availableDate = null;</span>
+<span class="pc bpc" id="L112" title="1 of 2 branches missed.">		if (quizElement.getAttributeValue(&quot;availableDate&quot;) != null) {</span>
+<span class="fc" id="L113">			availableDate = quizElement.getAttributeValue(&quot;availableDate&quot;);</span>
+		}
+
+<span class="fc" id="L116">		String conclusionDate = null;</span>
+<span class="pc bpc" id="L117" title="1 of 2 branches missed.">        if (quizElement.getAttributeValue(&quot;conclusionDate&quot;) != null) {</span>
+<span class="fc" id="L118">            conclusionDate = quizElement.getAttributeValue(&quot;conclusionDate&quot;);</span>
+        }
+<span class="fc" id="L120">		String type = quizElement.getAttributeValue(&quot;type&quot;);</span>
+<span class="fc" id="L121">		Integer series = null;</span>
+<span class="pc bpc" id="L122" title="1 of 2 branches missed.">		if (quizElement.getAttributeValue(&quot;series&quot;) != null) {</span>
+<span class="nc" id="L123">			series = Integer.valueOf(quizElement.getAttributeValue(&quot;series&quot;));</span>
+		}
+<span class="fc" id="L125">		String version = quizElement.getAttributeValue(&quot;version&quot;);</span>
+
+<span class="fc" id="L127">		QuizDto quizDto = new QuizDto();</span>
+<span class="fc" id="L128">		quizDto.setKey(key);</span>
+<span class="fc" id="L129">		quizDto.setScramble(scramble);</span>
+<span class="fc" id="L130">		quizDto.setQrCodeOnly(qrCodeOnly);</span>
+<span class="fc" id="L131">		quizDto.setOneWay(oneWay);</span>
+<span class="fc" id="L132">		quizDto.setTitle(title);</span>
+<span class="fc" id="L133">		quizDto.setCreationDate(creationDate);</span>
+<span class="fc" id="L134">        quizDto.setAvailableDate(availableDate);</span>
+<span class="fc" id="L135">        quizDto.setConclusionDate(conclusionDate);</span>
+<span class="fc" id="L136">		quizDto.setType(type);</span>
+<span class="fc" id="L137">		quizDto.setSeries(series);</span>
+<span class="fc" id="L138">		quizDto.setVersion(version);</span>
+
+<span class="fc" id="L140">		Course course = courseRepository.findByNameType(courseName, courseType)</span>
+<span class="pc" id="L141">			.orElseThrow(() -&gt; new TutorException(COURSE_NOT_FOUND, courseName + &quot;:&quot; + courseType));</span>
+
+<span class="fc" id="L143">		CourseExecution courseExecution = course.getCourseExecution(acronym, academicTerm, CourseType.valueOf(courseExecutionType))</span>
+<span class="pc" id="L144">				.orElseThrow(() -&gt; new TutorException(COURSE_EXECUTION_NOT_FOUND, acronym));</span>
+
+<span class="fc" id="L146">		QuizDto quizDto2 = quizService.createQuiz(courseExecution.getId(), quizDto);</span>
+<span class="fc" id="L147">		importQuizQuestions(quizElement.getChild(&quot;quizQuestions&quot;), quizDto2);</span>
+<span class="fc" id="L148">	}</span>
+
+	private void importQuizQuestions(Element quizQuestionsElement, QuizDto quizDto ) {
+<span class="fc bfc" id="L151" title="All 2 branches covered.">		for (Element quizQuestionElement: quizQuestionsElement.getChildren(&quot;quizQuestion&quot;)) {</span>
+<span class="fc" id="L152">			Integer sequence = Integer.valueOf(quizQuestionElement.getAttributeValue(&quot;sequence&quot;));</span>
+<span class="fc" id="L153">			int questionKey = Integer.parseInt(quizQuestionElement.getAttributeValue(&quot;questionKey&quot;));</span>
+
+<span class="fc" id="L155">			Question question = questionRepository.findByKey(questionKey)</span>
+<span class="pc" id="L156">					.orElseThrow(() -&gt; new TutorException(QUESTION_NOT_FOUND, questionKey));</span>
+
+<span class="fc" id="L158">			QuizQuestionDto quizQuestionDto = quizService.addQuestionToQuiz(question.getId(), quizDto.getId());</span>
+
+<span class="pc" id="L160">			QuizQuestion quizQuestion = quizQuestionRepository.findById(quizQuestionDto.getId()).orElseThrow(() -&gt; new TutorException(QUIZ_QUESTION_NOT_FOUND, quizQuestionDto.getId()));</span>
+
+<span class="fc" id="L162">			quizQuestion.setSequence(sequence);</span>
+<span class="fc" id="L163">		}</span>
+<span class="fc" id="L164">	}</span>
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

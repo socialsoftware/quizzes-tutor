@@ -1,0 +1,323 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>Tournament.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tournament</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tournament.domain</a> &gt; <span class="el_source">Tournament.java</span></div><h1>Tournament.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tournament.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentParticipantDto;
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto;
+
+import javax.persistence.*;
+import java.util.*;
+import java.time.LocalDateTime;
+import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+
+@Entity
+@Table(name = &quot;tournaments&quot;)
+public class Tournament  {
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Integer id;
+
+    @Column(name = &quot;start_time&quot;)
+    private LocalDateTime startTime;
+
+    @Column(name = &quot;end_time&quot;)
+    private LocalDateTime endTime;
+
+    @Column(name = &quot;number_of_questions&quot;)
+    private Integer numberOfQuestions;
+
+    @Embedded
+    private TournamentCreator creator;
+
+    @Column(name = &quot;is_canceled&quot;)
+    private boolean isCanceled;
+
+<span class="fc" id="L38">    @ElementCollection</span>
+    @CollectionTable(name = &quot;tournaments_participants&quot;)
+    private Set&lt;TournamentParticipant&gt; participants = new HashSet&lt;&gt;();
+
+    @Embedded
+    private TournamentCourseExecution courseExecution;
+
+<span class="fc" id="L45">    @ElementCollection</span>
+    @CollectionTable(name = &quot;tournaments_topics&quot;)
+    private Set&lt;TournamentTopic&gt; topics = new HashSet&lt;&gt;();
+
+    @Column(name = &quot;quiz_id&quot;)
+    private Integer quizId;
+
+    @Column(name = &quot;privateTournament&quot;)
+    private boolean privateTournament;
+
+    @Column(name = &quot;password&quot;)
+    private String password;
+
+<span class="fc" id="L58">    public Tournament() {</span>
+<span class="fc" id="L59">    }</span>
+
+<span class="fc" id="L61">    public Tournament(TournamentCreator creator, TournamentCourseExecution courseExecution, Set&lt;TournamentTopic&gt; topics, TournamentDto tournamentDto) {</span>
+<span class="fc" id="L62">        setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));</span>
+<span class="fc" id="L63">        setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));</span>
+<span class="fc" id="L64">        setNumberOfQuestions(tournamentDto.getNumberOfQuestions());</span>
+<span class="fc" id="L65">        setCanceled(tournamentDto.isCanceled());</span>
+<span class="fc" id="L66">        setCreator(creator);</span>
+<span class="fc" id="L67">        setCourseExecution(courseExecution);</span>
+<span class="fc" id="L68">        setTopics(topics);</span>
+<span class="fc" id="L69">        setPassword(tournamentDto.getPassword());</span>
+<span class="fc" id="L70">        setPrivateTournament(tournamentDto.isPrivateTournament());</span>
+<span class="fc" id="L71">    }</span>
+
+<span class="fc" id="L73">    public Integer getId() { return id; }</span>
+
+<span class="fc" id="L75">    public LocalDateTime getStartTime() { return startTime; }</span>
+
+    public void setStartTime(LocalDateTime startTime) {
+        // Added 2 minute as a buffer to take latency into consideration
+<span class="pc bpc" id="L79" title="1 of 6 branches missed.">        if (startTime == null || (this.endTime != null &amp;&amp; this.endTime.isBefore(startTime) ||</span>
+<span class="fc bfc" id="L80" title="All 2 branches covered.">                !DateHandler.now().isBefore(startTime.plusMinutes(2))))</span>
+        {
+<span class="fc" id="L82">            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, &quot;startTime&quot;);</span>
+        }
+
+<span class="fc" id="L85">        this.startTime = startTime;</span>
+<span class="fc" id="L86">    }</span>
+
+<span class="fc" id="L88">    public LocalDateTime getEndTime() { return endTime; }</span>
+
+    public void setEndTime(LocalDateTime endTime) {
+<span class="pc bpc" id="L91" title="1 of 6 branches missed.">        if (endTime == null || (this.startTime != null &amp;&amp; endTime.isBefore(this.startTime))) {</span>
+<span class="fc" id="L92">            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, &quot;endTime&quot;);</span>
+        }
+
+<span class="fc" id="L95">        this.endTime = endTime;</span>
+<span class="fc" id="L96">    }</span>
+
+    public void setNumberOfQuestions(Integer numberOfQuestions) {
+<span class="fc bfc" id="L99" title="All 2 branches covered.">        if (numberOfQuestions &lt;= 0) {</span>
+<span class="fc" id="L100">            throw new TutorException(TOURNAMENT_NOT_CONSISTENT, &quot;number of questions&quot;);</span>
+        }
+<span class="fc" id="L102">        this.numberOfQuestions = numberOfQuestions;</span>
+<span class="fc" id="L103">    }</span>
+
+<span class="fc" id="L105">    public Integer getNumberOfQuestions() { return numberOfQuestions; }</span>
+
+    public TournamentCreator getCreator() {
+<span class="fc" id="L108">        return creator;</span>
+    }
+
+    public void setCreator(TournamentCreator creator) {
+<span class="fc" id="L112">        this.creator = creator;</span>
+<span class="fc" id="L113">    }</span>
+
+<span class="nc" id="L115">    public boolean isCreator(Integer creatorId) { return creator.getId().equals(creatorId); }</span>
+
+<span class="fc" id="L117">    public void setCanceled(boolean isCanceled) { this.isCanceled = isCanceled; }</span>
+
+<span class="fc" id="L119">    public boolean isCanceled() { return isCanceled; }</span>
+
+    public void cancel() {
+<span class="fc" id="L122">        checkCanChange();</span>
+<span class="fc" id="L123">        this.isCanceled = true;</span>
+<span class="fc" id="L124">    }</span>
+
+    public Integer getQuizId() {
+<span class="fc" id="L127">        return quizId;</span>
+    }
+
+    public void setQuizId(Integer quizId) {
+<span class="fc" id="L131">        this.quizId = quizId;</span>
+<span class="fc" id="L132">    }</span>
+
+<span class="fc" id="L134">    public Set&lt;TournamentParticipant&gt; getParticipants() { return participants; }</span>
+
+    public TournamentCourseExecution getCourseExecution() {
+<span class="fc" id="L137">        return courseExecution;</span>
+    }
+
+    public void setCourseExecution(TournamentCourseExecution courseExecution) {
+<span class="fc" id="L141">        this.courseExecution = courseExecution;</span>
+<span class="fc" id="L142">    }</span>
+
+<span class="fc" id="L144">    public Set&lt;TournamentTopic&gt; getTopics() { return topics; }</span>
+
+    public void setTopics(Set&lt;TournamentTopic&gt; topics) {
+<span class="fc" id="L147">        Set&lt;TournamentTopic&gt; topicsList = new HashSet&lt;&gt;();</span>
+<span class="fc bfc" id="L148" title="All 2 branches covered.">        for (TournamentTopic topic: topics) {</span>
+<span class="fc" id="L149">            checkTopicCourse(topic);</span>
+<span class="fc" id="L150">            topicsList.add(topic);</span>
+<span class="fc" id="L151">        }</span>
+
+<span class="fc" id="L153">        this.topics = topicsList;</span>
+<span class="fc" id="L154">    }</span>
+
+    public void updateTopics(Set&lt;TournamentTopic&gt; newTopics) {
+<span class="pc bpc" id="L157" title="1 of 2 branches missed.">        if (newTopics.isEmpty()) throw new TutorException(TOURNAMENT_MUST_HAVE_ONE_TOPIC);</span>
+
+<span class="fc" id="L159">        Set&lt;TournamentTopic&gt; topicsList = new HashSet&lt;&gt;();</span>
+
+<span class="fc bfc" id="L161" title="All 2 branches covered.">        for (TournamentTopic topic : newTopics) {</span>
+<span class="fc" id="L162">            checkTopicCourse(topic);</span>
+<span class="fc" id="L163">            topicsList.add(topic);</span>
+<span class="fc" id="L164">        }</span>
+
+<span class="fc" id="L166">        this.topics = topicsList;</span>
+<span class="fc" id="L167">    }</span>
+
+    public void checkTopicCourse(TournamentTopic topic) {
+<span class="fc bfc" id="L170" title="All 2 branches covered.">        if (!topic.getCourseId().equals(courseExecution.getCourseId())) {</span>
+<span class="fc" id="L171">            throw new TutorException(TOURNAMENT_TOPIC_COURSE);</span>
+        }
+<span class="fc" id="L173">    }</span>
+
+    public void checkIsParticipant(TournamentParticipant participant) {
+<span class="pc bpc" id="L176" title="1 of 2 branches missed.">        if (!getParticipants().contains(participant)) {</span>
+<span class="nc" id="L177">            throw new TutorException(USER_NOT_JOINED, participant.getId());</span>
+        }
+
+<span class="pc bpc" id="L180" title="1 of 2 branches missed.">        if (participant.hasAnswered()) {</span>
+<span class="nc" id="L181">            throw new TutorException(USER_ALREDAY_ANSWERED_TOURNAMENT_QUIZ, participant.getId());</span>
+        }
+<span class="fc" id="L183">    }</span>
+
+    public void addParticipant(TournamentParticipant participant, String password) {
+<span class="fc bfc" id="L186" title="All 2 branches covered.">        if (DateHandler.now().isAfter(getEndTime())) {</span>
+<span class="fc" id="L187">            throw new TutorException(TOURNAMENT_NOT_OPEN, getId());</span>
+        }
+
+<span class="fc bfc" id="L190" title="All 2 branches covered.">        if (isCanceled()) {</span>
+<span class="fc" id="L191">            throw new TutorException(TOURNAMENT_CANCELED, getId());</span>
+        }
+
+<span class="fc bfc" id="L194" title="All 2 branches covered.">        if (getParticipants().contains(participant)) {</span>
+<span class="fc" id="L195">            throw new TutorException(DUPLICATE_TOURNAMENT_PARTICIPANT, participant.getUsername());</span>
+        }
+
+<span class="fc bfc" id="L198" title="All 4 branches covered.">        if (isPrivateTournament() &amp;&amp; !password.equals(getPassword())) {</span>
+<span class="fc" id="L199">            throw new TutorException(WRONG_TOURNAMENT_PASSWORD, getId());</span>
+        }
+
+<span class="fc" id="L202">        this.participants.add(participant);</span>
+<span class="fc" id="L203">    }</span>
+
+    public void removeParticipant(TournamentParticipant participant) {
+<span class="fc" id="L206">        checkIsParticipant(participant);</span>
+<span class="fc" id="L207">        this.participants.remove(participant);</span>
+<span class="fc" id="L208">    }</span>
+
+<span class="fc bfc" id="L210" title="All 2 branches covered.">    public boolean hasQuiz() { return getQuizId() != null; }</span>
+
+    public void remove() {
+<span class="fc" id="L213">        checkCanChange();</span>
+
+<span class="fc" id="L215">        creator = null;</span>
+<span class="fc" id="L216">        courseExecution = null;</span>
+
+<span class="fc" id="L218">        getTopics().clear();</span>
+<span class="fc" id="L219">        getParticipants().clear();</span>
+<span class="fc" id="L220">    }</span>
+
+    public void checkCanChange() {
+<span class="fc" id="L223">        int numberOfAnswers = 0;</span>
+
+<span class="fc bfc" id="L225" title="All 2 branches covered.">        if (this.quizId != null) {</span>
+<span class="fc" id="L226">            numberOfAnswers = Math.toIntExact(this.getParticipants().stream().filter(TournamentParticipant::hasAnswered).count());</span>
+        }
+
+<span class="fc" id="L229">        LocalDateTime now = DateHandler.now();</span>
+
+<span class="pc bpc" id="L231" title="1 of 4 branches missed.">        if (now.isAfter(getEndTime()) &amp;&amp; numberOfAnswers != 0) {</span>
+<span class="nc" id="L232">            throw new TutorException(TOURNAMENT_ALREADY_CLOSED, getId());</span>
+        }
+
+<span class="fc bfc" id="L235" title="All 4 branches covered.">        if (now.isAfter(getStartTime()) &amp;&amp; now.isBefore(getEndTime())) {</span>
+<span class="fc" id="L236">            throw new TutorException(TOURNAMENT_IS_OPEN, getId());</span>
+        }
+<span class="fc" id="L238">    }</span>
+
+    public void updateTournament(TournamentDto tournamentDto, Set&lt;TournamentTopic&gt; topics) {
+<span class="fc" id="L241">        checkCanChange();</span>
+
+<span class="pc bpc" id="L243" title="1 of 2 branches missed.">        if (DateHandler.isValidDateFormat(tournamentDto.getStartTime())) {</span>
+<span class="fc" id="L244">            DateHandler.toISOString(getStartTime());</span>
+<span class="fc" id="L245">            setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));</span>
+        }
+
+<span class="pc bpc" id="L248" title="1 of 2 branches missed.">        if (DateHandler.isValidDateFormat(tournamentDto.getEndTime())) {</span>
+<span class="fc" id="L249">            DateHandler.toISOString(getEndTime());</span>
+<span class="fc" id="L250">            setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));</span>
+        }
+
+<span class="fc" id="L253">        setNumberOfQuestions(tournamentDto.getNumberOfQuestions());</span>
+
+<span class="fc" id="L255">        updateTopics(topics);</span>
+<span class="fc" id="L256">    }</span>
+
+<span class="fc" id="L258">    public boolean isPrivateTournament() { return privateTournament; }</span>
+
+<span class="fc" id="L260">    public void setPrivateTournament(boolean privateTournament) { this.privateTournament = privateTournament; }</span>
+
+<span class="fc" id="L262">    public String getPassword() { return password; }</span>
+
+<span class="fc" id="L264">    public void setPassword(String password) { this.password = password; }</span>
+
+    public TournamentParticipant findParticipant(Integer userId) {
+<span class="fc" id="L267">        return this.getParticipants().stream().filter(participant -&gt; participant.getId().equals(userId)).</span>
+<span class="fc" id="L268">                findFirst().orElseThrow(() -&gt; new TutorException(USER_NOT_JOINED, userId));</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L273">        return &quot;Tournament{&quot; +</span>
+                &quot;id=&quot; + id +
+                &quot;, startTime=&quot; + startTime +
+                &quot;, endTime=&quot; + endTime +
+                &quot;, numberOfQuestions=&quot; + numberOfQuestions +
+                &quot;, creator=&quot; + creator +
+                &quot;, isCanceled=&quot; + isCanceled +
+                &quot;, participants=&quot; + participants +
+                &quot;, courseExecution=&quot; + courseExecution +
+                &quot;, topics=&quot; + topics +
+                &quot;, quizId=&quot; + quizId +
+                &quot;, privateTournament=&quot; + privateTournament +
+                &quot;, password='&quot; + password + '\'' +
+                '}';
+    }
+
+    public TournamentDto getDto() {
+<span class="fc" id="L290">        TournamentDto dto = new TournamentDto();</span>
+<span class="fc" id="L291">        dto.setId(getId());</span>
+<span class="fc" id="L292">        dto.setCourseAcronym(getCourseExecution().getCourseAcronym());</span>
+<span class="pc bpc" id="L293" title="1 of 2 branches missed.">        if (hasQuiz()) dto.setQuizId(getQuizId());</span>
+<span class="fc" id="L294">        dto.setStartTime(DateHandler.toISOString(getStartTime()));</span>
+<span class="fc" id="L295">        dto.setEndTime(DateHandler.toISOString(getEndTime()));</span>
+<span class="fc" id="L296">        dto.setNumberOfQuestions(getNumberOfQuestions());</span>
+<span class="fc" id="L297">        dto.setCanceled(isCanceled());</span>
+<span class="fc" id="L298">        dto.setTopicsDto(getTopics().stream()</span>
+<span class="fc" id="L299">                .map(TournamentTopic::getDto)</span>
+<span class="fc" id="L300">                .collect(Collectors.toSet()));</span>
+<span class="fc" id="L301">        dto.setCreator(getCreator().getDto());</span>
+<span class="fc" id="L302">        dto.setParticipants(getParticipants().stream()</span>
+<span class="fc" id="L303">                .map(TournamentParticipant::getDto)</span>
+<span class="fc" id="L304">                .sorted(Comparator.comparing(TournamentParticipantDto::getScore).reversed())</span>
+<span class="fc" id="L305">                .collect(Collectors.toList()));</span>
+<span class="fc" id="L306">        dto.setPrivateTournament(isPrivateTournament());</span>
+<span class="fc" id="L307">        dto.setPassword(getPassword());</span>
+<span class="fc bfc" id="L308" title="All 4 branches covered.">        dto.setOpened(getStartTime().isBefore(DateHandler.now()) &amp;&amp; getEndTime().isAfter(DateHandler.now()));</span>
+<span class="fc" id="L309">        dto.setClosed(getEndTime().isBefore(DateHandler.now()));</span>
+<span class="fc" id="L310">        return dto;</span>
+    }
+
+    public ExternalStatementCreationDto getExternalStatementCreationDto() {
+<span class="fc" id="L314">        ExternalStatementCreationDto dto = new ExternalStatementCreationDto();</span>
+<span class="fc" id="L315">        dto.setNumberOfQuestions(getNumberOfQuestions());</span>
+<span class="fc" id="L316">        dto.setTopics(getTopics().stream().map(TournamentTopic::getTopicWithCourseDto).collect(Collectors.toSet()));</span>
+<span class="fc" id="L317">        dto.setStartTime(getStartTime());</span>
+<span class="fc" id="L318">        dto.setEndTime(getEndTime());</span>
+<span class="fc" id="L319">        dto.setId(getId());</span>
+<span class="fc" id="L320">        return dto;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

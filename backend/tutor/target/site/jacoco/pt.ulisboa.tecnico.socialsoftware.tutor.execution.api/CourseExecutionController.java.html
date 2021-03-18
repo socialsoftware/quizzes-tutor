@@ -1,0 +1,157 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CourseExecutionController.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.execution.api</a> &gt; <span class="el_source">CourseExecutionController.java</span></div><h1>CourseExecutionController.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.execution.api;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
+import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.user.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TarGZip;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+
+import javax.servlet.http.HttpServletResponse;
+import javax.validation.Valid;
+import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.security.Principal;
+import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
+
+
+@RestController
+<span class="fc" id="L33">public class CourseExecutionController {</span>
+    @Autowired
+    private CourseExecutionService courseExecutionService;
+
+    @Autowired
+    private AnswerService answerService;
+
+    @Autowired
+    private QuizService quizService;
+
+    @Autowired
+    private QuizRepository quizRepository;
+
+    @Value(&quot;${export.dir}&quot;)
+    private String exportDir;
+
+    @GetMapping(&quot;/executions&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')&quot;)
+    public List&lt;CourseExecutionDto&gt; getCourseExecutions(Principal principal) {
+<span class="nc" id="L52">        User user = (User) ((Authentication) principal).getPrincipal();</span>
+
+<span class="nc bnc" id="L54" title="All 2 branches missed.">        if (user == null) {</span>
+<span class="nc" id="L55">            throw new TutorException(AUTHENTICATION_ERROR);</span>
+        }
+
+        User.Role role;
+<span class="nc bnc" id="L59" title="All 2 branches missed.">        if (user.isAdmin()) {</span>
+<span class="nc" id="L60">            role = User.Role.ADMIN;</span>
+        } else {
+<span class="nc" id="L62">            role = user.getRole();</span>
+        }
+
+<span class="nc" id="L65">        return courseExecutionService.getCourseExecutions(role);</span>
+    }
+
+    @GetMapping(&quot;/executions/{courseExecutionId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')&quot;)
+    public CourseExecutionDto getCourseExecutionById(@PathVariable Integer courseExecutionId) {
+<span class="nc" id="L71">        return courseExecutionService.getCourseExecutionById(courseExecutionId);</span>
+    }
+
+    @PostMapping(&quot;/executions/external&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#courseExecutionDto, 'DEMO.ACCESS'))&quot;)
+    public CourseExecutionDto createExternalCourseExecution(@RequestBody CourseExecutionDto courseExecutionDto) {
+<span class="nc" id="L77">        return courseExecutionService.createExternalCourseExecution(courseExecutionDto);</span>
+    }
+
+    @DeleteMapping(&quot;/executions/{courseExecutionId}&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#courseExecutionId, 'DEMO.ACCESS'))&quot;)
+    public void removeCourseExecution(@PathVariable Integer courseExecutionId) {
+<span class="nc" id="L83">        courseExecutionService.removeCourseExecution(courseExecutionId);</span>
+<span class="nc" id="L84">    }</span>
+
+    @PostMapping(&quot;/executions/activate&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#courseExecutionDto, 'EXECUTION.CREATE')&quot;)
+    public CourseExecutionDto activateCourseExecution(Authentication authentication, @RequestBody CourseExecutionDto courseExecutionDto) {
+<span class="nc" id="L89">        CourseExecutionDto result = courseExecutionService.createTecnicoCourseExecution(courseExecutionDto);</span>
+
+<span class="nc" id="L91">        String username = ((User) authentication.getPrincipal()).getUsername();</span>
+
+        // it may abort due to a failure, but the previous transaction is idempotent
+<span class="nc" id="L94">        courseExecutionService.addUserToTecnicoCourseExecution(username, result.getCourseExecutionId());</span>
+
+<span class="nc" id="L96">        return result;</span>
+    }
+
+    @GetMapping(&quot;/executions/{executionId}/anonymize&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))&quot;)
+    public void anonymizeCourseExecutionUsers(@PathVariable int executionId) {
+<span class="nc" id="L102">        courseExecutionService.anonymizeCourseExecutionUsers(executionId);</span>
+<span class="nc" id="L103">    }</span>
+
+    @GetMapping(&quot;/executions/{executionId}/students&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')&quot;)
+    public List&lt;StudentDto&gt; getCourseStudents(@PathVariable int executionId) {
+<span class="nc" id="L108">        return courseExecutionService.getStudents(executionId);</span>
+    }
+
+    @PostMapping(&quot;/executions/{executionId}/users/delete&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))&quot;)
+    public CourseExecutionDto deleteExternalInactiveUsers(@PathVariable Integer executionId, @Valid @RequestBody List&lt;Integer&gt; usersIds) {
+<span class="nc" id="L114">        return courseExecutionService.deleteExternalInactiveUsers(executionId, usersIds);</span>
+    }
+
+    @GetMapping(value = &quot;/executions/{executionId}/export&quot;)
+    @PreAuthorize(&quot;hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS')) or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))&quot;)
+    public void exportCourseExecutionInfo(HttpServletResponse response, @PathVariable Integer executionId) throws IOException {
+<span class="nc" id="L120">        List&lt;Quiz&gt; courseExecutionQuizzes = quizRepository.findQuizzesOfExecution(executionId);</span>
+<span class="nc" id="L121">        response.setHeader(&quot;Content-Disposition&quot;, &quot;attachment; filename=file.tar.gz&quot;);</span>
+<span class="nc" id="L122">        response.setContentType(&quot;application/tar.gz&quot;);</span>
+<span class="nc" id="L123">        String sourceFolder = exportDir + &quot;/quizzes-&quot; + executionId;</span>
+<span class="nc" id="L124">        File file = new File(sourceFolder);</span>
+<span class="nc" id="L125">        file.mkdir();</span>
+<span class="nc bnc" id="L126" title="All 2 branches missed.">        for (Quiz quiz : courseExecutionQuizzes) {</span>
+<span class="nc" id="L127">            answerService.writeQuizAnswers(quiz.getId());</span>
+<span class="nc" id="L128">            this.quizService.createQuizXmlDirectory(quiz.getId(), sourceFolder);</span>
+<span class="nc" id="L129">        }</span>
+<span class="nc" id="L130">        TarGZip tGzipDemo = new TarGZip(sourceFolder);</span>
+<span class="nc" id="L131">        tGzipDemo.createTarFile();</span>
+<span class="nc" id="L132">        response.getOutputStream().write(Files.readAllBytes(Paths.get(sourceFolder + &quot;.tar.gz&quot;)));</span>
+<span class="nc" id="L133">        response.flushBuffer();</span>
+
+<span class="nc" id="L135">        deleteDirectory(file);</span>
+<span class="nc" id="L136">        deleteDirectory(new File(sourceFolder + &quot;.tar.gz&quot;));</span>
+<span class="nc" id="L137">    }</span>
+
+    @GetMapping(&quot;/executions/{courseExecutionId}/topics/available&quot;)
+    @PreAuthorize(&quot;(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')&quot;)
+    public List&lt;TopicDto&gt; getAvailableTopicsByCourseExecution(@PathVariable int courseExecutionId) {
+<span class="nc" id="L142">        return this.courseExecutionService.findAvailableTopicsByCourseExecution(courseExecutionId);</span>
+    }
+
+    boolean deleteDirectory(File directoryToBeDeleted) {
+<span class="nc" id="L146">        File[] allContents = directoryToBeDeleted.listFiles();</span>
+<span class="nc bnc" id="L147" title="All 2 branches missed.">        if (allContents != null) {</span>
+<span class="nc bnc" id="L148" title="All 2 branches missed.">            for (File file : allContents) {</span>
+<span class="nc" id="L149">                deleteDirectory(file);</span>
+            }
+        }
+<span class="nc" id="L152">        return directoryToBeDeleted.delete();</span>
+    }
+
+}
+
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

@@ -1,0 +1,4 @@
+-------------------------------------------------------------------------------
+Test set: pt.ulisboa.tecnico.socialsoftware.tournament.tournament.service.CreateTournamentTest
+-------------------------------------------------------------------------------
+Tests run: 23, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 4.321 s - in pt.ulisboa.tecnico.socialsoftware.tournament.tournament.service.CreateTournamentTest

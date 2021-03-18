@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>CodeOrderStatementAnswerDetailsDto.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto</a> &gt; <span class="el_source">CodeOrderStatementAnswerDetailsDto.java</span></div><h1>CodeOrderStatementAnswerDetailsDto.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
+
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.stream.Collectors;
+
+public class CodeOrderStatementAnswerDetailsDto extends StatementAnswerDetailsDto {
+<span class="nc" id="L12">    private List&lt;CodeOrderSlotStatementAnswerDetailsDto&gt; orderedSlots = new ArrayList&lt;&gt;();</span>
+
+<span class="nc" id="L14">    public CodeOrderStatementAnswerDetailsDto() {</span>
+<span class="nc" id="L15">    }</span>
+
+<span class="nc" id="L17">    public CodeOrderStatementAnswerDetailsDto(CodeOrderAnswer questionAnswer) {</span>
+<span class="nc bnc" id="L18" title="All 2 branches missed.">        if (questionAnswer.getOrderedSlots() != null) {</span>
+<span class="nc" id="L19">            this.orderedSlots = questionAnswer.getOrderedSlots()</span>
+<span class="nc" id="L20">                    .stream()</span>
+<span class="nc" id="L21">                    .map(CodeOrderSlotStatementAnswerDetailsDto::new)</span>
+<span class="nc" id="L22">                    .collect(Collectors.toList());</span>
+<span class="nc" id="L23">            this.orderedSlots.sort(Comparator.comparing(CodeOrderSlotStatementAnswerDetailsDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));</span>
+        }
+<span class="nc" id="L25">    }</span>
+
+    public List&lt;CodeOrderSlotStatementAnswerDetailsDto&gt; getOrderedSlots() {
+<span class="nc" id="L28">        return orderedSlots;</span>
+    }
+
+    public void setOrderedSlots(List&lt;CodeOrderSlotStatementAnswerDetailsDto&gt; orderedSlots) {
+<span class="nc" id="L32">        this.orderedSlots = orderedSlots;</span>
+<span class="nc" id="L33">    }</span>
+
+    private CodeOrderAnswer codeOrderAnswer;
+
+    @Override
+    public AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer) {
+<span class="nc" id="L39">        codeOrderAnswer = new CodeOrderAnswer(questionAnswer);</span>
+<span class="nc" id="L40">        questionAnswer.getQuestion().getQuestionDetails().update(this);</span>
+<span class="nc" id="L41">        return codeOrderAnswer;</span>
+    }
+
+    @Override
+    public void update(CodeOrderQuestion question) {
+<span class="nc" id="L46">        codeOrderAnswer.setOrderedSlots(question, this);</span>
+<span class="nc" id="L47">    }</span>
+
+    @Override
+    public boolean emptyAnswer() {
+<span class="nc bnc" id="L51" title="All 4 branches missed.">        return orderedSlots == null || orderedSlots.isEmpty();</span>
+    }
+
+    @Override
+    public QuestionAnswerItem getQuestionAnswerItem(String username, int quizId, StatementAnswerDto statementAnswerDto) {
+<span class="nc" id="L56">        return new CodeOrderAnswerItem(username, quizId, statementAnswerDto, this);</span>
+    }
+
+    @Override
+    public String toString() {
+<span class="nc" id="L61">        return &quot;CodeOrderStatementAnswerDetailsDto{&quot; +</span>
+                &quot;orderedSlots=&quot; + orderedSlots +
+                '}';
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

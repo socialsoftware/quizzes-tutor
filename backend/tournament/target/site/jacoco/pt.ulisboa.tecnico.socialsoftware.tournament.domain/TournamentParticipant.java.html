@@ -1,0 +1,112 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>TournamentParticipant.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tournament</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tournament.domain</a> &gt; <span class="el_source">TournamentParticipant.java</span></div><h1>TournamentParticipant.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tournament.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentParticipantDto;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import java.util.Objects;
+
+@Embeddable
+public class TournamentParticipant {
+
+    @Column(name = &quot;participant_id&quot;)
+    private Integer id;
+
+    @Column(name = &quot;participant_username&quot;)
+    private String username;
+
+    @Column(name = &quot;participant_name&quot;)
+    private String name;
+
+    @Column(name = &quot;participant_answered&quot;)
+    private boolean answered;
+
+    @Column(name = &quot;number_of_answered&quot;)
+    private Integer numberOfAnswered;
+
+    @Column(name = &quot;number_of_correct&quot;)
+    private Integer numberOfCorrect;
+
+<span class="fc" id="L30">    public TournamentParticipant() {</span>
+<span class="fc" id="L31">    }</span>
+
+<span class="fc" id="L33">    public TournamentParticipant(Integer userId, String username, String name) {</span>
+<span class="fc" id="L34">        this.id = userId;</span>
+<span class="fc" id="L35">        this.username = username;</span>
+<span class="fc" id="L36">        this.name = name;</span>
+<span class="fc" id="L37">        this.answered = false;</span>
+<span class="fc" id="L38">        this.numberOfAnswered = 0;</span>
+<span class="fc" id="L39">        this.numberOfCorrect = 0;</span>
+<span class="fc" id="L40">    }</span>
+
+<span class="nc" id="L42">    public TournamentParticipant(TournamentParticipantDto tournamentParticipantDto) {</span>
+<span class="nc" id="L43">        this.id = tournamentParticipantDto.getUserId();</span>
+<span class="nc" id="L44">        this.username = tournamentParticipantDto.getUsername();</span>
+<span class="nc" id="L45">        this.name = tournamentParticipantDto.getName();</span>
+<span class="nc" id="L46">        this.answered = false;</span>
+<span class="nc" id="L47">        this.numberOfAnswered = 0;</span>
+<span class="nc" id="L48">        this.numberOfCorrect = 0;</span>
+<span class="nc" id="L49">    }</span>
+
+    public Integer getId() {
+<span class="fc" id="L52">        return id;</span>
+    }
+
+    public String getUsername() {
+<span class="fc" id="L56">        return username;</span>
+    }
+
+    public String getName() {
+<span class="fc" id="L60">        return name;</span>
+    }
+
+    public boolean hasAnswered() {
+<span class="fc" id="L64">        return answered;</span>
+    }
+
+    public void setAnswered(boolean answered) {
+<span class="nc" id="L68">        this.answered = answered;</span>
+<span class="nc" id="L69">    }</span>
+
+    public Integer getNumberOfAnswered() {
+<span class="nc" id="L72">        return numberOfAnswered;</span>
+    }
+
+    public void setNumberOfAnswered(Integer numberOfAnswered) {
+<span class="nc" id="L76">        this.numberOfAnswered = numberOfAnswered;</span>
+<span class="nc" id="L77">    }</span>
+
+    public Integer getNumberOfCorrect() {
+<span class="nc" id="L80">        return numberOfCorrect;</span>
+    }
+
+    public void setNumberOfCorrect(Integer numberOfCorrect) {
+<span class="nc" id="L84">        this.numberOfCorrect = numberOfCorrect;</span>
+<span class="nc" id="L85">    }</span>
+
+    @Override
+    public boolean equals(Object o) {
+<span class="pc bpc" id="L89" title="1 of 2 branches missed.">        if (this == o) return true;</span>
+<span class="pc bpc" id="L90" title="2 of 4 branches missed.">        if (o == null || getClass() != o.getClass()) return false;</span>
+<span class="fc" id="L91">        TournamentParticipant that = (TournamentParticipant) o;</span>
+<span class="pc bpc" id="L92" title="3 of 6 branches missed.">        return id.equals(that.id) &amp;&amp; username.equals(that.username) &amp;&amp; name.equals(that.name);</span>
+    }
+
+    @Override
+    public int hashCode() {
+<span class="fc" id="L97">        return Objects.hash(id, username, name);</span>
+    }
+
+    public TournamentParticipantDto getDto() {
+<span class="nc" id="L101">        TournamentParticipantDto dto = new TournamentParticipantDto();</span>
+<span class="nc" id="L102">        dto.setUserId(getId());</span>
+<span class="nc" id="L103">        dto.setName(getName());</span>
+<span class="nc" id="L104">        dto.setUsername(getUsername());</span>
+<span class="nc" id="L105">        dto.setAnswered(hasAnswered());</span>
+<span class="nc" id="L106">        dto.setNumberOfAnswered(getNumberOfAnswered());</span>
+<span class="nc" id="L107">        dto.setNumberOfCorrect(getNumberOfCorrect());</span>
+<span class="nc" id="L108">        dto.setScore(getNumberOfCorrect() - (getNumberOfAnswered() - getNumberOfCorrect()) * 0.3);</span>
+<span class="nc" id="L109">        return dto;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>

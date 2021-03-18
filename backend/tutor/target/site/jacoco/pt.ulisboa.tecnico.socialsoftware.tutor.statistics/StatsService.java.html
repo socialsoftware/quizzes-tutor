@@ -1,0 +1,106 @@
+<?xml version="1.0" encoding="UTF-8"?><!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Strict//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-strict.dtd"><html xmlns="http://www.w3.org/1999/xhtml" lang="pt"><head><meta http-equiv="Content-Type" content="text/html;charset=UTF-8"/><link rel="stylesheet" href="../jacoco-resources/report.css" type="text/css"/><link rel="shortcut icon" href="../jacoco-resources/report.gif" type="image/gif"/><title>StatsService.java</title><link rel="stylesheet" href="../jacoco-resources/prettify.css" type="text/css"/><script type="text/javascript" src="../jacoco-resources/prettify.js"></script></head><body onload="window['PR_TAB_WIDTH']=4;prettyPrint()"><div class="breadcrumb" id="breadcrumb"><span class="info"><a href="../jacoco-sessions.html" class="el_session">Sessions</a></span><a href="../index.html" class="el_report">tutor</a> &gt; <a href="index.source.html" class="el_package">pt.ulisboa.tecnico.socialsoftware.tutor.statistics</a> &gt; <span class="el_source">StatsService.java</span></div><h1>StatsService.java</h1><pre class="source lang-java linenums">package pt.ulisboa.tecnico.socialsoftware.tutor.statistics;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.TreeSet;
+
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.USER_NOT_FOUND;
+
+@Service
+<span class="fc" id="L33">public class StatsService {</span>
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
+
+    @Retryable(
+      value = { SQLException.class },
+      backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public StatsDto getStats(int userId, int executionId) {
+<span class="nc" id="L49">        User user = userRepository.findById(userId).orElseThrow(() -&gt; new TutorException(USER_NOT_FOUND, userId));</span>
+
+<span class="nc" id="L51">        StatsDto statsDto = new StatsDto();</span>
+
+<span class="nc" id="L53">        int totalQuizzes = (int) user.getQuizAnswers().stream()</span>
+<span class="nc" id="L54">                .filter(quizAnswer -&gt; quizAnswer.canResultsBePublic(executionId))</span>
+<span class="nc" id="L55">                .count();</span>
+
+<span class="nc" id="L57">        int totalAnswers = (int) user.getQuizAnswers().stream()</span>
+<span class="nc" id="L58">                .filter(quizAnswer -&gt; quizAnswer.canResultsBePublic(executionId))</span>
+<span class="nc" id="L59">                .map(QuizAnswer::getQuestionAnswers)</span>
+<span class="nc" id="L60">                .mapToLong(Collection::size)</span>
+<span class="nc" id="L61">                .sum();</span>
+
+<span class="nc" id="L63">        int uniqueQuestions = (int) user.getQuizAnswers().stream()</span>
+<span class="nc" id="L64">                .filter(quizAnswer -&gt; quizAnswer.canResultsBePublic(executionId))</span>
+<span class="nc" id="L65">                .map(QuizAnswer::getQuestionAnswers)</span>
+<span class="nc" id="L66">                .flatMap(Collection::stream)</span>
+<span class="nc" id="L67">                .map(QuestionAnswer::getQuizQuestion)</span>
+<span class="nc" id="L68">                .map(QuizQuestion::getQuestion)</span>
+<span class="nc" id="L69">                .map(Question::getId)</span>
+<span class="nc" id="L70">                .distinct().count();</span>
+
+<span class="nc" id="L72">        int correctAnswers = (int) user.getQuizAnswers().stream()</span>
+<span class="nc" id="L73">                .filter(quizAnswer -&gt; quizAnswer.canResultsBePublic(executionId))</span>
+<span class="nc" id="L74">                .map(QuizAnswer::getQuestionAnswers)</span>
+<span class="nc" id="L75">                .flatMap(Collection::stream)</span>
+<span class="nc" id="L76">                .filter(QuestionAnswer::isCorrect)</span>
+<span class="nc" id="L77">                .count();</span>
+
+<span class="nc" id="L79">        int uniqueCorrectAnswers = (int) user.getQuizAnswers().stream()</span>
+<span class="nc bnc" id="L80" title="All 4 branches missed.">                .filter(quizAnswer -&gt; quizAnswer.canResultsBePublic(executionId) &amp;&amp; quizAnswer.getAnswerDate() != null)</span>
+<span class="nc" id="L81">                .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())</span>
+<span class="nc" id="L82">                .map(QuizAnswer::getQuestionAnswers)</span>
+<span class="nc" id="L83">                .flatMap(Collection::stream)</span>
+<span class="nc" id="L84">                .collect(collectingAndThen(toCollection(() -&gt; new TreeSet&lt;&gt;(comparingInt(questionAnswer -&gt; questionAnswer.getQuizQuestion().getQuestion().getId()))),</span>
+<span class="nc" id="L85">                        ArrayList::new)).stream()</span>
+<span class="nc" id="L86">                .filter(QuestionAnswer::isCorrect)</span>
+<span class="nc" id="L87">                .count();</span>
+
+<span class="nc" id="L89">        Course course = courseExecutionRepository.findById(executionId).orElseThrow(() -&gt; new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId)).getCourse();</span>
+
+<span class="nc" id="L91">        int totalAvailableQuestions = questionRepository.getAvailableQuestionsSize(course.getId());</span>
+
+<span class="nc" id="L93">        statsDto.setTotalQuizzes(totalQuizzes);</span>
+<span class="nc" id="L94">        statsDto.setTotalAnswers(totalAnswers);</span>
+<span class="nc" id="L95">        statsDto.setTotalUniqueQuestions(uniqueQuestions);</span>
+<span class="nc" id="L96">        statsDto.setTotalAvailableQuestions(totalAvailableQuestions);</span>
+<span class="nc bnc" id="L97" title="All 2 branches missed.">        if (totalAnswers != 0) {</span>
+<span class="nc" id="L98">            statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);</span>
+<span class="nc" id="L99">            statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);</span>
+        }
+
+<span class="nc" id="L102">        statsDto.setCreatedDiscussions(user.getDiscussions().size());</span>
+<span class="nc" id="L103">        return statsDto;</span>
+    }
+}
+</pre><div class="footer"><span class="right">Created with <a href="http://www.jacoco.org/jacoco">JaCoCo</a> 0.8.6.202009150832</span></div></body></html>
