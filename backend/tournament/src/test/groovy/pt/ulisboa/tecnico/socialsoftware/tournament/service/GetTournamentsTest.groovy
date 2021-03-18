@@ -1,9 +1,8 @@
-package pt.ulisboa.tecnico.socialsoftware.tournament.tournament.service
+package pt.ulisboa.tecnico.socialsoftware.tournament.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class GetTournamentsTest extends TournamentTest {

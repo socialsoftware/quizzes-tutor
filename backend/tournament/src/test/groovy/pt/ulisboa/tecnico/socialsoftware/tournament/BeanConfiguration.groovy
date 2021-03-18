@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.PropertySource
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import pt.ulisboa.tecnico.socialsoftware.tournament.TournamentACL
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService

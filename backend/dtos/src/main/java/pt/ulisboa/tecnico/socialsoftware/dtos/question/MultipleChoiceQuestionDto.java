@@ -7,6 +7,7 @@ public class MultipleChoiceQuestionDto extends QuestionDetailsDto {
     private List<OptionDto> options = new ArrayList<>();
 
     public MultipleChoiceQuestionDto() {
+        setType(QuestionTypes.MULTIPLE_CHOICE_QUESTION);
     }
 
     public List<OptionDto> getOptions() {
@@ -16,11 +17,6 @@ public class MultipleChoiceQuestionDto extends QuestionDetailsDto {
     public void setOptions(List<OptionDto> options) {
         this.options = options;
     }
-
-    /*@Override
-    public void update(MultipleChoiceQuestion question) {
-        question.update(this);
-    }*/
 
     @Override
     public String toString() {

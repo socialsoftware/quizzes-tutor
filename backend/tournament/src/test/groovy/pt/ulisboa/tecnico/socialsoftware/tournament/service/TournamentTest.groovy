@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tournament.tournament.service
+package pt.ulisboa.tecnico.socialsoftware.tournament.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -22,7 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*
+
 import java.time.LocalDateTime
 
 @DataJpaTest

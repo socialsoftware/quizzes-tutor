@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes.*;
 import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
 
 @Entity
@@ -90,8 +91,7 @@ public class Question implements DomainEntity {
         if (questionDto.getImage() != null)
             setImage(new Image(questionDto.getImage()));
 
-        //setQuestionDetails(questionDto.getQuestionDetailsDto().getQuestionDetails(this));
-        setQuestionDetails(getQuestionDetails(this, questionDto.getQuestionDetailsDto()));
+        setQuestionDetails(getQuestionDetailsType(questionDto.getQuestionDetailsDto()));
     }
 
     public Integer getId() {
@@ -298,23 +298,21 @@ public class Question implements DomainEntity {
         return questionDetails;
     }
 
-    public QuestionDetails getQuestionDetails(Question question, QuestionDetailsDto questionDetailsDto) {
-        if (questionDetailsDto instanceof MultipleChoiceQuestionDto) {
-            return new MultipleChoiceQuestion(question, (MultipleChoiceQuestionDto) questionDetailsDto);
-        }
-        else if (questionDetailsDto instanceof CodeFillInQuestionDto) {
-            return new CodeFillInQuestion(question, (CodeFillInQuestionDto) questionDetailsDto);
-        }
-        else if (questionDetailsDto instanceof CodeOrderQuestionDto) {
-            return new CodeOrderQuestion(question, (CodeOrderQuestionDto) questionDetailsDto);
-        }
-        else {
-            throw new TutorException(INVALID_QUESTION_DETAILS, question.getClass().getName());
+    public QuestionDetails getQuestionDetailsType(QuestionDetailsDto questionDetailsDto) {
+        switch (questionDetailsDto.getType()) {
+            case MULTIPLE_CHOICE_QUESTION:
+                return new MultipleChoiceQuestion(this, (MultipleChoiceQuestionDto) questionDetailsDto);
+            case CODE_FILL_IN_QUESTION:
+                return new CodeFillInQuestion(this, (CodeFillInQuestionDto) questionDetailsDto);
+            case CODE_ORDER_QUESTION:
+                return new CodeOrderQuestion(this, (CodeOrderQuestionDto) questionDetailsDto);
+            default:
+                throw new TutorException(INVALID_QUESTION_DETAILS, questionDetailsDto.toString());
         }
     }
 
-    public void setQuestionDetails(QuestionDetails question) {
-        this.questionDetails = question;
+    public void setQuestionDetails(QuestionDetails questionDetails) {
+        this.questionDetails = questionDetails;
         if (this.questionDetails != null) {
             this.questionDetails.setQuestion(this);
         }

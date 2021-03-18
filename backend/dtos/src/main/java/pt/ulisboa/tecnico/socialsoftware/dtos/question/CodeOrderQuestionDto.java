@@ -9,6 +9,7 @@ public class CodeOrderQuestionDto extends QuestionDetailsDto {
     private List<CodeOrderSlotDto> codeOrderSlots = new ArrayList<>();
 
     public CodeOrderQuestionDto() {
+        setType(QuestionTypes.CODE_ORDER_QUESTION);
     }
 
     public Languages getLanguage() {
@@ -34,9 +35,4 @@ public class CodeOrderQuestionDto extends QuestionDetailsDto {
                 ", fillInSpots=" + codeOrderSlots +
                 '}';
     }
-
-    /*@Override
-    public void update(CodeOrderQuestion question) {
-        question.update(this);
-    }*/
 }

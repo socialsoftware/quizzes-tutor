@@ -11,6 +11,7 @@ public class CodeFillInQuestionDto extends QuestionDetailsDto {
     private List<CodeFillInSpotDto> fillInSpots = new ArrayList<>();
 
     public CodeFillInQuestionDto() {
+        setType(QuestionTypes.CODE_FILL_IN_QUESTION);
     }
 
     public Languages getLanguage() {
@@ -46,8 +47,4 @@ public class CodeFillInQuestionDto extends QuestionDetailsDto {
                 '}';
     }
 
-    /*@Override
-    public void update(CodeFillInQuestion question) {
-        question.update(this);
-    }*/
 }

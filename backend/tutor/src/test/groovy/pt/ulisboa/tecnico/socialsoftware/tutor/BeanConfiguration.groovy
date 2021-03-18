@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor
 
-
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -35,91 +34,6 @@ class BeanConfiguration {
 
     @Value('${spring.mail.properties.mail.debug}')
     private String debug
-
-    /*@Bean
-    QuizService quizService() {
-        return new QuizService()
-    }
-
-    @Bean
-    AnswerService answerService() {
-        return new AnswerService()
-    }
-
-    @Bean
-    AnswersXmlImport answersXmlImport() {
-        return new AnswersXmlImport()
-    }*/
-
-    /*@Bean
-    UserService userService() {
-        return new UserService()
-    }*/
-/*
-    @Bean
-    UserApplicationalService userServiceApplicational() {
-        return new UserApplicationalService()
-    }
-
-    @Bean
-    PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder()
-    }
-
-    @Bean
-    QuestionService questionService() {
-        return new QuestionService()
-    }
-
-    @Bean
-    CourseExecutionService courseService() {
-        return new CourseExecutionService()
-    }
-
-    @Bean
-    AuthUserService authUserService() {
-        return new AuthUserService()
-    }
-
-    @Bean
-    TopicService topicService() {
-        return new TopicService()
-    }
-
-    @Bean
-    AssessmentService assessmentService() {
-        return new AssessmentService()
-    }
-
-    @Bean
-    DiscussionService discussionService() {
-        return new DiscussionService()
-    }
-
-    @Bean
-    QuestionSubmissionService questionSubmissionService() {
-        return new QuestionSubmissionService()
-    }
-
-    @Bean
-    DemoUtils demoUtils() {
-        return new DemoUtils()
-    }
-
-    @Bean
-    Mailer mailer() {
-        return new Mailer()
-    }
-
-    @Bean
-    EventBus eventBus() {
-        return new EventBus()
-    }*/
-
-    /*@Bean
-    MonolithService monolithService() {
-        return new MonolithService()
-    }*/
 
     @Bean
     JavaMailSender getJavaMailSender() {

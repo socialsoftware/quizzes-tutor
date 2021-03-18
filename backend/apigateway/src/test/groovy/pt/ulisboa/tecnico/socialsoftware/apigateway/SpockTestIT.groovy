@@ -51,7 +51,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class SpockTest extends Specification {
+class SpockTestIT extends Specification {
 
     @Value('${spring.mail.username}')
     public String mailerUsername

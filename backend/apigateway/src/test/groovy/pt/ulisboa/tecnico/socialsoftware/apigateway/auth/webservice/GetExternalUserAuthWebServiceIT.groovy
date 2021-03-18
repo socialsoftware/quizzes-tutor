@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.apigateway.auth.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetExternalUserAuthWebServiceIT extends SpockTest {
+class GetExternalUserAuthWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 

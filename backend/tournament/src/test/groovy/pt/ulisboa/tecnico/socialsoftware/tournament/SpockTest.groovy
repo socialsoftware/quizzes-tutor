@@ -103,75 +103,24 @@ class SpockTest extends Specification {
 
     public static final int NUMBER_OF_QUESTIONS = 1
 
- /*   @Autowired
-    AuthUserService authUserService
-
-    @Autowired
-    AnswerService answerService
-
-    @Autowired
-    AnswerDetailsRepository answerDetailsRepository
-*/
     @Autowired
     AssessmentRepository assessmentRepository
-/*
-    @Autowired
-    AssessmentService assessmentService
-*/
+
     @Autowired
     CourseExecutionRepository courseExecutionRepository
 
     @Autowired
     CourseRepository courseRepository
-/*
-    @Autowired
-    CourseExecutionService courseService
 
-    @Autowired
-    ImageRepository imageRepository
-
-    @Autowired
-    OptionRepository optionRepository
-
-    @Autowired
-    QuestionAnswerRepository questionAnswerRepository
-
-    @Autowired
-    QuestionAnswerItemRepository questionAnswerItemRepository
-*/
     @Autowired
     QuestionRepository questionRepository
-/*
-    @Autowired
-    QuestionDetailsRepository questionDetailsRepository
 
-    @Autowired
-    QuestionService questionService
-
-    @Autowired
-    QuizAnswerRepository quizAnswerRepository
-
-    @Autowired
-    QuizAnswerItemRepository quizAnswerItemRepository
-
-    @Autowired
-    QuizQuestionRepository quizQuestionRepository
-*/
     @Autowired
     QuizRepository quizRepository
-/*
-    @Autowired
-    QuizService quizService
 
     @Autowired
-    TopicConjunctionRepository topicConjunctionRepository
-*/
-    @Autowired
     TopicRepository topicRepository
-/*
-    @Autowired
-    TopicService topicService
-*/
+
     @Autowired
     TournamentRepository tournamentRepository
 
@@ -180,27 +129,6 @@ class SpockTest extends Specification {
 
     @Autowired
     UserRepository userRepository
-/*
-    @Autowired
-    UserService userService
-
-    @Autowired
-    AuthUserRepository authUserRepository
-
-    @Autowired
-    UserApplicationalService userServiceApplicational
-
-    @Autowired
-    Mailer mailer
-
-    @Autowired
-    PasswordEncoder passwordEncoder
-
-    @Autowired
-    DemoUtils demoUtils
-
-    @Autowired
-    MonolithService monolithService*/
 
     Course externalCourse
     @Shared
