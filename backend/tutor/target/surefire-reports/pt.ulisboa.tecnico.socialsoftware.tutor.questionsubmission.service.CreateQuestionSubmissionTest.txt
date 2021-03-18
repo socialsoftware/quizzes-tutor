@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.service.CreateQuestionSubmissionTest
--------------------------------------------------------------------------------
-Tests run: 5, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.116 s - in pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.service.CreateQuestionSubmissionTest

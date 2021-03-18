@@ -229,8 +229,8 @@ class SpockTest extends Specification {
     @Autowired
     UserApplicationalService userServiceApplicational
 
-    @Autowired
-    Mailer mailer
+    /*@Autowired
+    Mailer mailer*/
 
     @Autowired
     PasswordEncoder passwordEncoder

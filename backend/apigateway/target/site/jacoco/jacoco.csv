@@ -1,7 +1,0 @@
-GROUP,PACKAGE,CLASS,INSTRUCTION_MISSED,INSTRUCTION_COVERED,BRANCH_MISSED,BRANCH_COVERED,LINE_MISSED,LINE_COVERED,COMPLEXITY_MISSED,COMPLEXITY_COVERED,METHOD_MISSED,METHOD_COVERED
-apigateway,pt.ulisboa.tecnico.socialsoftware.apigateway,TutorPermissionEvaluator,368,0,65,0,63,0,45,0,5,0
-apigateway,pt.ulisboa.tecnico.socialsoftware.apigateway,TutorApplication,16,0,0,0,7,0,3,0,3,0
-apigateway,pt.ulisboa.tecnico.socialsoftware.apigateway,ScheduledTasks,16,0,0,0,7,0,4,0,4,0
-apigateway,pt.ulisboa.tecnico.socialsoftware.apigateway,WebConfiguration,131,0,0,0,16,0,3,0,3,0
-apigateway,pt.ulisboa.tecnico.socialsoftware.apigateway,WebSecurityConfig,121,0,2,0,30,0,5,0,4,0
-apigateway,pt.ulisboa.tecnico.socialsoftware.apigateway,SwaggerConfig,48,0,0,0,14,0,2,0,2,0

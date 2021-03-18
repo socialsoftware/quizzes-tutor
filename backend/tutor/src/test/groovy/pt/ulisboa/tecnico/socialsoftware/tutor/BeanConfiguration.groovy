@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.utils.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
@@ -69,13 +70,13 @@ class BeanConfiguration {
     @Bean
     AnswersXmlImport answersXmlImport() {
         return new AnswersXmlImport()
-    }
+    }*/
 
-    @Bean
+    /*@Bean
     UserService userService() {
         return new UserService()
-    }
-
+    }*/
+/*
     @Bean
     UserApplicationalService userServiceApplicational() {
         return new UserApplicationalService()
@@ -134,9 +135,9 @@ class BeanConfiguration {
     @Bean
     EventBus eventBus() {
         return new EventBus()
-    }
+    }*/
 
-    @Bean
+    /*@Bean
     MonolithService monolithService() {
         return new MonolithService()
     }*/

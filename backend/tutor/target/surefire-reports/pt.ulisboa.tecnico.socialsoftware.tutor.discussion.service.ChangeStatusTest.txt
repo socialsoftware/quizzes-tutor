@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: pt.ulisboa.tecnico.socialsoftware.tutor.discussion.service.ChangeStatusTest
--------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.383 s - in pt.ulisboa.tecnico.socialsoftware.tutor.discussion.service.ChangeStatusTest

@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: pt.ulisboa.tecnico.socialsoftware.tournament.tournament.service.GetClosedTournamentsTest
--------------------------------------------------------------------------------
-Tests run: 6, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 3.135 s - in pt.ulisboa.tecnico.socialsoftware.tournament.tournament.service.GetClosedTournamentsTest

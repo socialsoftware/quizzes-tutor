@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: pt.ulisboa.tecnico.socialsoftware.tutor.execution.service.CreateExternalCourseExecutionTest
--------------------------------------------------------------------------------
-Tests run: 10, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.36 s - in pt.ulisboa.tecnico.socialsoftware.tutor.execution.service.CreateExternalCourseExecutionTest

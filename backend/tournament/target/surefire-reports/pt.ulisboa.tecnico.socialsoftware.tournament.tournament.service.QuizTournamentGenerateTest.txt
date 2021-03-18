@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: pt.ulisboa.tecnico.socialsoftware.tournament.tournament.service.QuizTournamentGenerateTest
--------------------------------------------------------------------------------
-Tests run: 3, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 2.713 s - in pt.ulisboa.tecnico.socialsoftware.tournament.tournament.service.QuizTournamentGenerateTest

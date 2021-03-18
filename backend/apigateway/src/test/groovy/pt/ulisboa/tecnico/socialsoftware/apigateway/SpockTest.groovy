@@ -128,18 +128,9 @@ class SpockTest extends Specification {
     public static final String ROLE_ADMIN = "ROLE_ADMIN"
     public static final String ROLE_DEMO_ADMIN = "ROLE_DEMO_ADMIN"
 
-    public static final String QUIZ_TITLE = "Quiz title"
-    public static final String CSVFILE = System.getProperty("user.dir") + "/src/test/resources/importUsers.csv"
-    public static final String CSVBADFORMATFILE = System.getProperty("user.dir") + "/src/test/resources/csvBadFormatFile.csv"
-    public static final String CSVIMPORTUSERSBADROLEFORMAT = System.getProperty("user.dir") + "/src/test/resources/csvImportUsersBadRoleFormat.csv"
-    public static final int NUMBER_OF_USERS_IN_FILE = 5
-
     public static final int NUMBER_OF_QUESTIONS = 1
 
     public static final String REVIEW_1_COMMENT = "Review Comment 1"
-
-    public static final String DISCUSSION_MESSAGE = "Discussion Message"
-    public static final String DISCUSSION_REPLY = "Discussion Reply"
 
     @Autowired
     AuthUserService authUserService

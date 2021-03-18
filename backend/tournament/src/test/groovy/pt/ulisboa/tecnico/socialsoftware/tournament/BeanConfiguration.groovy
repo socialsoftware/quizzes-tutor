@@ -56,7 +56,7 @@ class BeanConfiguration {
     @Value('${spring.mail.properties.mail.debug}')
     private String debug
 
-    /*@Bean
+    @Bean
     QuizService quizService() {
         return new QuizService()
     }
@@ -74,11 +74,6 @@ class BeanConfiguration {
     @Bean
     UserService userService() {
         return new UserService()
-    }
-
-    @Bean
-    UserApplicationalService userServiceApplicational() {
-        return new UserApplicationalService()
     }
 
     @Bean
@@ -104,9 +99,9 @@ class BeanConfiguration {
     @Bean
     TopicService topicService() {
         return new TopicService()
-    }*/
+    }
 
-    /*@Bean
+    @Bean
     TournamentProvidedService TournamentProvidedService() {
         return new TournamentProvidedService()
     }
@@ -119,16 +114,11 @@ class BeanConfiguration {
     @Bean
     TournamentACL TournamentACL() {
         return new TournamentACL()
-    }*/
-/*
-    @Bean
-    AssessmentService assessmentService() {
-        return new AssessmentService()
     }
 
     @Bean
-    DiscussionService discussionService() {
-        return new DiscussionService()
+    AssessmentService assessmentService() {
+        return new AssessmentService()
     }
 
     @Bean
@@ -137,40 +127,12 @@ class BeanConfiguration {
     }
 
     @Bean
-    DemoUtils demoUtils() {
-        return new DemoUtils()
-    }*/
-
-    @Bean
-    Mailer mailer() {
-        return new Mailer()
-    }
-/*
-    @Bean
     EventBus eventBus() {
         return new EventBus()
     }
 
-    @Bean
+   @Bean
     MonolithService monolithService() {
         return new MonolithService()
-    }*/
-
-    @Bean
-    JavaMailSender getJavaMailSender() {
-        JavaMailSender mailSender = new JavaMailSenderImpl();
-        mailSender.setHost(host);
-        mailSender.setPort(port);
-
-        mailSender.setUsername(username);
-        mailSender.setPassword(password);
-
-        Properties props = mailSender.getJavaMailProperties();
-        props.put("mail.transport.protocol", Boolean.parseBoolean(protocol));
-        props.put("mail.smtp.auth", Boolean.parseBoolean(auth));
-        props.put("mail.smtp.starttls.enable", starttls);
-        props.put("mail.debug", debug);
-
-        return mailSender;
     }
 }

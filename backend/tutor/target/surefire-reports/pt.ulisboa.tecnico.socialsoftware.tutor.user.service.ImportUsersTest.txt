@@ -1,4 +1,0 @@
--------------------------------------------------------------------------------
-Test set: pt.ulisboa.tecnico.socialsoftware.tutor.user.service.ImportUsersTest
--------------------------------------------------------------------------------
-Tests run: 4, Failures: 0, Errors: 0, Skipped: 0, Time elapsed: 1.95 s - in pt.ulisboa.tecnico.socialsoftware.tutor.user.service.ImportUsersTest

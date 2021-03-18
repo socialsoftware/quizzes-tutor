@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerI
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.api.MonolithService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.DemoUtils
@@ -130,7 +131,7 @@ class SpockTest extends Specification {
 
     public static final int NUMBER_OF_QUESTIONS = 1
 
-    @Autowired
+ /*   @Autowired
     AuthUserService authUserService
 
     @Autowired
@@ -138,19 +139,19 @@ class SpockTest extends Specification {
 
     @Autowired
     AnswerDetailsRepository answerDetailsRepository
-
+*/
     @Autowired
     AssessmentRepository assessmentRepository
-
+/*
     @Autowired
     AssessmentService assessmentService
-
+*/
     @Autowired
     CourseExecutionRepository courseExecutionRepository
 
     @Autowired
     CourseRepository courseRepository
-
+/*
     @Autowired
     CourseExecutionService courseService
 
@@ -165,10 +166,10 @@ class SpockTest extends Specification {
 
     @Autowired
     QuestionAnswerItemRepository questionAnswerItemRepository
-
+*/
     @Autowired
     QuestionRepository questionRepository
-
+/*
     @Autowired
     QuestionDetailsRepository questionDetailsRepository
 
@@ -183,22 +184,22 @@ class SpockTest extends Specification {
 
     @Autowired
     QuizQuestionRepository quizQuestionRepository
-
+*/
     @Autowired
     QuizRepository quizRepository
-
+/*
     @Autowired
     QuizService quizService
 
     @Autowired
     TopicConjunctionRepository topicConjunctionRepository
-
+*/
     @Autowired
     TopicRepository topicRepository
-
+/*
     @Autowired
     TopicService topicService
-
+*/
     @Autowired
     TournamentRepository tournamentRepository
 
@@ -207,7 +208,7 @@ class SpockTest extends Specification {
 
     @Autowired
     UserRepository userRepository
-
+/*
     @Autowired
     UserService userService
 
@@ -225,6 +226,9 @@ class SpockTest extends Specification {
 
     @Autowired
     DemoUtils demoUtils
+
+    @Autowired
+    MonolithService monolithService*/
 
     Course externalCourse
     @Shared
