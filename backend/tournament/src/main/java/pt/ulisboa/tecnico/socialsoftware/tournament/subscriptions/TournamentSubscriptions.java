@@ -5,11 +5,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.events.ExternalQuizSolvedEvent;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentParticipant;
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.ExternalQuizSolvedEvent;
 
 import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.NO_TOURNAMENT_WITH_QUIZ_ID;
 

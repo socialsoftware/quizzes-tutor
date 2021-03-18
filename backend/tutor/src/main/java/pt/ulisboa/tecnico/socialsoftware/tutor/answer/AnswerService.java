@@ -10,6 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.events.ExternalQuizSolvedEvent;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;

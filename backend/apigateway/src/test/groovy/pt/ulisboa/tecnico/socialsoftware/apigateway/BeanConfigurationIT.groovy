@@ -34,10 +34,4 @@ class BeanConfigurationIT {
 
     @Value('${spring.mail.properties.mail.debug}')
     private String debug
-
-
-    @Bean
-    UserService userService() {
-        return new UserService()
-    }
 }

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
+package pt.ulisboa.tecnico.socialsoftware.events;
 
 public class ExternalQuizSolvedEvent {
 

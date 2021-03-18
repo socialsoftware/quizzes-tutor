@@ -16,17 +16,17 @@
     <dependency>
       <groupId>pt.ulisboa.tecnico.socialsoftware.dtos</groupId>
       <artifactId>dtos</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
       <groupId>pt.ulisboa.tecnico.socialsoftware.exceptions</groupId>
       <artifactId>exceptions</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <version>${project.version}</version>
     </dependency>
     <dependency>
-      <groupId>pt.ulisboa.tecnico.socialsoftware.utils</groupId>
-      <artifactId>utils</artifactId>
-      <version>1.0-SNAPSHOT</version>
+      <groupId>pt.ulisboa.tecnico.socialsoftware.events</groupId>
+      <artifactId>events</artifactId>
+      <version>${project.version}</version>
     </dependency>
   </dependencies>
 </project>
