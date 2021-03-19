@@ -2,9 +2,10 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+
 import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*
 
 @DataJpaTest

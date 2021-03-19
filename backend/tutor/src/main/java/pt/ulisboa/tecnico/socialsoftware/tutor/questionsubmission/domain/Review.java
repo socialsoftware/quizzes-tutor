@@ -8,7 +8,8 @@ import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_TYPE_FOR_REVIEW;
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.REVIEW_MISSING_COMMENT;
 
 @Entity
 @Table(name = "reviews")

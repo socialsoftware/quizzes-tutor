@@ -2,15 +2,15 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
 
 @DataJpaTest
 class ImportExportQuizzesTest extends SpockTest {

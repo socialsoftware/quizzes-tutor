@@ -3,15 +3,16 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.NOT_ENOUGH_QUESTIONS_TOURNAMENT
 
 @DataJpaTest
 class QuizTournamentGenerateTest extends TournamentTest {

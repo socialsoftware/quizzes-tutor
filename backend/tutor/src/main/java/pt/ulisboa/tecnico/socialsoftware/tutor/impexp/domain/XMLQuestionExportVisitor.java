@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
-import org.cyberneko.html.filters.Identity;
 import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
@@ -9,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
 
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;

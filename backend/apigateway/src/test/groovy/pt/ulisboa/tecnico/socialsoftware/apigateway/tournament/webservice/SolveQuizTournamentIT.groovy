@@ -4,20 +4,16 @@ import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SolveQuizTournamentIT extends SpockTestIT {

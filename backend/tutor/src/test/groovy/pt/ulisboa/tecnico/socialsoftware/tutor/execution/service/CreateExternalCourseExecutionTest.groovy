@@ -2,17 +2,15 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.execution.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
 import spock.lang.Unroll
-import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_ACRONYM_FOR_COURSE_EXECUTION
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_NAME_FOR_COURSE
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_ACADEMIC_TERM_FOR_COURSE_EXECUTION
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_TYPE_FOR_COURSE
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class CreateExternalCourseExecutionTest extends SpockTest {

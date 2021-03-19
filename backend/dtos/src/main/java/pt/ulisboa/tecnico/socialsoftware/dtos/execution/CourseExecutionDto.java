@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.dtos.execution;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.dtos.user.UserDto;
 
 import java.io.Serializable;
 import java.util.List;

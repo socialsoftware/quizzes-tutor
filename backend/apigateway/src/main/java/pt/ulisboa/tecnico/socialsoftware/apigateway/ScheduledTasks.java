@@ -5,8 +5,8 @@ import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tournament.demoutils.TournamentDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.ImpExpService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.ImpExpService;
 
 @Component
 public class ScheduledTasks {

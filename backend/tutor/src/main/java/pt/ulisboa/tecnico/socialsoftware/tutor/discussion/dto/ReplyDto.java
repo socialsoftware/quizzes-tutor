@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
 
 import java.io.Serializable;

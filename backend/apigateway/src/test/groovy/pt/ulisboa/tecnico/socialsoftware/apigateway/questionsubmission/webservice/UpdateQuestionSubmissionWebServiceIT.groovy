@@ -4,11 +4,11 @@ import groovy.json.JsonOutput
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course

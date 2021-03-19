@@ -2,23 +2,23 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
 
 import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.QUIZ_NOT_YET_AVAILABLE
 import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.QUIZ_NO_LONGER_AVAILABLE

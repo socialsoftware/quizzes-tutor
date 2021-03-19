@@ -2,21 +2,18 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import spock.lang.Unroll
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.REVIEW_MISSING_QUESTION_SUBMISSION
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.REVIEW_MISSING_COMMENT
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_TYPE_FOR_REVIEW
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.REVIEW_MISSING_USER
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.CANNOT_REVIEW_QUESTION_SUBMISSION
+
+import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class CreateReviewTest extends SpockTest{

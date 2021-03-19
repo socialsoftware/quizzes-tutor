@@ -2,26 +2,22 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tournament.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCreator
-import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentParticipant
-import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
 
 import java.time.LocalDateTime
 
