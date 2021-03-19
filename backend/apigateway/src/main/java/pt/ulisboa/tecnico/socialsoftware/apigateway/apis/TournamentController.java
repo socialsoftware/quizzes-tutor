@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tournament;
+package pt.ulisboa.tecnico.socialsoftware.apigateway.apis;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
