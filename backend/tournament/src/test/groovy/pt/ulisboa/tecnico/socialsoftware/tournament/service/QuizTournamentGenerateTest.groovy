@@ -51,7 +51,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         topic2.getQuestions().remove(question)
 
         when:
-        tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
+        tournamentService.solveQuiz(participant1.getId(), tournamentDto.getId())
 
         then:
         def error = thrown(TutorException)
@@ -71,7 +71,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
         question.addTopic(topic3)
 
         when:
-        tournamentService.solveQuiz(user1.getId(), tournamentDto.getId())
+        tournamentService.solveQuiz(participant1.getId(), tournamentDto.getId())
 
         then:
         def error = thrown(TutorException)

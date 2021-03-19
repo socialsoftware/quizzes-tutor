@@ -34,13 +34,6 @@ public class TournamentCourseExecution {
         this.courseAcronym = courseAcronym;
     }
 
-    public TournamentCourseExecution(TournamentCourseExecutionDto tournamentCourseExecutionDto) {
-        this.id = tournamentCourseExecutionDto.getId();
-        this.courseId = tournamentCourseExecutionDto.getCourseId();
-        this.status = tournamentCourseExecutionDto.getStatus();
-        this.courseAcronym = tournamentCourseExecutionDto.getCourseAcronym();
-    }
-
     public Integer getId() {
         return id;
     }

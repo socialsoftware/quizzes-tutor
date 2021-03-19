@@ -2,6 +2,9 @@ package pt.ulisboa.tecnico.socialsoftware.dtos.tournament;
 
 import java.io.Serializable;
 
+/**
+ * Used during tournament creation and update to avoid one invocation to Tutor module to gather course ids
+ */
 public class TopicWithCourseDto implements Serializable {
     private Integer id;
     private String name;

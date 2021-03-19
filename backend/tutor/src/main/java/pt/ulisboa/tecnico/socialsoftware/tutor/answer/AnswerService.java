@@ -130,7 +130,6 @@ public class AnswerService {
                         .map(CorrectAnswerDto::new)
                         .collect(Collectors.toList());
 
-                // TODO: Confirmar
                 if (quizAnswer.getQuiz().getType().equals(QuizType.EXTERNAL_QUIZ)) {
                     ExternalQuizSolvedEvent event = new ExternalQuizSolvedEvent(quizAnswer.getQuiz().getId(),
                             quizAnswer.getUser().getId(), quizAnswer.getNumberOfAnsweredQuestions(),

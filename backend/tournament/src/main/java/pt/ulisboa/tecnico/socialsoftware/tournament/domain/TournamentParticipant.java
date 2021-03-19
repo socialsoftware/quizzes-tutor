@@ -39,15 +39,6 @@ public class TournamentParticipant {
         this.numberOfCorrect = 0;
     }
 
-    public TournamentParticipant(TournamentParticipantDto tournamentParticipantDto) {
-        this.id = tournamentParticipantDto.getUserId();
-        this.username = tournamentParticipantDto.getUsername();
-        this.name = tournamentParticipantDto.getName();
-        this.answered = false;
-        this.numberOfAnswered = 0;
-        this.numberOfCorrect = 0;
-    }
-
     public Integer getId() {
         return id;
     }

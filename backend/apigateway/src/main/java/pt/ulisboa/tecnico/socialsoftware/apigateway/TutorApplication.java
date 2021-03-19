@@ -50,8 +50,6 @@ public class TutorApplication extends SpringBootServletInitializer implements In
         answerService.writeQuizAnswersAndCalculateStatistics();
         tournamentDemoUtils.resetDemoInfo();
         tutorDemoUtils.resetDemoInfo();
-
-        //EventBusFactory.getEventBus().register(new TournamentSubscriptions());
     }
 
 }

@@ -26,12 +26,6 @@ public class TournamentCreator {
         this.name = name;
     }
 
-    public TournamentCreator(TournamentCreatorDto tournamentCreatorDto) {
-        this.id = tournamentCreatorDto.getId();
-        this.username = tournamentCreatorDto.getUsername();
-        this.name = tournamentCreatorDto.getName();
-    }
-
     public Integer getId() {
         return id;
     }
