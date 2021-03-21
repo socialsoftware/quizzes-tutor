@@ -19,6 +19,8 @@ class UpdateTopicsTest extends SpockTest {
     def topicThree
 
     def setup() {
+        createExternalCourseAndExecution()
+
         question = new Question()
         question.setKey(1)
         question.setTitle("Question Title")

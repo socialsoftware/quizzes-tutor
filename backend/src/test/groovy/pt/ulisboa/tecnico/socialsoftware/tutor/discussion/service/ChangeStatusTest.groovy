@@ -14,6 +14,8 @@ class ChangeStatusTest extends DiscussionFixtureSpockTest {
     def discussion
 
     def setup(){
+        createExternalCourseAndExecution()
+
         teacher = new User(USER_2_NAME,USER_2_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, AuthUser.Type.TECNICO)
         userRepository.save(teacher)
 

@@ -86,8 +86,6 @@ class ToggleStudentNotificationReadWebServiceIT extends SpockTest {
     }
 
     def cleanup() {
-        persistentCourseCleanup()
-
         userRepository.deleteById(student.getId())
         userRepository.deleteById(teacher.getId())
         courseExecutionRepository.deleteById(courseExecution.getId())

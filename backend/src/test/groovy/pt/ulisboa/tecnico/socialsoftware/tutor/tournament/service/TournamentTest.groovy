@@ -33,6 +33,8 @@ class TournamentTest extends SpockTest {
     def user1
 
     def setup() {
+        createExternalCourseAndExecution()
+
         user1 = createUser(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, externalCourseExecution)
 
         def topicDto1 = new TopicDto()

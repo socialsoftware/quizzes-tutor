@@ -10,7 +10,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 @DataJpaTest
 class ImportExportUsersTest extends SpockTest {
-
+    def setup() {
+        createExternalCourseAndExecution()
+    }
 
     def 'export and import with a AuthUser'() {
         given: 'two users with a auth user'

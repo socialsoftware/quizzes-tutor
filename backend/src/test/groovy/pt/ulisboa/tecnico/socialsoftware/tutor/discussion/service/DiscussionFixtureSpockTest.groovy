@@ -28,6 +28,8 @@ class DiscussionFixtureSpockTest extends SpockTest {
     def createdQuiz
 
     def defineBaseFixture() {
+        createExternalCourseAndExecution()
+
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(student)
         courseExecution = courseExecutionRepository.findAll().get(0)

@@ -21,6 +21,8 @@ class CreateQuizTest extends SpockTest {
     def questionDto
 
     def setup() {
+        createExternalCourseAndExecution()
+
         quizDto = new QuizDto()
         quizDto.setKey(1)
         quizDto.setScramble(true)

@@ -13,7 +13,6 @@ import java.util.stream.Collectors
 
 @DataJpaTest
 class AnonymizeCourseExecutionUsersTest extends SpockTest {
-
     def user
     def authUserId
 
@@ -23,6 +22,8 @@ class AnonymizeCourseExecutionUsersTest extends SpockTest {
     def answerItemsIds
 
     def setup() {
+        createExternalCourseAndExecution()
+
         tecnicoCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(tecnicoCourse)
         tecnicoCourseExecution = new CourseExecution(tecnicoCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TOMORROW)

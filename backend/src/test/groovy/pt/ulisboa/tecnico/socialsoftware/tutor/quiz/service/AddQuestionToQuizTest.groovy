@@ -10,8 +10,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 
 @DataJpaTest
 class AddQuestionToQuizTest extends SpockTest {
-
     def setup() {
+        createExternalCourseAndExecution()
+
         Quiz quiz = new Quiz()
         quiz.setKey(1)
         quiz.setTitle(QUIZ_TITLE)

@@ -16,13 +16,15 @@ import spock.lang.Unroll
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
-class CreateReviewTest extends SpockTest{
+class CreateReviewTest extends SpockTest {
     def student
     def teacher
     def question
     def questionSubmission
 
     def setup() {
+        createExternalCourseAndExecution()
+
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(student)

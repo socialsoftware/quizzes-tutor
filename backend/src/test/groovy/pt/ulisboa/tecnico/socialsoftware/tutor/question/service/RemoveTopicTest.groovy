@@ -9,14 +9,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 
 @DataJpaTest
 class RemoveTopicTest extends SpockTest {
-
-
     def question
     def topicOne
     def topicTwo
     def topicThree
 
     def setup() {
+        createExternalCourseAndExecution()
+
         topicOne = new Topic()
         topicOne.setName(TOPIC_1_NAME)
         topicOne.setCourse(externalCourse)

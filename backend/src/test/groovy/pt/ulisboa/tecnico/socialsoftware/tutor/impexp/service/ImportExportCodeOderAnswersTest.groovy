@@ -27,6 +27,8 @@ class ImportExportCodeOderAnswersTest extends SpockTest {
     def questionAnswer
 
     def setup() {
+        createExternalCourseAndExecution()
+
         Question question = new Question()
         question.setCourse(externalCourse)
         question.setKey(1)

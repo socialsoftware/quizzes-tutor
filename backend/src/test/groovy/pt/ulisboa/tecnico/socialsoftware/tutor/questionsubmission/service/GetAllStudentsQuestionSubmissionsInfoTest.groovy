@@ -12,13 +12,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 
 @DataJpaTest
-class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest{
+class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest {
     def student1
     def student2
     def student3
     def question
 
     def setup() {
+        createExternalCourseAndExecution()
+
         student1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(student1)

@@ -17,6 +17,8 @@ class RemoveCourseExecutionsTest extends SpockTest {
     def existingCourseExecutions
 
     def setup() {
+        createExternalCourseAndExecution()
+
         existingCourseExecutions = courseExecutionRepository.findAll().size()
 
         courseExecutionTecnico = externalCourseExecution

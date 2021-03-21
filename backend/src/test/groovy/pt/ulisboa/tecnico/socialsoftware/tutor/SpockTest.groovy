@@ -255,9 +255,7 @@ class SpockTest extends Specification {
     @Shared
     CourseExecution externalCourseExecution
 
-    RESTClient restClient
-
-    def setup() {
+    def createExternalCourseAndExecution() {
         externalCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(externalCourse)
 
@@ -265,19 +263,7 @@ class SpockTest extends Specification {
         courseExecutionRepository.save(externalCourseExecution)
     }
 
-    def persistentCourseCleanup() {
-        Course c
-        CourseExecution ce
-        if(courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO as String).isPresent()){
-            ce = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.TECNICO as String).get()
-            c = ce.getCourse()
-            courseExecutionRepository.dissociateCourseExecutionUsers(ce.getId())
-            courseExecutionRepository.deleteById(ce.getId())
-            courseRepository.deleteById(c.getId())
-        }
-    }
-
-
+    RESTClient restClient
 
     def demoAdminLogin() {
         def loginResponse = restClient.get(
@@ -288,7 +274,8 @@ class SpockTest extends Specification {
 
     def demoStudentLogin() {
         def loginResponse = restClient.get(
-                path: '/auth/demo/student'
+                path: '/auth/demo/student',
+                query: ['createNew': false]
         )
         restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
     }

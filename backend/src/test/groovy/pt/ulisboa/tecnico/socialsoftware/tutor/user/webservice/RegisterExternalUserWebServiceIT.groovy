@@ -57,8 +57,4 @@ class RegisterExternalUserWebServiceIT extends SpockTest {
         userRepository.delete(user)
     }
 
-    def cleanup() {
-        persistentCourseCleanup()
-    }
-
 }

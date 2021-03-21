@@ -10,6 +10,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
 class GetCourseExecutionsPerformanceTest extends SpockTest {
+    def setup() {
+        createExternalCourseAndExecution()
+    }
 
     def "performance testing to get 1000 course executions"() {
         1.upto(1, {
