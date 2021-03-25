@@ -37,12 +37,15 @@ class GetCourseExecutionsWebServiceIT extends SpockTest {
                 requestContentType: 'application/json'
         )
 
-        then: "the request returns OK"
+        then: 'the request returns OK'
         response.status == 200
-        and: "the response contains one course execution"
+        and: 'the response contains one course execution'
         response.data != null
         response.data.size() == 1
         response.data.get(0).name == DemoUtils.COURSE_NAME
+        and: 'there are two courses in the database'
+        courseRepository.findAll().size() == 2
+        courseExecutionRepository.findAll().size() == 2
 
         cleanup:
         courseRepository.delete(externalCourse)

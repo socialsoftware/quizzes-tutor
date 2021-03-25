@@ -48,6 +48,9 @@ class CreateExternalCourseExecutionWebServiceIT extends SpockTest {
         response.data.courseType == Course.Type.EXTERNAL.toString()
         response.data.courseExecutionType == Course.Type.EXTERNAL.toString()
         response.data.name == DemoUtils.COURSE_NAME
+        and: 'there are two courses in the database'
+        courseRepository.findAll().size() == 2
+        courseExecutionRepository.findAll().size() == 2
 
         cleanup:
         courseRepository.delete(courseRepository.findById(externalCourse.id).get())
@@ -77,6 +80,9 @@ class CreateExternalCourseExecutionWebServiceIT extends SpockTest {
         then: "the request returns 403"
         def error = thrown(HttpResponseException)
         error.response.status == HttpStatus.SC_FORBIDDEN
+        and: 'there is a single execution course in the database'
+        courseRepository.findAll().size() == 2
+        courseExecutionRepository.findAll().size() == 1
 
         cleanup:
         courseRepository.delete(externalCourse)
@@ -106,6 +112,9 @@ class CreateExternalCourseExecutionWebServiceIT extends SpockTest {
         then: "the request returns 403"
         def error = thrown(HttpResponseException)
         error.response.status == HttpStatus.SC_FORBIDDEN
+        and: 'there is a single execution course in the database'
+        courseRepository.findAll().size() == 2
+        courseExecutionRepository.findAll().size() == 1
 
         cleanup:
         courseRepository.delete(externalCourse)
