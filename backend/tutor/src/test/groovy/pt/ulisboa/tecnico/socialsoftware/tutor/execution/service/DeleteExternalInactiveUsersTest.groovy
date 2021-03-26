@@ -26,6 +26,8 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
     def initialUserCount
 
     def setup() {
+        createExternalCourseAndExecution()
+
         initialUserCount = userRepository.count()
         externalCourse = new Course(COURSE_1_NAME, CourseType.EXTERNAL)
         courseRepository.save(externalCourse)

@@ -115,8 +115,6 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTestIT {
     }
 
     def cleanup() {
-        persistentCourseCleanup()
-
         userRepository.deleteById(teacher.getId())
         userRepository.deleteById(student1.getId())
         userRepository.deleteById(student2.getId())

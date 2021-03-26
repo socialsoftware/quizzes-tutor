@@ -23,6 +23,8 @@ class FilterByAssessmentTest extends SpockTest {
     def questionList
 
     def setup() {
+        createExternalCourseAndExecution()
+
         topic1 = new Topic()
         topic1.setName(TOPIC_1_NAME)
         topic1.setCourse(externalCourse)

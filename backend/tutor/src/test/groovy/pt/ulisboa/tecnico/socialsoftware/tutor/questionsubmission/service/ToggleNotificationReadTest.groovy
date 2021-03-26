@@ -13,13 +13,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Unroll
 
 @DataJpaTest
-class ToggleNotificationReadTest extends SpockTest{
+class ToggleNotificationReadTest extends SpockTest {
     def student
     def question
     def optionOK
     def questionSubmission
 
     def setup() {
+        createExternalCourseAndExecution()
+
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         userRepository.save(student)

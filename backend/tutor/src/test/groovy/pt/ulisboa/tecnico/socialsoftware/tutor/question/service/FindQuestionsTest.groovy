@@ -22,6 +22,8 @@ class FindQuestionsTest extends SpockTest {
     def user
 
     def setup() {
+        createExternalCourseAndExecution()
+
         user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
 
         user.addCourse(externalCourseExecution)

@@ -11,6 +11,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 
 @DataJpaTest
 class CreateTopicTest extends SpockTest {
+    def setup() {
+        createExternalCourseAndExecution()
+    }
+
     def "create a topic"() {
         given:
         def topicDto = new TopicDto()

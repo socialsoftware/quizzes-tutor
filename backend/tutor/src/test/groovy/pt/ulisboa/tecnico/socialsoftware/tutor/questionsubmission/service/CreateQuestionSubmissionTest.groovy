@@ -20,7 +20,7 @@ import spock.lang.Unroll
 import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*
 
 @DataJpaTest
-class CreateQuestionSubmissionTest extends SpockTest{
+class CreateQuestionSubmissionTest extends SpockTest {
     @Shared
     def student
     @Shared
@@ -28,6 +28,8 @@ class CreateQuestionSubmissionTest extends SpockTest{
     def teacher
 
     def setup() {
+        createExternalCourseAndExecution()
+
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 User.Role.STUDENT, false, AuthUser.Type.TECNICO)
         ((AuthTecnicoUser)student.authUser).setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())

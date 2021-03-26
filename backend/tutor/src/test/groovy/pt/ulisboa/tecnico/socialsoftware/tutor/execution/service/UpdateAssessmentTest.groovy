@@ -16,6 +16,8 @@ class UpdateAssessmentTest extends SpockTest {
     def topicConjunction
 
     def setup() {
+        createExternalCourseAndExecution()
+
         def topic = new Topic()
         topic.setName(TOPIC_1_NAME)
         topic.setCourse(externalCourse)

@@ -134,9 +134,7 @@ class SpockTest extends Specification {
     @Shared
     CourseExecution externalCourseExecution
 
-    RESTClient restClient
-
-    def setup() {
+    def createExternalCourseAndExecution() {
         externalCourse = new Course(COURSE_1_NAME, CourseType.TECNICO)
         courseRepository.save(externalCourse)
 
@@ -156,7 +154,7 @@ class SpockTest extends Specification {
         }
     }
 
-
+    RESTClient restClient
 
     def demoAdminLogin() {
         def loginResponse = restClient.get(

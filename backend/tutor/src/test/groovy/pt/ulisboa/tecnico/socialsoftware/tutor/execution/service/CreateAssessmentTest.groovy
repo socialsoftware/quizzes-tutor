@@ -12,6 +12,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 
 @DataJpaTest
 class CreateAssessmentTest extends SpockTest {
+    def setup() {
+        createExternalCourseAndExecution()
+    }
+
     def "create a assessment with one topicConjunction with one topic"() {
         given: "a assessmentDto"
         def topic = new Topic()

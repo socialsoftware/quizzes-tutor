@@ -19,6 +19,8 @@ class CreateExternalCourseExecutionTest extends SpockTest {
     def existingCourseExecutions
 
     def setup() {
+        createExternalCourseAndExecution()
+
         existingCourses = courseRepository.findAll().size()
         existingCourseExecutions = courseExecutionRepository.findAll().size()
     }

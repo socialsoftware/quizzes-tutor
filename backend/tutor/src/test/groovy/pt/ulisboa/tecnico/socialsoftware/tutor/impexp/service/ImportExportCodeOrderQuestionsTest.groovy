@@ -15,6 +15,8 @@ class ImportExportCodeOrderQuestionsTest extends SpockTest {
     Integer questionId
 
     def setup() {
+        createExternalCourseAndExecution()
+
         def questionDto = new QuestionDto()
         questionDto.setKey(1)
         questionDto.setTitle(QUESTION_1_TITLE)

@@ -70,7 +70,4 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTestIT {
         courseRepository.deleteById(course1.getId())
     }
 
-    def cleanup() {
-        persistentCourseCleanup()
-    }
 }

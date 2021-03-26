@@ -131,7 +131,6 @@ class SolveQuizTournamentIT extends SpockTestIT {
     }
 
     def cleanup() {
-        persistentCourseCleanup()
         courseExecutionRepository.dissociateCourseExecutionUsers(courseExecution.getId())
         courseExecutionRepository.deleteById(courseExecution.getId())
         courseRepository.deleteById(course.getId())

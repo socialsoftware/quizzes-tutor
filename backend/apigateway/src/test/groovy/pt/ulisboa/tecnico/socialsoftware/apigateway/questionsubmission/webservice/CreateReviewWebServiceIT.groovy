@@ -103,8 +103,6 @@ class CreateReviewWebServiceIT extends SpockTestIT {
     }
 
     def cleanup() {
-        persistentCourseCleanup()
-
         userRepository.deleteById(teacher.getId())
         userRepository.deleteById(student.getId())
         courseExecutionRepository.deleteById(courseExecution.getId())

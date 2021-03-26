@@ -11,9 +11,9 @@ import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
 
 @DataJpaTest
 class CreateQuizAnswerTest extends SpockTest {
-
-
     def setup() {
+        createExternalCourseAndExecution()
+
         User user = new User(USER_1_NAME, User.Role.STUDENT, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)

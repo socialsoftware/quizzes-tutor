@@ -58,8 +58,4 @@ class GetDemoAuthWebServiceIT extends SpockTestIT {
         response.data.user.role == User.Role.TEACHER.toString()
     }
 
-    def cleanup() {
-        persistentCourseCleanup()
-    }
-
 }

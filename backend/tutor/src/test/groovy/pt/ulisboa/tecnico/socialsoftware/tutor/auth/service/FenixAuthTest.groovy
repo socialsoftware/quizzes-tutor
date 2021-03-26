@@ -23,6 +23,8 @@ class FenixAuthTest extends SpockTest {
     def existingCourseExecutions
 
     def setup() {
+        createExternalCourseAndExecution()
+
         client = Mock(FenixEduInterface)
 
         courses = new ArrayList<>()

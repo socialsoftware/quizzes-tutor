@@ -1,10 +1,11 @@
 # http://whitfin.io/speeding-up-maven-docker-builds/
 
 FROM maven:3-jdk-11 as maven
-COPY ../../../../../../backend/pom.xml ./pom.xml
+COPY ./pom.xml ./pom.xml
 RUN mvn dependency:go-offline -B
-COPY ../../../../../../backend/src ./src
-RUN mvn -Pprod -Dmaven.test.skip=true package
+COPY ./src ./src
+ARG PROFILE=test
+RUN mvn -P$PROFILE -Dmaven.test.skip=true package
 
 # https://stackoverflow.com/questions/53375613/why-is-the-java-11-base-docker-image-so-large-openjdk11-jre-slim
 
