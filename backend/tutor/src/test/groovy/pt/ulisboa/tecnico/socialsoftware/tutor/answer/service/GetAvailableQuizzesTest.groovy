@@ -19,7 +19,7 @@ class GetAvailableQuizzesTest extends SpockTest {
 
     def setup() {
         createExternalCourseAndExecution()
-        
+
         courseDto = externalCourseExecution.getDto()
 
         user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
