@@ -153,7 +153,7 @@ public class TournamentProvidedService {
     public void removeTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
 
-        if(tournament.getQuizId() != null) {
+        if (tournament.getQuizId() != null) {
             tournamentRequiredService.deleteQuiz(tournament.getQuizId());
         }
 
@@ -195,7 +195,7 @@ public class TournamentProvidedService {
 
     private void createQuiz(Tournament tournament) {
         ExternalStatementCreationDto quizForm = tournament.getExternalStatementCreationDto();
-        Integer quizId = tournamentRequiredService.getQuizId(tournament.getCreator().getId(),
+        Integer quizId = tournamentRequiredService.createQuiz(tournament.getCreator().getId(),
                 tournament.getCourseExecution().getId(), quizForm);
         tournament.setQuizId(quizId);
     }
