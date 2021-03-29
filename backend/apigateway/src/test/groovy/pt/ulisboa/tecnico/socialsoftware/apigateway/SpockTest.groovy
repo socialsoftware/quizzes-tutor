@@ -27,7 +27,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-class SpockTestIT extends Specification {
+class SpockTest extends Specification {
 
     @Value('${spring.mail.username}')
     public String mailerUsername
@@ -154,9 +154,7 @@ class SpockTestIT extends Specification {
     @Shared
     CourseExecution externalCourseExecution
 
-    RESTClient restClient
-
-    def setup() {
+    def createExternalCourseAndExecution() {
         externalCourse = new Course(COURSE_1_NAME, CourseType.TECNICO)
         courseRepository.save(externalCourse)
 
@@ -164,19 +162,7 @@ class SpockTestIT extends Specification {
         courseExecutionRepository.save(externalCourseExecution)
     }
 
-    def persistentCourseCleanup() {
-        Course c
-        CourseExecution ce
-        if(courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.TECNICO as String).isPresent()){
-            ce = courseExecutionRepository.findByFields(COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.TECNICO as String).get()
-            c = ce.getCourse()
-            courseExecutionRepository.dissociateCourseExecutionUsers(ce.getId())
-            courseExecutionRepository.deleteById(ce.getId())
-            courseRepository.deleteById(c.getId())
-        }
-    }
-
-
+    RESTClient restClient
 
     def demoAdminLogin() {
         def loginResponse = restClient.get(
@@ -187,7 +173,8 @@ class SpockTestIT extends Specification {
 
     def demoStudentLogin() {
         def loginResponse = restClient.get(
-                path: '/auth/demo/student'
+                path: '/auth/demo/student',
+                query: ['createNew': false]
         )
         restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
     }

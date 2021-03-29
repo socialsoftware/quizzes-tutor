@@ -1,17 +1,17 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.execution.webservice
+package pt.ulisboa.tecnico.socialsoftware.apigateway.execution.webservice
 
 import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CreateExternalCourseExecutionWebServiceIT extends SpockTestIT {
+class CreateExternalCourseExecutionWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
@@ -30,6 +30,11 @@ class CreateExternalCourseExecutionWebServiceIT extends SpockTestIT {
         courseRepository.save(externalCourse)
         and: 'a course execution dto'
         def courseExecutionDto = externalCourse.getCourseExecutionDto()
+        courseExecutionDto.setCourseType(CourseType.EXTERNAL)
+        courseExecutionDto.setCourseExecutionType(CourseType.EXTERNAL)
+        courseExecutionDto.setName(TutorDemoUtils.COURSE_NAME)
+        courseExecutionDto.setAcronym(TutorDemoUtils.COURSE_ACRONYM)
+        courseExecutionDto.setAcademicTerm(TutorDemoUtils.COURSE_ACADEMIC_TERM)
 
         when: 'the web service is invoked'
         response = restClient.post(
@@ -59,6 +64,11 @@ class CreateExternalCourseExecutionWebServiceIT extends SpockTestIT {
         courseRepository.save(externalCourse)
         and: 'a course execution dto'
         def courseExecutionDto = externalCourse.getCourseExecutionDto()
+        courseExecutionDto.setCourseType(CourseType.EXTERNAL)
+        courseExecutionDto.setCourseExecutionType(CourseType.EXTERNAL)
+        courseExecutionDto.setName(TutorDemoUtils.COURSE_NAME)
+        courseExecutionDto.setAcronym(TutorDemoUtils.COURSE_ACRONYM)
+        courseExecutionDto.setAcademicTerm(TutorDemoUtils.COURSE_ACADEMIC_TERM)
 
         when: 'the web service is invoked'
         response = restClient.post(
@@ -86,6 +96,11 @@ class CreateExternalCourseExecutionWebServiceIT extends SpockTestIT {
         courseRepository.save(externalCourse)
         and: 'a course execution dto'
         def courseExecutionDto = externalCourse.getCourseExecutionDto()
+        courseExecutionDto.setCourseType(CourseType.EXTERNAL)
+        courseExecutionDto.setCourseExecutionType(CourseType.EXTERNAL)
+        courseExecutionDto.setName("Software Engineering")
+        courseExecutionDto.setAcronym(TutorDemoUtils.COURSE_ACRONYM)
+        courseExecutionDto.setAcademicTerm(TutorDemoUtils.COURSE_ACADEMIC_TERM)
 
         when: 'the web service is invoked'
         response = restClient.post(

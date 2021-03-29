@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.apigateway.tournament.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto
@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class SolveQuizTournamentIT extends SpockTestIT {
+class SolveQuizTournamentIT extends SpockTest {
 
     @LocalServerPort
     private int port

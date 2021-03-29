@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.apigateway.BeanConfigurationIT
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto
@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TournamentIT extends SpockTestIT {
+class TournamentIT extends SpockTest {
     @LocalServerPort
     private int port
 
