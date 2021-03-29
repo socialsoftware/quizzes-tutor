@@ -13,7 +13,7 @@ describe('ShowQuestionDialog.vue with question', () => {
     Vue.use(Vuetify);
 
     wrapper = shallowMount(ShowQuestionDialog, {
-      propsData: { question: questionWithFigure, dialog: dialog }
+      propsData: { question: questionWithFigure, dialog: dialog },
     });
   });
 
