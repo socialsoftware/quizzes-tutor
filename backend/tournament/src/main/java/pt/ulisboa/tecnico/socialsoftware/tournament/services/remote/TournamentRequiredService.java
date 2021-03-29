@@ -32,7 +32,6 @@ public class TournamentRequiredService {
         UserDto userDto = monolithService.findUserById(userId);
         if (userDto != null) {
             return new TournamentCreator(userDto.getId(), userDto.getUsername(), userDto.getName());
-            //return tournamentACL.userToTournamentCreator(userDto);
         }
         else {
             throw new TutorException(USER_NOT_FOUND, userId);
@@ -43,7 +42,6 @@ public class TournamentRequiredService {
         UserDto userDto = monolithService.findUserById(userId);
         if (userDto != null) {
             return new TournamentParticipant(userDto.getId(), userDto.getUsername(), userDto.getName());
-            //return tournamentACL.userToTournamentParticipant(userDto);
         }
         else {
             throw new TutorException(USER_NOT_FOUND, userId);
@@ -54,7 +52,6 @@ public class TournamentRequiredService {
         CourseExecutionDto courseExecutionDto = monolithService.getCourseExecutionById(courseExecutionId);
         return new TournamentCourseExecution(courseExecutionDto.getCourseExecutionId(),
                 courseExecutionDto.getCourseId(), CourseExecutionStatus.valueOf(courseExecutionDto.getStatus().toString()), courseExecutionDto.getAcronym());
-        //return tournamentACL.courseExecutionToTournamentCourseExecution(courseExecutionDto);
     }
 
     public Integer getDemoCourseExecutionId() {
@@ -68,7 +65,6 @@ public class TournamentRequiredService {
         for (TopicWithCourseDto topicWithCourseDto : topicWithCourseDtoList) {
             topics.add(new TournamentTopic(topicWithCourseDto.getId(), topicWithCourseDto.getName(),
                     topicWithCourseDto.getCourseId()));
-            //topics.add(tournamentACL.topicToTournamentTopic(topicWithCourseDto));
         }
 
         return topics;
