@@ -201,7 +201,9 @@ public class QuestionsXmlImport {
         var slots = new ArrayList<CodeOrderSlotDto>();
         for (Element slotElement : questionElement.getChild("orderSlots").getChildren("slot")) {
             var slot = new CodeOrderSlotDto();
-            slot.setOrder(Integer.valueOf(slotElement.getAttributeValue("order")));
+
+            Integer order = slotElement.getAttributeValue("order").equals("null") ? null : Integer.valueOf(slotElement.getAttributeValue("order"));
+            slot.setOrder(order);
             slot.setSequence(Integer.valueOf(slotElement.getAttributeValue("sequence")));
             slot.setContent(slotElement.getValue());
 
