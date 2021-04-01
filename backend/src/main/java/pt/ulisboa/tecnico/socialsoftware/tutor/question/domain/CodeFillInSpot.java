@@ -13,7 +13,6 @@ import java.util.Collections;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.NO_CORRECT_OPTION;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.OPTION_NOT_FOUND;
 
 @Entity
 @Table(name = "code_fill_in_spot",
@@ -81,8 +80,8 @@ public class CodeFillInSpot implements DomainEntity {
 
         int index = 0;
         for (OptionDto optionDto : options) {
-            int sequence = optionDto.getSequence() != null ? optionDto.getSequence() : index++;
-            optionDto.setSequence(sequence);
+            int seq = optionDto.getSequence() != null ? optionDto.getSequence() : index++;
+            optionDto.setSequence(seq);
             CodeFillInOption codeFillInOption = new CodeFillInOption(optionDto);
             codeFillInOption.setFillInSpot(this);
             this.options.add(codeFillInOption);

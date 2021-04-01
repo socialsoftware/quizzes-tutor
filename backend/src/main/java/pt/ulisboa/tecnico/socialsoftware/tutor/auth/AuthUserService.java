@@ -56,7 +56,7 @@ public class AuthUserService {
         String username = fenix.getPersonUsername();
         AuthTecnicoUser authUser;
         try {
-            authUser = (AuthTecnicoUser) authUserRepository.findAuthUserByUsername(username).orElse(null);;
+            authUser = (AuthTecnicoUser) authUserRepository.findAuthUserByUsername(username).orElse(null);
         } catch (ClassCastException e) {
             throw new TutorException(INVALID_AUTH_USERNAME, username);
         }
@@ -203,10 +203,9 @@ public class AuthUserService {
 
     private List<CourseExecution> getActiveTecnicoCourses(List<CourseExecutionDto> courses) {
         return courses.stream()
-                .map(courseDto ->  {
-                    return courseExecutionRepository.findByFields(courseDto.getAcronym(),courseDto.getAcademicTerm(), Course.Type.TECNICO.name())
-                            .orElse(null);
-                })
+                .map(courseDto -> courseExecutionRepository.findByFields(courseDto.getAcronym(),courseDto.getAcademicTerm(), Course.Type.TECNICO.name())
+                            .orElse(null)
+                )
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }

@@ -22,11 +22,11 @@ public abstract class AnswerDetails implements DomainEntity {
     @JoinColumn(name = "question_answer_id")
     private QuestionAnswer questionAnswer;
 
-    public AnswerDetails() {
+    protected AnswerDetails() {
 
     }
 
-    public AnswerDetails(QuestionAnswer questionAnswer) {
+    protected AnswerDetails(QuestionAnswer questionAnswer) {
         setQuestionAnswer(questionAnswer);
     }
 

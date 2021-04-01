@@ -43,9 +43,9 @@ public class UserApplicationalService {
                 .stream()
                 .filter(userDto -> !userDto.isActive())
                 .map(userDto -> authUserRepository.findAuthUserByUsername(userDto.getUsername()).get())
-                .forEach(authUser -> {
-                    this.sendConfirmationEmailTo(authUser.getUsername(), authUser.getEmail(), ((AuthExternalUser) authUser).getConfirmationToken());
-                });
+                .forEach(authUser ->
+                    this.sendConfirmationEmailTo(authUser.getUsername(), authUser.getEmail(), ((AuthExternalUser) authUser).getConfirmationToken())
+                );
 
         return courseDtoNotificationResponse;
     }

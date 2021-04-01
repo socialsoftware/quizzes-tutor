@@ -7,6 +7,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQue
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 
+import javax.persistence.Transient;
+
 public class MultipleChoiceStatementAnswerDetailsDto extends StatementAnswerDetailsDto {
     private Integer optionId;
 
@@ -27,6 +29,7 @@ public class MultipleChoiceStatementAnswerDetailsDto extends StatementAnswerDeta
         this.optionId = optionId;
     }
 
+    @Transient
     private MultipleChoiceAnswer createdMultipleChoiceAnswer;
 
     @Override

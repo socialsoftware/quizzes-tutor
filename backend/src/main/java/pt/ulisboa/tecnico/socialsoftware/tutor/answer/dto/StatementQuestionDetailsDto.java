@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
+import java.io.Serializable;
+
 import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.QuestionTypes.*;
 
 @JsonTypeInfo(
@@ -15,5 +17,5 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question.Q
         @JsonSubTypes.Type(value = CodeFillInStatementQuestionDetailsDto.class, name = CODE_FILL_IN_QUESTION),
         @JsonSubTypes.Type(value = CodeOrderStatementQuestionDetailsDto.class, name = CODE_ORDER_QUESTION),
 })
-public abstract class StatementQuestionDetailsDto {
+public abstract class StatementQuestionDetailsDto implements Serializable {
 }

@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import org.apache.commons.lang3.tuple.Pair;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -11,8 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetails
 import javax.persistence.*;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_ORDER_SLOT_MISMATCH;
 
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.CODE_ORDER_QUESTION)
@@ -35,9 +32,7 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public void remove() {
-        if (this.orderedSlots != null) {
-            orderedSlots.forEach(CodeOrderAnswerSlot::remove);
-        }
+        orderedSlots.forEach(CodeOrderAnswerSlot::remove);
     }
 
     @Override
@@ -60,7 +55,7 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public boolean isAnswered() {
-        return orderedSlots != null && !orderedSlots.isEmpty();
+        return !orderedSlots.isEmpty();
     }
 
     public Set<CodeOrderAnswerSlot> getOrderedSlots() {

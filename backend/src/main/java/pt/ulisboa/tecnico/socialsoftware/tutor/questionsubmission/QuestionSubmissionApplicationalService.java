@@ -6,12 +6,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionApplicationalService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -24,7 +21,7 @@ import java.util.List;
 public class QuestionSubmissionApplicationalService {
     private static final Logger logger = LoggerFactory.getLogger(QuestionSubmissionApplicationalService.class);
 
-    private static String QUESTION_SUBMISSION_SUBJECT = "*Question Submission* ";
+    private static final String QUESTION_SUBMISSION_SUBJECT = "*Question Submission* ";
 
     @Autowired
     private QuestionSubmissionService questionSubmissionService;

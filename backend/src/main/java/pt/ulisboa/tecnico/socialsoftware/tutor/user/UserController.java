@@ -33,8 +33,7 @@ public class UserController {
 
     @PostMapping("/users/register/confirm")
     public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto){
-        ExternalUserDto user = userApplicationalService.confirmRegistration(externalUserDto);
-        return user;
+        return  userApplicationalService.confirmRegistration(externalUserDto);
     }
 
 }

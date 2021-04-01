@@ -39,6 +39,7 @@ public class FenixEduInterface {
 
     private static final String API_EVALUATION_PERIOD = "evaluationPeriod";
     private static final String API_EVALUATION_END = "end";
+    public static final String REGEX = "^\"|\"$";
 
     private FenixEduClientImpl client;
     private FenixEduUserDetails userDetails;
@@ -66,11 +67,11 @@ public class FenixEduInterface {
     }
 
     public String getPersonName() {
-        return String.valueOf(person.get(API_PERSON_NAME)).replaceAll("^\"|\"$", "");
+        return String.valueOf(person.get(API_PERSON_NAME)).replaceAll(REGEX, "");
     }
 
     public String getPersonUsername() {
-        return String.valueOf(person.get(API_PERSON_USERNAME)).replaceAll("^\"|\"$", "");
+        return String.valueOf(person.get(API_PERSON_USERNAME)).replaceAll(REGEX, "");
     }
 
     private JsonObject getPersonCourses() {
@@ -96,7 +97,7 @@ public class FenixEduInterface {
     }
 
     public String getPersonEmail() {
-        return String.valueOf(person.get(API_PERSON_EMAIL)).replaceAll("^\"|\"$", "");
+        return String.valueOf(person.get(API_PERSON_EMAIL)).replaceAll(REGEX, "");
     }
 
     private String getCourseEndDate(JsonElement courseJson) {

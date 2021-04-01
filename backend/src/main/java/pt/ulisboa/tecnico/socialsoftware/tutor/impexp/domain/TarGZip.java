@@ -14,8 +14,8 @@ public class TarGZip {
     //this class will create a tar.gz zip of source_folder
     private String sourceFolder;
 
-    public TarGZip(String source_folder) {
-        sourceFolder = source_folder;
+    public TarGZip(String sourceFolder) {
+        this.sourceFolder = sourceFolder;
     }
 
     public void createTarFile() {

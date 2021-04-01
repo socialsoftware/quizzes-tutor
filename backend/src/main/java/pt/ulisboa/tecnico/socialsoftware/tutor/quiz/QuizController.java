@@ -1,14 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,8 +14,6 @@ import java.util.List;
 
 @RestController
 public class QuizController {
-    private static final Logger logger = LoggerFactory.getLogger(TopicController.class);
-
     @Autowired
     private QuizService quizService;
 

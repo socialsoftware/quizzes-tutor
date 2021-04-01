@@ -28,10 +28,10 @@ public abstract class QuestionAnswerItem {
     private Integer timeTaken;
     private Integer timeToSubmission;
 
-    public QuestionAnswerItem() {
+    protected QuestionAnswerItem() {
     }
 
-    public QuestionAnswerItem(String username, int quizId, StatementAnswerDto answer) {
+    protected QuestionAnswerItem(String username, int quizId, StatementAnswerDto answer) {
         this.username = username;
         this.quizId = quizId;
         this.quizQuestionId = answer.getQuizQuestionId();

@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
-import org.apache.commons.lang.NotImplementedException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
@@ -9,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.time.Duration;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.concurrent.TimeUnit;
 import java.util.function.Function;
@@ -38,9 +36,9 @@ public class CSVQuizExportVisitor implements Visitor {
         column = 4;
 
         quizQuestionsList.stream()
-                .forEach(quizQuestion -> {
-                    line[++column] = String.valueOf(quizQuestion.getSequence()+1);
-                });
+                .forEach(quizQuestion ->
+                    line[++column] = String.valueOf(quizQuestion.getSequence()+1)
+                );
 
         table.add(line);
 

@@ -6,10 +6,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderSlotDto;
 
 import javax.persistence.*;
-import java.util.Comparator;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "code_order_slot")

@@ -10,7 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import java.time.LocalDateTime;
 import java.util.Optional;
 import java.util.Set;
-import java.util.stream.Stream;
 
 @Repository
 @Transactional

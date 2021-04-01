@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthUserDto;
-
 import java.io.Serializable;
 
 public class AuthDto implements Serializable {

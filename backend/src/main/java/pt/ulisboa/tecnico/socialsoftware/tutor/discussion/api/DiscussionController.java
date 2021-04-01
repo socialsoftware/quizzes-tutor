@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.api;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -10,7 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionApplicationa
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.validation.Valid;

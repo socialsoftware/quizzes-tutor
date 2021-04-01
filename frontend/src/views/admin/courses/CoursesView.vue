@@ -146,12 +146,12 @@
 import { Component, Vue } from 'vue-property-decorator';
 import Course from '@/models/user/Course';
 import RemoteServices from '@/services/RemoteServices';
-import EditCourseDialog from '@/views/admin/Courses/EditCourseDialog.vue';
-import AddUserDialog from '@/views/admin/Courses/AddUserDialog.vue';
-import UploadUsersDialog from '@/views/admin/Courses/UploadUsersDialog.vue';
-import ViewUsersDialog from '@/views/admin/Courses/ViewUsersDialog.vue';
-import ExternalUser from '../../../models/user/ExternalUser';
-import User from '../../../models/user/User';
+import EditCourseDialog from '@/views/admin/courses/EditCourseDialog.vue';
+import AddUserDialog from '@/views/admin/courses/AddUserDialog.vue';
+import UploadUsersDialog from '@/views/admin/courses/UploadUsersDialog.vue';
+import ViewUsersDialog from '@/views/admin/courses/ViewUsersDialog.vue';
+import ExternalUser from '@/models/user/ExternalUser';
+import User from '@/models/user/User';
 
 @Component({
   components: {

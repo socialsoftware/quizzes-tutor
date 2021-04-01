@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import org.apache.commons.lang3.tuple.Pair;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderCorrectAnswerDto;

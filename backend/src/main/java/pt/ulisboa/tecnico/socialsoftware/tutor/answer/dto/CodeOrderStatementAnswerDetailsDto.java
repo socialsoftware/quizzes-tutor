@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -36,6 +37,7 @@ public class CodeOrderStatementAnswerDetailsDto extends StatementAnswerDetailsDt
         this.orderedSlots = orderedSlots;
     }
 
+    @Transient
     private CodeOrderAnswer codeOrderAnswer;
 
     @Override

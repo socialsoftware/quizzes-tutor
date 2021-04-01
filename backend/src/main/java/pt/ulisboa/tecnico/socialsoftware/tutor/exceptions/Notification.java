@@ -1,15 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.exceptions;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
 
-public class Notification {
+public class Notification implements Serializable {
 
     private static class Error extends RuntimeException {
-        String message;
-        TutorException cause;
+        final String message;
+        final TutorException cause;
 
         private Error(String message, TutorException cause) {
             this.message = message;

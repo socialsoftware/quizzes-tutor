@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -9,15 +8,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification;
@@ -26,7 +22,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
@@ -43,7 +38,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
+import java.util.Objects;
 import java.util.Random;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -157,9 +152,9 @@ public class UserService {
             propagation = Propagation.REQUIRED)
     public NotificationResponse<CourseExecutionDto> registerListOfUsersTransactional(InputStream stream, int courseExecutionId) {
         Notification notification = new Notification();
-        extractUserDtos(stream, notification).forEach(userDto -> {
-            registerExternalUserTransactional(courseExecutionId, userDto);
-        });
+        extractUserDtos(stream, notification).forEach(userDto ->
+            registerExternalUserTransactional(courseExecutionId, userDto)
+        );
 
         CourseExecutionDto courseExecutionDto = courseExecutionRepository.findById(courseExecutionId)
                 .map(CourseExecutionDto::new)
@@ -268,8 +263,8 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserDto findUserById(Integer id) {
         return  userRepository.findById(id)
-                .filter(user -> user != null)
-                .map(user -> new UserDto(user))
+                .filter(Objects::nonNull)
+                .map(UserDto::new)
                 .orElse(null);
     }
 

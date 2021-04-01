@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import org.hibernate.annotations.CacheConcurrencyStrategy;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
@@ -259,7 +258,7 @@ public class Question implements DomainEntity {
     public boolean hasTopics(Set<Integer> chosenTopicsIds) {
         return !getTopics().isEmpty()
                 && chosenTopicsIds.containsAll(getTopics().stream()
-                .map(topic -> topic.getId())
+                .map(Topic::getId)
                 .collect(Collectors.toList()));
     }
 

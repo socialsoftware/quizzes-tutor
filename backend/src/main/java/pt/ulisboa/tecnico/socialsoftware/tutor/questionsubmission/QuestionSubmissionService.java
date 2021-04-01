@@ -7,12 +7,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -189,7 +185,7 @@ public class QuestionSubmissionService {
             userQuestionSubmissionInfoDtos.add(new UserQuestionSubmissionInfoDto(student));
         }
 
-        userQuestionSubmissionInfoDtos.sort(UserQuestionSubmissionInfoDto.NumSubmissionsComparator);
+        userQuestionSubmissionInfoDtos.sort(UserQuestionSubmissionInfoDto.numSubmissionsComparator);
 
         return userQuestionSubmissionInfoDtos;
     }

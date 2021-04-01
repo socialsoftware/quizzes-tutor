@@ -1,26 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.TopicController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
 
 @RestController
 public class AnswerController {
-    private static final Logger logger = LoggerFactory.getLogger(TopicController.class);
-
     @Autowired
     private AnswerService answerService;
 

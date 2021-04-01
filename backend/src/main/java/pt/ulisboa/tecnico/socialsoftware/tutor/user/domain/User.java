@@ -154,8 +154,7 @@ public class User implements DomainEntity {
 
     public String getUsername() {
         if (authUser == null) {
-            String role = getRole().toString().toLowerCase();
-            return String.format("%s-%s", role, getId());
+            return String.format("%s-%s", getRole().toString().toLowerCase(), getId());
         }
         return authUser.getUsername();
     }
@@ -169,7 +168,7 @@ public class User implements DomainEntity {
     }
 
     public boolean isAdmin() {
-        return  this.admin == null ? false : this.admin;
+        return this.admin != null && this.admin;
     }
 
     public void setAdmin(boolean admin) {
@@ -527,19 +526,19 @@ public class User implements DomainEntity {
                 throw new TutorException(USER_IS_ACTIVE, getUsername());
         }
 
-        if (quizAnswers.size() != 0) {
+        if (!quizAnswers.isEmpty()) {
             throw new TutorException(USER_HAS_QUIZ_ANSWERS, getUsername());
         }
 
-        if (questionSubmissions.size() != 0) {
+        if (!questionSubmissions.isEmpty()) {
             throw new TutorException(USER_HAS_QUESTION_SUBMISSIONS, getUsername());
         }
 
-        if (discussions.size() != 0) {
+        if (!discussions.isEmpty()) {
             throw new TutorException(USER_HAS_DISCUSSIONS, getUsername());
         }
 
-        if (replies.size() != 0) {
+        if (!replies.isEmpty()) {
             throw new TutorException(USER_HAS_REPLIES, getUsername());
         }
 
