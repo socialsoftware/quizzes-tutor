@@ -216,6 +216,44 @@ class UpdateQuestionTest extends SpockTest {
         exception.getErrorMessage() == ErrorMessage.CANNOT_CHANGE_ANSWERED_QUESTION
     }
 
+
+    def "new test update MultipleChoiceQuestion remove old options add new ones"() {
+        given: "a changed question"
+        def questionDto = new QuestionDto(question)
+        def multipleChoiceQuestionDto = new MultipleChoiceQuestionDto()
+        questionDto.setQuestionDetailsDto(multipleChoiceQuestionDto)
+
+        and: 'the new options'
+        def newOptionOK = new OptionDto()
+        newOptionOK.setContent(OPTION_2_CONTENT)
+        newOptionOK.setCorrect(true)
+        newOptionOK.setSequence(0)
+
+        def newOptionKO = new OptionDto()
+        newOptionKO.setContent(OPTION_2_CONTENT)
+        newOptionKO.setCorrect(false)
+        newOptionKO.setSequence(1)
+
+        def newOptions = new ArrayList<OptionDto>()
+        newOptions.add(newOptionOK)
+        newOptions.add(newOptionKO)
+        multipleChoiceQuestionDto.setOptions(newOptions)
+
+        when:
+        questionService.updateQuestion(question.getId(), questionDto)
+
+        then:'optionRepository only has two options'
+        optionRepository.findAll().size() == 2
+
+        and:'the question only has the two new options'
+        def result = questionRepository.findAll().get(0)
+        result.getQuestionDetails().getOptions().size() == 2
+        def resOptionOne = result.getQuestionDetails().getOptions().get(0)
+        resOptionOne.getContent() == OPTION_2_CONTENT
+        def resOptionTwo = result.getQuestionDetails().getOptions().get(1)
+        resOptionTwo.getContent() == OPTION_2_CONTENT
+    }
+
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
