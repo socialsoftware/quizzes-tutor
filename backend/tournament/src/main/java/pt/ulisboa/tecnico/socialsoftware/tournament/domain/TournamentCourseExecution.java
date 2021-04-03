@@ -1,0 +1,74 @@
+package pt.ulisboa.tecnico.socialsoftware.tournament.domain;
+
+import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentCourseExecutionDto;
+
+import javax.persistence.Column;
+import javax.persistence.Embeddable;
+import javax.persistence.EnumType;
+import javax.persistence.Enumerated;
+import java.util.Objects;
+
+@Embeddable
+public class TournamentCourseExecution {
+
+    @Column(name = "course_execution_id")
+    private Integer id;
+
+    @Column(name = "course_id")
+    private Integer courseId;
+
+    @Enumerated(EnumType.STRING)
+    private CourseExecutionStatus status;
+
+    @Column(name = "course_acronym")
+    private String courseAcronym;
+
+    public TournamentCourseExecution() {
+    }
+
+    public TournamentCourseExecution(Integer id, Integer courseId, CourseExecutionStatus status, String courseAcronym) {
+        this.id = id;
+        this.courseId = courseId;
+        this.status = status;
+        this.courseAcronym = courseAcronym;
+    }
+
+    public Integer getId() {
+        return id;
+    }
+
+    public Integer getCourseId() {
+        return courseId;
+    }
+
+    public CourseExecutionStatus getStatus() {
+        return status;
+    }
+
+    public String getCourseAcronym() {
+        return courseAcronym;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        TournamentCourseExecution that = (TournamentCourseExecution) o;
+        return courseId.equals(that.courseId) && status == that.status && courseAcronym.equals(that.courseAcronym);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(courseId, status, courseAcronym);
+    }
+
+    public TournamentCourseExecutionDto getDto() {
+        TournamentCourseExecutionDto dto = new TournamentCourseExecutionDto();
+        dto.setId(getId());
+        dto.setCourseId(getCourseId());
+        dto.setStatus(getStatus());
+        dto.setCourseAcronym(getCourseAcronym());
+        return dto;
+    }
+}
