@@ -90,6 +90,7 @@
               class="mr-2"
               v-on="on"
               @click="exportCourseExecutionInfo(item)"
+              data-cy="exportCourse"
               >fas fa-download</v-icon
             >
           </template>
@@ -357,14 +358,16 @@ export default class CoursesView extends Vue {
     return false;
   }
 
-  async anonymizeCourse(courseToDelete: Course) {
+  async anonymizeCourse(courseToAnonymize: Course) {
     if (
       confirm(
         'Are you sure you want to anonymize the users of this course execution?'
       )
     ) {
       try {
-        await RemoteServices.anonymizeCourse(courseToDelete.courseExecutionId);
+        await RemoteServices.anonymizeCourse(
+          courseToAnonymize.courseExecutionId
+        );
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
@@ -387,7 +390,7 @@ export default class CoursesView extends Vue {
   }
 
   async onDeleteUsers(users: User[]) {
-    var course: Course;
+    let course: Course;
     await this.$store.dispatch('loading');
     if (!!this.currentCourse) {
       try {
@@ -397,15 +400,14 @@ export default class CoursesView extends Vue {
         );
         let index: number = this.courses.indexOf(
           this.courses.filter(
-            (course) =>
-              course.courseExecutionId == this.currentCourse?.courseExecutionId
+            (c) => c.courseExecutionId == course.courseExecutionId
           )[0]
         );
-
         this.currentCourse = course;
         this.courses[
           index
         ].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+
         this.updateUserNumbers(this.courses[index]);
       } catch (error) {
         await this.$store.dispatch('error', error);

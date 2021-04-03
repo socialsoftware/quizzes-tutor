@@ -10,6 +10,19 @@ describe('EditCourseDialog view test', () => {
   let wrapper: Wrapper<EditCourseDialog>;
   let vuetify: Vuetify;
   const actions = { error: jest.fn() };
+  let mockCreateExternalCourse: RemoteServices;
+
+  beforeAll(() => {
+    mockCreateExternalCourse = jest
+      .spyOn(RemoteServices, 'createExternalCourse')
+      .mockImplementation(() => {
+        return Promise.resolve(filledCourse);
+      });
+  });
+
+  afterAll(() => {
+    jest.restoreAllMocks();
+  });
 
   beforeEach(() => {
     jest.clearAllMocks();
@@ -32,11 +45,6 @@ describe('EditCourseDialog view test', () => {
   });
 
   test('fill and cancel', async () => {
-    const mockCreateExternalCourse = jest.spyOn(
-      RemoteServices,
-      'createExternalCourse'
-    );
-
     const courseExecutionNameInput = wrapper.find(
       'input[data-cy="courseExecutionNameInput"]'
     );
@@ -61,10 +69,6 @@ describe('EditCourseDialog view test', () => {
   });
 
   test('fill and save', async () => {
-    RemoteServices.createExternalCourse = jest
-      .fn()
-      .mockReturnValue(filledCourse);
-
     const courseExecutionNameInput = wrapper.find(
       'input[data-cy="courseExecutionNameInput"]'
     );
@@ -85,14 +89,11 @@ describe('EditCourseDialog view test', () => {
 
     expect(wrapper.emitted('new-course')?.length).toBe(1);
     expect(wrapper.emitted('new-course')?.[0]).toEqual([filledCourse]);
+
+    expect(mockCreateExternalCourse).toHaveBeenCalled();
   });
 
   test('fill and save without complete information', async () => {
-    const mockCreateExternalCourse = jest.spyOn(
-      RemoteServices,
-      'createExternalCourse'
-    );
-
     const courseExecutionNameInput = wrapper.find(
       'input[data-cy="courseExecutionNameInput"]'
     );
