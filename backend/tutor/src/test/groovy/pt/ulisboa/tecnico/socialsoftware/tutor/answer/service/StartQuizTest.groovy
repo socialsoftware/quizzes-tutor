@@ -2,8 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
@@ -15,7 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Unroll
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class StartQuizTest extends SpockTest {

@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 

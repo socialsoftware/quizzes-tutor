@@ -14,18 +14,8 @@
   <url>http://maven.apache.org</url>
   <dependencies>
     <dependency>
-      <groupId>pt.ulisboa.tecnico.socialsoftware.dtos</groupId>
-      <artifactId>dtos</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>pt.ulisboa.tecnico.socialsoftware.exceptions</groupId>
-      <artifactId>exceptions</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>pt.ulisboa.tecnico.socialsoftware.events</groupId>
-      <artifactId>events</artifactId>
+      <groupId>pt.ulisboa.tecnico.socialsoftware.common</groupId>
+      <artifactId>common</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

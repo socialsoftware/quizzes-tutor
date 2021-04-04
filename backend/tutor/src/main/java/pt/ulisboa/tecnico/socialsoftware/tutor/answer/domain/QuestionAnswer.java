@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
@@ -11,8 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_QUESTION_ANSWER;
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.QUESTION_ANSWER_HAS_DISCUSSION;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_QUESTION_ANSWER;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.QUESTION_ANSWER_HAS_DISCUSSION;
 
 @Entity
 @Table(name = "question_answers",

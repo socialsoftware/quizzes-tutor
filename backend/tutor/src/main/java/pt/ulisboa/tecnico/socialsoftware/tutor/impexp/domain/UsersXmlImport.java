@@ -8,18 +8,18 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.springframework.stereotype.Component;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.USERS_IMPORT_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.USERS_IMPORT_ERROR;
 
 @Component
 public class UsersXmlImport {

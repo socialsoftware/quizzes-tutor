@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.CodeFillInSpotDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.CodeFillInSpotDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
@@ -12,7 +12,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.NO_CORRECT_OPTION;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.NO_CORRECT_OPTION;
 
 @Entity
 @Table(name = "code_fill_in_spot",
