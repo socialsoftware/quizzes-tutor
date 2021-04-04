@@ -21,7 +21,7 @@ import java.util.List;
 public class DiscussionApplicationalService {
     private static final Logger logger = LoggerFactory.getLogger(DiscussionApplicationalService.class);
 
-    private static String DISCUSSION_SUBJECT = "*Discussion* ";
+    private static final String DISCUSSION_SUBJECT = "*Discussion* ";
 
     @Autowired
     private DiscussionService discussionService;

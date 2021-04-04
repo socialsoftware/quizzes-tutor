@@ -3,7 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerSlot;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
 
-public class CodeOrderAnswerSlotDto {
+import java.io.Serializable;
+
+public class CodeOrderAnswerSlotDto implements Serializable {
     private Integer slotId;
     private Integer order;
     private boolean correct;

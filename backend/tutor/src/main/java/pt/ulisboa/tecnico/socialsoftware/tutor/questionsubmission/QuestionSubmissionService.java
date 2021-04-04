@@ -10,10 +10,11 @@ import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
@@ -23,7 +24,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.UserQuestionSubmissionInfoDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
@@ -183,7 +183,7 @@ public class QuestionSubmissionService {
             userQuestionSubmissionInfoDtos.add(new UserQuestionSubmissionInfoDto(student));
         }
 
-        userQuestionSubmissionInfoDtos.sort(UserQuestionSubmissionInfoDto.NumSubmissionsComparator);
+        userQuestionSubmissionInfoDtos.sort(UserQuestionSubmissionInfoDto.numSubmissionsComparator);
 
         return userQuestionSubmissionInfoDtos;
     }

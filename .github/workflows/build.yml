@@ -43,23 +43,36 @@ jobs:
         restore-keys: |
           ${{ runner.os }}-maven-
           
-    - name: Run unit tests
+    - name: Run backend unit tests
       working-directory: ./backend
       run: mvn clean -Ptest test
         
-    - name: Register code coverage
+    - name: Register backend code coverage
       uses: codecov/codecov-action@v1.0.5
       with:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./backend/target/site/jacoco/jacoco.xml
         yml: ./backend/codecov.yml
         
-    - name: Publish unit tests Report
+    - name: Publish backend unit tests Report
       uses: scacap/action-surefire-report@v1
       with:
-        check_name: Unit Tests Report
+        check_name: Backend Unit Tests Report
         github_token: ${{ secrets.GITHUB_TOKEN }}
-        
+
+    - name: Use Node.js
+      uses: actions/setup-node@v1
+      with:
+        node-version: '12.x'
+
+    - name: Install npm
+      working-directory: ./frontend
+      run: npm install
+
+    - name: Run frontend unit tests
+      working-directory: ./frontend
+      run: npm run test:unit
+
     - name: Run integration tests
       working-directory: ./backend
       run: mvn clean verify -Ptest-int

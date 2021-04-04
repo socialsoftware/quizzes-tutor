@@ -15,7 +15,6 @@ import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-
 @Entity
 @DiscriminatorValue(QuestionTypes.CODE_ORDER_QUESTION)
 public class CodeOrderAnswer extends AnswerDetails {
@@ -37,9 +36,7 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public void remove() {
-        if (this.orderedSlots != null) {
-            orderedSlots.forEach(CodeOrderAnswerSlot::remove);
-        }
+        orderedSlots.forEach(CodeOrderAnswerSlot::remove);
     }
 
     @Override
@@ -62,7 +59,7 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public boolean isAnswered() {
-        return orderedSlots != null && !orderedSlots.isEmpty();
+        return !orderedSlots.isEmpty();
     }
 
     public Set<CodeOrderAnswerSlot> getOrderedSlots() {

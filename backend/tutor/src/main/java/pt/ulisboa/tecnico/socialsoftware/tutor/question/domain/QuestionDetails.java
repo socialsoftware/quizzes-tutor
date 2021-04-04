@@ -24,11 +24,11 @@ public abstract class QuestionDetails implements DomainEntity, Updator {
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, orphanRemoval = true)
     private Question question;
 
-    public QuestionDetails(Question question) {
+    protected QuestionDetails(Question question) {
         this.question = question;
     }
 
-    public QuestionDetails() {
+    protected QuestionDetails() {
 
     }
 

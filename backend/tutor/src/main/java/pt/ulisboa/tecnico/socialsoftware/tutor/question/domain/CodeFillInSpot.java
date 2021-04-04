@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.CodeFillInSpotDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
@@ -81,8 +80,8 @@ public class CodeFillInSpot implements DomainEntity {
 
         int index = 0;
         for (OptionDto optionDto : options) {
-            int sequence = optionDto.getSequence() != null ? optionDto.getSequence() : index++;
-            optionDto.setSequence(sequence);
+            int seq = optionDto.getSequence() != null ? optionDto.getSequence() : index++;
+            optionDto.setSequence(seq);
             CodeFillInOption codeFillInOption = new CodeFillInOption(optionDto);
             codeFillInOption.setFillInSpot(this);
             this.options.add(codeFillInOption);
