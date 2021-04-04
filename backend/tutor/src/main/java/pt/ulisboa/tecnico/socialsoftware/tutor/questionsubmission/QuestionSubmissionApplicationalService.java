@@ -21,7 +21,7 @@ import java.util.List;
 public class QuestionSubmissionApplicationalService {
     private static final Logger logger = LoggerFactory.getLogger(QuestionSubmissionApplicationalService.class);
 
-    private static String QUESTION_SUBMISSION_SUBJECT = "*Question Submission* ";
+    private static final String QUESTION_SUBMISSION_SUBJECT = "*Question Submission* ";
 
     @Autowired
     private QuestionSubmissionService questionSubmissionService;

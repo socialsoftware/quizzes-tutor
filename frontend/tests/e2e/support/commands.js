@@ -35,13 +35,10 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
 });
 
 Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
-  cy.contains('Error')
-    .parent()
-    .find('button')
-    .click();
+  cy.contains('Error').parent().find('button').click();
 });
 
-Cypress.Commands.add('deleteCourseExecution', acronym => {
+Cypress.Commands.add('deleteCourseExecution', (acronym) => {
   cy.contains(acronym)
     .parent()
     .should('have.length', 1)
@@ -67,22 +64,20 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('seeTournamentsLists', type => {
+Cypress.Commands.add('seeTournamentsLists', (type) => {
   cy.get('[data-cy="Tournament"]').click();
   cy.get(`[data-cy="${type}"]`).click();
   cy.wait(100);
 });
 
-Cypress.Commands.add('createTournament', numberOfQuestions => {
-  cy.get('[data-cy="createButton"]')
-    .should('be.visible')
-    .click();
+Cypress.Commands.add('createTournament', (numberOfQuestions) => {
+  cy.get('[data-cy="createButton"]').should('be.visible').click();
   cy.tournamentCreation(numberOfQuestions);
   cy.get('[data-cy="saveButton"]').click();
   cy.wait(100);
 });
 
-Cypress.Commands.add('createPrivateTournament', numberOfQuestions => {
+Cypress.Commands.add('createPrivateTournament', (numberOfQuestions) => {
   cy.get('[data-cy="createButton"]')
     .should('be.visible')
     .click({ force: true });
@@ -95,17 +90,17 @@ Cypress.Commands.add('createPrivateTournament', numberOfQuestions => {
   cy.wait(100);
 });
 
-Cypress.Commands.add('tournamentCreation', numberOfQuestions => {
+Cypress.Commands.add('tournamentCreation', (numberOfQuestions) => {
   cy.time('Start Time', 22, 0);
   cy.wait(100);
   cy.time('End Time', 25, 1);
   cy.get('[data-cy="NumberOfQuestions"]').type(numberOfQuestions, {
-    force: true
+    force: true,
   });
   cy.selectTopic('Software Architecture');
 });
 
-Cypress.Commands.add('createOpenTournament', numberOfQuestions => {
+Cypress.Commands.add('createOpenTournament', (numberOfQuestions) => {
   cy.createTournament(numberOfQuestions);
   cy.updateTournamentStartTime();
 });
@@ -118,9 +113,7 @@ Cypress.Commands.add('time', (date, day, type) => {
     get = '#endTimeInput-picker-container-DatePicker';
   }
 
-  cy.get('label')
-    .contains(date)
-    .click({ force: true });
+  cy.get('label').contains(date).click({ force: true });
 
   cy.get(
     get +
@@ -136,7 +129,7 @@ Cypress.Commands.add('time', (date, day, type) => {
   ).click({ force: true });
 });
 
-Cypress.Commands.add('selectTopic', topic => {
+Cypress.Commands.add('selectTopic', (topic) => {
   cy.get('[data-cy="Topics"]')
     .should('have.length', 1)
     .children()
@@ -150,44 +143,44 @@ Cypress.Commands.add('selectTopic', topic => {
     .click();
 });
 
-Cypress.Commands.add('joinTournament', tournament => {
+Cypress.Commands.add('joinTournament', (tournament) => {
   cy.selectTournamentWithAction(tournament, 'JoinTournament');
 });
 
-Cypress.Commands.add('joinPrivateTournament', tournament => {
+Cypress.Commands.add('joinPrivateTournament', (tournament) => {
   cy.joinTournament(tournament);
   cy.get('[data-cy="Password"]').type('123');
   cy.get('[data-cy="joinPrivateTournament"]').click();
 });
 
-Cypress.Commands.add('solveTournament', tournament => {
+Cypress.Commands.add('solveTournament', (tournament) => {
   cy.selectTournamentWithAction(tournament, 'SolveQuiz');
 });
 
-Cypress.Commands.add('leaveTournament', tournament => {
+Cypress.Commands.add('leaveTournament', (tournament) => {
   cy.selectTournamentWithAction(tournament, 'LeaveTournament');
 });
 
-Cypress.Commands.add('editTournament', tournament => {
+Cypress.Commands.add('editTournament', (tournament) => {
   cy.selectTournamentWithAction(tournament, 'EditTournament');
 
   cy.time('End Time', 24, 1);
   cy.get('[data-cy="NumberOfQuestions"]')
     .clear({
-      force: true
+      force: true,
     })
     .type(5, {
-      force: true
+      force: true,
     });
   cy.selectTopic('Web Application');
   cy.get('[data-cy="saveButton"]').click();
 });
 
-Cypress.Commands.add('cancelTournament', tournament => {
+Cypress.Commands.add('cancelTournament', (tournament) => {
   cy.selectTournamentWithAction(tournament, 'CancelTournament');
 });
 
-Cypress.Commands.add('removeTournament', tournament => {
+Cypress.Commands.add('removeTournament', (tournament) => {
   cy.selectTournamentWithAction(tournament, 'RemoveTournament');
 });
 
@@ -233,9 +226,7 @@ Cypress.Commands.add(
 Cypress.Commands.add(
   'editQuestionSubmission',
   (valid, title, content, opt1, opt2, opt3, opt4, comment) => {
-    cy.get('[data-cy="EditSubmission"]')
-      .first()
-      .click();
+    cy.get('[data-cy="EditSubmission"]').first().click();
   }
 );
 
@@ -296,7 +287,7 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('deleteQuestionSubmission', title => {
+Cypress.Commands.add('deleteQuestionSubmission', (title) => {
   cy.contains(title)
     .parent()
     .parent()
@@ -376,10 +367,7 @@ Cypress.Commands.add(
     cy.get('[data-cy="userNameInput"]').type(name);
     cy.get('[data-cy="userUsernameInput"]').type(username);
     cy.get('[data-cy="userEmailInput"]').type(email);
-    cy.get('[data-cy="userRoleSelect"]')
-      .parent()
-      .parent()
-      .click();
+    cy.get('[data-cy="userRoleSelect"]').parent().parent().click();
     cy.get('.v-menu__content .v-list')
       .children()
       .contains(type)
@@ -397,30 +385,18 @@ Cypress.Commands.add('deleteUser', (mail, acronym) => {
     .find('[data-cy="viewUsersButton"]')
     .click();
 
-  cy.contains(mail)
-    .parent()
-    .children()
-    .eq(0)
-    .click();
+  cy.contains(mail).parent().children().eq(0).click();
   cy.get('[data-cy="deleteSelectedUsersButton"').click();
   cy.contains('No data available');
   cy.get('[data-cy="cancelButton"').click();
 });
 
 Cypress.Commands.add('checkStudentCount', (acronym, count) => {
-  cy.contains(acronym)
-    .parent()
-    .children()
-    .eq(9)
-    .contains(count);
+  cy.contains(acronym).parent().children().eq(9).contains(count);
 });
 
 Cypress.Commands.add('checkTeacherCount', (acronym, count) => {
-  cy.contains(acronym)
-    .parent()
-    .children()
-    .eq(7)
-    .contains(count);
+  cy.contains(acronym).parent().children().eq(7).contains(count);
 });
 
 Cypress.Commands.add('closeUserCreationDialog', () => {
@@ -489,23 +465,17 @@ Cypress.Commands.add('solveQuizz', (quizTitle, numberOfQuizQuestions) => {
   cy.contains(quizTitle).click();
 
   for (let i = 1; i < numberOfQuizQuestions; i++) {
-    cy.get('[data-cy="optionList"]')
-      .children()
-      .eq(1)
-      .click();
+    cy.get('[data-cy="optionList"]').children().eq(1).click();
     cy.get('[data-cy="nextQuestionButton"]').click();
   }
 
-  cy.get('[data-cy="optionList"]')
-    .children()
-    .eq(0)
-    .click();
+  cy.get('[data-cy="optionList"]').children().eq(0).click();
 
   cy.get('[data-cy="endQuizButton"]').click();
   cy.get('[data-cy="confirmationButton"]').click();
 });
 
-Cypress.Commands.add('createDiscussion', discussionContent => {
+Cypress.Commands.add('createDiscussion', (discussionContent) => {
   cy.get('[data-cy="quizzesStudentMenuButton"]').click();
   cy.contains('Solved').click();
 
@@ -539,7 +509,7 @@ Cypress.Commands.add('replyToDiscussion', (discussionContent, replyContent) => {
   cy.get('[data-cy="submitReplyButton"]').click();
 });
 
-Cypress.Commands.add('deleteQuiz', quizTitle => {
+Cypress.Commands.add('deleteQuiz', (quizTitle) => {
   cy.get('[data-cy="managementMenuButton"]').click();
   cy.get('[data-cy="quizzesTeacherMenuButton"]').click();
 
@@ -553,7 +523,7 @@ Cypress.Commands.add('deleteQuiz', quizTitle => {
     .click();
 });
 
-Cypress.Commands.add('deleteQuestion', questionTitle => {
+Cypress.Commands.add('deleteQuestion', (questionTitle) => {
   cy.get('[data-cy="managementMenuButton"]').click();
   cy.get('[data-cy="questionsTeacherMenuButton"]').click();
 

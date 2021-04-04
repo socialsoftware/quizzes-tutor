@@ -15,11 +15,11 @@ import pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.Notification;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
@@ -38,6 +38,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Random;
 
 import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
@@ -151,9 +152,9 @@ public class UserService {
             propagation = Propagation.REQUIRED)
     public NotificationResponse<CourseExecutionDto> registerListOfUsersTransactional(InputStream stream, int courseExecutionId) {
         Notification notification = new Notification();
-        extractUserDtos(stream, notification).forEach(userDto -> {
-            registerExternalUserTransactional(courseExecutionId, userDto);
-        });
+        extractUserDtos(stream, notification).forEach(userDto ->
+            registerExternalUserTransactional(courseExecutionId, userDto)
+        );
 
         CourseExecutionDto courseExecutionDto = courseExecutionRepository.findById(courseExecutionId)
                 .map(CourseExecution::getDto)
@@ -262,7 +263,7 @@ public class UserService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserDto findUserById(Integer id) {
         return  userRepository.findById(id)
-                .filter(user -> user != null)
+                .filter(Objects::nonNull)
                 .map(User::getUserDto)
                 .orElse(null);
     }

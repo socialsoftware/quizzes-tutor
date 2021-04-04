@@ -381,7 +381,7 @@ export default class RemoteServices {
 
   // CourseExecution Controller
 
-  static getCourses(): Promise<Course[]> {
+  static async getCourses(): Promise<Course[]> {
     return httpClient
       .get('/executions')
       .then((response) => {

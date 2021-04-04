@@ -70,7 +70,7 @@ public class UserQuestionSubmissionInfoDto {
 
     public void setName(String name) { this.name = name; }
 
-    public static Comparator<UserQuestionSubmissionInfoDto> NumSubmissionsComparator = (a, b) -> {
+    public static final Comparator<UserQuestionSubmissionInfoDto> numSubmissionsComparator = (a, b) -> {
         if (a.getTotalQuestionSubmissions() == b.getTotalQuestionSubmissions()) {
             return a.getSubmitterId() - b.getSubmitterId();
         } else {

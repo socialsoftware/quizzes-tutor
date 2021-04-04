@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class StatementFillInSpotsDto implements Serializable {
-    public Integer sequence;
-    public List<StatementOptionDto> options;
+    private Integer sequence;
+    private List<StatementOptionDto> options;
 
     public StatementFillInSpotsDto(CodeFillInSpot codeFillInSpot) {
         this.sequence = codeFillInSpot.getSequence();

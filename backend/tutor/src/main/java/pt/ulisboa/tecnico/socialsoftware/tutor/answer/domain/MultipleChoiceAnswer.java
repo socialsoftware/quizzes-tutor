@@ -50,7 +50,7 @@ public class MultipleChoiceAnswer extends AnswerDetails {
 
     public void setOption(MultipleChoiceQuestion question, MultipleChoiceStatementAnswerDetailsDto multipleChoiceStatementAnswerDetailsDto) {
         if (multipleChoiceStatementAnswerDetailsDto.getOptionId() != null) {
-            Option option = question.getOptions().stream()
+            Option opt = question.getOptions().stream()
                     .filter(option1 -> option1.getId().equals(multipleChoiceStatementAnswerDetailsDto.getOptionId()))
                     .findAny()
                     .orElseThrow(() -> new TutorException(QUESTION_OPTION_MISMATCH, multipleChoiceStatementAnswerDetailsDto.getOptionId()));
@@ -59,7 +59,7 @@ public class MultipleChoiceAnswer extends AnswerDetails {
                 this.getOption().getQuestionAnswers().remove(this);
             }
 
-            this.setOption(option);
+            this.setOption(opt);
         } else {
             this.setOption(null);
         }

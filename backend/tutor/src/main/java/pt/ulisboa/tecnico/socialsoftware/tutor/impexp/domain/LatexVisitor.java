@@ -48,8 +48,6 @@ public abstract class LatexVisitor implements Visitor {
         this.result = this.result + "\t" + this.questionContent + "\n\n";
 
         question.getQuestionDetails().accept(this);
-
-
     }
 
     @Override
@@ -102,7 +100,7 @@ public abstract class LatexVisitor implements Visitor {
                         .stream()
                         .filter(x -> x.getOrder() != null)
                         .sorted(Comparator.comparing(CodeOrderSlot::getOrder))
-                        .map(spot -> spot.getContent()
+                        .map(CodeOrderSlot::getContent
                         ).collect(Collectors.joining("\n")) + "\n\\end{lstlisting}\n";
 
         this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
@@ -114,7 +112,7 @@ public abstract class LatexVisitor implements Visitor {
         imageString = imageString + "\t\t\\includegraphics[width=" + image.getWidth() + "cm]{" + image.getUrl() + "}\n";
         imageString = imageString + "\t\\end{center}\n\t";
 
-        this.questionContent = this.questionContent.replaceAll("!\\[image\\]\\[image\\]", imageString);
+        this.questionContent = this.questionContent.replace("!\\[image\\]\\[image\\]", imageString);
     }
 
     @Override
@@ -139,15 +137,15 @@ public abstract class LatexVisitor implements Visitor {
     }
 
     private String convertToAlphabet(int number) {
-        String result = "";
-        String ALPHABET = "ABCDEFGHIJ";
+        String alphabet = "ABCDEFGHIJ";
         String numberString = String.valueOf(number);
+        StringBuilder bld = new StringBuilder();
         for (int i = 0; i < numberString.length(); i++) {
             int position = Character.getNumericValue(numberString.charAt(i));
-            result = result + ALPHABET.charAt(position);
+            bld.append(alphabet.charAt(position));
         }
 
-        return result;
+        return bld.toString();
     }
 
 }

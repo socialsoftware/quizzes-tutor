@@ -88,14 +88,13 @@ public class AssessmentService {
     }
 
     private List<TopicConjunction> createTopicConjunctions(AssessmentDto assessmentDto) {
-        List<TopicConjunction> topicConjunctions = assessmentDto.getTopicConjunctions().stream()
+        return assessmentDto.getTopicConjunctions().stream()
                 .map(topicConjunctionDto -> {
                     TopicConjunction topicConjunction = new TopicConjunction();
                     Set<Topic> newTopics = topicConjunctionDto.getTopics().stream().map(topicDto -> topicRepository.findById(topicDto.getId()).orElseThrow()).collect(Collectors.toSet());
                     topicConjunction.updateTopics(newTopics);
                     return topicConjunction;
                 }).collect(Collectors.toList());
-        return topicConjunctions;
     }
 
     @Retryable(

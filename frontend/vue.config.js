@@ -11,7 +11,7 @@ const isProductionEnvFlag = process.env.NODE_ENV === 'production';
 let custompaths = {
   host: 'http://localhost:8081/',
   port: 8081,
-  publicdomain: 'localhost:8081'
+  publicdomain: 'localhost:8081',
 };
 
 module.exports = {
@@ -23,7 +23,7 @@ module.exports = {
   // generate sourceMap for production build?
   productionSourceMap: process.env.NODE_ENV !== 'production',
 
-  chainWebpack: config => {
+  chainWebpack: (config) => {
     config.resolve.alias
       .set('vue$', 'vue/dist/vue.esm.js')
       .set('@assets', path.join(__dirname, 'src/assets'))
@@ -51,15 +51,15 @@ module.exports = {
             minChunks: 2,
             priority: -20,
             chunks: 'initial',
-            reuseExistingChunk: true
+            reuseExistingChunk: true,
           },
           element: {
             name: 'element',
             test: /[\\/]node_modules[\\/]element-ui[\\/]/,
             chunks: 'initial',
-            priority: -30
-          }
-        }
+            priority: -30,
+          },
+        },
       })
     );
 
@@ -94,8 +94,8 @@ module.exports = {
       //     })
       //   : () => {},
       isProductionEnvFlag ? new CompressionPlugin() : () => {},
-      isProductionEnvFlag ? new TerserPlugin() : () => {}
-    ]
+      isProductionEnvFlag ? new TerserPlugin() : () => {},
+    ],
   },
 
   // use thread-loader for babel & TS in production build
@@ -139,9 +139,9 @@ module.exports = {
     hotOnly: false,
     disableHostCheck: true,
     proxy: null, // string | Object
-    before: app => {}
+    before: (app) => {},
   },
 
   // options for 3rd party plugins
-  pluginOptions: {}
+  pluginOptions: {},
 };

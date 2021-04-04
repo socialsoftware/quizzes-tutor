@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
 
+import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -35,6 +36,7 @@ public class CodeFillInStatementAnswerDetailsDto extends StatementAnswerDetailsD
                 '}';
     }
 
+    @Transient
     private CodeFillInAnswer codeFillInAnswer;
 
     @Override

@@ -13,6 +13,8 @@ import java.util.Map;
 import java.util.stream.Collectors;
 
 public class XMLQuestionExportVisitor implements Visitor {
+    public static final String CONTENT = "content";
+    public static final String SEQUENCE = "sequence";
     private Element rootElement;
     private Element currentElement;
 
@@ -36,17 +38,17 @@ public class XMLQuestionExportVisitor implements Visitor {
     }
 
     private void exportQuestions(List<Question> questions) {
-        Map<Course, List<Question>> questionMap = questions.stream().collect(Collectors.groupingBy(question -> question.getCourse()));
+        Map<Course, List<Question>> questionMap = questions.stream().collect(Collectors.groupingBy(Question::getCourse));
 
-        for (Course course : questionMap.keySet()) {
+        for (var courseQuestions : questionMap.entrySet()) {
             Element courseElement = new Element("course");
-            courseElement.setAttribute("courseType", course.getType().name());
-            courseElement.setAttribute("courseName", course.getName());
+            courseElement.setAttribute("courseType", courseQuestions.getKey().getType().name());
+            courseElement.setAttribute("courseName", courseQuestions.getKey().getName());
 
             this.currentElement.addContent(courseElement);
             this.currentElement = courseElement;
 
-            for (Question question : questionMap.get(course)) {
+            for (Question question : courseQuestions.getValue()) {
                 question.accept(this);
             }
 
@@ -58,7 +60,7 @@ public class XMLQuestionExportVisitor implements Visitor {
     public void visitQuestion(Question question) {
         Element questionElement = new Element("question");
         questionElement.setAttribute("key", String.valueOf(question.getKey()));
-        questionElement.setAttribute("content", question.getContent());
+        questionElement.setAttribute(CONTENT, question.getContent());
         questionElement.setAttribute("title", question.getTitle());
         questionElement.setAttribute("status", question.getStatus().name());
 
@@ -108,7 +110,7 @@ public class XMLQuestionExportVisitor implements Visitor {
     public void visitFillInSpot(CodeFillInSpot spot) {
         Element spotElement = new Element("fillInSpot");
 
-        spotElement.setAttribute("sequence", String.valueOf(spot.getSequence()));
+        spotElement.setAttribute(SEQUENCE, String.valueOf(spot.getSequence()));
         this.currentElement.addContent(spotElement);
         var oldElement = this.currentElement;
         this.currentElement = spotElement;
@@ -122,8 +124,8 @@ public class XMLQuestionExportVisitor implements Visitor {
     public void visitFillInOption(CodeFillInOption option) {
         Element optionElement = new Element("fillInOption");
 
-        optionElement.setAttribute("sequence", String.valueOf(option.getSequence()));
-        optionElement.setAttribute("content", option.getContent());
+        optionElement.setAttribute(SEQUENCE, String.valueOf(option.getSequence()));
+        optionElement.setAttribute(CONTENT, option.getContent());
         optionElement.setAttribute("correct", String.valueOf(option.isCorrect()));
 
         this.currentElement.addContent(optionElement);
@@ -144,8 +146,8 @@ public class XMLQuestionExportVisitor implements Visitor {
     public void visitOption(Option option) {
         Element optionElement = new Element("option");
 
-        optionElement.setAttribute("sequence", String.valueOf(option.getSequence()));
-        optionElement.setAttribute("content", option.getContent());
+        optionElement.setAttribute(SEQUENCE, String.valueOf(option.getSequence()));
+        optionElement.setAttribute(CONTENT, option.getContent());
         optionElement.setAttribute("correct", String.valueOf(option.isCorrect()));
 
         this.currentElement.addContent(optionElement);
@@ -168,7 +170,7 @@ public class XMLQuestionExportVisitor implements Visitor {
         Element spotElement = new Element("slot");
 
         spotElement.setAttribute("order", String.valueOf(codeOrderSlot.getOrder()));
-        spotElement.setAttribute("sequence", String.valueOf(codeOrderSlot.getSequence()));
+        spotElement.setAttribute(SEQUENCE, String.valueOf(codeOrderSlot.getSequence()));
         spotElement.addContent(codeOrderSlot.getContent());
         this.currentElement.addContent(spotElement);
     }
