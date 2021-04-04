@@ -5,6 +5,7 @@ import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.MultipleChoiceQuestionDto;
 
 import static pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes.*;
+import java.io.Serializable;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -16,6 +17,6 @@ import static pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes.*;
         @JsonSubTypes.Type(value = CodeFillInCorrectAnswerDto.class, name = CODE_FILL_IN_QUESTION),
         @JsonSubTypes.Type(value = CodeOrderCorrectAnswerDto.class, name = CODE_ORDER_QUESTION),
 })
-public abstract class CorrectAnswerDetailsDto {
+public abstract class CorrectAnswerDetailsDto implements Serializable {
 
 }

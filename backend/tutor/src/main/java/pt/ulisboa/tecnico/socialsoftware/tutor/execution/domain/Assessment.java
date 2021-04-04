@@ -136,6 +136,6 @@ public class Assessment implements DomainEntity {
     public void remove() {
         getCourseExecution().getAssessments().remove(this);
         setCourseExecution(null);
-        getTopicConjunctions().forEach(topicConjunction -> topicConjunction.remove());
+        getTopicConjunctions().forEach(TopicConjunction::remove);
     }
 }

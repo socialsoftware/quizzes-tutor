@@ -4,6 +4,7 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 
 import static pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes.*;
+import java.io.Serializable;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -15,5 +16,5 @@ import static pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes.*;
         @JsonSubTypes.Type(value = CodeFillInStatementQuestionDetailsDto.class, name = CODE_FILL_IN_QUESTION),
         @JsonSubTypes.Type(value = CodeOrderStatementQuestionDetailsDto.class, name = CODE_ORDER_QUESTION),
 })
-public abstract class StatementQuestionDetailsDto {
+public abstract class StatementQuestionDetailsDto implements Serializable {
 }

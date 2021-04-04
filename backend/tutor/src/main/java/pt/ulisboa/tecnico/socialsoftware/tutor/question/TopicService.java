@@ -7,6 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
@@ -46,7 +47,7 @@ public class TopicService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto> findTopics(int courseId) {
+    public List<TopicDto> findTopics(int courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         return topicRepository.findTopics(course.getId()).stream().sorted(Comparator.comparing(Topic::getName)).map(Topic::getDto).collect(Collectors.toList());
     }
@@ -55,7 +56,7 @@ public class TopicService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto createTopic(int courseId, pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto topicDto) {
+    public TopicDto createTopic(int courseId, TopicDto topicDto) {
 
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
 
@@ -82,7 +83,7 @@ public class TopicService {
       value = { SQLException.class },
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto updateTopic(Integer topicId, pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto topicDto) {
+    public TopicDto updateTopic(Integer topicId, TopicDto topicDto) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
         topic.setName(topicDto.getName());

@@ -187,7 +187,7 @@ public class Discussion implements DomainEntity {
         questionAnswer.setDiscussion(null);
         questionAnswer = null;
 
-        replies.forEach(reply -> reply.remove());
+        replies.forEach(Reply::remove);
     }
 
     private void checkExistingDiscussion(QuestionAnswer questionAnswer) {

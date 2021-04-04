@@ -44,9 +44,9 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
 
-    public AuthUser() {}
+    protected AuthUser() {}
 
-    public AuthUser(User user, String username, String email) {
+    protected AuthUser(User user, String username, String email) {
         setUser(user);
         setUsername(username);
         setEmail(email);

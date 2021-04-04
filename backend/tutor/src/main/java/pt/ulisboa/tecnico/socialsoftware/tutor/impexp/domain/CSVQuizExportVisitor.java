@@ -39,9 +39,9 @@ public class CSVQuizExportVisitor implements Visitor {
         column = 4;
 
         quizQuestionsList.stream()
-                .forEach(quizQuestion -> {
-                    line[++column] = String.valueOf(quizQuestion.getSequence()+1);
-                });
+                .forEach(quizQuestion ->
+                    line[++column] = String.valueOf(quizQuestion.getSequence()+1)
+                );
 
         table.add(line);
 

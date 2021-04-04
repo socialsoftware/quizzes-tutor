@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentReposit
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
@@ -119,6 +120,9 @@ class SpockTest extends Specification {
 
     @Autowired
     CourseRepository courseRepository
+
+    @Autowired
+    CourseExecutionService courseService
 
     @Autowired
     OptionRepository optionRepository

@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 
+import javax.persistence.Transient;
+
 public class MultipleChoiceStatementAnswerDetailsDto extends StatementAnswerDetailsDto {
     private Integer optionId;
 
@@ -23,6 +25,7 @@ public class MultipleChoiceStatementAnswerDetailsDto extends StatementAnswerDeta
         this.optionId = optionId;
     }
 
+    @Transient
     private MultipleChoiceAnswer createdMultipleChoiceAnswer;
 
     @Override

@@ -40,6 +40,7 @@ import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
 public class AnswersXmlImport {
     public static final String SEQUENCE = "sequence";
     public static final String OPTION = "option";
+    public static final String QUESTION_KEY = "questionKey";
 
     @Autowired
     private AnswerService answerService;
@@ -72,7 +73,6 @@ public class AnswersXmlImport {
     private Map<Integer, CodeOrderQuestion> codeOrderQuestionMap;
 
     public void importAnswers(InputStream inputStream) {
-
         SAXBuilder builder = new SAXBuilder();
         builder.setIgnoringElementContentWhitespace(true);
 
@@ -152,7 +152,7 @@ public class AnswersXmlImport {
 
         Integer quizKey = Integer.valueOf(quizElement.getAttributeValue("key"));
         Quiz quiz = courseExecution.getQuizzes().stream()
-                .filter(quiz1 -> quiz1.getKey() == quizKey)
+                .filter(quiz1 -> quiz1.getKey().equals(quizKey))
                 .findAny()
                 .orElseThrow(() -> new TutorException(ANSWERS_IMPORT_ERROR,
                         "quiz id does not exist " + quizKey));
@@ -211,12 +211,12 @@ public class AnswersXmlImport {
     private void importCodeOrderXmlImport(Element questionAnswerElement, QuestionAnswer questionAnswer) {
         var slotsElement = questionAnswerElement.getChild("slots");
         if (slotsElement != null){
-            Integer questionKey = Integer.valueOf(slotsElement.getAttributeValue("questionKey"));
+            Integer questionKey = Integer.valueOf(slotsElement.getAttributeValue(QUESTION_KEY));
             CodeOrderQuestion codeOrderQuestion = codeOrderQuestionMap.get(questionKey);
 
             CodeOrderStatementAnswerDetailsDto codeOrderStatementAnswerDetailsDto = new CodeOrderStatementAnswerDetailsDto();
             for (var slot: slotsElement.getChildren("slot")) {
-                var sequence = Integer.valueOf(slot.getAttributeValue("sequence"));
+                var sequence = Integer.valueOf(slot.getAttributeValue(SEQUENCE));
                 var order = Integer.valueOf(slot.getAttributeValue("order"));
 
                 var slotId = codeOrderQuestion.getCodeOrderSlots()
@@ -240,7 +240,7 @@ public class AnswersXmlImport {
     private void importCodeFillInXmlImport(Element questionAnswerElement, QuestionAnswer questionAnswer) {
         var slotsElement = questionAnswerElement.getChild("fillInSpots");
         if (slotsElement != null){
-            Integer questionKey = Integer.valueOf(slotsElement.getAttributeValue("questionKey"));
+            Integer questionKey = Integer.valueOf(slotsElement.getAttributeValue(QUESTION_KEY));
             var codeFillInQuestion = codeFillInQuestionMap.get(questionKey);
 
             CodeFillInStatementAnswerDetailsDto codeFillInStatementAnswerDetailsDto = new CodeFillInStatementAnswerDetailsDto();
@@ -275,7 +275,7 @@ public class AnswersXmlImport {
     private void importMultipleChoiceXmlImport(Element questionAnswerElement, QuestionAnswer questionAnswer) {
         Integer optionId = null;
         if (questionAnswerElement.getChild(OPTION) != null) {
-            Integer questionKey = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue("questionKey"));
+            Integer questionKey = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue(QUESTION_KEY));
             Integer optionSequence = Integer.valueOf(questionAnswerElement.getChild(OPTION).getAttributeValue(SEQUENCE));
             optionId = multipleChoiceQuestionMap.get(questionKey).get(optionSequence);
         }

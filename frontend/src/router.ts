@@ -30,7 +30,6 @@ import NotFoundView from '@/views/NotFoundView.vue';
 import ExportCourseView from '@/views/teacher/impexp/ExportCourseView.vue';
 import AssessmentsView from '@/views/teacher/assessments/AssessmentsView.vue';
 import CreateQuizzesView from '@/views/student/CreateQuizzesView.vue';
-import CoursesView from '@/views/admin/Courses/CoursesView.vue';
 
 import QuestionSubmissionView from '@/views/questionsubmission/QuestionSubmissionView.vue';
 import SortQuestionSubmissionsByStudentView from '@/views/questionsubmission/SortQuestionSubmissionsByStudentView.vue';
@@ -38,6 +37,7 @@ import StudentDiscussionsView from '@/views/student/discussions/StudentDiscussio
 import TeacherDiscussionsView from '@/views/teacher/discussions/TeacherDiscussionsView.vue';
 import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
 import ExportAllView from '@/views/admin/ExportAllView.vue';
+import CoursesView from '@/views/admin/courses/CoursesView.vue';
 
 Vue.use(Router);
 
@@ -333,7 +333,7 @@ const router = new Router({
           name: 'courseAdmin',
           component: CoursesView,
           meta: {
-            title: APP_NAME + ' - Manage Courses',
+            title: APP_NAME + ' - Manage courses',
             requiredAuth: 'Admin',
           },
         },
@@ -342,7 +342,7 @@ const router = new Router({
           name: 'exportAll',
           component: ExportAllView,
           meta: {
-            title: APP_NAME + ' - Manage Courses',
+            title: APP_NAME + ' - Manage courses',
             requiredAuth: 'Admin',
           },
         },

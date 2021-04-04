@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Updator;
 
 import static pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes.*;
+import java.io.Serializable;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,
@@ -19,7 +20,7 @@ import static pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes.*;
         @JsonSubTypes.Type(value = CodeFillInStatementAnswerDetailsDto.class, name = CODE_FILL_IN_QUESTION),
         @JsonSubTypes.Type(value = CodeOrderStatementAnswerDetailsDto.class, name = CODE_ORDER_QUESTION),
 })
-public abstract class StatementAnswerDetailsDto implements Updator {
+public abstract class StatementAnswerDetailsDto implements Updator, Serializable {
     public abstract AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer);
 
     public abstract boolean emptyAnswer();

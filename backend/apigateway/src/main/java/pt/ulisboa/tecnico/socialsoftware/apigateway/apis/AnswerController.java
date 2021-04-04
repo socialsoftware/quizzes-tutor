@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.apigateway.apis;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -17,8 +15,6 @@ import java.util.List;
 
 @RestController
 public class AnswerController {
-    private static final Logger logger = LoggerFactory.getLogger(TopicController.class);
-
     @Autowired
     private AnswerService answerService;
 
