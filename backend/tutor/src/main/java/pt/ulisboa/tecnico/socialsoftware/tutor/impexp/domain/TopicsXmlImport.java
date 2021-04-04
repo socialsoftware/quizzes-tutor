@@ -7,9 +7,9 @@ import org.jdom2.filter.Filters;
 import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
@@ -18,8 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseReposit
 import java.io.*;
 import java.nio.charset.Charset;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.COURSE_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.TOPICS_IMPORT_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.COURSE_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.TOPICS_IMPORT_ERROR;
 
 public class TopicsXmlImport {
 	private QuestionService questionService;

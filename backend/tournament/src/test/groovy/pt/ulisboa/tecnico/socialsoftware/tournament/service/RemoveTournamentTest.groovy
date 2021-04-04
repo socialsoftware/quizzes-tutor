@@ -2,14 +2,14 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.QUIZ_HAS_ANSWERS
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.TOURNAMENT_IS_OPEN
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.QUIZ_HAS_ANSWERS
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.TOURNAMENT_IS_OPEN
 
 @DataJpaTest
 class RemoveTournamentTest extends TournamentTest {

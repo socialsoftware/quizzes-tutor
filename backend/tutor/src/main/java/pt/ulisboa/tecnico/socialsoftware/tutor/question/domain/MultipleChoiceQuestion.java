@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.MultipleChoiceQuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.MultipleChoiceQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
@@ -13,7 +13,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Entity
 @DiscriminatorValue(QuestionTypes.MULTIPLE_CHOICE_QUESTION)

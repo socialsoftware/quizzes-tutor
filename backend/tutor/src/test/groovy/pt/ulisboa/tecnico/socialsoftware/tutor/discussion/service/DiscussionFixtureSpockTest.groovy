@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.service
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 
 class DiscussionFixtureSpockTest extends SpockTest {
     def student

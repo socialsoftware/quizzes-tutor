@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.api;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
 
 import java.util.List;
 import java.util.Set;

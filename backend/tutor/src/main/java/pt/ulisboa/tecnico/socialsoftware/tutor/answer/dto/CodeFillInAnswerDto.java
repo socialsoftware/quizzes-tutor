@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInOption;
 

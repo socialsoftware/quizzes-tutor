@@ -2,17 +2,17 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import spock.lang.Unroll
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class CreateTournamentTest extends TournamentTest {

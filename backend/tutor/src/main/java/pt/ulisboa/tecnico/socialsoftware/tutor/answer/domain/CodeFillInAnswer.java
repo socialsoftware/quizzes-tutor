@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInOption;
@@ -16,7 +16,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
 
 @Entity
 @DiscriminatorValue(QuestionTypes.CODE_FILL_IN_QUESTION)

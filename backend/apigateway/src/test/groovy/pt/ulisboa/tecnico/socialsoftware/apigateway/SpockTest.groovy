@@ -4,8 +4,8 @@ import groovyx.net.http.RESTClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
-import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.Languages
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
@@ -22,7 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmis
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import spock.lang.Shared
 import spock.lang.Specification
 

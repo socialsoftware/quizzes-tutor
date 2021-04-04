@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.apigateway.tournament.webservice
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 
 class CreateTournamentIT extends TournamentIT {
     def "user creates tournament"() {

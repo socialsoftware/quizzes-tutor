@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
-import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GetCourseExecutionsWebServiceIT extends SpockTest {

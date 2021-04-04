@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto;
@@ -15,7 +15,7 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
 
 @Entity
 @DiscriminatorValue(QuestionTypes.MULTIPLE_CHOICE_QUESTION)

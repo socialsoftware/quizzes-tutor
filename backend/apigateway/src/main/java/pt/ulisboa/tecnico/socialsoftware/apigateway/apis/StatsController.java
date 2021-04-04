@@ -6,14 +6,14 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statistics.StatsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.statistics.StatsService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.security.Principal;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
 @RestController
 public class StatsController {
