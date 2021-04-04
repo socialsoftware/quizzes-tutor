@@ -9,9 +9,9 @@ import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
@@ -34,7 +34,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Component
 public class AnswersXmlImport {

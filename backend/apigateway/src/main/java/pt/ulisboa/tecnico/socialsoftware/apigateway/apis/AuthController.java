@@ -5,12 +5,12 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.FenixEduInterface;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_LOGIN_CREDENTIALS;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.INVALID_LOGIN_CREDENTIALS;
 
 @RestController
 public class AuthController {

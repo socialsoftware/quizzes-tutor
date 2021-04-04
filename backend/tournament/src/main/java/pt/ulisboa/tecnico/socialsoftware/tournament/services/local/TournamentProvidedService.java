@@ -6,16 +6,16 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.ExternalStatementCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentParticipantDto;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentParticipantDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Service
 public class TournamentProvidedService {

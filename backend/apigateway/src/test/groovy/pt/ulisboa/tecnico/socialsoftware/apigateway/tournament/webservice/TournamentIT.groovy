@@ -6,9 +6,9 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.apigateway.BeanConfigurationIT
 import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
-import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course

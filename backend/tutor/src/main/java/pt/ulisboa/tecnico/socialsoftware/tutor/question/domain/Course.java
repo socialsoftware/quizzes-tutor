@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
-import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -12,8 +12,8 @@ import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_NAME_FOR_COURSE;
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_TYPE_FOR_COURSE;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.INVALID_NAME_FOR_COURSE;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.INVALID_TYPE_FOR_COURSE;
 
 @Entity
 @Table(name = "courses")

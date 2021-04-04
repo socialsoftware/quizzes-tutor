@@ -7,11 +7,11 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType;
-import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.ExternalStatementCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.events.ExternalQuizSolvedEvent;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.common.events.ExternalQuizSolvedEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository;
@@ -31,7 +31,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRe
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -41,7 +41,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Service
 public class AnswerService {

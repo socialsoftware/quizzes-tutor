@@ -1,12 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.io.Serializable;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.REPLY_MISSING_DATA;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.REPLY_MISSING_DATA;
 
 public class ReplyDto implements Serializable {
     private Integer id;

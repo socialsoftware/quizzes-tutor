@@ -327,13 +327,9 @@
     </dependency>
   </dependencies>
   <modules>
-    <module>dtos</module>
-    <module>utils</module>
-    <module>exceptions</module>
     <module>tutor</module>
     <module>tournament</module>
     <module>apigateway</module>
-    <module>events</module>
     <module>answer</module>
     <module>common</module>
     <module>discussion</module>

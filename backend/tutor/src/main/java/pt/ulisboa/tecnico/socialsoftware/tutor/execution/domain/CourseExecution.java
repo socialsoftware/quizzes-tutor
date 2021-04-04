@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.course.CourseType;
-import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -23,7 +23,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "course_executions")

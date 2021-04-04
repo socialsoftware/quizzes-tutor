@@ -2,9 +2,9 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionStatus
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tournament.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*
@@ -17,7 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQue
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 
 import java.time.LocalDateTime
 

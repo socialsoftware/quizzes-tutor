@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.OptionDto;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -10,8 +10,8 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_CONTENT_FOR_OPTION;
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_OPTION;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.INVALID_CONTENT_FOR_OPTION;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_OPTION;
 
 @Entity
 @Table(name = "options")

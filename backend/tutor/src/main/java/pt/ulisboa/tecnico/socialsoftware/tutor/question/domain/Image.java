@@ -1,13 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.ImageDto;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.ImageDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
 import javax.persistence.*;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_URL_FOR_IMAGE;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.INVALID_URL_FOR_IMAGE;
 
 @Entity
 @Table(name = "images")

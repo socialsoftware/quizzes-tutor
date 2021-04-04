@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -10,7 +10,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.QUIZ_QUESTION_HAS_ANSWERS;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.QUIZ_QUESTION_HAS_ANSWERS;
 
 @Entity
 @Table(name="quiz_questions")

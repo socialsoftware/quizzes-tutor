@@ -3,13 +3,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.NotificationResponse;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
-import pt.ulisboa.tecnico.socialsoftware.utils.LinkHandler;
-import pt.ulisboa.tecnico.socialsoftware.utils.Mailer;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.LinkHandler;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer;
 
 import java.io.InputStream;
 

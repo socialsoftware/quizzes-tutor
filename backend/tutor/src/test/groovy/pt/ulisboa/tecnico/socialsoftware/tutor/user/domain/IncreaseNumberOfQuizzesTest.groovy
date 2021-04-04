@@ -2,9 +2,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizDto
-import pt.ulisboa.tecnico.socialsoftware.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer

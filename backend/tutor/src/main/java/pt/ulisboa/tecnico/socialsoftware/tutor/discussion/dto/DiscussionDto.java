@@ -1,16 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.DISCUSSION_MISSING_QUESTION;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.DISCUSSION_MISSING_QUESTION;
 
 public class DiscussionDto implements Serializable {
     private Integer id;

@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
@@ -9,7 +9,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_TYPE_FOR_REVIEW;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.INVALID_TYPE_FOR_REVIEW;
 
 @Entity
 @Table(name = "question_submissions")

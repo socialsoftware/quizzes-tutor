@@ -4,9 +4,9 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.util.List;
 import java.util.Map;

@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.tournament.TopicWithCourseDto;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import javax.persistence.*;
 import java.util.*;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.INVALID_NAME_FOR_TOPIC;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.INVALID_NAME_FOR_TOPIC;
 
 @Entity
 @Table(name = "topics")
@@ -36,7 +36,7 @@ public class Topic implements DomainEntity {
     public Topic() {
     }
 
-    public Topic(Course course, pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto topicDto) {
+    public Topic(Course course, pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto topicDto) {
         setName(topicDto.getName());
         setCourse(course);
     }

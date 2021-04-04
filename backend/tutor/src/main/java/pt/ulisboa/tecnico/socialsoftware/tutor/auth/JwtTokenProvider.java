@@ -7,7 +7,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
@@ -18,7 +18,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.USER_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.USER_NOT_FOUND;
 
 @Component
 public class JwtTokenProvider {

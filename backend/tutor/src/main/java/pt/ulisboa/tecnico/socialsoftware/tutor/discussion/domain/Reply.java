@@ -1,18 +1,18 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.REPLY_MISSING_MESSAGE;
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.REPLY_UNAUTHORIZED_USER;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.REPLY_MISSING_MESSAGE;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.REPLY_UNAUTHORIZED_USER;
 
 @Entity
 @Table(name = "replies")

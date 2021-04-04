@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.Languages;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
 
 import java.util.List;

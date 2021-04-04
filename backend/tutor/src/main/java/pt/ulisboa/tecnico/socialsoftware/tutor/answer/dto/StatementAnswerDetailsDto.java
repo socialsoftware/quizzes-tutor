@@ -7,7 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Updator;
 
-import static pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionTypes.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes.*;
 import java.io.Serializable;
 
 @JsonTypeInfo(

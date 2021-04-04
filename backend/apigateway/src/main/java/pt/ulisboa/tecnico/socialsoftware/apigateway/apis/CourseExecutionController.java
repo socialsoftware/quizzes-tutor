@@ -6,11 +6,11 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pt.ulisboa.tecnico.socialsoftware.dtos.execution.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.QuestionDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.question.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.dtos.user.StudentDto;
-import pt.ulisboa.tecnico.socialsoftware.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TarGZip;
@@ -28,7 +28,7 @@ import java.nio.file.Paths;
 import java.security.Principal;
 import java.util.List;
 
-import static pt.ulisboa.tecnico.socialsoftware.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
 
 @RestController
