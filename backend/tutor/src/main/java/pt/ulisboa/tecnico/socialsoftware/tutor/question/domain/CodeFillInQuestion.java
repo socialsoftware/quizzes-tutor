@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.*;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
@@ -85,7 +86,7 @@ public class CodeFillInQuestion extends QuestionDetails {
 
     @Override
     public StatementQuestionDetailsDto getStatementQuestionDetailsDto() {
-        return new CodeFillInStatementQuestionDetailsDto(this);
+        return getCodeFillInStatementQuestionDetailsDto();
     }
 
     @Override
@@ -139,11 +140,6 @@ public class CodeFillInQuestion extends QuestionDetails {
     }
 
     @Override
-    public void update(Updator updator) {
-        updator.update(this);
-    }
-
-    @Override
     public void accept(Visitor visitor) {
         visitor.visitQuestionDetails(this);
     }
@@ -177,6 +173,14 @@ public class CodeFillInQuestion extends QuestionDetails {
         dto.setFillInSpots(getFillInSpots()
                 .stream().map(CodeFillInSpot::getDto)
                 .collect(Collectors.toList()));
+        return dto;
+    }
+
+    public CodeFillInStatementQuestionDetailsDto getCodeFillInStatementQuestionDetailsDto() {
+        CodeFillInStatementQuestionDetailsDto dto = new CodeFillInStatementQuestionDetailsDto();
+        dto.setCode(getCode());
+        dto.setLanguage(getLanguage());
+        dto.setFillInSpots(getFillInSpots().stream().map(CodeFillInSpot::getStatementFillInSpotsDto).collect(Collectors.toList()));
         return dto;
     }
 }

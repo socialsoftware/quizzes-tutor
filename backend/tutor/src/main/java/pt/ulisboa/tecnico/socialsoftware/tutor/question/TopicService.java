@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
@@ -140,14 +141,14 @@ public class TopicService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<TopicWithCourseDto> findTopicById(Set<Integer> topicsList) {
+    public FindTopicsDto findTopicById(Set<Integer> topicsList) {
         List<TopicWithCourseDto> topicWithCourseDtoList = new ArrayList<>();
         for (Integer topicId : topicsList) {
             TopicWithCourseDto topicWithCourseDto = topicRepository.findById(topicId).map(Topic::getTopicWithCourseDto)
                     .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
             topicWithCourseDtoList.add(topicWithCourseDto);
         }
-        return topicWithCourseDtoList;
+        return new FindTopicsDto(topicWithCourseDtoList);
     }
 }
 

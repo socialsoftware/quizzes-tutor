@@ -6,15 +6,16 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentParticipantDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.sql.SQLException;
@@ -42,7 +43,7 @@ public class TournamentProvidedService {
         TournamentCreator creator = tournamentRequiredService.getTournamentCreator(userId);
         TournamentCourseExecution tournamentCourseExecution = tournamentRequiredService.getTournamentCourseExecution(executionId);
 
-        Set<TournamentTopic> topics = tournamentRequiredService.getTournamentTopics(topicsId);
+        Set<TournamentTopic> topics = tournamentRequiredService.getTournamentTopics(new TopicListDto(topicsId));
 
         if (topics.isEmpty()) {
             throw new TutorException(TOURNAMENT_MISSING_TOPICS);
@@ -124,7 +125,7 @@ public class TournamentProvidedService {
     public TournamentDto updateTournament(Set<Integer> topicsId, TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
 
-        Set<TournamentTopic> topics = tournamentRequiredService.getTournamentTopics(topicsId);
+        Set<TournamentTopic> topics = tournamentRequiredService.getTournamentTopics(new TopicListDto(topicsId));
 
         tournament.updateTournament(tournamentDto, topics);
 

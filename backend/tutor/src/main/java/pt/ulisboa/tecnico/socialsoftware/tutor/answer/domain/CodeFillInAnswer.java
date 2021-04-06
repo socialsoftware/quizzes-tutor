@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInOption;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
@@ -15,6 +15,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
 
@@ -47,12 +48,12 @@ public class CodeFillInAnswer extends AnswerDetails {
 
     @Override
     public AnswerDetailsDto getAnswerDetailsDto() {
-        return new CodeFillInAnswerDto(this);
+        return getDto();
     }
 
     @Override
     public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
-        return new CodeFillInStatementAnswerDetailsDto(this);
+        return getCodeFillInStatementAnswerDetailsDto();
     }
 
     @Override
@@ -108,5 +109,21 @@ public class CodeFillInAnswer extends AnswerDetails {
                 codeFillInOption.getQuestionAnswers().add(this);
             }
         }
+    }
+
+    public CodeFillInAnswerDto getDto() {
+        CodeFillInAnswerDto dto = new CodeFillInAnswerDto();
+        if (getFillInOptions() != null)
+            dto.setOptions(getFillInOptions().stream().map(CodeFillInOption::getDto).collect(Collectors.toList()));
+        return dto;
+    }
+
+    public CodeFillInStatementAnswerDetailsDto getCodeFillInStatementAnswerDetailsDto() {
+        CodeFillInStatementAnswerDetailsDto dto = new CodeFillInStatementAnswerDetailsDto();
+        if (getFillInOptions() != null) {
+            dto.setSelectedOptions(getFillInOptions()
+                    .stream().map(CodeFillInOption::CodeFillInOptionStatementAnswerDto).collect(Collectors.toList()));
+        }
+        return dto;
     }
 }

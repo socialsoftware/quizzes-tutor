@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.ReplyDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
@@ -11,8 +11,7 @@ import javax.persistence.*;
 import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.REPLY_MISSING_MESSAGE;
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.REPLY_UNAUTHORIZED_USER;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "replies")
@@ -132,5 +131,24 @@ public class Reply implements DomainEntity {
                 ", date=" + date +
                 ", isPublic=" + isPublic +
                 '}';
+    }
+
+    public ReplyDto getDto() {
+        ReplyDto dto = new ReplyDto();
+        dto.setName(getUser().getName());
+        dto.setUsername(getUser().getUsername());
+        dto.setId(getId());
+        dto.setUserId(getUser().getId());
+        checkEmptyMessage(getMessage());
+        dto.setMessage(getMessage());
+        dto.setDate(DateHandler.toISOString(getDate()));
+        dto.setPublic(isPublic());
+        return dto;
+    }
+
+    private void checkEmptyMessage(String message) {
+        if (message.trim().length() == 0){
+            throw new TutorException(REPLY_MISSING_DATA);
+        }
     }
 }

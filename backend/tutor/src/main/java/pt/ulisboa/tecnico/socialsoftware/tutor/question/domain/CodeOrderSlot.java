@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.CodeOrderSlotDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerSlot;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.CodeOrderAnswerSlotDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.CodeOrderSlotStatementQuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
@@ -99,6 +101,21 @@ public class CodeOrderSlot implements DomainEntity {
         dto.setContent(getContent());
         dto.setOrder(getOrder());
         dto.setSequence(getSequence());
+        return dto;
+    }
+
+    public CodeOrderAnswerSlotDto getCodeOrderAnswerSlotDto() {
+        CodeOrderAnswerSlotDto dto = new CodeOrderAnswerSlotDto();
+        dto.setSlotId(getId());
+        dto.setOrder(getOrder());
+        dto.setCorrect(true);
+        return dto;
+    }
+
+    public CodeOrderSlotStatementQuestionDetailsDto getCodeOrderSlotStatementQuestionDetailsDto() {
+        CodeOrderSlotStatementQuestionDetailsDto dto = new CodeOrderSlotStatementQuestionDetailsDto();
+        dto.setId(getId());
+        dto.setContent(getContent());
         return dto;
     }
 }

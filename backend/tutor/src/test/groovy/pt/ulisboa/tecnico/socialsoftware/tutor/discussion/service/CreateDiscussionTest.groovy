@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.DiscussionDto
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import spock.lang.Unroll
 

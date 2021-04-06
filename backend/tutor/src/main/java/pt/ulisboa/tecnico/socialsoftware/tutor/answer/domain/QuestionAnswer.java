@@ -1,18 +1,20 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.*;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
 import javax.persistence.*;
 
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.INVALID_SEQUENCE_FOR_QUESTION_ANSWER;
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.QUESTION_ANSWER_HAS_DISCUSSION;
+import static pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "question_answers",
@@ -117,12 +119,32 @@ public class QuestionAnswer implements DomainEntity {
     }
 
     public AnswerDetails setAnswerDetails(StatementAnswerDto statementAnswerDto) {
-        this.answerDetails = statementAnswerDto.getAnswerDetails(this);
+        this.answerDetails = statementAnswerDto.getAnswerDetails() != null ? getAnswerDetailsType(statementAnswerDto.getAnswerDetails()) : null;
         if (this.answerDetails != null) {
             this.answerDetails.setQuestionAnswer(this);
         }
         return this.answerDetails;
     }
+
+    public AnswerDetails getAnswerDetailsType(StatementAnswerDetailsDto statementAnswerDetailsDto) {
+        switch (statementAnswerDetailsDto.getType()) {
+            case MULTIPLE_CHOICE_QUESTION:
+                MultipleChoiceAnswer multipleChoiceAnswer = new MultipleChoiceAnswer(this);
+                multipleChoiceAnswer.setOption((MultipleChoiceQuestion) getQuestion().getQuestionDetails(), (MultipleChoiceStatementAnswerDetailsDto) statementAnswerDetailsDto);
+                return  multipleChoiceAnswer;
+            case CODE_FILL_IN_QUESTION:
+                CodeFillInAnswer codeFillInAnswer = new CodeFillInAnswer(this);
+                codeFillInAnswer.setFillInOptions((CodeFillInQuestion) getQuestion().getQuestionDetails(), (CodeFillInStatementAnswerDetailsDto) statementAnswerDetailsDto);
+                return codeFillInAnswer;
+            case CODE_ORDER_QUESTION:
+                CodeOrderAnswer codeOrderAnswer = new CodeOrderAnswer(this);
+                codeOrderAnswer.setOrderedSlots((CodeOrderQuestion) getQuestion().getQuestionDetails(), (CodeOrderStatementAnswerDetailsDto) statementAnswerDetailsDto);
+                return codeOrderAnswer;
+            default:
+                throw new TutorException(INVALID_ANSWER_DETAILS, statementAnswerDetailsDto.toString());
+        }
+    }
+
 
     public boolean isCorrect() {
         return getAnswerDetails() != null && getAnswerDetails().isCorrect();
@@ -164,5 +186,37 @@ public class QuestionAnswer implements DomainEntity {
 
     public boolean isAnswered() {
         return this.getTimeTaken() != null && this.getAnswerDetails() != null && this.getAnswerDetails().isAnswered();
+    }
+
+    public StatementQuestionDto getStatementQuestionDto(boolean ghost) {
+        StatementQuestionDto dto = new StatementQuestionDto();
+        Question question = getQuizQuestion().getQuestion();
+        if (!ghost) {
+            dto.setContent(question.getContent());
+            if (question.getImage() != null) {
+                dto.setImage(question.getImage().getDto());
+            }
+
+            dto.setQuestionDetails(question.getStatementQuestionDetailsDto());
+        }
+
+        dto.setSequence(getSequence());
+        dto.setQuestionId(question.getId());
+        return dto;
+    }
+
+    public StatementAnswerDto getStatementAnswerDto() {
+        StatementAnswerDto dto = new StatementAnswerDto();
+        dto.setTimeTaken(getTimeTaken());
+        dto.setSequence(getSequence());
+        dto.setQuestionAnswerId(getId());
+        dto.setQuizQuestionId(getQuizQuestion().getId());
+
+        dto.setAnswerDetails(getStatementAnswerDetailsDto());
+
+        if (getDiscussion() != null) {
+            dto.setUserDiscussion(getDiscussion().getDto(false));
+        }
+        return dto;
     }
 }

@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -15,6 +15,7 @@ import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
@@ -199,5 +200,31 @@ public class Discussion implements DomainEntity {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitDiscussion(this);
+    }
+
+    public DiscussionDto getDto(boolean deep) {
+        DiscussionDto dto = new DiscussionDto();
+        dto.setId(getId());
+
+        if (getQuestion() == null) {
+            throw new TutorException(DISCUSSION_MISSING_QUESTION);
+        }
+
+        if (deep) {
+            dto.setQuestion(getQuestion().getDto());
+        }
+
+
+        dto.setName(getUser().getName());
+        dto.setUsername(getUser().getUsername());
+        dto.setMessage(getMessage());
+        dto.setDate(DateHandler.toISOString(getDate()));
+        dto.setCourseExecutionId(getCourseExecution().getId());
+        dto.setClosed(isClosed());
+
+        if (getReplies() != null) {
+            dto.setReplies(getReplies().stream().map(Reply::getDto).collect(Collectors.toList()));
+        }
+        return dto;
     }
 }

@@ -1,10 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.*;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderCorrectAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -107,7 +105,7 @@ public class CodeOrderQuestion extends QuestionDetails {
 
     @Override
     public StatementQuestionDetailsDto getStatementQuestionDetailsDto() {
-        return new CodeOrderStatementQuestionDetailsDto(this);
+        return getCodeOrderStatementQuestionDetailsDto();
     }
 
     @Override
@@ -141,11 +139,6 @@ public class CodeOrderQuestion extends QuestionDetails {
                 .sorted(Comparator.comparing(CodeOrderSlot::getOrder))
                 .map(codeOrderSlot -> String.valueOf(codeOrderSlot.getSequence()))
                 .collect(Collectors.joining(" | "));
-    }
-
-    @Override
-    public void update(Updator updator) {
-        updator.update(this);
     }
 
     @Override
@@ -183,6 +176,14 @@ public class CodeOrderQuestion extends QuestionDetails {
                 .map(CodeOrderSlot::getDto)
                 .collect(Collectors.toList()));
         dto.getCodeOrderSlots().sort(Comparator.comparing(CodeOrderSlotDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
+        return dto;
+    }
+
+    public CodeOrderStatementQuestionDetailsDto getCodeOrderStatementQuestionDetailsDto() {
+        CodeOrderStatementQuestionDetailsDto dto = new CodeOrderStatementQuestionDetailsDto();
+        dto.setLanguage(getLanguage());
+        dto.setOrderSlots(getCodeOrderSlots().stream().map(CodeOrderSlot::getCodeOrderSlotStatementQuestionDetailsDto).collect(Collectors.toList()));
+        Collections.shuffle(dto.getOrderSlots());
         return dto;
     }
 }

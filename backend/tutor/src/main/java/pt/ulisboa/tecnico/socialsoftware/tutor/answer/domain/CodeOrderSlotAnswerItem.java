@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderSlotStatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.CodeOrderSlotStatementAnswerDetailsDto;
 
 import javax.persistence.Embeddable;
 

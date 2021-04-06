@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
@@ -24,6 +25,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlExportVisitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -41,6 +45,7 @@ import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
+import static pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes.*;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Service
@@ -243,7 +248,7 @@ public class AnswerService {
 
         quizRepository.save(quiz);
 
-        return new StatementQuizDto(quizAnswer, false);
+        return quizAnswer.getDto(false);
     }
 
     @Retryable(
@@ -289,7 +294,7 @@ public class AnswerService {
 
         quizRepository.save(quiz);
 
-        return new StatementQuizDto(quizAnswer, false);
+        return quizAnswer.getDto(false);
     }
 
     @Retryable(
@@ -326,7 +331,7 @@ public class AnswerService {
             if (quizAnswer.getCreationDate() == null) {
                 quizAnswer.setCreationDate(DateHandler.now());
             }
-            return new StatementQuizDto(quizAnswer, false);
+            return quizAnswer.getDto(false);
 
             // Send timer
         } else {
@@ -375,7 +380,7 @@ public class AnswerService {
     public StatementQuestionDto getQuestionForQuizAnswer(Integer quizId, Integer questionId) {
             Question question = questionRepository.findById(questionId)
                     .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
-            return new StatementQuestionDto(question);
+            return question.getStatementQuestionDto();
     }
 
     @Retryable(
@@ -391,7 +396,20 @@ public class AnswerService {
             questionAnswerItemRepository.insertQuestionAnswerItemOptionIdNull(username, quizId, answer.getQuizQuestionId(), DateHandler.now(),
                     answer.getTimeTaken(), answer.getTimeToSubmission());
         } else {
-            questionAnswerItemRepository.save(answer.getQuestionAnswerItem(username, quizId));
+            questionAnswerItemRepository.save(getQuestionAnswerType(username, quizId, answer));
+        }
+    }
+
+    public QuestionAnswerItem getQuestionAnswerType(String username, Integer quizId, StatementAnswerDto answer) {
+        switch (answer.getAnswerDetails().getType()) {
+            case MULTIPLE_CHOICE_QUESTION:
+                return new MultipleChoiceAnswerItem(username, quizId, answer, (MultipleChoiceStatementAnswerDetailsDto) answer.getAnswerDetails());
+            case CODE_FILL_IN_QUESTION:
+                return new CodeFillInAnswerItem(username, quizId, answer, (CodeFillInStatementAnswerDetailsDto) answer.getAnswerDetails());
+            case CODE_ORDER_QUESTION:
+                return new CodeOrderAnswerItem(username, quizId, answer, (CodeOrderStatementAnswerDetailsDto) answer.getAnswerDetails());
+            default:
+                throw new TutorException(INVALID_ANSWER_DETAILS, answer.toString());
         }
     }
 
@@ -452,7 +470,7 @@ public class AnswerService {
             quizAnswer.setCreationDate(DateHandler.now());
         }
 
-        return new StatementQuizDto(quizAnswer, false);
+        return quizAnswer.getDto(false);
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {
