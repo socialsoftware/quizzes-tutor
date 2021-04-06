@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.webservice
 
-import groovyx.net.http.ContentEncoding
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
@@ -40,5 +39,6 @@ class ExportCourseExecutionInfoWebServiceIT extends SpockTest {
 
         then: "the response status is OK"
         assert map['response'].status == 200
+        assert map['reader'] != null
     }
 }
