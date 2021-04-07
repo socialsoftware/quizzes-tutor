@@ -1,6 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -10,9 +13,12 @@ import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Entity
 @Table(name = "quiz_answers",
@@ -204,5 +210,32 @@ public class QuizAnswer implements DomainEntity {
 
     public long getNumberOfCorrectAnswers() {
         return getQuestionAnswers().stream().filter(QuestionAnswer::isCorrect).count();
+    }
+
+    public StatementQuizDto getDto(boolean complete) {
+        StatementQuizDto dto = new StatementQuizDto();
+        dto.setId(getQuiz().getId());
+        dto.setQuizAnswerId(getId());
+        dto.setTitle(getQuiz().getTitle());
+        dto.setOneWay(getQuiz().isOneWay());
+        dto.setTimed(getQuiz().getType().equals(QuizType.IN_CLASS));
+        dto.setAvailableDate(DateHandler.toISOString(getQuiz().getAvailableDate()));
+        dto.setConclusionDate(DateHandler.toISOString(getQuiz().getConclusionDate())); ;
+
+        if (getQuiz().getConclusionDate() != null && (getQuiz().getType().equals(QuizType.IN_CLASS) || getQuiz().getType().equals(QuizType.EXTERNAL_QUIZ))) {
+            dto.setTimeToSubmission(ChronoUnit.MILLIS.between(DateHandler.now(), getQuiz().getConclusionDate()));
+        }
+
+        boolean ghost = dto.isOneWay() && !complete;
+        dto.setQuestions(getQuestionAnswers().stream()
+                .map(questionAnswer -> questionAnswer.getStatementQuestionDto(ghost))
+                .sorted(Comparator.comparing(StatementQuestionDto::getSequence))
+                .collect(Collectors.toList()));
+
+        dto.setAnswers(getQuestionAnswers().stream()
+                .map(QuestionAnswer::getStatementAnswerDto)
+                .sorted(Comparator.comparing(StatementAnswerDto::getSequence))
+                .collect(Collectors.toList()));
+        return dto;
     }
 }

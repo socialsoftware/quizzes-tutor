@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.CodeOrderAnswerSlotDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
 
 import java.util.Comparator;
 import java.util.List;
@@ -12,7 +14,7 @@ public class CodeOrderCorrectAnswerDto extends CorrectAnswerDetailsDto {
     public CodeOrderCorrectAnswerDto(CodeOrderQuestion question) {
         this.correctOrder = question.getCodeOrderSlots()
                 .stream()
-                .map(CodeOrderAnswerSlotDto::new)
+                .map(CodeOrderSlot::getCodeOrderAnswerSlotDto)
                 .collect(Collectors.toList());
         this.correctOrder.sort(Comparator.comparing(CodeOrderAnswerSlotDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
     }

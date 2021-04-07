@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDetailsDto;
@@ -89,11 +90,6 @@ public class MultipleChoiceQuestion extends QuestionDetails {
     }
 
     @Override
-    public void update(Updator updator) {
-        updator.update(this);
-    }
-
-    @Override
     public String getCorrectAnswerRepresentation() {
         return convertSequenceToLetter(this.getCorrectAnswer());
     }
@@ -116,7 +112,7 @@ public class MultipleChoiceQuestion extends QuestionDetails {
 
     @Override
     public StatementQuestionDetailsDto getStatementQuestionDetailsDto() {
-        return new MultipleChoiceStatementQuestionDetailsDto(this);
+        return getMultipleChoiceStatementQuestionDetailsDto();
     }
 
     @Override
@@ -175,6 +171,14 @@ public class MultipleChoiceQuestion extends QuestionDetails {
     public MultipleChoiceQuestionDto getDto() {
         MultipleChoiceQuestionDto dto = new MultipleChoiceQuestionDto();
         dto.setOptions(getOptions().stream().map(Option::getDto).collect(Collectors.toList()));
+        return dto;
+    }
+
+    public MultipleChoiceStatementQuestionDetailsDto getMultipleChoiceStatementQuestionDetailsDto() {
+        MultipleChoiceStatementQuestionDetailsDto dto = new MultipleChoiceStatementQuestionDetailsDto();
+        dto.setOptions(getOptions().stream()
+                .map(Option::getStatementOptionDto)
+                .collect(Collectors.toList()));
         return dto;
     }
 }

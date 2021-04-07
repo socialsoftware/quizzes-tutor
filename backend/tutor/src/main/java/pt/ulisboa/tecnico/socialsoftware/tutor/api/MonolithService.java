@@ -5,10 +5,13 @@ import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.common.remote.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
@@ -18,7 +21,7 @@ import java.util.List;
 import java.util.Set;
 
 @Service
-public class MonolithService implements UserInterface, AnswerInterface, QuizInterface, TopicInterface, CourseExecutionInterface {
+public class MonolithService implements UserContract, AnswerContract, QuizContract, QuestionContract, CourseExecutionContract {
 
     @Autowired
     private UserService userService;
@@ -36,12 +39,12 @@ public class MonolithService implements UserInterface, AnswerInterface, QuizInte
     private TopicService topicService;
 
     @Override
-    public UserDto findUserById(Integer userId) {
+    public UserDto findUser(Integer userId) {
         return userService.findUserById(userId);
     }
 
     @Override
-    public CourseExecutionDto getCourseExecutionById(Integer courseExecutionId) {
+    public CourseExecutionDto findCourseExecution(Integer courseExecutionId) {
         return courseExecutionService.getCourseExecutionById(courseExecutionId);
     }
 
@@ -51,8 +54,8 @@ public class MonolithService implements UserInterface, AnswerInterface, QuizInte
     }
 
     @Override
-    public List<TopicWithCourseDto> findTopics(Set<Integer> topicsList) {
-        return topicService.findTopicById(topicsList);
+    public FindTopicsDto findTopics(TopicListDto topicsList) {
+        return topicService.findTopicById(topicsList.getTopicList());
     }
 
     public Integer generateQuizAndGetId(Integer creatorId, Integer courseExecutionId, ExternalStatementCreationDto quizDetails) {

@@ -2,10 +2,13 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.services.remote;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
@@ -13,7 +16,6 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCourseExecu
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCreator;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentParticipant;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.api.MonolithService;
 
 import java.util.HashSet;
@@ -29,7 +31,7 @@ public class TournamentRequiredService {
     private MonolithService monolithService;
 
     public TournamentCreator getTournamentCreator(Integer userId) {
-        UserDto userDto = monolithService.findUserById(userId);
+        UserDto userDto = monolithService.findUser(userId);
         if (userDto != null) {
             return new TournamentCreator(userDto.getId(), userDto.getUsername(), userDto.getName());
         }
@@ -39,7 +41,7 @@ public class TournamentRequiredService {
     }
 
     public TournamentParticipant getTournamentParticipant(Integer userId) {
-        UserDto userDto = monolithService.findUserById(userId);
+        UserDto userDto = monolithService.findUser(userId);
         if (userDto != null) {
             return new TournamentParticipant(userDto.getId(), userDto.getUsername(), userDto.getName());
         }
@@ -49,7 +51,7 @@ public class TournamentRequiredService {
     }
 
     public TournamentCourseExecution getTournamentCourseExecution(Integer courseExecutionId) {
-        CourseExecutionDto courseExecutionDto = monolithService.getCourseExecutionById(courseExecutionId);
+        CourseExecutionDto courseExecutionDto = monolithService.findCourseExecution(courseExecutionId);
         return new TournamentCourseExecution(courseExecutionDto.getCourseExecutionId(),
                 courseExecutionDto.getCourseId(), CourseExecutionStatus.valueOf(courseExecutionDto.getStatus().toString()), courseExecutionDto.getAcronym());
     }
@@ -58,11 +60,11 @@ public class TournamentRequiredService {
         return monolithService.getDemoCourseExecutionId();
     }
 
-    public Set<TournamentTopic> getTournamentTopics(Set<Integer> topicsList) {
-        List<TopicWithCourseDto> topicWithCourseDtoList = monolithService.findTopics(topicsList);
+    public Set<TournamentTopic> getTournamentTopics(TopicListDto topicsList) {
+        FindTopicsDto topicWithCourseDtoList = monolithService.findTopics(topicsList);
         Set<TournamentTopic> topics = new HashSet<>();
 
-        for (TopicWithCourseDto topicWithCourseDto : topicWithCourseDtoList) {
+        for (TopicWithCourseDto topicWithCourseDto : topicWithCourseDtoList.getTopicWithCourseDtoList()) {
             topics.add(new TournamentTopic(topicWithCourseDto.getId(), topicWithCourseDto.getName(),
                     topicWithCourseDto.getCourseId()));
         }

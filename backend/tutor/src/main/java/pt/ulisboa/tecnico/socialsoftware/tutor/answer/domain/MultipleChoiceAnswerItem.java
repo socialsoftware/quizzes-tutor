@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.MultipleChoiceStatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import javax.persistence.DiscriminatorValue;

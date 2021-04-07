@@ -8,9 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.MultipleChoiceStatementAnswerDetailsDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementAnswerDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option

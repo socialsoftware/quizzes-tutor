@@ -1,10 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderStatementAnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
@@ -41,7 +38,7 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public AnswerDetailsDto getAnswerDetailsDto() {
-        return new CodeOrderAnswerDto(this);
+        return getDto();
     }
 
     @Override
@@ -54,7 +51,7 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
-        return new CodeOrderStatementAnswerDetailsDto(this);
+        return getCodeOrderStatementAnswerDetailsDto();
     }
 
     @Override
@@ -85,5 +82,26 @@ public class CodeOrderAnswer extends AnswerDetails {
     @Override
     public void accept(Visitor visitor) {
         visitor.visitAnswerDetails(this);
+    }
+
+    public CodeOrderAnswerDto getDto() {
+        CodeOrderAnswerDto dto = new CodeOrderAnswerDto();
+        if (getOrderedSlots() != null) {
+            dto.setOrderedSlots(getOrderedSlots().stream().map(CodeOrderAnswerSlot::getDto).collect(Collectors.toList()));
+            dto.getOrderedSlots().sort(Comparator.comparing(CodeOrderAnswerSlotDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
+        }
+        return dto;
+    }
+
+    public CodeOrderStatementAnswerDetailsDto getCodeOrderStatementAnswerDetailsDto() {
+        CodeOrderStatementAnswerDetailsDto dto = new CodeOrderStatementAnswerDetailsDto();
+        if (getOrderedSlots() != null) {
+            dto.setOrderedSlots(getOrderedSlots()
+                    .stream()
+                    .map(CodeOrderAnswerSlot::getCodeOrderSlotStatementAnswerDetailsDto)
+                    .collect(Collectors.toList()));
+            dto.getOrderedSlots().sort(Comparator.comparing(CodeOrderSlotStatementAnswerDetailsDto::getOrder, Comparator.nullsLast(Comparator.naturalOrder())));
+        }
+        return dto;
     }
 }

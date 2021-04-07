@@ -29,6 +29,7 @@ public enum ErrorMessage {
     INVALID_AUTH_USERNAME("Username: %s, belongs to a different authentication method"),
     INVALID_QUESTION_DETAILS("Invalid question details type: %s"),
     INVALID_QUESTION_DETAILS_DTO("Invalid question details dto type: %s"),
+    INVALID_ANSWER_DETAILS("Invalid answer details type: %s"),
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),

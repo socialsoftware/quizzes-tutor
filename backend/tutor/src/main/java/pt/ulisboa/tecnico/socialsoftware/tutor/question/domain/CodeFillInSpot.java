@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.CodeFillInSpotDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementFillInSpotsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
@@ -112,6 +113,13 @@ public class CodeFillInSpot implements DomainEntity {
         dto.setId(getId());
         dto.setSequence(getSequence());
         dto.setOptions(getOptions().stream().map(CodeFillInOption::getDto).collect(Collectors.toList()));
+        return dto;
+    }
+
+    public StatementFillInSpotsDto getStatementFillInSpotsDto() {
+        StatementFillInSpotsDto dto = new StatementFillInSpotsDto();
+        dto.setSequence(getSequence());
+        dto.setOptions(getOptions().stream().map(CodeFillInOption::getStatementOptionDto).collect(Collectors.toList()));
         return dto;
     }
 }

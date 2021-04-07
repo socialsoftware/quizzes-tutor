@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.CodeOrderSlotStatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.CodeOrderAnswerSlotDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
 
 import javax.persistence.*;
@@ -67,4 +69,21 @@ public class CodeOrderAnswerSlot {
     public boolean isCorrect() {
         return this.assignedOrder.equals(this.codeOrderSlot.getOrder());
     }
+
+    public CodeOrderSlotStatementAnswerDetailsDto getCodeOrderSlotStatementAnswerDetailsDto() {
+        CodeOrderSlotStatementAnswerDetailsDto dto = new CodeOrderSlotStatementAnswerDetailsDto();
+        dto.setOrder(getAssignedOrder());
+        dto.setSlotId(getCodeOrderSlot().getId());
+        return dto;
+    }
+
+    public CodeOrderAnswerSlotDto getDto() {
+        CodeOrderAnswerSlotDto dto = new CodeOrderAnswerSlotDto();
+        dto.setSlotId(getCodeOrderSlot().getId());
+        dto.setOrder(getAssignedOrder());
+        dto.setCorrect(isCorrect());
+        dto.setSequence(getCodeOrderSlot().getSequence());
+        return dto;
+    }
+
 }

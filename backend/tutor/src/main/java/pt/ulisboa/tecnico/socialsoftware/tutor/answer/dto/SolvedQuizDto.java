@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
@@ -19,7 +20,7 @@ public class SolvedQuizDto implements Serializable {
     }
 
     public SolvedQuizDto(QuizAnswer quizAnswer) {
-        this.statementQuiz = new StatementQuizDto(quizAnswer, true);
+        this.statementQuiz = quizAnswer.getDto(true);
 
         this.correctAnswers = quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(QuestionAnswer::getSequence))
