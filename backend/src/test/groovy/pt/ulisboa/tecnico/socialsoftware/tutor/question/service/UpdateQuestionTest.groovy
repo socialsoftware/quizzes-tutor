@@ -65,7 +65,7 @@ class UpdateQuestionTest extends SpockTest {
         optionRepository.save(optionOK)
 
         optionKO = new Option()
-        optionKO.setContent(OPTION_1_CONTENT)
+        optionKO.setContent(OPTION_2_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(1)
         optionKO.setQuestionDetails(questionDetails)
@@ -81,13 +81,14 @@ class UpdateQuestionTest extends SpockTest {
         and: '2 changed options'
         def options = new ArrayList<OptionDto>()
         def optionDto = new OptionDto(optionOK)
-        optionDto.setContent(OPTION_2_CONTENT)
         optionDto.setCorrect(false)
         options.add(optionDto)
         optionDto = new OptionDto(optionKO)
         optionDto.setCorrect(true)
         options.add(optionDto)
         questionDto.getQuestionDetailsDto().setOptions(options)
+        and: 'a count to load options to memory due to in memory database flaw'
+        optionRepository.count();
 
         when:
         questionService.updateQuestion(question.getId(), questionDto)
@@ -106,12 +107,12 @@ class UpdateQuestionTest extends SpockTest {
         result.getImage() != null
         and: 'an option is changed'
         result.getQuestionDetails().getOptions().size() == 2
-        def resOptionOne = result.getQuestionDetails().getOptions().stream().filter({ option -> option.getId() == optionOK.getId()}).findAny().orElse(null)
+        def resOptionOne = result.getQuestionDetails().getOptions().stream().filter({ option -> option.isCorrect()}).findAny().orElse(null)
         resOptionOne.getContent() == OPTION_2_CONTENT
-        !resOptionOne.isCorrect()
-        def resOptionTwo = result.getQuestionDetails().getOptions().stream().filter({ option -> option.getId() == optionKO.getId()}).findAny().orElse(null)
+        def resOptionTwo = result.getQuestionDetails().getOptions().stream().filter({ option -> !option.isCorrect()}).findAny().orElse(null)
         resOptionTwo.getContent() == OPTION_1_CONTENT
-        resOptionTwo.isCorrect()
+        and: 'there are two questions in the database'
+        optionRepository.findAll().size() == 2
     }
 
     def "update question with missing data"() {
@@ -138,7 +139,7 @@ class UpdateQuestionTest extends SpockTest {
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         optionDto = new OptionDto(optionKO)
-        optionDto.setContent(OPTION_1_CONTENT)
+        optionDto.setContent(OPTION_2_CONTENT)
         optionDto.setCorrect(true)
         options.add(optionDto)
         questionDto.getQuestionDetailsDto().setOptions(options)
@@ -216,42 +217,39 @@ class UpdateQuestionTest extends SpockTest {
         exception.getErrorMessage() == ErrorMessage.CANNOT_CHANGE_ANSWERED_QUESTION
     }
 
-
-    def "new test update MultipleChoiceQuestion remove old options add new ones"() {
+    def "update MultipleChoiceQuestion remove old option add new one"() {
         given: "a changed question"
         def questionDto = new QuestionDto(question)
         def multipleChoiceQuestionDto = new MultipleChoiceQuestionDto()
         questionDto.setQuestionDetailsDto(multipleChoiceQuestionDto)
-
-        and: 'the new options'
-        def newOptionOK = new OptionDto()
-        newOptionOK.setContent(OPTION_2_CONTENT)
-        newOptionOK.setCorrect(true)
-        newOptionOK.setSequence(0)
-
+        and: 'a the old correct option'
+        def newOptionOK = new OptionDto(optionOK)
+        and: 'a new option'
         def newOptionKO = new OptionDto()
-        newOptionKO.setContent(OPTION_2_CONTENT)
+        newOptionKO.setContent(OPTION_1_CONTENT)
         newOptionKO.setCorrect(false)
-        newOptionKO.setSequence(1)
-
+        and: 'add options to dto'
         def newOptions = new ArrayList<OptionDto>()
         newOptions.add(newOptionOK)
         newOptions.add(newOptionKO)
         multipleChoiceQuestionDto.setOptions(newOptions)
+        and: 'a count to load options to memory due to in memory database flaw'
+        optionRepository.count();
 
         when:
         questionService.updateQuestion(question.getId(), questionDto)
 
-        then:'optionRepository only has two options'
-        optionRepository.findAll().size() == 2
-
-        and:'the question only has the two new options'
+        then: "the question is there"
+        questionRepository.count() == 1L
         def result = questionRepository.findAll().get(0)
+        and: 'an option is changed'
         result.getQuestionDetails().getOptions().size() == 2
-        def resOptionOne = result.getQuestionDetails().getOptions().get(0)
-        resOptionOne.getContent() == OPTION_2_CONTENT
-        def resOptionTwo = result.getQuestionDetails().getOptions().get(1)
-        resOptionTwo.getContent() == OPTION_2_CONTENT
+        def resOptionOne = result.getQuestionDetails().getOptions().stream().filter({ option -> option.isCorrect()}).findAny().orElse(null)
+        resOptionOne.getContent() == OPTION_1_CONTENT
+        def resOptionTwo = result.getQuestionDetails().getOptions().stream().filter({ option -> !option.isCorrect()}).findAny().orElse(null)
+        resOptionTwo.getContent() == OPTION_1_CONTENT
+        and: 'there are two questions in the database'
+        optionRepository.findAll().size() == 2
     }
 
     @TestConfiguration

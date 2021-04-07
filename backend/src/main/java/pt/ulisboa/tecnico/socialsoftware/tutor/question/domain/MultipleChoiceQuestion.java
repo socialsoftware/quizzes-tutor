@@ -11,6 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -18,10 +20,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
 public class MultipleChoiceQuestion extends QuestionDetails {
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails", fetch = FetchType.EAGER, orphanRemoval = true)
     private final List<Option> options = new ArrayList<>();
-
 
     public MultipleChoiceQuestion() {
         super();
@@ -36,26 +36,20 @@ public class MultipleChoiceQuestion extends QuestionDetails {
         return options;
     }
 
-    public void setOptions(List<OptionDto> options) {
-        if (options.stream().filter(OptionDto::isCorrect).count() != 1) {
+    public void setOptions(List<OptionDto> optionDtos) {
+        if (optionDtos.stream().filter(OptionDto::isCorrect).count() != 1) {
             throw new TutorException(ONE_CORRECT_OPTION_NEEDED);
         }
 
-        int index = 0;
-        for (OptionDto optionDto : options) {
-            if (optionDto.getId() == null) {
-                optionDto.setSequence(index++);
-                new Option(optionDto).setQuestionDetails(this);
-            } else {
-                Option option = getOptions()
-                        .stream()
-                        .filter(op -> op.getId().equals(optionDto.getId()))
-                        .findAny()
-                        .orElseThrow(() -> new TutorException(OPTION_NOT_FOUND, optionDto.getId()));
+        for (Option option: this.options) {
+            option.remove();
+        }
+        this.options.clear();
 
-                option.setContent(optionDto.getContent());
-                option.setCorrect(optionDto.isCorrect());
-            }
+        int index = 0;
+        for (OptionDto optionDto : optionDtos) {
+            optionDto.setSequence(index++);
+            new Option(optionDto).setQuestionDetails(this);
         }
     }
 
