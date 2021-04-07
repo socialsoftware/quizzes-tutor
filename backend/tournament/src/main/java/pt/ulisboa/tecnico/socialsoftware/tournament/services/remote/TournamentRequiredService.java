@@ -19,7 +19,6 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentParticipant
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.USER_NOT_FOUND;
@@ -45,6 +44,7 @@ public class TournamentRequiredService {
 
     public TournamentCreator getTournamentCreator(Integer userId) {
         UserDto userDto = userInterface.findUser(userId);
+
         if (userDto != null) {
             return new TournamentCreator(userDto.getId(), userDto.getUsername(), userDto.getName());
         }
