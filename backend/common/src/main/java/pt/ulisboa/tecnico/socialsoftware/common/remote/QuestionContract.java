@@ -1,10 +1,8 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.api;
+package pt.ulisboa.tecnico.socialsoftware.common.remote;
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
-
-import java.util.List;
-import java.util.Set;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 
 public interface QuestionContract {
-    List<TopicWithCourseDto> findTopics(Set<Integer> topicsList);
+    FindTopicsDto findTopics(TopicListDto topicsList);
 }

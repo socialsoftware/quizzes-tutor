@@ -1,9 +1,9 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.api;
+package pt.ulisboa.tecnico.socialsoftware.common.remote;
 
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 
 public interface CourseExecutionContract {
-    CourseExecutionDto findCourseExecutionById(Integer courseExecutionId);
+    CourseExecutionDto findCourseExecution(Integer courseExecutionId);
 
     Integer getDemoCourseExecutionId();
 }
