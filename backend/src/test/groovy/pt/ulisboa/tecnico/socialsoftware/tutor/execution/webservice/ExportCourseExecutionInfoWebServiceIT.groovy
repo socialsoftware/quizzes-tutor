@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.webservice
+package pt.ulisboa.tecnico.socialsoftware.tutor.execution.webservice
 
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
