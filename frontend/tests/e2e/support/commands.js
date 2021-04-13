@@ -503,9 +503,10 @@ Cypress.Commands.add('replyToDiscussion', (discussionContent, replyContent) => {
     .children()
     .should('have.length', 8)
     .find('[data-cy="showDiscussionButton"]')
+    .should('be.visible')
     .click();
 
-  cy.get('[data-cy="replyTextArea"]').type(replyContent);
+  cy.get('[data-cy="replyTextArea"]').should('be.visible').type(replyContent);
   cy.get('[data-cy="submitReplyButton"]').click();
 });
 
