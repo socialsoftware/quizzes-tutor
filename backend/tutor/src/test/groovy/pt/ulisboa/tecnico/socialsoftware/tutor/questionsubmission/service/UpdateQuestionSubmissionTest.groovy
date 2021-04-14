@@ -67,7 +67,9 @@ class UpdateQuestionSubmissionTest extends SpockTest {
         and: "a questionSubmissionDto"
         def questionSubmissionDto = new QuestionSubmissionDto(questionSubmission)
         questionSubmissionDto.setQuestion(questionDto)
-
+        and: 'a count to load options to memory due to in memory database flaw'
+        optionRepository.count();
+        
         when:
         questionSubmissionService.updateQuestionSubmission(questionSubmission.getId(), questionSubmissionDto)
 
