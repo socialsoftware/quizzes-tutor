@@ -51,9 +51,6 @@ public class AuthUserService {
     public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private CourseExecutionService courseExecutionService;
 
     @Autowired
@@ -156,7 +153,7 @@ public class AuthUserService {
                     });
         }
     }
-//TODO:Add course executions
+
     private AuthTecnicoUser createAuthUser(FenixEduInterface fenix, String username) {
         List<CourseExecutionDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
         List<CourseExecutionDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();

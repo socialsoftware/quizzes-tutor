@@ -148,7 +148,7 @@ public class UsersXmlImport {
 
 		return authUser.getUser();
 	}*/
-//TODO: ADD here
+	//TODO: When import is working again course execution should be added to authUser
 	private void importCourseExecutions(Element courseExecutions, User user) {
 		for (Element courseExecutionElement: courseExecutions.getChildren("courseExecution")) {
 			Integer executionId = Integer.valueOf(courseExecutionElement.getAttributeValue("executionId"));

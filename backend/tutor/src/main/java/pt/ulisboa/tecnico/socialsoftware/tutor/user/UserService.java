@@ -46,7 +46,6 @@ public class UserService {
         return user;
     }
 
-//TODO: ADD Course execution to auth
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void addCourseExecution(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));

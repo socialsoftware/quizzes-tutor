@@ -109,7 +109,7 @@ public class CourseExecutionService {
         if (user != null && courseExecution != null) {
             courseExecution.addUser(user);
             user.addCourse(courseExecution);
-            //TODO: Check this
+            //Auth subscribes to this event and adds course execution to authUser
             AddCourseExecutionEvent addCourseExecutionEvent = new AddCourseExecutionEvent(userId, courseExecutionId);
             eventBus.post(addCourseExecutionEvent);
         }

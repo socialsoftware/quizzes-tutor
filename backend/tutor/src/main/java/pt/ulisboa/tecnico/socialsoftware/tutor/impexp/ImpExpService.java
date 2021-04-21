@@ -98,7 +98,7 @@ public class ImpExpService {
         try (FileOutputStream fos = new FileOutputStream(directory.getPath() + PATH_DELIMITER + filename);
              ZipOutputStream zos = new ZipOutputStream(fos)) {
 
-            //TODO: Uncomment
+            //TODO: Uncomment when import is working again
             /*zos.putNextEntry(new ZipEntry("users.xml"));
             InputStream in = generateUsersInputStream();
             copyToZipStream(zos, in);
@@ -176,7 +176,8 @@ public class ImpExpService {
 
                 File usersFile = new File(directory.getPath() + PATH_DELIMITER + "users.xml");
                 UsersXmlImport usersXmlImport = new UsersXmlImport();
-                //usersXmlImport.importUsers(new FileInputStream(usersFile), userService); //TODO: Uncomment
+                //TODO: Uncomment when import is working again
+                //usersXmlImport.importUsers(new FileInputStream(usersFile), userService);
 
                 File questionsFile = new File(directory.getPath() + PATH_DELIMITER + "questions.xml");
                 QuestionsXmlImport questionsXmlImport = new QuestionsXmlImport();

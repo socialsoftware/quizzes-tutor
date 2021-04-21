@@ -1,14 +1,14 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
+package pt.ulisboa.tecnico.socialsoftware.apigateway.userapplicationalservice
 
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
+import pt.ulisboa.tecnico.socialsoftware.apigateway.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer
@@ -28,8 +28,8 @@ class ImportUsersTest extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
     }
-//TODO: Uncomment when import works
-   /* def 'Import users from csv file' () {
+
+   def 'Import users from csv file' () {
         given: "number of users in dataBase"
         def usersInDataBase = userRepository.count()
         and: "inputStream"
@@ -104,7 +104,7 @@ class ImportUsersTest extends SpockTest {
         userRepository.findAll().size() == usersInDataBase
         and: "no mail was sent"
         0 * mailerMock.sendSimpleMail(_,_,_,_)
-    }*/
+    }
 
 
     @TestConfiguration
