@@ -7,6 +7,7 @@ import org.springframework.test.context.ActiveProfiles
 
 @TestConfiguration
 @PropertySource("classpath:application-test-int.properties")
+@ActiveProfiles("test-int")
 class BeanConfigurationIT {
 
     @Value('${spring.mail.host}')

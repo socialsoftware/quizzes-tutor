@@ -8,8 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
@@ -30,7 +28,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
@@ -130,9 +127,6 @@ class SpockTest extends Specification {
     public static final String DISCUSSION_REPLY = "Discussion Reply"
 
     @Autowired
-    AuthUserService authUserService
-
-    @Autowired
     AnswerService answerService
 
     @Autowired
@@ -205,9 +199,6 @@ class SpockTest extends Specification {
     UserService userService
 
     @Autowired
-    AuthUserRepository authUserRepository
-
-    @Autowired
     QuestionSubmissionService questionSubmissionService
 
     @Autowired
@@ -215,9 +206,6 @@ class SpockTest extends Specification {
 
     @Autowired
     ReviewRepository reviewRepository
-
-    @Autowired
-    UserApplicationalService userServiceApplicational
 
     @Autowired
     PasswordEncoder passwordEncoder

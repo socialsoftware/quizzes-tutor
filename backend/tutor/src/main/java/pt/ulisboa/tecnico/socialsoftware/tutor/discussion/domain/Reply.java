@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.ReplyDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
@@ -116,7 +117,7 @@ public class Reply implements DomainEntity {
     }
 
     private void checkReplyAuthorization(User user, Discussion discussion) {
-        if (user.getRole() != User.Role.TEACHER && !user.getId().equals(discussion.getUser().getId())) {
+        if (user.getRole() != Role.TEACHER && !user.getId().equals(discussion.getUser().getId())) {
             throw new TutorException(REPLY_UNAUTHORIZED_USER);
         }
     }

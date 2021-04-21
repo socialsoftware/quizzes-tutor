@@ -3,10 +3,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.execution.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
 class GetCourseExecutionsPerformanceTest extends SpockTest {
@@ -20,7 +20,7 @@ class GetCourseExecutionsPerformanceTest extends SpockTest {
         })
 
         when:
-        1.upto(1, { courseService.getCourseExecutions(User.Role.ADMIN)})
+        1.upto(1, { courseService.getCourseExecutions(Role.ADMIN)})
 
         then:
         true

@@ -5,11 +5,10 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
@@ -31,11 +30,10 @@ class CreateQuestionSubmissionTest extends SpockTest {
         createExternalCourseAndExecution()
 
         student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
-        ((AuthTecnicoUser)student.authUser).setEnrolledCoursesAcronyms(externalCourseExecution.getAcronym())
+                Role.STUDENT, false)
         userRepository.save(student)
         teacher = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
-                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
+                Role.TEACHER, false)
         userRepository.save(teacher)
         questionDto = new QuestionDto()
         questionDto.setKey(1)
@@ -71,7 +69,6 @@ class CreateQuestionSubmissionTest extends SpockTest {
         result.getQuestion().getContent() == questionDto.getContent()
         result.getQuestion().getStatus() == Question.Status.SUBMITTED
         result.getCourseExecution() == externalCourseExecution
-        ((AuthTecnicoUser)student.authUser).getEnrolledCoursesAcronyms().contains(externalCourseExecution.getAcronym())
     }
 
     @Unroll

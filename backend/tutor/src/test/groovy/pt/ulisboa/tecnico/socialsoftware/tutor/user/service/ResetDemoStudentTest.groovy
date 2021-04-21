@@ -3,9 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
@@ -29,21 +29,18 @@ class ResetDemoStudentTest extends SpockTest {
         given:
         def birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
         def user1 = new User("Demo-Student-" + birthDate, "Demo-Student-" + birthDate,
-                USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.DEMO)
+                USER_1_EMAIL, Role.STUDENT, false)
         userRepository.save(user1)
-        def user1Username = user1.username
         def user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.DEMO)
+                Role.STUDENT, false)
         userRepository.save(user2)
 
         when:
         userService.resetDemoStudents()
 
         then:
-        AuthUser authUser1 = authUserRepository.findAuthUserByUsername(user1Username).orElse(null)
-        AuthUser authUser2 = authUserRepository.findAuthUserByUsername(USER_2_USERNAME).orElse(null)
-        authUser1 == null
-        authUser2.id == user2.authUser.id
+        userRepository.findAll().size() == 1
+        userRepository.findAll().get(0).getUsername().equals(USER_2_USERNAME)
     }
 
 

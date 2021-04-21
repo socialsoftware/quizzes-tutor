@@ -9,10 +9,9 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.test.context.ActiveProfiles
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.api.MonolithService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
@@ -22,11 +21,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")
+@ActiveProfiles("test")
 class BeanConfiguration {
 
     @Value('${spring.mail.host}')
@@ -64,18 +63,8 @@ class BeanConfiguration {
     }
 
     @Bean
-    AnswersXmlImport answersXmlImport() {
-        return new AnswersXmlImport()
-    }
-
-    @Bean
     UserService userService() {
         return new UserService()
-    }
-
-    @Bean
-    UserApplicationalService userServiceApplicational() {
-        return new UserApplicationalService()
     }
 
     @Bean
@@ -94,11 +83,6 @@ class BeanConfiguration {
     }
 
     @Bean
-    AuthUserService authUserService() {
-        return new AuthUserService()
-    }
-
-    @Bean
     TopicService topicService() {
         return new TopicService()
     }
@@ -111,6 +95,11 @@ class BeanConfiguration {
     @Bean
     DiscussionService discussionService() {
         return new DiscussionService()
+    }
+
+    @Bean
+    AnswersXmlImport answersXmlImport() {
+        return new AnswersXmlImport();
     }
 
     @Bean

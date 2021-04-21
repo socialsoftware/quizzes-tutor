@@ -2,9 +2,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -23,13 +23,13 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest {
         createExternalCourseAndExecution()
 
         student1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+                Role.STUDENT, false)
         userRepository.save(student1)
         student2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+                Role.STUDENT, false)
         userRepository.save(student2)
         teacher = new User(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL,
-                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
+                Role.TEACHER, false)
         userRepository.save(teacher)
         question = new Question()
         question.setKey(1)

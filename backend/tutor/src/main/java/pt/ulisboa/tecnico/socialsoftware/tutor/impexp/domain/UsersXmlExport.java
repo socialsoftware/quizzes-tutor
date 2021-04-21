@@ -4,17 +4,15 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.util.List;
 import java.util.Set;
 
 public class UsersXmlExport {
-	public String export(List<User> users) {
+	/*public String export(List<User> users) {
 		Element element = createHeader();
 
 		exportUsers(element, users);
@@ -113,6 +111,6 @@ public class UsersXmlExport {
 
 		authUsersElement.addContent(authUserElement);
 		userElement.addContent(authUsersElement);
-	}
+	}*/
 
 }

@@ -14,8 +14,8 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtConfigurer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
+import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.JwtConfigurer;
+import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.JwtTokenProvider;
 
 @Configuration
 @EnableWebSecurity

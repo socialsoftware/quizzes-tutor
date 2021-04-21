@@ -4,8 +4,8 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
@@ -32,7 +31,7 @@ class UpdateQuestionTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
 

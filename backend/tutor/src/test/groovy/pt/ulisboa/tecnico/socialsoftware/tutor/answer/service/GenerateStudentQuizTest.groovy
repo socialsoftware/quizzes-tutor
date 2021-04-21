@@ -2,12 +2,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementCreationDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
@@ -28,7 +28,7 @@ class GenerateStudentQuizTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
 

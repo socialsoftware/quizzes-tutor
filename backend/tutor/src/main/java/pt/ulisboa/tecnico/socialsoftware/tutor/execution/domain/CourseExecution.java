@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
@@ -219,32 +220,32 @@ public class CourseExecution implements DomainEntity {
     public int getNumberOfActiveTeachers() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(User.Role.TEACHER) &&
-                                (user.getAuthUser() == null || user.getAuthUser().isActive()))
+                        user.getRole().equals(Role.TEACHER) &&
+                                (!user.isAuthenticated() || user.isActive()))
                 .count();
     }
 
     public int getNumberofInactiveTeachers() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(User.Role.TEACHER) &&
-                                (user.getAuthUser() == null || !user.getAuthUser().isActive()))
+                        user.getRole().equals(Role.TEACHER) &&
+                                (!user.isAuthenticated() || !user.isActive()))
                 .count();
     }
 
     public int getNumberOfActiveStudents() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(User.Role.STUDENT) &&
-                                (user.getAuthUser() == null || user.getAuthUser().isActive()))
+                        user.getRole().equals(Role.STUDENT) &&
+                                (!user.isAuthenticated() || user.isActive()))
                 .count();
     }
 
     public int getNumberOfInactiveStudents() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(User.Role.STUDENT) &&
-                                (user.getAuthUser() == null || !user.getAuthUser().isActive()))
+                        user.getRole().equals(Role.STUDENT) &&
+                                (!user.isAuthenticated() || !user.isActive()))
                 .count();
     }
 
@@ -258,7 +259,7 @@ public class CourseExecution implements DomainEntity {
 
     public Set<User> getStudents() {
         return getUsers().stream()
-                .filter(user -> user.getRole().equals(User.Role.STUDENT))
+                .filter(user -> user.getRole().equals(Role.STUDENT))
                 .collect(Collectors.toSet());
     }
 
@@ -288,7 +289,7 @@ public class CourseExecution implements DomainEntity {
 
     public Set<User> getTeachers() {
         return getUsers().stream()
-                .filter(user -> user.getRole().equals(User.Role.TEACHER))
+                .filter(user -> user.getRole().equals(Role.TEACHER))
                 .collect(Collectors.toSet());
     }
 

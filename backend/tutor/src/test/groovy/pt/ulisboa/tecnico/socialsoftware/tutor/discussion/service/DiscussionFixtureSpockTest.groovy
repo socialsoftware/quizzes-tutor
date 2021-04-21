@@ -2,11 +2,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.service
 
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.DiscussionDto
@@ -31,7 +31,7 @@ class DiscussionFixtureSpockTest extends SpockTest {
     def defineBaseFixture() {
         createExternalCourseAndExecution()
 
-        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, false)
         userRepository.save(student)
         courseExecution = courseExecutionRepository.findAll().get(0)
 
