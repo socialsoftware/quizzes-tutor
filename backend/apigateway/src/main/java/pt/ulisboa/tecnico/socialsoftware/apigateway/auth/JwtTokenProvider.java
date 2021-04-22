@@ -8,7 +8,6 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.UserSecurityInfo;
 import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 
@@ -19,7 +18,7 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.USER_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.AUTHUSER_NOT_FOUND;
 
 @Component
 public class JwtTokenProvider {
@@ -76,13 +75,13 @@ public class JwtTokenProvider {
         }
         return "";
     }
-    static int getUserId(String token) {
+    static int getAuthUserId(String token) {
         return Integer.parseInt(Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody().getSubject());
     }
 
     Authentication getAuthentication(String token) {
-        int authUserId = getUserId(token);
-        AuthUser authUser = this.authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, authUserId));
+        int authUserId = getAuthUserId(token);
+        AuthUser authUser = this.authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(AUTHUSER_NOT_FOUND, authUserId));
         return new UsernamePasswordAuthenticationToken(authUser, "", authUser.getAuthorities());
     }
 }
