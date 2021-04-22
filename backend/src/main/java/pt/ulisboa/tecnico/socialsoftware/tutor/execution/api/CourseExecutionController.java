@@ -7,6 +7,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -49,17 +50,17 @@ public class CourseExecutionController {
     @GetMapping("/executions")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
     public List<CourseExecutionDto> getCourseExecutions(Principal principal) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        if (user == null) {
+        if (authUser == null) {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
         User.Role role;
-        if (user.isAdmin()) {
+        if (authUser.getUser().isAdmin()) {
             role = User.Role.ADMIN;
         } else {
-            role = user.getRole();
+            role = authUser.getUser().getRole();
         }
 
         return courseExecutionService.getCourseExecutions(role);
@@ -88,7 +89,7 @@ public class CourseExecutionController {
     public CourseExecutionDto activateCourseExecution(Authentication authentication, @RequestBody CourseExecutionDto courseExecutionDto) {
         CourseExecutionDto result = courseExecutionService.createTecnicoCourseExecution(courseExecutionDto);
 
-        String username = ((User) authentication.getPrincipal()).getUsername();
+        String username = ((AuthUser) authentication.getPrincipal()).getUser().getUsername();
 
         // it may abort due to a failure, but the previous transaction is idempotent
         courseExecutionService.addUserToTecnicoCourseExecution(username, result.getCourseExecutionId());

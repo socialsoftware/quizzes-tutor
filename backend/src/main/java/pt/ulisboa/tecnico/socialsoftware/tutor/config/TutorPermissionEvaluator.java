@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
@@ -68,8 +69,8 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
-        User user = ((User) authentication.getPrincipal());
-        int userId = user.getId();
+        AuthUser authUser = ((AuthUser) authentication.getPrincipal());
+        int userId = authUser.getUser().getId();
 
         if (targetDomainObject instanceof CourseExecutionDto) {
             CourseExecutionDto courseExecutionDto = (CourseExecutionDto) targetDomainObject;
@@ -130,14 +131,14 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                 case "TOURNAMENT.OWNER":
                     Tournament tournament = tournamentRepository.findById(id).orElse(null);
                     if (tournament != null) {
-                        return tournament.isCreator(user);
+                        return tournament.isCreator(authUser.getUser());
                     }
                     return false;
                 case "SUBMISSION.ACCESS":
                     QuestionSubmission questionSubmission = questionSubmissionRepository.findById(id).orElse(null);
                     if (questionSubmission != null) {
                         boolean hasCourseExecutionAccess = userHasThisExecution(userId, questionSubmission.getCourseExecution().getId());
-                        if (user.getRole() == User.Role.STUDENT) {
+                        if (authUser.getUser().getRole() == User.Role.STUDENT) {
                             return hasCourseExecutionAccess && questionSubmission.getSubmitter().getId() == userId;
                         } else {
                             return hasCourseExecutionAccess;
@@ -152,7 +153,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     return discussion != null && discussion.getUser().getId().equals(userId);
                 case "DISCUSSION.ACCESS":
                     discussion = discussionRepository.findById(id).orElse(null);
-                    return discussion != null && user.isTeacher() && userHasThisExecution(userId, discussion.getCourseExecution().getId());
+                    return discussion != null && authUser.getUser().isTeacher() && userHasThisExecution(userId, discussion.getCourseExecution().getId());
                 case "REPLY.ACCESS":
                     Reply reply = replyRepository.findById(id).orElse(null);
                     return reply != null && userHasThisExecution(userId, reply.getDiscussion().getCourseExecution().getId());

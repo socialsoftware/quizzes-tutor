@@ -1,14 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
-import io.jsonwebtoken.*;
+import io.jsonwebtoken.Claims;
+import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.KeyPair;
@@ -17,18 +18,18 @@ import java.security.PrivateKey;
 import java.security.PublicKey;
 import java.util.Date;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHUSER_NOT_FOUND;
 
 @Component
 public class JwtTokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
-    private UserRepository userRepository;
+    private AuthUserRepository authUserRepository;
     private static PublicKey publicKey;
     private static PrivateKey privateKey;
 
-    public JwtTokenProvider(UserRepository userRepository) {
-        this.userRepository = userRepository;
+    public JwtTokenProvider(AuthUserRepository authUserRepository) {
+        this.authUserRepository = authUserRepository;
     }
 
     public static void generateKeys() {
@@ -43,13 +44,13 @@ public class JwtTokenProvider {
         }
     }
 
-    static String generateToken(User user) {
+    static String generateToken(AuthUser authUser) {
         if (publicKey == null) {
             generateKeys();
         }
 
-        Claims claims = Jwts.claims().setSubject(String.valueOf(user.getId()));
-        claims.put("role", user.getRole());
+        Claims claims = Jwts.claims().setSubject(String.valueOf(authUser.getId()));
+        claims.put("role", authUser.getUser().getRole());
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 1000*60*60*24);
@@ -74,12 +75,13 @@ public class JwtTokenProvider {
         }
         return "";
     }
-    static int getUserId(String token) {
+    static int getAuthUserId(String token) {
         return Integer.parseInt(Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody().getSubject());
     }
 
     Authentication getAuthentication(String token) {
-        User user = this.userRepository.findById(getUserId(token)).orElseThrow(() -> new TutorException(USER_NOT_FOUND, getUserId(token)));
-        return new UsernamePasswordAuthenticationToken(user, "", user.getAuthUser().getAuthorities());
+        int authUserId = getAuthUserId(token);
+        AuthUser authUser = this.authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(AUTHUSER_NOT_FOUND, authUserId));
+        return new UsernamePasswordAuthenticationToken(authUser, "", authUser.getAuthorities());
     }
 }

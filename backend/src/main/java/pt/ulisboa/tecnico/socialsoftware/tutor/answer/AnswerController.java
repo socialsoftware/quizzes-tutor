@@ -5,6 +5,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
@@ -20,41 +21,41 @@ public class AnswerController {
     @GetMapping("/executions/{executionId}/quizzes/available")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<QuizDto> getAvailableQuizzes(Principal principal, @PathVariable int executionId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        return answerService.getAvailableQuizzes(user.getId(), executionId);
+        return answerService.getAvailableQuizzes(authUser.getUser().getId(), executionId);
     }
 
     @PostMapping("/executions/{executionId}/quizzes/generate")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public StatementQuizDto getNewQuiz(Principal principal, @PathVariable int executionId, @RequestBody StatementCreationDto quizDetails) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        return answerService.generateStudentQuiz(user.getId(), executionId, quizDetails);
+        return answerService.generateStudentQuiz(authUser.getUser().getId(), executionId, quizDetails);
     }
 
     @GetMapping("/executions/{executionId}/quizzes/solved")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<SolvedQuizDto> getSolvedQuizzes(Principal principal, @PathVariable int executionId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        return answerService.getSolvedQuizzes(user.getId(), executionId);
+        return answerService.getSolvedQuizzes(authUser.getUser().getId(), executionId);
     }
 
     @GetMapping("/quizzes/{quizId}/byqrcode")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuizDto getQuizByQRCode(Principal principal, @PathVariable int quizId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        return answerService.getQuizByQRCode(user.getId(), quizId);
+        return answerService.getQuizByQRCode(authUser.getUser().getId(), quizId);
     }
 
     @GetMapping("/quizzes/{quizId}/start")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuizDto startQuiz(Principal principal, @PathVariable int quizId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        return answerService.startQuiz(user.getId(), quizId);
+        return answerService.startQuiz(authUser.getUser().getId(), quizId);
     }
 
     @GetMapping("/quizzes/{quizId}/question/{questionId}")
@@ -66,9 +67,9 @@ public class AnswerController {
     @PostMapping("/quizzes/{quizId}/submit")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        answerService.submitAnswer(user.getUsername(), quizId, answer);
+        answerService.submitAnswer(authUser.getUser().getUsername(), quizId, answer);
     }
 
     @PostMapping("/quizzes/{quizId}/conclude")

@@ -70,9 +70,9 @@ public class AuthUserService {
         authUser.setLastAccess(DateHandler.now());
 
         if (authUser.getUser().isTeacher()) {
-            return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser, fenix.getPersonTeachingCourses()));
+            return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser, fenix.getPersonTeachingCourses()));
         } else {
-            return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
+            return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser));
         }
     }
 
@@ -159,7 +159,7 @@ public class AuthUserService {
         }
         authUser.setLastAccess(DateHandler.now());
 
-        return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser));
     }
 
     @Retryable(
@@ -176,7 +176,7 @@ public class AuthUserService {
         else {
             authUser = userService.createDemoStudent();
         }
-        return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser));
     }
 
     @Retryable(
@@ -187,7 +187,7 @@ public class AuthUserService {
     public AuthDto demoTeacherAuth() {
         AuthUser authUser = getDemoTeacher();
 
-        return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser));
     }
 
     @Retryable(
@@ -198,7 +198,7 @@ public class AuthUserService {
     public AuthDto demoAdminAuth() {
         AuthUser authUser = getDemoAdmin();
 
-        return new AuthDto(JwtTokenProvider.generateToken(authUser.getUser()), new AuthUserDto(authUser));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser));
     }
 
     private List<CourseExecution> getActiveTecnicoCourses(List<CourseExecutionDto> courses) {
