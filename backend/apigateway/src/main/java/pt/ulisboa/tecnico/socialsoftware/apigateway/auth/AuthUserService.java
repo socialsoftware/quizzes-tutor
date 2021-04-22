@@ -326,7 +326,7 @@ public class AuthUserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public String getEnrolledCoursesAcronyms(int userId) {
-        AuthUser authUser = authUserRepository.findAuthUserById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        AuthUser authUser = authUserRepository.findAuthUserById(userId).orElseThrow(() -> new TutorException(AUTHUSER_BY_USERID_NOT_FOUND, userId));
         return authUser.getEnrolledCoursesAcronyms();
     }
 

@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
@@ -77,8 +78,11 @@ public class UserService {
                 .stream()
                 .filter(User::isDemoStudent)
                 .forEach(user -> {
+                    Integer userId = user.getId();
                     user.remove();
                     this.userRepository.delete(user);
+                    DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(userId);
+                    eventBus.post(deleteAuthUser);
                 });
     }
 }

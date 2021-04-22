@@ -203,4 +203,18 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         }
         return key;
     }
+
+    @Override
+    public String toString() {
+        return "AuthUser{" +
+                "id=" + id +
+                ", key=" + key +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", username='" + username + '\'' +
+                ", lastAccess=" + lastAccess +
+                ", userSecurityInfo=" + userSecurityInfo +
+                ", userCourseExecutions=" + userCourseExecutions +
+                '}';
+    }
 }

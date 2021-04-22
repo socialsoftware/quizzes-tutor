@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
@@ -44,14 +45,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import spock.lang.Shared
 import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-@ActiveProfiles("test")
-class SpockTest extends Specification {
+@ActiveProfiles("test-int")
+class SpockTestIT extends Specification {
+
 
     @Value('${spring.mail.username}')
     public String mailerUsername

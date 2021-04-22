@@ -4,10 +4,11 @@ import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetDemoAuthWebServiceIT extends SpockTest {
+class GetDemoAuthWebServiceIT extends SpockTestIT {
 
     @LocalServerPort
     private int port

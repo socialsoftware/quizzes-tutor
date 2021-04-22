@@ -4,10 +4,11 @@ import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
 
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ExportCourseExecutionInfoWebServiceIT extends SpockTest {
+class ExportCourseExecutionInfoWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 

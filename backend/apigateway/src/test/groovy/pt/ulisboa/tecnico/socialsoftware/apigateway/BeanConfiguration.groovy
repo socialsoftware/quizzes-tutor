@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.apigateway
 
-import com.google.common.eventbus.EventBus
+
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -9,7 +9,6 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import org.springframework.test.context.ActiveProfiles
 import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
@@ -25,7 +24,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")
-@ActiveProfiles("test")
 class BeanConfiguration {
 
     @Value('${spring.mail.host}')
@@ -140,8 +138,8 @@ class BeanConfiguration {
         return mailSender;
     }
 
-    @Bean
+    /*@Bean
     EventBus eventBus() {
         return new EventBus()
-    }
+    }*/
 }

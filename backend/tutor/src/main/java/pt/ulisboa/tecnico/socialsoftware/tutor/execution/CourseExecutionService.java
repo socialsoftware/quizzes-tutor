@@ -273,6 +273,9 @@ public class CourseExecutionService {
                     .orElseThrow(() -> new TutorException((USER_NOT_FOUND)));
             user.remove();
             userRepository.delete(user);
+
+            DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(id);
+            eventBus.post(deleteAuthUser);
         }
     }
 
@@ -291,4 +294,15 @@ public class CourseExecutionService {
         }
     }
 
+    @Override
+    public String toString() {
+        return "CourseExecutionService{" +
+                "questionService=" + questionService +
+                ", courseRepository=" + courseRepository +
+                ", courseExecutionRepository=" + courseExecutionRepository +
+                ", userRepository=" + userRepository +
+                ", questionAnswerItemRepository=" + questionAnswerItemRepository +
+                ", eventBus=" + eventBus +
+                '}';
+    }
 }
