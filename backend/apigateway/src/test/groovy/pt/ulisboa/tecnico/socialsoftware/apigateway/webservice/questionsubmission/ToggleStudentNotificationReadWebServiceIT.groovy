@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.apigateway.webservice.questionsubmissi
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.AuthTecnicoUser
 import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.UserSecurityInfo
@@ -12,7 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.MultipleChoiceQues
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
-import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -42,7 +40,7 @@ class ToggleStudentNotificationReadWebServiceIT extends SpockTestIT {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.STUDENT, false)
+        student = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
         student.setActive(true)
         student.addCourse(courseExecution)
         userRepository.save(student)
@@ -53,7 +51,7 @@ class ToggleStudentNotificationReadWebServiceIT extends SpockTestIT {
         courseExecution.addUser(student)
         authUserRepository.save(authStudent)
 
-        teacher = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, Role.TEACHER, false)
+        teacher = new User(USER_2_NAME, USER_2_EMAIL, Role.TEACHER, false)
         teacher.setActive(true)
         teacher.addCourse(courseExecution)
         userRepository.save(teacher)

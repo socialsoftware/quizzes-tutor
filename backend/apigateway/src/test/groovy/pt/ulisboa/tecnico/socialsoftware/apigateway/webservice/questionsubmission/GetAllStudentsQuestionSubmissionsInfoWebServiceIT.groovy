@@ -41,7 +41,7 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTestIT {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        student1 = new User(USER_3_NAME, USER_3_EMAIL, USER_3_EMAIL, Role.STUDENT, false)
+        student1 = new User(USER_3_NAME, USER_3_EMAIL, Role.STUDENT, false)
         student1.setActive(true)
         student1.addCourse(courseExecution)
         userRepository.save(student1)
@@ -51,7 +51,7 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTestIT {
         courseExecution.addUser(student1)
         authUserRepository.save(authStudent1)
 
-        student2 = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, Role.STUDENT, false)
+        student2 = new User(USER_2_NAME, USER_2_EMAIL, Role.STUDENT, false)
         student2.setActive(true)
         student2.addCourse(courseExecution)
         userRepository.save(student2)
@@ -73,7 +73,7 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTestIT {
         questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
         questionDto.getQuestionDetailsDto().setOptions(options)
 
-        teacher = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.TEACHER, false)
+        teacher = new User(USER_1_NAME, USER_1_EMAIL, Role.TEACHER, false)
         teacher.setActive(true)
         teacher.addCourse(courseExecution)
         userRepository.save(teacher)

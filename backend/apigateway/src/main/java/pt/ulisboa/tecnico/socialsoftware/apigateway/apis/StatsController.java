@@ -27,10 +27,6 @@ public class StatsController {
     public StatsDto getStats(Principal principal, @PathVariable int executionId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        if (authUser.getUserSecurityInfo() == null) {
-            throw new TutorException(AUTHENTICATION_ERROR);
-        }
-
         return statsService.getStats(authUser.getUserSecurityInfo().getId(), executionId);
     }
 }

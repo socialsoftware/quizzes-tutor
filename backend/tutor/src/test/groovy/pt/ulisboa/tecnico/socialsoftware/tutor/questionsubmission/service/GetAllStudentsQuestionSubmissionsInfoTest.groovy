@@ -21,13 +21,13 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        student1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
+        student1 = new User(USER_1_NAME, USER_1_USERNAME,
                 Role.STUDENT, false)
         userRepository.save(student1)
-        student2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
+        student2 = new User(USER_2_NAME, USER_2_USERNAME,
                 Role.STUDENT, false)
         userRepository.save(student2)
-        student3 = new User(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL,
+        student3 = new User(USER_3_NAME, USER_3_USERNAME,
                 Role.STUDENT, false)
         userRepository.save(student3)
         externalCourseExecution.addUser(student1)

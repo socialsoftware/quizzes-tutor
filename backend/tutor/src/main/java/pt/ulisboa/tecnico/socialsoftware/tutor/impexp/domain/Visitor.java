@@ -22,7 +22,7 @@ public interface Visitor {
     default void visitQuizQuestion(QuizQuestion quizQuestion) {}
 
     default void visitUser(User user) {}
-
+    //TODO: Uncomment when export works again
     //default void visitAuthUser(AuthUser authUser) {}
 
     default void visitQuizAnswer(QuizAnswer quizAnswer) {}

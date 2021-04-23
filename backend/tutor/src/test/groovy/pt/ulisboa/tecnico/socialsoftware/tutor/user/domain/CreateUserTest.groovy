@@ -22,7 +22,7 @@ class CreateUserTest extends SpockTest {
 
     def "create Tecnico User: name, username, email, role, state, admin" () {
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, false)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
 
         then:
         result.getName() == USER_1_NAME
@@ -33,7 +33,7 @@ class CreateUserTest extends SpockTest {
 
     def "create External User: name, username, email, role, state, admin" () {
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, false)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
 
         then:
         result.getName() == USER_1_NAME
@@ -44,7 +44,7 @@ class CreateUserTest extends SpockTest {
 
     def "create Demo User: name, username, email, role, state, admin" () {
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, false)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
 
         then:
         result.getName() == USER_1_NAME

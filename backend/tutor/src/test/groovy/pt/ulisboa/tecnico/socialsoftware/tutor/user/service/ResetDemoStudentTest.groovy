@@ -28,10 +28,10 @@ class ResetDemoStudentTest extends SpockTest {
     def "reset all demo students"() {
         given:
         def birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
-        def user1 = new User("Demo-Student-" + birthDate, "Demo-Student-" + birthDate,
-                USER_1_EMAIL, Role.STUDENT, false)
+        def user1 = new User("Demo-Student-" + birthDate, "Demo-Student-" + birthDate
+                , Role.STUDENT, false)
         userRepository.save(user1)
-        def user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
+        def user2 = new User(USER_2_NAME, USER_2_USERNAME,
                 Role.STUDENT, false)
         userRepository.save(user2)
 

@@ -85,7 +85,6 @@ public class AuthExternalUser extends AuthUser {
 
     public ExternalUserDto getDto() {
         ExternalUserDto dto = new ExternalUserDto();
-        dto.setKey(getKey());
         dto.setId(getId());
         dto.setName(getUserSecurityInfo().getName());
         dto.setUsername(getUsername());

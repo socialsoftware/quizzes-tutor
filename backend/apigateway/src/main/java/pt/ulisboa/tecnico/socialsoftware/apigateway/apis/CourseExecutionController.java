@@ -93,6 +93,7 @@ public class CourseExecutionController {
 
         Integer userId = ((AuthUser) authentication.getPrincipal()).getUserSecurityInfo().getId();
 
+        // it may abort due to a failure, but the previous transaction is idempotent
         courseExecutionService.addUserToTecnicoCourseExecution(userId, result.getCourseExecutionId());
 
         return result;

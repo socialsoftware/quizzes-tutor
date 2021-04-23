@@ -24,7 +24,7 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.U
 @Component
 public class UsersXmlImport {
 	private UserService userService;
-
+	//TODO: Uncomment when export works again
 	/*public void importUsers(InputStream inputStream, UserService userService) {
 		this.userService = userService;
 

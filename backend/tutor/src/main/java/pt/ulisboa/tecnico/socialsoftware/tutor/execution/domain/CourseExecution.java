@@ -220,32 +220,28 @@ public class CourseExecution implements DomainEntity {
     public int getNumberOfActiveTeachers() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(Role.TEACHER) &&
-                                (!user.isAuthenticated() || user.isActive()))
+                        user.getRole().equals(Role.TEACHER) && user.isActive())
                 .count();
     }
 
     public int getNumberofInactiveTeachers() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(Role.TEACHER) &&
-                                (!user.isAuthenticated() || !user.isActive()))
+                        user.getRole().equals(Role.TEACHER) && !user.isActive())
                 .count();
     }
 
     public int getNumberOfActiveStudents() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(Role.STUDENT) &&
-                                (!user.isAuthenticated() || user.isActive()))
+                        user.getRole().equals(Role.STUDENT) && user.isActive())
                 .count();
     }
 
     public int getNumberOfInactiveStudents() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(Role.STUDENT) &&
-                                (!user.isAuthenticated() || !user.isActive()))
+                        user.getRole().equals(Role.STUDENT) && !user.isActive())
                 .count();
     }
 

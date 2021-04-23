@@ -13,6 +13,7 @@ class ImportExportUsersTest extends SpockTest {
         createExternalCourseAndExecution()
     }
 
+    //TODO: Uncomment when export works again
     /*def 'export and import with a AuthUser'() {
         given: 'two users with a auth user'
         def existingUsers = userRepository.findAll().size()

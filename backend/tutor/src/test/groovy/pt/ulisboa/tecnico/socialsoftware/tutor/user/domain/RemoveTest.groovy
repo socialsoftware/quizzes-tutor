@@ -16,7 +16,7 @@ class RemoveTest extends SpockTest {
     def user
 
     def setup() {
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
         user.setActive(false)
         userRepository.save(user)
     }

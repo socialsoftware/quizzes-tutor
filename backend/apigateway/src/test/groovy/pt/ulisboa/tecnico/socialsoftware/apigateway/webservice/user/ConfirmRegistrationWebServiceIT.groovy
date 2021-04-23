@@ -34,7 +34,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
 
     def "user confirms registration"() {
         given: "one inactive user"
-        user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
         userRepository.save(user)
@@ -65,14 +65,14 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
         response.data.role == "STUDENT"
         
         cleanup:
-        courseExecution.getUsers().remove(userRepository.findById(response.data.key).get())
+        courseExecution.getUsers().remove(userRepository.findById(response.data.id).get())
         authUserRepository.delete(authUserRepository.findAuthUserByUsername(response.data.username).get())
-        userRepository.delete(userRepository.findById(response.data.key).get())
+        userRepository.delete(userRepository.findById(response.data.id).get())
     }
 
     def "user tries to confirm registration with an expired token"() {
         given: "one inactive user with an expired token"
-        user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
         userRepository.save(user)
@@ -103,9 +103,9 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
         response.data.role == "STUDENT"
 
         cleanup:
-        courseExecution.getUsers().remove(userRepository.findById(response.data.key).get())
+        courseExecution.getUsers().remove(userRepository.findById(response.data.id).get())
         authUserRepository.delete(authUserRepository.findAuthUserByUsername(response.data.username).get())
-        userRepository.delete(userRepository.findById(response.data.key).get())
+        userRepository.delete(userRepository.findById(response.data.id).get())
     }
 
     def cleanup() {

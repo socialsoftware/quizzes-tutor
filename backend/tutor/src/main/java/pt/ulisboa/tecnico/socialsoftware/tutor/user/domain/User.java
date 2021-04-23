@@ -45,13 +45,8 @@ public class User implements DomainEntity {
     @Column(columnDefinition = "boolean default false")
     private Boolean admin;
 
-    private String email;
-
     @Column(columnDefinition = "boolean default false")
     private Boolean active;
-
-    @Column(columnDefinition = "boolean default false")
-    private Boolean authenticated;
 
     private String username;
 
@@ -89,15 +84,12 @@ public class User implements DomainEntity {
     public User() {
     }
 
-    public User(String name, String username, String email, Role role, boolean isAdmin){
+    public User(String name, String username, Role role, boolean isAdmin){
         setName(name);
         setRole(role);
         setAdmin(isAdmin);
         setCreationDate(DateHandler.now());
         setUsername(username);
-        setEmail(email);
-        // used to signal the creation of a authUser for this user
-        setAuthenticated(true);
     }
 
     public User(String name, Role role, boolean isAdmin){
@@ -105,7 +97,6 @@ public class User implements DomainEntity {
         setRole(role);
         setAdmin(isAdmin);
         setCreationDate(DateHandler.now());
-        setAuthenticated(false);
     }
 
     @Override
@@ -163,7 +154,7 @@ public class User implements DomainEntity {
     }
 
     public String getUsername() {
-        if (!isAuthenticated()) {
+        if (username == null) {
             return String.format("%s-%s", getRole().toString().toLowerCase(), getId());
         }
         return username;
@@ -228,10 +219,6 @@ public class User implements DomainEntity {
 
     public void setQuestionSubmissions(Set<QuestionSubmission> questionSubmissions) { 
         this.questionSubmissions = questionSubmissions; 
-    }
-    
-    public String getEmail() {
-        return email;
     }
 
     public Integer getNumberOfTeacherQuizzes() {
@@ -378,27 +365,12 @@ public class User implements DomainEntity {
         this.reviews = reviews;
     }
 
-    public void setEmail(String email) {
-        if (email == null || !email.matches(UserService.MAIL_FORMAT))
-            throw new TutorException(INVALID_EMAIL, email);
-
-        this.email = email;
-    }
-
     public boolean isActive() {
         return active;
     }
 
     public void setActive(boolean active) {
         this.active = active;
-    }
-
-    public boolean isAuthenticated() {
-        return authenticated;
-    }
-
-    public void setAuthenticated(boolean authenticated) {
-        this.authenticated = authenticated;
     }
 
     @Override
@@ -545,7 +517,7 @@ public class User implements DomainEntity {
     }
 
     public void remove() {
-        if (isAuthenticated() && !isDemoStudent() && isActive()) {
+        if (!isDemoStudent() && isActive()) {
                 throw new TutorException(USER_IS_ACTIVE, getUsername());
         }
         //if user is not active does it matter to check ?
@@ -573,7 +545,6 @@ public class User implements DomainEntity {
         UserDto dto = new UserDto();
         dto.setId(getId());
         dto.setUsername(getUsername());
-        dto.setEmail(getEmail());
         dto.setName(getName());
         dto.setRole(getRole().toString());
         dto.setActive(isActive());

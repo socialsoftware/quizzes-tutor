@@ -64,9 +64,6 @@ public class QuestionSubmissionController {
     public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Principal principal, @Valid @PathVariable int executionId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        if (authUser.getUserSecurityInfo() == null)
-            throw new TutorException(AUTHENTICATION_ERROR);
-
         return questionSubmissionService.getStudentQuestionSubmissions(authUser.getUserSecurityInfo().getId(), executionId);
     }
 

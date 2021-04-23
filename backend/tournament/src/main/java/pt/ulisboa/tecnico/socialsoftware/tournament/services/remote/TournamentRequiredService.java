@@ -19,7 +19,6 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.api.MonolithService;
 
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.USER_NOT_FOUND;

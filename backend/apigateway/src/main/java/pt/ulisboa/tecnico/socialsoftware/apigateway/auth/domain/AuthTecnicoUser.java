@@ -17,7 +17,6 @@ public class AuthTecnicoUser extends AuthUser {
         super(userSecurityInfo, username, email);
     }
 
-    @Override
     public String getEnrolledCoursesAcronyms() {
         return enrolledCoursesAcronyms;
     }

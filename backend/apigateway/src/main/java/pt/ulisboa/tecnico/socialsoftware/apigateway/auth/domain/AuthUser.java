@@ -30,9 +30,6 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true)
-    private Integer key;
-
     private String email;
     private String password;
 
@@ -137,10 +134,6 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
 
     public abstract Type getType();
 
-    public String getEnrolledCoursesAcronyms() {
-        return "";
-    }
-
     public void checkRole(boolean isActive) {
         if (!isActive && !(userSecurityInfo.getRole().equals(Role.STUDENT) || userSecurityInfo.getRole().equals(Role.TEACHER))) {
             throw new TutorException(INVALID_ROLE, userSecurityInfo.getRole().toString());
@@ -197,18 +190,10 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         getUserCourseExecutions().add(courseExecutionId);
     }
 
-    public Integer getKey() {
-        if (this.key == null) {
-            this.key = getUserSecurityInfo().getId();
-        }
-        return key;
-    }
-
     @Override
     public String toString() {
         return "AuthUser{" +
                 "id=" + id +
-                ", key=" + key +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", username='" + username + '\'' +

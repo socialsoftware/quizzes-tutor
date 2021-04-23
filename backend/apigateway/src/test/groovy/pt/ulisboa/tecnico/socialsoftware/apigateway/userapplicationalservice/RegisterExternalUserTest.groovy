@@ -45,7 +45,7 @@ class RegisterExternalUserTest extends SpockTest {
         externalUserDto.setEmail(USER_1_EMAIL)
         externalUserDto.setRole(Role.STUDENT)
         and: "an already created user"
-        def user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.STUDENT, false)
+        def user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
         user.setActive(true)
         userRepository.save(user)
         def authUser = new AuthExternalUser(new UserSecurityInfo(user.getId(), USER_1_NAME, Role.STUDENT, false), USER_1_EMAIL, USER_1_EMAIL)
@@ -96,7 +96,7 @@ class RegisterExternalUserTest extends SpockTest {
 
     def "the course execution exists, the user exists but he's not enrolled and enroll him in the course execution"() {
         given: "a user"
-        def user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.STUDENT, false)
+        def user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
         user.setActive(true)
         userRepository.save(user)
         def authUser = new AuthExternalUser(new UserSecurityInfo(user.getId(), USER_1_NAME, Role.STUDENT, false), USER_1_EMAIL, USER_1_EMAIL)

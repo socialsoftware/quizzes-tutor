@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.apigateway.webservice.questionsubmissi
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.UserSecurityInfo
@@ -39,7 +38,7 @@ class ToggleTeacherNotificationReadWebServiceIT extends SpockTestIT {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        student = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.STUDENT, false)
+        student = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         student.setActive(false)

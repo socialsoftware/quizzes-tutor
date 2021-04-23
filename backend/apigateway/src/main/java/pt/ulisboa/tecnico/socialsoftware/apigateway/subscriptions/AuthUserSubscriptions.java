@@ -37,11 +37,14 @@ public class AuthUserSubscriptions {
     public void deleteAuthUser(DeleteAuthUserEvent event) {
         logger.info("Received deleteAuthUser event!\n");
         AuthUser authUser = authUserRepository.findAuthUserById(event.getUserId())
-                .orElseThrow(() -> new TutorException(AUTHUSER_BY_USERID_NOT_FOUND, event.getUserId()));
+                // Does not throw exception because when we anonymize users,
+                // events are sent even if authUser does not exist
+                .orElse(null);
 
-        logger.info(authUser.toString() + "\n");
-
-        authUser.remove();
-        authUserRepository.delete(authUser);
+        if (authUser != null) {
+            logger.info(authUser + "\n");
+            authUser.remove();
+            authUserRepository.delete(authUser);
+        }
     }
 }

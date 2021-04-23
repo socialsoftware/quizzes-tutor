@@ -29,7 +29,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
@@ -187,7 +186,7 @@ public class AuthUserService {
             throw new TutorException(DUPLICATE_USER, username);
         }
 
-        User user = new User(name, username, email, role, false);
+        User user = new User(name, username, role, false);
         user.setActive(type != AuthUser.Type.EXTERNAL);
         userRepository.save(user);
 
@@ -325,12 +324,6 @@ public class AuthUserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public String getEnrolledCoursesAcronyms(int userId) {
-        AuthUser authUser = authUserRepository.findAuthUserById(userId).orElseThrow(() -> new TutorException(AUTHUSER_BY_USERID_NOT_FOUND, userId));
-        return authUser.getEnrolledCoursesAcronyms();
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean userHasAnExecutionOfCourse(int userId, int courseId) {
         return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId))
                 .getCourseExecutions()
@@ -451,7 +444,7 @@ public class AuthUserService {
         return (AuthExternalUser) authUserRepository.findAuthUserByUsername(username)
                 .orElseGet(() -> {
                     User user = new User(externalUserDto.getName(),
-                            username, externalUserDto.getEmail(),
+                            username,
                             externalUserDto.getRole(), false);
                     user.setActive(false);
                     userRepository.save(user);
@@ -480,7 +473,7 @@ public class AuthUserService {
     }
 
 
-    // Was from user service
+    // TODO: Was from user service
     /*public String exportUsers() {
         UsersXmlExport xmlExporter = new UsersXmlExport();
         return xmlExporter.export(userRepository.findAll());

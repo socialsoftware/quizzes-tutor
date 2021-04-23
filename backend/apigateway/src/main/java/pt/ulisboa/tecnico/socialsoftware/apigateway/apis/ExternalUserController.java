@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
-public class UserController {
+public class ExternalUserController {
 
     @Autowired
     private UserApplicationalService userApplicationalService;

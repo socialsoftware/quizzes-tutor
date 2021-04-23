@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.apigateway.webservice.auth
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.UserSecurityInfo
@@ -34,7 +33,7 @@ class GetExternalUserAuthWebServiceIT extends SpockTestIT {
 
     def "external user makes a login"() {
         given: "one inactive user with an expired "
-        user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
         user.setActive(false)
@@ -57,13 +56,13 @@ class GetExternalUserAuthWebServiceIT extends SpockTestIT {
         then: "check response status"
         response.status == 200
         response.data.token != ""
-        response.data.user.key != null
+        response.data.user.id != null
         response.data.user.username == USER_1_EMAIL
         
         cleanup:
-        courseExecution.getUsers().remove(userRepository.findById(response.data.user.key).get())
+        courseExecution.getUsers().remove(userRepository.findById(user.getId()).get())
         authUserRepository.delete(authUserRepository.findAuthUserByUsername(response.data.user.username).get())
-        userRepository.delete(userRepository.findById(response.data.user.key).get())
+        userRepository.delete(userRepository.findById(user.getId()).get())
     }
 
     def cleanup() {

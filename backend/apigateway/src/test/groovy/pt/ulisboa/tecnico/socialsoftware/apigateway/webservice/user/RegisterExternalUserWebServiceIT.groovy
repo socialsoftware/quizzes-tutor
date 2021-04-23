@@ -54,7 +54,7 @@ class RegisterExternalUserWebServiceIT extends SpockTestIT {
         courseExecutionRepository.delete(courseExecution1)
         courseRepository.delete(course1)
         authUserRepository.delete(authUserRepository.findAuthUserByUsername(response.data.username).get())
-        def user = userRepository.findById(response.data.key).get()
+        def user = userRepository.findById(response.data.id).get()
         userRepository.delete(user)
     }
 

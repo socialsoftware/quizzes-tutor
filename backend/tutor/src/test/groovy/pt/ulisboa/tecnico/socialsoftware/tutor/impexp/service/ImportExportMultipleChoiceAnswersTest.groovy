@@ -22,6 +22,7 @@ class ImportExportMultipleChoiceAnswersTest extends SpockTest {
     def quizAnswer
     def questionAnswer
 
+    //TODO: Uncomment when export works again
     /*def setup() {
         createExternalCourseAndExecution()
 
