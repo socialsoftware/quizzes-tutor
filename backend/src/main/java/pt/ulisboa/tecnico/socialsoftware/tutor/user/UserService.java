@@ -89,13 +89,6 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public String getEnrolledCoursesAcronyms(int userId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        AuthUser authUser = user.getAuthUser();
-        return authUser.getEnrolledCoursesAcronyms();
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean userHasAnExecutionOfCourse(int userId, int courseId) {
         return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId))
                 .getCourseExecutions()
