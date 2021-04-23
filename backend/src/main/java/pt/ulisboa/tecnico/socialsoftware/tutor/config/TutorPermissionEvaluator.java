@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
@@ -77,7 +78,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
             String permissionValue = (String) permission;
             switch (permissionValue) {
                 case "EXECUTION.CREATE":
-                    return userService.getEnrolledCoursesAcronyms(userId).contains(courseExecutionDto.getAcronym() + courseExecutionDto.getAcademicTerm());
+                    return ((AuthTecnicoUser)authUser).getEnrolledCoursesAcronyms().contains(courseExecutionDto.getAcronym() + courseExecutionDto.getAcademicTerm());
                 case "DEMO.ACCESS":
                     return courseExecutionDto.getName().equals("Demo Course");
                 default:

@@ -124,17 +124,11 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
 
     public abstract Type getType();
 
-    public String getEnrolledCoursesAcronyms() {
-        return "";
-    }
-
     public void checkRole(boolean isActive) {
         if (!isActive && !(user.getRole().equals(User.Role.STUDENT) || user.getRole().equals(User.Role.TEACHER))) {
             throw new TutorException(INVALID_ROLE, user.getRole().toString());
         }
     }
-
-
 
     @Override
     public void accept(Visitor visitor) {
