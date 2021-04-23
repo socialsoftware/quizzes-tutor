@@ -51,6 +51,8 @@ public enum ErrorMessage {
     TOPIC_CONJUNCTION_NOT_FOUND("Topic Conjunction not found with id %d"),
     TOPIC_NOT_FOUND("Topic not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
+    AUTHUSER_NOT_FOUND("AuthUser not found with id %d"),
+    AUTHUSER_BY_USERID_NOT_FOUND("AuthUser with userId %d not found"),
     EXTERNAL_USER_NOT_FOUND("User not found with username %s"),
     COURSE_NOT_FOUND("Course not found with name %s"),
     INVALID_COURSE("This is not an execution of course %s"),

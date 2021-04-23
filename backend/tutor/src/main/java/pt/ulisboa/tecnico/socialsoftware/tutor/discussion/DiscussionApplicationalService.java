@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.ReplyDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer;
 
 import java.util.ArrayList;
@@ -56,11 +56,11 @@ public class DiscussionApplicationalService {
         return discussionDto;
     }
 
-    public ReplyDto addReply(User user, int discussionId, ReplyDto replyDto) {
+    public ReplyDto addReply(Integer userId, Role role, int discussionId, ReplyDto replyDto) {
         DiscussionDto discussionDto = discussionService.findDiscussionById(discussionId, false);
-        List<UserDto> users = getUsersToSendEmail(user, discussionDto);
+        List<UserDto> users = getUsersToSendEmail(userId, role, discussionDto);
 
-        ReplyDto result = discussionService.addReply(user.getId(), discussionId, replyDto);
+        ReplyDto result = discussionService.addReply(userId, discussionId, replyDto);
 
         users.forEach(userDto -> {
             try {
@@ -78,12 +78,12 @@ public class DiscussionApplicationalService {
         return result;
     }
 
-    private List<UserDto> getUsersToSendEmail(User user, DiscussionDto discussionDto) {
+    private List<UserDto> getUsersToSendEmail(Integer userId, Role role, DiscussionDto discussionDto) {
         List<UserDto> users;
-        if (user.getRole().equals(User.Role.STUDENT)) {
+        if (role.equals(Role.STUDENT)) {
             users = courseExecutionService.getTeachers(discussionDto.getCourseExecutionId());
         } else {
-            UserDto userDto = userService.findUserByUsername(discussionDto.getUsername());
+            UserDto userDto = userService.findUserById(userId);
             users = new ArrayList<>();
             if (userDto != null) {
                 users.add(userDto);

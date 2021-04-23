@@ -13,6 +13,7 @@
         v-for="quiz in quizzes"
         :key="quiz.quizAnswerId"
         @click="solveQuiz(quiz)"
+        :disabled="disabled"
       >
         <div class="col">
           {{ quiz.title }}
@@ -40,6 +41,7 @@ import StatementQuiz from '@/models/statement/StatementQuiz';
 @Component
 export default class AvailableQuizzesView extends Vue {
   quizzes: StatementQuiz[] = [];
+  disabled: boolean = false;
 
   async created() {
     await this.$store.dispatch('loading');
@@ -52,13 +54,20 @@ export default class AvailableQuizzesView extends Vue {
   }
 
   async solveQuiz(quiz: StatementQuiz) {
-    let statementManager: StatementManager = StatementManager.getInstance;
+    if (!this.disabled) {
+      // handle double clicks
+      this.disabled = true;
 
-    try {
-      statementManager.statementQuiz = await RemoteServices.startQuiz(quiz.id);
-      await this.$router.push({ name: 'solve-quiz' });
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+      let statementManager: StatementManager = StatementManager.getInstance;
+
+      try {
+        statementManager.statementQuiz = await RemoteServices.startQuiz(
+          quiz.id
+        );
+        await this.$router.push({ name: 'solve-quiz' });
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
     }
   }
 }

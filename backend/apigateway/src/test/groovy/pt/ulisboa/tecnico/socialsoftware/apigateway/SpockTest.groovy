@@ -4,23 +4,45 @@ import groovyx.net.http.RESTClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.test.context.ActiveProfiles
+import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.TopicConjunctionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionDetailsRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import spock.lang.Shared
@@ -28,6 +50,7 @@ import spock.lang.Specification
 
 import java.time.LocalDateTime
 
+@ActiveProfiles("test")
 class SpockTest extends Specification {
 
     @Value('${spring.mail.username}')
@@ -105,6 +128,11 @@ class SpockTest extends Specification {
     public static final String ROLE_ADMIN = "ROLE_ADMIN"
     public static final String ROLE_DEMO_ADMIN = "ROLE_DEMO_ADMIN"
 
+    public static final String CSVFILE = System.getProperty("user.dir") + "/src/test/resources/importUsers.csv"
+    public static final String CSVBADFORMATFILE = System.getProperty("user.dir") + "/src/test/resources/csvBadFormatFile.csv"
+    public static final String CSVIMPORTUSERSBADROLEFORMAT = System.getProperty("user.dir") + "/src/test/resources/csvImportUsersBadRoleFormat.csv"
+    public static final int NUMBER_OF_USERS_IN_FILE = 5
+
     public static final int NUMBER_OF_QUESTIONS = 1
 
     public static final String REVIEW_1_COMMENT = "Review Comment 1"
@@ -146,6 +174,9 @@ class SpockTest extends Specification {
     AuthUserRepository authUserRepository
 
     @Autowired
+    AuthUserService authUserService
+
+    @Autowired
     QuestionSubmissionService questionSubmissionService
 
     @Autowired
@@ -153,6 +184,69 @@ class SpockTest extends Specification {
 
     @Autowired
     PasswordEncoder passwordEncoder
+
+    @Autowired
+    AnswerService answerService
+
+    @Autowired
+    AnswerDetailsRepository answerDetailsRepository
+
+    @Autowired
+    ImageRepository imageRepository
+
+    @Autowired
+    QuestionAnswerRepository questionAnswerRepository
+
+    @Autowired
+    QuestionAnswerItemRepository questionAnswerItemRepository
+
+    @Autowired
+    QuestionDetailsRepository questionDetailsRepository
+
+    @Autowired
+    QuestionService questionService
+
+    @Autowired
+    QuizAnswerRepository quizAnswerRepository
+
+    @Autowired
+    QuizAnswerItemRepository quizAnswerItemRepository
+
+    @Autowired
+    QuizQuestionRepository quizQuestionRepository
+
+    @Autowired
+    QuizRepository quizRepository
+
+    @Autowired
+    QuizService quizService
+
+    @Autowired
+    TopicConjunctionRepository topicConjunctionRepository
+
+    @Autowired
+    TopicService topicService
+
+    @Autowired
+    UserService userService
+
+    @Autowired
+    ReviewRepository reviewRepository
+
+    @Autowired
+    UserApplicationalService userServiceApplicational
+
+    @Autowired
+    DiscussionRepository discussionRepository
+
+    @Autowired
+    DiscussionService discussionService
+
+    @Autowired
+    ReplyRepository replyRepository
+
+    @Autowired
+    TutorDemoUtils demoUtils
 
     Course externalCourse
     @Shared

@@ -11,7 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentPro
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.api.MonolithService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
@@ -82,11 +81,6 @@ class BeanConfiguration {
     @Bean
     CourseExecutionService courseService() {
         return new CourseExecutionService()
-    }
-
-    @Bean
-    AuthUserService authUserService() {
-        return new AuthUserService()
     }
 
     @Bean

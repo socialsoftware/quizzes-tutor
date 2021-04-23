@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
@@ -12,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
@@ -31,7 +31,7 @@ class UpdateQuestionTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        user = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
 
@@ -65,7 +65,7 @@ class UpdateQuestionTest extends SpockTest {
         optionRepository.save(optionOK)
 
         optionKO = new Option()
-        optionKO.setContent(OPTION_1_CONTENT)
+        optionKO.setContent(OPTION_2_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(1)
         optionKO.setQuestionDetails(questionDetails)
@@ -81,13 +81,14 @@ class UpdateQuestionTest extends SpockTest {
         and: '2 changed options'
         def options = new ArrayList<OptionDto>()
         def optionDto = optionOK.getDto()
-        optionDto.setContent(OPTION_2_CONTENT)
         optionDto.setCorrect(false)
         options.add(optionDto)
         optionDto = optionKO.getDto()
         optionDto.setCorrect(true)
         options.add(optionDto)
         questionDto.getQuestionDetailsDto().setOptions(options)
+        and: 'a count to load options to memory due to in memory database flaw'
+        optionRepository.count();
 
         when:
         questionService.updateQuestion(question.getId(), questionDto)
@@ -106,12 +107,12 @@ class UpdateQuestionTest extends SpockTest {
         result.getImage() != null
         and: 'an option is changed'
         result.getQuestionDetails().getOptions().size() == 2
-        def resOptionOne = result.getQuestionDetails().getOptions().stream().filter({ option -> option.getId() == optionOK.getId()}).findAny().orElse(null)
+        def resOptionOne = result.getQuestionDetails().getOptions().stream().filter({ option -> option.isCorrect()}).findAny().orElse(null)
         resOptionOne.getContent() == OPTION_2_CONTENT
-        !resOptionOne.isCorrect()
-        def resOptionTwo = result.getQuestionDetails().getOptions().stream().filter({ option -> option.getId() == optionKO.getId()}).findAny().orElse(null)
+        def resOptionTwo = result.getQuestionDetails().getOptions().stream().filter({ option -> !option.isCorrect()}).findAny().orElse(null)
         resOptionTwo.getContent() == OPTION_1_CONTENT
-        resOptionTwo.isCorrect()
+        and: 'there are two questions in the database'
+        optionRepository.findAll().size() == 2
     }
 
     def "update question with missing data"() {
@@ -138,7 +139,7 @@ class UpdateQuestionTest extends SpockTest {
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
         optionDto = optionKO.getDto()
-        optionDto.setContent(OPTION_1_CONTENT)
+        optionDto.setContent(OPTION_2_CONTENT)
         optionDto.setCorrect(true)
         options.add(optionDto)
         questionDto.getQuestionDetailsDto().setOptions(options)
@@ -214,6 +215,41 @@ class UpdateQuestionTest extends SpockTest {
         then: "the question an exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_CHANGE_ANSWERED_QUESTION
+    }
+
+    def "update MultipleChoiceQuestion remove old option add new one"() {
+        given: "a changed question"
+        def questionDto = question.getDto()
+        def multipleChoiceQuestionDto = new MultipleChoiceQuestionDto()
+        questionDto.setQuestionDetailsDto(multipleChoiceQuestionDto)
+        and: 'a the old correct option'
+        def newOptionOK = optionOK.getDto()
+        and: 'a new option'
+        def newOptionKO = new OptionDto()
+        newOptionKO.setContent(OPTION_1_CONTENT)
+        newOptionKO.setCorrect(false)
+        and: 'add options to dto'
+        def newOptions = new ArrayList<OptionDto>()
+        newOptions.add(newOptionOK)
+        newOptions.add(newOptionKO)
+        multipleChoiceQuestionDto.setOptions(newOptions)
+        and: 'a count to load options to memory due to in memory database flaw'
+        optionRepository.count();
+
+        when:
+        questionService.updateQuestion(question.getId(), questionDto)
+
+        then: "the question is there"
+        questionRepository.count() == 1L
+        def result = questionRepository.findAll().get(0)
+        and: 'an option is changed'
+        result.getQuestionDetails().getOptions().size() == 2
+        def resOptionOne = result.getQuestionDetails().getOptions().stream().filter({ option -> option.isCorrect()}).findAny().orElse(null)
+        resOptionOne.getContent() == OPTION_1_CONTENT
+        def resOptionTwo = result.getQuestionDetails().getOptions().stream().filter({ option -> !option.isCorrect()}).findAny().orElse(null)
+        resOptionTwo.getContent() == OPTION_1_CONTENT
+        and: 'there are two questions in the database'
+        optionRepository.findAll().size() == 2
     }
 
     @TestConfiguration

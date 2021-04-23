@@ -5,10 +5,10 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tournament.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
@@ -40,7 +40,8 @@ class TournamentTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        user1 = createUser(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, externalCourseExecution)
+        user1 = createUser(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, externalCourseExecution)
+        user1.setActive(true)
         creator1 = createTournamentCreator(user1)
         participant1 = createTournamentParticipant(user1)
 
@@ -67,8 +68,8 @@ class TournamentTest extends SpockTest {
         tournamentExternalCourseExecution = createTournamentCourseExecution(externalCourseExecution)
     }
 
-    def createUser(String name, String username, String email, User.Role role, CourseExecution courseExecution) {
-        def user = new User(name, username, email, role, false, AuthUser.Type.EXTERNAL)
+    def createUser(String name, String username, String email, Role role, CourseExecution courseExecution) {
+        def user = new User(name, username, role, false)
         user.addCourse(courseExecution)
         userRepository.save(user)
 

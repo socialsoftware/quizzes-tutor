@@ -8,12 +8,11 @@ import org.jdom2.input.SAXBuilder;
 import org.jdom2.xpath.XPathExpression;
 import org.jdom2.xpath.XPathFactory;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.io.*;
 import java.nio.charset.Charset;
@@ -21,11 +20,12 @@ import java.time.LocalDateTime;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.USERS_IMPORT_ERROR;
 
+
 @Component
 public class UsersXmlImport {
 	private UserService userService;
-
-	public void importUsers(InputStream inputStream, UserService userService) {
+	//TODO: Uncomment when export works again
+	/*public void importUsers(InputStream inputStream, UserService userService) {
 		this.userService = userService;
 
 		SAXBuilder builder = new SAXBuilder();
@@ -57,9 +57,9 @@ public class UsersXmlImport {
 		InputStream stream = new ByteArrayInputStream(usersXml.getBytes());
 
 		importUsers(stream, userService);
-	}
+	}*/
 
-	private void importUsers(Document doc) {
+	/*private void importUsers(Document doc) {
 		XPathFactory xpfac = XPathFactory.instance();
 		XPathExpression<Element> xp = xpfac.compile("//users/user", Filters.element());
 		for (Element element : xp.evaluate(doc)) {
@@ -75,14 +75,14 @@ public class UsersXmlImport {
 				importCourseExecutions(element.getChild("courseExecutions"), user);
 			}
 		}
-	}
+	}*/
 
 	private User importUser(Element userElement) {
 		Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
 		String name = userElement.getAttributeValue("name");
 		LocalDateTime creationDate = DateHandler.toLocalDateTime(userElement.getAttributeValue("creationDate"));
 		boolean admin =  Boolean.parseBoolean(userElement.getAttributeValue("admin"));
-		User.Role role = getUserRole(userElement);
+		Role role = getUserRole(userElement);
 
 		User user = userService.createUser(name, role);
 		user.setKey(key);
@@ -91,11 +91,11 @@ public class UsersXmlImport {
 		return user;
 	}
 
-	private User importUserWithAuth(Element userElement) {
+	/*private User importUserWithAuth(Element userElement) {
 		Element authUserElement = userElement.getChild("authUsers").getChild("authUser");
 		Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
 		String name = userElement.getAttributeValue("name");
-		User.Role role = getUserRole(userElement);
+		Role role = getUserRole(userElement);
 
 		String username = authUserElement.getAttributeValue("username");
 		if (username.trim().isEmpty()) {
@@ -116,7 +116,7 @@ public class UsersXmlImport {
 			type = AuthUser.Type.valueOf(authUserElement.getAttributeValue("type"));
 		}
 		if (authUserElement.getAttributeValue("password") != null) {
-			 password = authUserElement.getAttributeValue("password");
+			password = authUserElement.getAttributeValue("password");
 		}
 		if (authUserElement.getAttributeValue("lastAccess") != null) {
 			lastAccess = DateHandler.toLocalDateTime(
@@ -147,8 +147,8 @@ public class UsersXmlImport {
 		authUser.setLastAccess(lastAccess);
 
 		return authUser.getUser();
-	}
-
+	}*/
+	//TODO: When import is working again course execution should be added to authUser
 	private void importCourseExecutions(Element courseExecutions, User user) {
 		for (Element courseExecutionElement: courseExecutions.getChildren("courseExecution")) {
 			Integer executionId = Integer.valueOf(courseExecutionElement.getAttributeValue("executionId"));
@@ -157,10 +157,10 @@ public class UsersXmlImport {
 		}
 	}
 
-	private User.Role getUserRole(Element userElement) {
-		User.Role role = null;
+	private Role getUserRole(Element userElement) {
+		Role role = null;
 		if (userElement.getAttributeValue("role") != null) {
-			role = User.Role.valueOf(userElement.getAttributeValue("role"));
+			role = Role.valueOf(userElement.getAttributeValue("role"));
 		}
 		return role;
 	}
