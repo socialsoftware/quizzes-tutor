@@ -72,4 +72,14 @@ public class UserSecurityInfo {
     public boolean isTeacher() { return this.role == Role.TEACHER; }
 
     public boolean isStudent() { return this.role == Role.STUDENT; }
+
+    @Override
+    public String toString() {
+        return "UserSecurityInfo{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", role=" + role +
+                ", admin=" + admin +
+                '}';
+    }
 }

@@ -226,6 +226,19 @@ public class CourseExecutionService {
         return courseExecution.getDto();
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseExecutionDto getCourseExecutionByFields(String acronym, String academicTerm, String type) {
+        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(acronym, academicTerm, type).orElse(null);
+        CourseExecutionDto courseExecutionDto = null;
+        if (courseExecution != null) {
+            courseExecutionDto = courseExecution.getDto();
+        }
+        return courseExecutionDto;
+    }
+
     public CourseExecution getDemoCourseExecution() {
         return this.courseExecutionRepository.findByFields(TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElseGet(() -> {
             Course course = getCourse(TutorDemoUtils.COURSE_NAME, CourseType.TECNICO);
