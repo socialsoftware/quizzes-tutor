@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.Notification;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.NotificationResponse;
@@ -27,8 +28,10 @@ import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.CourseService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
@@ -56,16 +59,13 @@ public class AuthUserService {
     private AuthUserRepository authUserRepository;
 
     @Autowired
-    private CourseExecutionRepository courseExecutionRepository;
-
-    @Autowired
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;
 
     @Autowired
-    private CourseRepository courseRepository;
+    private CourseService courseService;
 
     @Retryable(
             value = { SQLException.class },
@@ -99,9 +99,7 @@ public class AuthUserService {
 
     private List<CourseExecutionDto> getCourseExecutions(AuthUser authUser) {
         Integer userId = authUser.getUserSecurityInfo().getId();
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        return user.getCourseExecutions().stream().map(CourseExecution::getDto).collect(Collectors.toList());
+        return userService.getUserCourseExecutions(userId);
     }
 
     private void refreshFenixAuthUserInfo(FenixEduInterface fenix, AuthTecnicoUser authUser) {
@@ -116,17 +114,15 @@ public class AuthUserService {
     }
 
     private void updateTeacherCourses(AuthTecnicoUser authUser, List<CourseExecutionDto> fenixTeachingCourses) {
-        List<CourseExecution> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
+        List<CourseExecutionDto> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
         if (!fenixTeachingCourses.isEmpty() && authUser.getUserSecurityInfo().isTeacher()) {
-            User teacher = userRepository.findById(authUser.getUserSecurityInfo().getId())
-                    .orElseThrow(() -> new TutorException(USER_NOT_FOUND, authUser.getUserSecurityInfo().getId()));
 
             activeTeachingCourses.stream()
-                    .filter(courseExecution ->
-                            !teacher.getCourseExecutions().contains(courseExecution))
-                    .forEach(courseExecution -> {
-                        teacher.addCourse(courseExecution);
-                        authUser.addCourseExecution(courseExecution.getId());
+                    .filter(courseExecutionDto ->
+                            !authUser.getUserCourseExecutions().contains(courseExecutionDto.getCourseExecutionId()))
+                    .forEach(courseExecutionDto -> {
+                        userService.addCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionDto.getCourseExecutionId());
+                        authUser.addCourseExecution(courseExecutionDto.getCourseExecutionId());
                     });
 
             String ids = fenixTeachingCourses.stream()
@@ -138,17 +134,15 @@ public class AuthUserService {
     }
 
     private void updateStudentCourses(AuthTecnicoUser authUser, List<CourseExecutionDto> fenixAttendingCourses) {
-        List<CourseExecution> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
+        List<CourseExecutionDto> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
         if (!activeAttendingCourses.isEmpty() && authUser.getUserSecurityInfo().isStudent()) {
-            User student = userRepository.findById(authUser.getUserSecurityInfo().getId())
-                    .orElseThrow(() -> new TutorException(USER_NOT_FOUND, authUser.getUserSecurityInfo().getId()));
 
             activeAttendingCourses.stream()
-                    .filter(courseExecution ->
-                            !student.getCourseExecutions().contains(courseExecution))
-                    .forEach(courseExecution -> {
-                        student.addCourse(courseExecution);
-                        authUser.addCourseExecution(courseExecution.getId());
+                    .filter(courseExecutionDto ->
+                            !authUser.getUserCourseExecutions().contains(courseExecutionDto.getCourseExecutionId()))
+                    .forEach(courseExecutionDto -> {
+                        userService.addCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionDto.getCourseExecutionId());
+                        authUser.addCourseExecution(courseExecutionDto.getCourseExecutionId());
                     });
         }
     }
@@ -157,7 +151,7 @@ public class AuthUserService {
         List<CourseExecutionDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
         List<CourseExecutionDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();
 
-        List<CourseExecution> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
+        List<CourseExecutionDto> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
 
         AuthTecnicoUser authUser = null;
 
@@ -185,12 +179,9 @@ public class AuthUserService {
         if (authUserRepository.findAuthUserByUsername(username).isPresent()) {
             throw new TutorException(DUPLICATE_USER, username);
         }
+        UserDto userDto = userService.createUser(name, role, username, type != AuthUser.Type.EXTERNAL, false);
 
-        User user = new User(name, username, role, false);
-        user.setActive(type != AuthUser.Type.EXTERNAL);
-        userRepository.save(user);
-
-        AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(user.getId(), name, role, false), username, email, type);
+        AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(userDto.getId(), name, role, false), username, email, type);
         authUserRepository.save(authUser);
         return authUser;
     }
@@ -200,17 +191,19 @@ public class AuthUserService {
     @Transactional(isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED)
     public ExternalUserDto registerExternalUserTransactional(Integer courseExecutionId, ExternalUserDto externalUserDto) {
-        CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
+        CourseExecutionDto courseExecutionDto = courseExecutionService.getCourseExecutionById(courseExecutionId);
+
+        if (!courseExecutionDto.getCourseExecutionType().equals(CourseType.EXTERNAL)) {
+            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
+        }
+
         AuthExternalUser authUser = getOrCreateUser(externalUserDto);
 
         if (authUser.getUserCourseExecutions().contains(courseExecutionId)) {
             throw new TutorException(DUPLICATE_USER, authUser.getUsername());
         }
 
-        User user = userRepository.findById(authUser.getUserSecurityInfo().getId())
-                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, authUser.getUserSecurityInfo().getId()));
-        user.addCourse(courseExecution);
-        authUser.addCourseExecution(courseExecutionId);
+        courseExecutionService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionId);
         authUser.generateConfirmationToken();
         return authUser.getDto();
     }
@@ -232,9 +225,7 @@ public class AuthUserService {
             authUser.confirmRegistration(passwordEncoder, externalUserDto.getConfirmationToken(),
                     externalUserDto.getPassword());
 
-            User user = userRepository.findById(authUser.getUserSecurityInfo().getId())
-                    .orElseThrow(() -> new TutorException(USER_NOT_FOUND, authUser.getUserSecurityInfo().getId()));
-            user.setActive(true);
+            userService.activateUser(authUser.getUserSecurityInfo().getId());
         }
         catch (TutorException e) {
             if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
@@ -291,11 +282,10 @@ public class AuthUserService {
         String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
         AuthUser authUser = createUserWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", Role.STUDENT, AuthUser.Type.DEMO);
         CourseExecution courseExecution = courseExecutionService.getDemoCourseExecution();
-        User user = userRepository.findById(authUser.getUserSecurityInfo().getId())
-                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, authUser.getUserSecurityInfo().getId()));
+
         if (courseExecution != null) {
-            courseExecution.addUser(user);
-            user.addCourse(courseExecution);
+            // In addCourse method of User, it already adds the user to the course execution so there is no need to do it here again
+            userService.addCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecution.getId());
             authUser.addCourseExecution(courseExecution.getId());
         }
         return authUser;
@@ -325,10 +315,9 @@ public class AuthUserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean userHasAnExecutionOfCourse(int userId, int courseId) {
-        return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId))
-                .getCourseExecutions()
+        return courseService.findCourseWithCourseExecutionsById(courseId)
                 .stream()
-                .anyMatch(courseExecution ->  authUserRepository.countUserCourseExecutionsPairById(userId, courseExecution.getId()) == 1);
+                .anyMatch(courseExecution ->  authUserRepository.countUserCourseExecutionsPairById(userId, courseExecution.getCourseExecutionId()) == 1);
     }
 
     //Was from user service
@@ -340,9 +329,7 @@ public class AuthUserService {
                 registerExternalUserTransactional(courseExecutionId, userDto)
         );
 
-        CourseExecutionDto courseExecutionDto = courseExecutionRepository.findById(courseExecutionId)
-                .map(CourseExecution::getDto)
-                .get();
+        CourseExecutionDto courseExecutionDto = courseExecutionService.getCourseExecutionById(courseExecutionId);
 
         return new NotificationResponse<>(notification, courseExecutionDto);
     }
@@ -395,10 +382,10 @@ public class AuthUserService {
         return userDtos;
     }
 
-    private List<CourseExecution> getActiveTecnicoCourses(List<CourseExecutionDto> courses) {
+    private List<CourseExecutionDto> getActiveTecnicoCourses(List<CourseExecutionDto> courses) {
         return courses.stream()
-                .map(courseDto -> courseExecutionRepository.findByFields(courseDto.getAcronym(),courseDto.getAcademicTerm(), CourseType.TECNICO.name())
-                        .orElse(null)
+                .map(courseDto ->
+                        courseExecutionService.getCourseExecutionByFields(courseDto.getAcronym(),courseDto.getAcademicTerm(), CourseType.TECNICO.name())
                 )
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
@@ -407,10 +394,7 @@ public class AuthUserService {
     private AuthUser getDemoTeacher() {
         return authUserRepository.findAuthUserByUsername(TutorDemoUtils.TEACHER_USERNAME).orElseGet(() -> {
             AuthUser authUser = createUserWithAuth("Demo Teacher", TutorDemoUtils.TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUser.Type.DEMO);
-            User user = userRepository.findById(authUser.getUserSecurityInfo().getId())
-                    .orElseThrow(() -> new TutorException(USER_NOT_FOUND, authUser.getUserSecurityInfo().getId()));
-            user.addCourse(courseExecutionService.getDemoCourseExecution());
-            authUser.addCourseExecution(courseExecutionService.getDemoCourseExecution().getId());
+            courseExecutionService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionService.getDemoCourseExecution().getId());
             return authUser;
         });
     }
@@ -418,10 +402,7 @@ public class AuthUserService {
     private AuthUser getDemoStudent() {
         return authUserRepository.findAuthUserByUsername(TutorDemoUtils.STUDENT_USERNAME).orElseGet(() -> {
             AuthUser authUser = createUserWithAuth("Demo Student", TutorDemoUtils.STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUser.Type.DEMO);
-            User user = userRepository.findById(authUser.getUserSecurityInfo().getId())
-                    .orElseThrow(() -> new TutorException(USER_NOT_FOUND, authUser.getUserSecurityInfo().getId()));
-            user.addCourse(courseExecutionService.getDemoCourseExecution());
-            authUser.addCourseExecution(courseExecutionService.getDemoCourseExecution().getId());
+            courseExecutionService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionService.getDemoCourseExecution().getId());
             return authUser;
         });
     }
@@ -429,10 +410,7 @@ public class AuthUserService {
     private AuthUser getDemoAdmin() {
         return authUserRepository.findAuthUserByUsername(TutorDemoUtils.ADMIN_USERNAME).orElseGet(() -> {
             AuthUser authUser = createUserWithAuth("Demo Admin", TutorDemoUtils.ADMIN_USERNAME, "demo_admin@mail.com", Role.DEMO_ADMIN, AuthUser.Type.DEMO);
-            User user = userRepository.findById(authUser.getUserSecurityInfo().getId())
-                    .orElseThrow(() -> new TutorException(USER_NOT_FOUND, authUser.getUserSecurityInfo().getId()));
-            user.addCourse(courseExecutionService.getDemoCourseExecution());
-            authUser.addCourseExecution(courseExecutionService.getDemoCourseExecution().getId());
+            courseExecutionService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionService.getDemoCourseExecution().getId());
             return authUser;
         });
     }
@@ -440,30 +418,18 @@ public class AuthUserService {
     private AuthExternalUser getOrCreateUser(ExternalUserDto externalUserDto) {
         //Avoid creation of user and authUser with invalid roles (added because of tests and will be needed for sagas)
         checkRole(externalUserDto.getRole(), externalUserDto.getActive());
+        //Avoid creation of user for authUser with invalid email (added because of tests and will be needed for sagas)
+        checkEmail(externalUserDto.getEmail());
         String username = externalUserDto.getUsername() != null ? externalUserDto.getUsername() : externalUserDto.getEmail();
         return (AuthExternalUser) authUserRepository.findAuthUserByUsername(username)
                 .orElseGet(() -> {
-                    User user = new User(externalUserDto.getName(),
-                            username,
-                            externalUserDto.getRole(), false);
-                    user.setActive(false);
-                    userRepository.save(user);
-                    AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(user.getId(),
+                    UserDto userDto = userService.createUser(externalUserDto.getName(), externalUserDto.getRole(), username, false, false);
+                    AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(userDto.getId(),
                                     externalUserDto.getName(), externalUserDto.getRole(), false),
                             username, externalUserDto.getEmail(), AuthUser.Type.EXTERNAL);
                     authUserRepository.save(authUser);
                     return authUser;
                 });
-    }
-
-    private CourseExecution getExternalCourseExecution(Integer courseExecutionId) {
-        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
-                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
-
-        if (!courseExecution.getType().equals(CourseType.EXTERNAL)) {
-            throw new TutorException(COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
-        }
-        return courseExecution;
     }
 
     public void checkRole(Role role, boolean isActive) {
@@ -472,8 +438,13 @@ public class AuthUserService {
         }
     }
 
+    public void checkEmail(String email) {
+        if (email == null || !email.matches(UserService.MAIL_FORMAT))
+            throw new TutorException(INVALID_EMAIL, email);
+    }
 
-    // TODO: Was from user service
+
+    // TODO: Uncomment when impexp is working again
     /*public String exportUsers() {
         UsersXmlExport xmlExporter = new UsersXmlExport();
         return xmlExporter.export(userRepository.findAll());

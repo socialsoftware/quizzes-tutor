@@ -1,24 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
-import org.jdom2.Document;
 import org.jdom2.Element;
-import org.jdom2.JDOMException;
-import org.jdom2.filter.Filters;
-import org.jdom2.input.SAXBuilder;
-import org.jdom2.xpath.XPathExpression;
-import org.jdom2.xpath.XPathFactory;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
-import java.io.*;
-import java.nio.charset.Charset;
 import java.time.LocalDateTime;
-
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.USERS_IMPORT_ERROR;
 
 
 @Component
@@ -77,19 +67,19 @@ public class UsersXmlImport {
 		}
 	}*/
 
-	private User importUser(Element userElement) {
+	//TODO: Uncomment when import is working
+	/*private User importUser(Element userElement) {
 		Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
 		String name = userElement.getAttributeValue("name");
 		LocalDateTime creationDate = DateHandler.toLocalDateTime(userElement.getAttributeValue("creationDate"));
 		boolean admin =  Boolean.parseBoolean(userElement.getAttributeValue("admin"));
 		Role role = getUserRole(userElement);
 
-		User user = userService.createUser(name, role);
+		UserDto userDto = userService.createUser(name, role, null, false, admin);
 		user.setKey(key);
-		user.setAdmin(admin);
 		user.setCreationDate(creationDate);
 		return user;
-	}
+	}*/
 
 	/*private User importUserWithAuth(Element userElement) {
 		Element authUserElement = userElement.getChild("authUsers").getChild("authUser");

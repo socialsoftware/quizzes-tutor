@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
@@ -18,7 +19,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.sql.SQLException;
+import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
@@ -26,9 +29,6 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 public class UserService {
     @Autowired
     private UserRepository userRepository;
-
-    @Autowired
-    private CourseRepository courseRepository;
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
@@ -41,10 +41,17 @@ public class UserService {
     public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public User createUser(String name, Role role) {
-        User user = new User(name, role, false);
+    public UserDto createUser(String name, Role role, String username, boolean isActive, boolean isAdmin) {
+        User user;
+        if (username == null) {
+            user = new User(name, role, isAdmin);
+        }
+        else {
+            user = new User(name, username, role, isAdmin);
+        }
+        user.setActive(isActive);
         userRepository.save(user);
-        return user;
+        return user.getUserDto();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -84,5 +91,17 @@ public class UserService {
                     DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(userId);
                     eventBus.post(deleteAuthUser);
                 });
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void activateUser(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        user.setActive(true);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<CourseExecutionDto> getUserCourseExecutions(int userId) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        return user.getCourseExecutions().stream().map(CourseExecution::getDto).collect(Collectors.toList());
     }
 }
