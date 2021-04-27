@@ -48,10 +48,10 @@ export default class TournamentScore {
   }
 
   static async getScore(tournament: Tournament, correctAnswers: number) {
-    let quizzes = await RemoteServices.getSolvedQuizzes();
+    const quizzes = await RemoteServices.getSolvedQuizzes();
 
     let score = '';
-    quizzes.map(quiz => {
+    quizzes.map((quiz) => {
       if (tournament && quiz.statementQuiz.id == tournament.quizId) {
         score = this.calculateScore(quiz, correctAnswers);
       }
@@ -60,8 +60,8 @@ export default class TournamentScore {
   }
 
   static getPercentageColor(score: string) {
-    let res = score.split('/');
-    let percentage = (parseInt(res[0]) / parseInt(res[1])) * 100;
+    const res = score.split('/');
+    const percentage = (parseInt(res[0]) / parseInt(res[1])) * 100;
     if (percentage < 25) return 'red';
     else if (percentage < 50) return 'orange';
     else if (percentage < 75) return 'lime';

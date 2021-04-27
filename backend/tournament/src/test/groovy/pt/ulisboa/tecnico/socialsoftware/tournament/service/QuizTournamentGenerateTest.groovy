@@ -4,12 +4,12 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.NOT_ENOUGH_QUESTIONS_TOURNAMENT
@@ -82,7 +82,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
 
     def "generate a quiz with 2 student solving" () {
         given:
-        def user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, externalCourseExecution)
+        def user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, Role.STUDENT, externalCourseExecution)
         def participant2 = createTournamentParticipant(user2)
         and:
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(participant1, "")

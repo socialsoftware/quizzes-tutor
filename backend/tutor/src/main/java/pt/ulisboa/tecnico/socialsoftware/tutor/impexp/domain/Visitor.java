@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
@@ -23,8 +22,8 @@ public interface Visitor {
     default void visitQuizQuestion(QuizQuestion quizQuestion) {}
 
     default void visitUser(User user) {}
-
-    default void visitAuthUser(AuthUser authUser) {}
+    //TODO: Uncomment when export works again
+    //default void visitAuthUser(AuthUser authUser) {}
 
     default void visitQuizAnswer(QuizAnswer quizAnswer) {}
 

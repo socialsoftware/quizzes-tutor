@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
@@ -11,7 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.MultipleChoiceStatementAnswerDetailsDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -37,7 +37,7 @@ class ConcludeQuizTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        user = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
 

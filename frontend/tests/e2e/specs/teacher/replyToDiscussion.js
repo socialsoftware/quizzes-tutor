@@ -31,6 +31,7 @@ describe('Teacher Walkthrough', () => {
     cy.createDiscussion('DISCUSSAO REPLY TEST');
     cy.contains('Logout').click();
     Cypress.on('uncaught:exception', (err, runnable) => {
+      console.log(err);
       // returning false here prevents Cypress from
       // failing the test
       return false;

@@ -6,12 +6,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.mail.MailException;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer;
 
 import java.util.ArrayList;
@@ -41,8 +41,8 @@ public class QuestionSubmissionApplicationalService {
     @Value("${spring.mail.username}")
     private String mailUsername;
 
-    public ReviewDto createReview(User user, ReviewDto reviewDto) {
-        List<UserDto> users = getUsersToSendEmail(user, reviewDto.getQuestionSubmissionId());
+    public ReviewDto createReview(Role role, ReviewDto reviewDto) {
+        List<UserDto> users = getUsersToSendEmail(role, reviewDto.getQuestionSubmissionId());
 
         ReviewDto result = questionSubmissionService.createReview(reviewDto);
 
@@ -63,9 +63,9 @@ public class QuestionSubmissionApplicationalService {
         return result;
     }
 
-    private List<UserDto> getUsersToSendEmail(User user, Integer questionSubmissionId) {
+    private List<UserDto> getUsersToSendEmail(Role role, Integer questionSubmissionId) {
         List<UserDto> users;
-        if (user.getRole().equals(User.Role.STUDENT)) {
+        if (role.equals(Role.STUDENT)) {
             Integer courseExecutionId = questionSubmissionRepository.findCourseExecutionIdByQuestionSubmissionId(questionSubmissionId);
             users = courseExecutionService.getTeachers(courseExecutionId);
         } else {

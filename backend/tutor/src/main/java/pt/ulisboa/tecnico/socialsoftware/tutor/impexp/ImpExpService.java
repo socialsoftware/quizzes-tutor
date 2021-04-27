@@ -8,6 +8,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
@@ -31,8 +32,6 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
-
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.CANNOT_OPEN_FILE;
 
 @Service
 public class ImpExpService {
@@ -88,8 +87,8 @@ public class ImpExpService {
 
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public String exportAll() {
         String timeStamp = new SimpleDateFormat("yyyy.MM.dd.HH.mm.ss").format(new Date());
@@ -99,14 +98,14 @@ public class ImpExpService {
         try (FileOutputStream fos = new FileOutputStream(directory.getPath() + PATH_DELIMITER + filename);
              ZipOutputStream zos = new ZipOutputStream(fos)) {
 
-
-            zos.putNextEntry(new ZipEntry("users.xml"));
+            //TODO: Uncomment when import is working again
+            /*zos.putNextEntry(new ZipEntry("users.xml"));
             InputStream in = generateUsersInputStream();
             copyToZipStream(zos, in);
-            zos.closeEntry();
+            zos.closeEntry();*/
 
             zos.putNextEntry(new ZipEntry("questions.xml"));
-            in = generateQuestionsInputStream();
+            InputStream in = generateQuestionsInputStream();
             copyToZipStream(zos, in);
             zos.closeEntry();
 
@@ -125,7 +124,7 @@ public class ImpExpService {
             copyToZipStream(zos, in);
             zos.closeEntry();
         } catch (IOException ex) {
-           throw new TutorException(CANNOT_OPEN_FILE);
+            throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
         }
 
         return filename;
@@ -140,10 +139,11 @@ public class ImpExpService {
         in.close();
     }
 
-    private InputStream generateUsersInputStream() {
+    //TODO: Uncomment when export works again
+    /*private InputStream generateUsersInputStream() {
         UsersXmlExport usersExporter = new UsersXmlExport();
         return IOUtils.toInputStream(usersExporter.export(userRepository.findAll()), StandardCharsets.UTF_8);
-    }
+    }*/
 
     private InputStream generateQuestionsInputStream() {
         XMLQuestionExportVisitor generator = new XMLQuestionExportVisitor();
@@ -167,8 +167,8 @@ public class ImpExpService {
 
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void importAll() {
         if (userRepository.findAll().isEmpty()) {
@@ -177,7 +177,8 @@ public class ImpExpService {
 
                 File usersFile = new File(directory.getPath() + PATH_DELIMITER + "users.xml");
                 UsersXmlImport usersXmlImport = new UsersXmlImport();
-                usersXmlImport.importUsers(new FileInputStream(usersFile), userService);
+                //TODO: Uncomment when import is working again
+                //usersXmlImport.importUsers(new FileInputStream(usersFile), userService);
 
                 File questionsFile = new File(directory.getPath() + PATH_DELIMITER + "questions.xml");
                 QuestionsXmlImport questionsXmlImport = new QuestionsXmlImport();
@@ -195,7 +196,7 @@ public class ImpExpService {
 
                 answersXmlImport.importAnswers(new FileInputStream(answersFile));
             } catch (FileNotFoundException e) {
-                throw new TutorException(CANNOT_OPEN_FILE);
+                throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
             }
         }
     }

@@ -4,10 +4,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.validation.Valid;
@@ -24,10 +24,10 @@ public class TournamentController {
     @PostMapping(value = "/tournaments/{executionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public TournamentDto createTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @PathVariable int executionId, @RequestParam Set<Integer> topicsId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
         formatDates(tournamentDto);
 
-        return tournamentProvidedService.createTournament(user.getId(), executionId, topicsId, tournamentDto);
+        return tournamentProvidedService.createTournament(authUser.getUserSecurityInfo().getId(), executionId, topicsId, tournamentDto);
     }
 
     @GetMapping(value = "/tournaments/{executionId}/getTournaments")
@@ -57,25 +57,25 @@ public class TournamentController {
     @PutMapping(value = "/tournaments/{executionId}/joinTournament/{tournamentId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.ACCESS')")
     public void joinTournament(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId, @RequestParam String password) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        tournamentProvidedService.joinTournament(user.getId(), tournamentId, password);
+        tournamentProvidedService.joinTournament(authUser.getUserSecurityInfo().getId(), tournamentId, password);
     }
 
     @PutMapping(value = "/tournaments/{executionId}/solveQuiz/{tournamentId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.PARTICIPANT')")
     public StatementQuizDto solveQuiz(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        return tournamentProvidedService.solveQuiz(user.getId(), tournamentId);
+        return tournamentProvidedService.solveQuiz(authUser.getUserSecurityInfo().getId(), tournamentId);
     }
 
     @PutMapping(value = "/tournaments/{executionId}/leaveTournament/{tournamentId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.PARTICIPANT')")
     public void leaveTournament(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        tournamentProvidedService.leaveTournament(user.getId(), tournamentId);
+        tournamentProvidedService.leaveTournament(authUser.getUserSecurityInfo().getId(), tournamentId);
     }
 
     @PutMapping(value = "/tournaments/{executionId}/updateTournament")

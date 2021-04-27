@@ -3,9 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.execution.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -26,7 +26,7 @@ class GetCourseExecutionsTest extends SpockTest {
 
     def "returned a tecnico course with 0 info"() {
         when:
-        def result = courseService.getCourseExecutions(User.Role.ADMIN)
+        def result = courseService.getCourseExecutions(Role.ADMIN)
 
         then: "the returned data are correct"
         result.size() == existingCourses
@@ -55,10 +55,12 @@ class GetCourseExecutionsTest extends SpockTest {
         def courseExecution = new CourseExecution(externalCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        def teacher = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.TEACHER, false, AuthUser.Type.TECNICO)
+        def teacher = new User(USER_1_NAME, USER_1_USERNAME, Role.TEACHER, false)
+        teacher.setActive(true)
         teacher.addCourse(courseExecution)
 
-        def student = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        def student = new User(USER_2_NAME, USER_2_USERNAME, Role.STUDENT, false)
+        student.setActive(true)
         student.addCourse(courseExecution)
 
         Question question = new Question()
@@ -70,7 +72,7 @@ class GetCourseExecutionsTest extends SpockTest {
         quiz.setCourseExecution(courseExecution)
 
         when:
-        def result = courseService.getCourseExecutions(User.Role.ADMIN)
+        def result = courseService.getCourseExecutions(Role.ADMIN)
 
         then: "the returned data are correct"
         result.size() == 1

@@ -4,20 +4,17 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionApplicationalService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.UserQuestionSubmissionInfoDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
-
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
 @RestController
 public class QuestionSubmissionController {
@@ -48,9 +45,9 @@ public class QuestionSubmissionController {
     @PostMapping("/submissions/{questionSubmissionId}/reviews")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionSubmissionId,'SUBMISSION.ACCESS')")
     public ReviewDto createReview(Authentication authentication, @PathVariable int questionSubmissionId, @Valid @RequestBody ReviewDto reviewDto) {
-        User user = (User) authentication.getPrincipal();
+        AuthUser authUser = (AuthUser) authentication.getPrincipal();
 
-        return questionSubmissionApplicationalService.createReview(user, reviewDto);
+        return questionSubmissionApplicationalService.createReview(authUser.getUserSecurityInfo().getRole(), reviewDto);
     }
 
     @PutMapping("/submissions/{questionSubmissionId}/topics")
@@ -62,12 +59,9 @@ public class QuestionSubmissionController {
     @GetMapping(value = "/submissions/{executionId}/student")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Principal principal, @Valid @PathVariable int executionId) {
-        User user = (User) ((Authentication) principal).getPrincipal();
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
-        if (user == null)
-            throw new TutorException(AUTHENTICATION_ERROR);
-
-        return questionSubmissionService.getStudentQuestionSubmissions(user.getId(), executionId);
+        return questionSubmissionService.getStudentQuestionSubmissions(authUser.getUserSecurityInfo().getId(), executionId);
     }
 
     @GetMapping("/submissions/{executionId}/execution")

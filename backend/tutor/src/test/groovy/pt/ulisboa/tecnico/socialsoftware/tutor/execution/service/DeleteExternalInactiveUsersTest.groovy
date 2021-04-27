@@ -3,11 +3,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.execution.service
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
@@ -39,12 +39,12 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         tecnicoCourseExecution = new CourseExecution(tecnicoCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, CourseType.TECNICO, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(tecnicoCourseExecution)
 
-        user1 = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
+        user1 = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
         userRepository.save(user1)
         externalCourseExecution.addUser(user1)
         user1.addCourse(externalCourseExecution)
 
-        user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
+        user2 = new User(USER_2_NAME, USER_2_USERNAME, Role.STUDENT, false)
         userRepository.save(user2)
         externalCourseExecution.addUser(user2)
         user2.addCourse(externalCourseExecution)
@@ -57,7 +57,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         given: "an invalid execution id"
         def executionId = -1
         and: "a list of user id's"
-        user1.getAuthUser().setActive(false)
+        user1.setActive(false)
         userIdList << user1.getId()
 
         when:
@@ -75,7 +75,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         given: "a tecnico course execution id"
         def executionId = tecnicoCourseExecution.getId()
         and: "a list of user id's"
-        user1.getAuthUser().setActive(false)
+        user1.setActive(false)
         user1.addCourse(tecnicoCourseExecution)
         tecnicoCourseExecution.addUser(user1)
         userIdList << user1.getId()
@@ -95,7 +95,7 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         given: "and execution id"
         def executionId = externalCourseExecution.getId()
         and: "a list of user id's"
-        user1.getAuthUser().setActive(true)
+        user1.setActive(true)
         userIdList << user1.getId()
 
         when:
@@ -117,8 +117,8 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         given: "an execution id"
         def executionId = externalCourseExecution.getId()
         and: "a list of user id's"
-        user1.getAuthUser().setActive(false)
-        user2.getAuthUser().setActive(false)
+        user1.setActive(false)
+        user2.setActive(false)
         userIdList << user1.getId()
         userIdList << user2.getId()
 

@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentCreatorDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
 
 import javax.persistence.Column;
 import javax.persistence.Embeddable;
@@ -38,11 +38,20 @@ public class TournamentCreator {
         return name;
     }
 
-    public TournamentCreatorDto getDto() {
-        TournamentCreatorDto dto = new TournamentCreatorDto();
+    public StudentDto getStudentDto() {
+        StudentDto dto = new StudentDto();
         dto.setId(getId());
         dto.setName(getName());
         dto.setUsername(getUsername());
         return dto;
+    }
+
+    @Override
+    public String toString() {
+        return "TournamentCreator{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                '}';
     }
 }

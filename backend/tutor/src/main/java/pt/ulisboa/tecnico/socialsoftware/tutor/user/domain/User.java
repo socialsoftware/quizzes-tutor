@@ -1,12 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
@@ -16,7 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -28,7 +29,6 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 @Entity
 @Table(name = "users")
 public class User implements DomainEntity {
-    public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -44,6 +44,11 @@ public class User implements DomainEntity {
 
     @Column(columnDefinition = "boolean default false")
     private Boolean admin;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean active;
+
+    private String username;
 
     private Integer numberOfTeacherQuizzes = 0;
     private Integer numberOfStudentQuizzes = 0;
@@ -64,9 +69,6 @@ public class User implements DomainEntity {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
-    public AuthUser authUser;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
@@ -82,15 +84,15 @@ public class User implements DomainEntity {
     public User() {
     }
 
-    public User(String name, String username, String email, Role role, boolean isAdmin, AuthUser.Type type){
+    public User(String name, String username, Role role, boolean isAdmin){
         setName(name);
         setRole(role);
         setAdmin(isAdmin);
-        setAuthUser(AuthUser.createAuthUser(this, username, email, type));
         setCreationDate(DateHandler.now());
+        setUsername(username);
     }
 
-    public User(String name, User.Role role, boolean isAdmin){
+    public User(String name, Role role, boolean isAdmin){
         setName(name);
         setRole(role);
         setAdmin(isAdmin);
@@ -121,7 +123,7 @@ public class User implements DomainEntity {
         this.id = id;
     }
 
-    public Boolean getAdmin() {
+    public boolean getAdmin() {
         return admin;
     }
 
@@ -152,10 +154,14 @@ public class User implements DomainEntity {
     }
 
     public String getUsername() {
-        if (authUser == null) {
+        if (username == null) {
             return String.format("%s-%s", getRole().toString().toLowerCase(), getId());
         }
-        return authUser.getUsername();
+        return username;
+    }
+
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     public String getName() {
@@ -213,18 +219,6 @@ public class User implements DomainEntity {
 
     public void setQuestionSubmissions(Set<QuestionSubmission> questionSubmissions) { 
         this.questionSubmissions = questionSubmissions; 
-    }
-    
-    public String getEmail() {
-        return authUser.getEmail();
-    }
-
-    public AuthUser getAuthUser() {
-        return authUser;
-    }
-
-    public void setAuthUser(AuthUser authUser) {
-        this.authUser = authUser;
     }
 
     public Integer getNumberOfTeacherQuizzes() {
@@ -371,6 +365,14 @@ public class User implements DomainEntity {
         this.reviews = reviews;
     }
 
+    public boolean isActive() {
+        return active;
+    }
+
+    public void setActive(boolean active) {
+        this.active = active;
+    }
+
     @Override
     public String toString() {
         return "User{" +
@@ -388,8 +390,8 @@ public class User implements DomainEntity {
                 ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
                 ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
                 ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
-                ", creationDate=" + creationDate +
-                ", lastAccess=" + authUser.getLastAccess() +
+                ", creationDate=" + creationDate /*+
+                ", lastAccess=" + authUser.getLastAccess() */+
                 '}';
     }
 
@@ -458,9 +460,9 @@ public class User implements DomainEntity {
 
     public Set<Review> getReviews() { return reviews; }
 
-    public boolean isStudent() { return this.role == User.Role.STUDENT; }
+    public boolean isStudent() { return this.role == Role.STUDENT; }
 
-    public boolean isTeacher() { return this.role == User.Role.TEACHER; }
+    public boolean isTeacher() { return this.role == Role.TEACHER; }
 
     public List<Question> filterQuestionsByStudentModel(Integer numberOfQuestions, List<Question> availableQuestions) {
         List<Question> studentAnsweredQuestions = getQuizAnswers().stream()
@@ -510,11 +512,15 @@ public class User implements DomainEntity {
                 .orElse(null);
     }
 
+    public boolean isDemoStudent() {
+        return getUsername().toLowerCase(Locale.ROOT).startsWith("demo-student");
+    }
+
     public void remove() {
-        if (getAuthUser() != null && !getAuthUser().isDemoStudent() && getAuthUser().isActive()) {
+        if (!isDemoStudent() && isActive()) {
                 throw new TutorException(USER_IS_ACTIVE, getUsername());
         }
-
+        //if user is not active does it matter to check ?
         if (!quizAnswers.isEmpty()) {
             throw new TutorException(USER_HAS_QUIZ_ANSWERS, getUsername());
         }
@@ -539,12 +545,11 @@ public class User implements DomainEntity {
         UserDto dto = new UserDto();
         dto.setId(getId());
         dto.setUsername(getUsername());
-        dto.setEmail(getAuthUser().getEmail());
         dto.setName(getName());
         dto.setRole(getRole().toString());
-        dto.setActive(getAuthUser().isActive());
+        dto.setActive(isActive());
         dto.setCreationDate(DateHandler.toISOString(getCreationDate()));
-        dto.setLastAccess(DateHandler.toISOString(getAuthUser().getLastAccess()));
+        //dto.setLastAccess(DateHandler.toISOString(getAuthUser().getLastAccess()));
         return dto;
     }
 

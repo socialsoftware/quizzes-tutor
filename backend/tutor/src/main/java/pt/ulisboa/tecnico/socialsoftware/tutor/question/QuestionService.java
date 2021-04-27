@@ -48,9 +48,6 @@ public class QuestionService {
     private QuestionRepository questionRepository;
 
     @Autowired
-    private QuestionDetailsRepository questionDetailsRepository;
-
-    @Autowired
     private TopicRepository topicRepository;
 
     @Autowired
@@ -58,12 +55,6 @@ public class QuestionService {
 
     @Autowired
     private QuizQuestionRepository quizQuestionRepository;
-
-    @Autowired
-    private OptionRepository optionRepository;
-
-    @Autowired
-    private QuestionSubmissionService questionSubmissionService;
 
     @Autowired
     private QuestionSubmissionRepository questionSubmissionRepository;
