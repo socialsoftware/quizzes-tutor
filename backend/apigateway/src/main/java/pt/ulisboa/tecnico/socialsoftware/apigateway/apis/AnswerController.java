@@ -4,14 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.validation.Valid;
 import java.security.Principal;

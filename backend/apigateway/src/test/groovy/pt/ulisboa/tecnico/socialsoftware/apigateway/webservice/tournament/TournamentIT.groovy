@@ -6,8 +6,8 @@ import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.apigateway.BeanConfigurationIT
 import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
-import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.AuthExternalUser
-import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.UserSecurityInfo
+import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser
+import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto

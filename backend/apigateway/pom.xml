@@ -34,5 +34,10 @@
       <artifactId>tournament</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>pt.ulisboa.tecnico.socialsoftware.auth</groupId>
+      <artifactId>auth</artifactId>
+      <version>${project.version}</version>
+    </dependency>
   </dependencies>
 </project>
