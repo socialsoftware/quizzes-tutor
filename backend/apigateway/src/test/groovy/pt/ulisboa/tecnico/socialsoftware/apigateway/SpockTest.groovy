@@ -5,8 +5,9 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
-import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.AuthUserService
-import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.repository.AuthUserRepository
+import pt.ulisboa.tecnico.socialsoftware.auth.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.auth.UserApplicationalService
+import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository

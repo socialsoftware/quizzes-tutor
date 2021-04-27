@@ -9,7 +9,8 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.auth.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.auth.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils

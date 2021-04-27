@@ -4,8 +4,8 @@ import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.AuthExternalUser
-import pt.ulisboa.tecnico.socialsoftware.apigateway.auth.domain.UserSecurityInfo
+import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser
+import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto
