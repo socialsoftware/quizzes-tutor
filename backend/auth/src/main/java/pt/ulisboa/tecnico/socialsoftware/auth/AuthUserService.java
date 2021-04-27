@@ -12,8 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo;
-import pt.ulisboa.tecnico.socialsoftware.auth.dto.AuthDto;
-import pt.ulisboa.tecnico.socialsoftware.auth.dto.AuthUserDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
@@ -29,11 +28,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.CourseService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -44,8 +39,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Service
 public class AuthUserService {
@@ -91,9 +84,9 @@ public class AuthUserService {
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
 
         if (authUser.getUserSecurityInfo().isTeacher()) {
-            return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser, fenix.getPersonTeachingCourses(), courseExecutionList));
+            return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), fenix.getPersonTeachingCourses(), courseExecutionList);
         } else {
-            return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser, courseExecutionList));
+            return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null, courseExecutionList);
         }
     }
 
@@ -255,7 +248,7 @@ public class AuthUserService {
         }
         authUser.setLastAccess(DateHandler.now());
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
-        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser,courseExecutionList));
+        return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null , courseExecutionList);
     }
 
     @Retryable(
@@ -273,7 +266,7 @@ public class AuthUserService {
             authUser = createDemoStudent();
         }
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
-        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser, courseExecutionList));
+        return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null, courseExecutionList);
     }
 
     //Was from user service
@@ -299,7 +292,7 @@ public class AuthUserService {
     public AuthDto demoTeacherAuth() {
         AuthUser authUser = getDemoTeacher();
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
-        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser, courseExecutionList));
+        return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null, courseExecutionList);
     }
 
     @Retryable(
@@ -310,7 +303,7 @@ public class AuthUserService {
     public AuthDto demoAdminAuth() {
         AuthUser authUser = getDemoAdmin();
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
-        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser, courseExecutionList));
+        return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null, courseExecutionList);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

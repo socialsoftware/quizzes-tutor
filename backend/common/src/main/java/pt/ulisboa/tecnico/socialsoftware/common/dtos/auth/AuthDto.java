@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.auth.dto;
+package pt.ulisboa.tecnico.socialsoftware.common.dtos.auth;
 
 import java.io.Serializable;
 
@@ -6,9 +6,7 @@ public class AuthDto implements Serializable {
     private String token;
     private AuthUserDto user;
 
-    public AuthDto(String token, AuthUserDto user) {
-        this.token = token;
-        this.user = user;
+    public AuthDto() {
     }
 
     public String getToken() {
