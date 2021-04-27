@@ -39,5 +39,10 @@
       <artifactId>auth</artifactId>
       <version>${project.version}</version>
     </dependency>
+      <dependency>
+        <groupId>pt.ulisboa.tecnico.socialsoftware.tutor</groupId>
+        <artifactId>tutor</artifactId>
+        <version>${project.version}</version>
+      </dependency>
   </dependencies>
 </project>

@@ -12,10 +12,17 @@
   <name>tournament</name>
   <url>http://maven.apache.org</url>
   <packaging>jar</packaging>
-  <dependencies>
+  <!--<dependencies>
     <dependency>
       <groupId>pt.ulisboa.tecnico.socialsoftware.tutor</groupId>
       <artifactId>tutor</artifactId>
+      <version>${project.version}</version>
+    </dependency>
+  </dependencies>-->
+  <dependencies>
+    <dependency>
+      <groupId>pt.ulisboa.tecnico.socialsoftware.common</groupId>
+      <artifactId>common</artifactId>
       <version>${project.version}</version>
     </dependency>
   </dependencies>

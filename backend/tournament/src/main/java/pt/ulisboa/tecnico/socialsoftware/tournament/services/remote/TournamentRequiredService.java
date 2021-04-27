@@ -12,11 +12,11 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.remote.*;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCreator;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentParticipant;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.api.MonolithService;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -27,10 +27,24 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.U
 public class TournamentRequiredService {
 
     @Autowired
-    private MonolithService monolithService;
+    private UserInterface userInterface;
+
+    @Autowired
+    private CourseExecutionInterface courseExecutionInterface;
+
+    @Autowired
+    private QuestionInterface questionInterface;
+
+    @Autowired
+    private QuizInterface quizInterface;
+
+    @Autowired
+    private AnswerInterface answerInterface;
+
 
     public TournamentCreator getTournamentCreator(Integer userId) {
-        UserDto userDto = monolithService.findUser(userId);
+        UserDto userDto = userInterface.findUser(userId);
+
         if (userDto != null) {
             return new TournamentCreator(userDto.getId(), userDto.getUsername(), userDto.getName());
         }
@@ -40,7 +54,7 @@ public class TournamentRequiredService {
     }
 
     public TournamentParticipant getTournamentParticipant(Integer userId) {
-        UserDto userDto = monolithService.findUser(userId);
+        UserDto userDto = userInterface.findUser(userId);
         if (userDto != null) {
             return new TournamentParticipant(userDto.getId(), userDto.getUsername(), userDto.getName());
         }
@@ -50,17 +64,17 @@ public class TournamentRequiredService {
     }
 
     public TournamentCourseExecution getTournamentCourseExecution(Integer courseExecutionId) {
-        CourseExecutionDto courseExecutionDto = monolithService.findCourseExecution(courseExecutionId);
+        CourseExecutionDto courseExecutionDto = courseExecutionInterface.findCourseExecution(courseExecutionId);
         return new TournamentCourseExecution(courseExecutionDto.getCourseExecutionId(),
                 courseExecutionDto.getCourseId(), CourseExecutionStatus.valueOf(courseExecutionDto.getStatus().toString()), courseExecutionDto.getAcronym());
     }
 
     public Integer getDemoCourseExecutionId() {
-        return monolithService.getDemoCourseExecutionId();
+        return courseExecutionInterface.findDemoCourseExecution();
     }
 
     public Set<TournamentTopic> getTournamentTopics(TopicListDto topicsList) {
-        FindTopicsDto topicWithCourseDtoList = monolithService.findTopics(topicsList);
+        FindTopicsDto topicWithCourseDtoList = questionInterface.findTopics(topicsList);
         Set<TournamentTopic> topics = new HashSet<>();
 
         for (TopicWithCourseDto topicWithCourseDto : topicWithCourseDtoList.getTopicWithCourseDtoList()) {
@@ -72,22 +86,22 @@ public class TournamentRequiredService {
     }
 
     public Integer createQuiz(Integer creatorId, Integer courseExecutionId, ExternalStatementCreationDto quizDetails) {
-        return monolithService.generateQuizAndGetId(creatorId, courseExecutionId, quizDetails);
+        return quizInterface.generateQuizAndGetId(creatorId, courseExecutionId, quizDetails);
     }
 
     public StatementQuizDto startTournamentQuiz(Integer userId, Integer quizId) {
-        return monolithService.startQuiz(userId, quizId);
+        return answerInterface.startQuiz(userId, quizId);
     }
 
     public QuizDto getQuiz(Integer quizId) {
-        return monolithService.findQuizById(quizId);
+        return quizInterface.findQuizById(quizId);
     }
 
     public void updateQuiz(QuizDto quizDto) {
-        monolithService.updateQuiz(quizDto);
+        quizInterface.updateQuiz(quizDto);
     }
 
     public void deleteQuiz(Integer quizId) {
-        monolithService.deleteExternalQuiz(quizId);
+        quizInterface.deleteExternalQuiz(quizId);
     }
 }
