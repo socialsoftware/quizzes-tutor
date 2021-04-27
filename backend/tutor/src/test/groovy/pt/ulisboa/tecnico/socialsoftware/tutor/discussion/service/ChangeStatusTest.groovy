@@ -2,10 +2,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
@@ -16,7 +16,7 @@ class ChangeStatusTest extends DiscussionFixtureSpockTest {
     def setup(){
         createExternalCourseAndExecution()
 
-        teacher = new User(USER_2_NAME,USER_2_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, AuthUser.Type.TECNICO)
+        teacher = new User(USER_2_NAME, USER_2_USERNAME, Role.TEACHER, true)
         userRepository.save(teacher)
 
         defineBaseFixture()

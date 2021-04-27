@@ -31,7 +31,12 @@
         </v-btn-toggle>
       </div>
       <div>
-        <v-btn @click="createQuiz" depressed color="primary">
+        <v-btn
+          @click="createQuiz"
+          depressed
+          :disabled="disabled"
+          color="primary"
+        >
           Create quiz
         </v-btn>
       </div>
@@ -55,6 +60,7 @@ import RemoteServices from '@/services/RemoteServices';
 export default class CreateQuizzesView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;
   availableAssessments: Assessment[] = [];
+  disabled: boolean = false;
 
   async created() {
     await this.$store.dispatch('loading');
@@ -68,6 +74,7 @@ export default class CreateQuizzesView extends Vue {
   }
 
   async createQuiz() {
+    this.disabled = true;
     try {
       await this.statementManager.getQuizStatement();
       await this.$router.push({ name: 'solve-quiz' });

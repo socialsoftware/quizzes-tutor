@@ -1,5 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -14,8 +17,8 @@ public class TournamentDto implements Serializable {
     private String endTime;
     private Integer numberOfQuestions;
     private boolean isCanceled;
-    private Set<TournamentTopicDto> topicsDto = new HashSet<>();
-    private TournamentCreatorDto creator;
+    private Set<TopicDto> topicsDto = new HashSet<>();
+    private StudentDto creator;
     private List<TournamentParticipantDto> participants = new ArrayList<>();
     private boolean privateTournament = false;
     private String password = "";
@@ -81,19 +84,19 @@ public class TournamentDto implements Serializable {
         isCanceled = canceled;
     }
 
-    public Set<TournamentTopicDto> getTopicsDto() {
+    public Set<TopicDto> getTopicsDto() {
         return topicsDto;
     }
 
-    public void setTopicsDto(Set<TournamentTopicDto> topicsDto) {
+    public void setTopicsDto(Set<TopicDto> topicsDto) {
         this.topicsDto = topicsDto;
     }
 
-    public TournamentCreatorDto getCreator() {
+    public StudentDto getCreator() {
         return creator;
     }
 
-    public void setCreator(TournamentCreatorDto creator) {
+    public void setCreator(StudentDto creator) {
         this.creator = creator;
     }
 

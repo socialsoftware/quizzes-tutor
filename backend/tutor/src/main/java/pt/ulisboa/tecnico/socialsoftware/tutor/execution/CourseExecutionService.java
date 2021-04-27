@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution;
 
+import com.google.common.eventbus.EventBus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -11,12 +12,13 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDt
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
+import pt.ulisboa.tecnico.socialsoftware.common.events.AddCourseExecutionEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
@@ -53,10 +55,10 @@ public class CourseExecutionService {
     private UserRepository userRepository;
 
     @Autowired
-    private AuthUserRepository authUserRepository;
+    private QuestionAnswerItemRepository questionAnswerItemRepository;
 
     @Autowired
-    private QuestionAnswerItemRepository questionAnswerItemRepository;
+    private EventBus eventBus;
 
     @Retryable(
             value = { SQLException.class },
@@ -72,10 +74,10 @@ public class CourseExecutionService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<CourseExecutionDto> getCourseExecutions(User.Role role) {
+    public List<CourseExecutionDto> getCourseExecutions(Role role) {
         return courseExecutionRepository.findAll().stream()
-                .filter(courseExecution -> role.equals(User.Role.ADMIN) ||
-                        (role.equals(User.Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(TutorDemoUtils.COURSE_NAME)))
+                .filter(courseExecution -> role.equals(Role.ADMIN) ||
+                        (role.equals(Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(TutorDemoUtils.COURSE_NAME)))
                 .map(CourseExecution::getDto)
                 .sorted(Comparator
                         .comparing(CourseExecutionDto::getName)
@@ -100,13 +102,16 @@ public class CourseExecutionService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void addUserToTecnicoCourseExecution(String username, int courseExecutionId) {
+    public void addUserToTecnicoCourseExecution(Integer userId, int courseExecutionId) {
         CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);
-        User user = this.authUserRepository.findAuthUserByUsername(username).map(AuthUser::getUser).orElse(null);
+        User user = this.userRepository.findById(userId).orElse(null);
 
         if (user != null && courseExecution != null) {
             courseExecution.addUser(user);
             user.addCourse(courseExecution);
+            //Auth subscribes to this event and adds course execution to authUser
+            AddCourseExecutionEvent addCourseExecutionEvent = new AddCourseExecutionEvent(userId, courseExecutionId);
+            eventBus.post(addCourseExecutionEvent);
         }
     }
 
@@ -145,17 +150,15 @@ public class CourseExecutionService {
     public void anonymizeCourseExecutionUsers(int executionId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         for (User user : courseExecution.getUsers()) {
-            if (user.getAuthUser() != null) {
-                String oldUsername = user.getUsername();
-                AuthUser authUser = user.getAuthUser();
-                authUser.remove();
-                authUserRepository.delete(authUser);
-                String newUsername = user.getUsername();
-                questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
-                String role = user.getRole().toString();
-                String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();
-                user.setName(String.format("%s %s", roleCapitalized, user.getId()));
-            }
+            String oldUsername = user.getUsername();
+            DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(user.getId());
+            eventBus.post(deleteAuthUser);
+            String newUsername = user.getUsername();
+            questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
+            String role = user.getRole().toString();
+            String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();
+            user.setName(String.format("%s %s", roleCapitalized, user.getId()));
+            user.setUsername(null);
         }
     }
 
@@ -169,7 +172,7 @@ public class CourseExecutionService {
             return new ArrayList<>();
         }
         return courseExecution.getUsers().stream()
-                .filter(user -> user.getRole().equals(User.Role.STUDENT))
+                .filter(user -> user.getRole().equals(Role.STUDENT))
                 .sorted(Comparator.comparing(User::getName))
                 .map(User::getStudentDto)
                 .collect(Collectors.toList());
@@ -182,7 +185,7 @@ public class CourseExecutionService {
             return new ArrayList<>();
         }
         return courseExecution.getUsers().stream()
-                .filter(user -> user.getRole().equals(User.Role.TEACHER))
+                .filter(user -> user.getRole().equals(Role.TEACHER))
                 .map(User::getUserDto)
                 .collect(Collectors.toList());
     }
@@ -221,6 +224,19 @@ public class CourseExecutionService {
             return createTecnicoCourseExecution(new CourseExecutionDto(TutorDemoUtils.COURSE_NAME, TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM));
         }
         return courseExecution.getDto();
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public CourseExecutionDto getCourseExecutionByFields(String acronym, String academicTerm, String type) {
+        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(acronym, academicTerm, type).orElse(null);
+        CourseExecutionDto courseExecutionDto = null;
+        if (courseExecution != null) {
+            courseExecutionDto = courseExecution.getDto();
+        }
+        return courseExecutionDto;
     }
 
     public CourseExecution getDemoCourseExecution() {
@@ -268,6 +284,9 @@ public class CourseExecutionService {
                     .orElseThrow(() -> new TutorException((USER_NOT_FOUND)));
             user.remove();
             userRepository.delete(user);
+
+            DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(id);
+            eventBus.post(deleteAuthUser);
         }
     }
 
@@ -286,4 +305,15 @@ public class CourseExecutionService {
         }
     }
 
+    @Override
+    public String toString() {
+        return "CourseExecutionService{" +
+                "questionService=" + questionService +
+                ", courseRepository=" + courseRepository +
+                ", courseExecutionRepository=" + courseExecutionRepository +
+                ", userRepository=" + userRepository +
+                ", questionAnswerItemRepository=" + questionAnswerItemRepository +
+                ", eventBus=" + eventBus +
+                '}';
+    }
 }
