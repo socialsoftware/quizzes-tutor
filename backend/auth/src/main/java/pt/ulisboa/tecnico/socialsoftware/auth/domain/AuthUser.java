@@ -3,15 +3,18 @@ package pt.ulisboa.tecnico.socialsoftware.auth.domain;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
@@ -201,5 +204,41 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
                 ", userSecurityInfo=" + userSecurityInfo +
                 ", userCourseExecutions=" + userCourseExecutions +
                 '}';
+    }
+
+    public AuthDto getAuthDto(String token, List<CourseExecutionDto> currentCourses, List<CourseExecutionDto> courseExecutionList) {
+        AuthDto dto = new AuthDto();
+        AuthUserDto authUserDto = getAuthUserDto(currentCourses, courseExecutionList);
+        dto.setToken(token);
+        dto.setUser(authUserDto);
+        return dto;
+    }
+
+    public AuthUserDto getAuthUserDto(List<CourseExecutionDto> currentCourses, List<CourseExecutionDto> courseExecutionList) {
+        AuthUserDto dto = new AuthUserDto();
+        dto.setId(getUserSecurityInfo().getId());
+        dto.setName(getUserSecurityInfo().getName());
+        dto.setUsername(getUsername());
+        dto.setEmail(getEmail());
+        dto.setRole(getUserSecurityInfo().getRole());
+        dto.setAdmin(getUserSecurityInfo().isAdmin());
+        dto.setCourses(getActiveAndInactiveCourses(courseExecutionList, Objects.requireNonNullElseGet(currentCourses, ArrayList::new)));
+        return dto;
+    }
+
+    private Map<String, List<CourseExecutionDto>> getActiveAndInactiveCourses(List<CourseExecutionDto> courseExecutions, List<CourseExecutionDto> courses) {
+        courses.stream()
+                .forEach(courseDto -> {
+                    if (courseExecutions.stream().noneMatch(c -> c.getAcronym().equals(courseDto.getAcronym()) && c.getAcademicTerm().equals(courseDto.getAcademicTerm()))) {
+                        if (courseDto.getStatus() == null) {
+                            courseDto.setStatus(CourseExecutionStatus.INACTIVE);
+                        }
+                        courseExecutions.add(courseDto);
+                    }
+                });
+
+        return courseExecutions.stream().sorted(Comparator.comparing(CourseExecutionDto::getName))
+                .collect(Collectors.groupingBy(CourseExecutionDto::getAcademicTerm,
+                        Collectors.mapping(courseDto -> courseDto, Collectors.toList())));
     }
 }
