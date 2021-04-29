@@ -206,10 +206,11 @@ public class TournamentProvidedService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoTournaments() {
-        Integer demoCourseExecutionId = tournamentRequiredService.getDemoCourseExecutionId();
+        //TODO: Make this work
+        /*Integer demoCourseExecutionId = tournamentRequiredService.getDemoCourseExecutionId();
 
         tournamentRepository.getTournamentsForCourseExecution(demoCourseExecutionId)
-            .forEach(tournament -> tournamentRepository.delete(tournament));
+            .forEach(tournament -> tournamentRepository.delete(tournament));*/
     }
 
 }

@@ -6,6 +6,8 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository
+import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.auth.services.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler

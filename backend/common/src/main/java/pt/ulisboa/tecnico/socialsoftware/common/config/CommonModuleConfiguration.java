@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.common.config;
 
-import com.google.common.eventbus.EventBus;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.ComponentScan;
@@ -11,11 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.remote.*;
 @ComponentScan(basePackages = "pt.ulisboa.tecnico.socialsoftware.common")
 @EntityScan({"pt.ulisboa.tecnico.socialsoftware.common"})
 public class CommonModuleConfiguration {
-
-    @Bean
-    public EventBus eventBus() {
-        return new EventBus();
-    }
 
     @Bean
     public UserInterface userInterface() {
