@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.config;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
@@ -27,6 +29,8 @@ import java.io.Serializable;
 //TODO: Solve this
 @Component
 public class TutorPermissionEvaluator implements PermissionEvaluator {
+
+    private static final Logger logger = LoggerFactory.getLogger(TutorPermissionEvaluator.class);
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -58,6 +62,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         UserInfo userInfo = ((UserInfo) authentication.getPrincipal());
+        logger.info("Checking token permissions in tutor: " + userInfo.toString());
         int userId = userInfo.getId();
 
         if (targetDomainObject instanceof CourseExecutionDto) {

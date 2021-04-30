@@ -29,7 +29,7 @@ public class GatewayConfig {
                         .filters(f -> f.filter(filter))
                         .uri(AUTH_SERVICE_URL))
 
-                //routes not correct
+                //TODO: routes not correct
                 .route("answer-service", r -> r.path("/quizzes/**")
                         .filters(f -> f.filter(filter))
                         .uri(TUTOR_SERVICE_URL))
@@ -55,7 +55,7 @@ public class GatewayConfig {
                         .filters(f -> f.filter(filter))
                         .uri(TUTOR_SERVICE_URL))
 
-                //routes not correct
+                //TODO: routes not correct
                 .route("question-service", r -> r.path("**/topics","/topics/**","/questions/**","/courses/**")
                         .filters(f -> f.filter(filter))
                         .uri(TUTOR_SERVICE_URL))

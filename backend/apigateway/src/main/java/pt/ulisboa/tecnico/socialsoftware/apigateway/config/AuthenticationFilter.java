@@ -1,19 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.apigateway.config;
 
+import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cloud.context.config.annotation.RefreshScope;
+import org.springframework.cloud.gateway.filter.GatewayFilter;
+import org.springframework.cloud.gateway.filter.GatewayFilterChain;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
-import io.jsonwebtoken.Claims;
-import org.springframework.cloud.gateway.filter.GatewayFilter;
-import org.springframework.cloud.gateway.filter.GatewayFilterChain;
-import org.springframework.http.server.reactive.ServerHttpRequest;
 import reactor.core.publisher.Mono;
 
 import java.io.File;
@@ -36,17 +36,22 @@ public class AuthenticationFilter implements GatewayFilter {
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
-
+        logger.info("Request URI Path: "+ request.getURI().getPath());
+        logger.info("Request Cookies: "+ request.getCookies());
+        logger.info("Request Headers: "+ request.getHeaders());
         if (routerValidator.isSecured.test(request)) {
             if (this.isAuthMissing(request))
                 return this.onError(exchange, "Authorization header is missing in request");
 
-            final String token = this.getAuthHeader(request);
+            final String token = getToken(request);
+
+            logger.info("Token: "+ token);
 
             if (isInvalid(token))
                 return this.onError(exchange, "Authorization header is invalid");
 
-            //this.populateRequestWithHeaders(exchange, token);
+            /*
+            this.populateRequestWithHeaders(exchange, token);*/
         }
         return chain.filter(exchange);
     }
@@ -60,6 +65,7 @@ public class AuthenticationFilter implements GatewayFilter {
             try {
                 File resource = new ClassPathResource(PUBLIC_KEY_FILENAME).getFile();
                 publicKey = getPublicKey(resource.toPath());
+                logger.info("Public Key was read successfully: " + publicKey.toString());
             } catch (Exception e) {
                 logger.info("Failed reading key");
                 logger.info(e.getMessage());
@@ -86,8 +92,21 @@ public class AuthenticationFilter implements GatewayFilter {
         return response.setComplete();
     }
 
-    private String getAuthHeader(ServerHttpRequest request) {
-        return request.getHeaders().getOrEmpty("Authorization").get(0);
+//    private String getAuthHeader(ServerHttpRequest request) {
+//        return request.getHeaders().getOrEmpty("Authorization").get(0);
+//    }
+
+    public static String getToken(ServerHttpRequest req) {
+        String authHeader = req.getHeaders().getOrEmpty("Authorization").get(0);
+
+        if (authHeader != null && authHeader.startsWith("Bearer ")) {
+            return authHeader.substring(7);
+        } else if (authHeader != null && authHeader.startsWith("AUTH")) {
+            return authHeader.substring(4);
+        } else if (authHeader != null) {
+            return authHeader;
+        }
+        return "";
     }
 
     private boolean isAuthMissing(ServerHttpRequest request) {
@@ -105,12 +124,4 @@ public class AuthenticationFilter implements GatewayFilter {
     private static boolean isTokenExpired(String token) {
         return getAllClaimsFromToken(token).getExpiration().before(new Date());
     }
-
-    /*private void populateRequestWithHeaders(ServerWebExchange exchange, String token) {
-        Claims claims = JwtUtil.getAllClaimsFromToken(token);
-        exchange.getRequest().mutate()
-                .header("id", String.valueOf(claims.get("id")))
-                .header("role", String.valueOf(claims.get("role")))
-                .build();
-    }*/
 }

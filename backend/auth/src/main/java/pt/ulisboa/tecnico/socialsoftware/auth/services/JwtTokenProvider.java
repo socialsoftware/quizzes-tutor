@@ -42,6 +42,7 @@ public class JwtTokenProvider {
             try {
                 File resource = new ClassPathResource(PRIVATE_KEY_FILENAME).getFile();
                 privateKey = RSAUtil.getPrivateKey(resource.toPath());
+                logger.info("Private Key was read successfully: " + privateKey.toString());
             } catch (Exception e) {
                 logger.info("Failed reading key");
                 logger.info(e.getMessage());

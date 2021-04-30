@@ -60,11 +60,12 @@ public class JwtUtil {
 
     public static Authentication getAuthentication(String token) {
         Claims tokenClaims = getAllClaimsFromToken(token);
-        int userId = Integer.parseInt(tokenClaims.get("userId", String.class));
+        int userId = tokenClaims.get("userId", Integer.class);
         Role role = Role.valueOf(tokenClaims.get("role", String.class));
-        boolean isAdmin = Boolean.parseBoolean(tokenClaims.get("isAdmin", String.class));
+        boolean isAdmin = tokenClaims.get("isAdmin", Boolean.class);
         String username = tokenClaims.get("username", String.class);
         UserInfo userInfo = new UserInfo(userId, role, isAdmin, username);
+        logger.info("UserInfo: " + userInfo);
         return new UsernamePasswordAuthenticationToken(userInfo, "", userInfo.getAuthorities());
     }
 

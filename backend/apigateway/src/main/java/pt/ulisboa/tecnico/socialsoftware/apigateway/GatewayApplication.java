@@ -6,7 +6,7 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.web.bind.annotation.RestController;
 
 @RestController
-@PropertySource({"classpath:application.properties" })
+@PropertySource({"classpath:application.yml" })
 @SpringBootApplication
 public class GatewayApplication {
     public static void main(String[] args) {
