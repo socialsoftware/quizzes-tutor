@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -34,6 +36,9 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.A
 
 @RestController
 public class CourseExecutionController {
+
+    private static final Logger logger = LoggerFactory.getLogger(CourseExecutionController.class);
+
     @Autowired
     private CourseExecutionService courseExecutionService;
 

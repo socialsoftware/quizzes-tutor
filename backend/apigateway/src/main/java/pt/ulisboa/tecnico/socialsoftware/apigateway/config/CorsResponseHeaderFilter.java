@@ -10,7 +10,12 @@ import org.springframework.web.server.ServerWebExchange;
 import reactor.core.publisher.Mono;
 
 import java.util.ArrayList;
-
+/*
+This filter is used to solve this error: "The 'Access-Control-Allow-Origin' header contains multiple values
+'http://localhost:8081, http://localhost:8081', but only one is allowed."
+It allows to remove duplicated values in Access-Control-Allow-Origin
+https://github.com/spring-cloud/spring-cloud-gateway/issues/840
+*/
 @Component
 public class CorsResponseHeaderFilter implements GlobalFilter, Ordered {
 

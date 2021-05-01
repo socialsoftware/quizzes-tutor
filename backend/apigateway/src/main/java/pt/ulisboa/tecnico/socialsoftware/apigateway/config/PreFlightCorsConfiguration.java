@@ -6,8 +6,14 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.reactive.CorsConfigurationSource;
 import org.springframework.web.cors.reactive.CorsWebFilter;
 import org.springframework.web.cors.reactive.UrlBasedCorsConfigurationSource;
+import org.springframework.web.filter.CorsFilter;
 
 import java.util.Arrays;
+
+/*
+This filter is used to add Access-Control-Allow-Origin headers to solve CORS configuration issues
+https://github.com/spring-cloud/spring-cloud-gateway/issues/840
+*/
 
 @Configuration
 public class PreFlightCorsConfiguration {

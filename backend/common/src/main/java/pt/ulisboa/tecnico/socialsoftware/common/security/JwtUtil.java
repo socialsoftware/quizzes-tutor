@@ -54,10 +54,6 @@ public class JwtUtil {
         return Jwts.parserBuilder().setSigningKey(getPublicKey()).build().parseClaimsJws(token).getBody();
     }
 
-    private static boolean isTokenExpired(String token) {
-        return getAllClaimsFromToken(token).getExpiration().before(new Date());
-    }
-
     public static Authentication getAuthentication(String token) {
         Claims tokenClaims = getAllClaimsFromToken(token);
         int userId = tokenClaims.get("userId", Integer.class);

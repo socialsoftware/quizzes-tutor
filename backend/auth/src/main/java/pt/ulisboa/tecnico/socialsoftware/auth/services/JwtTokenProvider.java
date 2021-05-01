@@ -24,25 +24,12 @@ public class JwtTokenProvider {
     public JwtTokenProvider() {
     }
 
-    /*public static void generateKeys() {
-        try {
-            File resource = new ClassPathResource( PRIVATE_KEY_FILENAME).getFile();
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-            keyPairGenerator.initialize(2048);
-            KeyPair keyPair = keyPairGenerator.generateKeyPair();
-            privateKey = keyPair.getPrivate();
-            publicKey = keyPair.getPublic();
-        } catch (Exception e) {
-            logger.error("Unable to generate keys");
-        }
-    }*/
-
     static String generateToken(AuthUser authUser) {
         if (privateKey == null) {
             try {
                 File resource = new ClassPathResource(PRIVATE_KEY_FILENAME).getFile();
                 privateKey = RSAUtil.getPrivateKey(resource.toPath());
-                logger.info("Private Key was read successfully: " + privateKey.toString());
+                //logger.info("Private Key was read successfully: " + privateKey.toString());
             } catch (Exception e) {
                 logger.info("Failed reading key");
                 logger.info(e.getMessage());
