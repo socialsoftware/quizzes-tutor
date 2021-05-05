@@ -8,7 +8,7 @@ describe('Manage Topics Walk-through', () => {
       .should('be.empty')
       .type(topicName);
 
-    cy.route('POST', '/courses/*/topics/').as('postTopic');
+    cy.route('POST', '/topics/courses/*').as('postTopic');
 
     cy.get('button')
       .contains('Save')
@@ -23,7 +23,7 @@ describe('Manage Topics Walk-through', () => {
     cy.cleanTestTopics();
     cy.demoTeacherLogin();
     cy.server();
-    cy.route('GET', '/courses/*/topics').as('getTopics');
+    cy.route('GET', '/topics/courses/*').as('getTopics');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="manageTopicsMenuButton"]').click();
     cy.get('[data-cy="Search"]').click();
