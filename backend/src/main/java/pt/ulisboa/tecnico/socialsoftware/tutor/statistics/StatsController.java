@@ -20,7 +20,7 @@ public class StatsController {
     @Autowired
     private StatsService statsService;
 
-    @GetMapping("/executions/{executionId}/stats")
+    @GetMapping("/stats/executions/{executionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public StatsDto getStats(Principal principal, @PathVariable int executionId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();

@@ -18,7 +18,7 @@ public class AnswerController {
     @Autowired
     private AnswerService answerService;
 
-    @GetMapping("/executions/{executionId}/quizzes/available")
+    @GetMapping("/answers/{executionId}/quizzes/available")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<QuizDto> getAvailableQuizzes(Principal principal, @PathVariable int executionId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -26,7 +26,7 @@ public class AnswerController {
         return answerService.getAvailableQuizzes(authUser.getUser().getId(), executionId);
     }
 
-    @PostMapping("/executions/{executionId}/quizzes/generate")
+    @PostMapping("/answers/{executionId}/quizzes/generate")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public StatementQuizDto getNewQuiz(Principal principal, @PathVariable int executionId, @RequestBody StatementCreationDto quizDetails) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -34,7 +34,7 @@ public class AnswerController {
         return answerService.generateStudentQuiz(authUser.getUser().getId(), executionId, quizDetails);
     }
 
-    @GetMapping("/executions/{executionId}/quizzes/solved")
+    @GetMapping("/answers/{executionId}/quizzes/solved")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<SolvedQuizDto> getSolvedQuizzes(Principal principal, @PathVariable int executionId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -42,7 +42,7 @@ public class AnswerController {
         return answerService.getSolvedQuizzes(authUser.getUser().getId(), executionId);
     }
 
-    @GetMapping("/quizzes/{quizId}/byqrcode")
+    @GetMapping("/answers/{quizId}/byqrcode")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuizDto getQuizByQRCode(Principal principal, @PathVariable int quizId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -50,7 +50,7 @@ public class AnswerController {
         return answerService.getQuizByQRCode(authUser.getUser().getId(), quizId);
     }
 
-    @GetMapping("/quizzes/{quizId}/start")
+    @GetMapping("/answers/{quizId}/start")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuizDto startQuiz(Principal principal, @PathVariable int quizId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -58,13 +58,13 @@ public class AnswerController {
         return answerService.startQuiz(authUser.getUser().getId(), quizId);
     }
 
-    @GetMapping("/quizzes/{quizId}/question/{questionId}")
+    @GetMapping("/answers/{quizId}/question/{questionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuestionDto getQuestionForQuizAnswer(@PathVariable int quizId, @PathVariable int questionId) {
         return answerService.getQuestionForQuizAnswer(quizId, questionId);
     }
 
-    @PostMapping("/quizzes/{quizId}/submit")
+    @PostMapping("/answers/{quizId}/submit")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -72,7 +72,7 @@ public class AnswerController {
         answerService.submitAnswer(authUser.getUser().getUsername(), quizId, answer);
     }
 
-    @PostMapping("/quizzes/{quizId}/conclude")
+    @PostMapping("/answers/{quizId}/conclude")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public List<CorrectAnswerDto> concludeQuiz(@PathVariable int quizId, @RequestBody StatementQuizDto statementQuizDto) {
         return answerService.concludeQuiz(statementQuizDto);

@@ -20,7 +20,7 @@ public class QuizController {
     @Autowired
     private AnswerService answerService;
 
-    @GetMapping("/executions/{executionId}/quizzes/non-generated")
+    @GetMapping("/quizzes/executions/{executionId}/non-generated")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<QuizDto> findNonGeneratedQuizzes(@PathVariable int executionId) {
         return quizService.findNonGeneratedQuizzes(executionId);
@@ -32,7 +32,7 @@ public class QuizController {
         return this.quizService.findById(quizId);
     }
 
-    @PostMapping("/executions/{executionId}/quizzes")
+    @PostMapping("/quizzes/executions/{executionId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public QuizDto createQuiz(@PathVariable int executionId, @Valid @RequestBody QuizDto quiz) {
         return this.quizService.createQuiz(executionId, quiz);
