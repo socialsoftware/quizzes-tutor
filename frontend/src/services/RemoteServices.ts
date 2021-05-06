@@ -337,10 +337,7 @@ export default class RemoteServices {
 
   static async createTopic(topic: Topic): Promise<Topic> {
     return httpClient
-      .post(
-        `/topics/courses/${Store.getters.getCurrentCourse.courseId}`,
-        topic
-      )
+      .post(`/topics/courses/${Store.getters.getCurrentCourse.courseId}`, topic)
       .then((response) => {
         return new Topic(response.data);
       })

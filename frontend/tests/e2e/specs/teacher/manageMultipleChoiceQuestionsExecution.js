@@ -11,11 +11,9 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
         cy.get('.headline').should('contain', title);
         cy.get('span > p').should('contain', content);
         cy.get('li').each(($el, index, $list) => {
-          cy.get($el).should('contain', optionPrefix + index);
-          if (index === correctIndex) {
-            cy.get($el).should('contain', '[★]');
-          } else {
-            cy.get($el).should('not.contain', '[★]');
+          cy.get($el).should('contain', optionPrefix);
+          if ($el.text().includes('[★]')) {
+            cy.get($el).should('contain', optionPrefix + correctIndex);
           }
         });
       });
