@@ -1,0 +1,12 @@
+DROP DATABASE IF EXISTS eventuate;
+CREATE DATABASE eventuate;
+
+--CREATE USER postgres WITH SUPERUSER LOGIN PASSWORD 'root';
+GRANT ALL PRIVILEGES ON DATABASE eventuate TO postgres;
+
+DROP TABLE IF EXISTS cdc_monitoring;
+CREATE TABLE cdc_monitoring
+(
+  reader_id VARCHAR(1000) PRIMARY KEY,
+  last_time BIGINT
+);

@@ -2,23 +2,21 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.remote.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import java.util.List;
-import java.util.Set;
 
 @Service
 public class MonolithService implements UserContract, AnswerContract, QuizContract, QuestionContract, CourseExecutionContract {
@@ -41,6 +39,11 @@ public class MonolithService implements UserContract, AnswerContract, QuizContra
     @Override
     public UserDto findUser(Integer userId) {
         return userService.findUserById(userId);
+    }
+
+    @Override
+    public List<CourseExecutionDto> getCourseExecutions(Integer userId) {
+        return userService.getUserCourseExecutions(userId);
     }
 
     @Override

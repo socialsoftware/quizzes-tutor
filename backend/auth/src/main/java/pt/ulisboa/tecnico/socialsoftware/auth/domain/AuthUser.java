@@ -9,13 +9,14 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDt
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.UnsupportedStateTransitionException;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.*;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Entity
@@ -27,11 +28,20 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 @DiscriminatorColumn(name="auth_type",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
+
     public enum Type { EXTERNAL, TECNICO, DEMO }
+
+    public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Version
+    private Long version;
+
+    @Enumerated(EnumType.STRING)
+    private AuthUserState state;
 
     private String email;
     private String password;
@@ -55,6 +65,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         setUserSecurityInfo(userSecurityInfo);
         setUsername(username);
         setEmail(email);
+        setState(APPROVAL_PENDING);
     }
 
     public static AuthUser createAuthUser(UserSecurityInfo userSecurityInfo, String username, String email, Type type) {
@@ -100,7 +111,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
     }
 
     public void setEmail(String email) {
-        if (email == null || !email.matches(UserService.MAIL_FORMAT))
+        if (email == null || !email.matches(MAIL_FORMAT))
             throw new TutorException(INVALID_EMAIL, email);
 
         this.email = email.toLowerCase();
@@ -141,6 +152,14 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         if (!isActive && !(userSecurityInfo.getRole().equals(Role.STUDENT) || userSecurityInfo.getRole().equals(Role.TEACHER))) {
             throw new TutorException(INVALID_ROLE, userSecurityInfo.getRole().toString());
         }
+    }
+
+    public AuthUserState getState() {
+        return state;
+    }
+
+    public void setState(AuthUserState state) {
+        this.state = state;
     }
 
     /*@Override
@@ -240,5 +259,24 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         return courseExecutions.stream().sorted(Comparator.comparing(CourseExecutionDto::getName))
                 .collect(Collectors.groupingBy(CourseExecutionDto::getAcademicTerm,
                         Collectors.mapping(courseDto -> courseDto, Collectors.toList())));
+    }
+
+    public void authUserApproved(Integer userId) {
+        switch (state) {
+            case APPROVAL_PENDING:
+                getUserSecurityInfo().setId(userId);
+                this.state = APPROVED;
+            default:
+                throw new UnsupportedStateTransitionException(state);
+        }
+    }
+
+    public void authUserRejected() {
+        switch (state) {
+            case APPROVAL_PENDING:
+                this.state = REJECTED;
+            default:
+                throw new UnsupportedStateTransitionException(state);
+        }
     }
 }

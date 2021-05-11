@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDt
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
@@ -35,10 +36,6 @@ public class UserService {
 
     @Autowired
     private EventBus eventBus;
-
-    public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-    public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Password Confirmation";
-    public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserDto createUser(String name, Role role, String username, boolean isActive, boolean isAdmin) {
@@ -103,5 +100,12 @@ public class UserService {
     public List<CourseExecutionDto> getUserCourseExecutions(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         return user.getCourseExecutions().stream().map(CourseExecution::getDto).collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void deleteUser(Integer id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new TutorException(USER_NOT_FOUND, id));
+        user.remove();
+        userRepository.delete(user);
     }
 }

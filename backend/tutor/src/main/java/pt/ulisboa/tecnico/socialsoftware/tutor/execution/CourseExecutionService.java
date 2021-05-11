@@ -18,8 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.events.AddCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
@@ -29,7 +29,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseReposit
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -39,6 +38,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.utils.Utils.*;
 
 @Service
 public class CourseExecutionService {
@@ -77,7 +77,7 @@ public class CourseExecutionService {
     public List<CourseExecutionDto> getCourseExecutions(Role role) {
         return courseExecutionRepository.findAll().stream()
                 .filter(courseExecution -> role.equals(Role.ADMIN) ||
-                        (role.equals(Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(TutorDemoUtils.COURSE_NAME)))
+                        (role.equals(Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(COURSE_NAME)))
                 .map(CourseExecution::getDto)
                 .sorted(Comparator
                         .comparing(CourseExecutionDto::getName)
@@ -218,10 +218,10 @@ public class CourseExecutionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto getDemoCourse() {
-        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElse(null);
+        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(COURSE_ACRONYM, COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElse(null);
 
         if (courseExecution == null) {
-            return createTecnicoCourseExecution(new CourseExecutionDto(TutorDemoUtils.COURSE_NAME, TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM));
+            return createTecnicoCourseExecution(new CourseExecutionDto(COURSE_NAME, COURSE_ACRONYM, COURSE_ACADEMIC_TERM));
         }
         return courseExecution.getDto();
     }
@@ -240,9 +240,9 @@ public class CourseExecutionService {
     }
 
     public CourseExecution getDemoCourseExecution() {
-        return this.courseExecutionRepository.findByFields(TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElseGet(() -> {
-            Course course = getCourse(TutorDemoUtils.COURSE_NAME, CourseType.TECNICO);
-            CourseExecution courseExecution = new CourseExecution(course, TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO, DateHandler.now().plusDays(1));
+        return this.courseExecutionRepository.findByFields(COURSE_ACRONYM, COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElseGet(() -> {
+            Course course = getCourse(COURSE_NAME, CourseType.TECNICO);
+            CourseExecution courseExecution = new CourseExecution(course, COURSE_ACRONYM, COURSE_ACADEMIC_TERM, CourseType.TECNICO, DateHandler.now().plusDays(1));
             return courseExecutionRepository.save(courseExecution);
         });
     }

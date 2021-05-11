@@ -29,7 +29,16 @@
     <java.version>11</java.version>
     <maven.compiler.source>11</maven.compiler.source>
     <maven.compiler.target>11</maven.compiler.target>
+    <eventuate-client-java-spring.version>0.21.1.RELEASE</eventuate-client-java-spring.version>
+    <eventuate-tram.version>0.29.0.RELEASE</eventuate-tram.version>
+    <eventuate-tram-sagas.version>0.18.0.RELEASE</eventuate-tram-sagas.version>
+    <!--<eventuate-tram-saga-orchestration.version>0.15.2.RELEASE</eventuate-tram-saga-orchestration.version>
+    <eventuate-tram-saga-dsl.version>0.15.2.RELEASE</eventuate-tram-saga-dsl.version>
+    <eventuate-tram-sagas-participant.version>0.15.2.RELEASE</eventuate-tram-sagas-participant.version>
+    <eventuate-tram-sagas-spring-participant.version>0.15.2.RELEASE</eventuate-tram-sagas-spring-participant.version>
+    <eventuate-tram-sagas-spring-common.version>0.15.2.RELEASE</eventuate-tram-sagas-spring-common.version>-->
   </properties>
+
   <!-- Allows multiple properties files-->
   <profiles>
     <profile>

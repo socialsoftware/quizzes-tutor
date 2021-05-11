@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
 
 import java.io.Serializable;
-//TODO: Solve this
+
 @Component
 public class TournamentPermissionEvaluator implements PermissionEvaluator {
 
@@ -25,11 +25,12 @@ public class TournamentPermissionEvaluator implements PermissionEvaluator {
             int id = (int) targetDomainObject;
             String permissionValue = (String) permission;
             switch (permissionValue) {
+                case "EXECUTION.ACCESS":
+                    return userHasThisExecution(userInfo, id);
                 case "TOURNAMENT.ACCESS":
                     Integer courseExecutionId = tournamentRepository.findCourseExecutionIdByTournamentId(id).orElse(null);
                     if (courseExecutionId != null) {
-                        //return userHasThisExecution(userId, courseExecutionId);
-                        return true;
+                        return userHasThisExecution(userInfo, courseExecutionId);
                     }
                     return false;
                 case "TOURNAMENT.PARTICIPANT":
@@ -45,6 +46,10 @@ public class TournamentPermissionEvaluator implements PermissionEvaluator {
         }
 
         return false;
+    }
+
+    private boolean userHasThisExecution(UserInfo userInfo, int courseExecutionId) {
+        return userInfo.getCourseExecutions().contains(courseExecutionId);
     }
 
     private boolean userParticipatesInTournament(int userId, int tournamentId) {

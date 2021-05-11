@@ -8,19 +8,25 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <groupId>pt.ulisboa.tecnico.socialsoftware.auth</groupId>
-  <artifactId>auth</artifactId>
+  <artifactId>auth-service</artifactId>
   <packaging>jar</packaging>
-  <name>auth</name>
-  <url>http://maven.apache.org</url>
+  <name>Auth Service</name>
+
+  <repositories>
+    <repository>
+      <id>JCenter</id>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+    <repository>
+      <id>JCenter-Bintray</id>
+      <url>https://jcenter.bintray.com/</url>
+    </repository>
+  </repositories>
+
   <dependencies>
     <dependency>
       <groupId>pt.ulisboa.tecnico.socialsoftware.common</groupId>
       <artifactId>common</artifactId>
-      <version>${project.version}</version>
-    </dependency>
-    <dependency>
-      <groupId>pt.ulisboa.tecnico.socialsoftware.tutor</groupId>
-      <artifactId>tutor</artifactId>
       <version>${project.version}</version>
     </dependency>
     <dependency>
@@ -141,5 +147,114 @@
       <artifactId>commons-compress</artifactId>
       <version>1.20</version>
     </dependency>
+
+    <!-- Eventuate -->
+
+<!--    <dependency>-->
+<!--      <groupId>io.eventuate.tram.core</groupId>-->
+<!--      <artifactId>eventuate-tram-spring-messaging</artifactId>-->
+<!--      <version>${eventuate-tram.version} </version>-->
+<!--    </dependency>-->
+
+    <!-- Command/Async Reply messaging -->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-commands</artifactId>
+      <version>${eventuate-tram.version} </version>
+    </dependency>
+
+    <!-- Producer Implementation -->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-producer-jdbc</artifactId>
+      <version>${eventuate-tram.version} </version>
+    </dependency>
+
+    <!-- Consumer Implementation -->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-consumer-kafka</artifactId>
+      <version>${eventuate-tram.version} </version>
+    </dependency>
+
+    <!-- Consumer Idempotency (JDBC-based idempotency) -->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-consumer-jdbc</artifactId>
+      <version>${eventuate-tram.version} </version>
+    </dependency>
+
+    <!-- Transaction Management -->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-jdbc-kafka</artifactId>
+      <version>${eventuate-tram.version} </version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.eventuate.client.java</groupId>
+      <artifactId>eventuate-client-java-spring</artifactId>
+      <version>${eventuate-client-java-spring.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-orchestration</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-orchestration-simple-dsl</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-participant</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-spring-participant</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-spring-common</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+      <type>pom</type>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-spring-orchestration</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+
   </dependencies>
+
+  <!-- https://javahungry.blogspot.com/2019/05/solved-no-main-manifest-attribute-in-jar.html -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

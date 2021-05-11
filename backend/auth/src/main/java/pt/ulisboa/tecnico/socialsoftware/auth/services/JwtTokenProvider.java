@@ -6,6 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
+import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.common.security.RSAUtil;
 
@@ -41,6 +42,9 @@ public class JwtTokenProvider {
         claims.put("userId", authUser.getUserSecurityInfo().getId());
         claims.put("isAdmin", authUser.getUserSecurityInfo().isAdmin());
         claims.put("username", authUser.getUsername());
+        claims.put("executions",authUser.getUserCourseExecutions());
+        claims.put("courseAcronyms", authUser.getType().equals(AuthUser.Type.TECNICO) ?
+                ((AuthTecnicoUser) authUser).getEnrolledCoursesAcronyms() : "");
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 1000*60*60*24);

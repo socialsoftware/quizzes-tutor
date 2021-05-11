@@ -6,13 +6,14 @@ import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.NotificationResponse;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.LinkHandler;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer;
 
 import java.io.InputStream;
+
+import static pt.ulisboa.tecnico.socialsoftware.common.utils.Utils.PASSWORD_CONFIRMATION_MAIL_SUBJECT;
 
 @Service
 public class UserApplicationalService {
@@ -60,7 +61,7 @@ public class UserApplicationalService {
     }
 
     public void sendConfirmationEmailTo(String username, String email, String token) {
-        mailer.sendSimpleMail(mailUsername, email, Mailer.QUIZZES_TUTOR_SUBJECT + UserService.PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(username, token));
+        mailer.sendSimpleMail(mailUsername, email, Mailer.QUIZZES_TUTOR_SUBJECT + PASSWORD_CONFIRMATION_MAIL_SUBJECT, buildMailBody(username, token));
     }
 
     private String buildMailBody(String username, String token) {

@@ -33,6 +33,12 @@ public class UserSecurityInfo {
         this.admin = admin;
     }
 
+    public UserSecurityInfo(String name, Role role, Boolean admin) {
+        this.name = name;
+        this.role = role;
+        this.admin = admin;
+    }
+
     public String getName() {
         return name;
     }

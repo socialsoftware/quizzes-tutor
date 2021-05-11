@@ -9,9 +9,9 @@
   </parent>
   <groupId>pt.ulisboa.tecnico.socialsoftware.tournament</groupId>
   <artifactId>tournament</artifactId>
-  <name>tournament</name>
-  <url>http://maven.apache.org</url>
+  <name>Tournament Service</name>
   <packaging>jar</packaging>
+
   <dependencies>
     <dependency>
       <groupId>pt.ulisboa.tecnico.socialsoftware.common</groupId>

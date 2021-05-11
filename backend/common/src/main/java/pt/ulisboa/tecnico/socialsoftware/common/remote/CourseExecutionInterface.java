@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.exceptions.RemoteAccessException
 public class CourseExecutionInterface implements CourseExecutionContract{
     private static final Logger logger = LoggerFactory.getLogger(CourseExecutionInterface.class);
 
-    private static final String ENDPOINT = "http://localhost:8080";
+    private static final String ENDPOINT = "http://localhost:8084";
 
     @Override
     public CourseExecutionDto findCourseExecution(Integer courseExecutionId) {

@@ -10,8 +10,8 @@
   <groupId>pt.ulisboa.tecnico.socialsoftware.apigateway</groupId>
   <artifactId>apigateway</artifactId>
   <packaging>jar</packaging>
-  <name>apigateway</name>
-  <url>http://maven.apache.org</url>
+  <name>API Gateway</name>
+
   <repositories>
     <repository>
       <id>maven-central-repository</id>
@@ -54,22 +54,20 @@
     </dependencies>
   </dependencyManagement>
 
+  <!-- https://javahungry.blogspot.com/2019/05/solved-no-main-manifest-attribute-in-jar.html -->
   <build>
-    <pluginManagement>
       <plugins>
         <plugin>
           <groupId>org.springframework.boot</groupId>
           <artifactId>spring-boot-maven-plugin</artifactId>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-compiler-plugin</artifactId>
-          <configuration>
-            <source>11</source>
-            <target>11</target>
-          </configuration>
+          <executions>
+            <execution>
+              <goals>
+                <goal>repackage</goal>
+              </goals>
+            </execution>
+          </executions>
         </plugin>
       </plugins>
-    </pluginManagement>
   </build>
 </project>
