@@ -9,13 +9,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.util.Optional;
 
+// Queries need to use default schema for tables
+// https://stackoverflow.com/questions/4832579/getting-hibernate-default-schema-name-programmatically-from-session-factory
 @Repository
 @Transactional
 public interface UserRepository extends JpaRepository<User, Integer> {
     @EntityGraph(attributePaths = {"quizAnswers.questionAnswers"})
     Optional<User> findUserWithQuizAnswersAndQuestionAnswersById(int userId);
 
-    @Query(value = "select * from users u where u.key = :key", nativeQuery = true)
+    @Query(value = "select * from {h-schema}users u where u.key = :key", nativeQuery = true)
     Optional<User> findByKey(Integer key);
 
 }

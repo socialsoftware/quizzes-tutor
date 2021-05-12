@@ -11,15 +11,17 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import java.util.List;
 import java.util.Optional;
 
+// Queries need to use default schema for tables
+// https://stackoverflow.com/questions/4832579/getting-hibernate-default-schema-name-programmatically-from-session-factory
 @Repository
 @Transactional
 public interface TopicRepository extends JpaRepository<Topic, Integer> {
     @EntityGraph(attributePaths = {"course"})
     Optional<Topic> findTopicWithCourseById(int id);
 
-    @Query(value = "SELECT * FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId ORDER BY t.id", nativeQuery = true)
+    @Query(value = "SELECT * FROM {h-schema}topics t, {h-schema}courses c WHERE t.course_id = c.id AND c.id = :courseId ORDER BY t.id", nativeQuery = true)
     List<Topic> findTopics(int courseId);
 
-    @Query(value = "SELECT * FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId AND t.name = :name", nativeQuery = true)
+    @Query(value = "SELECT * FROM {h-schema}topics t, {h-schema}courses c WHERE t.course_id = c.id AND c.id = :courseId AND t.name = :name", nativeQuery = true)
     Topic findTopicByName(int courseId, String name);
 }
