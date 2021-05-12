@@ -1,7 +1,16 @@
 -- SQLINES DEMO ***  tables
 
-DROP TABLE IF EXISTS events;
-CREATE TABLE events
+-- CASCADE avoids dropping tables
+-- Automatically drop objects(tables, functions, etc.) that are contained in the schema, 
+-- and in turn all objects that depend on those objects
+-- https://www.postgresql.org/docs/current/sql-dropschema.html
+
+DROP table IF EXISTS :schema_name.events;
+DROP table IF EXISTS  :schema_name.entities;
+DROP table IF EXISTS  :schema_name.snapshots;
+DROP table IF EXISTS :schema_name.cdc_monitoring;
+
+CREATE TABLE :schema_name.events
 (
   event_id VARCHAR(1000) PRIMARY KEY,
   event_type VARCHAR(1000),
@@ -12,21 +21,19 @@ CREATE TABLE events
   metadata VARCHAR(1000),
   published SMALLINT DEFAULT 0
 );
-CREATE INDEX events_idx ON events(entity_type, entity_id, event_id);
-CREATE INDEX events_published_idx ON events(published, event_id);
+CREATE INDEX events_idx ON :schema_name.events(entity_type, entity_id, event_id);
+CREATE INDEX events_published_idx ON :schema_name.events(published, event_id);
 
-DROP TABLE IF EXISTS entities;
-CREATE TABLE entities
+CREATE TABLE :schema_name.entities
 (
   entity_type VARCHAR(1000),
   entity_id VARCHAR(1000),
   entity_version VARCHAR(1000) NOT NULL,
   PRIMARY KEY(entity_type, entity_id)
 );
-CREATE INDEX entities_idx ON events(entity_type, entity_id);
+CREATE INDEX entities_idx ON :schema_name.events(entity_type, entity_id);
 
-DROP TABLE IF EXISTS snapshots;
-create table snapshots
+create table :schema_name.snapshots
 (
   entity_type VARCHAR(1000),
   entity_id VARCHAR(1000),
@@ -37,17 +44,18 @@ create table snapshots
   PRIMARY KEY(entity_type, entity_id, entity_version)
 );
 
-DROP TABLE IF EXISTS cdc_monitoring;
-create table cdc_monitoring
+create table :schema_name.cdc_monitoring
 (
   reader_id VARCHAR(1000) PRIMARY KEY,
   last_time BIGINT
 );
 
 -- SQLINES DEMO *** ed tables
+DROP Table IF Exists :schema_name.message;
+DROP Table IF Exists :schema_name.received_messages;
+DROP Table IF Exists :schema_name.offset_store;
 
-DROP Table IF EXISTS message;
-CREATE TABLE message
+CREATE TABLE :schema_name.message
 (
   id VARCHAR(767) PRIMARY KEY,
   destination VARCHAR(1000) NOT NULL,
@@ -56,28 +64,29 @@ CREATE TABLE message
   published SMALLINT DEFAULT 0,
   creation_time BIGINT
 );
-CREATE INDEX message_published_idx ON message(published, id);
+CREATE INDEX message_published_idx ON :schema_name.message(published, id);
 
-DROP Table IF EXISTS received_messages;
-CREATE TABLE received_messages
+CREATE TABLE :schema_name.received_messages
 (
-  consumer_id VARCHAR(767),
-  message_id VARCHAR(767),
+  consumer_id VARCHAR(1000),
+  message_id VARCHAR(1000),
   creation_time BIGINT,
   PRIMARY KEY(consumer_id, message_id)
 );
 
-DROP Table IF EXISTS offset_store;
-CREATE TABLE offset_store
+CREATE TABLE :schema_name.offset_store
 (
   client_name VARCHAR(255) NOT NULL PRIMARY KEY,
   serialized_offset VARCHAR(255)
 );
 
 -- SQLINES DEMO *** tables
+DROP Table IF Exists :schema_name.saga_instance_participants;
+DROP Table IF Exists :schema_name.saga_instance;
+DROP Table IF Exists :schema_name.saga_lock_table;
+DROP Table IF Exists :schema_name.saga_stash_table;
 
-DROP Table IF EXISTS saga_instance_participants;
-CREATE TABLE saga_instance_participants
+CREATE TABLE :schema_name.saga_instance_participants
 (
   saga_type VARCHAR(255) NOT NULL,
   saga_id VARCHAR(100) NOT NULL,
@@ -86,8 +95,7 @@ CREATE TABLE saga_instance_participants
   PRIMARY KEY(saga_type, saga_id, destination, resource)
 );
 
-DROP Table IF EXISTS saga_instance;
-CREATE TABLE saga_instance
+CREATE TABLE :schema_name.saga_instance
 (
   saga_type VARCHAR(255) NOT NULL,
   saga_id VARCHAR(100) NOT NULL,
@@ -100,16 +108,14 @@ CREATE TABLE saga_instance
   PRIMARY KEY(saga_type, saga_id)
 );
 
-DROP Table IF EXISTS saga_lock_table;
-CREATE TABLE saga_lock_table
+CREATE TABLE :schema_name.saga_lock_table
 (
   target VARCHAR(100) PRIMARY KEY,
   saga_type VARCHAR(255) NOT NULL,
   saga_Id VARCHAR(100) NOT NULL
 );
 
-DROP Table IF EXISTS saga_stash_table;
-CREATE TABLE saga_stash_table
+CREATE TABLE :schema_name.saga_stash_table
 (
   message_id VARCHAR(100) PRIMARY KEY,
   target VARCHAR(100) NOT NULL,
