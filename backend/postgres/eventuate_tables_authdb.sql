@@ -1,10 +1,5 @@
 -- SQLINES DEMO ***  tables
 
--- CASCADE avoids dropping tables
--- Automatically drop objects(tables, functions, etc.) that are contained in the schema, 
--- and in turn all objects that depend on those objects
--- https://www.postgresql.org/docs/current/sql-dropschema.html
-
 DROP table IF EXISTS authdb_schema.events;
 DROP table IF EXISTS  authdb_schema.entities;
 DROP table IF EXISTS  authdb_schema.snapshots;

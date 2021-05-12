@@ -1,13 +1,5 @@
-#FROM postgres:latest
-#COPY replication.cnf /etc/mysql/conf.d
-
-#COPY common-schema.sql /docker-entrypoint-initdb.d/3.common-schema.sql
-
-
-
-#RUN touch /docker-entrypoint-initdb.d/5.schema-per-service.sql
-#RUN chown mysql -R /docker-entrypoint-initdb.d
-
+# This script was based on the scripts from this repository 
+# https://github.com/eventuate-foundation/eventuate-common/tree/master/postgres
 
 FROM postgres:13
 
@@ -37,11 +29,7 @@ COPY 0.activate-additional-scripts.sh /docker-entrypoint-initdb.d
 
 COPY eventuate-schema.sql /init_script/eventuate-schema.sql
 COPY 2.compile-schema-per-service.sh /docker-entrypoint-initdb.d/2.compile-schema-per-service.sh
-COPY *_eventuate_tables.sql /init_script
-
-#COPY 1.initialize-database.sql /docker-entrypoint-initdb.d
-#COPY 2.initialize-database.sql /docker-entrypoint-initdb.d
-#COPY 3.initialize-database.sql /docker-entrypoint-initdb.d
+COPY eventuate_tables_*.sql /init_script
 
 RUN mkdir additional-scripts
 RUN chown postgres -R /additional-scripts /docker-entrypoint-initdb.d
