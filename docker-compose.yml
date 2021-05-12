@@ -1,13 +1,15 @@
-version: '3'
+version: '3.8'
 services:
   zookeeper:
     image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     ports:
       - 2181:2181
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
   kafka:
     image: confluentinc/cp-kafka:latest
+    container_name: kafka
     ports:
       - 9092:9092
     depends_on:
@@ -20,7 +22,8 @@ services:
       KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
       KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
   postgres:
-    build: ./postgres
+    build: ./backend/postgres
+    container_name: postgres
     ports:
       - 5432:5432
     environment:
@@ -30,6 +33,7 @@ services:
       USE_JSON_PAYLOAD_AND_HEADERS: "false"
   cdc-service:
     image: eventuateio/eventuate-cdc-service:latest
+    container_name: eventuate_cdc_service
     ports:
       - "8099:8080"
     depends_on:
@@ -73,7 +77,8 @@ services:
       EVENTUATE_CDC_READER_READER3_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/common3
       JAVA_OPTS: -Xmx64m
   auth-service:
-    build: ./auth
+    build: ./backend/auth
+    container_name: auth_service
     ports:
       - "8082:8080"
     depends_on:
@@ -89,7 +94,8 @@ services:
       EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
       EVENTUATE_DATABASE_SCHEMA: authdb_schema
   tournament-service:
-    build: ./tournament
+    build: ./backend/tournament
+    container_name: tournament_service
     ports:
       - "8083:8080"
     depends_on:
@@ -107,7 +113,8 @@ services:
       EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
       EVENTUATE_DATABASE_SCHEMA: tournamentdb_schema
   tutor-service:
-    build: ./tutor
+    build: ./backend/tutor
+    container_name: tutor_service
     ports:
       - "8084:8080"
     depends_on:
@@ -124,6 +131,26 @@ services:
       EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
       EVENTUATE_DATABASE_SCHEMA: tutormicrodb_schema
   api-gateway:
-    build: ./apigateway
+    build: ./backend/apigateway
+    container_name: api_gateway
     ports:
       - "8080:8080"
+  frontend:
+    build:
+      context:  ./frontend/
+      dockerfile: Dockerfile
+      args:
+        NODE_ENV: dev
+    image: tutor-frontend                                                     
+    container_name: frontend
+    depends_on:
+      - api-gateway
+    links:
+      - api-gateway
+    ports:
+      - 8081:80
+    restart: unless-stopped
+    volumes:
+      - ./data/localhost-nginx.conf:/etc/nginx/nginx.conf
+      - ./data/error.log:/var/log/nginx/error.log
+      - ./data/access.log:/var/log/nginx/access.log
