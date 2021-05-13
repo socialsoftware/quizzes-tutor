@@ -18,7 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
@@ -35,7 +35,6 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
