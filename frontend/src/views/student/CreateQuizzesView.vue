@@ -79,6 +79,7 @@ export default class CreateQuizzesView extends Vue {
       await this.statementManager.getQuizStatement();
       await this.$router.push({ name: 'solve-quiz' });
     } catch (error) {
+      this.disabled = false;
       await this.$store.dispatch('error', error);
     }
   }

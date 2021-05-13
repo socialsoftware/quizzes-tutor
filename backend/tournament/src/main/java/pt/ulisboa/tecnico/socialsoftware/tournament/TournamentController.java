@@ -28,7 +28,7 @@ public class TournamentController {
         formatDates(tournamentDto);
 
         return tournamentProvidedService.createTournament(userInfo.getId(), executionId, topicsId, tournamentDto);
-    }
+ }
 
     @GetMapping(value = "/tournaments/{executionId}/getTournaments")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
@@ -60,7 +60,7 @@ public class TournamentController {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
 
         tournamentProvidedService.joinTournament(userInfo.getId(), tournamentId, password);
-    }
+   }
 
     @PutMapping(value = "/tournaments/{executionId}/solveQuiz/{tournamentId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.PARTICIPANT')")
@@ -76,7 +76,7 @@ public class TournamentController {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
 
         tournamentProvidedService.leaveTournament(userInfo.getId(), tournamentId);
-    }
+ }
 
     @PutMapping(value = "/tournaments/{executionId}/updateTournament")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentDto.getId(), 'TOURNAMENT.OWNER')")

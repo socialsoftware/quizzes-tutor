@@ -7,7 +7,6 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.ReplyDto;
 import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
-
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
@@ -69,5 +68,5 @@ public class DiscussionController {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
         return discussionApplicationalService.addReply(userInfo.getId(),
                 userInfo.getRole(), discussionId, reply);
-    }
+     }
 }

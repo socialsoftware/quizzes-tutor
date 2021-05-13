@@ -18,20 +18,20 @@ public class AssessmentController {
         this.assessmentService = assessmentService;
     }
 
-    @GetMapping("/executions/{executionId}/assessments")
+    @GetMapping("/assessments/executions/{executionId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<AssessmentDto> getExecutionCourseAssessments(@PathVariable int executionId) {
         return this.assessmentService.findAssessments(executionId);
     }
 
-    @GetMapping("/executions/{executionId}/assessments/available")
+    @GetMapping("/assessments/executions/{executionId}/available")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')) " +
             "or (hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
     public List<AssessmentDto> getAvailableAssessments(@PathVariable int executionId) {
         return this.assessmentService.findAvailableAssessments(executionId);
     }
 
-    @PostMapping("/executions/{executionId}/assessments")
+    @PostMapping("/assessments/executions/{executionId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public AssessmentDto createAssessment(@PathVariable int executionId, @Valid @RequestBody AssessmentDto assessment) {
         return this.assessmentService.createAssessment(executionId, assessment);

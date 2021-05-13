@@ -34,13 +34,13 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @GetMapping("/courses/{courseId}/questions")
+    @GetMapping("/questions/courses/{courseId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<QuestionDto> getCourseQuestions(@PathVariable int courseId) {
         return this.questionService.findQuestions(courseId);
     }
 
-    @GetMapping(value = "/courses/{courseId}/questions/export")
+    @GetMapping(value = "/questions/courses/{courseId}/export")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public void exportQuestions(HttpServletResponse response, @PathVariable int courseId) throws IOException {
         response.setHeader("Content-Disposition", "attachment; filename=file.zip");
@@ -50,13 +50,13 @@ public class QuestionController {
         response.flushBuffer();
     }
 
-    @GetMapping("/courses/{courseId}/questions/available")
+    @GetMapping("/questions/courses/{courseId}/available")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<QuestionDto> getAvailableQuestions(@PathVariable int courseId) {
         return this.questionService.findAvailableQuestions(courseId);
     }
 
-    @PostMapping("/courses/{courseId}/questions")
+    @PostMapping("/questions/courses/{courseId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody QuestionDto question) {
         question.setStatus(Question.Status.AVAILABLE.name());
