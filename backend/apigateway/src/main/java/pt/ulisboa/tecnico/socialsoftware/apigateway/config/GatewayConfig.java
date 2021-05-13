@@ -29,8 +29,11 @@ public class GatewayConfig {
                         .filters(f -> f.filter(filter))
                         .uri(AUTH_SERVICE_URL))
 
-                //TODO: routes not correct
-                .route("answer-service", r -> r.path("/quizzes/**")
+                .route("answer-service", r -> r.path("/answers/**")
+                        .filters(f -> f.filter(filter))
+                        .uri(TUTOR_SERVICE_URL))
+
+                .route("discussion-service", r -> r.path("/discussions/**")
                         .filters(f -> f.filter(filter))
                         .uri(TUTOR_SERVICE_URL))
 
@@ -38,12 +41,11 @@ public class GatewayConfig {
                         .filters(f -> f.filter(filter))
                         .uri(TUTOR_SERVICE_URL))
 
-                //////////////////////////
-                .route("discussion-service", r -> r.path("/discussions/**")
+                .route("impexp-service", r -> r.path("/admin/**")
                         .filters(f -> f.filter(filter))
                         .uri(TUTOR_SERVICE_URL))
 
-                .route("impexp-service", r -> r.path("/admin/**")
+                .route("question-service", r -> r.path("/topics/**","/questions/**")
                         .filters(f -> f.filter(filter))
                         .uri(TUTOR_SERVICE_URL))
 
@@ -51,15 +53,14 @@ public class GatewayConfig {
                         .filters(f -> f.filter(filter))
                         .uri(TUTOR_SERVICE_URL))
 
+                .route("quiz-service", r -> r.path("/quizzes/**")
+                        .filters(f -> f.filter(filter))
+                        .uri(TUTOR_SERVICE_URL))
+
                 .route("stats-service", r -> r.path("**/stats")
                         .filters(f -> f.filter(filter))
                         .uri(TUTOR_SERVICE_URL))
 
-                //TODO: routes not correct
-                .route("question-service", r -> r.path("**/topics","/topics/**","/questions/**","/courses/**")
-                        .filters(f -> f.filter(filter))
-                        .uri(TUTOR_SERVICE_URL))
-                //////////////////////////////
                 .build();
     }
 
