@@ -175,37 +175,33 @@ public class AnswersXmlImport {
 
     private void importQuestionAnswers(Element questionAnswersElement, QuizAnswer quizAnswer) {
         for (Element questionAnswerElement : questionAnswersElement.getChildren("questionAnswer")) {
-            Integer timeTaken = null;
-            if (questionAnswerElement.getAttributeValue("timeTaken") != null) {
-                timeTaken = Integer.valueOf(questionAnswerElement.getAttributeValue("timeTaken"));
-            }
-
             int answerSequence = Integer.parseInt(questionAnswerElement.getAttributeValue(SEQUENCE));
 
             QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream()
                     .filter(qa -> qa.getSequence().equals(answerSequence)).findAny()
                     .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answerSequence));
 
-            questionAnswer.setTimeTaken(timeTaken);
 
+            String timeTakenValue = questionAnswerElement.getAttributeValue("timeTaken");
+            if (timeTakenValue != null) {
+                Integer timeTaken = Integer.valueOf(timeTakenValue);
+                questionAnswer.setTimeTaken(timeTaken);
 
-            String questionType = QuestionTypes.MULTIPLE_CHOICE_QUESTION;
-            if (questionAnswerElement.getChild("quizQuestion") != null) {
-                questionType = Optional.ofNullable(questionAnswerElement.getChild("quizQuestion").getAttributeValue("type")).orElse(questionType);
-            }
+                String questionType = questionAnswerElement.getAttributeValue("type");
 
-            switch (questionType) {
-                case QuestionTypes.MULTIPLE_CHOICE_QUESTION:
-                    importMultipleChoiceXmlImport(questionAnswerElement, questionAnswer);
-                    break;
-                case QuestionTypes.CODE_FILL_IN_QUESTION:
-                    importCodeFillInXmlImport(questionAnswerElement, questionAnswer);
-                    break;
-                case QuestionTypes.CODE_ORDER_QUESTION:
-                    importCodeOrderXmlImport(questionAnswerElement, questionAnswer);
-                    break;
-                default:
-                    throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionType);
+                switch (questionType) {
+                    case QuestionTypes.MULTIPLE_CHOICE_QUESTION:
+                        importMultipleChoiceXmlImport(questionAnswerElement, questionAnswer);
+                        break;
+                    case QuestionTypes.CODE_FILL_IN_QUESTION:
+                        importCodeFillInXmlImport(questionAnswerElement, questionAnswer);
+                        break;
+                    case QuestionTypes.CODE_ORDER_QUESTION:
+                        importCodeOrderXmlImport(questionAnswerElement, questionAnswer);
+                        break;
+                    default:
+                        throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionType);
+                }
             }
 
             questionAnswerRepository.save(questionAnswer);
