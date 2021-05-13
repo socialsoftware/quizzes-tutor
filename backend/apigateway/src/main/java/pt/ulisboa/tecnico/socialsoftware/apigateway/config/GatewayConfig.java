@@ -57,7 +57,7 @@ public class GatewayConfig {
                         .filters(f -> f.filter(filter))
                         .uri(TUTOR_SERVICE_URL))
 
-                .route("stats-service", r -> r.path("**/stats")
+                .route("stats-service", r -> r.path("/stats/**")
                         .filters(f -> f.filter(filter))
                         .uri(TUTOR_SERVICE_URL))
 
