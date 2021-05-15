@@ -4,14 +4,14 @@ services:
     image: confluentinc/cp-zookeeper:latest
     container_name: zookeeper
     ports:
-      - 2181:2181
+      - "2181:2181"
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
   kafka:
     image: confluentinc/cp-kafka:latest
     container_name: kafka
     ports:
-      - 9092:9092
+      - "9092:9092"
     depends_on:
       - zookeeper
     environment:
@@ -25,7 +25,7 @@ services:
     build: ./backend/postgres
     container_name: postgres
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
@@ -78,9 +78,9 @@ services:
       JAVA_OPTS: -Xmx64m
   auth-service:
     build: ./backend/auth
-    container_name: auth_service
+    container_name: auth-service
     ports:
-      - "8082:8080"
+      - "8082:8082"
     depends_on:
       - postgres
       - kafka
@@ -95,9 +95,9 @@ services:
       EVENTUATE_DATABASE_SCHEMA: authdb_schema
   tournament-service:
     build: ./backend/tournament
-    container_name: tournament_service
+    container_name: tournament-service
     ports:
-      - "8083:8080"
+      - "8083:8083"
     depends_on:
       - postgres
       - kafka
@@ -114,9 +114,9 @@ services:
       EVENTUATE_DATABASE_SCHEMA: tournamentdb_schema
   tutor-service:
     build: ./backend/tutor
-    container_name: tutor_service
+    container_name: tutor-service
     ports:
-      - "8084:8080"
+      - "8084:8084"
     depends_on:
       - postgres
       - kafka
@@ -132,9 +132,21 @@ services:
       EVENTUATE_DATABASE_SCHEMA: tutormicrodb_schema
   api-gateway:
     build: ./backend/apigateway
-    container_name: api_gateway
+    container_name: api-gateway
+    depends_on:
+      - auth-service
+      - tournament-service
+      - tutor-service
+    links:
+      - auth-service
+      - tournament-service
+      - tutor-service
     ports:
       - "8080:8080"
+    environment:
+      DESTINATIONS_AUTHSERVICEURL: http://auth-service:8082
+      DESTINATIONS_TOURNAMENTSERVICEURL: http://tournament-service:8083
+      DESTINATIONS_TUTORSERVICEURL: http://tutor-service:8084
   frontend:
     build:
       context:  ./frontend/
@@ -148,9 +160,11 @@ services:
     links:
       - api-gateway
     ports:
-      - 8081:80
+      - "8081:80"
     restart: unless-stopped
     volumes:
       - ./data/localhost-nginx.conf:/etc/nginx/nginx.conf
       - ./data/error.log:/var/log/nginx/error.log
       - ./data/access.log:/var/log/nginx/access.log
+    environment:
+      VUE_APP_ROOT_API: http://api-gateway:8080
