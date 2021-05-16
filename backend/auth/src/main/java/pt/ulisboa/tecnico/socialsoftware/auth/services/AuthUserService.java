@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.auth.services;
 
 import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -9,6 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.auth.apis.AuthController;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
@@ -42,6 +45,8 @@ import static pt.ulisboa.tecnico.socialsoftware.common.utils.Utils.*;
 
 @Service
 public class AuthUserService {
+
+    private static final Logger logger = LoggerFactory.getLogger(AuthUserService.class);
 
     @Autowired
     private AuthRequiredService authRequiredService;
@@ -176,13 +181,15 @@ public class AuthUserService {
 
         /*AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(userDto.getId(), name, role, false), username, email, type);
         authUserRepository.save(authUser);*/
-
+        logger.info("Will create authUser");
         AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(name, role, false), username, email, type);
         authUserRepository.save(authUser);
+        logger.info("AuthUserCreated: "+ authUser);
 
+        logger.info("Will create authsaga data");
         CreateUserWithAuthSagaData data = new CreateUserWithAuthSagaData(authUser.getId(), name, role, username, type != AuthUser.Type.EXTERNAL, false);
         sagaInstanceFactory.create(createUserWithAuthSaga, data);
-
+        logger.info("Data created: " + data);
         return authUser;
     }
 
@@ -269,12 +276,17 @@ public class AuthUserService {
         AuthUser authUser;
 
         if (createNew == null || !createNew) {
+            logger.info("GetDemoStudent");
             authUser = getDemoStudent();
+            logger.info("GotDemoStudent: " + authUser);
         }
         else {
+            logger.info("CreateDemoStudent");
             authUser = createDemoStudent();
+            logger.info("CreatedDemoStudent: " + authUser);
         }
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
+        logger.info("courseExecutionList: " + courseExecutionList);
         return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null, courseExecutionList);
     }
 
@@ -398,7 +410,9 @@ public class AuthUserService {
 
     private AuthUser getDemoStudent() {
         return authUserRepository.findAuthUserByUsername(STUDENT_USERNAME).orElseGet(() -> {
+            logger.info("Did not find authUser by Username");
             AuthUser authUser = createUserWithAuth("Demo Student", STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUser.Type.DEMO);
+            logger.info("Auth User created with success: " + authUser);
             //TODO: fix this
             //courseExecutionService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionService.getDemoCourseExecution().getId());
             return authUser;

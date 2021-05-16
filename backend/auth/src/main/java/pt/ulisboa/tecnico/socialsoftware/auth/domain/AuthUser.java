@@ -23,7 +23,7 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 @Table(name = "auth_users",
         indexes = {
                 @Index(name = "auth_users_indx_0", columnList = "username")
-        })
+        }, schema = "authdb_schema")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="auth_type",
         discriminatorType = DiscriminatorType.STRING)
@@ -56,7 +56,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
     private UserSecurityInfo userSecurityInfo;
 
     @ElementCollection
-    @CollectionTable(name = "authuser_course_executions")
+    @CollectionTable(name = "authuser_course_executions", schema = "authdb_schema")
     private Set<Integer> userCourseExecutions = new HashSet<>();
 
     protected AuthUser() {}

@@ -11,10 +11,10 @@ import org.springframework.context.annotation.*;
 @ComponentScan
 @Import(AuthServiceRepositoryConfiguration.class)
 public class AuthServiceWebConfiguration {
-    @Bean
+    /*@Bean
     @Primary
     public ObjectMapper objectMapper() {
         return JSonMapper.objectMapper;
-    }
+    }*/
 
 }
