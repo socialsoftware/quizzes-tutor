@@ -12,6 +12,5 @@ import pt.ulisboa.tecnico.socialsoftware.common.config.CommonModuleConfiguration
 @Configuration
 @EnableJpaRepositories
 @EnableAutoConfiguration
-@Import({CommonModuleConfiguration.class})
 public class TutorServiceRepositoryConfiguration {
 }

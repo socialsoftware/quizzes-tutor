@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.auth.config;
+package pt.ulisboa.tecnico.socialsoftware.tutor.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.eventuate.common.json.mapper.JSonMapper;
@@ -9,12 +9,11 @@ import org.springframework.context.annotation.*;
  */
 @Configuration
 @ComponentScan
-@Import(AuthServiceRepositoryConfiguration.class)
-public class AuthServiceWebConfiguration {
+@Import(TutorServiceRepositoryConfiguration.class)
+public class TutorServiceWebConfiguration {
     @Bean
     @Primary
     public ObjectMapper objectMapper() {
         return JSonMapper.objectMapper;
     }
-
 }

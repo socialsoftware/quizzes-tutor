@@ -12,6 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.config.CommonModuleConfiguration
 @Configuration
 @EnableJpaRepositories
 @EnableAutoConfiguration
-@Import({CommonModuleConfiguration.class, AuthServiceOrchestratorConfiguration.class})
+@Import({AuthServiceOrchestratorConfiguration.class})
 public class AuthServiceRepositoryConfiguration {
 }

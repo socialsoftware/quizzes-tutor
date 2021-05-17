@@ -1,8 +1,17 @@
 package pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.ApproveAuthUserCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.RejectAuthUserCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.user.CreateUserCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.user.RejectUserCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 
 public class CreateUserWithAuthSagaData {
+
+    private final Logger logger = LoggerFactory.getLogger(getClass());
 
     private Integer authUserId;
     private String name;
@@ -53,5 +62,30 @@ public class CreateUserWithAuthSagaData {
 
     public Integer getAuthUserId() {
         return authUserId;
+    }
+
+    RejectUserCommand rejectUser() {
+        logger.debug("Sent RejectUserCommand to userService channel");
+        return new RejectUserCommand(getUserId());
+    }
+
+    ApproveAuthUserCommand approveAuthUser() {
+        logger.debug("Sent ApproveAuthUserCommand to authUserService channel");
+        return new ApproveAuthUserCommand(getAuthUserId(), getUserId());
+    }
+
+    CreateUserCommand createUser() {
+        logger.debug("Sent CreateUserCommand to userService channel");
+        return new CreateUserCommand(getName(), getRole(), getUsername(), isActive(), isAdmin());
+    }
+
+    RejectAuthUserCommand rejectAuthUser() {
+        logger.debug("Sent RejectAuthUserCommand to authUserService channel");
+        return new RejectAuthUserCommand(getAuthUserId());
+    }
+
+    void handleCreateUserReply(UserDto reply) {
+        logger.debug("Received CreateUserReply {}", reply.getId());
+        setUserId(reply.getId());
     }
 }

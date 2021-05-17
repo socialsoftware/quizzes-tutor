@@ -9,6 +9,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth.CreateUserWithAuthSaga;
+import pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants.AuthUserServiceProxy;
+import pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants.UserServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserService;
 
 /**
@@ -19,11 +21,18 @@ import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserService;
         EventuateTramKafkaMessageConsumerConfiguration.class})
 public class AuthServiceOrchestratorConfiguration {
 
-    /*@Bean
-    public AuthUserService authUserService() {return new AuthUserService();}*/
+    @Bean
+    public CreateUserWithAuthSaga createOrderSaga(AuthUserServiceProxy authUserService, UserServiceProxy userService) {
+        return new CreateUserWithAuthSaga(authUserService, userService);
+    }
 
     @Bean
-    public CreateUserWithAuthSaga createOrderSaga() {
-        return new CreateUserWithAuthSaga();
+    public AuthUserServiceProxy authUserServiceProxy() {
+        return new AuthUserServiceProxy();
+    }
+
+    @Bean
+    public UserServiceProxy userServiceProxy() {
+        return new UserServiceProxy();
     }
 }
