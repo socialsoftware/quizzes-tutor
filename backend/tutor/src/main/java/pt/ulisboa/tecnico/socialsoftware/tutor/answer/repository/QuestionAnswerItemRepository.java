@@ -10,8 +10,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
 
-// Queries need to use default schema for tables
-// https://stackoverflow.com/questions/4832579/getting-hibernate-default-schema-name-programmatically-from-session-factory
 @Repository
 public interface QuestionAnswerItemRepository extends JpaRepository<QuestionAnswerItem, Integer> {
     @Query(value = "SELECT qai FROM QuestionAnswerItem qai WHERE qai.quizId = :quizId")
@@ -21,19 +19,19 @@ public interface QuestionAnswerItemRepository extends JpaRepository<QuestionAnsw
     List<QuestionAnswerItem> findQuestionAnswerItemsByUsername(String username);
 
     @Modifying
-    @Query(value = "INSERT INTO {h-schema}question_answer_items (username, quiz_id, quiz_question_id, answer_date, time_taken, time_to_submission, option_id) values (:username, :quizId, :quizQuestionId, :answerDate, :timeTaken, :timeToSubmission, :optionId)",
+    @Query(value = "INSERT INTO question_answer_items (username, quiz_id, quiz_question_id, answer_date, time_taken, time_to_submission, option_id) values (:username, :quizId, :quizQuestionId, :answerDate, :timeTaken, :timeToSubmission, :optionId)",
             nativeQuery = true)
     void insertQuestionAnswerItem(String username, Integer quizId, Integer quizQuestionId,
                                   LocalDateTime answerDate, Integer timeTaken, Integer timeToSubmission, Integer optionId);
 
     @Modifying
-    @Query(value = "INSERT INTO {h-schema}question_answer_items (username, quiz_id, quiz_question_id, answer_date, time_taken, time_to_submission) values (:username, :quizId, :quizQuestionId, :answerDate, :timeTaken, :timeToSubmission)",
+    @Query(value = "INSERT INTO question_answer_items (username, quiz_id, quiz_question_id, answer_date, time_taken, time_to_submission) values (:username, :quizId, :quizQuestionId, :answerDate, :timeTaken, :timeToSubmission)",
             nativeQuery = true)
     void insertQuestionAnswerItemOptionIdNull(String username, Integer quizId, Integer quizQuestionId,
                                   LocalDateTime answerDate, Integer timeTaken, Integer timeToSubmission);
 
     @Modifying
-    @Query(value = "UPDATE {h-schema}question_answer_items SET username = :newUsername WHERE username = :oldUsername",
+    @Query(value = "UPDATE question_answer_items SET username = :newUsername WHERE username = :oldUsername",
             nativeQuery = true)
     void updateQuestionAnswerItemUsername(String oldUsername, String newUsername);
 

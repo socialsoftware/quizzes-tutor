@@ -40,7 +40,7 @@ public class UserServiceCommandHandlers {
     }
 
     public Message createUser(CommandMessage<CreateUserCommand> cm) {
-        logger.debug("Receive CreateUserCommand");
+        logger.debug("Received CreateUserCommand");
 
         String name = cm.getCommand().getName();
         Role role = cm.getCommand().getRole();
@@ -57,7 +57,7 @@ public class UserServiceCommandHandlers {
     }
 
     public Message rejectUser(CommandMessage<RejectUserCommand> cm) {
-        logger.debug("Receive RejectUserCommand");
+        logger.debug("Received RejectUserCommand");
 
         Integer userId = cm.getCommand().getUserId();
 

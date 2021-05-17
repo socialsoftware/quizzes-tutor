@@ -9,14 +9,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
 import java.util.List;
 import java.util.Optional;
 
-// Queries need to use default schema for tables
-// https://stackoverflow.com/questions/4832579/getting-hibernate-default-schema-name-programmatically-from-session-factory
 @Repository
 @Transactional
 public interface AssessmentRepository extends JpaRepository<Assessment, Integer> {
-    @Query(value = "SELECT * FROM {h-schema}assessments a, {h-schema}course_executions c WHERE c.id = :courseExecutionId AND c.id = a.course_execution_id ORDER BY a.id", nativeQuery = true)
+    @Query(value = "SELECT * FROM assessments a, course_executions c WHERE c.id = :courseExecutionId AND c.id = a.course_execution_id ORDER BY a.id", nativeQuery = true)
     List<Assessment>  findByExecutionCourseId(int courseExecutionId);
 
-    @Query(value = "SELECT a.course_execution_id FROM {h-schema}assessments a WHERE a.id = :id", nativeQuery = true)
+    @Query(value = "SELECT a.course_execution_id FROM assessments a WHERE a.id = :id", nativeQuery = true)
     Optional<Integer> findCourseExecutionIdById(int id);
 }

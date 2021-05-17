@@ -34,31 +34,31 @@ public class CreateUserWithAuthSaga implements SimpleSaga<CreateUserWithAuthSaga
     }
 
     private CommandWithDestination approveAuthUser(CreateUserWithAuthSagaData data) {
-        logger.debug("Send ApproveAuthUserCommand to authUserService channel");
+        logger.debug("Sent ApproveAuthUserCommand to authUserService channel");
         return send(new ApproveAuthUserCommand(data.getAuthUserId(), data.getUserId()))
                 .to(ServiceChannels.AUTH_USER_SERVICE_COMMAND_CHANNEL).build();
     }
 
     private CommandWithDestination createUser(CreateUserWithAuthSagaData data) {
-        logger.debug("Send CreateUserCommand to userService channel");
+        logger.debug("Sent CreateUserCommand to userService channel");
         return send(new CreateUserCommand(data.getName(), data.getRole(), data.getUsername(), data.isActive(), data.isAdmin()))
                 .to(ServiceChannels.USER_SERVICE_COMMAND_CHANNEL).build();
     }
 
     private CommandWithDestination rejectUser(CreateUserWithAuthSagaData data) {
-        logger.debug("Send RejectUserCommand to userService channel");
+        logger.debug("Sent RejectUserCommand to userService channel");
         return send(new RejectUserCommand(data.getUserId()))
                 .to(ServiceChannels.USER_SERVICE_COMMAND_CHANNEL).build();
     }
 
     private CommandWithDestination rejectAuthUser(CreateUserWithAuthSagaData data) {
-        logger.debug("Send RejectAuthUserCommand to authUserService channel");
+        logger.debug("Sent RejectAuthUserCommand to authUserService channel");
         return send(new RejectAuthUserCommand(data.getAuthUserId()))
                 .to(ServiceChannels.AUTH_USER_SERVICE_COMMAND_CHANNEL).build();
     }
 
     private void handleCreateUserReply(CreateUserWithAuthSagaData data, UserDto reply) {
-        logger.debug("Receive CreateUserReply {}", reply.getId());
+        logger.debug("Received CreateUserReply {}", reply.getId());
         data.setUserId(reply.getId());
     }
 

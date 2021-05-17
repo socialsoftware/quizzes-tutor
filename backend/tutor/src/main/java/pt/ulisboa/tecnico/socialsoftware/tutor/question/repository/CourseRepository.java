@@ -9,12 +9,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 
 import java.util.Optional;
 
-// Queries need to use default schema for tables
-// https://stackoverflow.com/questions/4832579/getting-hibernate-default-schema-name-programmatically-from-session-factory
 @Repository
 @Transactional
 public interface CourseRepository extends JpaRepository<Course, Integer> {
-    @Query(value = "select * from {h-schema}courses c where c.name = :name and c.type = :type", nativeQuery = true)
+    @Query(value = "select * from courses c where c.name = :name and c.type = :type", nativeQuery = true)
     Optional<Course> findByNameType(String name, String type);
 
     @EntityGraph(attributePaths = {"courseExecutions"})

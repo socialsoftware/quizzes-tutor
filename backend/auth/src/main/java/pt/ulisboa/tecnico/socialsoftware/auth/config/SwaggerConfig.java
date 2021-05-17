@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tournament.config;
+package pt.ulisboa.tecnico.socialsoftware.auth.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;
@@ -27,7 +27,7 @@ public class SwaggerConfig {
                                 )
                 )
                 .info(new Info()
-                    .title("Tournament Service API")
+                    .title("Auth Service API")
                     .termsOfService("http://swagger.io/terms/")
                     .license(new License().name("Apache 2.0").url("http://springdoc.org")));
     }

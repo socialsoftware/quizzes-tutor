@@ -4,13 +4,16 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ClassPathResource;
+import org.springframework.core.io.FileSystemResource;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.common.security.RSAUtil;
 
 import java.io.File;
+import java.io.InputStream;
 import java.security.PrivateKey;
 import java.util.Date;
 
@@ -28,8 +31,8 @@ public class JwtTokenProvider {
     static String generateToken(AuthUser authUser) {
         if (privateKey == null) {
             try {
-                File resource = new ClassPathResource(PRIVATE_KEY_FILENAME).getFile();
-                privateKey = RSAUtil.getPrivateKey(resource.toPath());
+                InputStream resource = new ClassPathResource(PRIVATE_KEY_FILENAME).getInputStream();
+                privateKey = RSAUtil.getPrivateKey(resource);
                 //logger.info("Private Key was read successfully: " + privateKey.toString());
             } catch (Exception e) {
                 logger.info("Failed reading key");

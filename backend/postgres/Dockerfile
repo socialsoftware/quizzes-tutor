@@ -29,7 +29,7 @@ COPY 0.activate-additional-scripts.sh /docker-entrypoint-initdb.d
 
 COPY eventuate-schema.sql /init_script/eventuate-schema.sql
 COPY 2.compile-schema-per-service.sh /docker-entrypoint-initdb.d/2.compile-schema-per-service.sh
-COPY eventuate_tables_*.sql /init_script
+COPY eventuate_tables.sql /init_script
 
 RUN mkdir additional-scripts
 RUN chown postgres -R /additional-scripts /docker-entrypoint-initdb.d

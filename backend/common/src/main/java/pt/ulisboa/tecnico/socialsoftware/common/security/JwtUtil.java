@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.File;
+import java.io.InputStream;
 import java.security.PublicKey;
 import java.util.Set;
 
@@ -27,8 +28,8 @@ public class JwtUtil {
     public static PublicKey getPublicKey() {
         if (publicKey == null) {
             try {
-                File resource = new ClassPathResource(PUBLIC_KEY_FILENAME).getFile();
-                publicKey = RSAUtil.getPublicKey(resource.toPath());
+                InputStream resource = new ClassPathResource(PUBLIC_KEY_FILENAME).getInputStream();
+                publicKey = RSAUtil.getPublicKey(resource);
             } catch (Exception e) {
                 logger.info("Failed reading key");
                 logger.info(e.getMessage());

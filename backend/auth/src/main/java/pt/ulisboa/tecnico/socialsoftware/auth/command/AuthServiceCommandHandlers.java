@@ -37,7 +37,7 @@ public class AuthServiceCommandHandlers {
     }
 
     public Message approveAuthUser(CommandMessage<ApproveAuthUserCommand> cm) {
-        logger.debug("Receive ApproveAuthUserCommand");
+        logger.debug("Received ApproveAuthUserCommand");
 
         Integer userId = cm.getCommand().getUserId();
         Integer authUserId = cm.getCommand().getAuthUserId();
@@ -51,7 +51,7 @@ public class AuthServiceCommandHandlers {
     }
 
     public Message rejectAuthUser(CommandMessage<RejectAuthUserCommand> cm) {
-        logger.debug("Receive RejectAuthUserCommand");
+        logger.debug("Received RejectAuthUserCommand");
 
         Integer authUserId = cm.getCommand().getAuthUserId();
 
