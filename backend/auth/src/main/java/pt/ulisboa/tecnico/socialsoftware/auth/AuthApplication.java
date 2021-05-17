@@ -4,12 +4,11 @@ import io.eventuate.tram.spring.jdbckafka.TramJdbcKafkaConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceCommandConfiguration;
+import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceParticipantConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceRepositoryConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceWebConfiguration;
 
@@ -18,7 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceWebConfiguration
 @EnableJpaAuditing
 //@ServiceDescription(description = "Manages Orders", capabilities = "Order Management")
 @SpringBootApplication
-@Import({AuthServiceWebConfiguration.class, AuthServiceCommandConfiguration.class,
+@Import({AuthServiceWebConfiguration.class, AuthServiceParticipantConfiguration.class,
         AuthServiceRepositoryConfiguration.class, TramJdbcKafkaConfiguration.class})
 @EntityScan({"pt.ulisboa.tecnico.socialsoftware.auth"})
 @EnableJpaRepositories({"pt.ulisboa.tecnico.socialsoftware.auth"})
