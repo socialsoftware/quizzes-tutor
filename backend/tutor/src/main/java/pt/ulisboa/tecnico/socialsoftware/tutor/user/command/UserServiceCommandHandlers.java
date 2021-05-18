@@ -19,7 +19,7 @@ import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.wit
 import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.withSuccess;
 
 public class UserServiceCommandHandlers {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(UserServiceCommandHandlers.class);
 
     @Autowired
     private UserService userService;
@@ -40,7 +40,7 @@ public class UserServiceCommandHandlers {
     }
 
     public Message createUser(CommandMessage<CreateUserCommand> cm) {
-        logger.debug("Received CreateUserCommand");
+        logger.info("Received CreateUserCommand");
 
         String name = cm.getCommand().getName();
         Role role = cm.getCommand().getRole();
@@ -57,7 +57,7 @@ public class UserServiceCommandHandlers {
     }
 
     public Message rejectUser(CommandMessage<RejectUserCommand> cm) {
-        logger.debug("Received RejectUserCommand");
+        logger.info("Received RejectUserCommand");
 
         Integer userId = cm.getCommand().getUserId();
 

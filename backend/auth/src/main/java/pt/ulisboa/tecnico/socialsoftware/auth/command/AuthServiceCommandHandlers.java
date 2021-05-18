@@ -16,7 +16,7 @@ import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.wit
 import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.withSuccess;
 
 public class AuthServiceCommandHandlers {
-    private Logger logger = LoggerFactory.getLogger(getClass());
+    private Logger logger = LoggerFactory.getLogger(AuthServiceCommandHandlers.class);
 
     @Autowired
     private AuthUserService authUserService;
@@ -37,7 +37,7 @@ public class AuthServiceCommandHandlers {
     }
 
     public Message approveAuthUser(CommandMessage<ApproveAuthUserCommand> cm) {
-        logger.debug("Received ApproveAuthUserCommand");
+        logger.info("Received ApproveAuthUserCommand");
 
         Integer userId = cm.getCommand().getUserId();
         Integer authUserId = cm.getCommand().getAuthUserId();
@@ -51,7 +51,7 @@ public class AuthServiceCommandHandlers {
     }
 
     public Message rejectAuthUser(CommandMessage<RejectAuthUserCommand> cm) {
-        logger.debug("Received RejectAuthUserCommand");
+        logger.info("Received RejectAuthUserCommand");
 
         Integer authUserId = cm.getCommand().getAuthUserId();
 

@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 
 public class CreateUserWithAuthSagaData {
 
-    private final Logger logger = LoggerFactory.getLogger(getClass());
+    private final Logger logger = LoggerFactory.getLogger(CreateUserWithAuthSagaData.class);
 
     private Integer authUserId;
     private String name;
@@ -65,27 +65,27 @@ public class CreateUserWithAuthSagaData {
     }
 
     RejectUserCommand rejectUser() {
-        logger.debug("Sent RejectUserCommand to userService channel");
+        System.out.println("Sent RejectUserCommand to userService channel");
         return new RejectUserCommand(getUserId());
     }
 
     ApproveAuthUserCommand approveAuthUser() {
-        logger.debug("Sent ApproveAuthUserCommand to authUserService channel");
+        System.out.println("Sent ApproveAuthUserCommand to authUserService channel");
         return new ApproveAuthUserCommand(getAuthUserId(), getUserId());
     }
 
     CreateUserCommand createUser() {
-        logger.debug("Sent CreateUserCommand to userService channel");
+        System.out.println("Sent CreateUserCommand to userService channel");
         return new CreateUserCommand(getName(), getRole(), getUsername(), isActive(), isAdmin());
     }
 
     RejectAuthUserCommand rejectAuthUser() {
-        logger.debug("Sent RejectAuthUserCommand to authUserService channel");
+        System.out.println("Sent RejectAuthUserCommand to authUserService channel");
         return new RejectAuthUserCommand(getAuthUserId());
     }
 
     void handleCreateUserReply(UserDto reply) {
-        logger.debug("Received CreateUserReply {}", reply.getId());
+        System.out.println("Received CreateUserReply userId: " + reply.getId());
         setUserId(reply.getId());
     }
 }

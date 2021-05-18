@@ -19,7 +19,8 @@ public class CreateUserWithAuthSaga implements SimpleSaga<CreateUserWithAuthSaga
                     .onReply(UserDto.class, CreateUserWithAuthSagaData::handleCreateUserReply)
                     .withCompensation(userService.reject, CreateUserWithAuthSagaData::rejectUser)
                 .step()
-                    .invokeParticipant(authUserService.approve, CreateUserWithAuthSagaData::approveAuthUser)
+                    //.invokeParticipant(authUserService.approve, CreateUserWithAuthSagaData::approveAuthUser)
+                    .invokeLocal(CreateUserWithAuthSagaData::approveAuthUser)
                 .build();
     }
 
