@@ -231,7 +231,7 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-ui</artifactId>
-            <version>1.5.4</version>
+            <version>1.5.8</version>
         </dependency>
 
         <!-- Fenix -->
