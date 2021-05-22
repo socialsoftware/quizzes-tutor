@@ -10,15 +10,15 @@ import pt.ulisboa.tecnico.socialsoftware.common.exceptions.RemoteAccessException
 public class CourseExecutionInterface implements CourseExecutionContract{
     private static final Logger logger = LoggerFactory.getLogger(CourseExecutionInterface.class);
 
-    private static final String ENDPOINT = "http://localhost:8084";
+    private static final String ENDPOINT = "http://tutor-service:8084";
 
     @Override
     public CourseExecutionDto findCourseExecution(Integer courseExecutionId) {
         logger.info("findCourseExecution id:{}", courseExecutionId);
         RestTemplate restTemplate = new RestTemplate();
         try {
-            CourseExecutionDto courseExecutionDto = restTemplate.postForObject(ENDPOINT + "rest/execution/find?courseExecutionId=" + courseExecutionId,
-                    null, CourseExecutionDto.class);
+            CourseExecutionDto courseExecutionDto = restTemplate.getForObject(ENDPOINT + "rest/execution/find?courseExecutionId=" + courseExecutionId,
+                    CourseExecutionDto.class);
             logger.info("CourseExecutionDto: {}", courseExecutionDto);
             return courseExecutionDto;
         } catch (HttpClientErrorException e) {
@@ -39,8 +39,8 @@ public class CourseExecutionInterface implements CourseExecutionContract{
         logger.info("findDemoCourseExecution");
         RestTemplate restTemplate = new RestTemplate();
         try {
-            Integer demoCourseExecutionId = restTemplate.postForObject(ENDPOINT + "rest/execution/demo",
-                    null, Integer.class);
+            Integer demoCourseExecutionId = restTemplate.getForObject(ENDPOINT + "rest/execution/demo",
+                    Integer.class);
             logger.info("findDemoCourseExecution: {}", demoCourseExecutionId);
             return demoCourseExecutionId;
         } catch (HttpClientErrorException e) {

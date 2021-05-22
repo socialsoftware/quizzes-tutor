@@ -93,6 +93,7 @@ services:
       - postgres
       - kafka
       - zookeeper
+      - tutor-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/authdb
       SPRING_DATASOURCE_USERNAME: authdb_user
@@ -110,7 +111,6 @@ services:
       - postgres
       - kafka
       - cdc-service
-      - auth-service
       - tutor-service
     links:
       - postgres
@@ -133,7 +133,6 @@ services:
       - postgres
       - kafka
       - cdc-service
-      - auth-service
     links:
       - postgres
       - kafka

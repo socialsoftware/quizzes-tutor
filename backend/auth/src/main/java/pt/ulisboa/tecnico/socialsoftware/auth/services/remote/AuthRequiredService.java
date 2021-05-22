@@ -34,4 +34,9 @@ public class AuthRequiredService {
         CourseExecutionDto courseExecutionDto= courseExecutionInterface.findCourseExecution(courseExecutionId);
         return courseExecutionDto;
     }
+
+    public Integer getDemoCourseExecution() {
+        Integer demoCourseExecutionId = courseExecutionInterface.findDemoCourseExecution();
+        return demoCourseExecutionId;
+    }
 }

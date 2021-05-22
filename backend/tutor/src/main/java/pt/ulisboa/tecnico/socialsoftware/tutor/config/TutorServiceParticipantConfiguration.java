@@ -10,6 +10,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.command.CourseExecutionServiceCommandHandlers;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.command.UserServiceCommandHandlers;
 
 /**
@@ -22,6 +24,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.command.UserServiceCommandHa
 public class TutorServiceParticipantConfiguration {
 
     @Bean
+    public CourseExecutionServiceCommandHandlers courseExecutionServiceCommandHandlers() {
+        return new CourseExecutionServiceCommandHandlers();
+    }
+
+    @Bean
     public UserServiceCommandHandlers userServiceCommandHandlers() {
         return new UserServiceCommandHandlers();
     }
@@ -29,5 +36,10 @@ public class TutorServiceParticipantConfiguration {
     @Bean
     public SagaCommandDispatcher userCommandHandlersDispatcher(UserServiceCommandHandlers userServiceCommandHandlers, SagaCommandDispatcherFactory sagaCommandDispatcherFactory) {
         return sagaCommandDispatcherFactory.make(ServiceChannels.USER_SERVICE_COMMAND_CHANNEL, userServiceCommandHandlers.commandHandlers());
+    }
+
+    @Bean
+    public SagaCommandDispatcher courseExecutionCommandHandlersDispatcher(CourseExecutionServiceCommandHandlers courseExecutionServiceCommandHandlers, SagaCommandDispatcherFactory sagaCommandDispatcherFactory) {
+        return sagaCommandDispatcherFactory.make(ServiceChannels.COURSE_EXECUTION_SERVICE_COMMAND_CHANNEL, courseExecutionServiceCommandHandlers.commandHandlers());
     }
 }

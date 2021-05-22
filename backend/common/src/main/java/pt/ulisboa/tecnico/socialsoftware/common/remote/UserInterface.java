@@ -14,7 +14,7 @@ import java.util.List;
 public class UserInterface implements UserContract {
     private static final Logger logger = LoggerFactory.getLogger(UserInterface.class);
 
-    private static final String ENDPOINT = "http://localhost:8084";
+    private static final String ENDPOINT = "http://tutor-service:8084";
 
     @Override
     public UserDto findUser(Integer userId) {

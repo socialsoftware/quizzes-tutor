@@ -452,6 +452,11 @@ public class User implements DomainEntity {
         course.addUser(this);
     }
 
+    public void removeCourse(CourseExecution course) {
+        this.courseExecutions.remove(course);
+        course.removeUser(this);
+    }
+
     public void addQuestionSubmission(QuestionSubmission questionSubmission) {
         questionSubmissions.add(questionSubmission);
     }

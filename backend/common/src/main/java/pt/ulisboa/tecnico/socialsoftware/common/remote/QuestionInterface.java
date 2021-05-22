@@ -16,7 +16,7 @@ import java.util.Set;
 public class QuestionInterface implements QuestionContract {
     private static final Logger logger = LoggerFactory.getLogger(QuestionInterface.class);
 
-    private static final String ENDPOINT = "http://localhost:8080";
+    private static final String ENDPOINT = "http://tutor-service:8084";
 
     @Override
     public FindTopicsDto findTopics(TopicListDto topicsList) {

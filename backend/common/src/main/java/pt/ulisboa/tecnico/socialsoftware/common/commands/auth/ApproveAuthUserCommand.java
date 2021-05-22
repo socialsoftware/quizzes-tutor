@@ -4,7 +4,7 @@ import io.eventuate.tram.commands.CommandDestination;
 import io.eventuate.tram.commands.common.Command;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 
-@CommandDestination(ServiceChannels.AUTH_USER_SERVICE_COMMAND_CHANNEL)
+//@CommandDestination(ServiceChannels.AUTH_USER_SERVICE_COMMAND_CHANNEL)
 public class ApproveAuthUserCommand implements Command {
 
     private Integer userId;
@@ -24,5 +24,13 @@ public class ApproveAuthUserCommand implements Command {
 
     public Integer getAuthUserId() {
         return authUserId;
+    }
+
+    @Override
+    public String toString() {
+        return "ApproveAuthUserCommand{" +
+                "userId=" + userId +
+                ", authUserId=" + authUserId +
+                '}';
     }
 }

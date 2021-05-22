@@ -110,8 +110,19 @@ public class CourseExecutionService {
             courseExecution.addUser(user);
             user.addCourse(courseExecution);
             //Auth subscribes to this event and adds course execution to authUser
-            AddCourseExecutionEvent addCourseExecutionEvent = new AddCourseExecutionEvent(userId, courseExecutionId);
-            eventBus.post(addCourseExecutionEvent);
+            //TODO: Check this
+            /*AddCourseExecutionEvent addCourseExecutionEvent = new AddCourseExecutionEvent(userId, courseExecutionId);
+            eventBus.post(addCourseExecutionEvent);*/
+        }
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void removeUserFromTecnicoCourseExecution(Integer userId, int courseExecutionId) {
+        CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);
+        User user = this.userRepository.findById(userId).orElse(null);
+
+        if (user != null && courseExecution != null) {
+            user.removeCourse(courseExecution);
         }
     }
 

@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.auth.services;
 
+import io.eventuate.tram.sagas.orchestration.SagaInstance;
 import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -172,7 +173,7 @@ public class AuthUserService {
     }
 
     //Was from user service
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    //@Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthUser createUserWithAuth(String name, String username, String email, Role role, AuthUser.Type type) {
         if (authUserRepository.findAuthUserByUsername(username).isPresent()) {
             throw new TutorException(ErrorMessage.DUPLICATE_USER, username);
@@ -185,11 +186,6 @@ public class AuthUserService {
         AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(name, role, false), username, email, type);
         authUserRepository.save(authUser);
         logger.info("AuthUserCreated: "+ authUser);
-
-        logger.info("Will create authsaga data");
-        CreateUserWithAuthSagaData data = new CreateUserWithAuthSagaData(authUser.getId(), name, role, username, type != AuthUser.Type.EXTERNAL, false);
-        sagaInstanceFactory.create(createUserWithAuthSaga, data);
-        logger.info("Data created: " + data);
         return authUser;
     }
 
@@ -267,11 +263,11 @@ public class AuthUserService {
         return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null , courseExecutionList);
     }
 
-    @Retryable(
+    /*@Retryable(
             value = { SQLException.class },
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED)*/
     public AuthDto demoStudentAuth(Boolean createNew) {
         AuthUser authUser;
 
@@ -285,6 +281,7 @@ public class AuthUserService {
             authUser = createDemoStudent();
             logger.info("CreatedDemoStudent: " + authUser);
         }
+
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
         logger.info("courseExecutionList: " + courseExecutionList);
         return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null, courseExecutionList);
@@ -413,8 +410,20 @@ public class AuthUserService {
             logger.info("Did not find authUser by Username");
             AuthUser authUser = createUserWithAuth("Demo Student", STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUser.Type.DEMO);
             logger.info("Auth User created with success: " + authUser);
-            //TODO: fix this
-            //courseExecutionService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionService.getDemoCourseExecution().getId());
+
+            Integer demoCourseExecutionId = authRequiredService.getDemoCourseExecution();
+            logger.info("Demo Course Execution Id: " + demoCourseExecutionId);
+
+            logger.info("Will create authsaga data");
+            CreateUserWithAuthSagaData data = new CreateUserWithAuthSagaData(authUser.getId(), authUser.getUserSecurityInfo().getName(),
+                    authUser.getUserSecurityInfo().getRole(), authUser.getUsername(), authUser.getType() != AuthUser.Type.EXTERNAL,
+                    false, demoCourseExecutionId);
+            SagaInstance sagaInstance = sagaInstanceFactory.create(createUserWithAuthSaga, data);
+            logger.info("Data created: " + data);
+
+            /*while (!sagaInstance.isEndState()) {
+                logger.info("Waiting for saga");
+            }*/
             return authUser;
         });
     }
