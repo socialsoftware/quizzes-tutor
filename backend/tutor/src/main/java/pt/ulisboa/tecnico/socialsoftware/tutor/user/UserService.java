@@ -9,6 +9,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserCourseExecutionsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage;
@@ -97,9 +98,9 @@ public class UserService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<CourseExecutionDto> getUserCourseExecutions(int userId) {
+    public UserCourseExecutionsDto getUserCourseExecutions(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        return user.getCourseExecutions().stream().map(CourseExecution::getDto).collect(Collectors.toList());
+        return user.getUserCourseExecutionsDto();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

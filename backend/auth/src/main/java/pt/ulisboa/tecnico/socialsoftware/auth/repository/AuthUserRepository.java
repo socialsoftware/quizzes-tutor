@@ -8,8 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 
 import java.util.Optional;
 
-// Queries need to use default schema for tables
-// https://stackoverflow.com/questions/4832579/getting-hibernate-default-schema-name-programmatically-from-session-factory
 @Repository
 @Transactional
 public interface AuthUserRepository extends JpaRepository<AuthUser, Integer> {

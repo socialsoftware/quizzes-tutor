@@ -82,7 +82,7 @@ public class CreateUserWithAuthSagaData {
 
     ApproveAuthUserCommand approveAuthUser() {
         logger.info("Sent ApproveAuthUserCommand to authUserService channel");
-        return new ApproveAuthUserCommand(getAuthUserId(), getUserId());
+        return new ApproveAuthUserCommand(getAuthUserId(), getUserId(), getCourseExecutionId(), isActive());
     }
 
     CreateUserCommand createUser() {
@@ -121,5 +121,19 @@ public class CreateUserWithAuthSagaData {
     @Override
     public int hashCode() {
         return Objects.hash(name, role, username, isActive, isAdmin, userId, courseExecutionId);
+    }
+
+    @Override
+    public String toString() {
+        return "CreateUserWithAuthSagaData{" +
+                "authUserId=" + authUserId +
+                ", name='" + name + '\'' +
+                ", role=" + role +
+                ", username='" + username + '\'' +
+                ", isActive=" + isActive +
+                ", isAdmin=" + isAdmin +
+                ", userId=" + userId +
+                ", courseExecutionId=" + courseExecutionId +
+                '}';
     }
 }

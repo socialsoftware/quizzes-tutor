@@ -55,7 +55,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
     @Embedded
     private UserSecurityInfo userSecurityInfo;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "authuser_course_executions")
     private Set<Integer> userCourseExecutions = new HashSet<>();
 
@@ -216,6 +216,8 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
     public String toString() {
         return "AuthUser{" +
                 "id=" + id +
+                ", version=" + version +
+                ", state=" + state +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", username='" + username + '\'' +
@@ -261,11 +263,13 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
                         Collectors.mapping(courseDto -> courseDto, Collectors.toList())));
     }
 
-    public void authUserApproved(Integer userId) {
+    public void authUserApproved(Integer userId, Integer courseExecutionId, boolean isActive) {
         switch (state) {
             case APPROVAL_PENDING:
                 getUserSecurityInfo().setId(userId);
+                addCourseExecution(courseExecutionId);
                 this.state = APPROVED;
+                break;
             default:
                 throw new UnsupportedStateTransitionException(state);
         }
@@ -275,6 +279,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         switch (state) {
             case APPROVAL_PENDING:
                 this.state = REJECTED;
+                break;
             default:
                 throw new UnsupportedStateTransitionException(state);
         }

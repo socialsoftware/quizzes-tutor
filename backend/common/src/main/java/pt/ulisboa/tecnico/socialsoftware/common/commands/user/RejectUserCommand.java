@@ -16,4 +16,11 @@ public class RejectUserCommand implements Command {
     public Integer getUserId() {
         return userId;
     }
+
+    @Override
+    public String toString() {
+        return "RejectUserCommand{" +
+                "userId=" + userId +
+                '}';
+    }
 }

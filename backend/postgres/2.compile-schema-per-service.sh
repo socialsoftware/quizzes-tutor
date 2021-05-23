@@ -1,6 +1,7 @@
 #! /bin/bash -e
 
-for database_name in authdb tutormicrodb tournamentdb;
+
+for database_name in authdb tutormicrodb tournamentdb
 do
   user=${database_name}_user
   password=${database_name}_password

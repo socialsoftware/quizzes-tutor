@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserCourseExecutionsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.remote.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
@@ -15,8 +16,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
-
-import java.util.List;
 
 @Service
 public class MonolithService implements UserContract, AnswerContract, QuizContract, QuestionContract, CourseExecutionContract {
@@ -42,7 +41,7 @@ public class MonolithService implements UserContract, AnswerContract, QuizContra
     }
 
     @Override
-    public List<CourseExecutionDto> getCourseExecutions(Integer userId) {
+    public UserCourseExecutionsDto getUserCourseExecutions(Integer userId) {
         return userService.getUserCourseExecutions(userId);
     }
 

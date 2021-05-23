@@ -1,19 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.auth;
 
-import io.eventuate.tram.messaging.common.ChannelMapping;
-import io.eventuate.tram.messaging.common.DefaultChannelMapping;
 import io.eventuate.tram.spring.jdbckafka.TramJdbcKafkaConfiguration;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
-import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceOrchestratorConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceParticipantConfiguration;
-import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceRepositoryConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceWebConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.common.config.CommonModuleConfiguration;
 

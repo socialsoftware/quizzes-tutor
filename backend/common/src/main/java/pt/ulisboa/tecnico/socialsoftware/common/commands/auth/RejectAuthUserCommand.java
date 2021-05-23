@@ -20,4 +20,11 @@ public class RejectAuthUserCommand implements Command {
     public void setAuthUserId(Integer authUserId) {
         this.authUserId = authUserId;
     }
+
+    @Override
+    public String toString() {
+        return "RejectAuthUserCommand{" +
+                "authUserId=" + authUserId +
+                '}';
+    }
 }

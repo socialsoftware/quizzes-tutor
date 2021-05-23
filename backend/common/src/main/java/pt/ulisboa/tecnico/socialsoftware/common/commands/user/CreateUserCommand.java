@@ -41,4 +41,15 @@ public class CreateUserCommand implements Command {
     public boolean isAdmin() {
         return isAdmin;
     }
+
+    @Override
+    public String toString() {
+        return "CreateUserCommand{" +
+                "name='" + name + '\'' +
+                ", role=" + role +
+                ", username='" + username + '\'' +
+                ", isActive=" + isActive +
+                ", isAdmin=" + isAdmin +
+                '}';
+    }
 }

@@ -28,7 +28,7 @@ COPY docker-entrypoint-initdb.d /docker-entrypoint-initdb.d
 COPY 0.activate-additional-scripts.sh /docker-entrypoint-initdb.d
 
 COPY eventuate-schema.sql /init_script/eventuate-schema.sql
-COPY 2.compile-schema-per-service.sh /docker-entrypoint-initdb.d/2.compile-schema-per-service.sh
+COPY 2.compile-schema-per-service.sh /docker-entrypoint-initdb.d
 COPY eventuate_tables.sql /init_script
 
 RUN mkdir additional-scripts

@@ -3,9 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.auth.services.remote;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserCourseExecutionsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.remote.*;
-
-import java.util.List;
 
 @Service
 public class AuthRequiredService {
@@ -25,9 +24,9 @@ public class AuthRequiredService {
     @Autowired
     private AnswerInterface answerInterface;
 
-    public List<CourseExecutionDto> getUserCourseExecutions(Integer userId) {
-        List<CourseExecutionDto> courseExecutionDtoList = userInterface.getCourseExecutions(userId);
-        return courseExecutionDtoList;
+    public UserCourseExecutionsDto getUserCourseExecutions(Integer userId) {
+        UserCourseExecutionsDto userCourseExecutions = userInterface.getUserCourseExecutions(userId);
+        return userCourseExecutions;
     }
 
     public CourseExecutionDto getCourseExecutionById(Integer courseExecutionId) {

@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.auth.services;
 
 import io.eventuate.tram.sagas.orchestration.SagaInstance;
 import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
+import io.eventuate.tram.sagas.orchestration.SagaInstanceRepositoryJdbc;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,11 +13,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.auth.apis.AuthController;
-import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser;
-import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthTecnicoUser;
-import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo;
+import pt.ulisboa.tecnico.socialsoftware.auth.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth.CreateUserWithAuthSaga;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth.CreateUserWithAuthSagaData;
@@ -96,7 +93,7 @@ public class AuthUserService {
 
     private List<CourseExecutionDto> getCourseExecutions(AuthUser authUser) {
         Integer userId = authUser.getUserSecurityInfo().getId();
-        return authRequiredService.getUserCourseExecutions(userId);
+        return authRequiredService.getUserCourseExecutions(userId).getCourseExecutionDtoList();
     }
 
     private void refreshFenixAuthUserInfo(FenixEduInterface fenix, AuthTecnicoUser authUser) {
@@ -418,13 +415,22 @@ public class AuthUserService {
             CreateUserWithAuthSagaData data = new CreateUserWithAuthSagaData(authUser.getId(), authUser.getUserSecurityInfo().getName(),
                     authUser.getUserSecurityInfo().getRole(), authUser.getUsername(), authUser.getType() != AuthUser.Type.EXTERNAL,
                     false, demoCourseExecutionId);
-            SagaInstance sagaInstance = sagaInstanceFactory.create(createUserWithAuthSaga, data);
+            sagaInstanceFactory.create(createUserWithAuthSaga, data);
             logger.info("Data created: " + data);
 
-            /*while (!sagaInstance.isEndState()) {
-                logger.info("Waiting for saga");
-            }*/
-            return authUser;
+
+            AuthUser authUserFinal = authUserRepository.findById(authUser.getId()).get();
+
+            while (!(authUserFinal.getState().equals(AuthUserState.APPROVED) ||
+                    authUserFinal.getState().equals(AuthUserState.REJECTED))) {
+
+                authUserFinal = authUserRepository.findById(authUser.getId()).get();
+
+                logger.info("AuthUser: " + authUserFinal);
+            }
+
+            //add course execution and activate authuser
+            return authUserFinal;
         });
     }
 
@@ -467,9 +473,10 @@ public class AuthUserService {
             throw new TutorException(ErrorMessage.INVALID_EMAIL, email);
     }
 
-    public void approveAuthUser(Integer authUserId, Integer userId) {
+    public void approveAuthUser(Integer authUserId, Integer userId, Integer courseExecutionId, boolean isActive) {
         AuthUser authUser = authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
-        authUser.authUserApproved(userId);
+        //TODO: Cast to activate
+        authUser.authUserApproved(userId, courseExecutionId, isActive);
     }
 
     public void rejectAuthUser(Integer authUserId) {

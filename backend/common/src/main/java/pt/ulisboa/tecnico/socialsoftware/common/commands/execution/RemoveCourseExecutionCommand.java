@@ -30,4 +30,12 @@ public class RemoveCourseExecutionCommand implements Command {
     public void setCourseExecutionId(Integer courseExecutionId) {
         this.courseExecutionId = courseExecutionId;
     }
+
+    @Override
+    public String toString() {
+        return "RemoveCourseExecutionCommand{" +
+                "userId=" + userId +
+                ", courseExecutionId=" + courseExecutionId +
+                '}';
+    }
 }

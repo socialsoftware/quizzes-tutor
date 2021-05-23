@@ -30,4 +30,12 @@ public class AddCourseExecutionCommand implements Command {
     public void setCourseExecutionId(Integer courseExecutionId) {
         this.courseExecutionId = courseExecutionId;
     }
+
+    @Override
+    public String toString() {
+        return "AddCourseExecutionCommand{" +
+                "userId=" + userId +
+                ", courseExecutionId=" + courseExecutionId +
+                '}';
+    }
 }
