@@ -1,9 +1,9 @@
 # http://whitfin.io/speeding-up-maven-docker-builds/
 
-FROM maven:3-jdk-11 as maven
-COPY ./pom.xml ./pom.xml
+#FROM maven:3-jdk-11 as maven
+#COPY ./pom.xml ./pom.xml
 #RUN mvn dependency:go-offline -B
-COPY ./src ./src
+#COPY ./src ./src
 #ARG PROFILE=test
 #RUN mvn clean -P$PROFILE -Dmaven.test.skip=true package
 
@@ -11,5 +11,6 @@ COPY ./src ./src
 
 FROM azul/zulu-openjdk-alpine:11
 #COPY ./target ./target
+COPY ./src ./src
 COPY target/apigateway-1.0-SNAPSHOT.jar ./
-ENTRYPOINT ["java","-jar", "./apigateway-1.0-SNAPSHOT.jar"]
+ENTRYPOINT ["java", "-jar", "./apigateway-1.0-SNAPSHOT.jar"]

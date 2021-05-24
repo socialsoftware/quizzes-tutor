@@ -5,6 +5,7 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
@@ -26,10 +27,8 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
         })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="auth_type",
-        discriminatorType = DiscriminatorType.STRING)
+        discriminatorType = DiscriminatorType.STRING)// TODO: Uncomment when impexp is working again
 public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
-
-    public enum Type { EXTERNAL, TECNICO, DEMO }
 
     public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
@@ -68,7 +67,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         setState(APPROVAL_PENDING);
     }
 
-    public static AuthUser createAuthUser(UserSecurityInfo userSecurityInfo, String username, String email, Type type) {
+    public static AuthUser createAuthUser(UserSecurityInfo userSecurityInfo, String username, String email, AuthUserType type) {
         switch (type) {
             case EXTERNAL:
                 return new AuthExternalUser(userSecurityInfo, username, email);
@@ -146,7 +145,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         return true;
     }
 
-    public abstract Type getType();
+    public abstract AuthUserType getType();
 
     public void checkRole(boolean isActive) {
         if (!isActive && !(userSecurityInfo.getRole().equals(Role.STUDENT) || userSecurityInfo.getRole().equals(Role.TEACHER))) {
@@ -162,14 +161,11 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         this.state = state;
     }
 
+    // TODO: Uncomment when impexp is working again
     /*@Override
     public void accept(Visitor visitor) {
         visitor.visitAuthUser(this);
     }*/
- 
-    public boolean isDemoStudent() {
-        return false;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -263,7 +259,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
                         Collectors.mapping(courseDto -> courseDto, Collectors.toList())));
     }
 
-    public void authUserApproved(Integer userId, Integer courseExecutionId, boolean isActive) {
+    public void authUserApproved(Integer userId, Integer courseExecutionId) {
         switch (state) {
             case APPROVAL_PENDING:
                 getUserSecurityInfo().setId(userId);

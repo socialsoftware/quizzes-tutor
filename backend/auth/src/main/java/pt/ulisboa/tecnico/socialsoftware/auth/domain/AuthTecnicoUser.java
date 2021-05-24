@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.auth.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
+
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
@@ -26,6 +28,5 @@ public class AuthTecnicoUser extends AuthUser {
     }
 
     @Override
-    public Type getType() {return Type.TECNICO;}
-
+    public AuthUserType getType() {return AuthUserType.TECNICO;}
 }

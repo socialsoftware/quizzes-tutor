@@ -82,7 +82,7 @@ public class CreateUserWithAuthSagaData {
 
     ApproveAuthUserCommand approveAuthUser() {
         logger.info("Sent ApproveAuthUserCommand to authUserService channel");
-        return new ApproveAuthUserCommand(getAuthUserId(), getUserId(), getCourseExecutionId(), isActive());
+        return new ApproveAuthUserCommand(getAuthUserId(), getUserId(), getCourseExecutionId());
     }
 
     CreateUserCommand createUser() {

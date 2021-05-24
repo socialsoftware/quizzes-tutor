@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.auth.domain;
 
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
 
@@ -11,7 +12,6 @@ import javax.persistence.Entity;
 import java.time.LocalDateTime;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
-
 
 @Entity
 @DiscriminatorValue("EXTERNAL")
@@ -74,13 +74,12 @@ public class AuthExternalUser extends AuthUser {
     }
 
     @Override
-    public Type getType() {return Type.EXTERNAL;}
+    public AuthUserType getType() {return AuthUserType.EXTERNAL;}
 
-    public String generateConfirmationToken() {
+    public void generateConfirmationToken() {
         String token = KeyGenerators.string().generateKey();
         setTokenGenerationDate(LocalDateTime.now());
         setConfirmationToken(token);
-        return token;
     }
 
     public ExternalUserDto getDto() {
