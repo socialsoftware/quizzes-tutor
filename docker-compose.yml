@@ -55,3 +55,21 @@ services:
       - ./data/localhost-nginx.conf:/etc/nginx/nginx.conf
       - ./data/error.log:/var/log/nginx/error.log
       - ./data/access.log:/var/log/nginx/access.log
+
+  integration-tests:
+    image: maven:3
+    stop_signal: SIGKILL
+    stdin_open: true
+    tty: true
+    depends_on:
+      - postgres
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tutordb
+      - PSQL_INT_TEST_DB_USERNAME=engineer
+      - PSQL_INT_TEST_DB_PASSWORD=password
+    working_dir: $PWD/backend/
+    volumes:
+      - $PWD:$PWD
+      - /var/run/docker.sock:/var/run/docker.sock
+      - ~/.m2:/root/.m2
+    command: mvn -Ptest-int integration-test

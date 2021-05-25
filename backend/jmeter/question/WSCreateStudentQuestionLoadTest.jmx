@@ -68,7 +68,7 @@
           </elementProp>
           <elementProp name="PSQL_DATABASE" elementType="Argument">
             <stringProp name="Argument.name">PSQL_DATABASE</stringProp>
-            <stringProp name="Argument.value">tutortestdb</stringProp>
+            <stringProp name="Argument.value">tutordb</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>

@@ -20,7 +20,7 @@ jobs:
         env:
           POSTGRES_USER: postgres
           POSTGRES_PASSWORD: postgres
-          POSTGRES_DB: tutortestdb
+          POSTGRES_DB: tutordb
         ports:
         # will assign a random free host port
         - 5432:5432
@@ -87,7 +87,7 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
         
     - name: Clean DB after integration tests
-      run: psql -d postgresql://postgres@localhost/tutortestdb -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
+      run: psql -d postgresql://postgres@localhost/tutordb -c "DROP SCHEMA public CASCADE; CREATE SCHEMA public;"
       env:
         PGPASSWORD: postgres
 
@@ -108,7 +108,7 @@ jobs:
       env:
         CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
         GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        cypress_psql_db_name: "tutortestdb"
+        cypress_psql_db_name: "tutordb"
         cypress_psql_db_username: "postgres"
         cypress_psql_db_password: "postgres"
         cypress_psql_db_host: "localhost"
