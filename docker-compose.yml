@@ -56,6 +56,17 @@ services:
       - ./data/error.log:/var/log/nginx/error.log
       - ./data/access.log:/var/log/nginx/access.log
 
+  be-unit-tests:
+    image: maven:3
+    stop_signal: SIGKILL
+    stdin_open: true
+    tty: true
+    working_dir: $PWD/backend/
+    volumes:
+      - $PWD:$PWD
+      - ~/.m2:/root/.m2
+    command: mvn -Ptest test
+
   integration-tests:
     image: maven:3
     stop_signal: SIGKILL
@@ -70,6 +81,16 @@ services:
     working_dir: $PWD/backend/
     volumes:
       - $PWD:$PWD
-      - /var/run/docker.sock:/var/run/docker.sock
       - ~/.m2:/root/.m2
     command: mvn -Ptest-int integration-test
+
+  fe-unit-tests:
+    image: node:15.14.0-alpine3.13
+    stop_signal: SIGKILL
+    stdin_open: true
+    tty: true
+    working_dir: $PWD/frontend/
+    volumes:
+      - $PWD:$PWD
+    command: /bin/sh -c "npm install && npm run test:unit"
+
