@@ -36,7 +36,22 @@ public class CourseExecutionInternalController {
     public ResponseEntity<Integer> findDemoCourseExecution() {
         logger.info("findDemoCourseExecution");
         try {
-            Integer result = monolithService.getDemoCourseExecutionId();
+            Integer result = monolithService.findDemoCourseExecution();
+            logger.info("Result:{}", result);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.info("Exception:{}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/findByFields", method = RequestMethod.GET)
+    public ResponseEntity<CourseExecutionDto> findCourseExecutionByFields(@RequestParam String acronym,
+                                                                          @RequestParam String academicTerm,
+                                                                          @RequestParam String type) {
+        logger.info("findCourseExecutionByFields");
+        try {
+            CourseExecutionDto result = monolithService.findCourseExecutionByFields(acronym, academicTerm, type);
             logger.info("Result:{}", result);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {

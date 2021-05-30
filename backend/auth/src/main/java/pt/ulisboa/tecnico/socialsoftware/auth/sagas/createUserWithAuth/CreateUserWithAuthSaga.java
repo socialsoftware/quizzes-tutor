@@ -27,6 +27,7 @@ public class CreateUserWithAuthSaga implements SimpleSaga<CreateUserWithAuthSaga
                 .build();
     }
 
+
     @Override
     public SagaDefinition<CreateUserWithAuthSagaData> getSagaDefinition() {
         Assert.notNull(sagaDefinition, "sagaDefinition is null.");

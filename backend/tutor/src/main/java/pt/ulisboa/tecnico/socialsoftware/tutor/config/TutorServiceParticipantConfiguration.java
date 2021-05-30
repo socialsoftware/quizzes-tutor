@@ -19,7 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.command.UserServiceCommandHa
  */
 @Configuration
 @Import({ SagaParticipantConfiguration.class, TramMessageProducerJdbcConfiguration.class,
-        EventuateTramKafkaMessageConsumerConfiguration.class/*, TramConsumerJdbcAutoConfiguration.class*/})
+        EventuateTramKafkaMessageConsumerConfiguration.class})
 @EnableAutoConfiguration
 public class TutorServiceParticipantConfiguration {
 

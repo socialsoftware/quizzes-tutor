@@ -21,6 +21,10 @@
       <id>JCenter-Bintray</id>
       <url>https://jcenter.bintray.com/</url>
     </repository>
+    <!--<repository>
+      <id>microservices-canvas-repository</id>
+      <url>https://dl.bintray.com/eventuateio-oss/microservice-canvas-tools-release</url>
+    </repository>-->
   </repositories>
 
   <dependencies>
@@ -238,6 +242,24 @@
       <artifactId>eventuate-tram-sagas-spring-orchestration</artifactId>
       <version>${eventuate-tram-sagas.version}</version>
     </dependency>
+
+    <!-- Microservices canvas-->
+    <!--https://github.com/microservice-canvas/microservice-canvas-tools-->
+    <!--<dependency>
+      <groupId>io.microservices.tools.canvas</groupId>
+      <artifactId>microservice-canvas-springmvc</artifactId>
+      <version>0.7.0.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>io.microservices.tools.canvas</groupId>
+      <artifactId>microservice-canvas-extractor-tram</artifactId>
+      <version>0.7.0.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>io.microservices.tools.canvas</groupId>
+      <artifactId>microservice-canvas-extractor-tram-sagas</artifactId>
+      <version>0.7.0.RELEASE</version>
+    </dependency>-->
 
   </dependencies>
 

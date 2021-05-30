@@ -13,8 +13,12 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.auth.sagas.confirmRegistration.ConfirmRegistrationSaga;
+import pt.ulisboa.tecnico.socialsoftware.auth.sagas.confirmRegistration.ConfirmRegistrationSagaData;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth.CreateUserWithAuthSaga;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth.CreateUserWithAuthSagaData;
+import pt.ulisboa.tecnico.socialsoftware.auth.sagas.updateCourseExecutions.UpdateCourseExecutionsSaga;
+import pt.ulisboa.tecnico.socialsoftware.auth.sagas.updateCourseExecutions.UpdateCourseExecutionsSagaData;
 import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
@@ -22,10 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.Notification;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.NotificationResponse;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.*;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.io.BufferedReader;
@@ -38,6 +39,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.READY_FOR_UPDATE;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 import static pt.ulisboa.tecnico.socialsoftware.common.utils.Utils.*;
 
 @Service
@@ -60,10 +63,12 @@ public class AuthUserService {
     @Autowired
     private CreateUserWithAuthSaga createUserWithAuthSaga;
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Autowired
+    private UpdateCourseExecutionsSaga updateCourseExecutionsSaga;
+
+    @Autowired
+    private ConfirmRegistrationSaga confirmRegistrationSaga;
+
     public AuthDto fenixAuth(FenixEduInterface fenix) {
         String username = fenix.getPersonUsername();
         AuthTecnicoUser authUser;
@@ -74,12 +79,10 @@ public class AuthUserService {
         }
 
         if (authUser == null) {
-            authUser = createAuthUser(fenix, username);
+            authUser = createAuthTecnicoUser(fenix, username);
         } else {
             refreshFenixAuthUserInfo(fenix, authUser);
         }
-
-        authUser.setLastAccess(DateHandler.now());
 
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
 
@@ -110,39 +113,54 @@ public class AuthUserService {
         List<CourseExecutionDto> activeTeachingCourses = getActiveTecnicoCourses(fenixTeachingCourses);
         if (!fenixTeachingCourses.isEmpty() && authUser.getUserSecurityInfo().isTeacher()) {
 
-            activeTeachingCourses.stream()
+            List<CourseExecutionDto> courseExecutionDtoList = activeTeachingCourses.stream()
                     .filter(courseExecutionDto ->
                             !authUser.getUserCourseExecutions().contains(courseExecutionDto.getCourseExecutionId()))
-                    .forEach(courseExecutionDto -> {
-                        //TODO: fix this
-                        //userService.addCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionDto.getCourseExecutionId());
-                        authUser.addCourseExecution(courseExecutionDto.getCourseExecutionId());
-                    });
+                    .collect(Collectors.toList());
 
             String ids = fenixTeachingCourses.stream()
                     .map(courseDto -> courseDto.getAcronym() + courseDto.getAcademicTerm())
                     .collect(Collectors.joining(","));
 
-            authUser.setEnrolledCoursesAcronyms(ids);
+            updateAuthUserCourseExecutions(authUser, courseExecutionDtoList, ids);
         }
+    }
+
+    @Transactional
+    public void updateCourseExecutionsSaga(Integer authUserId, Integer userId, String ids,
+                                           List<CourseExecutionDto> courseExecutionDtoList) {
+
+        UpdateCourseExecutionsSagaData data = new UpdateCourseExecutionsSagaData(authUserId, userId, ids,
+                courseExecutionDtoList);
+        sagaInstanceFactory.create(updateCourseExecutionsSaga, data);
     }
 
     private void updateStudentCourses(AuthTecnicoUser authUser, List<CourseExecutionDto> fenixAttendingCourses) {
         List<CourseExecutionDto> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
         if (!activeAttendingCourses.isEmpty() && authUser.getUserSecurityInfo().isStudent()) {
 
-            activeAttendingCourses.stream()
+            List<CourseExecutionDto> courseExecutionDtoList = activeAttendingCourses.stream()
                     .filter(courseExecutionDto ->
                             !authUser.getUserCourseExecutions().contains(courseExecutionDto.getCourseExecutionId()))
-                    .forEach(courseExecutionDto -> {
-                        //TODO: fix this
-                        //userService.addCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionDto.getCourseExecutionId());
-                        authUser.addCourseExecution(courseExecutionDto.getCourseExecutionId());
-                    });
+                    .collect(Collectors.toList());
+
+            updateAuthUserCourseExecutions(authUser, courseExecutionDtoList, null);
         }
     }
 
-    private AuthTecnicoUser createAuthUser(FenixEduInterface fenix, String username) {
+    private void updateAuthUserCourseExecutions(AuthUser authUser, List<CourseExecutionDto> courseExecutionDtoList, String ids) {
+        authUser.setState(READY_FOR_UPDATE);
+        updateCourseExecutionsSaga(authUser.getId(), authUser.getUserSecurityInfo().getId(), ids, courseExecutionDtoList);
+
+        // Waits for saga to finish
+        AuthUser authUserFinal = authUserRepository.findById(authUser.getId()).get();
+        while (!(authUserFinal.getState().equals(AuthUserState.APPROVED))) {
+
+            authUserFinal = authUserRepository.findById(authUser.getId()).get();
+        }
+    }
+
+    private AuthTecnicoUser createAuthTecnicoUser(FenixEduInterface fenix, String username) {
         List<CourseExecutionDto> fenixAttendingCourses = fenix.getPersonAttendingCourses();
         List<CourseExecutionDto> fenixTeachingCourses = fenix.getPersonTeachingCourses();
 
@@ -174,21 +192,12 @@ public class AuthUserService {
         if (authUserRepository.findAuthUserByUsername(username).isPresent()) {
             throw new TutorException(ErrorMessage.DUPLICATE_USER, username);
         }
-        //UserDto userDto = userService.createUser(name, role, username, type != AuthUser.Type.EXTERNAL, false);
 
-        /*AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(userDto.getId(), name, role, false), username, email, type);
-        authUserRepository.save(authUser);*/
-        logger.info("Will create authUser");
         AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(name, role, false), username, email, type);
         authUserRepository.save(authUser);
-        logger.info("AuthUserCreated: "+ authUser);
         return authUser;
     }
 
-
-    //Was from user service
-    @Transactional(isolation = Isolation.READ_COMMITTED,
-            propagation = Propagation.REQUIRED)
     public ExternalUserDto registerExternalUserTransactional(Integer courseExecutionId, ExternalUserDto externalUserDto) {
         CourseExecutionDto courseExecutionDto = authRequiredService.getCourseExecutionById(courseExecutionId);
 
@@ -196,22 +205,33 @@ public class AuthUserService {
             throw new TutorException(ErrorMessage.COURSE_EXECUTION_NOT_EXTERNAL, courseExecutionId);
         }
 
-        AuthExternalUser authUser = getOrCreateUser(externalUserDto);
+        checkRole(externalUserDto.getRole(), externalUserDto.getActive());
+        checkEmail(externalUserDto.getEmail());
+        String username = externalUserDto.getUsername() != null ? externalUserDto.getUsername() : externalUserDto.getEmail();
 
-        if (authUser.getUserCourseExecutions().contains(courseExecutionId)) {
-            throw new TutorException(ErrorMessage.DUPLICATE_USER, authUser.getUsername());
+        AuthExternalUser authUser = (AuthExternalUser) authUserRepository
+                .findAuthUserByUsername(username).orElse(null);
+
+        if (authUser == null) {
+            authUser = (AuthExternalUser) createAuthUser(externalUserDto.getName(), username, externalUserDto.getEmail(),
+                    externalUserDto.getRole(), AuthUserType.EXTERNAL);
         }
 
-        //TODO: fix this
-        //courseExecutionService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionId);
-        authUser.generateConfirmationToken();
+        if (authUser.getUserCourseExecutions().contains(courseExecutionId)) {
+            throw new TutorException(ErrorMessage.DUPLICATE_USER, username);
+        }
+
+        List<CourseExecutionDto> courseExecutionDtoList = new ArrayList<>();
+        courseExecutionDtoList.add(courseExecutionDto);
+        updateAuthUserCourseExecutions(authUser, courseExecutionDtoList, null);
+
         return authUser.getDto();
     }
 
     //Was from user service
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public ExternalUserDto confirmRegistrationTransactional(ExternalUserDto externalUserDto) {
-        AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findAuthUserByUsername(externalUserDto.getUsername()).orElse(null);
+        AuthExternalUser authUser = (AuthExternalUser) authUserRepository.
+                findAuthUserByUsername(externalUserDto.getUsername()).orElse(null);
 
         if (authUser == null) {
             throw new TutorException(ErrorMessage.EXTERNAL_USER_NOT_FOUND, externalUserDto.getUsername());
@@ -222,11 +242,9 @@ public class AuthUserService {
         }
 
         try {
-            authUser.confirmRegistration(passwordEncoder, externalUserDto.getConfirmationToken(),
-                    externalUserDto.getPassword());
+            checkConfirmationToken(authUser, externalUserDto.getConfirmationToken());
 
-            //TODO: fix this
-            //userService.activateUser(authUser.getUserSecurityInfo().getId());
+            confirmRegistration(authUser, passwordEncoder, externalUserDto.getPassword());
         }
         catch (TutorException e) {
             if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
@@ -236,6 +254,25 @@ public class AuthUserService {
         }
 
         return authUser.getDto();
+    }
+
+    public void confirmRegistration(AuthUser authUser, PasswordEncoder passwordEncoder, String password) {
+        authUser.setState(READY_FOR_UPDATE);
+        confirmRegistrationSaga(authUser.getId(), authUser.getUserSecurityInfo().getId(), passwordEncoder,
+                password);
+
+        // Waits for saga to finish
+        AuthUser authUserFinal = authUserRepository.findById(authUser.getId()).get();
+        while (!(authUserFinal.getState().equals(AuthUserState.APPROVED))) {
+            authUserFinal = authUserRepository.findById(authUser.getId()).get();
+        }
+    }
+
+    @Transactional
+    public void confirmRegistrationSaga(Integer authUserId, Integer userId, PasswordEncoder passwordEncoder, String password) {
+
+        ConfirmRegistrationSagaData data = new ConfirmRegistrationSagaData(authUserId, userId, passwordEncoder, password);
+        sagaInstanceFactory.create(confirmRegistrationSaga, data);
     }
 
     @Retryable(
@@ -259,63 +296,32 @@ public class AuthUserService {
         return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null , courseExecutionList);
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            maxAttempts = 2,
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoStudentAuth(Boolean createNew) {
         AuthUser authUser;
 
         if (createNew == null || !createNew) {
-            logger.info("GetDemoStudent");
             authUser = getDemoStudent();
-            logger.info("GotDemoStudent: " + authUser);
         }
         else {
-            logger.info("CreateDemoStudent");
             authUser = createDemoStudent();
-            logger.info("CreatedDemoStudent: " + authUser);
         }
 
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
-        logger.info("courseExecutionList: " + courseExecutionList);
         return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null, courseExecutionList);
     }
 
-    //Was from user service
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AuthUser createDemoStudent() {
         String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
-
-        AuthUser authUser = createAuthUser("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO);
-        //TODO: fix this
-        /*CourseExecutionDto courseExecution = authRequiredService.getDemoCourseExecution();
-
-        if (courseExecution != null) {
-            // In addCourse method of User, it already adds the user to the course execution so there is no need to do it here again
-            userService.addCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecution.getCourseExecutionId());
-            authUser.addCourseExecution(courseExecution.getId());
-        }*/
-        return authUser;
+        return createAuthUser("Demo-Student-" + birthDate, "Demo-Student-" + birthDate,
+                "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO);
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            maxAttempts = 2,
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoTeacherAuth() {
         AuthUser authUser = getDemoTeacher();
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
         return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null, courseExecutionList);
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            maxAttempts = 2,
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto demoAdminAuth() {
         AuthUser authUser = getDemoAdmin();
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
@@ -384,87 +390,60 @@ public class AuthUserService {
         return userDtos;
     }
 
-    private List<CourseExecutionDto> getActiveTecnicoCourses(List<CourseExecutionDto> courses) {
+    @Transactional
+    public List<CourseExecutionDto> getActiveTecnicoCourses(List<CourseExecutionDto> courses) {
         return courses.stream()
-                /*.map(courseDto ->
-                        courseExecutionService.getCourseExecutionByFields(courseDto.getAcronym(),courseDto.getAcademicTerm(), CourseType.TECNICO.name())
-                )*///TODO: fix this
+                .map(courseDto ->
+                        authRequiredService.getCourseExecutionByFields(courseDto.getAcronym(),
+                                courseDto.getAcademicTerm(), CourseType.TECNICO.name())
+                )
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());
     }
 
     private AuthUser getDemoTeacher() {
         return authUserRepository.findAuthUserByUsername(TEACHER_USERNAME).orElseGet(() -> {
-            AuthUser authUser = createUserWithAuth("Demo Teacher", TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUserType.DEMO);
-            //TODO: fix this
-            //courseExecutionService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionService.getDemoCourseExecution().getId());
-            return authUser;
+            return createAuthUser("Demo Teacher", TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUserType.DEMO);
         });
     }
 
     private AuthUser getDemoStudent() {
-        return authUserRepository.findAuthUserByUsername(STUDENT_USERNAME).orElseGet(
-                () -> {
-                return createAuthUser("Demo Student",
-                STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO);}
-        );
+        return authUserRepository.findAuthUserByUsername(STUDENT_USERNAME).orElseGet(() -> {
+            return createAuthUser("Demo Student", STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO);
+        });
     }
 
     private AuthUser createAuthUser(String name, String username, String email, Role role, AuthUserType type) {
-        logger.info("Did not find authUser by Username");
-        AuthUser authUser = createUserWithAuth(name, username, email, role, type);
-        logger.info("Auth User created with success: " + authUser);
+        AuthUser authUser = createAuthUserSaga(name, username, email, role, type);
 
-        Integer demoCourseExecutionId = authRequiredService.getDemoCourseExecution();
-        logger.info("Demo Course Execution Id: " + demoCourseExecutionId);
-
-        logger.info("Will create authsaga data");
-        CreateUserWithAuthSagaData data = new CreateUserWithAuthSagaData(authUser.getId(), authUser.getUserSecurityInfo().getName(),
-                authUser.getUserSecurityInfo().getRole(), authUser.getUsername(), authUser.getType() != AuthUserType.EXTERNAL,
-                false, demoCourseExecutionId);
-        sagaInstanceFactory.create(createUserWithAuthSaga, data);
-        logger.info("Data created: " + data);
-
+        // Waits for saga to finish
         AuthUser authUserFinal = authUserRepository.findById(authUser.getId()).get();
-
         while (!(authUserFinal.getState().equals(AuthUserState.APPROVED) ||
                 authUserFinal.getState().equals(AuthUserState.REJECTED))) {
 
             authUserFinal = authUserRepository.findById(authUser.getId()).get();
-
-            //logger.info("AuthUser: " + authUserFinal);
         }
 
-        //add course execution and activate authuser
         return authUserFinal;
+    }
+
+    @Transactional
+    public AuthUser createAuthUserSaga(String name, String username, String email, Role role, AuthUserType type) {
+        AuthUser authUser = createUserWithAuth(name, username, email, role, type);
+
+        Integer demoCourseExecutionId = authRequiredService.getDemoCourseExecution();
+
+        CreateUserWithAuthSagaData data = new CreateUserWithAuthSagaData(authUser.getId(), authUser.getUserSecurityInfo().getName(),
+                authUser.getUserSecurityInfo().getRole(), authUser.getUsername(), authUser.getType() != AuthUserType.EXTERNAL,
+                false, demoCourseExecutionId);
+        sagaInstanceFactory.create(createUserWithAuthSaga, data);
+        return authUser;
     }
 
     private AuthUser getDemoAdmin() {
         return authUserRepository.findAuthUserByUsername(ADMIN_USERNAME).orElseGet(() -> {
-            AuthUser authUser = createUserWithAuth("Demo Admin", ADMIN_USERNAME, "demo_admin@mail.com", Role.DEMO_ADMIN, AuthUserType.DEMO);
-            //TODO: fix this
-            //courseExecutionService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), courseExecutionService.getDemoCourseExecution().getId());
-            return authUser;
+            return createAuthUser("Demo Admin", ADMIN_USERNAME, "demo_admin@mail.com", Role.DEMO_ADMIN, AuthUserType.DEMO);
         });
-    }
-
-    private AuthExternalUser getOrCreateUser(ExternalUserDto externalUserDto) {
-        //Avoid creation of user and authUser with invalid roles (added because of tests and will be needed for sagas)
-        checkRole(externalUserDto.getRole(), externalUserDto.getActive());
-        //Avoid creation of user for authUser with invalid email (added because of tests and will be needed for sagas)
-        checkEmail(externalUserDto.getEmail());
-        String username = externalUserDto.getUsername() != null ? externalUserDto.getUsername() : externalUserDto.getEmail();
-        return (AuthExternalUser) authUserRepository.findAuthUserByUsername(username)
-                .orElseGet(() -> {
-                    //TODO: fix this
-                    //UserDto userDto = userService.createUser(externalUserDto.getName(), externalUserDto.getRole(), username, false, false);
-                    //TODO: fix this(give id to securityInfo)
-                    AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(
-                                    externalUserDto.getName(), externalUserDto.getRole(), false),
-                            username, externalUserDto.getEmail(), AuthUserType.EXTERNAL);
-                    authUserRepository.save(authUser);
-                    return authUser;
-                });
     }
 
     public void checkRole(Role role, boolean isActive) {
@@ -478,6 +457,16 @@ public class AuthUserService {
             throw new TutorException(ErrorMessage.INVALID_EMAIL, email);
     }
 
+    public void checkConfirmationToken(AuthExternalUser authUser, String token) {
+        if (authUser.isActive()) {
+            throw new TutorException(USER_ALREADY_ACTIVE, authUser.getUsername());
+        }
+        if (!token.equals(authUser.getConfirmationToken()))
+            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
+        if (authUser.getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
+            throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
+    }
+
     public void approveAuthUser(Integer authUserId, Integer userId, Integer courseExecutionId) {
         AuthUser authUser = authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
         authUser.authUserApproved(userId, courseExecutionId);
@@ -486,6 +475,48 @@ public class AuthUserService {
     public void rejectAuthUser(Integer authUserId) {
         AuthUser authUser = authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
         authUser.authUserRejected();
+    }
+
+    public void beginUpdateCourseExecutions(Integer authUserId) {
+        AuthTecnicoUser authUser = (AuthTecnicoUser) authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
+        authUser.authUserBeginUpdateCourseExecutions();
+    }
+
+    public void undoUpdateCourseExecutions(Integer authUserId) {
+        AuthTecnicoUser authUser = (AuthTecnicoUser) authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
+        authUser.authUserUndoUpdateCourseExecutions();
+    }
+
+    public void confirmUpdateCourseExecutions(Integer authUserId, String ids, List<CourseExecutionDto> courseExecutionDtoList) {
+        AuthUser authUser = authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
+        switch (authUser.getType()) {
+            case TECNICO:
+                ((AuthTecnicoUser)authUser).authUserconfirmUpdateCourseExecutions(ids, courseExecutionDtoList);
+                break;
+            case EXTERNAL:
+                ((AuthExternalUser)authUser).authUserconfirmUpdateCourseExecutions(courseExecutionDtoList);
+                break;
+            default:
+                throw new TutorException(ErrorMessage.WRONG_AUTH_USER_TYPE, authUser.getType().toString());
+        }
+    }
+
+    public void beginConfirmRegistration(Integer authUserId) {
+        AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findById(authUserId)
+                .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
+        authUser.authUserBeginConfirmRegistration();
+    }
+
+    public void undoConfirmAuthUserRegistration(Integer authUserId) {
+        AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findById(authUserId)
+                .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
+        authUser.authUserUndoConfirmRegistration();
+    }
+
+    public void confirmAuthUserRegistration(Integer authUserId, String password, PasswordEncoder passwordEncoder) {
+        AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findById(authUserId)
+                .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
+        authUser.authUserConfirmRegistration(password, passwordEncoder);
     }
 
 

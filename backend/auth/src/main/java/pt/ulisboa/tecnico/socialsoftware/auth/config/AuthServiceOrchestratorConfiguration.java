@@ -8,10 +8,12 @@ import io.eventuate.tram.spring.messaging.producer.jdbc.TramMessageProducerJdbcC
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import pt.ulisboa.tecnico.socialsoftware.auth.sagas.confirmRegistration.ConfirmRegistrationSaga;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth.CreateUserWithAuthSaga;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants.AuthUserServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants.CourseExecutionServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants.UserServiceProxy;
+import pt.ulisboa.tecnico.socialsoftware.auth.sagas.updateCourseExecutions.UpdateCourseExecutionsSaga;
 import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserService;
 
 /**
@@ -27,6 +29,18 @@ public class AuthServiceOrchestratorConfiguration {
     public CreateUserWithAuthSaga createOrderSaga(AuthUserServiceProxy authUserService, UserServiceProxy userService,
                                                   CourseExecutionServiceProxy courseExecutionService) {
         return new CreateUserWithAuthSaga(authUserService, userService, courseExecutionService);
+    }
+
+    @Bean
+    public UpdateCourseExecutionsSaga updateCourseExecutionsSaga(AuthUserServiceProxy authUserService,
+                                                                 UserServiceProxy userService) {
+        return new UpdateCourseExecutionsSaga(authUserService, userService);
+    }
+
+    @Bean
+    public ConfirmRegistrationSaga confirmRegistrationSaga(AuthUserServiceProxy authUserService,
+                                                              UserServiceProxy userService) {
+        return new ConfirmRegistrationSaga(authUserService, userService);
     }
 
     @Bean

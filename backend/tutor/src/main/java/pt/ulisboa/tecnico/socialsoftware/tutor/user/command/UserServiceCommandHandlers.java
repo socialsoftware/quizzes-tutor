@@ -8,12 +8,14 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.RejectAuthUserCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.user.CreateUserCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.user.RejectUserCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.user.*;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+
+import java.util.List;
 
 import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.withFailure;
 import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.withSuccess;
@@ -36,6 +38,9 @@ public class UserServiceCommandHandlers {
                 .fromChannel(ServiceChannels.USER_SERVICE_COMMAND_CHANNEL)
                 .onMessage(CreateUserCommand.class, this::createUser)
                 .onMessage(RejectUserCommand.class, this::rejectUser)
+                .onMessage(AddCourseExecutionsCommand.class, this::addCourseExecution)
+                .onMessage(RemoveCourseExecutionsCommand.class, this::removeCourseExecution)
+                .onMessage(ActivateUserCommand.class, this::activateUser)
                 .build();
     }
 
@@ -68,4 +73,44 @@ public class UserServiceCommandHandlers {
             return withFailure();
         }
     }
+
+    public Message addCourseExecution(CommandMessage<AddCourseExecutionsCommand> cm) {
+        logger.info("Received AddCourseExecutionsCommand");
+
+        Integer userId = cm.getCommand().getUserId();
+        List<CourseExecutionDto> courseExecutionDtoList = cm.getCommand().getCourseExecutionDtoList();
+        try {
+            userService.addCourseExecutions(userId, courseExecutionDtoList);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+    public Message removeCourseExecution(CommandMessage<RemoveCourseExecutionsCommand> cm) {
+        logger.info("Received RemoveCourseExecutionsCommand");
+
+        Integer userId = cm.getCommand().getUserId();
+        List<CourseExecutionDto> courseExecutionDtoList = cm.getCommand().getCourseExecutionDtoList();
+        try {
+            userService.removeCourseExecutions(userId, courseExecutionDtoList);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+    public Message activateUser(CommandMessage<ActivateUserCommand> cm) {
+        logger.info("Received ActivateUserCommand");
+
+        Integer userId = cm.getCommand().getUserId();
+
+        try {
+            userService.activateUser(userId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+
 }

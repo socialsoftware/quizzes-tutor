@@ -7,15 +7,14 @@ import pt.ulisboa.tecnico.socialsoftware.auth.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType
 
 @DataJpaTest
 class CheckConfirmationTokenTest extends SpockTest {
     def authUser
 
     def setup() {
-        authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUser.Type.EXTERNAL)
-        /*user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, false)
-        userRepository.save(user)*/
+        authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUserType.EXTERNAL)
     }
 
     def "checkConfirmationToken: correct token and date has not expired" (){

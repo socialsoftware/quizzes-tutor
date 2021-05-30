@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.auth.domain;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
@@ -11,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionSt
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.UnsupportedStateTransitionException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -56,7 +58,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
 
     @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "authuser_course_executions")
-    private Set<Integer> userCourseExecutions = new HashSet<>();
+    private List<Integer> userCourseExecutions = new ArrayList<>();
 
     protected AuthUser() {}
 
@@ -116,11 +118,11 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         this.email = email.toLowerCase();
     }
 
-    public Set<Integer> getUserCourseExecutions() {
+    public List<Integer> getUserCourseExecutions() {
         return userCourseExecutions;
     }
 
-    public void setUserCourseExecutions(Set<Integer> userCourseExecutions) {
+    public void setUserCourseExecutions(List<Integer> userCourseExecutions) {
         this.userCourseExecutions = userCourseExecutions;
     }
 

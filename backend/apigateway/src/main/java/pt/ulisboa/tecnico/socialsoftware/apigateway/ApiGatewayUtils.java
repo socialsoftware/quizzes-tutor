@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.core.io.ClassPathResource;
 
 import java.io.File;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.security.KeyFactory;
@@ -27,9 +28,8 @@ public class ApiGatewayUtils {
     public static PublicKey getPublicKey() {
         if (publicKey == null) {
             try {
-                File resource = new ClassPathResource(PUBLIC_KEY_FILENAME).getFile();
-                publicKey = getPublicKey(resource.toPath());
-                //logger.info("Public Key was read successfully: " + publicKey.toString());
+                InputStream resource = new ClassPathResource(PUBLIC_KEY_FILENAME).getInputStream();
+                publicKey = getPublicKey(resource);
             } catch (Exception e) {
                 logger.info("Failed reading key");
                 logger.info(e.getMessage());
@@ -38,9 +38,9 @@ public class ApiGatewayUtils {
         return publicKey;
     }
 
-    public static PublicKey getPublicKey(Path keyPath) throws Exception {
+    public static PublicKey getPublicKey(InputStream inputStream) throws Exception {
 
-        byte[] keyBytes = Files.readAllBytes(keyPath);
+        byte[] keyBytes = inputStream.readAllBytes();
 
         X509EncodedKeySpec spec = new X509EncodedKeySpec(keyBytes);
         KeyFactory kf = KeyFactory.getInstance("RSA");

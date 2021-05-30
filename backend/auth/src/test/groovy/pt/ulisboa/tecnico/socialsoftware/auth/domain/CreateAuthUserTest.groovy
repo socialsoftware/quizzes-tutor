@@ -4,6 +4,7 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import spock.lang.Unroll
 
@@ -37,16 +38,16 @@ class CreateAuthUserTest  extends SpockTest {
 
         where:
         type                    | active
-        AuthUser.Type.TECNICO  | true
-        AuthUser.Type.EXTERNAL | false
-        AuthUser.Type.DEMO     | true
+        AuthUserType.TECNICO  | true
+        AuthUserType.EXTERNAL | false
+        AuthUserType.DEMO     | true
     }
 
-    def createClassAutUser(AuthUser.Type type) {
+    def createClassAutUser(AuthUserType type) {
         switch (type) {
-            case AuthUser.Type.TECNICO: return new AuthTecnicoUser()
-            case AuthUser.Type.EXTERNAL: return new AuthExternalUser()
-            case AuthUser.Type.DEMO: return new AuthDemoUser()
+            case AuthUserType.TECNICO: return new AuthTecnicoUser()
+            case AuthUserType.EXTERNAL: return new AuthExternalUser()
+            case AuthUserType.DEMO: return new AuthDemoUser()
         }
     }
 

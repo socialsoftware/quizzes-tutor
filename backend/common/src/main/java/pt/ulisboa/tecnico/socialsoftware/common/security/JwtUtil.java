@@ -11,9 +11,10 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 
 import javax.servlet.http.HttpServletRequest;
-import java.io.File;
 import java.io.InputStream;
 import java.security.PublicKey;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Set;
 
 @Component
@@ -61,11 +62,9 @@ public class JwtUtil {
         Role role = Role.valueOf(tokenClaims.get("role", String.class));
         boolean isAdmin = tokenClaims.get("isAdmin", Boolean.class);
         String username = tokenClaims.get("username", String.class);
-        @SuppressWarnings("unchecked")
-        Set<Integer> executions = (Set<Integer>) tokenClaims.get("executions");
+        List<Integer> executions = (ArrayList<Integer>) tokenClaims.get("executions");
         String enrolledCourseAcronyms = tokenClaims.get("courseAcronyms", String.class);
         UserInfo userInfo = new UserInfo(userId, role, isAdmin, username, executions, enrolledCourseAcronyms);
-        logger.info("UserInfo: " + userInfo);
         return new UsernamePasswordAuthenticationToken(userInfo, "", userInfo.getAuthorities());
     }
 

@@ -9,9 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType
 
 @DataJpaTest
 class ExternalUserAuthTest extends SpockTest {
@@ -27,7 +25,7 @@ class ExternalUserAuthTest extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.STUDENT, AuthUser.Type.EXTERNAL)
+        authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.STUDENT, AuthUserType.EXTERNAL)
         user = userRepository.findAll().get(0)
         user.addCourse(courseExecution)
         user.setActive(true)

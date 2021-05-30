@@ -6,13 +6,14 @@ import pt.ulisboa.tecnico.socialsoftware.auth.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import spock.lang.Unroll
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType
 
 @DataJpaTest
 class GetAuthoritiesTest extends SpockTest {
     def authUser
 
     def setup() {
-        authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUser.Type.EXTERNAL)
+        authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUserType.EXTERNAL)
         authUserRepository.save(authUser)
     }
 

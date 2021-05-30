@@ -210,6 +210,12 @@
       <version>${eventuate-tram-sagas.version}</version>
       <type>pom</type>
     </dependency>
+      <dependency>
+          <groupId>io.microservices.tools.canvas</groupId>
+          <artifactId>microservice-canvas-springmvc</artifactId>
+          <version>0.7.0.RELEASE</version>
+          <scope>compile</scope>
+      </dependency>
   </dependencies>
 
   <!-- https://javahungry.blogspot.com/2019/05/solved-no-main-manifest-attribute-in-jar.html -->

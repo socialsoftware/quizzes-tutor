@@ -51,8 +51,13 @@ public class MonolithService implements UserContract, AnswerContract, QuizContra
     }
 
     @Override
-    public Integer getDemoCourseExecutionId() {
+    public Integer findDemoCourseExecution() {
         return courseExecutionService.getDemoCourse().getCourseExecutionId();
+    }
+
+    @Override
+    public CourseExecutionDto findCourseExecutionByFields(String acronym, String academicTerm, String type) {
+        return courseExecutionService.getCourseExecutionByFields(acronym, academicTerm, type);
     }
 
     @Override

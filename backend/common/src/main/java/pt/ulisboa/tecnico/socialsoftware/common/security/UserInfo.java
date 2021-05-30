@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-import java.util.Set;
 
 public class UserInfo {
 
@@ -15,10 +14,10 @@ public class UserInfo {
     private final Role role;
     private final Boolean isAdmin;
     private final String username;
-    private final Set<Integer> courseExecutions;
+    private final List<Integer> courseExecutions;
     private final String enrolledCourseAcronyms;
 
-    public UserInfo(Integer id, Role role, Boolean isAdmin, String username, Set<Integer> executions, String enrolledCourseAcronyms) {
+    public UserInfo(Integer id, Role role, Boolean isAdmin, String username, List<Integer> executions, String enrolledCourseAcronyms) {
         this.id = id;
         this.role = role;
         this.isAdmin = isAdmin;
@@ -43,7 +42,7 @@ public class UserInfo {
         return username;
     }
 
-    public Set<Integer> getCourseExecutions() {
+    public List<Integer> getCourseExecutions() {
         return courseExecutions;
     }
 

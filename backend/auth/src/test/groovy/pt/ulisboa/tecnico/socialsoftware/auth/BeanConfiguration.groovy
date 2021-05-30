@@ -12,18 +12,6 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.auth.services.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.CourseService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")
@@ -54,28 +42,8 @@ class BeanConfiguration {
     private String debug
 
     @Bean
-    AnswersXmlImport answersXmlImport() {
-        return new AnswersXmlImport()
-    }
-
-    @Bean
-    QuizService quizService() {
-        return new QuizService()
-    }
-
-    @Bean
-    AnswerService answerService() {
-        return new AnswerService()
-    }
-
-    @Bean
     AuthUserService authUserService() {
         return new AuthUserService()
-    }
-
-    @Bean
-    UserService userService() {
-        return new UserService()
     }
 
     @Bean
@@ -86,46 +54,6 @@ class BeanConfiguration {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder()
-    }
-
-    @Bean
-    QuestionService questionService() {
-        return new QuestionService()
-    }
-
-    @Bean
-    CourseExecutionService courseExecutionService() {
-        return new CourseExecutionService()
-    }
-
-    @Bean
-    TopicService topicService() {
-        return new TopicService()
-    }
-
-    @Bean
-    AssessmentService assessmentService() {
-        return new AssessmentService()
-    }
-
-    @Bean
-    DiscussionService discussionService() {
-        return new DiscussionService()
-    }
-
-    @Bean
-    QuestionSubmissionService questionSubmissionService() {
-        return new QuestionSubmissionService()
-    }
-
-    @Bean
-    TutorDemoUtils demoUtils() {
-        return new TutorDemoUtils();
-    }
-
-    @Bean
-    CourseService courseService() {
-        return new CourseService();
     }
 
     @Bean

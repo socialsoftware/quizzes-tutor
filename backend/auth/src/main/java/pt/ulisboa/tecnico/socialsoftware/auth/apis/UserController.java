@@ -19,13 +19,13 @@ public class UserController {
     private UserApplicationalService userApplicationalService;
 
     @PostMapping ("/users/register/{executionId}")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
     public ExternalUserDto registerExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
         return userApplicationalService.registerExternalUser(executionId, externalUserDto);
     }
 
     @PostMapping("/users/register/{executionId}/csv")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
     public NotificationResponse<CourseExecutionDto> registerExternalUsersCsvFile(@PathVariable Integer executionId, @RequestParam("file") MultipartFile file) throws IOException {
         return userApplicationalService.registerListOfUsers(file.getInputStream(), executionId);
     }

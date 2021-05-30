@@ -25,17 +25,19 @@ public class AuthRequiredService {
     private AnswerInterface answerInterface;
 
     public UserCourseExecutionsDto getUserCourseExecutions(Integer userId) {
-        UserCourseExecutionsDto userCourseExecutions = userInterface.getUserCourseExecutions(userId);
-        return userCourseExecutions;
+        return userInterface.getUserCourseExecutions(userId);
     }
 
     public CourseExecutionDto getCourseExecutionById(Integer courseExecutionId) {
-        CourseExecutionDto courseExecutionDto= courseExecutionInterface.findCourseExecution(courseExecutionId);
-        return courseExecutionDto;
+        return courseExecutionInterface.findCourseExecution(courseExecutionId);
     }
 
     public Integer getDemoCourseExecution() {
-        Integer demoCourseExecutionId = courseExecutionInterface.findDemoCourseExecution();
-        return demoCourseExecutionId;
+        return courseExecutionInterface.findDemoCourseExecution();
     }
+
+    public CourseExecutionDto getCourseExecutionByFields(String acronym, String academicTerm, String type) {
+        return courseExecutionInterface.findCourseExecutionByFields(acronym, academicTerm, type);
+    }
+
 }

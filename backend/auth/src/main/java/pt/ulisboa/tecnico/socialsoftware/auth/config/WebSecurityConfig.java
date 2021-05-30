@@ -37,8 +37,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .and()
                     .authorizeRequests()
                     .anyRequest().permitAll();
-                    /*.and()
-                    .apply(new JwtConfigurer());*/
         } else {
             http
                     .httpBasic().disable()
@@ -51,8 +49,6 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/users/register/confirm").permitAll()
                     .antMatchers("/images/**").permitAll()
                     .anyRequest().authenticated();
-                    /*.and()
-                    .apply(new JwtConfigurer());*/
         }
     }
 

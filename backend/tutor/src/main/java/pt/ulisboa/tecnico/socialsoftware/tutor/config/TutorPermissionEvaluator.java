@@ -71,6 +71,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
         if (targetDomainObject instanceof CourseExecutionDto) {
             CourseExecutionDto courseExecutionDto = (CourseExecutionDto) targetDomainObject;
+            logger.info("CourseExecutionDto: " + courseExecutionDto);
             String permissionValue = (String) permission;
             switch (permissionValue) {
                 case "EXECUTION.CREATE":
@@ -88,6 +89,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
             switch (permissionValue) {
                 case "DEMO.ACCESS":
                     CourseExecutionDto courseExecutionDto = courseExecutionService.getCourseExecutionById(id);
+                    logger.info("CourseExecutionDto: " + courseExecutionDto);
                     return courseExecutionDto.getName().equals("Demo Course");
                 case "COURSE.ACCESS":
                     return userHasAnExecutionOfCourse(userInfo, id);

@@ -7,10 +7,13 @@ import io.eventuate.tram.sagas.participant.SagaCommandHandlersBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserService;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.ApproveAuthUserCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.RejectAuthUserCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.*;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
+
+import java.util.List;
 
 import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.withFailure;
 import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.withSuccess;
@@ -33,7 +36,28 @@ public class AuthServiceCommandHandlers {
                 .fromChannel(ServiceChannels.AUTH_USER_SERVICE_COMMAND_CHANNEL)
                 .onMessage(ApproveAuthUserCommand.class, this::approveAuthUser)
                 .onMessage(RejectAuthUserCommand.class, this::rejectAuthUser)
+                .onMessage(BeginUpdateCourseExecutionsCommand.class, this::beginUpdateCourseExecutions)
+                .onMessage(UndoUpdateCourseExecutionsCommand.class, this::undoUpdateCourseExecutions)
+                .onMessage(ConfirmUpdateCourseExecutionsCommand.class, this::confirmUpdateCourseExecutions)
+                .onMessage(BeginConfirmRegistrationCommand.class, this::beginConfirmRegistration)
+                .onMessage(UndoConfirmRegistrationCommand.class, this::undoConfirmRegistration)
+                .onMessage(ConfirmRegistrationCommand.class, this::confirmRegistration)
                 .build();
+    }
+
+    public Message confirmUpdateCourseExecutions(CommandMessage<ConfirmUpdateCourseExecutionsCommand> cm) {
+        logger.info("Received ConfirmUpdateCourseExecutionsCommand");
+
+        Integer authUserId = cm.getCommand().getAuthUserId();
+        String ids = cm.getCommand().getIds();
+        List<CourseExecutionDto> courseExecutionDtoList = cm.getCommand().getCourseExecutionDtoList();
+
+        try {
+            authUserService.confirmUpdateCourseExecutions(authUserId, ids, courseExecutionDtoList);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
     }
 
     public Message approveAuthUser(CommandMessage<ApproveAuthUserCommand> cm) {
@@ -58,6 +82,75 @@ public class AuthServiceCommandHandlers {
 
         try {
             authUserService.rejectAuthUser(authUserId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+    public Message beginUpdateCourseExecutions(CommandMessage<BeginUpdateCourseExecutionsCommand> cm) {
+        logger.info("Received BeginUpdateCourseExecutionsCommand");
+
+        Integer authUserId = cm.getCommand().getAuthUserId();
+
+        try {
+            authUserService.beginUpdateCourseExecutions(authUserId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+    public Message undoUpdateCourseExecutions(CommandMessage<UndoUpdateCourseExecutionsCommand> cm) {
+        logger.info("Received UndoUpdateCourseExecutionsCommand");
+
+        Integer authUserId = cm.getCommand().getAuthUserId();
+
+        try {
+            authUserService.undoUpdateCourseExecutions(authUserId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+    public Message beginConfirmRegistration(CommandMessage<BeginConfirmRegistrationCommand> cm) {
+        logger.info("Received BeginConfirmRegistrationCommand");
+
+        Integer authUserId = cm.getCommand().getAuthUserId();
+
+        try {
+            authUserService.beginConfirmRegistration(authUserId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+
+    public Message undoConfirmRegistration(CommandMessage<UndoConfirmRegistrationCommand> cm) {
+        logger.info("Received UndoConfirmRegistrationCommand");
+
+        Integer authUserId = cm.getCommand().getAuthUserId();
+
+        try {
+            authUserService.undoConfirmAuthUserRegistration(authUserId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+
+    public Message confirmRegistration(CommandMessage<ConfirmRegistrationCommand> cm) {
+        logger.info("Received ConfirmRegistrationCommand");
+
+        Integer authUserId = cm.getCommand().getAuthUserId();
+        String password = cm.getCommand().getPassword();
+        PasswordEncoder passwordEncoder = cm.getCommand().getPasswordEncoder();
+
+        try {
+            authUserService.confirmAuthUserRegistration(authUserId, password, passwordEncoder);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();

@@ -11,31 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.auth.services.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.TopicConjunctionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
-import spock.lang.Shared
 import spock.lang.Specification
 
 import java.time.LocalDateTime
@@ -128,113 +103,16 @@ class SpockTest extends Specification {
     public static final String REVIEW_1_COMMENT = "Review Comment 1"
 
     @Autowired
-    AssessmentRepository assessmentRepository
-
-    @Autowired
-    AssessmentService assessmentService
-
-    @Autowired
-    CourseExecutionRepository courseExecutionRepository
-
-    @Autowired
-    CourseRepository courseRepository
-
-    @Autowired
-    CourseExecutionService courseService
-
-    @Autowired
-    OptionRepository optionRepository
-
-    @Autowired
-    QuestionRepository questionRepository
-
-    @Autowired
-    TopicRepository topicRepository
-
-    @Autowired
-    UserRepository userRepository
-
-    @Autowired
     AuthUserRepository authUserRepository
 
     @Autowired
     AuthUserService authUserService
 
     @Autowired
-    QuestionSubmissionService questionSubmissionService
-
-    @Autowired
-    QuestionSubmissionRepository questionSubmissionRepository
-
-    @Autowired
     PasswordEncoder passwordEncoder
 
     @Autowired
-    AnswerService answerService
-
-    @Autowired
-    AnswerDetailsRepository answerDetailsRepository
-
-    @Autowired
-    ImageRepository imageRepository
-
-    @Autowired
-    QuestionAnswerRepository questionAnswerRepository
-
-    @Autowired
-    QuestionAnswerItemRepository questionAnswerItemRepository
-
-    @Autowired
-    QuestionDetailsRepository questionDetailsRepository
-
-    @Autowired
-    QuestionService questionService
-
-    @Autowired
-    QuizAnswerRepository quizAnswerRepository
-
-    @Autowired
-    QuizAnswerItemRepository quizAnswerItemRepository
-
-    @Autowired
-    QuizQuestionRepository quizQuestionRepository
-
-    @Autowired
-    QuizRepository quizRepository
-
-    @Autowired
-    QuizService quizService
-
-    @Autowired
-    TopicConjunctionRepository topicConjunctionRepository
-
-    @Autowired
-    TopicService topicService
-
-    @Autowired
-    UserService userService
-
-    @Autowired
-    ReviewRepository reviewRepository
-
-    @Autowired
     UserApplicationalService userServiceApplicational
-
-    @Autowired
-    DiscussionRepository discussionRepository
-
-    @Autowired
-    DiscussionService discussionService
-
-    @Autowired
-    ReplyRepository replyRepository
-
-    @Autowired
-    TutorDemoUtils demoUtils
-
-    Course externalCourse
-    @Shared
-    CourseExecution externalCourseExecution
 
     def createExternalCourseAndExecution() {
         externalCourse = new Course(COURSE_1_NAME, CourseType.TECNICO)

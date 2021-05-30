@@ -53,6 +53,7 @@ public enum ErrorMessage {
     USER_NOT_FOUND("User not found with id %d"),
     AUTHUSER_NOT_FOUND("AuthUser not found with id %d"),
     AUTHUSER_BY_USERID_NOT_FOUND("AuthUser with userId %d not found"),
+    WRONG_AUTH_USER_TYPE("AuthUser with type %d not supported for this operation"),
     EXTERNAL_USER_NOT_FOUND("User not found with username %s"),
     COURSE_NOT_FOUND("Course not found with name %s"),
     INVALID_COURSE("This is not an execution of course %s"),
