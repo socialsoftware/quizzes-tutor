@@ -7,7 +7,7 @@ import org.springframework.test.context.ActiveProfiles
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository
-import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService
+import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
@@ -127,7 +127,7 @@ class SpockTest extends Specification {
     TournamentRepository tournamentRepository
 
     @Autowired
-    TournamentProvidedService tournamentService
+    TournamentService tournamentService
 
     @Autowired
     UserRepository userRepository

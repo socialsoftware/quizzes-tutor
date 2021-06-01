@@ -490,4 +490,11 @@ public class AnswerService {
         });
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public StatementQuizDto getStatementQuiz(Integer userId, Integer quizId) {
+        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quizId, userId)
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId));
+
+        return quizAnswer.getDto(false);
+    }
 }

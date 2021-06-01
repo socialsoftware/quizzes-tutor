@@ -1,5 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament;
 
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.annotation.JsonSerialize;
+import com.fasterxml.jackson.datatype.jsr310.deser.LocalDateTimeDeserializer;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 
 import java.io.Serializable;
@@ -9,7 +13,13 @@ import java.util.Set;
 
 public class ExternalStatementCreationDto implements Serializable {
     private Integer id;
+
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime startTime;
+
+    @JsonDeserialize(using = LocalDateTimeDeserializer.class)
+    @JsonSerialize(using = LocalDateTimeSerializer.class)
     private LocalDateTime endTime;
     private Integer numberOfQuestions;
     private Set<TopicDto> topics = new HashSet<>();

@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants;
 import io.eventuate.tram.commands.common.Success;
 import io.eventuate.tram.sagas.simpledsl.CommandEndpoint;
 import io.eventuate.tram.sagas.simpledsl.CommandEndpointBuilder;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.BeginConfirmRegistrationCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.user.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;

@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService;
+import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentService;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -19,7 +19,7 @@ import java.util.Set;
 public class TournamentController {
 
     @Autowired
-    private TournamentProvidedService tournamentProvidedService;
+    private TournamentService tournamentProvidedService;
 
     @PostMapping(value = "/tournaments/{executionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
@@ -28,7 +28,7 @@ public class TournamentController {
         formatDates(tournamentDto);
 
         return tournamentProvidedService.createTournament(userInfo.getId(), executionId, topicsId, tournamentDto);
- }
+    }
 
     @GetMapping(value = "/tournaments/{executionId}/getTournaments")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
@@ -76,7 +76,7 @@ public class TournamentController {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
 
         tournamentProvidedService.leaveTournament(userInfo.getId(), tournamentId);
- }
+    }
 
     @PutMapping(value = "/tournaments/{executionId}/updateTournament")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentDto.getId(), 'TOURNAMENT.OWNER')")

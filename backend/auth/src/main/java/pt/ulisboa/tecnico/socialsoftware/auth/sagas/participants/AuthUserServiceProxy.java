@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants;
 import io.eventuate.tram.commands.common.Success;
 import io.eventuate.tram.sagas.simpledsl.CommandEndpoint;
 import io.eventuate.tram.sagas.simpledsl.CommandEndpointBuilder;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.*;
+import pt.ulisboa.tecnico.socialsoftware.auth.command.*;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 
 public class AuthUserServiceProxy {

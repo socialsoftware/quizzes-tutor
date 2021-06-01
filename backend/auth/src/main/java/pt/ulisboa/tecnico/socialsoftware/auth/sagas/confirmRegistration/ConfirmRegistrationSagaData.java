@@ -3,9 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.auth.sagas.confirmRegistration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.BeginConfirmRegistrationCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.ConfirmRegistrationCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.UndoConfirmRegistrationCommand;
+import pt.ulisboa.tecnico.socialsoftware.auth.command.BeginConfirmRegistrationCommand;
+import pt.ulisboa.tecnico.socialsoftware.auth.command.ConfirmRegistrationCommand;
+import pt.ulisboa.tecnico.socialsoftware.auth.command.UndoConfirmRegistrationCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.user.ActivateUserCommand;
 
 public class ConfirmRegistrationSagaData {

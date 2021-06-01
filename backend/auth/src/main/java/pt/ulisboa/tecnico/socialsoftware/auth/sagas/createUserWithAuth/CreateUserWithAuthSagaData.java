@@ -2,8 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.ApproveAuthUserCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.RejectAuthUserCommand;
+import pt.ulisboa.tecnico.socialsoftware.auth.command.ApproveAuthUserCommand;
+import pt.ulisboa.tecnico.socialsoftware.auth.command.RejectAuthUserCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.AddCourseExecutionCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.RemoveCourseExecutionCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.user.CreateUserCommand;
@@ -76,22 +76,22 @@ public class CreateUserWithAuthSagaData {
     }
 
     RejectUserCommand rejectUser() {
-        logger.info("Sent RejectUserCommand to userService channel");
+        logger.info("Sent RejectUserCommand");
         return new RejectUserCommand(getUserId());
     }
 
     ApproveAuthUserCommand approveAuthUser() {
-        logger.info("Sent ApproveAuthUserCommand to authUserService channel");
+        logger.info("Sent ApproveAuthUserCommand");
         return new ApproveAuthUserCommand(getAuthUserId(), getUserId(), getCourseExecutionId());
     }
 
     CreateUserCommand createUser() {
-        logger.info("Sent CreateUserCommand to userService channel");
+        logger.info("Sent CreateUserCommand");
         return new CreateUserCommand(getName(), getRole(), getUsername(), isActive(), isAdmin());
     }
 
     RejectAuthUserCommand rejectAuthUser() {
-        logger.info("Sent RejectAuthUserCommand to authUserService channel");
+        logger.info("Sent RejectAuthUserCommand");
         return new RejectAuthUserCommand(getAuthUserId());
     }
 
@@ -101,12 +101,12 @@ public class CreateUserWithAuthSagaData {
     }
 
     AddCourseExecutionCommand addCourseExecution() {
-        logger.info("Sent AddCourseExecutionCommand to courseExecutionService channel");
+        logger.info("Sent AddCourseExecutionCommand");
         return new AddCourseExecutionCommand(getUserId(), getCourseExecutionId());
     }
 
     RemoveCourseExecutionCommand removeCourseExecution() {
-        logger.info("Sent RemoveCourseExecutionCommand to courseExecutionService channel");
+        logger.info("Sent RemoveCourseExecutionCommand");
         return new RemoveCourseExecutionCommand(getUserId(), getCourseExecutionId());
     }
 

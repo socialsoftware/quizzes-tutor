@@ -21,6 +21,7 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 import java.util.HashSet;
 import java.util.Set;
 
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.QUIZ_ANSWER_NOT_FOUND;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.USER_NOT_FOUND;
 
 @Service
@@ -103,5 +104,15 @@ public class TournamentRequiredService {
 
     public void deleteQuiz(Integer quizId) {
         quizInterface.deleteExternalQuiz(quizId);
+    }
+
+    public StatementQuizDto getStatementQuiz(Integer userId, Integer quizId) {
+        StatementQuizDto quizDto = answerInterface.getStatementQuiz(userId, quizId);
+        if (quizDto != null) {
+            return quizDto;
+        }
+        else {
+            throw new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId);
+        }
     }
 }

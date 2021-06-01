@@ -80,6 +80,27 @@ services:
       EVENTUATE_CDC_READER_READER3_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
       EVENTUATE_CDC_READER_READER3_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/common3
       JAVA_OPTS: -Xmx64m
+  tutor-service:
+    build: ./backend/tutor
+    container_name: tutor-service
+    ports:
+      - "8084:8084"
+    depends_on:
+      - postgres
+      - kafka
+      - cdc-service
+    links:
+      - postgres
+      - kafka
+      - zookeeper
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/tutormicrodb
+      SPRING_DATASOURCE_USERNAME: tutormicrodb_user
+      SPRING_DATASOURCE_PASSWORD: tutormicrodb_password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+      EVENTUATE_DATABASE_SCHEMA: none
   auth-service:
     build: ./backend/auth
     container_name: auth-service
@@ -116,31 +137,11 @@ services:
       - postgres
       - kafka
       - zookeeper
+      - tutor-service
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/tournamentdb
       SPRING_DATASOURCE_USERNAME: tournamentdb_user
       SPRING_DATASOURCE_PASSWORD: tournamentdb_password
-      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
-      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
-      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
-      EVENTUATE_DATABASE_SCHEMA: none
-  tutor-service:
-    build: ./backend/tutor
-    container_name: tutor-service
-    ports:
-      - "8084:8084"
-    depends_on:
-      - postgres
-      - kafka
-      - cdc-service
-    links:
-      - postgres
-      - kafka
-      - zookeeper
-    environment:
-      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/tutormicrodb
-      SPRING_DATASOURCE_USERNAME: tutormicrodb_user
-      SPRING_DATASOURCE_PASSWORD: tutormicrodb_password
       SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
       EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
       EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181

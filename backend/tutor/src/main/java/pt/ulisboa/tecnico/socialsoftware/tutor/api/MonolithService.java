@@ -75,6 +75,11 @@ public class MonolithService implements UserContract, AnswerContract, QuizContra
     }
 
     @Override
+    public StatementQuizDto getStatementQuiz(Integer userId, Integer quizId) {
+        return answerService.getStatementQuiz(userId, quizId);
+    }
+
+    @Override
     public QuizDto findQuizById(Integer quizId) {
         return quizService.findById(quizId);
     }

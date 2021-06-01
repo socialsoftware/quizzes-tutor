@@ -1,15 +1,14 @@
-package pt.ulisboa.tecnico.socialsoftware.common.commands.auth;
+package pt.ulisboa.tecnico.socialsoftware.auth.command;
 
 import io.eventuate.tram.commands.common.Command;
 
-public class UndoConfirmRegistrationCommand implements Command {
-
+public class UndoUpdateCourseExecutionsCommand implements Command {
     private Integer authUserId;
 
-    public UndoConfirmRegistrationCommand() {
+    public UndoUpdateCourseExecutionsCommand() {
     }
 
-    public UndoConfirmRegistrationCommand(Integer authUserId) {
+    public UndoUpdateCourseExecutionsCommand(Integer authUserId) {
         this.authUserId = authUserId;
     }
 
@@ -23,7 +22,7 @@ public class UndoConfirmRegistrationCommand implements Command {
 
     @Override
     public String toString() {
-        return "UndoConfirmRegistrationCommand{" +
+        return "UndoUpdateCourseExecutionsCommand{" +
                 "authUserId=" + authUserId +
                 '}';
     }

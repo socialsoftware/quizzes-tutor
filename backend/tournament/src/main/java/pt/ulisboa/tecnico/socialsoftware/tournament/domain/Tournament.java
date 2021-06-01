@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatemen
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentParticipantDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.UnsupportedStateTransitionException;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentState.*;
 
 @Entity
 @Table(name = "tournaments")
@@ -21,6 +23,12 @@ public class Tournament  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Version
+    private Long version;
+
+    @Enumerated(EnumType.STRING)
+    private TournamentState state;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -37,14 +45,14 @@ public class Tournament  {
     @Column(name = "is_canceled")
     private boolean isCanceled;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "tournaments_participants")
     private Set<TournamentParticipant> participants = new HashSet<>();
 
     @Embedded
     private TournamentCourseExecution courseExecution;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "tournaments_topics")
     private Set<TournamentTopic> topics = new HashSet<>();
 
@@ -70,6 +78,7 @@ public class Tournament  {
         setTopics(topics);
         setPassword(tournamentDto.getPassword());
         setPrivateTournament(tournamentDto.isPrivateTournament());
+        setState(APPROVED);
     }
 
     public Integer getId() { return id; }
@@ -155,6 +164,14 @@ public class Tournament  {
         this.topics = topicsList;
     }
 
+    public TournamentState getState() {
+        return state;
+    }
+
+    public void setState(TournamentState state) {
+        this.state = state;
+    }
+
     public void updateTopics(Set<TournamentTopic> newTopics) {
         if (newTopics.isEmpty()) throw new TutorException(TOURNAMENT_MUST_HAVE_ONE_TOPIC);
 
@@ -212,8 +229,6 @@ public class Tournament  {
     public boolean hasQuiz() { return getQuizId() != null; }
 
     public void remove() {
-        checkCanChange();
-
         creator = null;
         courseExecution = null;
 
@@ -240,8 +255,6 @@ public class Tournament  {
     }
 
     public void updateTournament(TournamentDto tournamentDto, Set<TournamentTopic> topics) {
-        checkCanChange();
-
         if (DateHandler.isValidDateFormat(tournamentDto.getStartTime())) {
             DateHandler.toISOString(getStartTime());
             setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
@@ -320,5 +333,97 @@ public class Tournament  {
         dto.setEndTime(getEndTime());
         dto.setId(getId());
         return dto;
+    }
+
+    public void beginRemoveTournament() {
+        switch (getState()) {
+            case APPROVED:
+                setState(REMOVAL_PENDING);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void confirmRemoveTournament() {
+        switch (getState()) {
+            case REMOVAL_PENDING:
+                remove();
+                setState(REMOVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void undoRemoveTournament() {
+        switch (getState()) {
+            case REMOVAL_PENDING:
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void beginSolveQuiz() {
+        switch (getState()) {
+            case READY_FOR_UPDATE:
+                setState(UPDATE_PENDING);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void undoSolveQuiz() {
+        switch (getState()) {
+            case UPDATE_PENDING:
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void confirmSolveQuiz() {
+        switch (getState()) {
+            case UPDATE_PENDING:
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void beginUpdateQuiz() {
+        switch (getState()) {
+            case READY_FOR_UPDATE:
+                setState(UPDATE_PENDING);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void undoUpdateQuiz() {
+        switch (getState()) {
+            case UPDATE_PENDING:
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void confirmUpdateQuiz(TournamentDto tournamentDto, Set<TournamentTopic> topics) {
+        switch (getState()) {
+            case UPDATE_PENDING:
+                updateTournament(tournamentDto, topics);
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
     }
 }

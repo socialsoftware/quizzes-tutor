@@ -1,15 +1,15 @@
-package pt.ulisboa.tecnico.socialsoftware.common.commands.auth;
+package pt.ulisboa.tecnico.socialsoftware.auth.command;
 
 import io.eventuate.tram.commands.common.Command;
 
-public class RejectAuthUserCommand implements Command {
+public class BeginConfirmRegistrationCommand implements Command {
 
     private Integer authUserId;
 
-    public RejectAuthUserCommand() {
+    public BeginConfirmRegistrationCommand() {
     }
 
-    public RejectAuthUserCommand(Integer authUserId) {
+    public BeginConfirmRegistrationCommand(Integer authUserId) {
         this.authUserId = authUserId;
     }
 
@@ -23,7 +23,7 @@ public class RejectAuthUserCommand implements Command {
 
     @Override
     public String toString() {
-        return "RejectAuthUserCommand{" +
+        return "BeginConfirmRegistrationCommand{" +
                 "authUserId=" + authUserId +
                 '}';
     }

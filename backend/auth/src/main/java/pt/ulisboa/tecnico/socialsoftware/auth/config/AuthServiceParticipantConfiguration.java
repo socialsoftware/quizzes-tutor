@@ -19,7 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
  */
 @Configuration
 @Import({ SagaParticipantConfiguration.class, TramMessageProducerJdbcConfiguration.class,
-        EventuateTramKafkaMessageConsumerConfiguration.class/*, TramConsumerJdbcAutoConfiguration.class*/})
+        EventuateTramKafkaMessageConsumerConfiguration.class})
 @EnableAutoConfiguration
 public class AuthServiceParticipantConfiguration {
 

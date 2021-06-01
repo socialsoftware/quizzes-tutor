@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.common.commands.auth;
+package pt.ulisboa.tecnico.socialsoftware.auth.command;
 
 import io.eventuate.tram.commands.common.Command;
 

@@ -2,9 +2,9 @@ package pt.ulisboa.tecnico.socialsoftware.auth.sagas.updateCourseExecutions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.BeginUpdateCourseExecutionsCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.ConfirmUpdateCourseExecutionsCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.auth.UndoUpdateCourseExecutionsCommand;
+import pt.ulisboa.tecnico.socialsoftware.auth.command.BeginUpdateCourseExecutionsCommand;
+import pt.ulisboa.tecnico.socialsoftware.auth.command.ConfirmUpdateCourseExecutionsCommand;
+import pt.ulisboa.tecnico.socialsoftware.auth.command.UndoUpdateCourseExecutionsCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.user.AddCourseExecutionsCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.user.RemoveCourseExecutionsCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
