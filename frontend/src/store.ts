@@ -111,8 +111,6 @@ export default new Vuex.Store({
     async fenixLogin({ commit }, code) {
       const authResponse = await RemoteServices.fenixLogin(code);
       commit('login', authResponse);
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async externalLogin({ commit }, user: ExternalUser) {
       const authResponse = await RemoteServices.externalLogin(
@@ -120,8 +118,6 @@ export default new Vuex.Store({
         user.password
       );
       commit('login', authResponse);
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async demoStudentLogin({ commit }) {
       const authResponse = await RemoteServices.demoStudentLogin(false);
@@ -130,8 +126,6 @@ export default new Vuex.Store({
         'currentCourse',
         (Object.values(authResponse.user.courses)[0] as Course[])[0]
       );
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async demoNewStudentLogin({ commit }) {
       const authResponse = await RemoteServices.demoStudentLogin(true);
@@ -140,8 +134,6 @@ export default new Vuex.Store({
         'currentCourse',
         (Object.values(authResponse.user.courses)[0] as Course[])[0]
       );
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async demoTeacherLogin({ commit }) {
       const authResponse = await RemoteServices.demoTeacherLogin();
@@ -150,20 +142,14 @@ export default new Vuex.Store({
         'currentCourse',
         (Object.values(authResponse.user.courses)[0] as Course[])[0]
       );
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async demoAdminLogin({ commit }) {
       const authResponse = await RemoteServices.demoAdminLogin();
       commit('login', authResponse);
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     logout({ commit }) {
       return new Promise<void>((resolve) => {
         commit('logout');
-        // localStorage.removeItem("token");
-        // localStorage.removeItem("userRole");
         resolve();
       });
     },
