@@ -87,7 +87,12 @@
     <dependency>
       <groupId>org.springdoc</groupId>
       <artifactId>springdoc-openapi-ui</artifactId>
-      <version>1.5.4</version>
+      <version>1.5.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>swagger-ui</artifactId>
+      <version>3.49.0</version>
     </dependency>
     <!-- Fenix -->
     <dependency>
@@ -131,12 +136,12 @@
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy</artifactId>
-      <version>3.0.7</version>
+      <version>3.0.8</version>
     </dependency>
     <dependency>
       <groupId>org.codehaus.groovy</groupId>
       <artifactId>groovy-all</artifactId>
-      <version>3.0.7</version>
+      <version>3.0.8</version>
       <type>pom</type>
     </dependency>
     <!-- Enables mocking of classes without default constructor (together with CGLIB) -->
