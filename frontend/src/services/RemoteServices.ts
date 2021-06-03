@@ -22,6 +22,7 @@ import Review from '@/models/management/Review';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import router from '@/router';
+import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -190,6 +191,19 @@ export default class RemoteServices {
         return response.data.map((question: any) => {
           return new Question(question);
         });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getStatementQuestion(
+    questionId: number
+  ): Promise<StatementQuestion> {
+    return httpClient
+      .get(`/questions/${questionId}/statement`)
+      .then((response) => {
+        return new StatementQuestion(response.data);
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));

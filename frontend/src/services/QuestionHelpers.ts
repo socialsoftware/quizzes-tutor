@@ -55,6 +55,7 @@ export abstract class QuestionFactory {
     question: any
   ): StatementQuestionDetails;
   abstract createStatementAnswerDetails(details: any): StatementAnswerDetails;
+  abstract createEmptyStatementAnswerDetails(): StatementAnswerDetails;
   abstract createStatementCorrectAnswerDetails(
     details: any
   ): StatementCorrectAnswerDetails;
@@ -75,6 +76,9 @@ class MultipleChoiceQuestionFactory extends QuestionFactory {
   }
   createStatementAnswerDetails(details: any): StatementAnswerDetails {
     return new MultipleChoiceStatementAnswerDetails(details);
+  }
+  createEmptyStatementAnswerDetails(): StatementAnswerDetails {
+    return new MultipleChoiceStatementAnswerDetails();
   }
   createStatementCorrectAnswerDetails(
     details: any
@@ -99,6 +103,9 @@ class CodeFillInQuestionFactory extends QuestionFactory {
   createStatementAnswerDetails(details: any): StatementAnswerDetails {
     return new CodeFillInStatementAnswerDetails(details);
   }
+  createEmptyStatementAnswerDetails(): StatementAnswerDetails {
+    return new CodeFillInStatementAnswerDetails();
+  }
   createStatementCorrectAnswerDetails(
     details: any
   ): StatementCorrectAnswerDetails {
@@ -121,6 +128,9 @@ class CodeOrderQuestionFactory extends QuestionFactory {
   }
   createStatementAnswerDetails(details: any): StatementAnswerDetails {
     return new CodeOrderStatementAnswerDetails(details);
+  }
+  createEmptyStatementAnswerDetails(): StatementAnswerDetails {
+    return new CodeOrderStatementAnswerDetails();
   }
   createStatementCorrectAnswerDetails(
     details: any
