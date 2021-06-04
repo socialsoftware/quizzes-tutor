@@ -15,7 +15,7 @@
         class="question-content"
         v-html="convertMarkDown(question.content, question.image)"
       ></div>
-      <div class="square" @click="increaseOrder">
+      <div class="square" @click="increaseOrder" data-cy="nextQuestionButton">
         <i
           v-if="questionOrder !== questionNumber - 1"
           class="fas fa-chevron-right"

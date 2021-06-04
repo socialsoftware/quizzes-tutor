@@ -1,45 +1,61 @@
 <template>
   <div class="quiz-container" v-if="statementManager.correctAnswers.length > 0">
     <div class="question-navigation">
-      <div data-cy="navigationButtons" class="navigation-buttons">
-        <span
-          v-for="index in +statementManager.statementQuiz.questions.length"
-          v-bind:class="[
-            'question-button',
-            index === questionOrder + 1 ? 'current-question-button' : '',
-            index === questionOrder + 1 &&
-            !statementManager.statementQuiz.answers[index - 1].isAnswerCorrect(
-              statementManager.correctAnswers[index - 1]
-            )
-              ? 'incorrect-current'
-              : '',
-            !statementManager.statementQuiz.answers[index - 1].isAnswerCorrect(
-              statementManager.correctAnswers[index - 1]
-            )
-              ? 'incorrect'
-              : '',
-          ]"
-          :key="index"
-          @click="changeOrder(index - 1)"
-        >
-          {{ index }}
-        </span>
+      <div
+        data-cy="navigationButtons"
+        class="navigation-buttons"
+        show-arrows
+        center-active
+      >
+        <v-sheet class="mx-auto" max-width="400">
+          <v-slide-group v-model="slideItemPosition" show-arrows>
+            <v-slide-item
+              v-for="index in +statementManager.statementQuiz.questions.length"
+              :key="index"
+            >
+              <span
+                v-bind:class="[
+                  'question-button',
+                  index === questionOrder + 1 ? 'current-question-button' : '',
+                  index === questionOrder + 1 &&
+                  !statementManager.statementQuiz.answers[
+                    index - 1
+                  ].isAnswerCorrect(statementManager.correctAnswers[index - 1])
+                    ? 'incorrect-current'
+                    : '',
+                  !statementManager.statementQuiz.answers[
+                    index - 1
+                  ].isAnswerCorrect(statementManager.correctAnswers[index - 1])
+                    ? 'incorrect'
+                    : '',
+                ]"
+                @click="changeOrder(index - 1)"
+              >
+                {{ index }}
+              </span>
+            </v-slide-item>
+          </v-slide-group>
+        </v-sheet>
       </div>
-      <span
-        class="left-button"
-        @click="decreaseOrder"
-        v-if="questionOrder !== 0"
-        ><i class="fas fa-chevron-left"
-      /></span>
-      <span
-        class="right-button"
-        data-cy="nextQuestionButton"
-        @click="increaseOrder"
-        v-if="
-          questionOrder !== statementManager.statementQuiz.questions.length - 1
-        "
-        ><i class="fas fa-chevron-right"
-      /></span>
+      <span class="number-of-questions"
+        >{{
+          statementManager.statementQuiz.answers.filter((a1) =>
+            a1.isAnswerCorrect(
+              statementManager.correctAnswers.filter(
+                (a2) => a2.sequence === a1.sequence
+              )[0]
+            )
+          ).length
+        }}
+        /
+        {{ statementManager.statementQuiz.questions.length }}
+      </span>
+      <!--      <span-->
+      <!--        class="left-button"-->
+      <!--        @click="decreaseOrder"-->
+      <!--        v-if="questionOrder !== 0"-->
+      <!--        ><i class="fas fa-chevron-left"-->
+      <!--      /></span>-->
     </div>
     <result-component
       v-model="questionOrder"
@@ -78,6 +94,7 @@ import RemoteServices from '@/services/RemoteServices';
 export default class ResultsView extends Vue {
   statementManager: StatementManager = StatementManager.getInstance;
   questionOrder: number = 0;
+  slideItemPosition: number = 1;
   discussion: Discussion = new Discussion();
 
   async created() {
@@ -101,7 +118,8 @@ export default class ResultsView extends Vue {
       return;
     }
 
-    this.discussion!.courseExecutionId = this.$store.getters.getCurrentCourse.courseExecutionId;
+    this.discussion!.courseExecutionId =
+      this.$store.getters.getCurrentCourse.courseExecutionId;
     this.discussion!.date = new Date().toISOString();
     this.statementManager.statementQuiz!.answers[
       this.questionOrder
@@ -118,6 +136,7 @@ export default class ResultsView extends Vue {
       +this.statementManager.statementQuiz!.questions.length
     ) {
       this.questionOrder += 1;
+      this.slideItemPosition += 1;
     }
 
     this.updateDiscussion();
@@ -126,6 +145,7 @@ export default class ResultsView extends Vue {
   decreaseOrder(): void {
     if (this.questionOrder > 0) {
       this.questionOrder -= 1;
+      this.slideItemPosition -= 1;
     }
 
     this.updateDiscussion();
@@ -134,6 +154,7 @@ export default class ResultsView extends Vue {
   changeOrder(n: number): void {
     if (n >= 0 && n < +this.statementManager.statementQuiz!.questions.length) {
       this.questionOrder = n;
+      this.slideItemPosition = n + 1;
     }
 
     this.updateDiscussion();
