@@ -36,13 +36,39 @@ public class TournamentServiceCommandHandlers {
                 .onMessage(BeginRemoveTournamentCommand.class, this::beginRemove)
                 .onMessage(ConfirmRemoveTournamentCommand.class, this::confirmRemove)
                 .onMessage(UndoRemoveTournamentCommand.class, this::undoRemove)
-                .onMessage(BeginSolveTournamentQuizCommand.class, this::beginSolve)
-                .onMessage(UndoSolveTournamentQuizCommand.class, this::undoSolve)
-                .onMessage(ConfirmSolveTournamentQuizCommand.class, this::confirmSolve)
                 .onMessage(BeginUpdateTournamentQuizCommand.class, this::beginUpdate)
                 .onMessage(UndoUpdateTournamentQuizCommand.class, this::undoUpdate)
                 .onMessage(ConfirmUpdateTournamentQuizCommand.class, this::confirmUpdate)
+                .onMessage(ConfirmCreateTournamentCommand.class, this::confirmCreate)
+                .onMessage(RejectCreateTournamentCommand.class, this::rejectCreate)
                 .build();
+    }
+
+    public Message rejectCreate(CommandMessage<RejectCreateTournamentCommand> cm) {
+        logger.info("Received RejectCreateTournamentCommand");
+
+        Integer tournamentId = cm.getCommand().getTournamentId();
+
+        try {
+            tournamentService.rejectCreate(tournamentId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+    public Message confirmCreate(CommandMessage<ConfirmCreateTournamentCommand> cm) {
+        logger.info("Received ConfirmCreateTournamentCommand");
+
+        Integer tournamentId = cm.getCommand().getTournamentId();
+        Integer quizId = cm.getCommand().getQuizId();
+
+        try {
+            tournamentService.confirmCreate(tournamentId, quizId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
     }
 
     public Message confirmUpdate(CommandMessage<ConfirmUpdateTournamentQuizCommand> cm) {
@@ -124,45 +150,4 @@ public class TournamentServiceCommandHandlers {
             return withFailure();
         }
     }
-
-    public Message beginSolve(CommandMessage<BeginSolveTournamentQuizCommand> cm) {
-        logger.info("Received BeginSolveTournamentQuizCommand");
-
-        Integer tournamentId = cm.getCommand().getTournamentId();
-
-        try {
-            tournamentService.beginSolve(tournamentId);
-            return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
-
-    public Message undoSolve(CommandMessage<UndoSolveTournamentQuizCommand> cm) {
-        logger.info("Received UndoSolveTournamentQuizCommand");
-
-        Integer tournamentId = cm.getCommand().getTournamentId();
-
-        try {
-            tournamentService.undoSolve(tournamentId);
-            return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
-
-    public Message confirmSolve(CommandMessage<ConfirmSolveTournamentQuizCommand> cm) {
-        logger.info("Received ConfirmSolveTournamentQuizCommand");
-
-        Integer tournamentId = cm.getCommand().getTournamentId();
-        Integer quizId = cm.getCommand().getQuizId();
-
-        try {
-            tournamentService.confirmSolve(tournamentId, quizId);
-            return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
-
 }

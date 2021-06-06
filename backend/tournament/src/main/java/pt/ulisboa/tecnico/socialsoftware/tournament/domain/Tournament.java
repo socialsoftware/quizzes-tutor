@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.domain;
 
+import org.hibernate.id.IntegralDataTypeHolder;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentParticipantDto;
@@ -78,7 +79,7 @@ public class Tournament  {
         setTopics(topics);
         setPassword(tournamentDto.getPassword());
         setPrivateTournament(tournamentDto.isPrivateTournament());
-        setState(APPROVED);
+        setState(APPROVAL_PENDING);
     }
 
     public Integer getId() { return id; }
@@ -366,37 +367,6 @@ public class Tournament  {
         }
     }
 
-    public void beginSolveQuiz() {
-        switch (getState()) {
-            case READY_FOR_UPDATE:
-                setState(UPDATE_PENDING);
-                break;
-            default:
-                throw new UnsupportedStateTransitionException(getState());
-        }
-    }
-
-    public void undoSolveQuiz() {
-        switch (getState()) {
-            case UPDATE_PENDING:
-                setState(APPROVED);
-                break;
-            default:
-                throw new UnsupportedStateTransitionException(getState());
-        }
-    }
-
-    public void confirmSolveQuiz(Integer quizId) {
-        switch (getState()) {
-            case UPDATE_PENDING:
-                setQuizId(quizId);
-                setState(APPROVED);
-                break;
-            default:
-                throw new UnsupportedStateTransitionException(getState());
-        }
-    }
-
     public void beginUpdateQuiz() {
         switch (getState()) {
             case READY_FOR_UPDATE:
@@ -422,6 +392,28 @@ public class Tournament  {
             case UPDATE_PENDING:
                 updateTournament(tournamentDto, topics);
                 setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void confirmTournament(Integer quizId) {
+        switch (getState()) {
+            case APPROVAL_PENDING:
+                setQuizId(quizId);
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void rejectTournament() {
+        switch (getState()) {
+            case APPROVAL_PENDING:
+                remove();
+                setState(REMOVED);
                 break;
             default:
                 throw new UnsupportedStateTransitionException(getState());

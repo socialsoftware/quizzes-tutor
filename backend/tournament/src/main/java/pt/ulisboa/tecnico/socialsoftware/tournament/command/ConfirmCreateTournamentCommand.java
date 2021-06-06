@@ -2,15 +2,17 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.command;
 
 import io.eventuate.tram.commands.common.Command;
 
-public class UndoSolveTournamentQuizCommand implements Command {
+public class ConfirmCreateTournamentCommand implements Command {
 
     private Integer tournamentId;
+    private Integer quizId;
 
-    public UndoSolveTournamentQuizCommand() {
+    public ConfirmCreateTournamentCommand() {
     }
 
-    public UndoSolveTournamentQuizCommand(Integer tournamentId) {
+    public ConfirmCreateTournamentCommand(Integer tournamentId, Integer quizId) {
         this.tournamentId = tournamentId;
+        this.quizId = quizId;
     }
 
     public Integer getTournamentId() {
@@ -21,10 +23,19 @@ public class UndoSolveTournamentQuizCommand implements Command {
         this.tournamentId = tournamentId;
     }
 
+    public Integer getQuizId() {
+        return quizId;
+    }
+
+    public void setQuizId(Integer quizId) {
+        this.quizId = quizId;
+    }
+
     @Override
     public String toString() {
-        return "UndoSolveTournamentQuizCommand{" +
+        return "ConfirmCreateTournamentCommand{" +
                 "tournamentId=" + tournamentId +
+                ", quizId=" + quizId +
                 '}';
     }
 }

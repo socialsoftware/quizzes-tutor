@@ -6,11 +6,11 @@ import io.eventuate.tram.spring.messaging.producer.jdbc.TramMessageProducerJdbcC
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament.CreateTournamentSaga;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.AnswerServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.QuizServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.TournamentServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.removeTournament.RemoveTournamentSaga;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.solveTournamentQuiz.CreateAndSolveTournamentQuizSaga;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSaga;
 
 /**
@@ -43,9 +43,9 @@ public class TournamentServiceOrchestratorConfiguration {
     }
 
     @Bean
-    public CreateAndSolveTournamentQuizSaga solveTournamentQuizSaga(TournamentServiceProxy tournamentService,
-                                                                    AnswerServiceProxy answerService) {
-        return new CreateAndSolveTournamentQuizSaga(tournamentService, answerService);
+    public CreateTournamentSaga createTournamentSaga(TournamentServiceProxy tournamentService,
+                                                        AnswerServiceProxy answerService) {
+        return new CreateTournamentSaga(tournamentService, answerService);
     }
 
     @Bean

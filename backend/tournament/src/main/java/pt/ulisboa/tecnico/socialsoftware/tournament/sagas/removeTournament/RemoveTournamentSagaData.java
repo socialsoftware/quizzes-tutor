@@ -54,6 +54,7 @@ public class RemoveTournamentSagaData {
     }
 
     ConfirmRemoveTournamentCommand confirmRemoveTournament() {
+        logger.info("Sent ConfirmRemoveTournamentCommand");
         return new ConfirmRemoveTournamentCommand(getTournamentId());
     }
 }
