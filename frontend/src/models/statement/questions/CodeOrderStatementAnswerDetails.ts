@@ -10,6 +10,8 @@ export default class CodeOrderStatementAnswerDetails extends StatementAnswerDeta
     super(QuestionTypes.CodeOrder);
     if (jsonObj) {
       this.orderedSlots = jsonObj.orderedSlots || [];
+    } else {
+      this.orderedSlots = [];
     }
   }
 

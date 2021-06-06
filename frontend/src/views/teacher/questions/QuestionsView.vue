@@ -102,6 +102,17 @@
           </template>
           <span>Show Question</span>
         </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="showStudentViewDialog(item)"
+              >school</v-icon
+            >
+          </template>
+          <span>Student View</span>
+        </v-tooltip>
         <v-tooltip bottom data-cy="duplicateButton">
           <template v-slot:activator="{ on }">
             <v-icon
@@ -174,6 +185,12 @@
       :question="currentQuestion"
       v-on:close-show-question-dialog="onCloseShowQuestionDialog"
     />
+    <student-view-dialog
+      v-if="statementQuestion && studentViewDialog"
+      v-model="studentViewDialog"
+      :statementQuestion="statementQuestion"
+      v-on:close-show-question-dialog="onCloseStudentViewDialog"
+    />
     <show-clarification-dialog
       v-if="currentQuestion && clarificationDialog"
       v-model="clarificationDialog"
@@ -194,11 +211,14 @@ import EditQuestionDialog from '@/views/teacher/questions/EditQuestionDialog.vue
 import EditQuestionTopics from '@/views/teacher/questions/EditQuestionTopics.vue';
 import ShowClarificationDialog from '../discussions/ShowClarificationDialog.vue';
 import UploadQuestionsDialog from '@/views/teacher/questions/UploadQuestionsDialog.vue';
+import StatementQuestion from '@/models/statement/StatementQuestion';
+import StudentViewDialog from '@/views/teacher/questions/StudentViewDialog.vue';
 
 @Component({
   components: {
     'upload-questions-dialog': UploadQuestionsDialog,
     'show-question-dialog': ShowQuestionDialog,
+    'student-view-dialog': StudentViewDialog,
     'show-clarification-dialog': ShowClarificationDialog,
     'edit-question-dialog': EditQuestionDialog,
     'edit-question-topics': EditQuestionTopics,
@@ -208,8 +228,10 @@ export default class QuestionsView extends Vue {
   questions: Question[] = [];
   topics: Topic[] = [];
   currentQuestion: Question | null = null;
+  statementQuestion: StatementQuestion | null = null;
   editQuestionDialog: boolean = false;
   questionDialog: boolean = false;
+  studentViewDialog: boolean = false;
   uploadQuestionsDialog: boolean = false;
   clarificationDialog: boolean = false;
   search: string = '';
@@ -349,6 +371,19 @@ export default class QuestionsView extends Vue {
     this.questionDialog = true;
   }
 
+  async showStudentViewDialog(question: Question) {
+    if (question.id) {
+      try {
+        this.statementQuestion = await RemoteServices.getStatementQuestion(
+          question.id
+        );
+        this.studentViewDialog = true;
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
+  }
+
   showClarificationDialog(question: Question) {
     this.currentQuestion = question;
     this.clarificationDialog = true;
@@ -357,6 +392,11 @@ export default class QuestionsView extends Vue {
   onCloseShowQuestionDialog() {
     this.currentQuestion = null;
     this.questionDialog = false;
+  }
+
+  onCloseStudentViewDialog() {
+    this.statementQuestion = null;
+    this.studentViewDialog = false;
   }
 
   onCloseShowClarificationDialog() {
