@@ -86,10 +86,6 @@ public class TournamentRequiredService {
         return topics;
     }
 
-    public Integer createQuiz(Integer creatorId, Integer courseExecutionId, ExternalStatementCreationDto quizDetails) {
-        return quizInterface.generateQuizAndGetId(creatorId, courseExecutionId, quizDetails);
-    }
-
     public StatementQuizDto startTournamentQuiz(Integer userId, Integer quizId) {
         return answerInterface.startQuiz(userId, quizId);
     }
@@ -98,21 +94,4 @@ public class TournamentRequiredService {
         return quizInterface.findQuizById(quizId);
     }
 
-    public void updateQuiz(QuizDto quizDto) {
-        quizInterface.updateQuiz(quizDto);
-    }
-
-    public void deleteQuiz(Integer quizId) {
-        quizInterface.deleteExternalQuiz(quizId);
-    }
-
-    public StatementQuizDto getStatementQuiz(Integer userId, Integer quizId) {
-        StatementQuizDto quizDto = answerInterface.getStatementQuiz(userId, quizId);
-        if (quizDto != null) {
-            return quizDto;
-        }
-        else {
-            throw new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId);
-        }
-    }
 }

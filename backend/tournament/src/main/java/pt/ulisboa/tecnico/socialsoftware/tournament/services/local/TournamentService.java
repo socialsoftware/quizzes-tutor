@@ -1,6 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.services.local;
 
 import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
+import org.hibernate.exception.LockAcquisitionException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -33,6 +36,8 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 
 @Service
 public class TournamentService {
+
+    private final Logger logger = LoggerFactory.getLogger(TournamentService.class);
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -119,18 +124,16 @@ public class TournamentService {
     }
 
 
+    @Retryable(value = { SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void joinTournament(Integer userId, Integer tournamentId, String password) {
         TournamentParticipant participant = tournamentRequiredService.getTournamentParticipant(userId);
 
-        addParticipant(tournamentId, password, participant);
-    }
-
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void addParticipant(Integer tournamentId, String password, TournamentParticipant participant) {
         Tournament tournament = checkTournament(tournamentId);
         tournament.addParticipant(participant, password);
     }
+
+
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)

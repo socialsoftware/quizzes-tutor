@@ -66,12 +66,10 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         UserInfo userInfo = ((UserInfo) authentication.getPrincipal());
-        logger.info("Checking token permissions in tutor: " + userInfo.toString());
         int userId = userInfo.getId();
 
         if (targetDomainObject instanceof CourseExecutionDto) {
             CourseExecutionDto courseExecutionDto = (CourseExecutionDto) targetDomainObject;
-            logger.info("CourseExecutionDto: " + courseExecutionDto);
             String permissionValue = (String) permission;
             switch (permissionValue) {
                 case "EXECUTION.CREATE":
@@ -89,7 +87,6 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
             switch (permissionValue) {
                 case "DEMO.ACCESS":
                     CourseExecutionDto courseExecutionDto = courseExecutionService.getCourseExecutionById(id);
-                    logger.info("CourseExecutionDto: " + courseExecutionDto);
                     return courseExecutionDto.getName().equals("Demo Course");
                 case "COURSE.ACCESS":
                     return userHasAnExecutionOfCourse(userInfo, id);

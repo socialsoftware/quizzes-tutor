@@ -16,9 +16,6 @@ public class GatewayConfig {
 
     @Bean
     public RouteLocator routes(RouteLocatorBuilder builder, ServiceDestinations serviceDestinations) {
-        System.out.println(serviceDestinations.getAuthServiceUrl());
-        System.out.println(serviceDestinations.getTutorServiceUrl());
-        System.out.println(serviceDestinations.getTournamentServiceUrl());
         return builder.routes()
                 .route("tournament-service", r -> r.path("/tournaments/**")
                         .filters(f -> f.filter(filter))

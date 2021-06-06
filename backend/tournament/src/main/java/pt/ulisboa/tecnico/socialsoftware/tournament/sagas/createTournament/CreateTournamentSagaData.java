@@ -16,6 +16,9 @@ public class CreateTournamentSagaData {
     private Integer creatorId;
     private Integer courseExecutionId;
 
+    public CreateTournamentSagaData() {
+    }
+
     public CreateTournamentSagaData(Integer tournamentId, Integer creatorId, Integer courseExecutionId,
                                     ExternalStatementCreationDto externalStatementCreationDto) {
         this.tournamentId = tournamentId;
