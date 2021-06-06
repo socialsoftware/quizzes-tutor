@@ -88,7 +88,7 @@ public class CreateAndSolveTournamentQuizSagaData {
 
     ConfirmSolveTournamentQuizCommand confirmSolveTournamentQuiz() {
         logger.info("Sent ConfirmSolveTournamentQuizCommand");
-        return new ConfirmSolveTournamentQuizCommand(getTournamentId());
+        return new ConfirmSolveTournamentQuizCommand(getTournamentId(), getQuizId());
     }
 
     GenerateQuizCommand generateTournamentQuiz() {

@@ -19,15 +19,17 @@ public class UpdateCourseExecutionsSagaData {
     private Integer userId;
     private String ids;
     private List<CourseExecutionDto> courseExecutionDtoList;
+    private String email;
 
     public UpdateCourseExecutionsSagaData() {
     }
 
-    public UpdateCourseExecutionsSagaData(Integer authUserId, Integer userId, String ids, List<CourseExecutionDto> courseExecutionDtoList) {
+    public UpdateCourseExecutionsSagaData(Integer authUserId, Integer userId, String ids, List<CourseExecutionDto> courseExecutionDtoList, String email) {
         this.authUserId = authUserId;
         this.userId = userId;
         this.ids = ids;
         this.courseExecutionDtoList = courseExecutionDtoList;
+        this.email = email;
     }
 
     public Integer getAuthUserId() {
@@ -44,6 +46,10 @@ public class UpdateCourseExecutionsSagaData {
 
     public List<CourseExecutionDto> getCourseExecutionDtoList() {
         return courseExecutionDtoList;
+    }
+
+    public String getEmail() {
+        return email;
     }
 
     BeginUpdateCourseExecutionsCommand beginUpdateCourseExecutions() {
@@ -68,6 +74,6 @@ public class UpdateCourseExecutionsSagaData {
 
     ConfirmUpdateCourseExecutionsCommand confirmUpdateCourseExecutions() {
         logger.info("Sent ConfirmUpdateCourseExecutionsCommand");
-        return new ConfirmUpdateCourseExecutionsCommand(getAuthUserId(), getIds(), getCourseExecutionDtoList());
+        return new ConfirmUpdateCourseExecutionsCommand(getAuthUserId(), getIds(), getCourseExecutionDtoList(), getEmail());
     }
 }

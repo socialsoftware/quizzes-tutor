@@ -9,14 +9,17 @@ public class ConfirmUpdateCourseExecutionsCommand implements Command {
     private Integer authUserId;
     private String ids;
     private List<CourseExecutionDto> courseExecutionDtoList;
+    private String email;
 
     public ConfirmUpdateCourseExecutionsCommand() {
     }
 
-    public ConfirmUpdateCourseExecutionsCommand(Integer authUserId, String ids, List<CourseExecutionDto> courseExecutionDtoList) {
+    public ConfirmUpdateCourseExecutionsCommand(Integer authUserId, String ids,
+                                                List<CourseExecutionDto> courseExecutionDtoList, String email) {
         this.authUserId = authUserId;
         this.ids = ids;
         this.courseExecutionDtoList = courseExecutionDtoList;
+        this.email = email;
     }
 
     public Integer getAuthUserId() {
@@ -43,12 +46,21 @@ public class ConfirmUpdateCourseExecutionsCommand implements Command {
         this.courseExecutionDtoList = courseExecutionDtoList;
     }
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
     @Override
     public String toString() {
         return "ConfirmUpdateCourseExecutionsCommand{" +
                 "authUserId=" + authUserId +
                 ", ids='" + ids + '\'' +
                 ", courseExecutionDtoList=" + courseExecutionDtoList +
+                ", email='" + email + '\'' +
                 '}';
     }
 }

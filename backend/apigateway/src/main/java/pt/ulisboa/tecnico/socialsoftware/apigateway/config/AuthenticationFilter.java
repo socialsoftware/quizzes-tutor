@@ -31,16 +31,12 @@ public class AuthenticationFilter implements GatewayFilter {
     public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
         ServerHttpRequest request = exchange.getRequest();
         logger.info("Request URI Path: "+ request.getURI().getPath());
-        logger.info("Request Cookies: "+ request.getCookies());
-        logger.info("Request Headers: "+ request.getHeaders());
-        logger.info("Request Method: "+ request.getMethod());
+
         if (routerValidator.isSecured.test(request)) {
             if (this.isAuthMissing(request))
                 return this.onError(exchange, "Authorization header is missing in request");
 
             final String token = getToken(request);
-
-            logger.info("Token: "+ token);
 
             if (isInvalid(token))
                 return this.onError(exchange, "Authorization header is invalid");

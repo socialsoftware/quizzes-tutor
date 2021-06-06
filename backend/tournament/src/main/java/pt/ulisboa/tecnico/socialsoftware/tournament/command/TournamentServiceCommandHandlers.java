@@ -155,9 +155,10 @@ public class TournamentServiceCommandHandlers {
         logger.info("Received ConfirmSolveTournamentQuizCommand");
 
         Integer tournamentId = cm.getCommand().getTournamentId();
+        Integer quizId = cm.getCommand().getQuizId();
 
         try {
-            tournamentService.confirmSolve(tournamentId);
+            tournamentService.confirmSolve(tournamentId, quizId);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();

@@ -50,9 +50,10 @@ public class AuthServiceCommandHandlers {
         Integer authUserId = cm.getCommand().getAuthUserId();
         String ids = cm.getCommand().getIds();
         List<CourseExecutionDto> courseExecutionDtoList = cm.getCommand().getCourseExecutionDtoList();
+        String email = cm.getCommand().getEmail();
 
         try {
-            authUserService.confirmUpdateCourseExecutions(authUserId, ids, courseExecutionDtoList);
+            authUserService.confirmUpdateCourseExecutions(authUserId, ids, courseExecutionDtoList, email);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();

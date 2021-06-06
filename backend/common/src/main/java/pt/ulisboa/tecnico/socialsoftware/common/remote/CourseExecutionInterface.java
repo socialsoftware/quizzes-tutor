@@ -17,7 +17,7 @@ public class CourseExecutionInterface implements CourseExecutionContract {
         logger.info("findCourseExecution id:{}", courseExecutionId);
         RestTemplate restTemplate = new RestTemplate();
         try {
-            CourseExecutionDto courseExecutionDto = restTemplate.getForObject(ENDPOINT + "rest/execution/find?courseExecutionId=" + courseExecutionId,
+            CourseExecutionDto courseExecutionDto = restTemplate.getForObject(ENDPOINT + "/rest/execution/find?courseExecutionId=" + courseExecutionId,
                     CourseExecutionDto.class);
             logger.info("CourseExecutionDto: {}", courseExecutionDto);
             return courseExecutionDto;
@@ -35,7 +35,7 @@ public class CourseExecutionInterface implements CourseExecutionContract {
         logger.info("findCourseExecutionByFields");
         RestTemplate restTemplate = new RestTemplate();
         try {
-            CourseExecutionDto courseExecutionDto = restTemplate.getForObject(ENDPOINT + "rest/execution/findByFields?acronym="
+            CourseExecutionDto courseExecutionDto = restTemplate.getForObject(ENDPOINT + "/rest/execution/findByFields?acronym="
                             + acronym + "&academicTerm=" + academicTerm + "&type=" + type,
                     CourseExecutionDto.class);
             logger.info("findCourseExecutionByFields: {}", courseExecutionDto);
@@ -54,7 +54,7 @@ public class CourseExecutionInterface implements CourseExecutionContract {
         logger.info("findDemoCourseExecution");
         RestTemplate restTemplate = new RestTemplate();
         try {
-            Integer demoCourseExecutionId = restTemplate.getForObject(ENDPOINT + "rest/execution/demo",
+            Integer demoCourseExecutionId = restTemplate.getForObject(ENDPOINT + "/rest/execution/demo",
                     Integer.class);
             logger.info("findDemoCourseExecution: {}", demoCourseExecutionId);
             return demoCourseExecutionId;

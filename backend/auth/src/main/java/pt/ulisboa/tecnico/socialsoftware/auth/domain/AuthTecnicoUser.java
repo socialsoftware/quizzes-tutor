@@ -58,7 +58,7 @@ public class AuthTecnicoUser extends AuthUser {
         }
     }
 
-    public void authUserconfirmUpdateCourseExecutions(String ids, List<CourseExecutionDto> courseExecutionDtoList) {
+    public void authUserconfirmUpdateCourseExecutions(String ids, List<CourseExecutionDto> courseExecutionDtoList, String email) {
         switch (getState()) {
             case UPDATE_PENDING:
                 for(CourseExecutionDto dto : courseExecutionDtoList) {
@@ -69,6 +69,11 @@ public class AuthTecnicoUser extends AuthUser {
                     // Used for Tecnico teachers
                     setEnrolledCoursesAcronyms(ids);
                 }
+
+                if (email != null) {
+                    setEmail(email);
+                }
+
                 setLastAccess(DateHandler.now());
                 setState(APPROVED);
                 break;

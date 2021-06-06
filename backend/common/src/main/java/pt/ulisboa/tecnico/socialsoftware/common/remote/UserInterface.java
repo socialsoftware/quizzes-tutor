@@ -18,7 +18,7 @@ public class UserInterface implements UserContract {
         logger.info("findUser id:{}", userId);
         RestTemplate restTemplate = new RestTemplate();
         try {
-            UserDto userDto = restTemplate.getForObject(ENDPOINT + "rest/users/find?userId=" + userId,
+            UserDto userDto = restTemplate.getForObject(ENDPOINT + "/rest/users/find?userId=" + userId,
                     UserDto.class);
             logger.info("UserDto: {}", userDto);
             return userDto;
@@ -37,7 +37,7 @@ public class UserInterface implements UserContract {
         logger.info("getUserCourseExecutions id:{}", userId);
         RestTemplate restTemplate = new RestTemplate();
         try {
-            UserCourseExecutionsDto userCourseExecutions = restTemplate.getForObject(ENDPOINT + "rest/users/executions?userId=" + userId,
+            UserCourseExecutionsDto userCourseExecutions = restTemplate.getForObject(ENDPOINT + "/rest/users/executions?userId=" + userId,
                     UserCourseExecutionsDto.class);
             logger.info("CourseExecutionDtoList: {}", userCourseExecutions);
             return userCourseExecutions;

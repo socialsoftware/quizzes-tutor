@@ -66,6 +66,10 @@ services:
       EVENTUATE_CDC_READER_READER1_DATASOURCEPASSWORD: tutormicrodb_password
       EVENTUATE_CDC_READER_READER1_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
       EVENTUATE_CDC_READER_READER1_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/common1
+      EVENTUATE_CDC_READER_READER1_POLLINGINTERVALINMILLISECONDS: 100
+      EVENTUATE_CDC_READER_READER1_MAXEVENTSPERPOLLING: 1000
+      EVENTUATE_CDC_READER_READER1_MAXATTEMPTSFORPOLLING: 100
+      EVENTUATE_CDC_READER_READER1_POLLINGRETRYINTERVALINMILLISECONDS: 500
 
       EVENTUATE_CDC_READER_READER2_TYPE: polling
       EVENTUATE_CDC_READER_READER2_DATASOURCEURL: jdbc:postgresql://postgres/authdb
@@ -73,6 +77,10 @@ services:
       EVENTUATE_CDC_READER_READER2_DATASOURCEPASSWORD: authdb_password
       EVENTUATE_CDC_READER_READER2_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
       EVENTUATE_CDC_READER_READER2_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/common2
+      EVENTUATE_CDC_READER_READER2_POLLINGINTERVALINMILLISECONDS: 100
+      EVENTUATE_CDC_READER_READER2_MAXEVENTSPERPOLLING: 1000
+      EVENTUATE_CDC_READER_READER2_MAXATTEMPTSFORPOLLING: 100
+      EVENTUATE_CDC_READER_READER2_POLLINGRETRYINTERVALINMILLISECONDS: 500
 
       EVENTUATE_CDC_READER_READER3_TYPE: polling
       EVENTUATE_CDC_READER_READER3_DATASOURCEURL: jdbc:postgresql://postgres/tournamentdb
@@ -80,6 +88,10 @@ services:
       EVENTUATE_CDC_READER_READER3_DATASOURCEPASSWORD: tournamentdb_password
       EVENTUATE_CDC_READER_READER3_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
       EVENTUATE_CDC_READER_READER3_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/common3
+      EVENTUATE_CDC_READER_READER3_POLLINGINTERVALINMILLISECONDS: 100
+      EVENTUATE_CDC_READER_READER3_MAXEVENTSPERPOLLING: 1000
+      EVENTUATE_CDC_READER_READER3_MAXATTEMPTSFORPOLLING: 100
+      EVENTUATE_CDC_READER_READER3_POLLINGRETRYINTERVALINMILLISECONDS: 500
       JAVA_OPTS: -Xmx64m
   tutor-service:
     build: ./backend/tutor
@@ -186,41 +198,3 @@ services:
       - ./data/access.log:/var/log/nginx/access.log
     environment:
       VUE_APP_ROOT_API: http://api-gateway:8080
-
-  be-unit-tests:
-    image: maven:3
-    stop_signal: SIGKILL
-    stdin_open: true
-    tty: true
-    working_dir: $PWD/backend/
-    volumes:
-      - $PWD:$PWD
-      - ~/.m2:/root/.m2
-    command: mvn -Ptest test
-
-  integration-tests:
-    image: maven:3
-    stop_signal: SIGKILL
-    stdin_open: true
-    tty: true
-    depends_on:
-      - postgres
-    environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tutordb
-      - PSQL_INT_TEST_DB_USERNAME=engineer
-      - PSQL_INT_TEST_DB_PASSWORD=password
-    working_dir: $PWD/backend/
-    volumes:
-      - $PWD:$PWD
-      - ~/.m2:/root/.m2
-    command: mvn -Ptest-int integration-test
-
-  fe-unit-tests:
-    image: node:15.14.0-alpine3.13
-    stop_signal: SIGKILL
-    stdin_open: true
-    tty: true
-    working_dir: $PWD/frontend/
-    volumes:
-      - $PWD:$PWD
-    command: /bin/sh -c "npm install && npm run test:unit"

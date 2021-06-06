@@ -386,9 +386,10 @@ public class Tournament  {
         }
     }
 
-    public void confirmSolveQuiz() {
+    public void confirmSolveQuiz(Integer quizId) {
         switch (getState()) {
             case UPDATE_PENDING:
+                setQuizId(quizId);
                 setState(APPROVED);
                 break;
             default:

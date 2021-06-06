@@ -104,13 +104,17 @@ public class TournamentService {
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void joinTournament(Integer userId, Integer tournamentId, String password) {
-        Tournament tournament = checkTournament(tournamentId);
 
+    public void joinTournament(Integer userId, Integer tournamentId, String password) {
         TournamentParticipant participant = tournamentRequiredService.getTournamentParticipant(userId);
 
+        extracted(tournamentId, password, participant);
+    }
+
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void extracted(Integer tournamentId, String password, TournamentParticipant participant) {
+        Tournament tournament = checkTournament(tournamentId);
         tournament.addParticipant(participant, password);
     }
 
@@ -299,10 +303,10 @@ public class TournamentService {
         tournament.undoSolveQuiz();
     }
 
-    public void confirmSolve(Integer tournamentId) {
+    public void confirmSolve(Integer tournamentId, Integer quizId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
-        tournament.confirmSolveQuiz();
+        tournament.confirmSolveQuiz(quizId);
     }
 
     public void beginUpdate(Integer tournamentId) {
