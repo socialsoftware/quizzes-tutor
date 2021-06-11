@@ -9,6 +9,7 @@ import org.springframework.boot.autoconfigure.EnableAutoConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
+import org.springframework.retry.annotation.EnableRetry;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tournament.command.TournamentServiceCommandHandlers;
 
@@ -16,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.command.TournamentServiceCom
  * The configuration class to instantiate and wire the command handler.
  */
 @Configuration
+@EnableRetry
 @Import({ SagaParticipantConfiguration.class, TramMessageProducerJdbcConfiguration.class,
         EventuateTramKafkaMessageConsumerConfiguration.class})
 @EnableAutoConfiguration

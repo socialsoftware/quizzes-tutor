@@ -405,15 +405,11 @@ public class AuthUserService {
     }
 
     private AuthUser getDemoTeacher() {
-        return authUserRepository.findAuthUserByUsername(TEACHER_USERNAME).orElseGet(() -> {
-            return createAuthUser("Demo Teacher", TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUserType.DEMO, null);
-        });
+        return authUserRepository.findAuthUserByUsername(TEACHER_USERNAME).get();
     }
 
     private AuthUser getDemoStudent() {
-        return authUserRepository.findAuthUserByUsername(STUDENT_USERNAME).orElseGet(() -> {
-            return createAuthUser("Demo Student", STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO, null);
-        });
+        return authUserRepository.findAuthUserByUsername(STUDENT_USERNAME).get();
     }
 
     private AuthUser createAuthUser(String name, String username, String email, Role role, AuthUserType type, Integer courseExecutionId) {
@@ -447,9 +443,7 @@ public class AuthUserService {
     }
 
     private AuthUser getDemoAdmin() {
-        return authUserRepository.findAuthUserByUsername(ADMIN_USERNAME).orElseGet(() -> {
-            return createAuthUser("Demo Admin", ADMIN_USERNAME, "demo_admin@mail.com", Role.DEMO_ADMIN, AuthUserType.DEMO, null);
-        });
+        return authUserRepository.findAuthUserByUsername(ADMIN_USERNAME).get();
     }
 
     public void checkRole(Role role, boolean isActive) {
@@ -523,6 +517,24 @@ public class AuthUserService {
         AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findById(authUserId)
                 .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
         authUser.authUserConfirmRegistration(password, passwordEncoder);
+    }
+
+    public void createDemoUsers() {
+        Integer demoCourseExecutionId;
+        while(true) {
+            try {
+                demoCourseExecutionId = authRequiredService.getDemoCourseExecution();
+                if(demoCourseExecutionId != null) {
+                    break;
+                }
+            }
+            catch(RemoteAccessException e) {
+                continue;
+            }
+        }
+        createAuthUserSaga("Demo Student", STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO, demoCourseExecutionId);
+        createAuthUserSaga("Demo Teacher", TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUserType.DEMO, demoCourseExecutionId);
+        createAuthUserSaga("Demo Admin", ADMIN_USERNAME, "demo_admin@mail.com", Role.DEMO_ADMIN, AuthUserType.DEMO, demoCourseExecutionId);
     }
 
 

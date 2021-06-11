@@ -124,7 +124,7 @@ public class TournamentService {
     }
 
 
-    @Retryable(value = { SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class}, maxAttempts = 6, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void joinTournament(Integer userId, Integer tournamentId, String password) {
         TournamentParticipant participant = tournamentRequiredService.getTournamentParticipant(userId);
@@ -232,56 +232,48 @@ public class TournamentService {
             .forEach(tournament -> tournamentRepository.delete(tournament));
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void beginRemove(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.beginRemoveTournament();
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void confirmRemove(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.confirmRemoveTournament();
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void undoRemove(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.undoRemoveTournament();
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void beginUpdate(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.beginUpdateQuiz();
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void undoUpdate(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.undoUpdateQuiz();
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void confirmUpdate(Integer tournamentId, TournamentDto tournamentDto, Set<TournamentTopic> topics) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.confirmUpdateQuiz(tournamentDto, topics);
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void confirmCreate(Integer tournamentId, Integer quizId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.confirmTournament(quizId);
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void rejectCreate(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));

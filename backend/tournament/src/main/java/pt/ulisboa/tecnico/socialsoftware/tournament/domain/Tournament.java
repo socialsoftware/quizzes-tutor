@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.domain;
 
-import org.hibernate.id.IntegralDataTypeHolder;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentParticipantDto;
@@ -25,8 +24,8 @@ public class Tournament  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Version
-    private Long version;
+    /*@Version
+    private Long version;*/
 
     @Enumerated(EnumType.STRING)
     private TournamentState state;
