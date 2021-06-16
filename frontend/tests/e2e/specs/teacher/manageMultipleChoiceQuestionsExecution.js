@@ -68,12 +68,14 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('span.headline').should('contain', 'New Question');
 
-    cy.get(
-      '[data-cy="questionTitleTextArea"]'
-    ).type('Cypress Question Example - 01', { force: true });
-    cy.get(
-      '[data-cy="questionQuestionTextArea"]'
-    ).type('Cypress Question Example - Content - 01', { force: true });
+    cy.get('[data-cy="questionTitleTextArea"]').type(
+      'Cypress Question Example - 01',
+      { force: true }
+    );
+    cy.get('[data-cy="questionQuestionTextArea"]').type(
+      'Cypress Question Example - Content - 01',
+      { force: true }
+    );
 
     cy.get('[data-cy="questionOptionsInput"')
       .should('have.length', 4)
@@ -255,9 +257,10 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('span.headline').should('contain', 'New Question');
 
-    cy.get(
-      '[data-cy="questionTitleTextArea"]'
-    ).type('Cypress Question Example - 01 (2 Options)', { force: true });
+    cy.get('[data-cy="questionTitleTextArea"]').type(
+      'Cypress Question Example - 01 (2 Options)',
+      { force: true }
+    );
     cy.get('[data-cy="questionQuestionTextArea"]').type(
       'Cypress Question Example - Content - 01 (2 Options)',
       {
@@ -301,9 +304,10 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('span.headline').should('contain', 'New Question');
 
-    cy.get(
-      '[data-cy="questionTitleTextArea"]'
-    ).type('Cypress Question Example - 01 (10 Options)', { force: true });
+    cy.get('[data-cy="questionTitleTextArea"]').type(
+      'Cypress Question Example - 01 (10 Options)',
+      { force: true }
+    );
     cy.get('[data-cy="questionQuestionTextArea"]').type(
       'Cypress Question Example - Content - 01 (10 Options)',
       {

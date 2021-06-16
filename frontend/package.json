@@ -63,7 +63,7 @@
     "glob-all": "^3.2.1",
     "prettier": "^2.2.1",
     "purgecss-webpack-plugin": "^4.0.3",
-    "sass": "^1.32.8",
+    "sass": "^1.32.12",
     "sass-loader": "^10.1.1",
     "terser-webpack-plugin": "^4.2.3",
     "ts-jest": "26.5.6",
