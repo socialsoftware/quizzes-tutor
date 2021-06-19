@@ -16,5 +16,4 @@ public interface AuthUserRepository extends JpaRepository<AuthUser, Integer> {
 
     @Query(value = "select * from auth_users u where u.user_id = :userId", nativeQuery = true)
     Optional<AuthUser> findAuthUserById(Integer userId);
-
 }

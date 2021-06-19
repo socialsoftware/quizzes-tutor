@@ -61,7 +61,7 @@ public class AnswerServiceCommandHandlers {
         ExternalStatementCreationDto quizForm = cm.getCommand().getQuizForm();
 
         try {
-            StatementQuizDto quizDto = answerService.generateTournamentQuiz(userId, courseExecutionId, quizForm);
+            StatementQuizDto quizDto = answerService.generateExternalQuiz(userId, courseExecutionId, quizForm);
             return withSuccess(quizDto.getId());
         } catch (Exception e) {
             return withFailure();

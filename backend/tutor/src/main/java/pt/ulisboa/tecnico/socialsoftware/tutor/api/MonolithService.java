@@ -66,7 +66,7 @@ public class MonolithService implements UserContract, AnswerContract, QuizContra
     }
 
     public Integer generateQuizAndGetId(Integer creatorId, Integer courseExecutionId, ExternalStatementCreationDto quizDetails) {
-        return answerService.generateTournamentQuiz(creatorId,
+        return answerService.generateExternalQuiz(creatorId,
                 courseExecutionId, quizDetails).getId();
     }
 

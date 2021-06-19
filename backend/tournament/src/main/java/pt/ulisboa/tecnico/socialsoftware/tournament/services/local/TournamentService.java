@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.services.local;
 
 import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
-import org.hibernate.exception.LockAcquisitionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,10 +10,10 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament.CreateTournamentSaga;
@@ -24,7 +23,6 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.removeTournament.Remov
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSaga;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSagaData;
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -58,36 +56,32 @@ public class TournamentService {
     private CreateTournamentSaga createTournamentSaga;
 
 
-    public TournamentDto createTournament(Integer userId, Integer executionId, Set<Integer> topicsId, TournamentDto tournamentDto) {
-        checkInput(userId, topicsId, tournamentDto);
-
-        TournamentCreator creator = tournamentRequiredService.getTournamentCreator(userId);
-        TournamentCourseExecution tournamentCourseExecution = tournamentRequiredService.getTournamentCourseExecution(executionId);
-        Set<TournamentTopic> topics = tournamentRequiredService.getTournamentTopics(new TopicListDto(topicsId));
-
-        if (topics.isEmpty()) {
-            throw new TutorException(TOURNAMENT_MISSING_TOPICS);
-        }
-
-        Tournament tournament = createTournamentSaga(tournamentDto, creator, tournamentCourseExecution, topics);
+    public TournamentDto createTournament(Integer userId, Integer executionId, Set<Integer> topicsId,
+                                          TournamentDto tournamentDto, String username, String name) {
+        Tournament tournament = createTournamentSaga(userId, executionId, topicsId, tournamentDto, username, name);
 
         // Waits for saga to finish
-        Tournament tournamentFinal = tournamentRepository.findById(tournament.getId()).get();
-        while (!(tournamentFinal.getState().equals(TournamentState.APPROVED))) {
-            tournamentFinal = tournamentRepository.findById(tournament.getId()).get();
+        Tournament approvedTournament = tournamentRepository.findById(tournament.getId()).get();
+        while (!(approvedTournament.getState().equals(TournamentState.APPROVED))) {
+            approvedTournament = tournamentRepository.findById(tournament.getId()).get();
         }
 
-        return tournament.getDto();
+        return approvedTournament.getDto();
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public Tournament createTournamentSaga(TournamentDto tournamentDto, TournamentCreator creator, TournamentCourseExecution tournamentCourseExecution, Set<TournamentTopic> topics) {
-        Tournament tournament = new Tournament(creator, tournamentCourseExecution, topics, tournamentDto);
+    public Tournament createTournamentSaga(Integer userId, Integer executionId, Set<Integer> topicsId,
+                                           TournamentDto tournamentDto, String username, String name) {
+        checkInput(userId, topicsId, tournamentDto);
+        /*return createTournamentSaga(tournamentDto, new TournamentCreator(userId, username, name),
+                new TopicListDto(topicsId), executionId);*/
+
+        Tournament tournament = new Tournament(new TournamentCreator(userId, username, name), tournamentDto);
         tournamentRepository.save(tournament);
 
         CreateTournamentSagaData data = new CreateTournamentSagaData(tournament.getId(), tournament.getCreator().getId(),
-                tournament.getCourseExecution().getId(), tournament.getExternalStatementCreationDto());
+                executionId, tournament.getExternalStatementCreationDto(), new TopicListDto(topicsId));
         sagaInstanceFactory.create(createTournamentSaga, data);
         return tournament;
     }
@@ -118,22 +112,17 @@ public class TournamentService {
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto getTournament(Integer tournamentId) {
-        return tournamentRepository.findById(tournamentId)
+        return tournamentRepository.findApprovedTournamentById(tournamentId)
                 .map(Tournament::getDto)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 
-
     @Retryable(value = { SQLException.class}, maxAttempts = 6, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void joinTournament(Integer userId, Integer tournamentId, String password) {
-        TournamentParticipant participant = tournamentRequiredService.getTournamentParticipant(userId);
-
+    public void joinTournament(Integer userId, Integer tournamentId, String password, String username, String name) {
         Tournament tournament = checkTournament(tournamentId);
-        tournament.addParticipant(participant, password);
+        tournament.addParticipant(new TournamentParticipant(userId, username, name), password);
     }
-
-
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -152,24 +141,26 @@ public class TournamentService {
         tournament.removeParticipant(participant);
     }
 
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto updateTournament(Set<Integer> topicsId, TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
-
         tournament.checkCanChange();
 
-        Set<TournamentTopic> topics = tournamentRequiredService.getTournamentTopics(new TopicListDto(topicsId));
-        QuizDto quizDto = tournamentRequiredService.getQuiz(tournamentDto.getQuizId());
-        quizDto.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
+        //Set<TournamentTopic> topics = tournamentRequiredService.getTournamentTopics(new TopicListDto(topicsId));
+        /*QuizDto quizDto = tournamentRequiredService.getQuiz(tournamentDto.getQuizId());
+        quizDto.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());*/
 
-        updateTournamentQuizSaga(tournament.getId(), quizDto, topics, tournamentDto);
+        updateTournamentQuizSaga(tournament.getId(), tournamentDto, new TopicListDto(topicsId));
 
         return tournament.getDto();
     }
 
     @Transactional
-    public void updateTournamentQuizSaga(Integer tournamentId, QuizDto quizDto, Set<TournamentTopic> topics,
-                                     TournamentDto tournamentDto) {
-        UpdateTournamentSagaData data = new UpdateTournamentSagaData(tournamentId, quizDto, topics, tournamentDto);
+    public void updateTournamentQuizSaga(Integer tournamentId,
+                                     TournamentDto tournamentDto, TopicListDto topicsList) {
+        UpdateTournamentSagaData data = new UpdateTournamentSagaData(tournamentId, tournamentDto,
+                topicsList);
         sagaInstanceFactory.create(updateTournamentSaga, data);
     }
 
@@ -183,13 +174,21 @@ public class TournamentService {
         return tournament.getDto();
     }
 
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
         tournament.checkCanChange();
 
         removeTournamentSaga(tournament.getId(), tournament.getQuizId());
 
-        tournamentRepository.delete(tournament);
+        // Waits for saga to finish
+        Tournament removedTournament = tournamentRepository.findById(tournament.getId()).get();
+        while (!(removedTournament.getState().equals(TournamentState.REMOVED))) {
+            removedTournament = tournamentRepository.findById(tournament.getId()).get();
+        }
+
+        tournamentRepository.delete(removedTournament);
     }
 
     @Transactional
@@ -217,7 +216,7 @@ public class TournamentService {
     }
 
     private Tournament checkTournament(Integer tournamentId) {
-        return tournamentRepository.findById(tournamentId)
+        return tournamentRepository.findApprovedTournamentById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 
@@ -268,10 +267,11 @@ public class TournamentService {
         tournament.confirmUpdateQuiz(tournamentDto, topics);
     }
 
-    public void confirmCreate(Integer tournamentId, Integer quizId) {
+    public void confirmCreate(Integer tournamentId, Integer quizId, Set<TournamentTopic> topics,
+                              TournamentCourseExecution courseExecution) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
-        tournament.confirmTournament(quizId);
+        tournament.confirmTournament(quizId, topics, courseExecution);
     }
 
     public void rejectCreate(Integer tournamentId) {

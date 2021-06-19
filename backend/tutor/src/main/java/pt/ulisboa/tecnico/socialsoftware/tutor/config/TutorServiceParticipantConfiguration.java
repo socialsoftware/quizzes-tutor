@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.command.AnswerServiceCommandHandlers;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.command.CourseExecutionServiceCommandHandlers;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.command.QuestionServiceCommandHandlers;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.command.QuizServiceCommandHandlers;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.command.UserServiceCommandHandlers;
 
@@ -21,6 +22,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.command.UserServiceCommandHa
  * The configuration class to instantiate and wire the command handler.
  */
 @Configuration
+@EnableRetry
 @Import({ SagaParticipantConfiguration.class, TramMessageProducerJdbcConfiguration.class,
         EventuateTramKafkaMessageConsumerConfiguration.class})
 @EnableAutoConfiguration
@@ -47,6 +49,11 @@ public class TutorServiceParticipantConfiguration {
     }
 
     @Bean
+    public QuestionServiceCommandHandlers questionServiceCommandHandlers() {
+        return new QuestionServiceCommandHandlers();
+    }
+
+    @Bean
     public SagaCommandDispatcher userCommandHandlersDispatcher(UserServiceCommandHandlers userServiceCommandHandlers, SagaCommandDispatcherFactory sagaCommandDispatcherFactory) {
         return sagaCommandDispatcherFactory.make(ServiceChannels.USER_SERVICE_COMMAND_CHANNEL, userServiceCommandHandlers.commandHandlers());
     }
@@ -64,5 +71,10 @@ public class TutorServiceParticipantConfiguration {
     @Bean
     public SagaCommandDispatcher answerCommandHandlersDispatcher(AnswerServiceCommandHandlers answerServiceCommandHandlers, SagaCommandDispatcherFactory sagaCommandDispatcherFactory) {
         return sagaCommandDispatcherFactory.make(ServiceChannels.ANSWER_SERVICE_COMMAND_CHANNEL, answerServiceCommandHandlers.commandHandlers());
+    }
+
+    @Bean
+    public SagaCommandDispatcher questionCommandHandlersDispatcher(QuestionServiceCommandHandlers questionServiceCommandHandlers, SagaCommandDispatcherFactory sagaCommandDispatcherFactory) {
+        return sagaCommandDispatcherFactory.make(ServiceChannels.QUESTION_SERVICE_COMMAND_CHANNEL, questionServiceCommandHandlers.commandHandlers());
     }
 }

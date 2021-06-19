@@ -162,6 +162,7 @@ public class CourseExecutionService {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         for (User user : courseExecution.getUsers()) {
             String oldUsername = user.getUsername();
+            //TODO: Fix this
             DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(user.getId());
             eventBus.post(deleteAuthUser);
             String newUsername = user.getUsername();
@@ -295,7 +296,7 @@ public class CourseExecutionService {
                     .orElseThrow(() -> new TutorException((USER_NOT_FOUND)));
             user.remove();
             userRepository.delete(user);
-
+            //TODO: Fix this
             DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(id);
             eventBus.post(deleteAuthUser);
         }

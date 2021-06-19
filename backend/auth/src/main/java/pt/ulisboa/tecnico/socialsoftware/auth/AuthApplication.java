@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.autoconfigure.domain.EntityScan;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
@@ -24,17 +23,17 @@ import pt.ulisboa.tecnico.socialsoftware.common.config.CommonModuleConfiguration
         TramJdbcKafkaConfiguration.class})
 @EntityScan({"pt.ulisboa.tecnico.socialsoftware.auth"})
 @EnableJpaRepositories({"pt.ulisboa.tecnico.socialsoftware.auth"})
-public class AuthApplication implements InitializingBean {
+public class AuthApplication /*implements InitializingBean */{
 
     public static void main(String[] args) {
         SpringApplication.run(AuthApplication.class, args);
     }
 
-    @Autowired
+    /*@Autowired
     public AuthUserService authUserService;
 
     @Override
     public void afterPropertiesSet() {
-        authUserService.createDemoUsers();
-    }
+        authUserService.resetDemoAuthUsers();
+    }*/
 }

@@ -10,7 +10,5 @@
 # https://stackoverflow.com/questions/53375613/why-is-the-java-11-base-docker-image-so-large-openjdk11-jre-slim
 
 FROM azul/zulu-openjdk-alpine:11
-#COPY ./target ./target
-COPY ./src ./src
 COPY target/apigateway-1.0-SNAPSHOT.jar ./
 ENTRYPOINT ["java", "-jar", "./apigateway-1.0-SNAPSHOT.jar"]

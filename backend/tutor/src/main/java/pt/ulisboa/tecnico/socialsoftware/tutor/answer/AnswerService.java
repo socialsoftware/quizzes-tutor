@@ -252,7 +252,7 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuizDto generateTournamentQuiz(int userId, int executionId, ExternalStatementCreationDto quizDetails) {
+    public StatementQuizDto generateExternalQuiz(int userId, int executionId, ExternalStatementCreationDto quizDetails) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         Quiz quiz = new Quiz();
@@ -277,8 +277,6 @@ public class AnswerService {
 
         quiz.generateQuiz(availableQuestions);
 
-        QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
-
         quiz.setCourseExecution(courseExecution);
 
         if (DateHandler.now().isBefore(quizDetails.getStartTime())) {
@@ -291,6 +289,7 @@ public class AnswerService {
 
         quizRepository.save(quiz);
 
+        QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
         return quizAnswer.getDto(false);
     }
 

@@ -6,6 +6,7 @@ services:
     container_name: zookeeper
     ports:
       - "2181:2181"
+    restart: unless-stopped
     environment:
       ZOOKEEPER_CLIENT_PORT: 2181
   kafka:
@@ -15,6 +16,7 @@ services:
       - "9092:9092"
     depends_on:
       - zookeeper
+    restart: unless-stopped
     environment:
       KAFKA_LISTENERS: LC://kafka:29092,LX://kafka:9092
       KAFKA_ADVERTISED_LISTENERS: LC://kafka:29092,LX://${DOCKER_HOST_IP:-localhost}:9092
@@ -27,6 +29,7 @@ services:
     container_name: postgres
     ports:
       - "5432:5432"
+    restart: unless-stopped
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: root
@@ -37,6 +40,7 @@ services:
     container_name: eventuate-cdc-service
     ports:
       - "8099:8080"
+    restart: unless-stopped
     depends_on:
       - postgres
       - kafka
@@ -98,6 +102,7 @@ services:
     container_name: tutor-service
     ports:
       - "8084:8084"
+    restart: unless-stopped
     depends_on:
       - postgres
       - kafka
@@ -119,6 +124,7 @@ services:
     container_name: auth-service
     ports:
       - "8082:8082"
+    restart: unless-stopped
     depends_on:
       - postgres
       - kafka
@@ -141,6 +147,7 @@ services:
     container_name: tournament-service
     ports:
       - "8083:8083"
+    restart: unless-stopped
     depends_on:
       - postgres
       - kafka
@@ -172,6 +179,7 @@ services:
       - tutor-service
     ports:
       - "8080:8080"
+    restart: unless-stopped
     environment:
       DESTINATIONS_AUTHSERVICEURL: http://auth-service:8082
       DESTINATIONS_TOURNAMENTSERVICEURL: http://tournament-service:8083

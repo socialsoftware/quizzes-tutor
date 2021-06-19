@@ -38,9 +38,6 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Version
-    private Long version;
-
     @Enumerated(EnumType.STRING)
     private AuthUserState state;
 
@@ -214,7 +211,6 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
     public String toString() {
         return "AuthUser{" +
                 "id=" + id +
-                ", version=" + version +
                 ", state=" + state +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +

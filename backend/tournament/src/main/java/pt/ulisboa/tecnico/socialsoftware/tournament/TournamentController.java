@@ -27,7 +27,8 @@ public class TournamentController {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
         formatDates(tournamentDto);
 
-        return tournamentProvidedService.createTournament(userInfo.getId(), executionId, topicsId, tournamentDto);
+        return tournamentProvidedService.createTournament(userInfo.getId(), executionId, topicsId, tournamentDto,
+                userInfo.getUsername(), userInfo.getName());
     }
 
     @GetMapping(value = "/tournaments/{executionId}/getTournaments")
@@ -59,7 +60,8 @@ public class TournamentController {
     public void joinTournament(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId, @RequestParam String password) {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
 
-        tournamentProvidedService.joinTournament(userInfo.getId(), tournamentId, password);
+        tournamentProvidedService.joinTournament(userInfo.getId(), tournamentId, password, userInfo.getUsername(),
+                userInfo.getName());
    }
 
     @PutMapping(value = "/tournaments/{executionId}/solveQuiz/{tournamentId}")

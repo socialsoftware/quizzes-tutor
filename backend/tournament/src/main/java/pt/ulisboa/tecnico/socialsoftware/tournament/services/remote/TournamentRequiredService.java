@@ -67,7 +67,8 @@ public class TournamentRequiredService {
     public TournamentCourseExecution getTournamentCourseExecution(Integer courseExecutionId) {
         CourseExecutionDto courseExecutionDto = courseExecutionInterface.findCourseExecution(courseExecutionId);
         return new TournamentCourseExecution(courseExecutionDto.getCourseExecutionId(),
-                courseExecutionDto.getCourseId(), CourseExecutionStatus.valueOf(courseExecutionDto.getStatus().toString()), courseExecutionDto.getAcronym());
+                courseExecutionDto.getCourseId(), CourseExecutionStatus.valueOf(courseExecutionDto.getStatus().toString()),
+                courseExecutionDto.getAcronym());
     }
 
     public Integer getDemoCourseExecutionId() {

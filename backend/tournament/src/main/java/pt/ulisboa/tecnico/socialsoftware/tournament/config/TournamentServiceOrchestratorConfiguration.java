@@ -7,9 +7,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament.CreateTournamentSaga;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.AnswerServiceProxy;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.QuizServiceProxy;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.TournamentServiceProxy;
+import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.*;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.removeTournament.RemoveTournamentSaga;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSaga;
 
@@ -37,6 +35,16 @@ public class TournamentServiceOrchestratorConfiguration {
     }
 
     @Bean
+    public CourseExecutionServiceProxy courseExecutionServiceProxy() {
+        return new CourseExecutionServiceProxy();
+    }
+
+    @Bean
+    public QuestionServiceProxy questionServiceProxy() {
+        return new QuestionServiceProxy();
+    }
+
+    @Bean
     public RemoveTournamentSaga confirmRegistrationSaga(TournamentServiceProxy tournamentService,
                                                         QuizServiceProxy quizService) {
         return new RemoveTournamentSaga(tournamentService, quizService);
@@ -44,13 +52,16 @@ public class TournamentServiceOrchestratorConfiguration {
 
     @Bean
     public CreateTournamentSaga createTournamentSaga(TournamentServiceProxy tournamentService,
-                                                        AnswerServiceProxy answerService) {
-        return new CreateTournamentSaga(tournamentService, answerService);
+                                                     AnswerServiceProxy answerService,
+                                                     CourseExecutionServiceProxy executionService,
+                                                     QuestionServiceProxy questionService) {
+        return new CreateTournamentSaga(tournamentService, answerService, executionService, questionService);
     }
 
     @Bean
     public UpdateTournamentSaga updateTournamentSaga(TournamentServiceProxy tournamentService,
-                                                        QuizServiceProxy quizService) {
-        return new UpdateTournamentSaga(tournamentService, quizService);
+                                                        QuizServiceProxy quizService,
+                                                        QuestionServiceProxy questionService) {
+        return new UpdateTournamentSaga(tournamentService, quizService, questionService);
     }
 }

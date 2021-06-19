@@ -45,6 +45,7 @@ public class JwtTokenProvider {
         claims.put("executions",authUser.getUserCourseExecutions());
         claims.put("courseAcronyms", authUser.getType().equals(AuthUserType.TECNICO) ?
                 ((AuthTecnicoUser) authUser).getEnrolledCoursesAcronyms() : "");
+        claims.put("name",authUser.getUserSecurityInfo().getName());
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 1000*60*60*24);

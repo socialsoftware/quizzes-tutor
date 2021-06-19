@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
  * The configuration class to instantiate and wire the command handler.
  */
 @Configuration
+@EnableRetry
 @Import({ SagaParticipantConfiguration.class, TramMessageProducerJdbcConfiguration.class,
         EventuateTramKafkaMessageConsumerConfiguration.class})
 @EnableAutoConfiguration

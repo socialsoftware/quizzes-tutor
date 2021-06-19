@@ -55,12 +55,11 @@ public class AnswerController {
     }
 
     @GetMapping("/answers/{quizId}/start")
-    //@PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuizDto startQuiz(Principal principal, @PathVariable int quizId) {
-        /*UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
+        UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
 
-        return answerService.startQuiz(userInfo.getId(), quizId);*/
-        return new StatementQuizDto();
+        return answerService.startQuiz(userInfo.getId(), quizId);
     }
 
     @GetMapping("/answers/{quizId}/question/{questionId}")

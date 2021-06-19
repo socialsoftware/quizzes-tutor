@@ -64,7 +64,8 @@ public class JwtUtil {
         String username = tokenClaims.get("username", String.class);
         List<Integer> executions = (ArrayList<Integer>) tokenClaims.get("executions");
         String enrolledCourseAcronyms = tokenClaims.get("courseAcronyms", String.class);
-        UserInfo userInfo = new UserInfo(userId, role, isAdmin, username, executions, enrolledCourseAcronyms);
+        String name = tokenClaims.get("name", String.class);
+        UserInfo userInfo = new UserInfo(userId, role, isAdmin, username, executions, enrolledCourseAcronyms, name);
         return new UsernamePasswordAuthenticationToken(userInfo, "", userInfo.getAuthorities());
     }
 

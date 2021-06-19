@@ -125,15 +125,6 @@ public class AuthUserService {
         }
     }
 
-    @Transactional
-    public void updateCourseExecutionsSaga(Integer authUserId, Integer userId, String ids,
-                                           List<CourseExecutionDto> courseExecutionDtoList, String email) {
-
-        UpdateCourseExecutionsSagaData data = new UpdateCourseExecutionsSagaData(authUserId, userId, ids,
-                courseExecutionDtoList, email);
-        sagaInstanceFactory.create(updateCourseExecutionsSaga, data);
-    }
-
     private void updateStudentCourses(AuthTecnicoUser authUser, List<CourseExecutionDto> fenixAttendingCourses, String email) {
         List<CourseExecutionDto> activeAttendingCourses = getActiveTecnicoCourses(fenixAttendingCourses);
         if (!activeAttendingCourses.isEmpty() && authUser.getUserSecurityInfo().isStudent()) {
@@ -148,10 +139,8 @@ public class AuthUserService {
     }
 
     private void updateAuthUserCourseExecutions(AuthUser authUser, List<CourseExecutionDto> courseExecutionDtoList, String ids, String email) {
-        authUser.setState(READY_FOR_UPDATE);
-        authUserRepository.save(authUser);
 
-        updateCourseExecutionsSaga(authUser.getId(), authUser.getUserSecurityInfo().getId(), ids, courseExecutionDtoList, email);
+        updateCourseExecutionsSaga(authUser, authUser.getUserSecurityInfo().getId(), ids, courseExecutionDtoList, email);
 
         // Waits for saga to finish
         AuthUser authUserFinal = authUserRepository.findById(authUser.getId()).get();
@@ -159,6 +148,17 @@ public class AuthUserService {
 
             authUserFinal = authUserRepository.findById(authUser.getId()).get();
         }
+    }
+
+    @Transactional
+    public void updateCourseExecutionsSaga(AuthUser authUser, Integer userId, String ids,
+                                           List<CourseExecutionDto> courseExecutionDtoList, String email) {
+        authUser.setState(READY_FOR_UPDATE);
+        authUserRepository.save(authUser);
+
+        UpdateCourseExecutionsSagaData data = new UpdateCourseExecutionsSagaData(authUser.getId(), userId, ids,
+                courseExecutionDtoList, email);
+        sagaInstanceFactory.create(updateCourseExecutionsSaga, data);
     }
 
     private AuthTecnicoUser createAuthTecnicoUser(FenixEduInterface fenix, String username) {
@@ -321,7 +321,9 @@ public class AuthUserService {
 
     public AuthDto demoTeacherAuth() {
         AuthUser authUser = getDemoTeacher();
+        logger.info("AuthUser: "+authUser);
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
+        logger.info("CourseExecutionList: "+courseExecutionList);
         return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null, courseExecutionList);
     }
 
@@ -404,12 +406,24 @@ public class AuthUserService {
                 .collect(Collectors.toList());
     }
 
-    private AuthUser getDemoTeacher() {
+    /*private AuthUser getDemoTeacher() {
         return authUserRepository.findAuthUserByUsername(TEACHER_USERNAME).get();
     }
 
     private AuthUser getDemoStudent() {
         return authUserRepository.findAuthUserByUsername(STUDENT_USERNAME).get();
+    }*/
+    private AuthUser getDemoTeacher() {
+        return authUserRepository.findAuthUserByUsername(TEACHER_USERNAME).orElseGet(() -> {
+            logger.info("Creating..");
+            return createAuthUser("Demo Teacher", TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUserType.DEMO, null);
+        });
+    }
+
+    private AuthUser getDemoStudent() {
+        return authUserRepository.findAuthUserByUsername(STUDENT_USERNAME).orElseGet(() -> {
+            return createAuthUser("Demo Student", STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO, null);
+        });
     }
 
     private AuthUser createAuthUser(String name, String username, String email, Role role, AuthUserType type, Integer courseExecutionId) {
@@ -442,8 +456,14 @@ public class AuthUserService {
         return authUser;
     }
 
-    private AuthUser getDemoAdmin() {
+    /*private AuthUser getDemoAdmin() {
         return authUserRepository.findAuthUserByUsername(ADMIN_USERNAME).get();
+    }*/
+
+    private AuthUser getDemoAdmin() {
+        return authUserRepository.findAuthUserByUsername(ADMIN_USERNAME).orElseGet(() -> {
+            return createAuthUser("Demo Admin", ADMIN_USERNAME, "demo_admin@mail.com", Role.DEMO_ADMIN, AuthUserType.DEMO, null);
+        });
     }
 
     public void checkRole(Role role, boolean isActive) {
@@ -519,12 +539,18 @@ public class AuthUserService {
         authUser.authUserConfirmRegistration(password, passwordEncoder);
     }
 
-    public void createDemoUsers() {
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void resetDemoAuthUsers() {
+        deleteDemoStudents();
+
         Integer demoCourseExecutionId;
         while(true) {
             try {
                 demoCourseExecutionId = authRequiredService.getDemoCourseExecution();
-                if(demoCourseExecutionId != null) {
+                if (demoCourseExecutionId != null) {
                     break;
                 }
             }
@@ -537,6 +563,19 @@ public class AuthUserService {
         createAuthUserSaga("Demo Admin", ADMIN_USERNAME, "demo_admin@mail.com", Role.DEMO_ADMIN, AuthUserType.DEMO, demoCourseExecutionId);
     }
 
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void deleteDemoStudents() {
+        authUserRepository.findAll()
+                .stream()
+                .filter(authUser -> authUser.getType().equals(AuthUserType.DEMO))
+                .forEach(authUser -> {
+                    authUser.remove();
+                    this.authUserRepository.delete(authUser);
+                });
+    }
 
     // TODO: Uncomment when impexp is working again
     /*public String exportUsers() {

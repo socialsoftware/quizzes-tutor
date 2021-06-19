@@ -84,6 +84,7 @@ public class UserService {
                     Integer userId = user.getId();
                     user.remove();
                     this.userRepository.delete(user);
+                    //TODO: Fix this
                     DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(userId);
                     eventBus.post(deleteAuthUser);
                 });

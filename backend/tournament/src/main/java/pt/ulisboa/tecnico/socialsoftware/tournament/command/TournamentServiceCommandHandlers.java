@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentService;
 
@@ -62,9 +63,11 @@ public class TournamentServiceCommandHandlers {
 
         Integer tournamentId = cm.getCommand().getTournamentId();
         Integer quizId = cm.getCommand().getQuizId();
+        Set<TournamentTopic> topics = cm.getCommand().getTopics();
+        TournamentCourseExecution courseExecution = cm.getCommand().getTournamentCourseExecution();
 
         try {
-            tournamentService.confirmCreate(tournamentId, quizId);
+            tournamentService.confirmCreate(tournamentId, quizId, topics, courseExecution);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();

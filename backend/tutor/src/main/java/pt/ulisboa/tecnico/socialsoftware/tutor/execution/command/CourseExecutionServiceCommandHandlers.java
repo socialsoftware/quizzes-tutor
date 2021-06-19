@@ -8,7 +8,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.AddCourseExecutionCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.GetCourseExecutionCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.RemoveCourseExecutionCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.command.UserServiceCommandHandlers;
@@ -34,7 +36,21 @@ public class CourseExecutionServiceCommandHandlers {
                 .fromChannel(ServiceChannels.COURSE_EXECUTION_SERVICE_COMMAND_CHANNEL)
                 .onMessage(AddCourseExecutionCommand.class, this::addCourseExecution)
                 .onMessage(RemoveCourseExecutionCommand.class, this::removeCourseExecution)
+                .onMessage(GetCourseExecutionCommand.class, this::getCourseExecution)
                 .build();
+    }
+
+    private Message getCourseExecution(CommandMessage<GetCourseExecutionCommand> cm) {
+        logger.info("Received GetCourseExecutionCommand");
+
+        Integer courseExecutionId = cm.getCommand().getCourseExecutionId();
+
+        try {
+            CourseExecutionDto courseExecutionDto = courseExecutionService.getCourseExecutionById(courseExecutionId);
+            return withSuccess(courseExecutionDto);
+        } catch (Exception e) {
+            return withFailure();
+        }
     }
 
     public Message addCourseExecution(CommandMessage<AddCourseExecutionCommand> cm) {

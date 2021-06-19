@@ -8,11 +8,11 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.DeleteQuizCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.GetQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.UpdateQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 
 import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.withFailure;
 import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.withSuccess;
@@ -36,7 +36,21 @@ public class QuizServiceCommandHandlers {
                 .fromChannel(ServiceChannels.QUIZ_SERVICE_COMMAND_CHANNEL)
                 .onMessage(DeleteQuizCommand.class, this::deleteQuiz)
                 .onMessage(UpdateQuizCommand.class, this::updateQuiz)
+                .onMessage(GetQuizCommand.class, this::getQuiz)
                 .build();
+    }
+
+    private Message getQuiz(CommandMessage<GetQuizCommand> cm) {
+        logger.info("Received GetQuizCommand");
+
+        Integer quizId = cm.getCommand().getQuizId();
+
+        try {
+            QuizDto quizDto = quizService.findById(quizId);
+            return withSuccess(quizDto);
+        } catch (Exception e) {
+            return withFailure();
+        }
     }
 
     public Message updateQuiz(CommandMessage<UpdateQuizCommand> cm) {

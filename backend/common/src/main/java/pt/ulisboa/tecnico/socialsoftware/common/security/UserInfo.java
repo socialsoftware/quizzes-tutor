@@ -16,14 +16,17 @@ public class UserInfo {
     private final String username;
     private final List<Integer> courseExecutions;
     private final String enrolledCourseAcronyms;
+    private final String name;
 
-    public UserInfo(Integer id, Role role, Boolean isAdmin, String username, List<Integer> executions, String enrolledCourseAcronyms) {
+    public UserInfo(Integer id, Role role, Boolean isAdmin, String username, List<Integer> executions,
+                    String enrolledCourseAcronyms, String name) {
         this.id = id;
         this.role = role;
         this.isAdmin = isAdmin;
         this.username = username;
         this.courseExecutions = executions;
         this.enrolledCourseAcronyms = enrolledCourseAcronyms;
+        this.name = name;
     }
 
     public Integer getId() {
@@ -48,6 +51,10 @@ public class UserInfo {
 
     public String getEnrolledCourseAcronyms() {
         return enrolledCourseAcronyms;
+    }
+
+    public String getName() {
+        return name;
     }
 
     @Override

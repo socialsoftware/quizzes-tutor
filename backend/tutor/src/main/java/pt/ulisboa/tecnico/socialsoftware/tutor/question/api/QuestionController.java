@@ -7,6 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;

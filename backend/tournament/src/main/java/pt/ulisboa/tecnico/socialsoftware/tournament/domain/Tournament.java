@@ -24,9 +24,6 @@ public class Tournament  {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    /*@Version
-    private Long version;*/
-
     @Enumerated(EnumType.STRING)
     private TournamentState state;
 
@@ -68,14 +65,12 @@ public class Tournament  {
     public Tournament() {
     }
 
-    public Tournament(TournamentCreator creator, TournamentCourseExecution courseExecution, Set<TournamentTopic> topics, TournamentDto tournamentDto) {
+    public Tournament(TournamentCreator creator, TournamentDto tournamentDto) {
         setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
         setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
         setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
         setCanceled(tournamentDto.isCanceled());
         setCreator(creator);
-        setCourseExecution(courseExecution);
-        setTopics(topics);
         setPassword(tournamentDto.getPassword());
         setPrivateTournament(tournamentDto.isPrivateTournament());
         setState(APPROVAL_PENDING);
@@ -287,6 +282,7 @@ public class Tournament  {
     public String toString() {
         return "Tournament{" +
                 "id=" + id +
+                ", state=" + state +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", numberOfQuestions=" + numberOfQuestions +
@@ -397,10 +393,12 @@ public class Tournament  {
         }
     }
 
-    public void confirmTournament(Integer quizId) {
+    public void confirmTournament(Integer quizId, Set<TournamentTopic> topics, TournamentCourseExecution courseExecution) {
         switch (getState()) {
             case APPROVAL_PENDING:
                 setQuizId(quizId);
+                setCourseExecution(courseExecution);
+                setTopics(topics);
                 setState(APPROVED);
                 break;
             default:
