@@ -11,6 +11,6 @@ public class TournamentDemoUtils {
     private TournamentService tournamentProvidedService;
 
     public void resetDemoInfo() {
-        //tournamentProvidedService.resetDemoTournaments();
+        tournamentProvidedService.resetDemoTournaments();
     }
 }

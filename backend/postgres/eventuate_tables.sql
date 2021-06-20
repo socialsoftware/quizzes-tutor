@@ -54,8 +54,8 @@ CREATE TABLE message
 (
   id VARCHAR(767) PRIMARY KEY,
   destination VARCHAR(1000) NOT NULL,
-  headers VARCHAR(1000) NOT NULL,
-  payload VARCHAR(1000) NOT NULL,
+  headers VARCHAR(3000) NOT NULL,
+  payload VARCHAR(10000) NOT NULL,
   published SMALLINT DEFAULT 0,
   creation_time BIGINT
 );
@@ -98,8 +98,8 @@ CREATE TABLE saga_instance
   last_request_id VARCHAR(100),
   end_state BOOLEAN,
   compensating BOOLEAN,
-  saga_data_type VARCHAR(1000) NOT NULL,
-  saga_data_json VARCHAR(1000) NOT NULL,
+  saga_data_type VARCHAR(255) NOT NULL,
+  saga_data_json VARCHAR(10000) NOT NULL,
   PRIMARY KEY(saga_type, saga_id)
 );
 
@@ -116,6 +116,6 @@ CREATE TABLE saga_stash_table
   target VARCHAR(100) NOT NULL,
   saga_type VARCHAR(255) NOT NULL,
   saga_id VARCHAR(100) NOT NULL,
-  message_headers VARCHAR(1000) NOT NULL,
-  message_payload VARCHAR(1000) NOT NULL
+  message_headers VARCHAR(3000) NOT NULL,
+  message_payload VARCHAR(10000) NOT NULL
 );

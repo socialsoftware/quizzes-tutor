@@ -6,6 +6,7 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.ImpExpService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 
 @Component
 public class ScheduledTasks {
@@ -15,6 +16,9 @@ public class ScheduledTasks {
 
     @Autowired
     private AnswerService answerService;
+
+    @Autowired
+    private QuizService quizService;
 
     @Autowired
     private TutorDemoUtils tutorDemoUtils;
@@ -32,5 +36,10 @@ public class ScheduledTasks {
     @Scheduled(cron = "0 0 1 * * *")
     public void resetDemoInfo() {
         tutorDemoUtils.resetDemoInfo();
+    }
+
+    @Scheduled(cron = "*/300 * * * * *")
+    public void populateExternalQuizzes() {
+        quizService.populateExternalQuizzesWithQuizAnswers();
     }
 }

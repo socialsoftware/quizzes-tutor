@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 
+import java.util.HashSet;
 import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.TOURNAMENT_MISSING_TOPICS;
@@ -25,7 +26,7 @@ public class UpdateTournamentSagaData {
 
     private Integer tournamentId;
     private QuizDto quizDto;
-    private Set<TournamentTopic> topics;
+    private Set<TournamentTopic> topics = new HashSet<>();
     private TournamentDto tournamentDto;
     private TopicListDto topicListDto;
 

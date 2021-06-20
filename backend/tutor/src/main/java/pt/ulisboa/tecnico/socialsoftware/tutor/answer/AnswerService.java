@@ -252,7 +252,7 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuizDto generateExternalQuiz(int userId, int executionId, ExternalStatementCreationDto quizDetails) {
+    public Quiz generateExternalQuiz(int userId, int executionId, ExternalStatementCreationDto quizDetails) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         Quiz quiz = new Quiz();
@@ -289,8 +289,10 @@ public class AnswerService {
 
         quizRepository.save(quiz);
 
-        QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
-        return quizAnswer.getDto(false);
+        // Quiz Answer cannot be created because it prevents tournaments from being updated
+        /*QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+        return quizAnswer.getDto(false);*/
+        return quiz;
     }
 
     @Retryable(

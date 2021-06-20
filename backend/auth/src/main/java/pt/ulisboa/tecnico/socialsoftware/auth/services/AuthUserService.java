@@ -558,6 +558,15 @@ public class AuthUserService {
                 continue;
             }
         }
+
+        try {
+            // Wait for Tutor to erase old demo students
+            // Avoids tutor from erasing users of the below sagas
+            Thread.sleep(7000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
         createAuthUserSaga("Demo Student", STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO, demoCourseExecutionId);
         createAuthUserSaga("Demo Teacher", TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUserType.DEMO, demoCourseExecutionId);
         createAuthUserSaga("Demo Admin", ADMIN_USERNAME, "demo_admin@mail.com", Role.DEMO_ADMIN, AuthUserType.DEMO, demoCourseExecutionId);

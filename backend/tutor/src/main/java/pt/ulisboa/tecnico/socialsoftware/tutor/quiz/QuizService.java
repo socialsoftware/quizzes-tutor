@@ -466,4 +466,21 @@ public class QuizService {
 
         return quiz.getDto(false);
     }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void populateExternalQuizzesWithQuizAnswers() {
+        List<Quiz> quizzes = quizRepository.findAll();
+        quizzes.stream().filter(Quiz::isExternalQuiz).forEach(
+            quiz -> {
+                for (User student : quiz.getCourseExecution().getStudents()) {
+                    if (student.getQuizAnswer(quiz) == null) {
+                        answerService.createQuizAnswer(student.getId(), quiz.getId());
+                    }
+                }
+            }
+        );
+    }
 }

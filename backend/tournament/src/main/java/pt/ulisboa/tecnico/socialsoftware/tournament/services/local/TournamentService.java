@@ -12,6 +12,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.RemoteAccessException;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*;
@@ -74,8 +75,6 @@ public class TournamentService {
     public Tournament createTournamentSaga(Integer userId, Integer executionId, Set<Integer> topicsId,
                                            TournamentDto tournamentDto, String username, String name) {
         checkInput(userId, topicsId, tournamentDto);
-        /*return createTournamentSaga(tournamentDto, new TournamentCreator(userId, username, name),
-                new TopicListDto(topicsId), executionId);*/
 
         Tournament tournament = new Tournament(new TournamentCreator(userId, username, name), tournamentDto);
         tournamentRepository.save(tournament);
@@ -146,10 +145,6 @@ public class TournamentService {
     public TournamentDto updateTournament(Set<Integer> topicsId, TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
         tournament.checkCanChange();
-
-        //Set<TournamentTopic> topics = tournamentRequiredService.getTournamentTopics(new TopicListDto(topicsId));
-        /*QuizDto quizDto = tournamentRequiredService.getQuiz(tournamentDto.getQuizId());
-        quizDto.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());*/
 
         updateTournamentQuizSaga(tournament.getId(), tournamentDto, new TopicListDto(topicsId));
 
@@ -225,10 +220,24 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoTournaments() {
-        Integer demoCourseExecutionId = tournamentRequiredService.getDemoCourseExecutionId();
+        Integer demoCourseExecutionId;
+        while(true) {
+            try {
+                demoCourseExecutionId = tournamentRequiredService.getDemoCourseExecutionId();
+                if (demoCourseExecutionId != null) {
+                    break;
+                }
+            }
+            catch(RemoteAccessException e) {
+                continue;
+            }
+        }
 
         tournamentRepository.getTournamentsForCourseExecution(demoCourseExecutionId)
-            .forEach(tournament -> tournamentRepository.delete(tournament));
+            .forEach(tournament -> {
+                tournament.remove();
+                tournamentRepository.delete(tournament);
+            });
     }
 
     public void beginRemove(Integer tournamentId) {

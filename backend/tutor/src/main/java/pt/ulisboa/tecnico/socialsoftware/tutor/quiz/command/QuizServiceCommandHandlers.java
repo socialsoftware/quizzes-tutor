@@ -40,7 +40,7 @@ public class QuizServiceCommandHandlers {
                 .build();
     }
 
-    private Message getQuiz(CommandMessage<GetQuizCommand> cm) {
+    public Message getQuiz(CommandMessage<GetQuizCommand> cm) {
         logger.info("Received GetQuizCommand");
 
         Integer quizId = cm.getCommand().getQuizId();

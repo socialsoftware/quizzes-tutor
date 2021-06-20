@@ -364,7 +364,7 @@ public class Tournament  {
 
     public void beginUpdateQuiz() {
         switch (getState()) {
-            case READY_FOR_UPDATE:
+            case APPROVED:
                 setState(UPDATE_PENDING);
                 break;
             default:
