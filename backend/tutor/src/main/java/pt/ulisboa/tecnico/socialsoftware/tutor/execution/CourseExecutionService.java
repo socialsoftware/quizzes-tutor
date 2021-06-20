@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution;
 
-import com.google.common.eventbus.EventBus;
+import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -33,10 +33,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.COURSE_EXECUTION_AGGREGATE_TYPE;
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.USER_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 import static pt.ulisboa.tecnico.socialsoftware.common.utils.Utils.*;
 
@@ -58,7 +61,7 @@ public class CourseExecutionService {
     private QuestionAnswerItemRepository questionAnswerItemRepository;
 
     @Autowired
-    private EventBus eventBus;
+    private DomainEventPublisher domainEventPublisher;
 
     @Retryable(
             value = { SQLException.class },
@@ -110,9 +113,10 @@ public class CourseExecutionService {
             courseExecution.addUser(user);
             user.addCourse(courseExecution);
             //Auth subscribes to this event and adds course execution to authUser
-            //TODO: Check this
-            /*AddCourseExecutionEvent addCourseExecutionEvent = new AddCourseExecutionEvent(userId, courseExecutionId);
-            eventBus.post(addCourseExecutionEvent);*/
+            //TODO: Solved
+            AddCourseExecutionEvent addCourseExecutionEvent = new AddCourseExecutionEvent(userId, courseExecutionId);
+            domainEventPublisher.publish(COURSE_EXECUTION_AGGREGATE_TYPE, String.valueOf(courseExecutionId),
+                    Collections.singletonList(addCourseExecutionEvent));
         }
     }
 
@@ -162,9 +166,12 @@ public class CourseExecutionService {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         for (User user : courseExecution.getUsers()) {
             String oldUsername = user.getUsername();
-            //TODO: Fix this
-            DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(user.getId());
-            eventBus.post(deleteAuthUser);
+
+            //TODO: Solved
+            DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(user.getId());
+            domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
+                    Collections.singletonList(deleteAuthUserEvent));
+
             String newUsername = user.getUsername();
             questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
             String role = user.getRole().toString();
@@ -296,9 +303,11 @@ public class CourseExecutionService {
                     .orElseThrow(() -> new TutorException((USER_NOT_FOUND)));
             user.remove();
             userRepository.delete(user);
-            //TODO: Fix this
-            DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(id);
-            eventBus.post(deleteAuthUser);
+
+            //TODO: Solved
+            DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(id);
+            domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
+                    Collections.singletonList(deleteAuthUserEvent));
         }
     }
 
@@ -325,7 +334,6 @@ public class CourseExecutionService {
                 ", courseExecutionRepository=" + courseExecutionRepository +
                 ", userRepository=" + userRepository +
                 ", questionAnswerItemRepository=" + questionAnswerItemRepository +
-                ", eventBus=" + eventBus +
                 '}';
     }
 }

@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
 
-import com.google.common.eventbus.EventBus;
+import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -13,8 +13,12 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.common.events.ExternalQuizSolvedEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.SolvedQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemRepository;
@@ -32,7 +36,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRe
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -43,6 +46,8 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.QUIZ_AGGREGATE_TYPE;
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.USER_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Service
@@ -81,7 +86,7 @@ public class AnswerService {
     private CourseExecutionService courseExecutionService;
 
     @Autowired
-    private EventBus eventBus;
+    private DomainEventPublisher domainEventPublisher;
 
     @Retryable(
             value = {SQLException.class},
@@ -133,11 +138,13 @@ public class AnswerService {
                         .collect(Collectors.toList());
 
                 if (quizAnswer.getQuiz().getType().equals(QuizType.EXTERNAL_QUIZ)) {
+                    // TODO: Solved
                     ExternalQuizSolvedEvent event = new ExternalQuizSolvedEvent(quizAnswer.getQuiz().getId(),
                             quizAnswer.getUser().getId(), quizAnswer.getNumberOfAnsweredQuestions(),
                             quizAnswer.getNumberOfCorrectAnswers());
 
-                    eventBus.post(event);
+                    domainEventPublisher.publish(QUIZ_AGGREGATE_TYPE, String.valueOf(quizAnswer.getQuiz().getId()),
+                            Collections.singletonList(event));
                 }
 
                 return correctAnswerDtoList;

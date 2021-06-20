@@ -13,6 +13,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceParticipantConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceWebConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserService;
+import pt.ulisboa.tecnico.socialsoftware.auth.subscriptions.AuthUserServiceEventConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.common.config.CommonModuleConfiguration;
 
 @PropertySource({"classpath:application.properties" })
@@ -20,7 +21,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.config.CommonModuleConfiguration
 //@ServiceDescription(description = "Manages Orders", capabilities = "Order Management")
 @SpringBootApplication
 @Import({CommonModuleConfiguration.class, AuthServiceWebConfiguration.class, AuthServiceParticipantConfiguration.class,
-        TramJdbcKafkaConfiguration.class})
+        TramJdbcKafkaConfiguration.class, AuthUserServiceEventConfiguration.class})
 @EntityScan({"pt.ulisboa.tecnico.socialsoftware.auth"})
 @EnableJpaRepositories({"pt.ulisboa.tecnico.socialsoftware.auth"})
 public class AuthApplication implements InitializingBean {

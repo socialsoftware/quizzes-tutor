@@ -1,7 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.common.events;
 
-public class DeleteAuthUserEvent {
+import io.eventuate.tram.events.common.DomainEvent;
+
+public class DeleteAuthUserEvent implements DomainEvent {
     private Integer userId;
+
+    public DeleteAuthUserEvent() {
+    }
 
     public DeleteAuthUserEvent(Integer userId) {
         this.userId = userId;

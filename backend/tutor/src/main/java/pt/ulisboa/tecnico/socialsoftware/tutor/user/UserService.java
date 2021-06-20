@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
-import com.google.common.eventbus.EventBus;
+import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -19,9 +19,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.COURSE_EXECUTION_AGGREGATE_TYPE;
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.USER_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.USER_NOT_FOUND;
 
@@ -34,7 +37,7 @@ public class UserService {
     private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
-    private EventBus eventBus;
+    private DomainEventPublisher domainEventPublisher;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserDto createUser(String name, Role role, String username, boolean isActive, boolean isAdmin) {
@@ -84,9 +87,11 @@ public class UserService {
                     Integer userId = user.getId();
                     user.remove();
                     this.userRepository.delete(user);
-                    //TODO: Fix this
-                    DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(userId);
-                    eventBus.post(deleteAuthUser);
+
+                    //TODO: Solved
+                    /*DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(userId);
+                    domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
+                            Collections.singletonList(deleteAuthUserEvent));*/
                 });
     }
 

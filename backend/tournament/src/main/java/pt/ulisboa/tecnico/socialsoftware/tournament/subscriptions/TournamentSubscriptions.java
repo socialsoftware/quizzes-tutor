@@ -1,6 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.subscriptions;
 
-import com.google.common.eventbus.Subscribe;
+import io.eventuate.tram.events.subscriber.DomainEventEnvelope;
+import io.eventuate.tram.events.subscriber.DomainEventHandlers;
+import io.eventuate.tram.events.subscriber.DomainEventHandlersBuilder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.common.events.ExternalQuizSolvedEvent;
@@ -9,22 +13,31 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentParticipant;
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
 
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.QUIZ_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.NO_TOURNAMENT_WITH_QUIZ_ID;
 
-@Component
 public class TournamentSubscriptions {
+    private static final Logger logger = LoggerFactory.getLogger(TournamentSubscriptions.class);
 
     @Autowired
     private TournamentRepository tournamentRepository;
 
-    @Subscribe
-    public void collectQuizAnswerData(ExternalQuizSolvedEvent event) {
-        Tournament tournament = tournamentRepository.findTournamentByQuizId(event.getQuizId()).orElseThrow(() ->
-                new TutorException(NO_TOURNAMENT_WITH_QUIZ_ID, event.getQuizId()));
+    public DomainEventHandlers domainEventHandlers() {
+        return DomainEventHandlersBuilder
+                .forAggregateType(QUIZ_AGGREGATE_TYPE)
+                .onEvent(ExternalQuizSolvedEvent.class, this::collectQuizAnswerData)
+                .build();
+    }
 
-        TournamentParticipant participant = tournament.findParticipant(event.getParticipantId());
+    public void collectQuizAnswerData(DomainEventEnvelope<ExternalQuizSolvedEvent> event) {
+        logger.info("Received externalQuizSolvedEvent!");
+        ExternalQuizSolvedEvent externalQuizSolvedEvent = event.getEvent();
+        Tournament tournament = tournamentRepository.findTournamentByQuizId(externalQuizSolvedEvent.getQuizId()).orElseThrow(() ->
+                new TutorException(NO_TOURNAMENT_WITH_QUIZ_ID, externalQuizSolvedEvent.getQuizId()));
+
+        TournamentParticipant participant = tournament.findParticipant(externalQuizSolvedEvent.getParticipantId());
         participant.setAnswered(true);
-        participant.setNumberOfAnswered(event.getNumberOfAnswered());
-        participant.setNumberOfCorrect(event.getNumberOfCorrect());
+        participant.setNumberOfAnswered(externalQuizSolvedEvent.getNumberOfAnswered());
+        participant.setNumberOfCorrect(externalQuizSolvedEvent.getNumberOfCorrect());
     }
 }

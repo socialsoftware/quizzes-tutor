@@ -210,12 +210,6 @@
       <artifactId>eventuate-tram-sagas</artifactId>
       <version>${eventuate-tram-sagas.version}</version>
     </dependency>
-    <!--<dependency>
-      <groupId>io.eventuate.tram.sagas</groupId>
-      <artifactId>eventuate-tram-sagas</artifactId>
-      <version>${eventuate-tram-sagas.version}</version>
-      <type>pom</type>
-    </dependency>-->
 
     <!-- Saga Orchestrator -->
     <dependency>

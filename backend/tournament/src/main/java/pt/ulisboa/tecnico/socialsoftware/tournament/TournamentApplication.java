@@ -11,12 +11,11 @@ import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
-import org.springframework.transaction.annotation.EnableTransactionManagement;
 import pt.ulisboa.tecnico.socialsoftware.common.config.CommonModuleConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tournament.config.TournamentServiceParticipantConfiguration;
-import pt.ulisboa.tecnico.socialsoftware.tournament.config.TournamentServiceRepositoryConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tournament.config.TournamentServiceWebConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tournament.demoutils.TournamentDemoUtils;
+import pt.ulisboa.tecnico.socialsoftware.tournament.subscriptions.TournamentServiceEventConfiguration;
 
 @PropertySource({"classpath:application.properties" })
 @EnableJpaAuditing
@@ -25,7 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.demoutils.TournamentDemoUtil
 @SpringBootApplication
 @Import({CommonModuleConfiguration.class, TournamentServiceWebConfiguration.class,
         TournamentServiceParticipantConfiguration.class,
-        TramJdbcKafkaConfiguration.class})
+        TramJdbcKafkaConfiguration.class, TournamentServiceEventConfiguration.class})
 @EntityScan({"pt.ulisboa.tecnico.socialsoftware.tournament"})
 @EnableJpaRepositories({"pt.ulisboa.tecnico.socialsoftware.tournament"})
 public class TournamentApplication implements InitializingBean {

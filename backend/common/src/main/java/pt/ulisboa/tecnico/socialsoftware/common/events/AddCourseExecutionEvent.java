@@ -1,8 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.common.events;
 
-public class AddCourseExecutionEvent {
+import io.eventuate.tram.events.common.DomainEvent;
+
+public class AddCourseExecutionEvent implements DomainEvent {
     private Integer userId;
     private Integer courseExecutionId;
+
+    public AddCourseExecutionEvent() {
+    }
 
     public AddCourseExecutionEvent(Integer userId, Integer courseExecutionId) {
         this.userId = userId;

@@ -215,6 +215,18 @@
       <version>${eventuate-tram-sagas.version}</version>
       <type>pom</type>
     </dependency>
+
+    <!-- Eventuate Tram Event Handling -->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-events</artifactId>
+      <version>${eventuate-tram.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-events-publisher</artifactId>
+      <version>${eventuate-tram.version}</version>
+    </dependency>
   </dependencies>
 
   <!-- https://javahungry.blogspot.com/2019/05/solved-no-main-manifest-attribute-in-jar.html -->

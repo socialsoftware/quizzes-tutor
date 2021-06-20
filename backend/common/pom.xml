@@ -46,5 +46,10 @@
       <artifactId>eventuate-tram-sagas-participant</artifactId>
       <version>${eventuate-tram-sagas.version}</version>
     </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-events</artifactId>
+      <version>${eventuate-tram.version}</version>
+    </dependency>
   </dependencies>
 </project>

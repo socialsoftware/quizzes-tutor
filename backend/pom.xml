@@ -180,11 +180,6 @@
       <version>0.11.2</version>
       <scope>runtime</scope>
     </dependency>
-    <dependency>
-      <groupId>com.google.guava</groupId>
-      <artifactId>guava</artifactId>
-      <version>30.1-jre</version>
-    </dependency>
   </dependencies>
   <modules>
     <module>tutor</module>
