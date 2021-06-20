@@ -42,7 +42,7 @@ public class JwtTokenProvider {
         claims.put("userId", authUser.getUserSecurityInfo().getId());
         claims.put("isAdmin", authUser.getUserSecurityInfo().isAdmin());
         claims.put("username", authUser.getUsername());
-        claims.put("executions",authUser.getUserCourseExecutions());
+        claims.put("executions", authUser.getUserCourseExecutions());
         claims.put("courseAcronyms", authUser.getType().equals(AuthUserType.TECNICO) ?
                 ((AuthTecnicoUser) authUser).getEnrolledCoursesAcronyms() : "");
         claims.put("name",authUser.getUserSecurityInfo().getName());

@@ -24,7 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.config.CommonModuleConfiguration
         TramJdbcKafkaConfiguration.class, AuthUserServiceEventConfiguration.class})
 @EntityScan({"pt.ulisboa.tecnico.socialsoftware.auth"})
 @EnableJpaRepositories({"pt.ulisboa.tecnico.socialsoftware.auth"})
-public class AuthApplication implements InitializingBean {
+public class AuthApplication /*implements InitializingBean*/ {
 
     public static void main(String[] args) {
         SpringApplication.run(AuthApplication.class, args);
@@ -33,8 +33,8 @@ public class AuthApplication implements InitializingBean {
     @Autowired
     public AuthUserService authUserService;
 
-    @Override
+    /*@Override
     public void afterPropertiesSet() {
         authUserService.resetDemoAuthUsers();
-    }
+    }*/
 }

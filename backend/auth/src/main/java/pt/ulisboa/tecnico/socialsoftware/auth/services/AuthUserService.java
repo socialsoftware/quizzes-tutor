@@ -321,9 +321,7 @@ public class AuthUserService {
 
     public AuthDto demoTeacherAuth() {
         AuthUser authUser = getDemoTeacher();
-        logger.info("AuthUser: "+authUser);
         List<CourseExecutionDto> courseExecutionList = getCourseExecutions(authUser);
-        logger.info("CourseExecutionList: "+courseExecutionList);
         return authUser.getAuthDto(JwtTokenProvider.generateToken(authUser), null, courseExecutionList);
     }
 
@@ -406,26 +404,6 @@ public class AuthUserService {
                 .collect(Collectors.toList());
     }
 
-    /*private AuthUser getDemoTeacher() {
-        return authUserRepository.findAuthUserByUsername(TEACHER_USERNAME).get();
-    }
-
-    private AuthUser getDemoStudent() {
-        return authUserRepository.findAuthUserByUsername(STUDENT_USERNAME).get();
-    }*/
-    private AuthUser getDemoTeacher() {
-        return authUserRepository.findAuthUserByUsername(TEACHER_USERNAME).orElseGet(() -> {
-            logger.info("Creating..");
-            return createAuthUser("Demo Teacher", TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUserType.DEMO, null);
-        });
-    }
-
-    private AuthUser getDemoStudent() {
-        return authUserRepository.findAuthUserByUsername(STUDENT_USERNAME).orElseGet(() -> {
-            return createAuthUser("Demo Student", STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO, null);
-        });
-    }
-
     private AuthUser createAuthUser(String name, String username, String email, Role role, AuthUserType type, Integer courseExecutionId) {
         AuthUser authUser = createAuthUserSaga(name, username, email, role, type, courseExecutionId);
 
@@ -456,9 +434,17 @@ public class AuthUserService {
         return authUser;
     }
 
-    /*private AuthUser getDemoAdmin() {
-        return authUserRepository.findAuthUserByUsername(ADMIN_USERNAME).get();
-    }*/
+    private AuthUser getDemoTeacher() {
+        return authUserRepository.findAuthUserByUsername(TEACHER_USERNAME).orElseGet(() -> {
+            return createAuthUser("Demo Teacher", TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUserType.DEMO, null);
+        });
+    }
+
+    private AuthUser getDemoStudent() {
+        return authUserRepository.findAuthUserByUsername(STUDENT_USERNAME).orElseGet(() -> {
+            return createAuthUser("Demo Student", STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO, null);
+        });
+    }
 
     private AuthUser getDemoAdmin() {
         return authUserRepository.findAuthUserByUsername(ADMIN_USERNAME).orElseGet(() -> {
@@ -537,53 +523,6 @@ public class AuthUserService {
         AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findById(authUserId)
                 .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
         authUser.authUserConfirmRegistration(password, passwordEncoder);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void resetDemoAuthUsers() {
-        deleteDemoStudents();
-
-        Integer demoCourseExecutionId;
-        while(true) {
-            try {
-                demoCourseExecutionId = authRequiredService.getDemoCourseExecution();
-                if (demoCourseExecutionId != null) {
-                    break;
-                }
-            }
-            catch(RemoteAccessException e) {
-                continue;
-            }
-        }
-
-        try {
-            // Wait for Tutor to erase old demo students
-            // Avoids tutor from erasing users of the below sagas
-            Thread.sleep(7000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-
-        createAuthUserSaga("Demo Student", STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO, demoCourseExecutionId);
-        createAuthUserSaga("Demo Teacher", TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUserType.DEMO, demoCourseExecutionId);
-        createAuthUserSaga("Demo Admin", ADMIN_USERNAME, "demo_admin@mail.com", Role.DEMO_ADMIN, AuthUserType.DEMO, demoCourseExecutionId);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void deleteDemoStudents() {
-        authUserRepository.findAll()
-                .stream()
-                .filter(authUser -> authUser.getType().equals(AuthUserType.DEMO))
-                .forEach(authUser -> {
-                    authUser.remove();
-                    this.authUserRepository.delete(authUser);
-                });
     }
 
     // TODO: Uncomment when impexp is working again

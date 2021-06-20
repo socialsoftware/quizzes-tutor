@@ -89,9 +89,9 @@ public class UserService {
                     this.userRepository.delete(user);
 
                     //TODO: Solved
-                    /*DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(userId);
+                    DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(userId);
                     domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
-                            Collections.singletonList(deleteAuthUserEvent));*/
+                            Collections.singletonList(deleteAuthUserEvent));
                 });
     }
 
