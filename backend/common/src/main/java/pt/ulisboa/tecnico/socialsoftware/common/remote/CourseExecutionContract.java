@@ -7,5 +7,5 @@ public interface CourseExecutionContract {
 
     CourseExecutionDto findCourseExecutionByFields(String acronym, String academicTerm, String type);
 
-    Integer findDemoCourseExecution();
+    CourseExecutionDto findDemoCourseExecution();
 }

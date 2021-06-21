@@ -37,7 +37,6 @@ public class UserServiceCommandHandlers {
                 .fromChannel(ServiceChannels.USER_SERVICE_COMMAND_CHANNEL)
                 .onMessage(CreateUserCommand.class, this::createUser)
                 .onMessage(RejectUserCommand.class, this::rejectUser)
-                .onMessage(AddCourseExecutionsCommand.class, this::addCourseExecution)
                 .onMessage(RemoveCourseExecutionsCommand.class, this::removeCourseExecution)
                 .onMessage(ActivateUserCommand.class, this::activateUser)
                 .build();
@@ -73,18 +72,6 @@ public class UserServiceCommandHandlers {
         }
     }
 
-    public Message addCourseExecution(CommandMessage<AddCourseExecutionsCommand> cm) {
-        logger.info("Received AddCourseExecutionsCommand");
-
-        Integer userId = cm.getCommand().getUserId();
-        List<CourseExecutionDto> courseExecutionDtoList = cm.getCommand().getCourseExecutionDtoList();
-        try {
-            userService.addCourseExecutions(userId, courseExecutionDtoList);
-            return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
     public Message removeCourseExecution(CommandMessage<RemoveCourseExecutionsCommand> cm) {
         logger.info("Received RemoveCourseExecutionsCommand");
 

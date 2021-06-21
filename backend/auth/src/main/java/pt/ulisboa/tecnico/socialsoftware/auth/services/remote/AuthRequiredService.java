@@ -15,15 +15,6 @@ public class AuthRequiredService {
     @Autowired
     private CourseExecutionInterface courseExecutionInterface;
 
-    @Autowired
-    private QuestionInterface questionInterface;
-
-    @Autowired
-    private QuizInterface quizInterface;
-
-    @Autowired
-    private AnswerInterface answerInterface;
-
     public UserCourseExecutionsDto getUserCourseExecutions(Integer userId) {
         return userInterface.getUserCourseExecutions(userId);
     }
@@ -32,7 +23,7 @@ public class AuthRequiredService {
         return courseExecutionInterface.findCourseExecution(courseExecutionId);
     }
 
-    public Integer getDemoCourseExecution() {
+    public CourseExecutionDto getDemoCourseExecution() {
         return courseExecutionInterface.findDemoCourseExecution();
     }
 

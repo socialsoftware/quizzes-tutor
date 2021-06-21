@@ -21,12 +21,6 @@ public class UserServiceProxy {
             .withReply(Success.class)
             .build();
 
-    public final CommandEndpoint<AddCourseExecutionsCommand> addCourseExecution = CommandEndpointBuilder
-            .forCommand(AddCourseExecutionsCommand.class)
-            .withChannel(ServiceChannels.USER_SERVICE_COMMAND_CHANNEL)
-            .withReply(Success.class)
-            .build();
-
 
     public final CommandEndpoint<ActivateUserCommand> activateUser = CommandEndpointBuilder
             .forCommand(ActivateUserCommand.class)

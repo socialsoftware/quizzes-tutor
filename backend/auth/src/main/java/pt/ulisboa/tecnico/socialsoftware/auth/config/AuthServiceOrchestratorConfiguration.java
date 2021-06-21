@@ -1,9 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.auth.config;
 
 import io.eventuate.tram.sagas.spring.orchestration.SagaOrchestratorConfiguration;
-import io.eventuate.tram.spring.commands.producer.TramCommandProducerConfiguration;
 import io.eventuate.tram.spring.consumer.kafka.EventuateTramKafkaMessageConsumerConfiguration;
-import io.eventuate.tram.spring.events.publisher.TramEventsPublisherConfiguration;
 import io.eventuate.tram.spring.messaging.producer.jdbc.TramMessageProducerJdbcConfiguration;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -14,7 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants.CourseExecutionServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants.UserServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.updateCourseExecutions.UpdateCourseExecutionsSaga;
-import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserService;
 
 /**
  * The configuration class to instantiate and wire the domain service class.
@@ -33,8 +30,8 @@ public class AuthServiceOrchestratorConfiguration {
 
     @Bean
     public UpdateCourseExecutionsSaga updateCourseExecutionsSaga(AuthUserServiceProxy authUserService,
-                                                                 UserServiceProxy userService) {
-        return new UpdateCourseExecutionsSaga(authUserService, userService);
+                                                                 CourseExecutionServiceProxy courseExecutionService) {
+        return new UpdateCourseExecutionsSaga(authUserService, courseExecutionService);
     }
 
     @Bean

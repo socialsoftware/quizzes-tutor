@@ -23,7 +23,6 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 
-import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.COURSE_EXECUTION_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.USER_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.USER_NOT_FOUND;
@@ -88,7 +87,6 @@ public class UserService {
                     user.remove();
                     this.userRepository.delete(user);
 
-                    //TODO: Solved
                     DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(userId);
                     domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
                             Collections.singletonList(deleteAuthUserEvent));
@@ -112,17 +110,6 @@ public class UserService {
         User user = userRepository.findById(id).orElseThrow(() -> new TutorException(USER_NOT_FOUND, id));
         user.remove();
         userRepository.delete(user);
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void addCourseExecutions(Integer userId, List<CourseExecutionDto> courseExecutionDtoList) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-
-        for(CourseExecutionDto dto: courseExecutionDtoList) {
-            CourseExecution courseExecution = courseExecutionRepository.findById(dto.getCourseExecutionId()).
-                    orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
-            user.addCourse(courseExecution);
-        }
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

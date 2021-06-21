@@ -7,13 +7,15 @@ import io.eventuate.tram.sagas.participant.SagaCommandHandlersBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.AddCourseExecutionCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.GetCourseExecutionCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.RemoveCourseExecutionCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.user.AddCourseExecutionsCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.command.UserServiceCommandHandlers;
+
+import java.util.List;
 
 import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.withFailure;
 import static io.eventuate.tram.commands.consumer.CommandHandlerReplyBuilder.withSuccess;
@@ -34,7 +36,7 @@ public class CourseExecutionServiceCommandHandlers {
     public CommandHandlers commandHandlers() {
         return SagaCommandHandlersBuilder
                 .fromChannel(ServiceChannels.COURSE_EXECUTION_SERVICE_COMMAND_CHANNEL)
-                .onMessage(AddCourseExecutionCommand.class, this::addCourseExecution)
+                .onMessage(AddCourseExecutionsCommand.class, this::addCourseExecutions)
                 .onMessage(RemoveCourseExecutionCommand.class, this::removeCourseExecution)
                 .onMessage(GetCourseExecutionCommand.class, this::getCourseExecution)
                 .build();
@@ -53,14 +55,13 @@ public class CourseExecutionServiceCommandHandlers {
         }
     }
 
-    public Message addCourseExecution(CommandMessage<AddCourseExecutionCommand> cm) {
-        logger.info("Received AddCourseExecutionCommand");
+    public Message addCourseExecutions(CommandMessage<AddCourseExecutionsCommand> cm) {
+        logger.info("Received AddCourseExecutionsCommand");
 
         Integer userId = cm.getCommand().getUserId();
-        Integer courseExecutionId = cm.getCommand().getCourseExecutionId();
-
+        List<CourseExecutionDto> courseExecutionDtoList = cm.getCommand().getCourseExecutionDtoList();
         try {
-            courseExecutionService.addUserToTecnicoCourseExecution(userId, courseExecutionId);
+            courseExecutionService.addCourseExecutions(userId, courseExecutionDtoList);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();

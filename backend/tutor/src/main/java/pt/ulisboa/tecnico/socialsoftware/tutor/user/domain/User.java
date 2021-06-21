@@ -390,8 +390,7 @@ public class User implements DomainEntity {
                 ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
                 ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
                 ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
-                ", creationDate=" + creationDate /*+
-                ", lastAccess=" + authUser.getLastAccess() */+
+                ", creationDate=" + creationDate +
                 '}';
     }
 

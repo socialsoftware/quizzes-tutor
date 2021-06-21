@@ -257,11 +257,14 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
                         Collectors.mapping(courseDto -> courseDto, Collectors.toList())));
     }
 
-    public void authUserApproved(Integer userId, Integer courseExecutionId) {
+    public void authUserApproved(Integer userId, List<CourseExecutionDto> courseExecutionList) {
         switch (state) {
             case APPROVAL_PENDING:
                 getUserSecurityInfo().setId(userId);
-                addCourseExecution(courseExecutionId);
+                for (CourseExecutionDto courseExecutionDto: courseExecutionList) {
+                    addCourseExecution(courseExecutionDto.getCourseExecutionId());
+                }
+
                 this.state = APPROVED;
                 break;
             default:

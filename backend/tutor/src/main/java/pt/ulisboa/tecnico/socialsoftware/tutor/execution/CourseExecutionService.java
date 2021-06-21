@@ -105,18 +105,26 @@ public class CourseExecutionService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void addUserToTecnicoCourseExecution(Integer userId, int courseExecutionId) {
+    public void addUserToActivatedTecnicoCourseExecution(Integer userId, int courseExecutionId) {
         CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);
         User user = this.userRepository.findById(userId).orElse(null);
 
         if (user != null && courseExecution != null) {
-            courseExecution.addUser(user);
             user.addCourse(courseExecution);
             //Auth subscribes to this event and adds course execution to authUser
-            //TODO: Solved
             AddCourseExecutionEvent addCourseExecutionEvent = new AddCourseExecutionEvent(userId, courseExecutionId);
             domainEventPublisher.publish(COURSE_EXECUTION_AGGREGATE_TYPE, String.valueOf(courseExecutionId),
                     Collections.singletonList(addCourseExecutionEvent));
+        }
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void addUserToCourseExecution(Integer userId, int courseExecutionId) {
+        CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);
+        User user = this.userRepository.findById(userId).orElse(null);
+
+        if (user != null && courseExecution != null) {
+            user.addCourse(courseExecution);
         }
     }
 
@@ -167,7 +175,6 @@ public class CourseExecutionService {
         for (User user : courseExecution.getUsers()) {
             String oldUsername = user.getUsername();
 
-            //TODO: Solved
             DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(user.getId());
             domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
                     Collections.singletonList(deleteAuthUserEvent));
@@ -304,7 +311,6 @@ public class CourseExecutionService {
             user.remove();
             userRepository.delete(user);
 
-            //TODO: Solved
             DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(id);
             domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
                     Collections.singletonList(deleteAuthUserEvent));
@@ -335,5 +341,16 @@ public class CourseExecutionService {
                 ", userRepository=" + userRepository +
                 ", questionAnswerItemRepository=" + questionAnswerItemRepository +
                 '}';
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void addCourseExecutions(Integer userId, List<CourseExecutionDto> courseExecutionDtoList) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        for(CourseExecutionDto dto: courseExecutionDtoList) {
+            CourseExecution courseExecution = courseExecutionRepository.findById(dto.getCourseExecutionId()).
+                    orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
+            user.addCourse(courseExecution);
+        }
     }
 }

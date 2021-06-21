@@ -65,10 +65,10 @@ public class AuthServiceCommandHandlers {
 
         Integer userId = cm.getCommand().getUserId();
         Integer authUserId = cm.getCommand().getAuthUserId();
-        Integer courseExecutionId = cm.getCommand().getCourseExecutionId();
+        List<CourseExecutionDto> courseExecutionList = cm.getCommand().getCourseExecutionDtoList();
 
         try {
-            authUserService.approveAuthUser(authUserId, userId, courseExecutionId);
+            authUserService.approveAuthUser(authUserId, userId, courseExecutionList);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();

@@ -1,20 +1,23 @@
 package pt.ulisboa.tecnico.socialsoftware.auth.command;
 
 import io.eventuate.tram.commands.common.Command;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
+
+import java.util.List;
 
 public class ApproveAuthUserCommand implements Command {
 
     private Integer userId;
     private Integer authUserId;
-    private Integer courseExecutionId;
+    private List<CourseExecutionDto> courseExecutionDtoList;
 
     public ApproveAuthUserCommand() {
     }
 
-    public ApproveAuthUserCommand(Integer userId, Integer authUserId, Integer courseExecutionId) {
+    public ApproveAuthUserCommand(Integer userId, Integer authUserId, List<CourseExecutionDto> courseExecutionDtos) {
         this.userId = userId;
         this.authUserId = authUserId;
-        this.courseExecutionId = courseExecutionId;
+        this.courseExecutionDtoList = courseExecutionDtos;
     }
 
     public Integer getUserId() {
@@ -33,12 +36,12 @@ public class ApproveAuthUserCommand implements Command {
         this.authUserId = authUserId;
     }
 
-    public Integer getCourseExecutionId() {
-        return courseExecutionId;
+    public List<CourseExecutionDto> getCourseExecutionDtoList() {
+        return courseExecutionDtoList;
     }
 
-    public void setCourseExecutionId(Integer courseExecutionId) {
-        this.courseExecutionId = courseExecutionId;
+    public void setCourseExecutionDtoList(List<CourseExecutionDto> courseExecutionDtoList) {
+        this.courseExecutionDtoList = courseExecutionDtoList;
     }
 
     @Override
@@ -46,7 +49,7 @@ public class ApproveAuthUserCommand implements Command {
         return "ApproveAuthUserCommand{" +
                 "userId=" + userId +
                 ", authUserId=" + authUserId +
-                ", courseExecutionId=" + courseExecutionId +
+                ", courseExecutionDtoList=" + courseExecutionDtoList +
                 '}';
     }
 }

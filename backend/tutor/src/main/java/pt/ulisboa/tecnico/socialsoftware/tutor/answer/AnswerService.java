@@ -138,7 +138,6 @@ public class AnswerService {
                         .collect(Collectors.toList());
 
                 if (quizAnswer.getQuiz().getType().equals(QuizType.EXTERNAL_QUIZ)) {
-                    // TODO: Solved
                     ExternalQuizSolvedEvent event = new ExternalQuizSolvedEvent(quizAnswer.getQuiz().getId(),
                             quizAnswer.getUser().getId(), quizAnswer.getNumberOfAnsweredQuestions(),
                             quizAnswer.getNumberOfCorrectAnswers());

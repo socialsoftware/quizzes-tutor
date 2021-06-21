@@ -4,14 +4,15 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.auth.command.ApproveAuthUserCommand;
 import pt.ulisboa.tecnico.socialsoftware.auth.command.RejectAuthUserCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.AddCourseExecutionCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.RemoveCourseExecutionCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.user.AddCourseExecutionsCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.user.CreateUserCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.user.RejectUserCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.user.RemoveCourseExecutionsCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 
-import java.util.Objects;
+import java.util.List;
 
 public class CreateUserWithAuthSagaData {
 
@@ -24,19 +25,19 @@ public class CreateUserWithAuthSagaData {
     private boolean isActive;
     private boolean isAdmin;
     private Integer userId;
-    private Integer courseExecutionId;
+    private List<CourseExecutionDto> courseExecutionDtoList;
 
     public CreateUserWithAuthSagaData() {}
 
     public CreateUserWithAuthSagaData(Integer authUserId, String name, Role role, String username, boolean isActive,
-                                      boolean isAdmin, Integer courseExecutionId) {
+                                      boolean isAdmin, List<CourseExecutionDto> courseExecutionDtoList) {
         this.authUserId = authUserId;
         this.name = name;
         this.role = role;
         this.username = username;
         this.isActive = isActive;
         this.isAdmin = isAdmin;
-        this.courseExecutionId = courseExecutionId;
+        this.courseExecutionDtoList = courseExecutionDtoList;
     }
 
     public String getName() {
@@ -71,8 +72,8 @@ public class CreateUserWithAuthSagaData {
         return authUserId;
     }
 
-    public Integer getCourseExecutionId() {
-        return courseExecutionId;
+    public List<CourseExecutionDto> getCourseExecutionDtoList() {
+        return courseExecutionDtoList;
     }
 
     RejectUserCommand rejectUser() {
@@ -82,7 +83,7 @@ public class CreateUserWithAuthSagaData {
 
     ApproveAuthUserCommand approveAuthUser() {
         logger.info("Sent ApproveAuthUserCommand");
-        return new ApproveAuthUserCommand(getAuthUserId(), getUserId(), getCourseExecutionId());
+        return new ApproveAuthUserCommand(getAuthUserId(), getUserId(), getCourseExecutionDtoList());
     }
 
     CreateUserCommand createUser() {
@@ -100,27 +101,14 @@ public class CreateUserWithAuthSagaData {
         setUserId(reply.getId());
     }
 
-    AddCourseExecutionCommand addCourseExecution() {
+    AddCourseExecutionsCommand addCourseExecution() {
         logger.info("Sent AddCourseExecutionCommand");
-        return new AddCourseExecutionCommand(getUserId(), getCourseExecutionId());
+        return new AddCourseExecutionsCommand(getUserId(), getCourseExecutionDtoList());
     }
 
-    RemoveCourseExecutionCommand removeCourseExecution() {
+    RemoveCourseExecutionsCommand removeCourseExecution() {
         logger.info("Sent RemoveCourseExecutionCommand");
-        return new RemoveCourseExecutionCommand(getUserId(), getCourseExecutionId());
-    }
-
-    @Override
-    public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        CreateUserWithAuthSagaData that = (CreateUserWithAuthSagaData) o;
-        return isActive == that.isActive && isAdmin == that.isAdmin && authUserId.equals(that.authUserId) && name.equals(that.name) && role == that.role && username.equals(that.username) && userId.equals(that.userId) && courseExecutionId.equals(that.courseExecutionId);
-    }
-
-    @Override
-    public int hashCode() {
-        return Objects.hash(name, role, username, isActive, isAdmin, userId, courseExecutionId);
+        return new RemoveCourseExecutionsCommand(getUserId(), getCourseExecutionDtoList());
     }
 
     @Override
@@ -133,7 +121,7 @@ public class CreateUserWithAuthSagaData {
                 ", isActive=" + isActive +
                 ", isAdmin=" + isAdmin +
                 ", userId=" + userId +
-                ", courseExecutionId=" + courseExecutionId +
+                ", courseExecutionDtoList=" + courseExecutionDtoList +
                 '}';
     }
 }

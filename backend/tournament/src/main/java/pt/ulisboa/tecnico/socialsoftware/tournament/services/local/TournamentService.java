@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.RemoteAccessException;
@@ -220,11 +221,11 @@ public class TournamentService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoTournaments() {
-        Integer demoCourseExecutionId;
+        CourseExecutionDto demoCourseExecution;
         while(true) {
             try {
-                demoCourseExecutionId = tournamentRequiredService.getDemoCourseExecutionId();
-                if (demoCourseExecutionId != null) {
+                demoCourseExecution = tournamentRequiredService.getDemoCourseExecutionId();
+                if (demoCourseExecution!= null) {
                     break;
                 }
             }
@@ -233,7 +234,7 @@ public class TournamentService {
             }
         }
 
-        tournamentRepository.getTournamentsForCourseExecution(demoCourseExecutionId)
+        tournamentRepository.getTournamentsForCourseExecution(demoCourseExecution.getCourseExecutionId())
             .forEach(tournament -> {
                 tournament.remove();
                 tournamentRepository.delete(tournament);

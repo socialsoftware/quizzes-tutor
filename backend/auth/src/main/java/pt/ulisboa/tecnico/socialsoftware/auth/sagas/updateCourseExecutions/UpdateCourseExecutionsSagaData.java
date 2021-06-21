@@ -62,7 +62,7 @@ public class UpdateCourseExecutionsSagaData {
         return new UndoUpdateCourseExecutionsCommand(getAuthUserId());
     }
 
-    AddCourseExecutionsCommand addCourseExecution() {
+    AddCourseExecutionsCommand addCourseExecutions() {
         logger.info("Sent AddCourseExecutionsCommand");
         return new AddCourseExecutionsCommand(getUserId(), getCourseExecutionDtoList());
     }

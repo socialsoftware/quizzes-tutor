@@ -33,10 +33,10 @@ public class CourseExecutionInternalController {
     }
 
     @RequestMapping(value = "/demo", method = RequestMethod.GET)
-    public ResponseEntity<Integer> findDemoCourseExecution() {
+    public ResponseEntity<CourseExecutionDto> findDemoCourseExecution() {
         logger.info("findDemoCourseExecution");
         try {
-            Integer result = monolithService.findDemoCourseExecution();
+            CourseExecutionDto result = monolithService.findDemoCourseExecution();
             logger.info("Result:{}", result);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {
