@@ -36,7 +36,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                     .and()
                     .authorizeRequests()
-                    .anyRequest().permitAll();
+                    .anyRequest().permitAll()
+                    .and()
+                    .apply(new JwtConfigurer());
         } else {
             http
                     .httpBasic().disable()
@@ -48,7 +50,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                     .antMatchers("/auth/**").permitAll()
                     .antMatchers("/users/register/confirm").permitAll()
                     .antMatchers("/images/**").permitAll()
-                    .anyRequest().authenticated();
+                    .anyRequest().authenticated()
+                    .and()
+                    .apply(new JwtConfigurer());
         }
     }
 
