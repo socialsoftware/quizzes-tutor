@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.auth.domain;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
@@ -279,6 +278,21 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
                 break;
             default:
                 throw new UnsupportedStateTransitionException(state);
+        }
+    }
+
+    public void authUserConfirmUpdateCourseExecutions(List<CourseExecutionDto> courseExecutionDtoList) {
+        switch (getState()) {
+            case UPDATE_PENDING:
+                for(CourseExecutionDto dto : courseExecutionDtoList) {
+                    addCourseExecution(dto.getCourseExecutionId());
+                }
+
+                setLastAccess(DateHandler.now());
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
         }
     }
 }

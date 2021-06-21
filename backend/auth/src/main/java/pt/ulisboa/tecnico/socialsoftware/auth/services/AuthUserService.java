@@ -220,23 +220,20 @@ public class AuthUserService {
         checkEmail(externalUserDto.getEmail());
         String username = externalUserDto.getUsername() != null ? externalUserDto.getUsername() : externalUserDto.getEmail();
 
-        AuthExternalUser authUser = (AuthExternalUser) authUserRepository
-                .findAuthUserByUsername(username).orElse(null);
+        List<CourseExecutionDto> courseExecutionDtoList = new ArrayList<>();
+        courseExecutionDtoList.add(courseExecutionDto);
+
+        AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findAuthUserByUsername(username).orElse(null);
 
         if (authUser == null) {
-            List<CourseExecutionDto> courseExecutionDtoList = new ArrayList<>();
-            courseExecutionDtoList.add(courseExecutionDto);
             authUser = (AuthExternalUser) createAuthUser(externalUserDto.getName(), username, externalUserDto.getEmail(),
                     externalUserDto.getRole(), AuthUserType.EXTERNAL, courseExecutionDtoList, null);
+            return authUser.getDto();
         }
 
         if (authUser.getUserCourseExecutions().contains(courseExecutionId)) {
             throw new TutorException(ErrorMessage.DUPLICATE_USER, username);
         }
-
-        List<CourseExecutionDto> courseExecutionDtoList = new ArrayList<>();
-        courseExecutionDtoList.add(courseExecutionDto);
-        updateAuthUserCourseExecutions(authUser, courseExecutionDtoList, null, null);
 
         return authUser.getDto();
     }
@@ -494,7 +491,18 @@ public class AuthUserService {
 
     public void approveAuthUser(Integer authUserId, Integer userId, List<CourseExecutionDto> courseExecutionList) {
         AuthUser authUser = authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
-        authUser.authUserApproved(userId, courseExecutionList);
+        //authUser.authUserApproved(userId, courseExecutionList);
+        switch (authUser.getType()) {
+            case TECNICO:
+            case DEMO:
+                authUser.authUserApproved(userId, courseExecutionList);
+                break;
+            case EXTERNAL:
+                ((AuthExternalUser)authUser).authUserApproved(userId, courseExecutionList);
+                break;
+            default:
+                throw new TutorException(ErrorMessage.WRONG_AUTH_USER_TYPE, authUser.getType().toString());
+        }
     }
 
     public void rejectAuthUser(Integer authUserId) {
@@ -516,10 +524,7 @@ public class AuthUserService {
         AuthUser authUser = authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
         switch (authUser.getType()) {
             case TECNICO:
-                ((AuthTecnicoUser)authUser).authUserconfirmUpdateCourseExecutions(ids, courseExecutionDtoList, email);
-                break;
-            case EXTERNAL:
-                ((AuthExternalUser)authUser).authUserconfirmUpdateCourseExecutions(courseExecutionDtoList);
+                ((AuthTecnicoUser)authUser).authUserConfirmUpdateCourseExecutions(ids, courseExecutionDtoList, email);
                 break;
             default:
                 throw new TutorException(ErrorMessage.WRONG_AUTH_USER_TYPE, authUser.getType().toString());

@@ -6,7 +6,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.UnsupportedStateTransitionException;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -89,23 +88,6 @@ public class AuthExternalUser extends AuthUser {
         return dto;
     }
 
-
-    public void authUserconfirmUpdateCourseExecutions(List<CourseExecutionDto> courseExecutionDtoList) {
-        switch (getState()) {
-            case UPDATE_PENDING:
-                for(CourseExecutionDto dto : courseExecutionDtoList) {
-                    addCourseExecution(dto.getCourseExecutionId());
-                }
-
-                setLastAccess(DateHandler.now());
-                generateConfirmationToken();
-                setState(APPROVED);
-                break;
-            default:
-                throw new UnsupportedStateTransitionException(getState());
-        }
-    }
-
     public void authUserBeginConfirmRegistration() {
         switch (getState()) {
             case READY_FOR_UPDATE:
@@ -132,6 +114,17 @@ public class AuthExternalUser extends AuthUser {
             case UPDATE_PENDING:
                 confirmRegistration(passwordEncoder, password);
                 setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void authUserApproved(Integer userId, List<CourseExecutionDto> courseExecutionList) {
+        switch (getState()) {
+            case APPROVAL_PENDING:
+                generateConfirmationToken();
+                super.authUserApproved(userId, courseExecutionList);
                 break;
             default:
                 throw new UnsupportedStateTransitionException(getState());

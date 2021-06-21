@@ -3,12 +3,10 @@ package pt.ulisboa.tecnico.socialsoftware.auth.domain;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.UnsupportedStateTransitionException;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.APPROVED;
@@ -58,13 +56,9 @@ public class AuthTecnicoUser extends AuthUser {
         }
     }
 
-    public void authUserconfirmUpdateCourseExecutions(String ids, List<CourseExecutionDto> courseExecutionDtoList, String email) {
+    public void authUserConfirmUpdateCourseExecutions(String ids, List<CourseExecutionDto> courseExecutionDtoList, String email) {
         switch (getState()) {
             case UPDATE_PENDING:
-                for(CourseExecutionDto dto : courseExecutionDtoList) {
-                    addCourseExecution(dto.getCourseExecutionId());
-                }
-
                 if (ids != null) {
                     // Used for Tecnico teachers
                     setEnrolledCoursesAcronyms(ids);
@@ -74,8 +68,7 @@ public class AuthTecnicoUser extends AuthUser {
                     setEmail(email);
                 }
 
-                setLastAccess(DateHandler.now());
-                setState(APPROVED);
+                super.authUserConfirmUpdateCourseExecutions(courseExecutionDtoList);
                 break;
             default:
                 throw new UnsupportedStateTransitionException(getState());

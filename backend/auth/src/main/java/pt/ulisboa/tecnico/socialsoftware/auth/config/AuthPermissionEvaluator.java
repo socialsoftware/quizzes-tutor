@@ -23,7 +23,7 @@ public class AuthPermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         UserInfo userInfo = ((UserInfo) authentication.getPrincipal());
-        logger.info("Checking token permissions in tutor: " + userInfo.toString());
+        logger.info("Checking token permissions in auth: " + userInfo.toString());
 
         if (targetDomainObject instanceof Integer) {
             int id = (int) targetDomainObject;
