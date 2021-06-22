@@ -254,7 +254,7 @@ public class AuthUserService {
         try {
             checkConfirmationToken(authUser, externalUserDto.getConfirmationToken());
 
-            confirmRegistration(authUser, passwordEncoder, externalUserDto.getPassword());
+            authUser = confirmRegistration(authUser, passwordEncoder.encode(externalUserDto.getPassword()));
         }
         catch (TutorException e) {
             if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
@@ -266,24 +266,24 @@ public class AuthUserService {
         return authUser.getDto();
     }
 
-    public void confirmRegistration(AuthUser authUser, PasswordEncoder passwordEncoder, String password) {
+    public AuthExternalUser confirmRegistration(AuthUser authUser, String password) {
         authUser.setState(READY_FOR_UPDATE);
         authUserRepository.save(authUser);
 
-        confirmRegistrationSaga(authUser.getId(), authUser.getUserSecurityInfo().getId(), passwordEncoder,
-                password);
+        confirmRegistrationSaga(authUser.getId(), authUser.getUserSecurityInfo().getId(), password);
 
         // Waits for saga to finish
         AuthUser authUserFinal = authUserRepository.findById(authUser.getId()).get();
         while (!(authUserFinal.getState().equals(AuthUserState.APPROVED))) {
             authUserFinal = authUserRepository.findById(authUser.getId()).get();
         }
+        return (AuthExternalUser) authUserFinal;
     }
 
     @Transactional
-    public void confirmRegistrationSaga(Integer authUserId, Integer userId, PasswordEncoder passwordEncoder, String password) {
+    public void confirmRegistrationSaga(Integer authUserId, Integer userId, String password) {
 
-        ConfirmRegistrationSagaData data = new ConfirmRegistrationSagaData(authUserId, userId, passwordEncoder, password);
+        ConfirmRegistrationSagaData data = new ConfirmRegistrationSagaData(authUserId, userId, password);
         sagaInstanceFactory.create(confirmRegistrationSaga, data);
     }
 
@@ -543,10 +543,10 @@ public class AuthUserService {
         authUser.authUserUndoConfirmRegistration();
     }
 
-    public void confirmAuthUserRegistration(Integer authUserId, String password, PasswordEncoder passwordEncoder) {
+    public void confirmAuthUserRegistration(Integer authUserId, String password) {
         AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findById(authUserId)
                 .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
-        authUser.authUserConfirmRegistration(password, passwordEncoder);
+        authUser.authUserConfirmRegistration(password);
     }
 
     // TODO: Uncomment when impexp is working again

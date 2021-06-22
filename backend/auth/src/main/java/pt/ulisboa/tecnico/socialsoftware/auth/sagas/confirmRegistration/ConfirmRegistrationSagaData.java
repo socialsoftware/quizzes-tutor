@@ -14,21 +14,15 @@ public class ConfirmRegistrationSagaData {
 
     private Integer authUserId;
     private Integer userId;
-    private PasswordEncoder passwordEncoder;
     private String password;
 
     public ConfirmRegistrationSagaData() {
     }
 
-    public ConfirmRegistrationSagaData(Integer authUserId, Integer userId, PasswordEncoder passwordEncoder, String password) {
+    public ConfirmRegistrationSagaData(Integer authUserId, Integer userId, String password) {
         this.authUserId = authUserId;
         this.userId = userId;
-        this.passwordEncoder = passwordEncoder;
         this.password = password;
-    }
-
-    public Logger getLogger() {
-        return logger;
     }
 
     public Integer getAuthUserId() {
@@ -45,14 +39,6 @@ public class ConfirmRegistrationSagaData {
 
     public void setUserId(Integer userId) {
         this.userId = userId;
-    }
-
-    public PasswordEncoder getPasswordEncoder() {
-        return passwordEncoder;
-    }
-
-    public void setPasswordEncoder(PasswordEncoder passwordEncoder) {
-        this.passwordEncoder = passwordEncoder;
     }
 
     public String getPassword() {
@@ -80,6 +66,15 @@ public class ConfirmRegistrationSagaData {
 
     ConfirmRegistrationCommand confirmRegistration() {
         logger.info("Sent ConfirmRegistrationCommand");
-        return new ConfirmRegistrationCommand(getAuthUserId(), getPasswordEncoder(), getPassword());
+        return new ConfirmRegistrationCommand(getAuthUserId(), getPassword());
+    }
+
+    @Override
+    public String toString() {
+        return "ConfirmRegistrationSagaData{" +
+                "authUserId=" + authUserId +
+                ", userId=" + userId +
+                ", password='" + password + '\'' +
+                '}';
     }
 }

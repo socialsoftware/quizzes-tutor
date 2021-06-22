@@ -147,10 +147,9 @@ public class AuthServiceCommandHandlers {
 
         Integer authUserId = cm.getCommand().getAuthUserId();
         String password = cm.getCommand().getPassword();
-        PasswordEncoder passwordEncoder = cm.getCommand().getPasswordEncoder();
 
         try {
-            authUserService.confirmAuthUserRegistration(authUserId, password, passwordEncoder);
+            authUserService.confirmAuthUserRegistration(authUserId, password);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();

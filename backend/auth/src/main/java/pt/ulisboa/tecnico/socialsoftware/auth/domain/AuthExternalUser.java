@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.auth.domain;
 
 import org.springframework.security.crypto.keygen.KeyGenerators;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
@@ -60,8 +59,8 @@ public class AuthExternalUser extends AuthUser {
         this.tokenGenerationDate = tokenGenerationDate;
     }
 
-    public void confirmRegistration(PasswordEncoder passwordEncoder, String password) {
-        setPassword(passwordEncoder.encode(password));
+    public void confirmRegistration(String password) {
+        setPassword(password);
         setActive(true);
     }
 
@@ -109,10 +108,10 @@ public class AuthExternalUser extends AuthUser {
     }
 
 
-    public void authUserConfirmRegistration(String password, PasswordEncoder passwordEncoder) {
+    public void authUserConfirmRegistration(String password) {
         switch (getState()) {
             case UPDATE_PENDING:
-                confirmRegistration(passwordEncoder, password);
+                confirmRegistration(password);
                 setState(APPROVED);
                 break;
             default:

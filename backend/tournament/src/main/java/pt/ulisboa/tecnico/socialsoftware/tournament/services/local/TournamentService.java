@@ -170,8 +170,6 @@ public class TournamentService {
         return tournament.getDto();
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
         tournament.checkCanChange();
