@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.RemoveCourseExecutionCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
@@ -17,6 +18,8 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.events.AddCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveCourseExecutionEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveUserFromTecnicoCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
@@ -132,9 +135,13 @@ public class CourseExecutionService {
     public void removeUserFromTecnicoCourseExecution(Integer userId, int courseExecutionId) {
         CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);
         User user = this.userRepository.findById(userId).orElse(null);
-
+        //TODO: Send event
         if (user != null && courseExecution != null) {
             user.removeCourse(courseExecution);
+            RemoveUserFromTecnicoCourseExecutionEvent userFromTecnicoCourseExecutionEvent =
+                    new RemoveUserFromTecnicoCourseExecutionEvent(userId, courseExecutionId);
+            domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
+                    Collections.singletonList(userFromTecnicoCourseExecutionEvent));
         }
     }
 
@@ -162,6 +169,11 @@ public class CourseExecutionService {
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
         courseExecution.remove();
+        //TODO: Send Event
+
+        RemoveCourseExecutionEvent removeCourseExecutionEvent = new RemoveCourseExecutionEvent(courseExecutionId);
+        domainEventPublisher.publish(COURSE_EXECUTION_AGGREGATE_TYPE, String.valueOf(courseExecutionId),
+                Collections.singletonList(removeCourseExecutionEvent));
 
         courseExecutionRepository.delete(courseExecution);
     }
@@ -175,16 +187,16 @@ public class CourseExecutionService {
         for (User user : courseExecution.getUsers()) {
             String oldUsername = user.getUsername();
 
-            DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(user.getId());
-            domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
-                    Collections.singletonList(deleteAuthUserEvent));
-
             String newUsername = user.getUsername();
             questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
             String role = user.getRole().toString();
             String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();
             user.setName(String.format("%s %s", roleCapitalized, user.getId()));
             user.setUsername(null);
+
+            DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(user.getId());
+            domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
+                    Collections.singletonList(deleteAuthUserEvent));
         }
     }
 

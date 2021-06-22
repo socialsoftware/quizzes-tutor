@@ -13,22 +13,22 @@ import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceRepositoryConfig
 public class AuthUserServiceEventConfiguration {
 
     @Bean
-    public UserSubscriptions authUserSubscriptions() {
-        return new UserSubscriptions();
+    public AuthUserUserSubscriptions authUserUserSubscriptions() {
+        return new AuthUserUserSubscriptions();
     }
 
     @Bean
-    public CourseExecutionSubscriptions courseExecutionSubscriptions() {
-        return new CourseExecutionSubscriptions();
+    public AuthUserCourseExecutionSubscriptions courseExecutionSubscriptions() {
+        return new AuthUserCourseExecutionSubscriptions();
     }
 
     @Bean
-    public DomainEventDispatcher domainEventDispatcherUser(UserSubscriptions userSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
+    public DomainEventDispatcher domainEventDispatcherUser(AuthUserUserSubscriptions userSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
         return domainEventDispatcherFactory.make("authUser_user_events", userSubscriptions.domainEventHandlers());
     }
 
     @Bean
-    public DomainEventDispatcher domainEventDispatcherExecution(CourseExecutionSubscriptions courseExecutionSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
+    public DomainEventDispatcher domainEventDispatcherExecution(AuthUserCourseExecutionSubscriptions courseExecutionSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
         return domainEventDispatcherFactory.make("authUser_execution_events", courseExecutionSubscriptions.domainEventHandlers());
     }
 }

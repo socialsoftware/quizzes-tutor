@@ -15,8 +15,8 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentReposit
 import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.QUIZ_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.NO_TOURNAMENT_WITH_QUIZ_ID;
 
-public class TournamentSubscriptions {
-    private static final Logger logger = LoggerFactory.getLogger(TournamentSubscriptions.class);
+public class TournamentQuizSubscriptions {
+    private static final Logger logger = LoggerFactory.getLogger(TournamentQuizSubscriptions.class);
 
     @Autowired
     private TournamentRepository tournamentRepository;

@@ -13,12 +13,33 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.config.TournamentServiceRepo
 public class TournamentServiceEventConfiguration {
 
     @Bean
-    public TournamentSubscriptions tournamentSubscriptions() {
-        return new TournamentSubscriptions();
+    public TournamentQuizSubscriptions tournamentSubscriptions() {
+        return new TournamentQuizSubscriptions();
     }
 
     @Bean
-    public DomainEventDispatcher domainEventDispatcher(TournamentSubscriptions tournamentSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
+    public TournamentTopicSubscriptions topicSubscriptions() {
+        return new TournamentTopicSubscriptions();
+    }
+
+    @Bean
+    public TournamentCourseExecutionSubscriptions tournamentCourseExecutionSubscriptions() {
+        return new TournamentCourseExecutionSubscriptions();
+    }
+
+    @Bean
+    public DomainEventDispatcher domainEventDispatcher(TournamentQuizSubscriptions tournamentSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
         return domainEventDispatcherFactory.make("tournament_quiz_events", tournamentSubscriptions.domainEventHandlers());
     }
+
+    @Bean
+    public DomainEventDispatcher domainEventDispatcherUser(TournamentTopicSubscriptions topicSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
+        return domainEventDispatcherFactory.make("tournament_topic_events", topicSubscriptions.domainEventHandlers());
+    }
+
+    @Bean
+    public DomainEventDispatcher domainEventDispatcherExecution(TournamentCourseExecutionSubscriptions tournamentCourseExecutionSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
+        return domainEventDispatcherFactory.make("tournament_execution_events", tournamentCourseExecutionSubscriptions.domainEventHandlers());
+    }
+
 }
