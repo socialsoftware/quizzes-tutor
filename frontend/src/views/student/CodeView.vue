@@ -27,9 +27,7 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { QrcodeStream } from 'vue-qrcode-reader';
 import StatementQuiz from '@/models/statement/StatementQuiz';
-import StatementManager from '@/models/statement/StatementManager';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
 @Component
@@ -41,17 +39,17 @@ export default class CodeView extends Vue {
 
   async setQuizId() {
     this.hasCode = true;
-    this.getQuizByCode();
+    await this.getQuizByCode();
   }
 
   async getQuizByCode() {
+    await this.$store.dispatch('loading');
     if (this.quizId && this.$router.currentRoute.name === 'code') {
       try {
         this.quiz = await RemoteServices.getQuizByQRCode(this.quizId);
 
         if (!this.quiz.timeToAvailability) {
-          let statementManager: StatementManager = StatementManager.getInstance;
-          statementManager.statementQuiz = this.quiz;
+          await this.$store.dispatch('statementQuiz', this.quiz);
           await this.$router.push({ name: 'solve-quiz' });
         }
       } catch (error) {
@@ -59,6 +57,7 @@ export default class CodeView extends Vue {
         await this.$router.push({ name: 'home' });
       }
     }
+    await this.$store.dispatch('clearLoading');
   }
 
   @Watch('quiz.timeToAvailability')

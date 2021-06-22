@@ -147,12 +147,12 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
-import StatementManager from '@/models/statement/StatementManager';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
+import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 
 @Component({
   components: {
@@ -160,9 +160,7 @@ import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
   },
 })
 export default class QuizView extends Vue {
-  statementManager: StatementManager = StatementManager.getInstance;
-  statementQuiz: StatementQuiz | null =
-    StatementManager.getInstance.statementQuiz;
+  statementQuiz: StatementQuiz | null = this.$store.getters.getStatementQuiz;
   confirmationDialog: boolean = false;
   confirmed: boolean = false;
   nextConfirmationDialog: boolean = false;
@@ -174,7 +172,7 @@ export default class QuizView extends Vue {
 
   async created() {
     if (!this.statementQuiz?.id) {
-      await this.$router.push({ name: 'create-quiz' });
+      await this.$router.push({ name: 'create-quizzes' });
     }
     await this.setCurrentQuestion(0);
   }
@@ -265,9 +263,16 @@ export default class QuizView extends Vue {
     try {
       this.calculateTime();
       this.confirmed = true;
-      await this.statementManager.concludeQuiz();
 
-      if (this.statementManager.correctAnswers.length !== 0) {
+      let correctAnswers: StatementCorrectAnswer[] = [];
+      if (this.statementQuiz) {
+        correctAnswers = await RemoteServices.concludeQuiz(this.statementQuiz);
+      } else {
+        throw Error('No quiz');
+      }
+
+      if (correctAnswers.length !== 0) {
+        await this.$store.dispatch('correctAnswers', correctAnswers);
         await this.$router.push({ name: 'quiz-results' });
       } else {
         this.quizSubmitted = true;
