@@ -12,7 +12,8 @@ export default class StatementAnswer {
   public userDiscussion?: Discussion;
   public timeToSubmission: number | null = null;
 
-  answerDetails: StatementAnswerDetails = new MultipleChoiceStatementAnswerDetails();
+  answerDetails: StatementAnswerDetails =
+    new MultipleChoiceStatementAnswerDetails();
 
   constructor(jsonObj?: StatementAnswer) {
     if (jsonObj) {

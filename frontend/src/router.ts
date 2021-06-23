@@ -358,13 +358,13 @@ const router = new Router({
 });
 
 router.beforeEach(async (to, from, next) => {
-  if (to.meta.requiredAuth == 'None') {
+  if (to.meta?.requiredAuth == 'None') {
     next();
-  } else if (to.meta.requiredAuth == 'Admin' && Store.getters.isAdmin) {
+  } else if (to.meta?.requiredAuth == 'Admin' && Store.getters.isAdmin) {
     next();
-  } else if (to.meta.requiredAuth == 'Teacher' && Store.getters.isTeacher) {
+  } else if (to.meta?.requiredAuth == 'Teacher' && Store.getters.isTeacher) {
     next();
-  } else if (to.meta.requiredAuth == 'Student' && Store.getters.isStudent) {
+  } else if (to.meta?.requiredAuth == 'Student' && Store.getters.isStudent) {
     next();
   } else {
     next('/');
@@ -372,7 +372,7 @@ router.beforeEach(async (to, from, next) => {
 });
 
 router.afterEach(async (to, from) => {
-  document.title = to.meta.title;
+  document.title = to.meta?.title;
   await Store.dispatch('clearLoading');
 });
 
