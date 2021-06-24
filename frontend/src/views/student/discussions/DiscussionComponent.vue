@@ -8,7 +8,10 @@
         >
           Clarifications
         </v-card-title>
-        <clarification-component :clarifications="clarifications">
+        <clarification-component
+          :clarifications="clarifications"
+          :can-change="false"
+        >
         </clarification-component>
       </v-card>
     </div>

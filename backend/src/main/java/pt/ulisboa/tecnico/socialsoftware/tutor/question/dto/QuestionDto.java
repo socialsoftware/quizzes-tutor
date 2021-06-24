@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
@@ -18,6 +20,7 @@ public class QuestionDto implements Serializable {
     private String title;
     private String content;
     private Integer difficulty;
+    private long numberOfClarifications;
     private int numberOfAnswers = 0;
     private int numberOfGeneratedQuizzes = 0;
     private int numberOfNonGeneratedQuizzes = 0;
@@ -37,6 +40,7 @@ public class QuestionDto implements Serializable {
         this.title = question.getTitle();
         this.content = question.getContent();
         this.difficulty = question.getDifficulty();
+        this.numberOfClarifications = question.getDiscussions().stream().flatMap(discussion -> discussion.getReplies().stream()).filter(Reply::isPublic).count();
         this.numberOfAnswers = question.getNumberOfAnswers();
         this.numberOfNonGeneratedQuizzes = question.getQuizQuestions().size() - this.numberOfGeneratedQuizzes;
         this.numberOfCorrect = question.getNumberOfCorrect();
@@ -91,6 +95,14 @@ public class QuestionDto implements Serializable {
 
     public void setDifficulty(Integer difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public long getNumberOfClarifications() {
+        return numberOfClarifications;
+    }
+
+    public void setNumberOfClarifications(long numberOfClarifications) {
+        this.numberOfClarifications = numberOfClarifications;
     }
 
     public int getNumberOfAnswers() {
@@ -181,6 +193,7 @@ public class QuestionDto implements Serializable {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", difficulty=" + difficulty +
+                ", numberOfClarifications=" + numberOfClarifications +
                 ", numberOfAnswers=" + numberOfAnswers +
                 ", numberOfGeneratedQuizzes=" + numberOfGeneratedQuizzes +
                 ", numberOfNonGeneratedQuizzes=" + numberOfNonGeneratedQuizzes +
