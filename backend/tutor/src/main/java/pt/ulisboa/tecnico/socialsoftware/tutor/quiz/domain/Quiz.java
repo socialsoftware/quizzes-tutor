@@ -326,12 +326,6 @@ public class Quiz implements DomainEntity {
     }
 
     public void remove() {
-        checkCanChange();
-
-        if(this.getType().equals(QuizType.EXTERNAL_QUIZ)) {
-            throw new TutorException(EXTERNAL_CANNOT_BE_REMOVED);
-        }
-
         this.courseExecution.getQuizzes().remove(this);
         this.courseExecution = null;
     }

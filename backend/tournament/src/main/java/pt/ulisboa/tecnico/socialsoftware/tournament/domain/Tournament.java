@@ -150,13 +150,11 @@ public class Tournament  {
     public Set<TournamentTopic> getTopics() { return topics; }
 
     public void setTopics(Set<TournamentTopic> topics) {
-        Set<TournamentTopic> topicsList = new HashSet<>();
         for (TournamentTopic topic: topics) {
             checkTopicCourse(topic);
-            topicsList.add(topic);
         }
 
-        this.topics = topicsList;
+        this.topics = topics;
     }
 
     public TournamentState getState() {
@@ -170,14 +168,11 @@ public class Tournament  {
     public void updateTopics(Set<TournamentTopic> newTopics) {
         if (newTopics.isEmpty()) throw new TutorException(TOURNAMENT_MUST_HAVE_ONE_TOPIC);
 
-        Set<TournamentTopic> topicsList = new HashSet<>();
-
         for (TournamentTopic topic : newTopics) {
             checkTopicCourse(topic);
-            topicsList.add(topic);
         }
 
-        this.topics = topicsList;
+        this.topics = newTopics;
     }
 
     public void checkTopicCourse(TournamentTopic topic) {
@@ -249,7 +244,7 @@ public class Tournament  {
         }
     }
 
-    public void updateTournament(TournamentDto tournamentDto, Set<TournamentTopic> topics) {
+    public void updateTournament(TournamentDto tournamentDto) {
         if (DateHandler.isValidDateFormat(tournamentDto.getStartTime())) {
             DateHandler.toISOString(getStartTime());
             setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
@@ -261,8 +256,6 @@ public class Tournament  {
         }
 
         setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
-
-        updateTopics(topics);
     }
 
     public boolean isPrivateTournament() { return privateTournament; }
@@ -364,7 +357,7 @@ public class Tournament  {
 
     public void beginUpdateQuiz() {
         switch (getState()) {
-            case APPROVED:
+            case READY_FOR_UPDATE:
                 setState(UPDATE_PENDING);
                 break;
             default:
@@ -372,7 +365,7 @@ public class Tournament  {
         }
     }
 
-    public void undoUpdateQuiz() {
+    public void undoUpdate() {
         switch (getState()) {
             case UPDATE_PENDING:
                 setState(APPROVED);
@@ -382,10 +375,10 @@ public class Tournament  {
         }
     }
 
-    public void confirmUpdateQuiz(TournamentDto tournamentDto, Set<TournamentTopic> topics) {
+    public void confirmUpdateQuiz(TournamentDto tournamentDto) {
         switch (getState()) {
             case UPDATE_PENDING:
-                updateTournament(tournamentDto, topics);
+                updateTournament(tournamentDto);
                 setState(APPROVED);
                 break;
             default:
@@ -393,12 +386,10 @@ public class Tournament  {
         }
     }
 
-    public void confirmTournament(Integer quizId, Set<TournamentTopic> topics, TournamentCourseExecution courseExecution) {
+    public void confirmTournament(Integer quizId) {
         switch (getState()) {
             case APPROVAL_PENDING:
                 setQuizId(quizId);
-                setCourseExecution(courseExecution);
-                setTopics(topics);
                 setState(APPROVED);
                 break;
             default:
@@ -410,7 +401,7 @@ public class Tournament  {
         switch (getState()) {
             case APPROVAL_PENDING:
                 remove();
-                setState(REMOVED);
+                setState(REJECTED);
                 break;
             default:
                 throw new UnsupportedStateTransitionException(getState());

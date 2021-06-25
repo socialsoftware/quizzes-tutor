@@ -93,7 +93,6 @@ public class UserService {
                 });
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void activateUser(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         user.setActive(true);
@@ -105,21 +104,31 @@ public class UserService {
         return user.getUserCourseExecutionsDto();
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+
     public void deleteUser(Integer id) {
         User user = userRepository.findById(id).orElseThrow(() -> new TutorException(USER_NOT_FOUND, id));
         user.remove();
         userRepository.delete(user);
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeCourseExecutions(Integer userId, List<CourseExecutionDto> courseExecutionDtoList) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        checkExecutionsExist(courseExecutionDtoList);
+        removeCourseExecutionsFromUser(courseExecutionDtoList, user);
+    }
 
-        for(CourseExecutionDto dto: courseExecutionDtoList) {
-            CourseExecution courseExecution = courseExecutionRepository.findById(dto.getCourseExecutionId()).
-                    orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void removeCourseExecutionsFromUser(List<CourseExecutionDto> courseExecutionDtoList, User user) {
+        for (CourseExecutionDto dto: courseExecutionDtoList) {
+            CourseExecution courseExecution = courseExecutionRepository.findById(dto.getCourseExecutionId()).get();
             user.removeCourse(courseExecution);
+        }
+    }
+
+    private void checkExecutionsExist(List<CourseExecutionDto> courseExecutionDtoList) {
+        for (CourseExecutionDto dto: courseExecutionDtoList) {
+            courseExecutionRepository.findById(dto.getCourseExecutionId()).
+                    orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
         }
     }
 }

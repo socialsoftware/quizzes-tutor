@@ -38,14 +38,74 @@ public class TournamentServiceCommandHandlers {
                 .onMessage(ConfirmRemoveTournamentCommand.class, this::confirmRemove)
                 .onMessage(UndoRemoveTournamentCommand.class, this::undoRemove)
                 .onMessage(BeginUpdateTournamentQuizCommand.class, this::beginUpdate)
-                .onMessage(UndoUpdateTournamentQuizCommand.class, this::undoUpdate)
+                .onMessage(UndoUpdateTournamentCommand.class, this::undoUpdate)
                 .onMessage(ConfirmUpdateTournamentQuizCommand.class, this::confirmUpdate)
                 .onMessage(ConfirmCreateTournamentCommand.class, this::confirmCreate)
                 .onMessage(RejectCreateTournamentCommand.class, this::rejectCreate)
+                .onMessage(StoreTournamentTopicsCommand.class, this::storeTopics)
+                .onMessage(StoreTournamentCourseExecutionCommand.class, this::storeCourseExecution)
+                .onMessage(UpdateTopicsTournamentCommand.class, this::updateTopics)
+                .onMessage(UndoUpdateTopicsTournamentCommand.class, this::undoUpdateTopics)
                 .build();
     }
 
-    public Message rejectCreate(CommandMessage<RejectCreateTournamentCommand> cm) {
+    private Message undoUpdateTopics(CommandMessage<UndoUpdateTopicsTournamentCommand> cm) {
+        logger.info("Received UndoUpdateTopicsTournamentCommand");
+
+        Integer tournamentId = cm.getCommand().getTournamentId();
+        Set<TournamentTopic> topics = cm.getCommand().getOldTopics();
+
+        try {
+            tournamentService.undoUpdateTopics(tournamentId, topics);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+    private Message updateTopics(CommandMessage<UpdateTopicsTournamentCommand> cm) {
+        logger.info("Received UpdateTopicsTournamentCommand");
+
+        Integer tournamentId = cm.getCommand().getTournamentId();
+        Set<TournamentTopic> topics = cm.getCommand().getTournamentTopics();
+
+        try {
+            tournamentService.updateTopics(tournamentId, topics);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+    private Message storeCourseExecution(CommandMessage<StoreTournamentCourseExecutionCommand> cm) {
+        logger.info("Received StoreTournamentCourseExecutionCommand");
+
+        Integer tournamentId = cm.getCommand().getTournamentId();
+        TournamentCourseExecution tournamentCourseExecution = cm.getCommand().getTournamentCourseExecution();
+
+        try {
+            tournamentService.storeCourseExecution(tournamentId, tournamentCourseExecution);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+    private Message storeTopics(CommandMessage<StoreTournamentTopicsCommand> cm) {
+        logger.info("Received StoreTournamentTopicsCommand");
+
+        Integer tournamentId = cm.getCommand().getTournamentId();
+        Set<TournamentTopic> tournamentTopics = cm.getCommand().getTournamentTopics();
+
+        try {
+            tournamentService.storeTopics(tournamentId, tournamentTopics);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+    private Message rejectCreate(CommandMessage<RejectCreateTournamentCommand> cm) {
         logger.info("Received RejectCreateTournamentCommand");
 
         Integer tournamentId = cm.getCommand().getTournamentId();
@@ -58,38 +118,35 @@ public class TournamentServiceCommandHandlers {
         }
     }
 
-    public Message confirmCreate(CommandMessage<ConfirmCreateTournamentCommand> cm) {
+    private Message confirmCreate(CommandMessage<ConfirmCreateTournamentCommand> cm) {
         logger.info("Received ConfirmCreateTournamentCommand");
 
         Integer tournamentId = cm.getCommand().getTournamentId();
         Integer quizId = cm.getCommand().getQuizId();
-        Set<TournamentTopic> topics = cm.getCommand().getTopics();
-        TournamentCourseExecution courseExecution = cm.getCommand().getTournamentCourseExecution();
 
         try {
-            tournamentService.confirmCreate(tournamentId, quizId, topics, courseExecution);
+            tournamentService.confirmCreate(tournamentId, quizId);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
         }
     }
 
-    public Message confirmUpdate(CommandMessage<ConfirmUpdateTournamentQuizCommand> cm) {
+    private Message confirmUpdate(CommandMessage<ConfirmUpdateTournamentQuizCommand> cm) {
         logger.info("Received ConfirmUpdateTournamentQuizCommand");
 
         Integer tournamentId = cm.getCommand().getTournamentId();
         TournamentDto tournamentDto = cm.getCommand().getTournamentDto();
-        Set<TournamentTopic> topics = cm.getCommand().getTopics();
 
         try {
-            tournamentService.confirmUpdate(tournamentId, tournamentDto, topics);
+            tournamentService.confirmUpdate(tournamentId, tournamentDto);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
         }
     }
 
-    public Message undoUpdate(CommandMessage<UndoUpdateTournamentQuizCommand> cm) {
+    private Message undoUpdate(CommandMessage<UndoUpdateTournamentCommand> cm) {
         logger.info("Received UndoUpdateTournamentQuizCommand");
 
         Integer tournamentId = cm.getCommand().getTournamentId();
@@ -102,7 +159,7 @@ public class TournamentServiceCommandHandlers {
         }
     }
 
-    public Message beginUpdate(CommandMessage<BeginUpdateTournamentQuizCommand> cm) {
+    private Message beginUpdate(CommandMessage<BeginUpdateTournamentQuizCommand> cm) {
         logger.info("Received BeginUpdateTournamentQuizCommand");
 
         Integer tournamentId = cm.getCommand().getTournamentId();
@@ -115,7 +172,7 @@ public class TournamentServiceCommandHandlers {
         }
     }
 
-    public Message beginRemove(CommandMessage<BeginRemoveTournamentCommand> cm) {
+    private Message beginRemove(CommandMessage<BeginRemoveTournamentCommand> cm) {
         logger.info("Received BeginRemoveTournamentCommand");
 
         Integer tournamentId = cm.getCommand().getTournamentId();
@@ -128,7 +185,7 @@ public class TournamentServiceCommandHandlers {
         }
     }
 
-    public Message confirmRemove(CommandMessage<ConfirmRemoveTournamentCommand> cm) {
+    private Message confirmRemove(CommandMessage<ConfirmRemoveTournamentCommand> cm) {
         logger.info("Received ConfirmRemoveTournamentCommand");
 
         Integer tournamentId = cm.getCommand().getTournamentId();
@@ -141,7 +198,7 @@ public class TournamentServiceCommandHandlers {
         }
     }
 
-    public Message undoRemove(CommandMessage<UndoRemoveTournamentCommand> cm) {
+    private Message undoRemove(CommandMessage<UndoRemoveTournamentCommand> cm) {
         logger.info("Received UndoRemoveTournamentCommand");
 
         Integer tournamentId = cm.getCommand().getTournamentId();

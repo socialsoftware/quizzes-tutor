@@ -1,13 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants;
 
 import io.eventuate.tram.commands.common.Success;
+import io.eventuate.tram.commands.consumer.CommandWithDestination;
 import io.eventuate.tram.sagas.simpledsl.CommandEndpoint;
 import io.eventuate.tram.sagas.simpledsl.CommandEndpointBuilder;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tournament.command.*;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament.CreateTournamentSagaData;
+import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSagaData;
 
-import java.util.function.Predicate;
+import java.util.function.Function;
 
 public class TournamentServiceProxy {
 
@@ -35,7 +36,7 @@ public class TournamentServiceProxy {
             .withReply(Success.class)
             .build();
 
-    public final CommandEndpoint<UndoUpdateTournamentQuizCommand> undoUpdate = CommandEndpointBuilder
+    public final CommandEndpoint<UndoUpdateTournamentQuizCommand> undoUpdateQuiz = CommandEndpointBuilder
             .forCommand(UndoUpdateTournamentQuizCommand.class)
             .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
             .withReply(Success.class)
@@ -55,6 +56,36 @@ public class TournamentServiceProxy {
 
     public final CommandEndpoint<ConfirmCreateTournamentCommand> confirmCreate = CommandEndpointBuilder
             .forCommand(ConfirmCreateTournamentCommand.class)
+            .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
+            .withReply(Success.class)
+            .build();
+
+    public final CommandEndpoint<StoreTournamentTopicsCommand> storeTopics = CommandEndpointBuilder
+            .forCommand(StoreTournamentTopicsCommand.class)
+            .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
+            .withReply(Success.class)
+            .build();
+
+    public final CommandEndpoint<StoreTournamentCourseExecutionCommand> storeCourseExecution = CommandEndpointBuilder
+            .forCommand(StoreTournamentCourseExecutionCommand.class)
+            .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
+            .withReply(Success.class)
+            .build();
+
+    public final CommandEndpoint<UndoUpdateTournamentCommand> undoUpdate = CommandEndpointBuilder
+            .forCommand(UndoUpdateTournamentCommand.class)
+            .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
+            .withReply(Success.class)
+            .build();
+
+    public final CommandEndpoint<UpdateTopicsTournamentCommand> updateTopics = CommandEndpointBuilder
+            .forCommand(UpdateTopicsTournamentCommand.class)
+            .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
+            .withReply(Success.class)
+            .build();
+
+    public final CommandEndpoint<UndoUpdateTopicsTournamentCommand> undoUpdateTopics = CommandEndpointBuilder
+            .forCommand(UndoUpdateTopicsTournamentCommand.class)
             .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
             .withReply(Success.class)
             .build();

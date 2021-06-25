@@ -1,22 +1,21 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.command;
 
 import io.eventuate.tram.commands.common.Command;
-import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 
 import java.util.Set;
 
-public class ConfirmCreateTournamentCommand implements Command {
+public class UndoUpdateTopicsTournamentCommand implements Command {
 
     private Integer tournamentId;
-    private Integer quizId;
+    private Set<TournamentTopic> oldTopics;
 
-    public ConfirmCreateTournamentCommand() {
+    public UndoUpdateTopicsTournamentCommand() {
     }
 
-    public ConfirmCreateTournamentCommand(Integer tournamentId, Integer quizId) {
+    public UndoUpdateTopicsTournamentCommand(Integer tournamentId, Set<TournamentTopic> oldTopics) {
         this.tournamentId = tournamentId;
-        this.quizId = quizId;
+        this.oldTopics = oldTopics;
     }
 
     public Integer getTournamentId() {
@@ -27,19 +26,19 @@ public class ConfirmCreateTournamentCommand implements Command {
         this.tournamentId = tournamentId;
     }
 
-    public Integer getQuizId() {
-        return quizId;
+    public Set<TournamentTopic> getOldTopics() {
+        return oldTopics;
     }
 
-    public void setQuizId(Integer quizId) {
-        this.quizId = quizId;
+    public void setOldTopics(Set<TournamentTopic> oldTopics) {
+        this.oldTopics = oldTopics;
     }
 
     @Override
     public String toString() {
-        return "ConfirmCreateTournamentCommand{" +
+        return "UndoUpdateTopicsTournamentCommand{" +
                 "tournamentId=" + tournamentId +
-                ", quizId=" + quizId +
+                ", oldTopics=" + oldTopics +
                 '}';
     }
 }

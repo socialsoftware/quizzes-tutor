@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.RemoteAccessException;
@@ -33,6 +34,8 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentState.READY_FOR_UPDATE;
+import static pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentState.UPDATE_PENDING;
 
 @Service
 public class TournamentService {
@@ -141,22 +144,32 @@ public class TournamentService {
         tournament.removeParticipant(participant);
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
+
     public TournamentDto updateTournament(Set<Integer> topicsId, TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
         tournament.checkCanChange();
 
-        updateTournamentQuizSaga(tournament.getId(), tournamentDto, new TopicListDto(topicsId));
+        updateTournamentQuizSaga(tournament, tournamentDto, new TopicListDto(topicsId),
+                tournament.getTopics());
 
-        return tournament.getDto();
+        // Waits for saga to finish
+        Tournament tournamentFinal = tournamentRepository.findById(tournament.getId()).get();
+        while (!(tournamentFinal.getState().equals(TournamentState.APPROVED))) {
+            tournamentFinal = tournamentRepository.findById(tournament.getId()).get();
+        }
+
+        return tournamentFinal.getDto();
     }
 
     @Transactional
-    public void updateTournamentQuizSaga(Integer tournamentId,
-                                     TournamentDto tournamentDto, TopicListDto topicsList) {
-        UpdateTournamentSagaData data = new UpdateTournamentSagaData(tournamentId, tournamentDto,
-                topicsList);
+    public void updateTournamentQuizSaga(Tournament tournament, TournamentDto tournamentDto,
+                                         TopicListDto topicsList, Set<TournamentTopic> oldTopics) {
+        tournament.setState(UPDATE_PENDING);
+        tournamentRepository.save(tournament);
+
+        logger.info("Before creating update saga");
+        UpdateTournamentSagaData data = new UpdateTournamentSagaData(tournament.getId(), tournamentDto,
+                topicsList, oldTopics, tournament.getCourseExecution().getId());
         sagaInstanceFactory.create(updateTournamentSaga, data);
     }
 
@@ -260,31 +273,55 @@ public class TournamentService {
     public void beginUpdate(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+        logger.info("Begin Update");
         tournament.beginUpdateQuiz();
     }
 
     public void undoUpdate(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
-        tournament.undoUpdateQuiz();
+        tournament.undoUpdate();
     }
 
-    public void confirmUpdate(Integer tournamentId, TournamentDto tournamentDto, Set<TournamentTopic> topics) {
+    public void confirmUpdate(Integer tournamentId, TournamentDto tournamentDto) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
-        tournament.confirmUpdateQuiz(tournamentDto, topics);
+        tournament.confirmUpdateQuiz(tournamentDto);
     }
 
-    public void confirmCreate(Integer tournamentId, Integer quizId, Set<TournamentTopic> topics,
-                              TournamentCourseExecution courseExecution) {
+    public void confirmCreate(Integer tournamentId, Integer quizId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
-        tournament.confirmTournament(quizId, topics, courseExecution);
+        tournament.confirmTournament(quizId);
     }
 
     public void rejectCreate(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.rejectTournament();
+    }
+
+    public void storeTopics(Integer tournamentId, Set<TournamentTopic> tournamentTopics) {
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+        tournament.setTopics(tournamentTopics);
+    }
+
+    public void storeCourseExecution(Integer tournamentId, TournamentCourseExecution tournamentCourseExecution) {
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+        tournament.setCourseExecution(tournamentCourseExecution);
+    }
+
+    public void updateTopics(Integer tournamentId, Set<TournamentTopic> topics) {
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+        tournament.updateTopics(topics);
+    }
+
+    public void undoUpdateTopics(Integer tournamentId, Set<TournamentTopic> topics) {
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+        tournament.setTopics(topics);
     }
 }

@@ -5,15 +5,14 @@ import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.question.GetTopicsCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.GetQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.UpdateQuizCommand;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tournament.command.BeginUpdateTournamentQuizCommand;
-import pt.ulisboa.tecnico.socialsoftware.tournament.command.ConfirmUpdateTournamentQuizCommand;
-import pt.ulisboa.tecnico.socialsoftware.tournament.command.UndoUpdateTournamentQuizCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tournament.command.*;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 
 import java.util.HashSet;
@@ -26,17 +25,22 @@ public class UpdateTournamentSagaData {
 
     private Integer tournamentId;
     private QuizDto quizDto;
-    private Set<TournamentTopic> topics = new HashSet<>();
+    private Set<TournamentTopic> newTopics = new HashSet<>();
+    private Set<TournamentTopic> oldTopics = new HashSet<>();
     private TournamentDto tournamentDto;
     private TopicListDto topicListDto;
+    private Integer executionId;
 
     public UpdateTournamentSagaData() {
     }
 
-    public UpdateTournamentSagaData(Integer tournamentId, TournamentDto tournamentDto, TopicListDto topicListDto) {
+    public UpdateTournamentSagaData(Integer tournamentId, TournamentDto tournamentDto, TopicListDto topicListDto,
+                                    Set<TournamentTopic> oldTopics, Integer executionId) {
         this.tournamentId = tournamentId;
         this.tournamentDto = tournamentDto;
         this.topicListDto = topicListDto;
+        this.oldTopics = oldTopics;
+        this.executionId = executionId;
     }
 
     public Integer getTournamentId() {
@@ -56,11 +60,11 @@ public class UpdateTournamentSagaData {
     }
 
     public Set<TournamentTopic> getTournamentTopics() {
-        return topics;
+        return newTopics;
     }
 
-    public void setTopics(Set<TournamentTopic> topics) {
-        this.topics = topics;
+    public void setNewTopics(Set<TournamentTopic> newTopics) {
+        this.newTopics = newTopics;
     }
 
     public TournamentDto getTournamentDto() {
@@ -79,6 +83,22 @@ public class UpdateTournamentSagaData {
         this.topicListDto = topicListDto;
     }
 
+    public Set<TournamentTopic> getOldTopics() {
+        return oldTopics;
+    }
+
+    public void setOldTopics(Set<TournamentTopic> oldTopics) {
+        this.oldTopics = oldTopics;
+    }
+
+    public Integer getExecutionId() {
+        return executionId;
+    }
+
+    public void setExecutionId(Integer executionId) {
+        this.executionId = executionId;
+    }
+
     BeginUpdateTournamentQuizCommand beginUpdateTournamentQuiz() {
         logger.info("Sent BeginUpdateTournamentQuizCommand");
         return new BeginUpdateTournamentQuizCommand(getTournamentId());
@@ -91,15 +111,16 @@ public class UpdateTournamentSagaData {
 
     UpdateQuizCommand updateQuiz() {
         logger.info("Sent UpdateQuizCommand");
-        return new UpdateQuizCommand(getQuizDto());
+        return new UpdateQuizCommand(getTournamentDto().getCreator().getId(), executionId, tournamentDto.getQuizId(),
+                getTournamentDto());
     }
 
     ConfirmUpdateTournamentQuizCommand confirmUpdateTournamentQuiz() {
         logger.info("Sent ConfirmUpdateTournamentQuizCommand");
-        return new ConfirmUpdateTournamentQuizCommand(getTournamentId(), getTournamentDto(), getTournamentTopics());
+        return new ConfirmUpdateTournamentQuizCommand(getTournamentId(), getTournamentDto());
     }
 
-    GetTopicsCommand getTopics() {
+    GetTopicsCommand getNewTopics() {
         logger.info("Sent GetTopicsCommand");
         return new GetTopicsCommand(getTopicListDto());
     }
@@ -112,7 +133,12 @@ public class UpdateTournamentSagaData {
         }
         else {
             for (TopicWithCourseDto topicWithCourseDto : topicWithCourseDtoList.getTopicWithCourseDtoList()) {
-                topics.add(new TournamentTopic(topicWithCourseDto.getId(), topicWithCourseDto.getName(),
+                TopicDto topic = new TopicDto();
+                topic.setId(topicWithCourseDto.getId());
+                topic.setName(topicWithCourseDto.getName());
+                tournamentDto.getTopicsDto().add(topic);
+
+                newTopics.add(new TournamentTopic(topicWithCourseDto.getId(), topicWithCourseDto.getName(),
                         topicWithCourseDto.getCourseId()));
             }
         }
@@ -127,5 +153,20 @@ public class UpdateTournamentSagaData {
         logger.info("Received saveQuiz quizDto: " + quizDto);
         quizDto.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
         setQuizDto(quizDto);
+    }
+
+    UndoUpdateTournamentCommand undoUpdateTournament() {
+        logger.info("Sent UndoUpdateTournamentCommand");
+        return new UndoUpdateTournamentCommand(getTournamentId());
+    }
+
+    UpdateTopicsTournamentCommand updateTopics() {
+        logger.info("Sent UpdateTopicsTournamentCommand");
+        return new UpdateTopicsTournamentCommand(getTournamentId(), getTournamentTopics());
+    }
+
+    UndoUpdateTopicsTournamentCommand undoUpdateTopics() {
+        logger.info("Sent UndoUpdateTopicsTournamentCommand");
+        return new UndoUpdateTopicsTournamentCommand(getTournamentId(), getOldTopics());
     }
 }

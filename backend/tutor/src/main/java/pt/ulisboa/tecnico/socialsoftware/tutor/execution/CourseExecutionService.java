@@ -7,7 +7,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.RemoveCourseExecutionCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
@@ -131,11 +130,10 @@ public class CourseExecutionService {
         }
     }
 
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeUserFromTecnicoCourseExecution(Integer userId, int courseExecutionId) {
         CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);
         User user = this.userRepository.findById(userId).orElse(null);
-        //TODO: Send event
+
         if (user != null && courseExecution != null) {
             user.removeCourse(courseExecution);
             RemoveUserFromTecnicoCourseExecutionEvent userFromTecnicoCourseExecutionEvent =
@@ -169,7 +167,6 @@ public class CourseExecutionService {
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
         courseExecution.remove();
-        //TODO: Send Event
 
         RemoveCourseExecutionEvent removeCourseExecutionEvent = new RemoveCourseExecutionEvent(courseExecutionId);
         domainEventPublisher.publish(COURSE_EXECUTION_AGGREGATE_TYPE, String.valueOf(courseExecutionId),
@@ -355,14 +352,27 @@ public class CourseExecutionService {
                 '}';
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+
     public void addCourseExecutions(Integer userId, List<CourseExecutionDto> courseExecutionDtoList) {
+        checkCourseExecutionsExist(courseExecutionDtoList);
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        for(CourseExecutionDto dto: courseExecutionDtoList) {
-            CourseExecution courseExecution = courseExecutionRepository.findById(dto.getCourseExecutionId()).
-                    orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
+        addExecutionsToUser(user, courseExecutionDtoList);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void addExecutionsToUser(User user, List<CourseExecutionDto> courseExecutionDtoList) {
+
+        for (CourseExecutionDto dto: courseExecutionDtoList) {
+            CourseExecution courseExecution = courseExecutionRepository.findById(dto.getCourseExecutionId()).get();
             user.addCourse(courseExecution);
+        }
+    }
+
+    private void checkCourseExecutionsExist(List<CourseExecutionDto> courseExecutionDtoList) {
+        for (CourseExecutionDto dto: courseExecutionDtoList) {
+            courseExecutionRepository.findById(dto.getCourseExecutionId()).
+                    orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
         }
     }
 }

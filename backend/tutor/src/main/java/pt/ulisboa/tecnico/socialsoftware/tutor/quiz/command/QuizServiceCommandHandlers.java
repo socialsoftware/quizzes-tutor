@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.DeleteQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.GetQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.UpdateQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 
@@ -56,10 +57,13 @@ public class QuizServiceCommandHandlers {
     public Message updateQuiz(CommandMessage<UpdateQuizCommand> cm) {
         logger.info("Received UpdateQuizCommand");
 
-        QuizDto quizDto = cm.getCommand().getQuizDto();
+        Integer userId = cm.getCommand().getUserId();
+        Integer executionId = cm.getCommand().getExecutionId();
+        Integer quizId = cm.getCommand().getQuizId();
+        TournamentDto tournamentDto = cm.getCommand().getTournamentDto();
 
         try {
-            quizService.updateQuiz(quizDto.getId(), quizDto);
+            quizService.updateExternalQuiz(userId, executionId, quizId, tournamentDto);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();

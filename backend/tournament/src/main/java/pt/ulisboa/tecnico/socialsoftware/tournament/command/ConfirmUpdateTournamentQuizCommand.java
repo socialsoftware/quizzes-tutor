@@ -2,22 +2,17 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.command;
 
 import io.eventuate.tram.commands.common.Command;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
-import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
-
-import java.util.Set;
 
 public class ConfirmUpdateTournamentQuizCommand implements Command {
     private Integer tournamentId;
     private TournamentDto tournamentDto;
-    private Set<TournamentTopic> topics;
 
     public ConfirmUpdateTournamentQuizCommand() {
     }
 
-    public ConfirmUpdateTournamentQuizCommand(Integer tournamentId, TournamentDto tournamentDto, Set<TournamentTopic> topics) {
+    public ConfirmUpdateTournamentQuizCommand(Integer tournamentId, TournamentDto tournamentDto) {
         this.tournamentId = tournamentId;
         this.tournamentDto = tournamentDto;
-        this.topics = topics;
     }
 
     public Integer getTournamentId() {
@@ -36,20 +31,11 @@ public class ConfirmUpdateTournamentQuizCommand implements Command {
         this.tournamentDto = tournamentDto;
     }
 
-    public Set<TournamentTopic> getTopics() {
-        return topics;
-    }
-
-    public void setTopics(Set<TournamentTopic> topics) {
-        this.topics = topics;
-    }
-
     @Override
     public String toString() {
         return "ConfirmUpdateTournamentQuizCommand{" +
                 "tournamentId=" + tournamentId +
                 ", tournamentDto=" + tournamentDto +
-                ", topics=" + topics +
                 '}';
     }
 }

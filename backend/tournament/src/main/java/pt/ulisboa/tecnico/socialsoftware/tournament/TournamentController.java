@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -17,6 +19,8 @@ import java.util.Set;
 
 @RestController
 public class TournamentController {
+
+    private final Logger logger = LoggerFactory.getLogger(TournamentController.class);
 
     @Autowired
     private TournamentService tournamentProvidedService;
@@ -83,6 +87,7 @@ public class TournamentController {
     @PutMapping(value = "/tournaments/{executionId}/updateTournament")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentDto.getId(), 'TOURNAMENT.OWNER')")
     public void updateTournament(@Valid @RequestBody TournamentDto tournamentDto, @PathVariable int executionId, @RequestParam Set<Integer> topicsId) {
+        logger.info("Tournament Dto received:" + tournamentDto);
         tournamentProvidedService.updateTournament(topicsId, tournamentDto);
     }
 

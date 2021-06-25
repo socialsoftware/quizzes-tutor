@@ -5,7 +5,6 @@ import io.eventuate.tram.sagas.simpledsl.SimpleSaga;
 import org.springframework.util.Assert;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament.CreateTournamentSagaData;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.QuestionServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.QuizServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.TournamentServiceProxy;
@@ -17,17 +16,20 @@ public class UpdateTournamentSaga implements SimpleSaga<UpdateTournamentSagaData
                                 QuestionServiceProxy questionService) {
         this.sagaDefinition =
             step()
-                .invokeParticipant(tournamentService.beginUpdate, UpdateTournamentSagaData::beginUpdateTournamentQuiz)
-                .withCompensation(tournamentService.undoUpdate, UpdateTournamentSagaData::undoUpdateTournamentQuiz)
+                //.invokeParticipant(tournamentService.beginUpdate, UpdateTournamentSagaData::beginUpdateTournamentQuiz)
+                .withCompensation(tournamentService.undoUpdate, UpdateTournamentSagaData::undoUpdateTournament)
             .step()
-                .invokeParticipant(questionService.getTopics, UpdateTournamentSagaData::getTopics)
+                .invokeParticipant(questionService.getTopics, UpdateTournamentSagaData::getNewTopics)
                 .onReply(FindTopicsDto.class, UpdateTournamentSagaData::saveTopics)
             .step()
+                .invokeParticipant(tournamentService.updateTopics, UpdateTournamentSagaData::updateTopics)
+                .withCompensation(tournamentService.undoUpdateTopics, UpdateTournamentSagaData::undoUpdateTopics)
+            /*.step()
                 .invokeParticipant(quizService.getQuiz, UpdateTournamentSagaData::getQuiz)
-                .onReply(QuizDto.class, UpdateTournamentSagaData::saveQuiz)
+                .onReply(QuizDto.class, UpdateTournamentSagaData::saveQuiz)*/
             .step()
                 .invokeParticipant(quizService.updateQuiz, UpdateTournamentSagaData::updateQuiz)
-                .withCompensation(tournamentService.undoUpdate, UpdateTournamentSagaData::undoUpdateTournamentQuiz)
+                .withCompensation(tournamentService.undoUpdateQuiz, UpdateTournamentSagaData::undoUpdateTournamentQuiz)
             .step()
                 .invokeParticipant(tournamentService.confirmUpdate, UpdateTournamentSagaData::confirmUpdateTournamentQuiz)
             .build();

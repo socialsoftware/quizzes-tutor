@@ -14,6 +14,8 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseD
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tournament.command.ConfirmCreateTournamentCommand;
 import pt.ulisboa.tecnico.socialsoftware.tournament.command.RejectCreateTournamentCommand;
+import pt.ulisboa.tecnico.socialsoftware.tournament.command.StoreTournamentCourseExecutionCommand;
+import pt.ulisboa.tecnico.socialsoftware.tournament.command.StoreTournamentTopicsCommand;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 
@@ -130,8 +132,7 @@ public class CreateTournamentSagaData {
 
     ConfirmCreateTournamentCommand confirmCreateTournament() {
         logger.info("Sent ConfirmCreateTournamentCommand");
-        return new ConfirmCreateTournamentCommand(getTournamentId(), getQuizId(), getTournamentCourseExecution(),
-                getTournamentTopics());
+        return new ConfirmCreateTournamentCommand(getTournamentId(), getQuizId());
     }
 
     void saveTournamentCourseExecution(CourseExecutionDto courseExecutionDto) {
@@ -177,5 +178,15 @@ public class CreateTournamentSagaData {
                 ", topics=" + topics +
                 ", topicListDto=" + topicListDto +
                 '}';
+    }
+
+    StoreTournamentTopicsCommand storeTopics() {
+        logger.info("Sent StoreTournamentTopicsCommand");
+        return new StoreTournamentTopicsCommand(getTournamentId(), getTournamentTopics());
+    }
+
+    StoreTournamentCourseExecutionCommand storeCourseExecution() {
+        logger.info("Sent StoreTournamentCourseExecutionCommand");
+        return new StoreTournamentCourseExecutionCommand(getTournamentId(), getTournamentCourseExecution());
     }
 }

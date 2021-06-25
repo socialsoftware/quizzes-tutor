@@ -152,10 +152,6 @@ public class TopicService {
                 });
     }
 
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public FindTopicsDto findTopicById(Set<Integer> topicsList) {
         List<TopicWithCourseDto> topicWithCourseDtoList = new ArrayList<>();
         for (Integer topicId : topicsList) {

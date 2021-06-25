@@ -6,5 +6,6 @@ public enum TournamentState {
     READY_FOR_UPDATE,
     UPDATE_PENDING,
     REMOVAL_PENDING,
-    REMOVED
+    REMOVED,
+    REJECTED
 }

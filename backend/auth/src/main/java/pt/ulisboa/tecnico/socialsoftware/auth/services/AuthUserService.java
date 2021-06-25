@@ -267,10 +267,8 @@ public class AuthUserService {
     }
 
     public AuthExternalUser confirmRegistration(AuthUser authUser, String password) {
-        authUser.setState(READY_FOR_UPDATE);
-        authUserRepository.save(authUser);
 
-        confirmRegistrationSaga(authUser.getId(), authUser.getUserSecurityInfo().getId(), password);
+        confirmRegistrationSaga(authUser, authUser.getId(), authUser.getUserSecurityInfo().getId(), password);
 
         // Waits for saga to finish
         AuthUser authUserFinal = authUserRepository.findById(authUser.getId()).get();
@@ -281,7 +279,9 @@ public class AuthUserService {
     }
 
     @Transactional
-    public void confirmRegistrationSaga(Integer authUserId, Integer userId, String password) {
+    public void confirmRegistrationSaga(AuthUser authUser, Integer authUserId, Integer userId, String password) {
+        authUser.setState(READY_FOR_UPDATE);
+        authUserRepository.save(authUser);
 
         ConfirmRegistrationSagaData data = new ConfirmRegistrationSagaData(authUserId, userId, password);
         sagaInstanceFactory.create(confirmRegistrationSaga, data);
@@ -491,7 +491,7 @@ public class AuthUserService {
 
     public void approveAuthUser(Integer authUserId, Integer userId, List<CourseExecutionDto> courseExecutionList) {
         AuthUser authUser = authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
-        //authUser.authUserApproved(userId, courseExecutionList);
+
         switch (authUser.getType()) {
             case TECNICO:
             case DEMO:

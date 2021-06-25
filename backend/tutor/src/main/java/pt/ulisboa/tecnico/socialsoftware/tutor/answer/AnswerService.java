@@ -47,7 +47,6 @@ import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes.*;
 import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.QUIZ_AGGREGATE_TYPE;
-import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.USER_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Service
@@ -254,16 +253,9 @@ public class AnswerService {
         return quizAnswer.getDto(false);
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+
     public Quiz generateExternalQuiz(int userId, int executionId, ExternalStatementCreationDto quizDetails) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-
-        Quiz quiz = new Quiz();
-        quiz.setType(QuizType.GENERATED.toString());
-        quiz.setCreationDate(DateHandler.now());
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
@@ -281,6 +273,22 @@ public class AnswerService {
 
         availableQuestions = user.filterQuestionsByStudentModel(quizDetails.getNumberOfQuestions(), availableQuestions);
 
+
+        // Quiz Answer cannot be created because it prevents tournaments from being updated
+        /*QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+        return quizAnswer.getDto(false);*/
+        return createExternalQuiz(quizDetails, courseExecution, availableQuestions);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Quiz createExternalQuiz(ExternalStatementCreationDto quizDetails, CourseExecution courseExecution, List<Question> availableQuestions) {
+        Quiz quiz = new Quiz();
+        quiz.setType(QuizType.GENERATED.toString());
+        quiz.setCreationDate(DateHandler.now());
+
         quiz.generateQuiz(availableQuestions);
 
         quiz.setCourseExecution(courseExecution);
@@ -294,10 +302,6 @@ public class AnswerService {
         quiz.setType(QuizType.EXTERNAL_QUIZ.toString());
 
         quizRepository.save(quiz);
-
-        // Quiz Answer cannot be created because it prevents tournaments from being updated
-        /*QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
-        return quizAnswer.getDto(false);*/
         return quiz;
     }
 
