@@ -36,7 +36,7 @@ import RemoteServices from '@/services/RemoteServices';
 @Component
 export default class ClarificationComponent extends Vue {
   @Prop() readonly clarifications!: Reply[];
-  @Prop() readonly canChange: boolean;
+  @Prop() readonly canChange!: boolean;
 
   convertMarkDown(text: string) {
     return convertMarkDown(text, null);

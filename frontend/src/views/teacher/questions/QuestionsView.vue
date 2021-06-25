@@ -410,7 +410,9 @@ export default class QuestionsView extends Vue {
     let question = this.questions.find(
       (question) => question.id === questionId
     );
-    question.numberOfClarifications--;
+    if (question) {
+      question.numberOfClarifications--;
+    }
   }
 
   onCloseShowClarificationDialog() {

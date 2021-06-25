@@ -6,17 +6,25 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_FOUND;
+
 @RestController
 public class AnswerController {
     @Autowired
     private AnswerService answerService;
+
+    @Autowired
+    private QuizRepository quizRepository;
 
     @GetMapping("/answers/{executionId}/quizzes/available")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
@@ -48,6 +56,16 @@ public class AnswerController {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
         return answerService.getQuizByQRCode(authUser.getUser().getId(), quizId);
+    }
+
+    @GetMapping("/answers/{executionId}/bycode/{code}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public StatementQuizDto getQuizByCode(Principal principal, @PathVariable int executionId, @PathVariable int code) {
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
+
+        Quiz quiz = quizRepository.findByCourseExecutionAndCode(executionId, code).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, code));
+
+        return answerService.getQuizByQRCode(authUser.getUser().getId(), quiz.getId());
     }
 
     @GetMapping("/answers/{quizId}/start")

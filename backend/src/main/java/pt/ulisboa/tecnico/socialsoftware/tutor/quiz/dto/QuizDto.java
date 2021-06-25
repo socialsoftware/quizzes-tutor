@@ -15,6 +15,7 @@ public class QuizDto implements Serializable {
     private boolean scramble;
     private boolean qrCodeOnly;
     private boolean oneWay;
+    private Integer code;
     private boolean timed;
     private String type;
     private String title;
@@ -37,6 +38,7 @@ public class QuizDto implements Serializable {
         this.scramble = quiz.getScramble();
         this.qrCodeOnly = quiz.isQrCodeOnly();
         this.oneWay = quiz.isOneWay();
+        this.code = quiz.getCode();
         this.title = quiz.getTitle();
         this.timed = quiz.getType().equals(Quiz.QuizType.IN_CLASS);
         this.type = quiz.getType().toString();
@@ -86,6 +88,14 @@ public class QuizDto implements Serializable {
 
     public void setQrCodeOnly(boolean qrCodeOnly) {
         this.qrCodeOnly = qrCodeOnly;
+    }
+
+    public Integer getCode() {
+        return code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public boolean isOneWay() {

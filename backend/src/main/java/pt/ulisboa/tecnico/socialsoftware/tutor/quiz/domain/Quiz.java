@@ -54,6 +54,8 @@ public class Quiz implements DomainEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean qrCodeOnly = false;
 
+    private Integer code;
+
     @Column(columnDefinition = "boolean default false")
     private boolean oneWay = false;
 
@@ -95,6 +97,7 @@ public class Quiz implements DomainEntity {
         setTitle(quizDto.getTitle());
         setScramble(quizDto.isScramble());
         setQrCodeOnly(quizDto.isQrCodeOnly());
+        setCode(quizDto.getCode());
         setOneWay(quizDto.isOneWay());
         setCreationDate(DateHandler.toLocalDateTime(quizDto.getCreationDate()));
         setAvailableDate(DateHandler.toLocalDateTime(quizDto.getAvailableDate()));
@@ -102,8 +105,6 @@ public class Quiz implements DomainEntity {
         setResultsDate(DateHandler.toLocalDateTime(quizDto.getResultsDate()));
         setSeries(quizDto.getSeries());
         setVersion(quizDto.getVersion());
-
-
     }
 
     @Override
@@ -144,6 +145,14 @@ public class Quiz implements DomainEntity {
 
     public void setQrCodeOnly(boolean qrCodeOnly) {
         this.qrCodeOnly = qrCodeOnly;
+    }
+
+    public Integer getCode() {
+        return this.code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
     }
 
     public boolean isTournamentQuiz() { return type == QuizType.TOURNAMENT; }

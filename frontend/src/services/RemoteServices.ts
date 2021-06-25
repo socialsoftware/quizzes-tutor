@@ -763,6 +763,20 @@ export default class RemoteServices {
       });
   }
 
+  static async getQuizByCode(
+    courseExecutionId: number,
+    code: number
+  ): Promise<StatementQuiz> {
+    return httpClient
+      .get(`/answers/${courseExecutionId}/bycode/${code}`)
+      .then((response) => {
+        return new StatementQuiz(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async startQuiz(quizId: number): Promise<StatementQuiz> {
     return httpClient
       .get(`/answers/${quizId}/start`)
