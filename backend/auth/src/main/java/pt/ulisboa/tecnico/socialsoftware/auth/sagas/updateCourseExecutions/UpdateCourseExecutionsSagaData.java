@@ -2,11 +2,9 @@ package pt.ulisboa.tecnico.socialsoftware.auth.sagas.updateCourseExecutions;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import pt.ulisboa.tecnico.socialsoftware.auth.command.BeginUpdateCourseExecutionsCommand;
 import pt.ulisboa.tecnico.socialsoftware.auth.command.ConfirmUpdateCourseExecutionsCommand;
 import pt.ulisboa.tecnico.socialsoftware.auth.command.UndoUpdateCourseExecutionsCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.user.AddCourseExecutionsCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.user.RemoveCourseExecutionsCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 
 import java.util.List;
@@ -52,11 +50,6 @@ public class UpdateCourseExecutionsSagaData {
         return email;
     }
 
-    BeginUpdateCourseExecutionsCommand beginUpdateCourseExecutions() {
-        logger.info("Sent BeginUpdateCourseExecutionsCommand");
-        return new BeginUpdateCourseExecutionsCommand(getAuthUserId());
-    }
-
     UndoUpdateCourseExecutionsCommand undoUpdateCourseExecutions() {
         logger.info("Sent UndoUpdateCourseExecutionsCommand");
         return new UndoUpdateCourseExecutionsCommand(getAuthUserId());
@@ -65,11 +58,6 @@ public class UpdateCourseExecutionsSagaData {
     AddCourseExecutionsCommand addCourseExecutions() {
         logger.info("Sent AddCourseExecutionsCommand");
         return new AddCourseExecutionsCommand(getUserId(), getCourseExecutionDtoList());
-    }
-
-    RemoveCourseExecutionsCommand removeCourseExecution() {
-        logger.info("Sent RemoveCourseExecutionsCommand");
-        return new RemoveCourseExecutionsCommand(getUserId(), getCourseExecutionDtoList());
     }
 
     ConfirmUpdateCourseExecutionsCommand confirmUpdateCourseExecutions() {

@@ -7,7 +7,6 @@ import io.eventuate.tram.sagas.participant.SagaCommandHandlersBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
@@ -35,10 +34,8 @@ public class AuthServiceCommandHandlers {
                 .fromChannel(ServiceChannels.AUTH_USER_SERVICE_COMMAND_CHANNEL)
                 .onMessage(ApproveAuthUserCommand.class, this::approveAuthUser)
                 .onMessage(RejectAuthUserCommand.class, this::rejectAuthUser)
-                .onMessage(BeginUpdateCourseExecutionsCommand.class, this::beginUpdateCourseExecutions)
                 .onMessage(UndoUpdateCourseExecutionsCommand.class, this::undoUpdateCourseExecutions)
                 .onMessage(ConfirmUpdateCourseExecutionsCommand.class, this::confirmUpdateCourseExecutions)
-                .onMessage(BeginConfirmRegistrationCommand.class, this::beginConfirmRegistration)
                 .onMessage(UndoConfirmRegistrationCommand.class, this::undoConfirmRegistration)
                 .onMessage(ConfirmRegistrationCommand.class, this::confirmRegistration)
                 .build();
@@ -88,19 +85,6 @@ public class AuthServiceCommandHandlers {
         }
     }
 
-    public Message beginUpdateCourseExecutions(CommandMessage<BeginUpdateCourseExecutionsCommand> cm) {
-        logger.info("Received BeginUpdateCourseExecutionsCommand");
-
-        Integer authUserId = cm.getCommand().getAuthUserId();
-
-        try {
-            authUserService.beginUpdateCourseExecutions(authUserId);
-            return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
-
     public Message undoUpdateCourseExecutions(CommandMessage<UndoUpdateCourseExecutionsCommand> cm) {
         logger.info("Received UndoUpdateCourseExecutionsCommand");
 
@@ -108,19 +92,6 @@ public class AuthServiceCommandHandlers {
 
         try {
             authUserService.undoUpdateCourseExecutions(authUserId);
-            return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
-
-    public Message beginConfirmRegistration(CommandMessage<BeginConfirmRegistrationCommand> cm) {
-        logger.info("Received BeginConfirmRegistrationCommand");
-
-        Integer authUserId = cm.getCommand().getAuthUserId();
-
-        try {
-            authUserService.beginConfirmRegistration(authUserId);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();

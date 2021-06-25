@@ -508,17 +508,12 @@ public class QuizService {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
         List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
-        logger.info("Tournament Dto:" + tournamentDto);
-        logger.info("Available Questions:" + availableQuestions);
 
         if (tournamentDto.getTopicsDto() != null) {
             availableQuestions = courseExecution.filterQuestionsByTopics(availableQuestions, tournamentDto.getTopicsDto());
         } else {
             availableQuestions = new ArrayList<>();
         }
-
-        logger.info("Available Questions size:" + availableQuestions.size());
-        logger.info("Tournament Number of Questions:" + tournamentDto.getNumberOfQuestions());
 
         if (availableQuestions.size() < tournamentDto.getNumberOfQuestions()) {
             throw new TutorException(NOT_ENOUGH_QUESTIONS_TOURNAMENT);

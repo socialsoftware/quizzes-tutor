@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.question.GetTopicsCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.GetQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.UpdateQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
@@ -99,11 +98,6 @@ public class UpdateTournamentSagaData {
         this.executionId = executionId;
     }
 
-    BeginUpdateTournamentQuizCommand beginUpdateTournamentQuiz() {
-        logger.info("Sent BeginUpdateTournamentQuizCommand");
-        return new BeginUpdateTournamentQuizCommand(getTournamentId());
-    }
-
     UndoUpdateTournamentQuizCommand undoUpdateTournamentQuiz() {
         logger.info("Sent UndoUpdateTournamentQuizCommand");
         return new UndoUpdateTournamentQuizCommand(getTournamentId());
@@ -142,17 +136,6 @@ public class UpdateTournamentSagaData {
                         topicWithCourseDto.getCourseId()));
             }
         }
-    }
-
-    GetQuizCommand getQuiz() {
-        logger.info("Sent GetQuizCommand");
-        return new GetQuizCommand(tournamentDto.getQuizId());
-    }
-
-    void saveQuiz(QuizDto quizDto) {
-        logger.info("Received saveQuiz quizDto: " + quizDto);
-        quizDto.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
-        setQuizDto(quizDto);
     }
 
     UndoUpdateTournamentCommand undoUpdateTournament() {

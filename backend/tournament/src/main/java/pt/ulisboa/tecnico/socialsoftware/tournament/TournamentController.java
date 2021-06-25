@@ -85,9 +85,8 @@ public class TournamentController {
     }
 
     @PutMapping(value = "/tournaments/{executionId}/updateTournament")
-    @PreAuthorize("hasRole('ROLE_STUDENT')" /*and hasPermission(#tournamentDto.getId(), 'TOURNAMENT.OWNER')"*/)
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentDto.getId(), 'TOURNAMENT.OWNER')")
     public void updateTournament(@Valid @RequestBody TournamentDto tournamentDto, @PathVariable int executionId, @RequestParam Set<Integer> topicsId) {
-        logger.info("Tournament Dto received:" + tournamentDto);
         tournamentProvidedService.updateTournament(topicsId, tournamentDto);
     }
 

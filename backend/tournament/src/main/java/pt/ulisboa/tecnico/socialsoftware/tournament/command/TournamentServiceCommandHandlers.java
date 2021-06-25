@@ -34,10 +34,6 @@ public class TournamentServiceCommandHandlers {
     public CommandHandlers commandHandlers() {
         return SagaCommandHandlersBuilder
                 .fromChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
-                .onMessage(BeginRemoveTournamentCommand.class, this::beginRemove)
-                .onMessage(ConfirmRemoveTournamentCommand.class, this::confirmRemove)
-                .onMessage(UndoRemoveTournamentCommand.class, this::undoRemove)
-                .onMessage(BeginUpdateTournamentQuizCommand.class, this::beginUpdate)
                 .onMessage(UndoUpdateTournamentCommand.class, this::undoUpdate)
                 .onMessage(ConfirmUpdateTournamentQuizCommand.class, this::confirmUpdate)
                 .onMessage(ConfirmCreateTournamentCommand.class, this::confirmCreate)
@@ -159,55 +155,4 @@ public class TournamentServiceCommandHandlers {
         }
     }
 
-    private Message beginUpdate(CommandMessage<BeginUpdateTournamentQuizCommand> cm) {
-        logger.info("Received BeginUpdateTournamentQuizCommand");
-
-        Integer tournamentId = cm.getCommand().getTournamentId();
-
-        try {
-            tournamentService.beginUpdate(tournamentId);
-            return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
-
-    private Message beginRemove(CommandMessage<BeginRemoveTournamentCommand> cm) {
-        logger.info("Received BeginRemoveTournamentCommand");
-
-        Integer tournamentId = cm.getCommand().getTournamentId();
-
-        try {
-            tournamentService.beginRemove(tournamentId);
-            return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
-
-    private Message confirmRemove(CommandMessage<ConfirmRemoveTournamentCommand> cm) {
-        logger.info("Received ConfirmRemoveTournamentCommand");
-
-        Integer tournamentId = cm.getCommand().getTournamentId();
-
-        try {
-            tournamentService.confirmRemove(tournamentId);
-            return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
-
-    private Message undoRemove(CommandMessage<UndoRemoveTournamentCommand> cm) {
-        logger.info("Received UndoRemoveTournamentCommand");
-
-        Integer tournamentId = cm.getCommand().getTournamentId();
-
-        try {
-            tournamentService.undoRemove(tournamentId);
-            return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
 }

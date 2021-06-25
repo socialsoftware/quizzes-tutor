@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.auth.command.RejectAuthUserCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.user.AddCourseExecutionsCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.user.CreateUserCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.user.RejectUserCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.user.RemoveCourseExecutionsCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
@@ -104,11 +103,6 @@ public class CreateUserWithAuthSagaData {
     AddCourseExecutionsCommand addCourseExecution() {
         logger.info("Sent AddCourseExecutionCommand");
         return new AddCourseExecutionsCommand(getUserId(), getCourseExecutionDtoList());
-    }
-
-    RemoveCourseExecutionsCommand removeCourseExecution() {
-        logger.info("Sent RemoveCourseExecutionCommand");
-        return new RemoveCourseExecutionsCommand(getUserId(), getCourseExecutionDtoList());
     }
 
     @Override

@@ -12,7 +12,6 @@ public class ConfirmRegistrationSaga implements SimpleSaga<ConfirmRegistrationSa
     public ConfirmRegistrationSaga(AuthUserServiceProxy authUserService, UserServiceProxy userService) {
         this.sagaDefinition =
                 step()
-                    .invokeParticipant(authUserService.beginConfirmRegistration, ConfirmRegistrationSagaData::beginConfirmRegistration)
                     .withCompensation(authUserService.undoConfirmRegistration, ConfirmRegistrationSagaData::undoConfirmRegistration)
                 .step()
                     .invokeParticipant(userService.activateUser, ConfirmRegistrationSagaData::activateUser)

@@ -13,11 +13,9 @@ public class UpdateCourseExecutionsSaga implements SimpleSaga<UpdateCourseExecut
     public UpdateCourseExecutionsSaga(AuthUserServiceProxy authUserService, CourseExecutionServiceProxy executionServiceProxy) {
         this.sagaDefinition =
                 step()
-                    .invokeParticipant(authUserService.beginUpdateCourseExecutions, UpdateCourseExecutionsSagaData::beginUpdateCourseExecutions)
                     .withCompensation(authUserService.undoUpdateCourseExecutions, UpdateCourseExecutionsSagaData::undoUpdateCourseExecutions)
                 .step()
                     .invokeParticipant(executionServiceProxy.addCourseExecutions, UpdateCourseExecutionsSagaData::addCourseExecutions)
-                    //.withCompensation(userService.removeCourseExecution, UpdateCourseExecutionsSagaData::removeCourseExecution)
                 .step()
                     .invokeParticipant(authUserService.confirmUpdateCourseExecutions, UpdateCourseExecutionsSagaData::confirmUpdateCourseExecutions)
                 .build();

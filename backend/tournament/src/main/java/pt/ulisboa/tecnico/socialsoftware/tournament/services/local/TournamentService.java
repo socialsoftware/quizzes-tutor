@@ -11,7 +11,6 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.RemoteAccessException;
@@ -21,8 +20,6 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament.CreateTournamentSaga;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament.CreateTournamentSagaData;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.removeTournament.RemoveTournamentSaga;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.removeTournament.RemoveTournamentSagaData;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSaga;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSagaData;
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService;
@@ -34,7 +31,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
-import static pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentState.READY_FOR_UPDATE;
 import static pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentState.UPDATE_PENDING;
 
 @Service
@@ -50,9 +46,6 @@ public class TournamentService {
 
     @Autowired
     private SagaInstanceFactory sagaInstanceFactory;
-
-    @Autowired
-    private RemoveTournamentSaga removeTournamentSaga;
 
     @Autowired
     private UpdateTournamentSaga updateTournamentSaga;
@@ -167,7 +160,6 @@ public class TournamentService {
         tournament.setState(UPDATE_PENDING);
         tournamentRepository.save(tournament);
 
-        logger.info("Before creating update saga");
         UpdateTournamentSagaData data = new UpdateTournamentSagaData(tournament.getId(), tournamentDto,
                 topicsList, oldTopics, tournament.getCourseExecution().getId());
         sagaInstanceFactory.create(updateTournamentSaga, data);
@@ -183,25 +175,14 @@ public class TournamentService {
         return tournament.getDto();
     }
 
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
-        tournament.checkCanChange();
 
-        removeTournamentSaga(tournament.getId(), tournament.getQuizId());
+        tournament.remove();
 
-        // Waits for saga to finish
-        Tournament removedTournament = tournamentRepository.findById(tournament.getId()).get();
-        while (!(removedTournament.getState().equals(TournamentState.REMOVED))) {
-            removedTournament = tournamentRepository.findById(tournament.getId()).get();
-        }
-
-        tournamentRepository.delete(removedTournament);
-    }
-
-    @Transactional
-    public void removeTournamentSaga(Integer tournamentId, Integer quizId) {
-        RemoveTournamentSagaData data = new RemoveTournamentSagaData(tournamentId, quizId);
-        sagaInstanceFactory.create(removeTournamentSaga, data);
+        tournamentRepository.delete(tournament);
     }
 
     private void checkInput(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
@@ -250,31 +231,6 @@ public class TournamentService {
                 tournament.remove();
                 tournamentRepository.delete(tournament);
             });
-    }
-
-    public void beginRemove(Integer tournamentId) {
-        Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
-        tournament.beginRemoveTournament();
-    }
-
-    public void confirmRemove(Integer tournamentId) {
-        Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
-        tournament.confirmRemoveTournament();
-    }
-
-    public void undoRemove(Integer tournamentId) {
-        Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
-        tournament.undoRemoveTournament();
-    }
-
-    public void beginUpdate(Integer tournamentId) {
-        Tournament tournament = tournamentRepository.findById(tournamentId)
-                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
-        logger.info("Begin Update");
-        tournament.beginUpdateQuiz();
     }
 
     public void undoUpdate(Integer tournamentId) {

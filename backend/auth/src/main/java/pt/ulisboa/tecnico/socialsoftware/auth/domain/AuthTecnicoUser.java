@@ -36,16 +36,6 @@ public class AuthTecnicoUser extends AuthUser {
     @Override
     public AuthUserType getType() {return AuthUserType.TECNICO;}
 
-    public void authUserBeginUpdateCourseExecutions() {
-        switch (getState()) {
-            case READY_FOR_UPDATE:
-                setState(UPDATE_PENDING);
-                break;
-            default:
-                throw new UnsupportedStateTransitionException(getState());
-        }
-    }
-
     public void authUserUndoUpdateCourseExecutions() {
         switch (getState()) {
             case UPDATE_PENDING:

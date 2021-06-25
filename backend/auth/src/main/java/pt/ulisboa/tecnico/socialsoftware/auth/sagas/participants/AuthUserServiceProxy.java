@@ -20,12 +20,6 @@ public class AuthUserServiceProxy {
             .withReply(Success.class)
             .build();
 
-    public final CommandEndpoint<BeginUpdateCourseExecutionsCommand> beginUpdateCourseExecutions = CommandEndpointBuilder
-            .forCommand(BeginUpdateCourseExecutionsCommand.class)
-            .withChannel(ServiceChannels.AUTH_USER_SERVICE_COMMAND_CHANNEL)
-            .withReply(Success.class)
-            .build();
-
     public final CommandEndpoint<ConfirmUpdateCourseExecutionsCommand> confirmUpdateCourseExecutions = CommandEndpointBuilder
             .forCommand(ConfirmUpdateCourseExecutionsCommand.class)
             .withChannel(ServiceChannels.AUTH_USER_SERVICE_COMMAND_CHANNEL)
@@ -40,12 +34,6 @@ public class AuthUserServiceProxy {
 
     public final CommandEndpoint<UndoConfirmRegistrationCommand> undoConfirmRegistration = CommandEndpointBuilder
             .forCommand(UndoConfirmRegistrationCommand.class)
-            .withChannel(ServiceChannels.AUTH_USER_SERVICE_COMMAND_CHANNEL)
-            .withReply(Success.class)
-            .build();
-
-    public final CommandEndpoint<BeginConfirmRegistrationCommand> beginConfirmRegistration = CommandEndpointBuilder
-            .forCommand(BeginConfirmRegistrationCommand.class)
             .withChannel(ServiceChannels.AUTH_USER_SERVICE_COMMAND_CHANNEL)
             .withReply(Success.class)
             .build();

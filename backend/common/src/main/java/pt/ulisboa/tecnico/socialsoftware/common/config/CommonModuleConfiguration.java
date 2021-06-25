@@ -27,11 +27,6 @@ public class CommonModuleConfiguration {
     }
 
     @Bean
-    public QuizInterface quizInterface() {
-        return new QuizInterface();
-    }
-
-    @Bean
     public AnswerInterface answerInterface() {
         return new AnswerInterface();
     }

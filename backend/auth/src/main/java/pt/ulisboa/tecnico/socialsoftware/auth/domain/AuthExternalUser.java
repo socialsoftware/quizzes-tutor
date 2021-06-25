@@ -87,16 +87,6 @@ public class AuthExternalUser extends AuthUser {
         return dto;
     }
 
-    public void authUserBeginConfirmRegistration() {
-        switch (getState()) {
-            case READY_FOR_UPDATE:
-                setState(UPDATE_PENDING);
-                break;
-            default:
-                throw new UnsupportedStateTransitionException(getState());
-        }
-    }
-
     public void authUserUndoConfirmRegistration() {
         switch (getState()) {
             case UPDATE_PENDING:

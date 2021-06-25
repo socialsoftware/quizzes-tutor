@@ -26,7 +26,10 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.*;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.Notification;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.NotificationResponse;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.io.BufferedReader;
@@ -39,7 +42,7 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.READY_FOR_UPDATE;
+import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.UPDATE_PENDING;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 import static pt.ulisboa.tecnico.socialsoftware.common.utils.Utils.*;
 
@@ -154,7 +157,7 @@ public class AuthUserService {
     @Transactional
     public void updateCourseExecutionsSaga(AuthUser authUser, Integer userId, String ids,
                                            List<CourseExecutionDto> courseExecutionDtoList, String email) {
-        authUser.setState(READY_FOR_UPDATE);
+        authUser.setState(UPDATE_PENDING);
         authUserRepository.save(authUser);
 
         UpdateCourseExecutionsSagaData data = new UpdateCourseExecutionsSagaData(authUser.getId(), userId, ids,
@@ -280,7 +283,7 @@ public class AuthUserService {
 
     @Transactional
     public void confirmRegistrationSaga(AuthUser authUser, Integer authUserId, Integer userId, String password) {
-        authUser.setState(READY_FOR_UPDATE);
+        authUser.setState(UPDATE_PENDING);
         authUserRepository.save(authUser);
 
         ConfirmRegistrationSagaData data = new ConfirmRegistrationSagaData(authUserId, userId, password);
@@ -510,11 +513,6 @@ public class AuthUserService {
         authUser.authUserRejected();
     }
 
-    public void beginUpdateCourseExecutions(Integer authUserId) {
-        AuthTecnicoUser authUser = (AuthTecnicoUser) authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
-        authUser.authUserBeginUpdateCourseExecutions();
-    }
-
     public void undoUpdateCourseExecutions(Integer authUserId) {
         AuthTecnicoUser authUser = (AuthTecnicoUser) authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
         authUser.authUserUndoUpdateCourseExecutions();
@@ -529,12 +527,6 @@ public class AuthUserService {
             default:
                 throw new TutorException(ErrorMessage.WRONG_AUTH_USER_TYPE, authUser.getType().toString());
         }
-    }
-
-    public void beginConfirmRegistration(Integer authUserId) {
-        AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findById(authUserId)
-                .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
-        authUser.authUserBeginConfirmRegistration();
     }
 
     public void undoConfirmAuthUserRegistration(Integer authUserId) {

@@ -20,13 +20,13 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.subscriptions.TournamentServ
 @PropertySource({"classpath:application.properties" })
 @EnableJpaAuditing
 @EnableScheduling
-//@ServiceDescription(description = "Manages Orders", capabilities = "Order Management")
 @SpringBootApplication
 @Import({CommonModuleConfiguration.class, TournamentServiceWebConfiguration.class,
         TournamentServiceParticipantConfiguration.class,
         TramJdbcKafkaConfiguration.class, TournamentServiceEventConfiguration.class})
 @EntityScan({"pt.ulisboa.tecnico.socialsoftware.tournament"})
 @EnableJpaRepositories({"pt.ulisboa.tecnico.socialsoftware.tournament"})
+//@ServiceDescription(description = "Tournament", capabilities = "Tournament")
 public class TournamentApplication implements InitializingBean {
 
     public static void main(String[] args) {

@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament;
 import io.eventuate.tram.sagas.orchestration.SagaDefinition;
 import io.eventuate.tram.sagas.simpledsl.SimpleSaga;
 import org.springframework.util.Assert;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.QuestionServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.QuizServiceProxy;
@@ -16,7 +15,6 @@ public class UpdateTournamentSaga implements SimpleSaga<UpdateTournamentSagaData
                                 QuestionServiceProxy questionService) {
         this.sagaDefinition =
             step()
-                //.invokeParticipant(tournamentService.beginUpdate, UpdateTournamentSagaData::beginUpdateTournamentQuiz)
                 .withCompensation(tournamentService.undoUpdate, UpdateTournamentSagaData::undoUpdateTournament)
             .step()
                 .invokeParticipant(questionService.getTopics, UpdateTournamentSagaData::getNewTopics)
@@ -24,9 +22,6 @@ public class UpdateTournamentSaga implements SimpleSaga<UpdateTournamentSagaData
             .step()
                 .invokeParticipant(tournamentService.updateTopics, UpdateTournamentSagaData::updateTopics)
                 .withCompensation(tournamentService.undoUpdateTopics, UpdateTournamentSagaData::undoUpdateTopics)
-            /*.step()
-                .invokeParticipant(quizService.getQuiz, UpdateTournamentSagaData::getQuiz)
-                .onReply(QuizDto.class, UpdateTournamentSagaData::saveQuiz)*/
             .step()
                 .invokeParticipant(quizService.updateQuiz, UpdateTournamentSagaData::updateQuiz)
                 .withCompensation(tournamentService.undoUpdateQuiz, UpdateTournamentSagaData::undoUpdateTournamentQuiz)

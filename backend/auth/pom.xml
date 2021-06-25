@@ -211,12 +211,6 @@
       <artifactId>eventuate-tram-sagas</artifactId>
       <version>${eventuate-tram-sagas.version}</version>
     </dependency>
-    <!--<dependency>
-      <groupId>io.eventuate.tram.sagas</groupId>
-      <artifactId>eventuate-tram-sagas</artifactId>
-      <version>${eventuate-tram-sagas.version}</version>
-      <type>pom</type>
-    </dependency>-->
 
     <!-- Saga Orchestrator -->
     <dependency>
@@ -253,17 +247,17 @@
     <!--<dependency>
       <groupId>io.microservices.tools.canvas</groupId>
       <artifactId>microservice-canvas-springmvc</artifactId>
-      <version>0.7.0.RELEASE</version>
+      <version>0.7.0.TEST.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>io.microservices.tools.canvas</groupId>
       <artifactId>microservice-canvas-extractor-tram</artifactId>
-      <version>0.7.0.RELEASE</version>
+      <version>0.7.0.TEST.RELEASE</version>
     </dependency>
     <dependency>
       <groupId>io.microservices.tools.canvas</groupId>
       <artifactId>microservice-canvas-extractor-tram-sagas</artifactId>
-      <version>0.7.0.RELEASE</version>
+      <version>0.7.0.TEST.RELEASE</version>
     </dependency>-->
 
   </dependencies>

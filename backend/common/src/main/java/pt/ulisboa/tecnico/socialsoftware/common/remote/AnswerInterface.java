@@ -15,11 +15,6 @@ public class AnswerInterface implements AnswerContract {
     private static final String ENDPOINT = "http://tutor-service:8084";
 
     @Override
-    public Integer generateQuizAndGetId(Integer creatorId, Integer courseExecutionId, ExternalStatementCreationDto quizDetails) {
-        return null;
-    }
-
-    @Override
     public StatementQuizDto startQuiz(Integer userId, Integer quizId) {
         logger.info("startQuiz userId:{} quizId:{}", userId, quizId);
         RestTemplate restTemplate = new RestTemplate();

@@ -324,47 +324,6 @@ public class Tournament  {
         return dto;
     }
 
-    public void beginRemoveTournament() {
-        switch (getState()) {
-            case APPROVED:
-                setState(REMOVAL_PENDING);
-                break;
-            default:
-                throw new UnsupportedStateTransitionException(getState());
-        }
-    }
-
-    public void confirmRemoveTournament() {
-        switch (getState()) {
-            case REMOVAL_PENDING:
-                remove();
-                setState(REMOVED);
-                break;
-            default:
-                throw new UnsupportedStateTransitionException(getState());
-        }
-    }
-
-    public void undoRemoveTournament() {
-        switch (getState()) {
-            case REMOVAL_PENDING:
-                setState(APPROVED);
-                break;
-            default:
-                throw new UnsupportedStateTransitionException(getState());
-        }
-    }
-
-    public void beginUpdateQuiz() {
-        switch (getState()) {
-            case READY_FOR_UPDATE:
-                setState(UPDATE_PENDING);
-                break;
-            default:
-                throw new UnsupportedStateTransitionException(getState());
-        }
-    }
-
     public void undoUpdate() {
         switch (getState()) {
             case UPDATE_PENDING:

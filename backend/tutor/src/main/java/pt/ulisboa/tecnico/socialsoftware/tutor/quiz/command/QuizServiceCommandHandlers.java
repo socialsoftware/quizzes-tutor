@@ -7,7 +7,6 @@ import io.eventuate.tram.sagas.participant.SagaCommandHandlersBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.DeleteQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.GetQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.UpdateQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
@@ -35,7 +34,6 @@ public class QuizServiceCommandHandlers {
     public CommandHandlers commandHandlers() {
         return SagaCommandHandlersBuilder
                 .fromChannel(ServiceChannels.QUIZ_SERVICE_COMMAND_CHANNEL)
-                .onMessage(DeleteQuizCommand.class, this::deleteQuiz)
                 .onMessage(UpdateQuizCommand.class, this::updateQuiz)
                 .onMessage(GetQuizCommand.class, this::getQuiz)
                 .build();
@@ -70,16 +68,4 @@ public class QuizServiceCommandHandlers {
         }
     }
 
-    public Message deleteQuiz(CommandMessage<DeleteQuizCommand> cm) {
-        logger.info("Received DeleteQuizCommand");
-
-        Integer quizId = cm.getCommand().getQuizId();
-
-        try {
-            quizService.removeQuiz(quizId);
-            return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
 }

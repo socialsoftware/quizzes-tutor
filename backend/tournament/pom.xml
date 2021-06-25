@@ -239,6 +239,24 @@
       <artifactId>eventuate-tram-sagas-spring-participant</artifactId>
       <version>${eventuate-tram-sagas.version}</version>
     </dependency>
+
+    <!-- Microservices canvas-->
+    <!--https://github.com/microservice-canvas/microservice-canvas-tools-->
+   <!-- <dependency>
+      <groupId>io.microservices.tools.canvas</groupId>
+      <artifactId>microservice-canvas-springmvc</artifactId>
+      <version>0.7.0.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>io.microservices.tools.canvas</groupId>
+      <artifactId>microservice-canvas-extractor-tram</artifactId>
+      <version>0.7.0.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>io.microservices.tools.canvas</groupId>
+      <artifactId>microservice-canvas-extractor-tram-sagas</artifactId>
+      <version>0.7.0.RELEASE</version>
+    </dependency>-->
   </dependencies>
 
   <!-- https://javahungry.blogspot.com/2019/05/solved-no-main-manifest-attribute-in-jar.html -->
