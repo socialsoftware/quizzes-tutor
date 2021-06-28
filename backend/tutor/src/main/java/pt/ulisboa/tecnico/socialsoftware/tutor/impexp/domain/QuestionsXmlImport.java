@@ -92,22 +92,26 @@ public class QuestionsXmlImport {
 
     private void importQuestion(Element questionElement, Course course) {
         Integer key = null;
+        QuestionDto questionDto = null;
         if (loadCourseExecution == null) {
             key = Integer.valueOf(questionElement.getAttributeValue("key"));
             try {
-                questionService.findQuestionByKey(key);
-                throw new TutorException(QUESTION_KEY_ALREADY_EXISTS, key);
+                questionDto = questionService.findQuestionByKey(key);
             } catch (TutorException tutorException) {
-                // OK it does not exist
+                // OK it does not exist and we can proceed
+            }
+            if (questionDto != null) {
+                throw new TutorException(QUESTION_KEY_ALREADY_EXISTS, key);
             }
         }
+
         String content = questionElement.getAttributeValue(CONTENT);
         String title = questionElement.getAttributeValue("title");
         String status = questionElement.getAttributeValue("status");
         String creationDate = questionElement.getAttributeValue("creationDate");
         String type = questionElement.getAttributeValue("type");
 
-        QuestionDto questionDto = new QuestionDto();
+        questionDto = new QuestionDto();
         questionDto.setKey(key);
         questionDto.setContent(content);
         questionDto.setTitle(title);

@@ -7,6 +7,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage;
@@ -17,8 +18,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.XMLQuestionExportVi
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -37,6 +40,7 @@ import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
+
 
 @Service
 public class QuestionService {
@@ -69,11 +73,13 @@ public class QuestionService {
     }
 
     @Retryable(
-          value = { SQLException.class },
-          backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public Integer findQuestionIdByQuestionSubmissionId(Integer questionSubmissionId) {
-        return questionSubmissionRepository.findQuestionIdByQuestionSubmissionId(questionSubmissionId).orElse(null);
+    public StatementQuestionDto getStatementQuestionDto(Integer questionId) {
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+        return question.getStatementQuestionDto();
     }
 
     @Retryable(

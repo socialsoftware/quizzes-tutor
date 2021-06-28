@@ -35,8 +35,8 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
   beforeEach(() => {
     cy.demoTeacherLogin();
-    cy.route('GET', '/courses/*/questions').as('getQuestions');
-    cy.route('GET', '/courses/*/topics').as('getTopics');
+    cy.route('GET', '/questions/courses/*').as('getQuestions');
+    cy.route('GET', '/topics/courses/*').as('getTopics');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="questionsTeacherMenuButton"]').click();
 
@@ -94,7 +94,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
       .contains('answer slot', { matchCase: false })
       .click({ force: true });
 
-    cy.route('POST', '/courses/*/questions/').as('postQuestion');
+    cy.route('POST', '/questions/courses/*').as('postQuestion');
 
     cy.get('button').contains('Save').click();
 
@@ -229,7 +229,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
       'Cypress New Content For Question!'
     );
 
-    cy.route('POST', '/courses/*/questions/').as('postQuestion');
+    cy.route('POST', '/questions/courses/*').as('postQuestion');
 
     cy.wait(1000);
 

@@ -9,13 +9,13 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDt
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.auth.AuthUserService.MAIL_FORMAT;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Entity
@@ -100,7 +100,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
     }
 
     public void setEmail(String email) {
-        if (email == null || !email.matches(UserService.MAIL_FORMAT))
+        if (email == null || !email.matches(MAIL_FORMAT))
             throw new TutorException(INVALID_EMAIL, email);
 
         this.email = email.toLowerCase();

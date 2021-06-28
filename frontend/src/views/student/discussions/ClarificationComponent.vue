@@ -8,10 +8,17 @@
       >
         <div class="text-left">
           <b
-            >{{ clarification.username }} replied on
+            >{{ clarification.name }} ({{ clarification.username }}) replied on
             {{ clarification.date }} :</b
           >
           <span v-html="convertMarkDown(clarification.message)" />
+          <v-switch
+            v-if="canChange"
+            style="width: 12%"
+            v-model="clarification.public"
+            :label="clarification.public ? 'Public' : 'Private'"
+            @change="changeReplyAvailability(clarification.id)"
+          />
         </div>
       </li>
     </ul>
@@ -25,12 +32,21 @@
 import { Component, Vue, Prop } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Reply from '@/models/management/Reply';
+import RemoteServices from '@/services/RemoteServices';
 @Component
 export default class ClarificationComponent extends Vue {
   @Prop() readonly clarifications!: Reply[];
+  @Prop() readonly canChange!: boolean;
 
   convertMarkDown(text: string) {
     return convertMarkDown(text, null);
+  }
+
+  async changeReplyAvailability(id: number) {
+    await this.$store.dispatch('loading');
+    await RemoteServices.changeReplyAvailability(id);
+    await this.$store.dispatch('clearLoading');
+    this.$emit('make-private', id);
   }
 }
 </script>

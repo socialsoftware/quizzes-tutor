@@ -5,11 +5,15 @@ import AuthDto from '@/models/user/AuthDto';
 import Course from '@/models/user/Course';
 import AuthUser from '@/models/user/AuthUser';
 import ExternalUser from '@/models/user/ExternalUser';
+import StatementQuiz from '@/models/statement/StatementQuiz';
+import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 
 interface State {
   token: string;
   user: AuthUser | null;
   currentCourse: Course | null;
+  statementQuiz: StatementQuiz | null;
+  correctAnswers: StatementCorrectAnswer[];
   error: boolean;
   errorMessage: string;
   notification: boolean;
@@ -21,6 +25,8 @@ const state: State = {
   token: '',
   user: null,
   currentCourse: null,
+  statementQuiz: null,
+  correctAnswers: [],
   error: false,
   errorMessage: '',
   notification: false,
@@ -88,6 +94,12 @@ export default new Vuex.Store({
       localStorage.setItem('currentCourse', JSON.stringify(currentCourse));
       state.currentCourse = currentCourse;
     },
+    statementQuiz(state, statementQuiz: StatementQuiz) {
+      state.statementQuiz = statementQuiz;
+    },
+    correctAnswers(state, correctAnswers: StatementCorrectAnswer[]) {
+      state.correctAnswers = correctAnswers;
+    },
   },
   actions: {
     error({ commit }, errorMessage) {
@@ -111,8 +123,6 @@ export default new Vuex.Store({
     async fenixLogin({ commit }, code) {
       const authResponse = await RemoteServices.fenixLogin(code);
       commit('login', authResponse);
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async externalLogin({ commit }, user: ExternalUser) {
       const authResponse = await RemoteServices.externalLogin(
@@ -120,8 +130,6 @@ export default new Vuex.Store({
         user.password
       );
       commit('login', authResponse);
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async demoStudentLogin({ commit }) {
       const authResponse = await RemoteServices.demoStudentLogin(false);
@@ -130,8 +138,6 @@ export default new Vuex.Store({
         'currentCourse',
         (Object.values(authResponse.user.courses)[0] as Course[])[0]
       );
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async demoNewStudentLogin({ commit }) {
       const authResponse = await RemoteServices.demoStudentLogin(true);
@@ -140,8 +146,6 @@ export default new Vuex.Store({
         'currentCourse',
         (Object.values(authResponse.user.courses)[0] as Course[])[0]
       );
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async demoTeacherLogin({ commit }) {
       const authResponse = await RemoteServices.demoTeacherLogin();
@@ -150,25 +154,25 @@ export default new Vuex.Store({
         'currentCourse',
         (Object.values(authResponse.user.courses)[0] as Course[])[0]
       );
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     async demoAdminLogin({ commit }) {
       const authResponse = await RemoteServices.demoAdminLogin();
       commit('login', authResponse);
-      // localStorage.setItem("token", authResponse.token);
-      // localStorage.setItem("userRole", authResponse.user.role);
     },
     logout({ commit }) {
       return new Promise<void>((resolve) => {
         commit('logout');
-        // localStorage.removeItem("token");
-        // localStorage.removeItem("userRole");
         resolve();
       });
     },
     currentCourse({ commit }, currentCourse) {
       commit('currentCourse', currentCourse);
+    },
+    statementQuiz({ commit }, statementQuiz) {
+      commit('statementQuiz', statementQuiz);
+    },
+    correctAnswers({ commit }, correctAnswers) {
+      commit('correctAnswers', correctAnswers);
     },
   },
   getters: {
@@ -200,6 +204,12 @@ export default new Vuex.Store({
     },
     getCurrentCourse(state): Course | null {
       return state.currentCourse;
+    },
+    getStatementQuiz(state): StatementQuiz | null {
+      return state.statementQuiz;
+    },
+    getCorrectAnswers(state): StatementCorrectAnswer[] | null {
+      return state.correctAnswers;
     },
     getError(state): boolean {
       return state.error;

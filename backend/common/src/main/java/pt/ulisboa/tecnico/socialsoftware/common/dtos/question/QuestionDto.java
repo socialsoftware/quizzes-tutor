@@ -10,6 +10,7 @@ public class QuestionDto implements Serializable {
     private String title;
     private String content;
     private Integer difficulty;
+    private long numberOfClarifications;
     private int numberOfAnswers = 0;
     private int numberOfGeneratedQuizzes = 0;
     private int numberOfNonGeneratedQuizzes = 0;
@@ -62,6 +63,14 @@ public class QuestionDto implements Serializable {
 
     public void setDifficulty(Integer difficulty) {
         this.difficulty = difficulty;
+    }
+
+    public long getNumberOfClarifications() {
+        return numberOfClarifications;
+    }
+
+    public void setNumberOfClarifications(long numberOfClarifications) {
+        this.numberOfClarifications = numberOfClarifications;
     }
 
     public int getNumberOfAnswers() {
@@ -152,6 +161,7 @@ public class QuestionDto implements Serializable {
                 ", title='" + title + '\'' +
                 ", content='" + content + '\'' +
                 ", difficulty=" + difficulty +
+                ", numberOfClarifications=" + numberOfClarifications +
                 ", numberOfAnswers=" + numberOfAnswers +
                 ", numberOfGeneratedQuizzes=" + numberOfGeneratedQuizzes +
                 ", numberOfNonGeneratedQuizzes=" + numberOfNonGeneratedQuizzes +

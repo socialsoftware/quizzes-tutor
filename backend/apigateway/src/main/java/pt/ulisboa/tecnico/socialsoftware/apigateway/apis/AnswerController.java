@@ -9,19 +9,29 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.SolvedQuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementCreationDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.QUIZ_NOT_FOUND;
 
 @RestController
 public class AnswerController {
     @Autowired
     private AnswerService answerService;
 
-    @GetMapping("/executions/{executionId}/quizzes/available")
+    @Autowired
+    private QuizRepository quizRepository;
+
+    @GetMapping("/answers/{executionId}/quizzes/available")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<QuizDto> getAvailableQuizzes(Principal principal, @PathVariable int executionId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -29,7 +39,7 @@ public class AnswerController {
         return answerService.getAvailableQuizzes(authUser.getUserSecurityInfo().getId(), executionId);
     }
 
-    @PostMapping("/executions/{executionId}/quizzes/generate")
+    @PostMapping("/answers/{executionId}/quizzes/generate")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public StatementQuizDto getNewQuiz(Principal principal, @PathVariable int executionId, @RequestBody StatementCreationDto quizDetails) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -37,7 +47,7 @@ public class AnswerController {
         return answerService.generateStudentQuiz(authUser.getUserSecurityInfo().getId(), executionId, quizDetails);
     }
 
-    @GetMapping("/executions/{executionId}/quizzes/solved")
+    @GetMapping("/answers/{executionId}/quizzes/solved")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<SolvedQuizDto> getSolvedQuizzes(Principal principal, @PathVariable int executionId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -45,7 +55,7 @@ public class AnswerController {
         return answerService.getSolvedQuizzes(authUser.getUserSecurityInfo().getId(), executionId);
     }
 
-    @GetMapping("/quizzes/{quizId}/byqrcode")
+    @GetMapping("/answers/{quizId}/byqrcode")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuizDto getQuizByQRCode(Principal principal, @PathVariable int quizId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -53,7 +63,17 @@ public class AnswerController {
         return answerService.getQuizByQRCode(authUser.getUserSecurityInfo().getId(), quizId);
     }
 
-    @GetMapping("/quizzes/{quizId}/start")
+    @GetMapping("/answers/{executionId}/bycode/{code}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public StatementQuizDto getQuizByCode(Principal principal, @PathVariable int executionId, @PathVariable int code) {
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
+
+        Quiz quiz = quizRepository.findByCourseExecutionAndCode(executionId, code).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, code));
+
+        return answerService.getQuizByQRCode(authUser.getUserSecurityInfo().getId(), quiz.getId());
+    }
+
+    @GetMapping("/answers/{quizId}/start")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuizDto startQuiz(Principal principal, @PathVariable int quizId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -61,13 +81,13 @@ public class AnswerController {
         return answerService.startQuiz(authUser.getUserSecurityInfo().getId(), quizId);
     }
 
-    @GetMapping("/quizzes/{quizId}/question/{questionId}")
+    @GetMapping("/answers/{quizId}/question/{questionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public StatementQuestionDto getQuestionForQuizAnswer(@PathVariable int quizId, @PathVariable int questionId) {
         return answerService.getQuestionForQuizAnswer(quizId, questionId);
     }
 
-    @PostMapping("/quizzes/{quizId}/submit")
+    @PostMapping("/answers/{quizId}/submit")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public void submitAnswer(Principal principal, @PathVariable int quizId, @Valid @RequestBody StatementAnswerDto answer) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
@@ -75,7 +95,7 @@ public class AnswerController {
         answerService.submitAnswer(authUser.getUsername(), quizId, answer);
     }
 
-    @PostMapping("/quizzes/{quizId}/conclude")
+    @PostMapping("/answers/{quizId}/conclude")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public List<CorrectAnswerDto> concludeQuiz(@PathVariable int quizId, @RequestBody StatementQuizDto statementQuizDto) {
         return answerService.concludeQuiz(statementQuizDto);

@@ -39,7 +39,7 @@
       group="answer"
       draggable="li"
     >
-      <h4 class="code-order-header" slot="header">Reponse:</h4>
+      <h4 class="code-order-header" slot="header">Response:</h4>
       <li
         v-for="(el, index) in answerDetails.orderedSlots"
         :key="index"

@@ -81,6 +81,39 @@
     outline: rgb(51, 51, 51) none 0;
     padding: 5px 0;
 
+    .number-of-questions {
+      bottom: 0;
+      box-sizing: border-box;
+      color: rgb(169, 169, 169);
+      display: block;
+      height: 40px;
+      left: 0;
+      position: absolute;
+      right: 1528px;
+      text-align: center;
+      text-decoration: none solid rgb(194, 194, 194);
+      text-size-adjust: 100%;
+      top: 0;
+      vertical-align: middle;
+      width: 200px;
+      column-rule-color: rgb(194, 194, 194);
+      perspective-origin: 25px 20px;
+      transform-origin: 25px 20px;
+      user-select: none;
+      caret-color: rgb(194, 194, 194);
+      background: rgba(0, 0, 0, 0) -webkit-linear-gradient(
+                      right,
+                      rgba(245, 245, 245, 0) 0,
+                      rgba(245, 245, 245, 0.77) 15%,
+                      rgb(245, 245, 245) 40%
+      ) repeat scroll 0 0 / auto padding-box border-box;
+      border: 0 none rgb(194, 194, 194);
+      font: normal normal 400 normal 20px / 45px 'Varela Round', Helvetica,
+      Arial, sans-serif;
+      outline: rgb(194, 194, 194) none 0;
+      padding: 0 15px 0 10px;
+    }
+
     .left-button {
       bottom: 0;
       box-sizing: border-box;
@@ -103,14 +136,14 @@
       user-select: none;
       caret-color: rgb(194, 194, 194);
       background: rgba(0, 0, 0, 0) -webkit-linear-gradient(
-          right,
-          rgba(245, 245, 245, 0) 0,
-          rgba(245, 245, 245, 0.77) 15%,
-          rgb(245, 245, 245) 40%
-        ) repeat scroll 0 0 / auto padding-box border-box;
+                      right,
+                      rgba(245, 245, 245, 0) 0,
+                      rgba(245, 245, 245, 0.77) 15%,
+                      rgb(245, 245, 245) 40%
+      ) repeat scroll 0 0 / auto padding-box border-box;
       border: 0 none rgb(194, 194, 194);
       font: normal normal 400 normal 26px / 45px 'Varela Round', Helvetica,
-        Arial, sans-serif;
+      Arial, sans-serif;
       outline: rgb(194, 194, 194) none 0;
       padding: 0 15px 0 10px;
     }
@@ -141,6 +174,33 @@
       outline: rgb(51, 51, 51) none 0;
       overflow: hidden;
     }
+
+    .answered-question-button {
+      box-sizing: border-box;
+      color: white !important;
+      cursor: pointer;
+      display: inline-block;
+      height: 40px;
+      text-align: center;
+      text-decoration: none solid rgb(255, 255, 255);
+      text-size-adjust: 100%;
+      white-space: nowrap;
+      width: 40px;
+      column-rule-color: rgb(255, 255, 255);
+      perspective-origin: 20px 20px;
+      transform-origin: 20px 20px;
+      user-select: none;
+      caret-color: rgb(255, 255, 255);
+      background: rgb(167, 167, 176) none repeat scroll 0 0 / auto padding-box
+      border-box;
+      border: 0 none rgb(255, 255, 255);
+      font: normal normal 700 normal 16px / 32px 'Varela Round', Helvetica,
+      Arial, sans-serif;
+      outline: rgb(255, 255, 255) none 0;
+      overflow: hidden;
+      padding: 5px;
+    }
+
 
     .current-question-button {
       box-sizing: border-box;

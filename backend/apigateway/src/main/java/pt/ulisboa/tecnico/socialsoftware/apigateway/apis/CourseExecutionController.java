@@ -31,7 +31,6 @@ import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
-
 @RestController
 public class CourseExecutionController {
     @Autowired

@@ -22,8 +22,8 @@ class GetCourseExecutionsWebServiceIT extends SpockTestIT {
     def setup() {
         given: 'a rest client'
         restClient = new RESTClient("http://localhost:" + port)
-        and: 'an external course execution, where a demo course execution already exists by default'
-        externalCourse = new Course("Software Engineering", CourseType.TECNICO)
+        and: 'an external course execution'
+        externalCourse = new Course("Software Engineering", CourseType.EXTERNAL)
         courseRepository.save(externalCourse)
         externalCourseExecution = new CourseExecution(externalCourse, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(externalCourseExecution)

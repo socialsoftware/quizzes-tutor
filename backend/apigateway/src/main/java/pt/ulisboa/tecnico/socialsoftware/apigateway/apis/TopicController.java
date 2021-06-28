@@ -19,14 +19,14 @@ public class TopicController {
     @Autowired
     private TopicService topicService;
 
-    @GetMapping("/courses/{courseId}/topics")
+    @GetMapping("/topics/courses/{courseId}")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<TopicDto> getCourseTopics(@PathVariable int courseId) {
         logger.debug("courseId {}", courseId);
         return this.topicService.findTopics(courseId);
     }
 
-    @PostMapping(value = "/courses/{courseId}/topics")
+    @PostMapping(value = "/topics/courses/{courseId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public TopicDto createTopic(@PathVariable int courseId, @Valid @RequestBody TopicDto topicDto) {
         return this.topicService.createTopic(courseId, topicDto);
