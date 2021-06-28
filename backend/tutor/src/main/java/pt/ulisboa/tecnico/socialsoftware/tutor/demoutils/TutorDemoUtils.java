@@ -48,22 +48,5 @@ public class TutorDemoUtils {
         quizService.resetDemoQuizzes();
         questionSubmissionService.resetDemoQuestionSubmissions();
         userService.resetDemoStudents();
-
-        CourseExecutionDto dto = new CourseExecutionDto();
-        dto.setCourseExecutionType(null);
-        dto.setCourseType(null);
-        dto.setStatus(null);
-        dto.setAcademicTerm("1º Semestre 2020/2021");
-        dto.setAcronym("PADI7");
-        dto.setName("Desenvolvimento de Aplicações Distribuídas");
-        dto.setCourseExecutionId(0);
-        dto.setCourseId(0);
-        dto.setNumberOfQuestions(0);
-        dto.setNumberOfQuizzes(0);
-        dto.setNumberOfActiveStudents(0);
-        dto.setNumberOfInactiveStudents(0);
-        dto.setNumberOfActiveTeachers(0);
-        dto.setNumberOfInactiveTeachers(0);
-        courseExecutionService.createTecnicoCourseExecution(dto);
     }
 }

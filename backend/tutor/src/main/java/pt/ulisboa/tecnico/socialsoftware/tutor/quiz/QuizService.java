@@ -210,41 +210,14 @@ public class QuizService {
         return new QuizQuestionDto(quizQuestion);
     }
 
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeQuiz(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        quiz.checkCanChange();
-
-        /*if (quiz.getType().equals(QuizType.EXTERNAL_QUIZ)) {
-            throw new TutorException(EXTERNAL_CANNOT_BE_REMOVED);
-        }*/
-
-        deleteQuiz(quiz);
-    }
-
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void deleteQuiz(Quiz quiz) {
         quiz.remove();
-
-        Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
-
-        quizQuestions.forEach(QuizQuestion::remove);
-        quizQuestions.forEach(quizQuestion -> quizQuestionRepository.delete(quizQuestion));
-
-        quizRepository.delete(quiz);
-    }
-
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void removeExternalQuiz(Integer quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
-
-        quiz.removeExternal();
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 
@@ -443,7 +416,7 @@ public class QuizService {
                 .sorted(Comparator.comparing(Quiz::getId))
                 .skip(2)
                 .forEach(quiz -> {
-                    quiz.removeExternal();
+                    quiz.remove();
                     this.quizRepository.delete(quiz);
                 });
 
