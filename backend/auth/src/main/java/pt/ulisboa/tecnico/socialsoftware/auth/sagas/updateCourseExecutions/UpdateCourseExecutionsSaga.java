@@ -5,7 +5,6 @@ import io.eventuate.tram.sagas.simpledsl.SimpleSaga;
 import org.springframework.util.Assert;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants.AuthUserServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants.CourseExecutionServiceProxy;
-import pt.ulisboa.tecnico.socialsoftware.auth.sagas.participants.UserServiceProxy;
 
 public class UpdateCourseExecutionsSaga implements SimpleSaga<UpdateCourseExecutionsSagaData> {
     private SagaDefinition<UpdateCourseExecutionsSagaData> sagaDefinition;

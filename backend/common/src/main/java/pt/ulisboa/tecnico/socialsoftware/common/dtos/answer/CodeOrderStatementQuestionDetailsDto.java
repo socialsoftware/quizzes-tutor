@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.common.dtos.answer;
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages;
 
 import java.util.List;

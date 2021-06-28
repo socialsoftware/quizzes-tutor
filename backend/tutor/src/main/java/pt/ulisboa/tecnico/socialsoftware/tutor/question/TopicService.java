@@ -11,7 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
-import pt.ulisboa.tecnico.socialsoftware.common.events.ExternalQuizSolvedEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.events.TopicDeletedEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.events.TopicUpdatedEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
@@ -28,7 +27,6 @@ import java.sql.SQLException;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.QUIZ_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.TOPIC_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 

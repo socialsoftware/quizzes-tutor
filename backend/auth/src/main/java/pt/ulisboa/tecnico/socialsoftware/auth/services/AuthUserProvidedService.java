@@ -47,9 +47,9 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 import static pt.ulisboa.tecnico.socialsoftware.common.utils.Utils.*;
 
 @Service
-public class AuthUserService {
+public class AuthUserProvidedService {
 
-    private static final Logger logger = LoggerFactory.getLogger(AuthUserService.class);
+    private static final Logger logger = LoggerFactory.getLogger(AuthUserProvidedService.class);
 
     @Autowired
     private AuthRequiredService authRequiredService;

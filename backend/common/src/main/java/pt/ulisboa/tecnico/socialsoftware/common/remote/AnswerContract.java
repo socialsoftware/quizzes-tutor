@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.common.remote;
 
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
 
 public interface AnswerContract {
 

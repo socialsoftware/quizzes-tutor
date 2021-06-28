@@ -12,7 +12,6 @@ import org.springframework.context.annotation.Import;
 import org.springframework.retry.annotation.EnableRetry;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.command.AnswerServiceCommandHandlers;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.command.CourseExecutionServiceCommandHandlers;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.command.QuestionServiceCommandHandlers;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.command.QuizServiceCommandHandlers;

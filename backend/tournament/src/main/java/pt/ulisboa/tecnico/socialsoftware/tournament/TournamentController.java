@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentService;
+import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -23,7 +23,7 @@ public class TournamentController {
     private final Logger logger = LoggerFactory.getLogger(TournamentController.class);
 
     @Autowired
-    private TournamentService tournamentProvidedService;
+    private TournamentProvidedService tournamentProvidedService;
 
     @PostMapping(value = "/tournaments/{executionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")

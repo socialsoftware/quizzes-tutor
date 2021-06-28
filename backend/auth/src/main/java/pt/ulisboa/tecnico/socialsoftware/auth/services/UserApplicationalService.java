@@ -18,7 +18,7 @@ import static pt.ulisboa.tecnico.socialsoftware.common.utils.Utils.PASSWORD_CONF
 @Service
 public class UserApplicationalService {
     @Autowired
-    private AuthUserService authUserService;
+    private AuthUserProvidedService authUserProvidedService;
 
     @Autowired
     private Mailer mailer;
@@ -30,7 +30,7 @@ public class UserApplicationalService {
     private String mailUsername;
 
     public ExternalUserDto registerExternalUser(Integer courseExecutionId, ExternalUserDto externalUserDto) {
-        ExternalUserDto user = authUserService.registerExternalUserTransactional(courseExecutionId, externalUserDto);
+        ExternalUserDto user = authUserProvidedService.registerExternalUserTransactional(courseExecutionId, externalUserDto);
         if (!user.isActive()) {
             sendConfirmationEmailTo(user.getUsername(), user.getEmail(), user.getConfirmationToken());
         }
@@ -39,7 +39,7 @@ public class UserApplicationalService {
     }
 
     public NotificationResponse<CourseExecutionDto> registerListOfUsers(InputStream stream, int courseExecutionId) {
-        NotificationResponse<CourseExecutionDto> courseDtoNotificationResponse = authUserService.registerListOfUsersTransactional(stream, courseExecutionId);
+        NotificationResponse<CourseExecutionDto> courseDtoNotificationResponse = authUserProvidedService.registerListOfUsersTransactional(stream, courseExecutionId);
 
         courseDtoNotificationResponse.getResponse().getCourseExecutionUsers()
                 .stream()
@@ -53,7 +53,7 @@ public class UserApplicationalService {
     }
 
     public ExternalUserDto confirmRegistration(ExternalUserDto externalUserDto) {
-        ExternalUserDto user = authUserService.confirmRegistrationTransactional(externalUserDto);
+        ExternalUserDto user = authUserProvidedService.confirmRegistrationTransactional(externalUserDto);
         if (!user.isActive()) {
             sendConfirmationEmailTo(user.getUsername(), user.getEmail(), user.getConfirmationToken());
         }

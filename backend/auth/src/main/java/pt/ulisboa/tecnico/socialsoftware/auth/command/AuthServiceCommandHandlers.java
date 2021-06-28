@@ -7,7 +7,7 @@ import io.eventuate.tram.sagas.participant.SagaCommandHandlersBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserService;
+import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserProvidedService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 
@@ -20,7 +20,7 @@ public class AuthServiceCommandHandlers {
     private Logger logger = LoggerFactory.getLogger(AuthServiceCommandHandlers.class);
 
     @Autowired
-    private AuthUserService authUserService;
+    private AuthUserProvidedService authUserProvidedService;
 
     /**
      * Create command handlers.
@@ -50,7 +50,7 @@ public class AuthServiceCommandHandlers {
         String email = cm.getCommand().getEmail();
 
         try {
-            authUserService.confirmUpdateCourseExecutions(authUserId, ids, courseExecutionDtoList, email);
+            authUserProvidedService.confirmUpdateCourseExecutions(authUserId, ids, courseExecutionDtoList, email);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -65,7 +65,7 @@ public class AuthServiceCommandHandlers {
         List<CourseExecutionDto> courseExecutionList = cm.getCommand().getCourseExecutionDtoList();
 
         try {
-            authUserService.approveAuthUser(authUserId, userId, courseExecutionList);
+            authUserProvidedService.approveAuthUser(authUserId, userId, courseExecutionList);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -78,7 +78,7 @@ public class AuthServiceCommandHandlers {
         Integer authUserId = cm.getCommand().getAuthUserId();
 
         try {
-            authUserService.rejectAuthUser(authUserId);
+            authUserProvidedService.rejectAuthUser(authUserId);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -91,7 +91,7 @@ public class AuthServiceCommandHandlers {
         Integer authUserId = cm.getCommand().getAuthUserId();
 
         try {
-            authUserService.undoUpdateCourseExecutions(authUserId);
+            authUserProvidedService.undoUpdateCourseExecutions(authUserId);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -105,7 +105,7 @@ public class AuthServiceCommandHandlers {
         Integer authUserId = cm.getCommand().getAuthUserId();
 
         try {
-            authUserService.undoConfirmAuthUserRegistration(authUserId);
+            authUserProvidedService.undoConfirmAuthUserRegistration(authUserId);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -120,7 +120,7 @@ public class AuthServiceCommandHandlers {
         String password = cm.getCommand().getPassword();
 
         try {
-            authUserService.confirmAuthUserRegistration(authUserId, password);
+            authUserProvidedService.confirmAuthUserRegistration(authUserId, password);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();

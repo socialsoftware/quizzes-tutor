@@ -4,14 +4,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.RemoteAccessException;
-
-import java.util.List;
-import java.util.Set;
 
 public class QuestionInterface implements QuestionContract {
     private static final Logger logger = LoggerFactory.getLogger(QuestionInterface.class);

@@ -4,7 +4,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserCourseExecutionsDto;
-import pt.ulisboa.tecnico.socialsoftware.common.remote.*;
+import pt.ulisboa.tecnico.socialsoftware.common.remote.CourseExecutionInterface;
+import pt.ulisboa.tecnico.socialsoftware.common.remote.UserInterface;
 
 @Service
 public class AuthRequiredService {

@@ -5,8 +5,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.client.RestTemplate;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.RemoteAccessException;
 
 public class AnswerInterface implements AnswerContract {

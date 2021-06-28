@@ -34,9 +34,9 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 import static pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentState.UPDATE_PENDING;
 
 @Service
-public class TournamentService {
+public class TournamentProvidedService {
 
-    private final Logger logger = LoggerFactory.getLogger(TournamentService.class);
+    private final Logger logger = LoggerFactory.getLogger(TournamentProvidedService.class);
 
     @Autowired
     private TournamentRepository tournamentRepository;

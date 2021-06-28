@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
-import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentService;
+import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService;
 
 import java.util.Set;
 
@@ -22,7 +22,7 @@ public class TournamentServiceCommandHandlers {
     private Logger logger = LoggerFactory.getLogger(TournamentServiceCommandHandlers.class);
 
     @Autowired
-    private TournamentService tournamentService;
+    private TournamentProvidedService tournamentProvidedService;
 
     /**
      * Create command handlers.
@@ -52,7 +52,7 @@ public class TournamentServiceCommandHandlers {
         Set<TournamentTopic> topics = cm.getCommand().getOldTopics();
 
         try {
-            tournamentService.undoUpdateTopics(tournamentId, topics);
+            tournamentProvidedService.undoUpdateTopics(tournamentId, topics);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -66,7 +66,7 @@ public class TournamentServiceCommandHandlers {
         Set<TournamentTopic> topics = cm.getCommand().getTournamentTopics();
 
         try {
-            tournamentService.updateTopics(tournamentId, topics);
+            tournamentProvidedService.updateTopics(tournamentId, topics);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -80,7 +80,7 @@ public class TournamentServiceCommandHandlers {
         TournamentCourseExecution tournamentCourseExecution = cm.getCommand().getTournamentCourseExecution();
 
         try {
-            tournamentService.storeCourseExecution(tournamentId, tournamentCourseExecution);
+            tournamentProvidedService.storeCourseExecution(tournamentId, tournamentCourseExecution);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -94,7 +94,7 @@ public class TournamentServiceCommandHandlers {
         Set<TournamentTopic> tournamentTopics = cm.getCommand().getTournamentTopics();
 
         try {
-            tournamentService.storeTopics(tournamentId, tournamentTopics);
+            tournamentProvidedService.storeTopics(tournamentId, tournamentTopics);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -107,7 +107,7 @@ public class TournamentServiceCommandHandlers {
         Integer tournamentId = cm.getCommand().getTournamentId();
 
         try {
-            tournamentService.rejectCreate(tournamentId);
+            tournamentProvidedService.rejectCreate(tournamentId);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -121,7 +121,7 @@ public class TournamentServiceCommandHandlers {
         Integer quizId = cm.getCommand().getQuizId();
 
         try {
-            tournamentService.confirmCreate(tournamentId, quizId);
+            tournamentProvidedService.confirmCreate(tournamentId, quizId);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -135,7 +135,7 @@ public class TournamentServiceCommandHandlers {
         TournamentDto tournamentDto = cm.getCommand().getTournamentDto();
 
         try {
-            tournamentService.confirmUpdate(tournamentId, tournamentDto);
+            tournamentProvidedService.confirmUpdate(tournamentId, tournamentDto);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();
@@ -148,7 +148,7 @@ public class TournamentServiceCommandHandlers {
         Integer tournamentId = cm.getCommand().getTournamentId();
 
         try {
-            tournamentService.undoUpdate(tournamentId);
+            tournamentProvidedService.undoUpdate(tournamentId);
             return withSuccess();
         } catch (Exception e) {
             return withFailure();

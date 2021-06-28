@@ -1,8 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.common.commands.quiz;
 
 import io.eventuate.tram.commands.common.Command;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatementCreationDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 
 public class UpdateQuizCommand implements Command {

@@ -1,8 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.common.security;
 
 import java.io.InputStream;
-import java.nio.file.Files;
-import java.nio.file.Path;
 import java.security.KeyFactory;
 import java.security.PrivateKey;
 import java.security.PublicKey;

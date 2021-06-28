@@ -1,9 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

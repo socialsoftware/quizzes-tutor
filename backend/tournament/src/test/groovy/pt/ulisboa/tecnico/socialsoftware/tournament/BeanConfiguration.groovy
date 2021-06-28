@@ -6,7 +6,7 @@ import org.springframework.context.annotation.Bean
 import org.springframework.context.annotation.PropertySource
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentService
+import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService
 
 @TestConfiguration
@@ -19,8 +19,8 @@ class BeanConfiguration {
     }
 
     @Bean
-    TournamentService TournamentProvidedService() {
-        return new TournamentService()
+    TournamentProvidedService TournamentProvidedService() {
+        return new TournamentProvidedService()
     }
 
     @Bean

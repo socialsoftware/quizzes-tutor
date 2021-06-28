@@ -1,10 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.command;
 
 import io.eventuate.tram.commands.common.Command;
-import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
-
-import java.util.Set;
 
 public class ConfirmCreateTournamentCommand implements Command {
 
