@@ -9,7 +9,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 
 import javax.servlet.http.HttpServletRequest;
@@ -82,7 +81,7 @@ public class JwtTokenProvider {
 
     Authentication getAuthentication(String token) {
         int authUserId = getAuthUserId(token);
-        AuthUser authUser = this.authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
+        AuthUser authUser = this.authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(AUTHUSER_NOT_FOUND, authUserId));
         return new UsernamePasswordAuthenticationToken(authUser, "", authUser.getAuthorities());
     }
 }

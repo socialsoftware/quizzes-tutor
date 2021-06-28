@@ -95,7 +95,9 @@ public class Assessment implements DomainEntity {
 
     public void setCourseExecution(CourseExecution courseExecution) {
         this.courseExecution = courseExecution;
-        courseExecution.addAssessment(this);
+        if (courseExecution != null) {
+            courseExecution.addAssessment(this);
+        }
     }
 
     public List<TopicConjunction> getTopicConjunctions() {

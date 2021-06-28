@@ -221,8 +221,8 @@ import CreateTournamentDialog from '@/views/student/tournament/TournamentForm.vu
 import EditPasswordDialog from '@/views/student/tournament/PasswordTournamentView.vue';
 import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
 import Tournament from '@/models/user/Tournament';
-import StatementManager from '@/models/statement/StatementManager';
 import EditTournamentDialog from '@/views/student/tournament/TournamentForm.vue';
+import StatementQuiz from '@/models/statement/StatementQuiz';
 
 @Component({
   components: {
@@ -313,9 +313,11 @@ export default class TournamentsListView extends Vue {
     await this.$store.dispatch('loading');
     try {
       if (this.type === 'OPEN')
-        this.tournaments = await RemoteServices.getOpenedTournamentsForCourseExecution();
+        this.tournaments =
+          await RemoteServices.getOpenedTournamentsForCourseExecution();
       else
-        this.tournaments = await RemoteServices.getClosedTournamentsForCourseExecution();
+        this.tournaments =
+          await RemoteServices.getClosedTournamentsForCourseExecution();
       this.tournaments.sort((a, b) => Tournament.sortById(a, b));
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -370,7 +372,8 @@ export default class TournamentsListView extends Vue {
   async onEditTournament(tournament: Tournament) {
     this.currentTournament = tournament;
     try {
-      this.tournaments = await RemoteServices.getTournamentsForCourseExecution();
+      this.tournaments =
+        await RemoteServices.getTournamentsForCourseExecution();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -418,15 +421,18 @@ export default class TournamentsListView extends Vue {
   }
 
   async solveQuiz(tournament: Tournament) {
-    let statementManager: StatementManager = StatementManager.getInstance;
+    await this.$store.dispatch('loading');
+
+    let statementQuiz: StatementQuiz;
     try {
-      statementManager.statementQuiz = await RemoteServices.solveTournament(
-        tournament.id
-      );
+      statementQuiz = await RemoteServices.solveTournament(tournament.id);
+      await this.$store.dispatch('statementQuiz', statementQuiz);
       await this.$router.push({ name: 'solve-quiz' });
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+
+    await this.$store.dispatch('clearLoading');
   }
 
   async cancelTournament(tournamentToCancel: Tournament) {

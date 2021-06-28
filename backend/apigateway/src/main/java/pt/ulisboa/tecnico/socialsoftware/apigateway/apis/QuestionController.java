@@ -6,6 +6,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
@@ -34,13 +35,13 @@ public class QuestionController {
         this.questionService = questionService;
     }
 
-    @GetMapping("/courses/{courseId}/questions")
+    @GetMapping("/questions/courses/{courseId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<QuestionDto> getCourseQuestions(@PathVariable int courseId) {
         return this.questionService.findQuestions(courseId);
     }
 
-    @GetMapping(value = "/courses/{courseId}/questions/export")
+    @GetMapping(value = "/questions/courses/{courseId}/export")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public void exportQuestions(HttpServletResponse response, @PathVariable int courseId) throws IOException {
         response.setHeader("Content-Disposition", "attachment; filename=file.zip");
@@ -50,13 +51,13 @@ public class QuestionController {
         response.flushBuffer();
     }
 
-    @GetMapping("/courses/{courseId}/questions/available")
+    @GetMapping("/questions/courses/{courseId}/available")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<QuestionDto> getAvailableQuestions(@PathVariable int courseId) {
         return this.questionService.findAvailableQuestions(courseId);
     }
 
-    @PostMapping("/courses/{courseId}/questions")
+    @PostMapping("/questions/courses/{courseId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public QuestionDto createQuestion(@PathVariable int courseId, @Valid @RequestBody QuestionDto question) {
         question.setStatus(Question.Status.AVAILABLE.name());
@@ -67,6 +68,12 @@ public class QuestionController {
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
     public QuestionDto getQuestion(@PathVariable Integer questionId) {
         return this.questionService.findQuestionById(questionId);
+    }
+
+    @GetMapping("/questions/{questionId}/statement")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionId, 'QUESTION.ACCESS')")
+    public StatementQuestionDto getStatementQuestion(@PathVariable Integer questionId) {
+        return this.questionService.getStatementQuestionDto(questionId);
     }
 
     @PutMapping("/questions/{questionId}")

@@ -9,7 +9,10 @@ import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.common.events.AddCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+
+import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.AUTHUSER_BY_USERID_NOT_FOUND;
 
@@ -44,5 +47,15 @@ public class AuthUserSubscriptions {
             authUser.remove();
             authUserRepository.delete(authUser);
         }
+    }
+
+    @Subscribe
+    public void removeTournamentsFromCourseExecution(RemoveCourseExecutionEvent event) {
+        logger.info("Received RemoveCourseExecutionEvent!");
+        List<AuthUser> authUsersList = authUserRepository.findAll();
+
+        authUsersList.forEach(authUser -> {
+            authUser.getUserCourseExecutions().remove(event.getCourseExecutionId());
+        });
     }
 }

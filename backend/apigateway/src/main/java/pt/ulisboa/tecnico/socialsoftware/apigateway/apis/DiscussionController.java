@@ -5,10 +5,10 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionApplicationalService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.ReplyDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionApplicationalService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -26,6 +26,7 @@ public class DiscussionController {
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')")
     public List<DiscussionDto> getDiscussionsByUserId(Principal principal, @PathVariable int courseExecutionId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
+
         return this.discussionService.findByCourseExecutionIdAndUserId(courseExecutionId, authUser.getUserSecurityInfo().getId());
     }
 

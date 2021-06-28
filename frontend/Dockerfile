@@ -2,7 +2,7 @@
 
 FROM node:15.14.0-alpine3.13 as build-stage
 WORKDIR /app
-COPY package*.json ./
+COPY package.json ./
 RUN npm install
 COPY . .
 ARG NODE_ENV

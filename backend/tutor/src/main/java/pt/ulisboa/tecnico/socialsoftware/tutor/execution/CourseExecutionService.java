@@ -17,6 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.events.AddCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
@@ -34,6 +35,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -139,8 +141,10 @@ public class CourseExecutionService {
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
         courseExecution.remove();
-
         courseExecutionRepository.delete(courseExecution);
+
+        RemoveCourseExecutionEvent removeCourseExecutionEvent = new RemoveCourseExecutionEvent(courseExecutionId);
+        eventBus.post(removeCourseExecutionEvent);
     }
 
     @Retryable(

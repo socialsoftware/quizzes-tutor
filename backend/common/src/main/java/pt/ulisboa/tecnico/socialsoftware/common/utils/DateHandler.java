@@ -23,13 +23,14 @@ public class DateHandler {
     /**
      *  Converts LocalDateTime to ISO8601 string format
      */
+    // NOTE: it generates Lisbon time, it is used for the csv file, to be customizable it has to receive a local from the browser
     public static String toHumanReadableString(LocalDateTime time) {
         if (time == null) {
             return null;
         }
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
-        return ZonedDateTime.of(time, ZoneId.of("UTC")).format(formatter);
+        return ZonedDateTime.of(time, ZoneId.of("UTC")).withZoneSameInstant(ZoneId.of("Europe/Lisbon")).format(formatter);
     }
 
     /**

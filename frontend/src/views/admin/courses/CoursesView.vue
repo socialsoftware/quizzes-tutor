@@ -316,9 +316,8 @@ export default class CoursesView extends Vue {
             course.courseExecutionId == this.currentCourse?.courseExecutionId
         )[0]
       );
-      this.courses[
-        index
-      ].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+      this.courses[index].courseExecutionUsers =
+        this.currentCourse.courseExecutionUsers;
       this.updateUserNumbers(this.courses[index]);
     }
   }
@@ -404,9 +403,8 @@ export default class CoursesView extends Vue {
           )[0]
         );
         this.currentCourse = course;
-        this.courses[
-          index
-        ].courseExecutionUsers = this.currentCourse.courseExecutionUsers;
+        this.courses[index].courseExecutionUsers =
+          this.currentCourse.courseExecutionUsers;
 
         this.updateUserNumbers(this.courses[index]);
       } catch (error) {

@@ -61,7 +61,7 @@
           </elementProp>
           <elementProp name="number_of_questions" elementType="Argument">
             <stringProp name="Argument.name">number_of_questions</stringProp>
-            <stringProp name="Argument.value">40</stringProp>
+            <stringProp name="Argument.value">5</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -219,7 +219,7 @@
               <stringProp name="HTTPSampler.port">${port}</stringProp>
               <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
-              <stringProp name="HTTPSampler.path">${prefix}/courses/${course_id}/questions/</stringProp>
+              <stringProp name="HTTPSampler.path">${prefix}/questions/courses/${course_id}</stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -229,33 +229,14 @@
               <stringProp name="HTTPSampler.connect_timeout"></stringProp>
               <stringProp name="HTTPSampler.response_timeout"></stringProp>
             </HTTPSamplerProxy>
-            <hashTree/>
-          </hashTree>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get list of questions" enabled="true">
-            <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
-              <collectionProp name="Arguments.arguments"/>
-            </elementProp>
-            <stringProp name="HTTPSampler.domain">${server}</stringProp>
-            <stringProp name="HTTPSampler.port">${port}</stringProp>
-            <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
-            <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">${prefix}/courses/${course_id}/questions</stringProp>
-            <stringProp name="HTTPSampler.method">GET</stringProp>
-            <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-            <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-            <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-            <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-            <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-            <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-            <stringProp name="HTTPSampler.response_timeout"></stringProp>
-          </HTTPSamplerProxy>
-          <hashTree>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get question ids" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">question_id</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$.[*].id</stringProp>
-              <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
-            </JSONPostProcessor>
-            <hashTree/>
+            <hashTree>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get question ids" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">question_id_${counter_value}</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Create quiz" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -279,7 +260,7 @@
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
             <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
-            <stringProp name="HTTPSampler.path">${prefix}/executions/${course_execution_id}/quizzes</stringProp>
+            <stringProp name="HTTPSampler.path">${prefix}/quizzes/executions/${course_execution_id}</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -301,7 +282,7 @@ int numberOfQuestions = Integer.parseInt(vars.get(&quot;number_of_questions&quot
 for (int i = 1; i &lt;= numberOfQuestions; i++) {
 	result.append(&quot;{&quot;);
 	result.append(&quot;\&quot;id\&quot;: &quot;);
-	result.append(vars.get(&quot;question_id_&quot;+i));
+	result.append(vars.get(&quot;question_id_&quot;+i+&quot;_1&quot;));
 	result.append(&quot;,  \&quot;sequence\&quot;: &quot;);
 	result.append(i);
 	result.append(&quot;}&quot;);	
@@ -430,7 +411,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
           <boolProp name="LoopController.continue_forever">false</boolProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </elementProp>
-        <stringProp name="ThreadGroup.num_threads">300</stringProp>
+        <stringProp name="ThreadGroup.num_threads">3</stringProp>
         <stringProp name="ThreadGroup.ramp_time">1</stringProp>
         <boolProp name="ThreadGroup.scheduler">false</boolProp>
         <stringProp name="ThreadGroup.duration"></stringProp>
@@ -510,31 +491,6 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Loop Controller" enabled="true">
-            <boolProp name="LoopController.continue_forever">true</boolProp>
-            <stringProp name="LoopController.loops">1</stringProp>
-          </LoopController>
-          <hashTree>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get quizzes available" enabled="true">
-              <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
-                <collectionProp name="Arguments.arguments"/>
-              </elementProp>
-              <stringProp name="HTTPSampler.domain">${server}</stringProp>
-              <stringProp name="HTTPSampler.port">${port}</stringProp>
-              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
-              <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-              <stringProp name="HTTPSampler.path">${prefix}/executions/${course_execution_id}/quizzes/available</stringProp>
-              <stringProp name="HTTPSampler.method">GET</stringProp>
-              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-              <stringProp name="HTTPSampler.response_timeout"></stringProp>
-            </HTTPSamplerProxy>
-            <hashTree/>
-          </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Start quiz" enabled="true">
             <elementProp name="HTTPsampler.Arguments" elementType="Arguments" guiclass="HTTPArgumentsPanel" testclass="Arguments" enabled="true">
               <collectionProp name="Arguments.arguments"/>
@@ -543,7 +499,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">${prefix}/quizzes/${__property(quiz_id)}/start</stringProp>
+            <stringProp name="HTTPSampler.path">${prefix}/answers/${__property(quiz_id)}/start</stringProp>
             <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -572,9 +528,9 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option ids" enabled="true">
-              <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].questionDetails.fillInSpots[0].options[0].optionId</stringProp>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get question ids" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">question_id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].questionId</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
@@ -584,16 +540,50 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             <stringProp name="LoopController.loops">${number_of_questions}</stringProp>
           </LoopController>
           <hashTree>
-            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
+            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Questions counter" enabled="true">
               <stringProp name="CounterConfig.start">1</stringProp>
               <stringProp name="CounterConfig.end">${number_of_questions}</stringProp>
               <stringProp name="CounterConfig.incr">1</stringProp>
-              <stringProp name="CounterConfig.name">counter_value</stringProp>
+              <stringProp name="CounterConfig.name">question_number</stringProp>
               <stringProp name="CounterConfig.format"></stringProp>
               <boolProp name="CounterConfig.per_user">true</boolProp>
               <boolProp name="CounterConfig.reset_on_tg_iteration">true</boolProp>
             </CounterConfig>
             <hashTree/>
+            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get question" enabled="true">
+              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
+              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
+                <collectionProp name="Arguments.arguments">
+                  <elementProp name="" elementType="HTTPArgument">
+                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
+                    <stringProp name="Argument.value">&#xd;
+</stringProp>
+                    <stringProp name="Argument.metadata">=</stringProp>
+                  </elementProp>
+                </collectionProp>
+              </elementProp>
+              <stringProp name="HTTPSampler.domain">${server}</stringProp>
+              <stringProp name="HTTPSampler.port">${port}</stringProp>
+              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
+              <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
+              <stringProp name="HTTPSampler.path">${prefix}/answers/${__property(quiz_id)}/question/${__V(question_id_${question_number})}</stringProp>
+              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
+              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
+              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
+              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
+              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
+              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
+              <stringProp name="HTTPSampler.response_timeout"></stringProp>
+            </HTTPSamplerProxy>
+            <hashTree>
+              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id" enabled="true">
+                <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
+                <stringProp name="JSONPostProcessor.jsonPathExprs">$.questionDetails.fillInSpots[0].options[0].optionId</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+              </JSONPostProcessor>
+              <hashTree/>
+            </hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Submit answer" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
               <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
@@ -607,14 +597,14 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
     &quot;type&quot;: &quot;code_fill_in&quot;,&#xd;
     &quot;selectedOptions&quot;: [&#xd;
       {&#xd;
-        &quot;optionId&quot;: ${__V(option_id_${counter_value})},&#xd;
+        &quot;optionId&quot;: ${option_id_1},&#xd;
         &quot;sequence&quot;: 1&#xd;
       }&#xd;
     ]&#xd;
   },&#xd;
-	&quot;questionAnswerId&quot;:${__V(question_answer_id_${counter_value})},&#xd;
-	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${counter_value})},&#xd;
-	&quot;sequence&quot;:${counter_value},&#xd;
+	&quot;questionAnswerId&quot;:${__V(question_answer_id_${question_number})},&#xd;
+	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${question_number})},&#xd;
+	&quot;sequence&quot;:${question_number},&#xd;
   &quot;userDiscussion&quot;: null&#xd;
 }</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
@@ -625,7 +615,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
               <stringProp name="HTTPSampler.port">${port}</stringProp>
               <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
-              <stringProp name="HTTPSampler.path">${prefix}/quizzes/${__property(quiz_id)}/submit</stringProp>
+              <stringProp name="HTTPSampler.path">${prefix}/answers/${__property(quiz_id)}/submit</stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -664,7 +654,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
             <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-            <stringProp name="HTTPSampler.path">${prefix}/quizzes/${__property(quiz_id)}/conclude</stringProp>
+            <stringProp name="HTTPSampler.path">${prefix}/answers/${__property(quiz_id)}/conclude</stringProp>
             <stringProp name="HTTPSampler.method">POST</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -986,7 +976,7 @@ vars.put(&quot;answers&quot;, result.toString());</stringProp>
             <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
             <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
             <stringProp name="HTTPSampler.path">${prefix}/quizzes/${__property(quiz_id)}/answers</stringProp>
-            <stringProp name="HTTPSampler.method">POST</stringProp>
+            <stringProp name="HTTPSampler.method">GET</stringProp>
             <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
             <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
             <boolProp name="HTTPSampler.use_keepalive">true</boolProp>

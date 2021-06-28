@@ -6,6 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionApplicationalService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto;
@@ -15,6 +16,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.UserQuesti
 import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.AUTHENTICATION_ERROR;
 
 @RestController
 public class QuestionSubmissionController {
@@ -60,9 +63,12 @@ public class QuestionSubmissionController {
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Principal principal, @Valid @PathVariable int executionId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
+        if (authUser == null)
+            throw new TutorException(AUTHENTICATION_ERROR);
 
         return questionSubmissionService.getStudentQuestionSubmissions(authUser.getUserSecurityInfo().getId(), executionId);
-    }
+
+ }
 
     @GetMapping("/submissions/{executionId}/execution")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")

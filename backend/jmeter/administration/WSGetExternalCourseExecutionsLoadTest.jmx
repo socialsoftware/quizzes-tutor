@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.2.1">
+<jmeterTestPlan version="1.2" properties="5.0" jmeter="5.4.1">
   <hashTree>
     <TestPlan guiclass="TestPlanGui" testclass="TestPlan" testname="Load Test Web Service getExternalCourseExecutions" enabled="true">
       <stringProp name="TestPlan.comments"></stringProp>
@@ -41,7 +41,7 @@
           </elementProp>
           <elementProp name="PSQL_USERNAME" elementType="Argument">
             <stringProp name="Argument.name">PSQL_USERNAME</stringProp>
-            <stringProp name="Argument.value"></stringProp>
+            <stringProp name="Argument.value">ars</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="PSQL_PASSWORD" elementType="Argument">
@@ -151,7 +151,7 @@
               <stringProp name="HTTPSampler.port">${port}</stringProp>
               <stringProp name="HTTPSampler.protocol"></stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-              <stringProp name="HTTPSampler.path">/courses/external</stringProp>
+              <stringProp name="HTTPSampler.path">/executions/external</stringProp>
               <stringProp name="HTTPSampler.method">POST</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -303,7 +303,7 @@
               <stringProp name="HTTPSampler.port">${port}</stringProp>
               <stringProp name="HTTPSampler.protocol"></stringProp>
               <stringProp name="HTTPSampler.contentEncoding"></stringProp>
-              <stringProp name="HTTPSampler.path">/courses/executions</stringProp>
+              <stringProp name="HTTPSampler.path">/executions</stringProp>
               <stringProp name="HTTPSampler.method">GET</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
