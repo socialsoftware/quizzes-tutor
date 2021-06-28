@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question;
 
+import com.google.common.eventbus.EventBus;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -10,6 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
+import pt.ulisboa.tecnico.socialsoftware.common.events.TopicDeletedEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.TopicUpdatedEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
@@ -21,10 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseReposit
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
@@ -43,6 +43,9 @@ public class TopicService {
 
     @Autowired
     private TopicRepository topicRepository;
+
+    @Autowired
+    private EventBus eventBus;
 
     @Retryable(
       value = { SQLException.class },
@@ -88,6 +91,10 @@ public class TopicService {
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
         topic.setName(topicDto.getName());
+
+        TopicUpdatedEvent event = new TopicUpdatedEvent(topic.getId(), topicDto.getName());
+        eventBus.post(event);
+
         return topic.getDto();
     }
 
@@ -101,6 +108,9 @@ public class TopicService {
 
         topic.remove();
         topicRepository.delete(topic);
+
+        TopicDeletedEvent event = new TopicDeletedEvent(topicId);
+        eventBus.post(event);
     }
 
     @Retryable(
