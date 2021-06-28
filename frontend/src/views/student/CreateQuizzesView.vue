@@ -3,11 +3,7 @@
     <h2>Create Random Quiz</h2>
     <v-container class="create-buttons">
       <p>Assessment</p>
-      <v-btn-toggle
-        v-model="statementManager.assessment"
-        mandatory
-        class="button-group"
-      >
+      <v-btn-toggle v-model="assessmentId" mandatory class="button-group">
         <v-btn
           v-for="assessment in availableAssessments"
           text
@@ -21,7 +17,7 @@
       <div>
         <p class="pl-0">Number of Questions</p>
         <v-btn-toggle
-          v-model="statementManager.numberOfQuestions"
+          v-model="numberOfQuestions"
           mandatory
           class="button-group"
         >
@@ -31,12 +27,7 @@
         </v-btn-toggle>
       </div>
       <div>
-        <v-btn
-          @click="createQuiz"
-          depressed
-          :disabled="disabled"
-          color="primary"
-        >
+        <v-btn @click="createQuiz" depressed color="primary">
           Create quiz
         </v-btn>
       </div>
@@ -52,21 +43,21 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import StatementManager from '@/models/statement/StatementManager';
 import Assessment from '@/models/management/Assessment';
 import RemoteServices from '@/services/RemoteServices';
+import StatementQuiz from '@/models/statement/StatementQuiz';
 
 @Component
 export default class CreateQuizzesView extends Vue {
-  statementManager: StatementManager = StatementManager.getInstance;
+  assessmentId: number | null = null;
+  numberOfQuestions: number | null = null;
   availableAssessments: Assessment[] = [];
-  disabled: boolean = false;
 
   async created() {
     await this.$store.dispatch('loading');
-    this.statementManager.reset();
     try {
-      this.availableAssessments = await RemoteServices.getAvailableAssessments();
+      this.availableAssessments =
+        await RemoteServices.getAvailableAssessments();
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -74,14 +65,21 @@ export default class CreateQuizzesView extends Vue {
   }
 
   async createQuiz() {
-    this.disabled = true;
+    await this.$store.dispatch('loading');
     try {
-      await this.statementManager.getQuizStatement();
-      await this.$router.push({ name: 'solve-quiz' });
+      let statementQuiz: StatementQuiz =
+        await RemoteServices.generateStatementQuiz({
+          assessment: this.assessmentId,
+          numberOfQuestions: this.numberOfQuestions,
+        });
+      await this.$store.dispatch('statementQuiz', statementQuiz);
+      await this.$router.push({
+        name: 'solve-quiz',
+      });
     } catch (error) {
-      this.disabled = false;
       await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>

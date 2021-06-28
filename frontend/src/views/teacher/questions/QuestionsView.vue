@@ -195,6 +195,7 @@
       v-if="currentQuestion && clarificationDialog"
       v-model="clarificationDialog"
       :question="currentQuestion"
+      v-on:remove-clarification="onRemoveClarification"
       v-on:close-show-clarification-dialog="onCloseShowClarificationDialog"
     />
   </v-card>
@@ -261,6 +262,12 @@ export default class QuestionsView extends Vue {
       align: 'center',
       sortable: false,
     },
+    {
+      text: 'Clarifications',
+      value: 'numberOfClarifications',
+      width: '5px',
+      align: 'center',
+    },
     { text: 'Difficulty', value: 'difficulty', width: '5px', align: 'center' },
     {
       text: 'Answers',
@@ -269,13 +276,13 @@ export default class QuestionsView extends Vue {
       align: 'center',
     },
     {
-      text: 'Nº of generated quizzes',
+      text: 'Generated quizzes',
       value: 'numberOfGeneratedQuizzes',
       width: '5px',
       align: 'center',
     },
     {
-      text: 'Nº of non generated quizzes',
+      text: 'Non generated quizzes',
       value: 'numberOfNonGeneratedQuizzes',
       width: '5px',
       align: 'center',
@@ -397,6 +404,15 @@ export default class QuestionsView extends Vue {
   onCloseStudentViewDialog() {
     this.statementQuestion = null;
     this.studentViewDialog = false;
+  }
+
+  onRemoveClarification(questionId: number) {
+    let question = this.questions.find(
+      (question) => question.id === questionId
+    );
+    if (question) {
+      question.numberOfClarifications--;
+    }
   }
 
   onCloseShowClarificationDialog() {

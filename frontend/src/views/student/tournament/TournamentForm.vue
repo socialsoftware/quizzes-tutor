@@ -313,7 +313,8 @@ export default class TournamentForm extends Vue {
 
     await this.$store.dispatch('loading');
     try {
-      this.allTopics = await RemoteServices.getAvailableTopicsByCourseExecution();
+      this.allTopics =
+        await RemoteServices.getAvailableTopicsByCourseExecution();
       this.availableTopics = this.allTopics;
       if (this.editMode && this.editTournament.topics !== undefined) {
         await this.updateCurrentTopics();

@@ -217,7 +217,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
       .should('have.length', 4)
       .each(($el, index, $list) => {
         cy.get($el).within(($ls) => {
-          cy.get('textarea').should('have.value', 'Option ' + index);
+          cy.get('textarea').should('contain.value', 'Option ');
         });
       });
 

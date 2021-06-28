@@ -114,7 +114,7 @@ public class QuizService {
                 .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
 
         return quizRepository.findQuizzesOfExecution(executionId).stream()
-                .filter(quiz -> !quiz.getType().equals(QuizType.GENERATED))
+                .filter(quiz -> !quiz.getType().equals(QuizType.GENERATED) || quiz.getType().equals(QuizType.EXTERNAL_QUIZ))
                 .sorted(comparator)
                 .map(quiz -> quiz.getDto(false))
                 .collect(Collectors.toList());
@@ -126,6 +126,9 @@ public class QuizService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto createQuiz(int executionId, QuizDto quizDto) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+        if (quizDto.isQrCodeOnly() && quizDto.getCode() == null) {
+            quizDto.setCode(quizRepository.getMaxCode(executionId).orElse(0) + 1);
+        }
         Quiz quiz = new Quiz(quizDto);
 
         if (quizDto.getCreationDate() == null) {
@@ -165,6 +168,9 @@ public class QuizService {
             quiz.setResultsDate(DateHandler.toLocalDateTime(quizDto.getResultsDate()));
         quiz.setScramble(quizDto.isScramble());
         quiz.setQrCodeOnly(quizDto.isQrCodeOnly());
+        if (quizDto.isQrCodeOnly() && quiz.getCode() == null) {
+            quiz.setCode(quizRepository.getMaxCode(quiz.getCourseExecution().getId()).orElse(0) + 1);
+        }
         quiz.setOneWay(quizDto.isOneWay());
 
         if (quizDto.isTimed())

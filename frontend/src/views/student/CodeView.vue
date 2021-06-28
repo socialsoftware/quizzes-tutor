@@ -5,14 +5,10 @@
         <v-form ref="form" v-if="!hasCode">
           <v-row justify="center">
             <v-col cols="8" sm="4" md="2">
-              <v-text-field
-                label="Code"
-                v-model="quizId"
-                outlined
-              ></v-text-field>
+              <v-text-field label="Code" v-model="code" outlined></v-text-field>
+              <v-btn color="blue darken-1" @click="setCode">Send</v-btn>
             </v-col>
           </v-row>
-          <v-btn color="green darken-1" @click="setQuizId">Save</v-btn>
         </v-form>
       </v-card-text>
     </v-card>
@@ -27,31 +23,32 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { QrcodeStream } from 'vue-qrcode-reader';
 import StatementQuiz from '@/models/statement/StatementQuiz';
-import StatementManager from '@/models/statement/StatementManager';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
 @Component
 export default class CodeView extends Vue {
   hasCode: boolean = false;
-  quizId: number | null = null;
+  code: number | null = null;
   quiz: StatementQuiz | null = null;
   timer: string = '';
 
-  async setQuizId() {
+  async setCode() {
     this.hasCode = true;
-    this.getQuizByCode();
+    await this.getQuizByCode();
   }
 
   async getQuizByCode() {
-    if (this.quizId && this.$router.currentRoute.name === 'code') {
+    await this.$store.dispatch('loading');
+    if (this.code && this.$router.currentRoute.name === 'code') {
       try {
-        this.quiz = await RemoteServices.getQuizByQRCode(this.quizId);
+        this.quiz = await RemoteServices.getQuizByCode(
+          this.$store.getters.getCurrentCourse.courseExecutionId,
+          this.code
+        );
 
         if (!this.quiz.timeToAvailability) {
-          let statementManager: StatementManager = StatementManager.getInstance;
-          statementManager.statementQuiz = this.quiz;
+          await this.$store.dispatch('statementQuiz', this.quiz);
           await this.$router.push({ name: 'solve-quiz' });
         }
       } catch (error) {
@@ -59,6 +56,7 @@ export default class CodeView extends Vue {
         await this.$router.push({ name: 'home' });
       }
     }
+    await this.$store.dispatch('clearLoading');
   }
 
   @Watch('quiz.timeToAvailability')

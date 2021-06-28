@@ -97,6 +97,10 @@ public class QuizzesXmlImport {
 		if (quizElement.getAttributeValue("qrCodeOnly") != null) {
 			qrCodeOnly = Boolean.parseBoolean(quizElement.getAttributeValue("qrCodeOnly"));
 		}
+		Integer code = null;
+		if (quizElement.getAttributeValue("code") != null) {
+			code = Integer.valueOf(quizElement.getAttributeValue("code"));
+		}
 		boolean oneWay = false;
 		if (quizElement.getAttributeValue("oneWay") != null) {
 			oneWay = Boolean.parseBoolean(quizElement.getAttributeValue("oneWay"));
@@ -128,6 +132,7 @@ public class QuizzesXmlImport {
 		quizDto.setKey(key);
 		quizDto.setScramble(scramble);
 		quizDto.setQrCodeOnly(qrCodeOnly);
+		quizDto.setCode(code);
 		quizDto.setOneWay(oneWay);
 		quizDto.setTitle(title);
 		quizDto.setCreationDate(creationDate);

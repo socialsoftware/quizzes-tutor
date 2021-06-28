@@ -142,8 +142,8 @@ export default class EditQuestionSubmissionDialog extends Vue {
     this.questionSubmission
   );
   comment: string = '';
-  questionType: string = this.questionSubmission.question.questionDetailsDto
-    .type;
+  questionType: string =
+    this.questionSubmission.question.questionDetailsDto.type;
 
   get questionTypesOptions() {
     return Object.values(QuestionTypes).map((qt) => ({
@@ -153,9 +153,10 @@ export default class EditQuestionSubmissionDialog extends Vue {
   }
 
   updateQuestionType() {
-    this.editQuestionSubmission.question.questionDetailsDto = QuestionFactory.getFactory(
-      this.questionType
-    ).createEmptyQuestionDetails();
+    this.editQuestionSubmission.question.questionDetailsDto =
+      QuestionFactory.getFactory(
+        this.questionType
+      ).createEmptyQuestionDetails();
   }
 
   @Watch('questionSubmission', { immediate: true, deep: true })

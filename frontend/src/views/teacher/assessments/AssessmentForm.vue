@@ -342,9 +342,10 @@ export default class AssessmentForm extends Vue {
 
   removeTopicConjunction(topicConjuntion: TopicConjunction) {
     this.topicConjunctions.push(topicConjuntion);
-    this.assessment.topicConjunctions = this.assessment.topicConjunctions.filter(
-      (tc) => tc.sequence != topicConjuntion.sequence
-    );
+    this.assessment.topicConjunctions =
+      this.assessment.topicConjunctions.filter(
+        (tc) => tc.sequence != topicConjuntion.sequence
+      );
   }
 
   addTopicConjunction(topicConjuntion: TopicConjunction) {

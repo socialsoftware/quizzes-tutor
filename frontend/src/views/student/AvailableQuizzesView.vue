@@ -13,7 +13,6 @@
         v-for="quiz in quizzes"
         :key="quiz.quizAnswerId"
         @click="solveQuiz(quiz)"
-        :disabled="disabled"
       >
         <div class="col">
           {{ quiz.title }}
@@ -35,13 +34,11 @@
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import StatementManager from '@/models/statement/StatementManager';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 
 @Component
 export default class AvailableQuizzesView extends Vue {
   quizzes: StatementQuiz[] = [];
-  disabled: boolean = false;
 
   async created() {
     await this.$store.dispatch('loading');
@@ -54,21 +51,17 @@ export default class AvailableQuizzesView extends Vue {
   }
 
   async solveQuiz(quiz: StatementQuiz) {
-    if (!this.disabled) {
-      // handle double clicks
-      this.disabled = true;
-
-      let statementManager: StatementManager = StatementManager.getInstance;
-
-      try {
-        statementManager.statementQuiz = await RemoteServices.startQuiz(
-          quiz.id
-        );
-        await this.$router.push({ name: 'solve-quiz' });
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
+    await this.$store.dispatch('loading');
+    try {
+      let statementQuiz: StatementQuiz = await RemoteServices.startQuiz(
+        quiz.id
+      );
+      await this.$store.dispatch('statementQuiz', statementQuiz);
+      await this.$router.push({ name: 'solve-quiz' });
+    } catch (error) {
+      await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>
