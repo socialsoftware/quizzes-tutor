@@ -1,7 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.apigateway.config;
 
-import io.jsonwebtoken.Claims;
-import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -13,10 +11,8 @@ import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.http.server.reactive.ServerHttpResponse;
 import org.springframework.stereotype.Component;
 import org.springframework.web.server.ServerWebExchange;
-import pt.ulisboa.tecnico.socialsoftware.apigateway.ApiGatewayUtils;
+import pt.ulisboa.tecnico.socialsoftware.apigateway.ApiGatewaySecurityUtils;
 import reactor.core.publisher.Mono;
-
-import java.util.Date;
 
 @RefreshScope
 @Component
@@ -38,7 +34,7 @@ public class AuthenticationFilter implements GatewayFilter {
 
             final String token = getToken(request);
 
-            if (isInvalid(token))
+            if (ApiGatewaySecurityUtils.isTokenExpired(token))
                 return this.onError(exchange, "Authorization header is invalid");
         }
         return chain.filter(exchange);
@@ -47,6 +43,7 @@ public class AuthenticationFilter implements GatewayFilter {
     private Mono<Void> onError(ServerWebExchange exchange, String err) {
         ServerHttpResponse response = exchange.getResponse();
         response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        logger.info(err);
         return response.setComplete();
     }
 
@@ -65,17 +62,5 @@ public class AuthenticationFilter implements GatewayFilter {
 
     private boolean isAuthMissing(ServerHttpRequest request) {
         return !request.getHeaders().containsKey("Authorization");
-    }
-
-    private boolean isInvalid(String token) {
-        return isTokenExpired(token);
-    }
-
-    public static Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(ApiGatewayUtils.getPublicKey()).build().parseClaimsJws(token).getBody();
-    }
-
-    private static boolean isTokenExpired(String token) {
-        return getAllClaimsFromToken(token).getExpiration().before(new Date());
     }
 }

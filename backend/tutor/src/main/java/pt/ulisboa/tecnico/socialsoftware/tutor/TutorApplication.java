@@ -18,7 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.config.TutorServiceParticipantCon
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.TutorServiceWebConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 
-@PropertySource({"classpath:application.properties" })
+@PropertySource({"classpath:application.properties"})
 @EnableScheduling
 @EnableJpaAuditing
 //@ServiceDescription(description = "Manages Orders", capabilities = "Order Management")

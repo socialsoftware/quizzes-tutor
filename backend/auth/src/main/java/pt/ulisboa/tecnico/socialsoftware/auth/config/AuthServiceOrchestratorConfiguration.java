@@ -23,7 +23,7 @@ public class AuthServiceOrchestratorConfiguration {
 
 
     @Bean
-    public CreateUserWithAuthSaga createOrderSaga(AuthUserServiceProxy authUserService, UserServiceProxy userService,
+    public CreateUserWithAuthSaga createUserWithAuthSaga(AuthUserServiceProxy authUserService, UserServiceProxy userService,
                                                   CourseExecutionServiceProxy courseExecutionService) {
         return new CreateUserWithAuthSaga(authUserService, userService, courseExecutionService);
     }

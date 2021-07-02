@@ -263,7 +263,6 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
                 for (CourseExecutionDto courseExecutionDto: courseExecutionList) {
                     addCourseExecution(courseExecutionDto.getCourseExecutionId());
                 }
-
                 this.state = APPROVED;
                 break;
             default:

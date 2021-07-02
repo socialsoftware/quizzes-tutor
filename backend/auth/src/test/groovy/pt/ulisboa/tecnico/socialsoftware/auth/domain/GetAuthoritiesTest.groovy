@@ -4,9 +4,9 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import spock.lang.Unroll
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType
 
 @DataJpaTest
 class GetAuthoritiesTest extends SpockTest {

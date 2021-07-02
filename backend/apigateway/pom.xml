@@ -22,7 +22,6 @@
   <properties>
     <spring-cloud.version>2020.0.2</spring-cloud.version>
     <spring-cloud-starter-gateway.version>3.0.2</spring-cloud-starter-gateway.version>
-    <!--<spring-cloud-starter-gateway.version>2.2.8.RELEASE</spring-cloud-starter-gateway.version>-->
     <spring-cloud-starter-netflix-hystrix.version>2.2.8.RELEASE</spring-cloud-starter-netflix-hystrix.version>
   </properties>
 

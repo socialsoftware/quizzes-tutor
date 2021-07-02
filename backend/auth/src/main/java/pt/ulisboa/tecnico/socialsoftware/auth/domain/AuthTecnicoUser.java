@@ -10,7 +10,6 @@ import javax.persistence.Entity;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.APPROVED;
-import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.UPDATE_PENDING;
 
 @Entity
 @DiscriminatorValue("TECNICO")

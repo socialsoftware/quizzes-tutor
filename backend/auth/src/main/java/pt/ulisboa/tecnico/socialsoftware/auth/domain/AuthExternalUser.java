@@ -13,7 +13,6 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.APPROVED;
-import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.UPDATE_PENDING;
 
 @Entity
 @DiscriminatorValue("EXTERNAL")
@@ -96,7 +95,6 @@ public class AuthExternalUser extends AuthUser {
                 throw new UnsupportedStateTransitionException(getState());
         }
     }
-
 
     public void authUserConfirmRegistration(String password) {
         switch (getState()) {
