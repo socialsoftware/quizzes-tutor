@@ -12,8 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
@@ -36,7 +38,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRe
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.io.*;
 import java.nio.charset.StandardCharsets;
@@ -44,6 +46,7 @@ import java.sql.SQLException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -78,6 +81,9 @@ public class QuizService {
     private QuizQuestionRepository quizQuestionRepository;
 
     @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
     private AnswerService answerService;
 
     @Autowired
@@ -107,7 +113,7 @@ public class QuizService {
                 .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
 
         return quizRepository.findQuizzesOfExecution(executionId).stream()
-                .filter(quiz -> !quiz.getType().equals(QuizType.GENERATED))
+                .filter(quiz -> !quiz.getType().equals(QuizType.GENERATED) || quiz.getType().equals(QuizType.EXTERNAL_QUIZ))
                 .sorted(comparator)
                 .map(quiz -> quiz.getDto(false))
                 .collect(Collectors.toList());
@@ -119,6 +125,9 @@ public class QuizService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto createQuiz(int executionId, QuizDto quizDto) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+        if (quizDto.isQrCodeOnly() && quizDto.getCode() == null) {
+            quizDto.setCode(quizRepository.getMaxCode(executionId).orElse(0) + 1);
+        }
         Quiz quiz = new Quiz(quizDto);
 
         if (quizDto.getCreationDate() == null) {
@@ -140,7 +149,6 @@ public class QuizService {
         return quiz.getDto(true);
     }
 
-
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
@@ -159,6 +167,9 @@ public class QuizService {
             quiz.setResultsDate(DateHandler.toLocalDateTime(quizDto.getResultsDate()));
         quiz.setScramble(quizDto.isScramble());
         quiz.setQrCodeOnly(quizDto.isQrCodeOnly());
+        if (quizDto.isQrCodeOnly() && quiz.getCode() == null) {
+            quiz.setCode(quizRepository.getMaxCode(quiz.getCourseExecution().getId()).orElse(0) + 1);
+        }
         quiz.setOneWay(quizDto.isOneWay());
 
         if (quizDto.isTimed())
@@ -174,8 +185,7 @@ public class QuizService {
         if (quizDto.getQuestions() != null) {
             quizDto.getQuestions().stream().sorted(Comparator.comparing(QuestionDto::getSequence))
                     .forEach(questionDto -> {
-                        Question question = questionRepository.findById(questionDto.getId())
-                                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionDto.getId()));
+                        Question question = questionRepository.findById(questionDto.getId()).get();
                         QuizQuestion quizQuestion = new QuizQuestion(quiz, question, quiz.getQuizQuestionsNumber());
                         quizQuestionRepository.save(quizQuestion);
                     });
@@ -200,7 +210,6 @@ public class QuizService {
         return new QuizQuestionDto(quizQuestion);
     }
 
-
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
@@ -209,23 +218,6 @@ public class QuizService {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
         quiz.remove();
-
-        Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
-
-        quizQuestions.forEach(QuizQuestion::remove);
-        quizQuestions.forEach(quizQuestion -> quizQuestionRepository.delete(quizQuestion));
-
-        quizRepository.delete(quiz);
-    }
-
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void removeExternalQuiz(Integer quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
-
-        quiz.removeExternal();
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 
@@ -424,7 +416,7 @@ public class QuizService {
                 .sorted(Comparator.comparing(Quiz::getId))
                 .skip(2)
                 .forEach(quiz -> {
-                    quiz.removeExternal();
+                    quiz.remove();
                     this.quizRepository.delete(quiz);
                 });
 
@@ -465,5 +457,69 @@ public class QuizService {
         }
 
         return quiz.getDto(false);
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void populateExternalQuizzesWithQuizAnswers() {
+        List<Quiz> quizzes = quizRepository.findAll();
+        quizzes.stream().filter(Quiz::isExternalQuiz).forEach(
+            quiz -> {
+                for (User student : quiz.getCourseExecution().getStudents()) {
+                    if (student.getQuizAnswer(quiz) == null) {
+                        answerService.createQuizAnswer(student.getId(), quiz.getId());
+                    }
+                }
+            }
+        );
+    }
+
+    public void updateExternalQuiz(Integer userId, Integer executionId, Integer quizId,
+                                      TournamentDto tournamentDto) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        quiz.checkCanChange();
+
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+        List<Question> availableQuestions = questionRepository.findAvailableQuestions(courseExecution.getCourse().getId());
+
+        if (tournamentDto.getTopicsDto() != null) {
+            availableQuestions = courseExecution.filterQuestionsByTopics(availableQuestions, tournamentDto.getTopicsDto());
+        } else {
+            availableQuestions = new ArrayList<>();
+        }
+
+        if (availableQuestions.size() < tournamentDto.getNumberOfQuestions()) {
+            throw new TutorException(NOT_ENOUGH_QUESTIONS_TOURNAMENT);
+        }
+
+        availableQuestions = user.filterQuestionsByStudentModel(tournamentDto.getNumberOfQuestions(), availableQuestions);
+
+        updateExternalQuizDetails(tournamentDto, quiz, availableQuestions);
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void updateExternalQuizDetails(TournamentDto tournamentDto, Quiz quiz, List<Question> availableQuestions) {
+        if (DateHandler.isValidDateFormat(tournamentDto.getStartTime()))
+            quiz.setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
+        if (DateHandler.isValidDateFormat(tournamentDto.getEndTime())) {
+            quiz.setConclusionDate(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
+            quiz.setResultsDate(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
+        }
+
+        Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
+
+        quizQuestions.forEach(QuizQuestion::remove);
+        quizQuestions.forEach(quizQuestion -> quizQuestionRepository.delete(quizQuestion));
+
+        IntStream.range(0, availableQuestions.size())
+                .forEach(index -> new QuizQuestion(quiz, availableQuestions.get(index), index));
     }
 }

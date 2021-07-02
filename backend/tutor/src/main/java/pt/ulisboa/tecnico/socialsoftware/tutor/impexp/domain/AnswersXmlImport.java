@@ -18,7 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
@@ -35,7 +35,6 @@ import java.io.*;
 import java.nio.charset.Charset;
 import java.time.LocalDateTime;
 import java.util.Map;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
@@ -175,37 +174,33 @@ public class AnswersXmlImport {
 
     private void importQuestionAnswers(Element questionAnswersElement, QuizAnswer quizAnswer) {
         for (Element questionAnswerElement : questionAnswersElement.getChildren("questionAnswer")) {
-            Integer timeTaken = null;
-            if (questionAnswerElement.getAttributeValue("timeTaken") != null) {
-                timeTaken = Integer.valueOf(questionAnswerElement.getAttributeValue("timeTaken"));
-            }
-
             int answerSequence = Integer.parseInt(questionAnswerElement.getAttributeValue(SEQUENCE));
 
             QuestionAnswer questionAnswer = quizAnswer.getQuestionAnswers().stream()
                     .filter(qa -> qa.getSequence().equals(answerSequence)).findAny()
                     .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answerSequence));
 
-            questionAnswer.setTimeTaken(timeTaken);
 
+            String timeTakenValue = questionAnswerElement.getAttributeValue("timeTaken");
+            if (timeTakenValue != null) {
+                Integer timeTaken = Integer.valueOf(timeTakenValue);
+                questionAnswer.setTimeTaken(timeTaken);
 
-            String questionType = QuestionTypes.MULTIPLE_CHOICE_QUESTION;
-            if (questionAnswerElement.getChild("quizQuestion") != null) {
-                questionType = Optional.ofNullable(questionAnswerElement.getChild("quizQuestion").getAttributeValue("type")).orElse(questionType);
-            }
+                String questionType = questionAnswerElement.getAttributeValue("type");
 
-            switch (questionType) {
-                case QuestionTypes.MULTIPLE_CHOICE_QUESTION:
-                    importMultipleChoiceXmlImport(questionAnswerElement, questionAnswer);
-                    break;
-                case QuestionTypes.CODE_FILL_IN_QUESTION:
-                    importCodeFillInXmlImport(questionAnswerElement, questionAnswer);
-                    break;
-                case QuestionTypes.CODE_ORDER_QUESTION:
-                    importCodeOrderXmlImport(questionAnswerElement, questionAnswer);
-                    break;
-                default:
-                    throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionType);
+                switch (questionType) {
+                    case QuestionTypes.MULTIPLE_CHOICE_QUESTION:
+                        importMultipleChoiceXmlImport(questionAnswerElement, questionAnswer);
+                        break;
+                    case QuestionTypes.CODE_FILL_IN_QUESTION:
+                        importCodeFillInXmlImport(questionAnswerElement, questionAnswer);
+                        break;
+                    case QuestionTypes.CODE_ORDER_QUESTION:
+                        importCodeOrderXmlImport(questionAnswerElement, questionAnswer);
+                        break;
+                    default:
+                        throw new TutorException(QUESTION_TYPE_NOT_IMPLEMENTED, questionType);
+                }
             }
 
             questionAnswerRepository.save(questionAnswer);

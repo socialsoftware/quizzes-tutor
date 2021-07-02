@@ -156,6 +156,10 @@ public class CourseExecution implements DomainEntity {
         users.add(user);
     }
 
+    public void removeUser(User user) {
+        users.remove(user);
+    }
+
     public Set<Quiz> getQuizzes() {
         return quizzes;
     }

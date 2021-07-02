@@ -8,15 +8,274 @@
     <version>1.0-SNAPSHOT</version>
   </parent>
   <groupId>pt.ulisboa.tecnico.socialsoftware.auth</groupId>
-  <artifactId>auth</artifactId>
+  <artifactId>auth-service</artifactId>
   <packaging>jar</packaging>
-  <name>auth</name>
-  <url>http://maven.apache.org</url>
+  <name>Auth Service</name>
+
+  <repositories>
+    <repository>
+      <id>JCenter</id>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+    <repository>
+      <id>JCenter-Bintray</id>
+      <url>https://jcenter.bintray.com/</url>
+    </repository>
+    <!--<repository>
+      <id>microservices-canvas-repository</id>
+      <url>https://dl.bintray.com/eventuateio-oss/microservice-canvas-tools-release</url>
+    </repository>-->
+  </repositories>
+
   <dependencies>
     <dependency>
-      <groupId>pt.ulisboa.tecnico.socialsoftware.tutor</groupId>
-      <artifactId>tutor</artifactId>
+      <groupId>pt.ulisboa.tecnico.socialsoftware.common</groupId>
+      <artifactId>common</artifactId>
       <version>${project.version}</version>
     </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-data-jpa</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-mail</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-devtools</artifactId>
+      <scope>runtime</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
+    </dependency>
+    <!-- Access Control -->
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-security</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.security</groupId>
+      <artifactId>spring-security-test</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- Postgres -->
+    <dependency>
+      <groupId>org.postgresql</groupId>
+      <artifactId>postgresql</artifactId>
+      <scope>runtime</scope>
+    </dependency>
+    <!-- In memory database for tests -->
+    <dependency>
+      <groupId>com.h2database</groupId>
+      <artifactId>h2</artifactId>
+      <version>1.4.200</version>
+    </dependency>
+    <!-- Swagger -->
+    <dependency>
+      <groupId>org.springdoc</groupId>
+      <artifactId>springdoc-openapi-ui</artifactId>
+      <version>1.5.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.webjars</groupId>
+      <artifactId>swagger-ui</artifactId>
+      <version>3.49.0</version>
+    </dependency>
+    <!-- Fenix -->
+    <dependency>
+      <groupId>org.fenixedu</groupId>
+      <artifactId>feaf4j-api</artifactId>
+      <version>2.3.1</version>
+    </dependency>
+    <dependency>
+      <groupId>org.fenixedu</groupId>
+      <artifactId>feaf4j-okhttp</artifactId>
+      <version>2.3.1</version>
+    </dependency>
+    <!-- https://www.baeldung.com/spring-retry -->
+    <dependency>
+      <groupId>org.springframework.retry</groupId>
+      <artifactId>spring-retry</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework</groupId>
+      <artifactId>spring-aspects</artifactId>
+    </dependency>
+    <!-- Spock testing framework -->
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-spring</artifactId>
+      <version>2.0-M4-groovy-3.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.spockframework</groupId>
+      <artifactId>spock-core</artifactId>
+      <version>2.0-M4-groovy-3.0</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy.modules.http-builder</groupId>
+      <artifactId>http-builder</artifactId>
+      <version>0.7.1</version>
+    </dependency>
+    <!-- Specific Groovy version rather than the one specified by spock-core -->
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy</artifactId>
+      <version>3.0.8</version>
+    </dependency>
+    <dependency>
+      <groupId>org.codehaus.groovy</groupId>
+      <artifactId>groovy-all</artifactId>
+      <version>3.0.8</version>
+      <type>pom</type>
+    </dependency>
+    <!-- Enables mocking of classes without default constructor (together with CGLIB) -->
+    <dependency>
+      <groupId>org.objenesis</groupId>
+      <artifactId>objenesis</artifactId>
+      <version>3.1</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-compress</artifactId>
+      <version>1.20</version>
+    </dependency>
+
+    <!-- Eventuate dependencies-->
+
+    <dependency>
+      <groupId>io.eventuate.client.java</groupId>
+      <artifactId>eventuate-client-java-spring</artifactId>
+      <version>${eventuate-client-java-spring.version}</version>
+    </dependency>
+
+    <!-- Command/Async Reply messaging -->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-commands</artifactId>
+      <version>${eventuate-tram.version} </version>
+    </dependency>
+
+    <!-- Producer Implementation -->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-producer-jdbc</artifactId>
+      <version>${eventuate-tram.version} </version>
+    </dependency>
+
+    <!-- Consumer Implementation -->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-consumer-kafka</artifactId>
+      <version>${eventuate-tram.version} </version>
+    </dependency>
+
+    <!-- Consumer Idempotency (JDBC-based idempotency) -->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-consumer-jdbc</artifactId>
+      <version>${eventuate-tram.version} </version>
+    </dependency>
+
+    <!-- Transaction Management -->
+    <dependency>
+      <groupId>io.eventuate.tram.core</groupId>
+      <artifactId>eventuate-tram-spring-jdbc-kafka</artifactId>
+      <version>${eventuate-tram.version} </version>
+    </dependency>
+
+    <!-- Saga -->
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-spring-common</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+
+    <!-- Saga Orchestrator -->
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-orchestration</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-orchestration-simple-dsl</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-spring-orchestration</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+
+    <!-- Saga Participant -->
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-participant</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>io.eventuate.tram.sagas</groupId>
+      <artifactId>eventuate-tram-sagas-spring-participant</artifactId>
+      <version>${eventuate-tram-sagas.version}</version>
+    </dependency>
+
+
+    <!-- Microservices canvas-->
+    <!--https://github.com/microservice-canvas/microservice-canvas-tools-->
+    <!--<dependency>
+      <groupId>io.microservices.tools.canvas</groupId>
+      <artifactId>microservice-canvas-springmvc</artifactId>
+      <version>0.7.0.TEST.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>io.microservices.tools.canvas</groupId>
+      <artifactId>microservice-canvas-extractor-tram</artifactId>
+      <version>0.7.0.TEST.RELEASE</version>
+    </dependency>
+    <dependency>
+      <groupId>io.microservices.tools.canvas</groupId>
+      <artifactId>microservice-canvas-extractor-tram-sagas</artifactId>
+      <version>0.7.0.TEST.RELEASE</version>
+    </dependency>-->
+
   </dependencies>
+
+  <!-- https://javahungry.blogspot.com/2019/05/solved-no-main-manifest-attribute-in-jar.html -->
+  <build>
+    <plugins>
+      <plugin>
+        <groupId>org.springframework.boot</groupId>
+        <artifactId>spring-boot-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <goals>
+              <goal>repackage</goal>
+            </goals>
+          </execution>
+        </executions>
+      </plugin>
+    </plugins>
+  </build>
 </project>

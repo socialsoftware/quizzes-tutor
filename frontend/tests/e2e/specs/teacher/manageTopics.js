@@ -8,46 +8,38 @@ describe('Manage Topics Walk-through', () => {
       .should('be.empty')
       .type(topicName);
 
-    cy.route('POST', '/courses/*/topics/').as('postTopic');
+    cy.route('POST', '/topics/courses/*').as('postTopic');
 
-    cy.get('button')
-      .contains('Save')
-      .click();
+    cy.get('button').contains('Save').click();
 
-    cy.wait('@postTopic')
-      .its('status')
-      .should('eq', 200);
+    cy.wait('@postTopic').its('status').should('eq', 200);
   }
 
   beforeEach(() => {
     cy.cleanTestTopics();
     cy.demoTeacherLogin();
     cy.server();
-    cy.route('GET', '/courses/*/topics').as('getTopics');
+    cy.route('GET', '/topics/courses/*').as('getTopics');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="manageTopicsMenuButton"]').click();
     cy.get('[data-cy="Search"]').click();
 
-    cy.wait('@getTopics')
-      .its('status')
-      .should('eq', 200);
+    cy.wait('@getTopics').its('status').should('eq', 200);
   });
 
   afterEach(() => {
     cy.logout();
   });
 
-  it('Can create a new topic', function() {
+  it('Can create a new topic', function () {
     let topicName = `CY - Test topic ${new Date().toJSON()}`;
 
     createTopicWithName(topicName);
 
-    cy.get('[data-cy="topicsGrid"]')
-      .first()
-      .should('contain', topicName);
+    cy.get('[data-cy="topicsGrid"]').first().should('contain', topicName);
   });
 
-  it('Can edit created new topics', function() {
+  it('Can edit created new topics', function () {
     let topicName = `CY - Test topic ${new Date().toJSON()}`;
 
     createTopicWithName(topicName);
@@ -67,29 +59,21 @@ describe('Manage Topics Walk-through', () => {
 
     cy.route('PUT', '/topics/*').as('putTopic');
 
-    cy.get('button')
-      .contains('Save')
-      .click();
+    cy.get('button').contains('Save').click();
 
-    cy.wait('@putTopic')
-      .its('status')
-      .should('eq', 200);
+    cy.wait('@putTopic').its('status').should('eq', 200);
 
-    cy.get('[data-cy="topicsGrid"]')
-      .first()
-      .should('contain', 'CY - EDITED');
+    cy.get('[data-cy="topicsGrid"]').first().should('contain', 'CY - EDITED');
   });
 
-  it('Can delete created topics', function() {
+  it('Can delete created topics', function () {
     let topicName = `CY - Test topic ${new Date().toJSON()}`;
 
     createTopicWithName(topicName);
 
     cy.route('DELETE', '/topics/*').as('deleteTopic');
 
-    cy.get('[data-cy="topicsGrid"]')
-      .contains(topicName)
-      .should('exist');
+    cy.get('[data-cy="topicsGrid"]').contains(topicName).should('exist');
 
     cy.get('[data-cy="topicsGrid"] table > tbody > tr:first')
       .should('contain', topicName)
@@ -97,12 +81,8 @@ describe('Manage Topics Walk-through', () => {
         cy.get('[data-cy="topicsGridDeleteButton"]').click();
       });
 
-    cy.wait('@deleteTopic')
-      .its('status')
-      .should('eq', 200);
+    cy.wait('@deleteTopic').its('status').should('eq', 200);
 
-    cy.get('[data-cy="topicsGrid"]')
-      .contains(topicName)
-      .should('not.exist');
+    cy.get('[data-cy="topicsGrid"]').contains(topicName).should('not.exist');
   });
 });

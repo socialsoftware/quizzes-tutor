@@ -124,6 +124,18 @@ npm start
 ```
 * **Access http://localhost:8081**
 
+# Run CDC Service Locally
+
+* **Create eventuate db**
+```
+cd backend/eventuate-cdc-service
+sudo su -l postgres
+createdb eventuate
+\q
+psql -U ars -d eventuate -f create_eventuate_schema.sql
+```
+
+
 # Patreons
 
 A special thanks to our patreons for supporting this project:

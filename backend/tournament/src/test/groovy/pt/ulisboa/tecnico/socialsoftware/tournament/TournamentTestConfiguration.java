@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootConfiguration
 @EnableAutoConfiguration
-@EnableJpaRepositories({"pt.ulisboa.tecnico.socialsoftware.tutor", "pt.ulisboa.tecnico.socialsoftware.tournament"})
-@EntityScan({"pt.ulisboa.tecnico.socialsoftware.tutor", "pt.ulisboa.tecnico.socialsoftware.tournament"})
+@EnableJpaRepositories({"pt.ulisboa.tecnico.socialsoftware.tournament"})
+@EntityScan({"pt.ulisboa.tecnico.socialsoftware.tournament"})
 public class TournamentTestConfiguration {
 }

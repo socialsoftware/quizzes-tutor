@@ -4,12 +4,12 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -51,6 +51,8 @@ public class Quiz implements DomainEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean qrCodeOnly = false;
 
+    private Integer code;
+
     @Column(columnDefinition = "boolean default false")
     private boolean oneWay = false;
 
@@ -89,6 +91,7 @@ public class Quiz implements DomainEntity {
         setTitle(quizDto.getTitle());
         setScramble(quizDto.isScramble());
         setQrCodeOnly(quizDto.isQrCodeOnly());
+        setCode(quizDto.getCode());
         setOneWay(quizDto.isOneWay());
         setCreationDate(DateHandler.toLocalDateTime(quizDto.getCreationDate()));
         setAvailableDate(DateHandler.toLocalDateTime(quizDto.getAvailableDate()));
@@ -139,6 +142,14 @@ public class Quiz implements DomainEntity {
     }
 
     public boolean isExternalQuiz() { return type == QuizType.EXTERNAL_QUIZ; }
+
+    public Integer getCode() {
+        return this.code;
+    }
+
+    public void setCode(Integer code) {
+        this.code = code;
+    }
 
     public boolean isOneWay() {
         return oneWay;
@@ -328,16 +339,9 @@ public class Quiz implements DomainEntity {
     public void remove() {
         checkCanChange();
 
-        if(this.getType().equals(QuizType.EXTERNAL_QUIZ)) {
+        if (getType().equals(QuizType.EXTERNAL_QUIZ)) {
             throw new TutorException(EXTERNAL_CANNOT_BE_REMOVED);
         }
-
-        this.courseExecution.getQuizzes().remove(this);
-        this.courseExecution = null;
-    }
-
-    public void removeExternal() {
-        checkCanChange();
 
         this.courseExecution.getQuizzes().remove(this);
         this.courseExecution = null;
@@ -378,6 +382,7 @@ public class Quiz implements DomainEntity {
         dto.setAvailableDate(DateHandler.toISOString(getAvailableDate()));
         dto.setConclusionDate(DateHandler.toISOString(getConclusionDate()));
         dto.setResultsDate(DateHandler.toISOString(getResultsDate()));
+        dto.setCode(getCode());
 
         if (deepCopy) {
             dto.setQuestions(getQuizQuestions().stream()

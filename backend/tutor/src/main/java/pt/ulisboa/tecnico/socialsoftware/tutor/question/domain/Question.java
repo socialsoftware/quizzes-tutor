@@ -7,15 +7,16 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -377,6 +378,7 @@ public class Question implements DomainEntity {
         dto.setStatus(getStatus().name());
         dto.setTopics(getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(Topic::getDto).collect(Collectors.toList()));
         dto.setCreationDate(DateHandler.toISOString(getCreationDate()));
+        dto.setNumberOfClarifications(getDiscussions().stream().flatMap(discussion -> discussion.getReplies().stream()).filter(Reply::isPublic).count());
 
         if (!getQuizQuestions().isEmpty()) {
             dto.setNumberOfGeneratedQuizzes((int) getQuizQuestions().stream()

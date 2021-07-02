@@ -1,14 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.common.dtos.auth;
 
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 
 import java.io.Serializable;
-import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
 
 public class AuthUserDto implements Serializable {
     private Integer id;

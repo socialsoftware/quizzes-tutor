@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
-import com.google.common.eventbus.EventBus;
+import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -9,21 +9,23 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserCourseExecutionsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.sql.SQLException;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
-import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.USER_AGGREGATE_TYPE;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.USER_NOT_FOUND;
 
 @Service
 public class UserService {
@@ -34,11 +36,7 @@ public class UserService {
     private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
-    private EventBus eventBus;
-
-    public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
-    public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Password Confirmation";
-    public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
+    private DomainEventPublisher domainEventPublisher;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserDto createUser(String name, Role role, String username, boolean isActive, boolean isAdmin) {
@@ -88,20 +86,49 @@ public class UserService {
                     Integer userId = user.getId();
                     user.remove();
                     this.userRepository.delete(user);
-                    DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(userId);
-                    eventBus.post(deleteAuthUser);
+
+                    DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(userId);
+                    domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
+                            Collections.singletonList(deleteAuthUserEvent));
                 });
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void activateUser(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         user.setActive(true);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<CourseExecutionDto> getUserCourseExecutions(int userId) {
+    public UserCourseExecutionsDto getUserCourseExecutions(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
-        return user.getCourseExecutions().stream().map(CourseExecution::getDto).collect(Collectors.toList());
+        return user.getUserCourseExecutionsDto();
+    }
+
+
+    public void deleteUser(Integer id) {
+        User user = userRepository.findById(id).orElseThrow(() -> new TutorException(USER_NOT_FOUND, id));
+        user.remove();
+        userRepository.delete(user);
+    }
+
+    public void removeCourseExecutions(Integer userId, List<CourseExecutionDto> courseExecutionDtoList) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        checkExecutionsExist(courseExecutionDtoList);
+        removeCourseExecutionsFromUser(courseExecutionDtoList, user);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void removeCourseExecutionsFromUser(List<CourseExecutionDto> courseExecutionDtoList, User user) {
+        for (CourseExecutionDto dto: courseExecutionDtoList) {
+            CourseExecution courseExecution = courseExecutionRepository.findById(dto.getCourseExecutionId()).get();
+            user.removeCourse(courseExecution);
+        }
+    }
+
+    private void checkExecutionsExist(List<CourseExecutionDto> courseExecutionDtoList) {
+        for (CourseExecutionDto dto: courseExecutionDtoList) {
+            courseExecutionRepository.findById(dto.getCourseExecutionId()).
+                    orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
+        }
     }
 }

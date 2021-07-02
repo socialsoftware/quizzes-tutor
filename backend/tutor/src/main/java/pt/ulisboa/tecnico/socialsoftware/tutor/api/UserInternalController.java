@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserCourseExecutionsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 
 @RestController
@@ -24,6 +25,19 @@ public class UserInternalController {
         logger.info("findUserById id:{}", userId);
         try {
             UserDto result = monolithService.findUser(userId);
+            logger.info("Result:{}", result);
+            return new ResponseEntity<>(result, HttpStatus.OK);
+        } catch (Exception e) {
+            logger.info("Exception:{}", e.getMessage());
+            return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+        }
+    }
+
+    @RequestMapping(value = "/executions", method = RequestMethod.GET)
+    public ResponseEntity<UserCourseExecutionsDto> findUserCourseExecutions(@RequestParam Integer userId) {
+        logger.info("findUserCourseExecutions id:{}", userId);
+        try {
+            UserCourseExecutionsDto result = monolithService.getUserCourseExecutions(userId);
             logger.info("Result:{}", result);
             return new ResponseEntity<>(result, HttpStatus.OK);
         } catch (Exception e) {

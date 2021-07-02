@@ -7,7 +7,7 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 
 @SpringBootConfiguration
 @EnableAutoConfiguration
-@EnableJpaRepositories({"pt.ulisboa.tecnico.socialsoftware.tutor", "pt.ulisboa.tecnico.socialsoftware.auth"})
-@EntityScan({"pt.ulisboa.tecnico.socialsoftware.tutor", "pt.ulisboa.tecnico.socialsoftware.auth"})
+@EnableJpaRepositories({"pt.ulisboa.tecnico.socialsoftware.auth"})
+@EntityScan({"pt.ulisboa.tecnico.socialsoftware.auth"})
 public class AuthTestConfiguration {
 }

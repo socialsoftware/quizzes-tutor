@@ -139,4 +139,24 @@ public class TournamentDto implements Serializable {
     public void setClosed(boolean closed) {
         isClosed = closed;
     }
+
+    @Override
+    public String toString() {
+        return "TournamentDto{" +
+                "id=" + id +
+                ", courseAcronym='" + courseAcronym + '\'' +
+                ", quizId=" + quizId +
+                ", startTime='" + startTime + '\'' +
+                ", endTime='" + endTime + '\'' +
+                ", numberOfQuestions=" + numberOfQuestions +
+                ", isCanceled=" + isCanceled +
+                ", topicsDto=" + topicsDto +
+                ", creator=" + creator +
+                ", participants=" + participants +
+                ", privateTournament=" + privateTournament +
+                ", password='" + password + '\'' +
+                ", isOpened=" + isOpened +
+                ", isClosed=" + isClosed +
+                '}';
+    }
 }

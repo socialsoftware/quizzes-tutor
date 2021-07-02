@@ -4,9 +4,9 @@ import org.jdom2.Document;
 import org.jdom2.Element;
 import org.jdom2.output.Format;
 import org.jdom2.output.XMLOutputter;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.util.Comparator;
 import java.util.List;
@@ -47,6 +47,9 @@ public class QuizzesXmlExport {
         quizElement.setAttribute("key", String.valueOf(quiz.getNonNullKey()));
 		quizElement.setAttribute("scramble", String.valueOf(quiz.getScramble()));
 		quizElement.setAttribute("qrCodeOnly", String.valueOf(quiz.isQrCodeOnly()));
+		if (quiz.getCode() != null) {
+			quizElement.setAttribute("code", String.valueOf(quiz.getCode()));
+		}
 		quizElement.setAttribute("oneWay", String.valueOf(quiz.isOneWay()));
 		quizElement.setAttribute("type", quiz.getType().name());
 		quizElement.setAttribute("title", quiz.getTitle());

@@ -1,11 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.MultipleChoiceAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.MultipleChoiceStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;

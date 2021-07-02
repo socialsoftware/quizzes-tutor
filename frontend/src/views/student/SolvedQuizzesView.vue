@@ -35,7 +35,6 @@
 import { Component, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import SolvedQuiz from '@/models/statement/SolvedQuiz';
-import StatementManager from '@/models/statement/StatementManager';
 
 @Component
 export default class SolvedQuizzesView extends Vue {
@@ -65,9 +64,8 @@ export default class SolvedQuizzesView extends Vue {
   }
 
   async showResults(quiz: SolvedQuiz) {
-    let statementManager: StatementManager = StatementManager.getInstance;
-    statementManager.correctAnswers = quiz.correctAnswers;
-    statementManager.statementQuiz = quiz.statementQuiz;
+    await this.$store.dispatch('statementQuiz', quiz.statementQuiz);
+    await this.$store.dispatch('correctAnswers', quiz.correctAnswers);
     await this.$router.push({ name: 'quiz-results' });
   }
 }

@@ -99,4 +99,16 @@ public class TournamentParticipant {
         dto.setScore(getNumberOfCorrect() - (getNumberOfAnswered() - getNumberOfCorrect()) * 0.3);
         return dto;
     }
+
+    @Override
+    public String toString() {
+        return "TournamentParticipant{" +
+                "id=" + id +
+                ", username='" + username + '\'' +
+                ", name='" + name + '\'' +
+                ", answered=" + answered +
+                ", numberOfAnswered=" + numberOfAnswered +
+                ", numberOfCorrect=" + numberOfCorrect +
+                '}';
+    }
 }

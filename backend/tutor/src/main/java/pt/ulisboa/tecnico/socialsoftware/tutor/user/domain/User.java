@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserCourseExecutionsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
@@ -17,7 +18,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -390,8 +390,7 @@ public class User implements DomainEntity {
                 ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
                 ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
                 ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
-                ", creationDate=" + creationDate /*+
-                ", lastAccess=" + authUser.getLastAccess() */+
+                ", creationDate=" + creationDate +
                 '}';
     }
 
@@ -450,6 +449,11 @@ public class User implements DomainEntity {
     public void addCourse(CourseExecution course) {
         this.courseExecutions.add(course);
         course.addUser(this);
+    }
+
+    public void removeCourse(CourseExecution course) {
+        this.courseExecutions.remove(course);
+        course.removeUser(this);
     }
 
     public void addQuestionSubmission(QuestionSubmission questionSubmission) {
@@ -583,5 +587,12 @@ public class User implements DomainEntity {
             studentDto.setPercentageOfCorrectAnswers((getNumberOfCorrectTeacherAnswers() + getNumberOfCorrectInClassAnswers() + getNumberOfCorrectStudentAnswers())  * 100 / studentDto.getNumberOfAnswers());
 
         return studentDto;
+    }
+
+    public UserCourseExecutionsDto getUserCourseExecutionsDto() {
+        UserCourseExecutionsDto userCourseExecutions = new UserCourseExecutionsDto();
+        userCourseExecutions.setCourseExecutionDtoList(getCourseExecutions().stream().map(CourseExecution::getDto)
+                .collect(Collectors.toList()));
+        return userCourseExecutions;
     }
 }

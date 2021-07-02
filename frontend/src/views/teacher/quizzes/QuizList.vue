@@ -129,9 +129,9 @@
           {{ item.title }}
         </div>
       </template>
-      <template v-slot:[`item.id`]="{ item }">
+      <template v-slot:[`item.code`]="{ item }">
         <div v-if="item.qrCodeOnly">
-          {{ item.id }}
+          {{ item.code }}
         </div>
       </template>
 
@@ -230,7 +230,7 @@ export default class QuizList extends Vue {
     { text: 'Title', value: 'title', align: 'left', width: '30%' },
     {
       text: 'Code',
-      value: 'id',
+      value: 'code',
       align: 'center',
       width: '150px',
     },

@@ -1,17 +1,18 @@
 package pt.ulisboa.tecnico.socialsoftware.auth.domain;
 
 import org.springframework.security.crypto.keygen.KeyGenerators;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.UnsupportedStateTransitionException;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.time.LocalDateTime;
+import java.util.List;
 
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
-
+import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.APPROVED;
 
 @Entity
 @DiscriminatorValue("EXTERNAL")
@@ -57,30 +58,18 @@ public class AuthExternalUser extends AuthUser {
         this.tokenGenerationDate = tokenGenerationDate;
     }
 
-    public void confirmRegistration(PasswordEncoder passwordEncoder, String confirmationToken, String password) {
-        checkConfirmationToken(confirmationToken);
-        setPassword(passwordEncoder.encode(password));
+    public void confirmRegistration(String password) {
+        setPassword(password);
         setActive(true);
     }
 
-    public void checkConfirmationToken(String token) {
-        if (isActive()) {
-            throw new TutorException(USER_ALREADY_ACTIVE, getUsername());
-        }
-        if (!token.equals(getConfirmationToken()))
-            throw new TutorException(INVALID_CONFIRMATION_TOKEN);
-        if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
-            throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
-    }
-
     @Override
-    public Type getType() {return Type.EXTERNAL;}
+    public AuthUserType getType() {return AuthUserType.EXTERNAL;}
 
-    public String generateConfirmationToken() {
+    public void generateConfirmationToken() {
         String token = KeyGenerators.string().generateKey();
         setTokenGenerationDate(LocalDateTime.now());
         setConfirmationToken(token);
-        return token;
     }
 
     public ExternalUserDto getDto() {
@@ -95,5 +84,37 @@ public class AuthExternalUser extends AuthUser {
         dto.setAdmin(getUserSecurityInfo().isAdmin());
         dto.setConfirmationToken(getConfirmationToken());
         return dto;
+    }
+
+    public void authUserUndoConfirmRegistration() {
+        switch (getState()) {
+            case UPDATE_PENDING:
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void authUserConfirmRegistration(String password) {
+        switch (getState()) {
+            case UPDATE_PENDING:
+                confirmRegistration(password);
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void authUserApproved(Integer userId, List<CourseExecutionDto> courseExecutionList) {
+        switch (getState()) {
+            case APPROVAL_PENDING:
+                generateConfirmationToken();
+                super.authUserApproved(userId, courseExecutionList);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
     }
 }

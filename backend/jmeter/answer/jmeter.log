@@ -1,0 +1,44 @@
+2021-06-04 12:41:38,670 INFO o.a.j.u.JMeterUtils: Setting Locale to en_EN
+2021-06-04 12:41:38,709 INFO o.a.j.JMeter: Loading user properties from: C:\Program Files\apache-jmeter-5.4.1\bin\user.properties
+2021-06-04 12:41:38,716 INFO o.a.j.JMeter: Loading system properties from: C:\Program Files\apache-jmeter-5.4.1\bin\system.properties
+2021-06-04 12:41:38,731 INFO o.a.j.JMeter: Copyright (c) 1998-2021 The Apache Software Foundation
+2021-06-04 12:41:38,731 INFO o.a.j.JMeter: Version 5.4.1
+2021-06-04 12:41:38,731 INFO o.a.j.JMeter: java.version=11.0.8
+2021-06-04 12:41:38,731 INFO o.a.j.JMeter: java.vm.name=Java HotSpot(TM) 64-Bit Server VM
+2021-06-04 12:41:38,732 INFO o.a.j.JMeter: os.name=Windows 10
+2021-06-04 12:41:38,732 INFO o.a.j.JMeter: os.arch=amd64
+2021-06-04 12:41:38,732 INFO o.a.j.JMeter: os.version=10.0
+2021-06-04 12:41:38,732 INFO o.a.j.JMeter: file.encoding=Cp1252
+2021-06-04 12:41:38,732 INFO o.a.j.JMeter: java.awt.headless=null
+2021-06-04 12:41:38,732 INFO o.a.j.JMeter: Max memory     =1073741824
+2021-06-04 12:41:38,732 INFO o.a.j.JMeter: Available Processors =8
+2021-06-04 12:41:38,749 INFO o.a.j.JMeter: Default Locale=English (EN)
+2021-06-04 12:41:38,749 INFO o.a.j.JMeter: JMeter  Locale=English (EN)
+2021-06-04 12:41:38,750 INFO o.a.j.JMeter: JMeterHome=C:\Program Files\apache-jmeter-5.4.1
+2021-06-04 12:41:38,750 INFO o.a.j.JMeter: user.dir  =C:\Users\jhmff\Desktop\IST\MEIC\2ano\2Semestre\Tutor\backend\jmeter\answer
+2021-06-04 12:41:38,751 INFO o.a.j.JMeter: PWD       =C:\Users\jhmff\Desktop\IST\MEIC\2ano\2Semestre\Tutor\backend\jmeter\answer
+2021-06-04 12:41:38,754 INFO o.a.j.JMeter: IP: 172.23.176.1 Name: DESKTOP-JF FullName: DESKTOP-JF.mshome.net
+2021-06-04 12:41:39,041 INFO o.a.j.JMeter: Setting LAF to: com.github.weisj.darklaf.DarkLaf:com.github.weisj.darklaf.theme.IntelliJTheme
+2021-06-04 12:41:40,416 INFO o.a.j.JMeter: Loaded icon properties from org/apache/jmeter/images/icon.properties
+2021-06-04 12:41:49,704 INFO o.a.j.s.FileServer: Default base='C:\Users\jhmff\Desktop\IST\MEIC\2ano\2Semestre\Tutor\backend\jmeter\answer'
+2021-06-04 12:41:49,709 INFO o.a.j.g.a.Load: Loading file: C:\Users\jhmff\Desktop\IST\MEIC\2ano\2Semestre\Tutor\backend\jmeter\answer\quiz-answer-muliple-choice.jmx
+2021-06-04 12:41:49,709 INFO o.a.j.s.FileServer: Set new base='C:\Users\jhmff\Desktop\IST\MEIC\2ano\2Semestre\Tutor\backend\jmeter\answer'
+2021-06-04 12:41:49,917 INFO o.a.j.s.SaveService: Testplan (JMX) version: 2.2. Testlog (JTL) version: 2.2
+2021-06-04 12:41:49,942 INFO o.a.j.s.SaveService: Using SaveService properties version 5.0
+2021-06-04 12:41:49,945 INFO o.a.j.s.SaveService: Using SaveService properties file encoding UTF-8
+2021-06-04 12:41:49,948 INFO o.a.j.s.SaveService: Loading file: C:\Users\jhmff\Desktop\IST\MEIC\2ano\2Semestre\Tutor\backend\jmeter\answer\quiz-answer-muliple-choice.jmx
+2021-06-04 12:41:50,003 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/html is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2021-06-04 12:41:50,003 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xhtml+xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2021-06-04 12:41:50,003 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for application/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2021-06-04 12:41:50,003 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/xml is org.apache.jmeter.protocol.http.parser.LagartoBasedHtmlParser
+2021-06-04 12:41:50,003 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/vnd.wap.wml is org.apache.jmeter.protocol.http.parser.RegexpHTMLParser
+2021-06-04 12:41:50,003 INFO o.a.j.p.h.s.HTTPSamplerBase: Parser for text/css is org.apache.jmeter.protocol.http.parser.CssParser
+2021-06-04 12:41:50,397 INFO o.a.j.s.SampleResult: Note: Sample TimeStamps are START times
+2021-06-04 12:41:50,398 INFO o.a.j.s.SampleResult: sampleresult.default.encoding is set to ISO-8859-1
+2021-06-04 12:41:50,398 INFO o.a.j.s.SampleResult: sampleresult.useNanoTime=true
+2021-06-04 12:41:50,398 INFO o.a.j.s.SampleResult: sampleresult.nanoThreadSleep=5000
+2021-06-04 12:41:50,672 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2021-06-04 12:41:50,989 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2021-06-04 12:41:51,147 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2021-06-04 12:41:51,439 INFO o.a.j.v.ViewResultsFullVisualizer: Add JavaFX to your Java installation if you want to use renderer: org.apache.jmeter.visualizers.RenderInBrowser
+2021-06-04 12:41:51,528 INFO o.a.j.s.FileServer: Set new base='C:\Users\jhmff\Desktop\IST\MEIC\2ano\2Semestre\Tutor\backend\jmeter\answer'
