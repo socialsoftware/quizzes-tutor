@@ -6,7 +6,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthRequiredService;
+import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthUserRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
 
@@ -16,7 +16,7 @@ import java.io.Serializable;
 public class AuthPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
-    private AuthRequiredService authRequiredService;
+    private AuthUserRequiredService authRequiredService;
 
     private static final Logger logger = LoggerFactory.getLogger(AuthPermissionEvaluator.class);
 

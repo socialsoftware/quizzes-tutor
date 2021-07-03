@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.remote.CourseExecutionInterface;
 import pt.ulisboa.tecnico.socialsoftware.common.remote.UserInterface;
 
 @Service
-public class AuthRequiredService {
+public class AuthUserRequiredService {
 
     @Autowired
     private UserInterface userInterface;
