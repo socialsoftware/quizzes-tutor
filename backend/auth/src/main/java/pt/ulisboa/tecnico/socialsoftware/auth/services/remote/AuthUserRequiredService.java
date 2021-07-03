@@ -12,7 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import java.util.List;
 
 @Service
-public class AuthRequiredService {
+public class AuthUserRequiredService {
 
     @Autowired
     private UserService userService;

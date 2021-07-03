@@ -9,6 +9,9 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserProvidedService
+import pt.ulisboa.tecnico.socialsoftware.auth.services.UserApplicationalService
+import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthUserRequiredService
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
@@ -67,8 +70,13 @@ class BeanConfiguration {
     }
 
     @Bean
-    AuthUserService authUserService() {
-        return new AuthUserService()
+    AuthUserProvidedService authUserService() {
+        return new AuthUserProvidedService()
+    }
+
+    @Bean
+    AuthUserRequiredService authRequiredService() {
+        return new AuthUserRequiredService()
     }
 
     @Bean

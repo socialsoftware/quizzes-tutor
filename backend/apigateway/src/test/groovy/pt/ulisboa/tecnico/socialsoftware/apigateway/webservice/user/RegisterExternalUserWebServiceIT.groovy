@@ -3,13 +3,13 @@ package pt.ulisboa.tecnico.socialsoftware.apigateway.webservice.user
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class RegisterExternalUserWebServiceIT extends SpockTestIT {
+class RegisterExternalUserWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.auth;
+package pt.ulisboa.tecnico.socialsoftware.auth.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
-import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthRequiredService;
+import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthUserRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
@@ -42,13 +42,13 @@ import java.util.stream.Collectors;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService.MAIL_FORMAT;
 
 @Service
-public class AuthUserService {
+public class AuthUserProvidedService {
 
     @Autowired
     private AuthUserRepository authUserRepository;
 
     @Autowired
-    private AuthRequiredService authRequiredService;
+    private AuthUserRequiredService authRequiredService;
 
     @Autowired
     private PasswordEncoder passwordEncoder;

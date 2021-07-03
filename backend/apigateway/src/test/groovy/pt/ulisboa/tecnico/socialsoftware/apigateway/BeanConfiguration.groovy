@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.apigateway
 
-
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -9,8 +8,9 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
-import pt.ulisboa.tecnico.socialsoftware.auth.AuthUserService
-import pt.ulisboa.tecnico.socialsoftware.auth.UserApplicationalService
+import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserProvidedService
+import pt.ulisboa.tecnico.socialsoftware.auth.services.UserApplicationalService
+import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthUserRequiredService
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
@@ -25,7 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 
 @TestConfiguration
-@PropertySource("classpath:application-test.properties")
+@PropertySource("classpath:application-test-int.properties")
 class BeanConfiguration {
 
     @Value('${spring.mail.host}')
@@ -63,8 +63,13 @@ class BeanConfiguration {
     }
 
     @Bean
-    AuthUserService authUserService() {
-        return new AuthUserService()
+    AuthUserProvidedService authUserService() {
+        return new AuthUserProvidedService()
+    }
+
+    @Bean
+    AuthUserRequiredService authRequiredService() {
+        return new AuthUserRequiredService()
     }
 
     @Bean
@@ -144,9 +149,4 @@ class BeanConfiguration {
 
         return mailSender;
     }
-
-    /*@Bean
-    EventBus eventBus() {
-        return new EventBus()
-    }*/
 }

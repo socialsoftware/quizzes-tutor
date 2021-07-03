@@ -15,8 +15,8 @@ import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.auth.AuthUserService.MAIL_FORMAT;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService.MAIL_FORMAT;
 
 @Entity
 @Table(name = "auth_users",

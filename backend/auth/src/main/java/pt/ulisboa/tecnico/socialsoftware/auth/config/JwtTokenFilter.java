@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.auth;
+package pt.ulisboa.tecnico.socialsoftware.auth.config;
 
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.MalformedJwtException;
@@ -7,6 +7,7 @@ import io.jsonwebtoken.UnsupportedJwtException;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.filter.GenericFilterBean;
+import pt.ulisboa.tecnico.socialsoftware.auth.services.JwtTokenProvider;
 
 import javax.servlet.FilterChain;
 import javax.servlet.ServletException;
