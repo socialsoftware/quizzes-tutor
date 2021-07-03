@@ -5,11 +5,11 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*

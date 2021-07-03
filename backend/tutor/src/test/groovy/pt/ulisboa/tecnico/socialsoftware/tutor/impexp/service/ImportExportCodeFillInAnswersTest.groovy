@@ -2,21 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeFillInAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInOption
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInSpot
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 
 @DataJpaTest
 class ImportExportCodeFillInAnswersTest extends SpockTest {

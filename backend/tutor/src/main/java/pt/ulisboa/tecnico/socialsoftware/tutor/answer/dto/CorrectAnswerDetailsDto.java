@@ -4,8 +4,9 @@ import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.MultipleChoiceQuestionDto;
 
-import static pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes.*;
 import java.io.Serializable;
+
+import static pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes.*;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

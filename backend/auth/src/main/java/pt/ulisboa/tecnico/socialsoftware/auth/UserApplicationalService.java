@@ -6,11 +6,11 @@ import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.NotificationResponse;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.LinkHandler;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import java.io.InputStream;
 
