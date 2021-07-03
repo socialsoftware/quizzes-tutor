@@ -19,7 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth.CreateUse
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth.CreateUserWithAuthSagaData;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.updateCourseExecutions.UpdateCourseExecutionsSaga;
 import pt.ulisboa.tecnico.socialsoftware.auth.sagas.updateCourseExecutions.UpdateCourseExecutionsSagaData;
-import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthRequiredService;
+import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthUserRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
@@ -52,7 +52,7 @@ public class AuthUserProvidedService {
     private static final Logger logger = LoggerFactory.getLogger(AuthUserProvidedService.class);
 
     @Autowired
-    private AuthRequiredService authRequiredService;
+    private AuthUserRequiredService authRequiredService;
 
     @Autowired
     private AuthUserRepository authUserRepository;
