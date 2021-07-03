@@ -4,7 +4,7 @@ import groovy.json.JsonOutput
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
@@ -20,7 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSu
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UpdateQuestionSubmissionWebServiceIT extends SpockTestIT {
+class UpdateQuestionSubmissionWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 

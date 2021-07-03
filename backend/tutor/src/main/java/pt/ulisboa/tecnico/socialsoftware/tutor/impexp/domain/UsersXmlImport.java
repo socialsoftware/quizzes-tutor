@@ -3,12 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 import org.jdom2.Element;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-
-import java.time.LocalDateTime;
 
 
 @Component

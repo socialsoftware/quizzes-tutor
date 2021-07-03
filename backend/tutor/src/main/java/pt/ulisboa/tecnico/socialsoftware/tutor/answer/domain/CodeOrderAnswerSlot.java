@@ -1,7 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.CodeOrderSlotStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.CodeOrderAnswerSlotDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.CodeOrderSlotStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
 
 import javax.persistence.*;

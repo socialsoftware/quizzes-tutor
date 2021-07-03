@@ -4,8 +4,8 @@ import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.BeanConfigurationIT
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.apigateway.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
@@ -18,7 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TournamentIT extends SpockTestIT {
+class TournamentIT extends SpockTest {
     @LocalServerPort
     private int port
 
@@ -84,5 +84,5 @@ class TournamentIT extends SpockTestIT {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfigurationIT {}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

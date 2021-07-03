@@ -2,8 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.auth.domain;
 
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;

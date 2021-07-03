@@ -2,10 +2,10 @@ package pt.ulisboa.tecnico.socialsoftware.common.dtos.answer;
 
 import com.fasterxml.jackson.annotation.JsonSubTypes;
 import com.fasterxml.jackson.annotation.JsonTypeInfo;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.CodeFillInStatementQuestionDetailsDto;
+
+import java.io.Serializable;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes.*;
-import java.io.Serializable;
 
 @JsonTypeInfo(
         use = JsonTypeInfo.Id.NAME,

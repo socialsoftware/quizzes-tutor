@@ -9,11 +9,10 @@ import org.springframework.boot.web.servlet.support.SpringBootServletInitializer
 import org.springframework.context.annotation.Import;
 import org.springframework.context.annotation.PropertySource;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
-import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
-import pt.ulisboa.tecnico.socialsoftware.auth.JwtTokenProvider;
 import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthModuleConfiguration;
+import pt.ulisboa.tecnico.socialsoftware.auth.services.JwtTokenProvider;
 import pt.ulisboa.tecnico.socialsoftware.common.config.CommonModuleConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tournament.config.TournamentModuleConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tournament.demoutils.TournamentDemoUtils;

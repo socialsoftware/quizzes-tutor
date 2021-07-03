@@ -24,7 +24,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseReposit
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 
 import java.sql.SQLException;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;

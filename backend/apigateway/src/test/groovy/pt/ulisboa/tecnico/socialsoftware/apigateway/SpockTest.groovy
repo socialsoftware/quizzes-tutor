@@ -5,19 +5,16 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
-import pt.ulisboa.tecnico.socialsoftware.auth.AuthUserService
-import pt.ulisboa.tecnico.socialsoftware.auth.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository
+import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserProvidedService
+import pt.ulisboa.tecnico.socialsoftware.auth.services.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
@@ -30,12 +27,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.TopicConjunc
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.ImageRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.OptionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionDetailsRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
@@ -45,13 +37,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import spock.lang.Shared
 import spock.lang.Specification
 
 import java.time.LocalDateTime
 
-@ActiveProfiles("test")
+@ActiveProfiles("test-int")
 class SpockTest extends Specification {
 
     @Value('${spring.mail.username}')
@@ -175,7 +166,7 @@ class SpockTest extends Specification {
     AuthUserRepository authUserRepository
 
     @Autowired
-    AuthUserService authUserService
+    AuthUserProvidedService authUserService
 
     @Autowired
     QuestionSubmissionService questionSubmissionService

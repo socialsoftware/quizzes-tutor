@@ -1,8 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.common.dtos.answer;
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementOptionDto;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuestionDetailsDto;
-
 import java.util.List;
 
 public class MultipleChoiceStatementQuestionDetailsDto extends StatementQuestionDetailsDto {
