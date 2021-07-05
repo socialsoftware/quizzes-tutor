@@ -75,6 +75,14 @@ public class TournamentParticipant {
         this.numberOfCorrect = numberOfCorrect;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;

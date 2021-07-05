@@ -15,10 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
-import pt.ulisboa.tecnico.socialsoftware.common.events.AddCourseExecutionEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveCourseExecutionEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveUserFromTecnicoCourseExecutionEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.*;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
@@ -191,9 +188,14 @@ public class CourseExecutionService {
             user.setName(String.format("%s %s", roleCapitalized, user.getId()));
             user.setUsername(null);
 
-            DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(user.getId());
+            /*DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(user.getId());
             domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
-                    Collections.singletonList(deleteAuthUserEvent));
+                    Collections.singletonList(deleteAuthUserEvent));*/
+
+
+            AnonymizeUserEvent anonymizeUserEvent = new AnonymizeUserEvent(user.getId(), user.getUsername(), user.getName());
+            domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
+                    Collections.singletonList(anonymizeUserEvent));
         }
     }
 

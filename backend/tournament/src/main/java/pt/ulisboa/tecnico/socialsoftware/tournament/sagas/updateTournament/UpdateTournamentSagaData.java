@@ -11,7 +11,10 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tournament.command.*;
+import pt.ulisboa.tecnico.socialsoftware.tournament.command.ConfirmUpdateTournamentQuizCommand;
+import pt.ulisboa.tecnico.socialsoftware.tournament.command.UndoUpdateTopicsTournamentCommand;
+import pt.ulisboa.tecnico.socialsoftware.tournament.command.UndoUpdateTournamentCommand;
+import pt.ulisboa.tecnico.socialsoftware.tournament.command.UpdateTopicsTournamentCommand;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 
 import java.util.HashSet;
@@ -96,11 +99,6 @@ public class UpdateTournamentSagaData {
 
     public void setExecutionId(Integer executionId) {
         this.executionId = executionId;
-    }
-
-    UndoUpdateTournamentQuizCommand undoUpdateTournamentQuiz() {
-        logger.info("Sent UndoUpdateTournamentQuizCommand");
-        return new UndoUpdateTournamentQuizCommand(getTournamentId());
     }
 
     UpdateQuizCommand updateQuiz() {

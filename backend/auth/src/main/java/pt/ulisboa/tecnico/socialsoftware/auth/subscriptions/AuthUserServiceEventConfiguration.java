@@ -18,7 +18,7 @@ public class AuthUserServiceEventConfiguration {
     }
 
     @Bean
-    public AuthUserCourseExecutionSubscriptions courseExecutionSubscriptions() {
+    public AuthUserCourseExecutionSubscriptions authUserCourseExecutionSubscriptions() {
         return new AuthUserCourseExecutionSubscriptions();
     }
 
