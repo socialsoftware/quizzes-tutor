@@ -45,6 +45,23 @@ public class AuthUserUserSubscriptions {
         logger.info("Received deleteAuthUser event!");
         DeleteAuthUserEvent deleteAuthUserEvent = event.getEvent();
         AuthUser authUser = authUserRepository.findAuthUserById(deleteAuthUserEvent.getUserId())
+                .orElse(null);
+
+        if (authUser != null) {
+            if (authUser.getState().equals(AuthUserState.APPROVED)) {
+                authUser.remove();
+                authUserRepository.delete(authUser);
+            }
+            else {
+                authUser.setState(AuthUserState.REJECTED);
+            }
+        }
+    }
+
+    public void anonymizeUserEvent(DomainEventEnvelope<AnonymizeUserEvent> event) {
+        logger.info("Received deleteAuthUser event!");
+        AnonymizeUserEvent anonymizeUserEventUserEvent = event.getEvent();
+        AuthUser authUser = authUserRepository.findAuthUserById(anonymizeUserEventUserEvent.getId())
                 // Does not throw exception because when we anonymize users,
                 // events are sent even if authUser does not exist
                 .orElse(null);
