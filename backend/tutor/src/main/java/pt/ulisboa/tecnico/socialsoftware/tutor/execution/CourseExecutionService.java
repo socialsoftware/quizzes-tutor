@@ -188,11 +188,6 @@ public class CourseExecutionService {
             user.setName(String.format("%s %s", roleCapitalized, user.getId()));
             user.setUsername(null);
 
-            /*DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(user.getId());
-            domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
-                    Collections.singletonList(deleteAuthUserEvent));*/
-
-
             AnonymizeUserEvent anonymizeUserEvent = new AnonymizeUserEvent(user.getId(), user.getUsername(), user.getName());
             domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
                     Collections.singletonList(anonymizeUserEvent));
