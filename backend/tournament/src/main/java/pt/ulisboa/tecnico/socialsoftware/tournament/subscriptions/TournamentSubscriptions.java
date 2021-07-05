@@ -5,12 +5,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import pt.ulisboa.tecnico.socialsoftware.common.events.ExternalQuizSolvedEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveCourseExecutionEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.TopicDeletedEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.TopicUpdatedEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.*;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCreator;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentParticipant;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
@@ -67,6 +65,27 @@ public class TournamentSubscriptions {
             for (TournamentTopic topic : tournament.getTopics()) {
                 if (topic.getId().equals(event.getTopicId())) {
                     topic.setName(event.getNewName());
+                    break;
+                }
+            }
+        });
+    }
+
+    @Subscribe
+    public void anonymizeUser(AnonymizeUserEvent event) {
+        logger.info("Received anonymizeUserEvent!");
+        tournamentRepository.findAll().forEach(tournament -> {
+            TournamentCreator creator = tournament.getCreator();
+
+            if (creator.getId().equals(event.getId())) {
+                creator.setName(event.getName());
+                creator.setUsername(event.getUsername());
+            }
+
+            for (TournamentParticipant participant : tournament.getParticipants()) {
+                if (participant.getId().equals(event.getId())) {
+                    participant.setName(event.getName());
+                    participant.setUsername(event.getUsername());
                     break;
                 }
             }

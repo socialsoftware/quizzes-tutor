@@ -8,6 +8,7 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.common.events.AddCourseExecutionEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.AnonymizeUserEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
@@ -57,5 +58,20 @@ public class AuthUserSubscriptions {
         authUsersList.forEach(authUser -> {
             authUser.getUserCourseExecutions().remove(event.getCourseExecutionId());
         });
+    }
+
+    @Subscribe
+    public void anonymizeUserEvent(AnonymizeUserEvent event) {
+        logger.info("Received AnonymizeUserEvent event!");
+        AuthUser authUser = authUserRepository.findAuthUserById(event.getId())
+                // Does not throw exception because when we anonymize users,
+                // events are sent even if authUser does not exist
+                .orElse(null);
+
+        if (authUser != null) {
+            logger.info(authUser + "\n");
+            authUser.remove();
+            authUserRepository.delete(authUser);
+        }
     }
 }

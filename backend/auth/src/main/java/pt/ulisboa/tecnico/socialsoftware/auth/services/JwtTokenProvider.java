@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.auth;
+package pt.ulisboa.tecnico.socialsoftware.auth.services;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -63,7 +63,7 @@ public class JwtTokenProvider {
                 .compact();
     }
 
-    static String getToken(HttpServletRequest req) {
+    public static String getToken(HttpServletRequest req) {
         String authHeader = req.getHeader("Authorization");
 
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
@@ -79,7 +79,7 @@ public class JwtTokenProvider {
         return Integer.parseInt(Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody().getSubject());
     }
 
-    Authentication getAuthentication(String token) {
+    public Authentication getAuthentication(String token) {
         int authUserId = getAuthUserId(token);
         AuthUser authUser = this.authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(AUTHUSER_NOT_FOUND, authUserId));
         return new UsernamePasswordAuthenticationToken(authUser, "", authUser.getAuthorities());

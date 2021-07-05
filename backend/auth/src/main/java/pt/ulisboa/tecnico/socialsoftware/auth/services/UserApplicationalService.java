@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.auth;
+package pt.ulisboa.tecnico.socialsoftware.auth.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -17,7 +17,7 @@ import java.io.InputStream;
 @Service
 public class UserApplicationalService {
     @Autowired
-    private AuthUserService authUserService;
+    private AuthUserProvidedService authUserService;
 
     @Autowired
     private Mailer mailer;
