@@ -8,12 +8,6 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.command.*;
 
 public class TournamentServiceProxy {
 
-    public final CommandEndpoint<UndoUpdateTournamentQuizCommand> undoUpdateQuiz = CommandEndpointBuilder
-            .forCommand(UndoUpdateTournamentQuizCommand.class)
-            .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
-            .withReply(Success.class)
-            .build();
-
     public final CommandEndpoint<ConfirmUpdateTournamentQuizCommand> confirmUpdate = CommandEndpointBuilder
             .forCommand(ConfirmUpdateTournamentQuizCommand.class)
             .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)

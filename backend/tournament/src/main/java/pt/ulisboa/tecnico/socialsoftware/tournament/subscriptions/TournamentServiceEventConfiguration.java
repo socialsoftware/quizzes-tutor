@@ -18,7 +18,7 @@ public class TournamentServiceEventConfiguration {
     }
 
     @Bean
-    public TournamentTopicSubscriptions topicSubscriptions() {
+    public TournamentTopicSubscriptions tournamentTopicSubscriptions() {
         return new TournamentTopicSubscriptions();
     }
 
@@ -28,18 +28,28 @@ public class TournamentServiceEventConfiguration {
     }
 
     @Bean
-    public DomainEventDispatcher domainEventDispatcher(TournamentQuizSubscriptions tournamentSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
+    public TournamentUserSubscriptions tournamentUserSubscriptions() {
+        return new TournamentUserSubscriptions();
+    }
+
+    @Bean
+    public DomainEventDispatcher domainEventDispatcherQuiz(TournamentQuizSubscriptions tournamentSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
         return domainEventDispatcherFactory.make("tournament_quiz_events", tournamentSubscriptions.domainEventHandlers());
     }
 
     @Bean
-    public DomainEventDispatcher domainEventDispatcherUser(TournamentTopicSubscriptions topicSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
+    public DomainEventDispatcher domainEventDispatcherTopic(TournamentTopicSubscriptions topicSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
         return domainEventDispatcherFactory.make("tournament_topic_events", topicSubscriptions.domainEventHandlers());
     }
 
     @Bean
     public DomainEventDispatcher domainEventDispatcherExecution(TournamentCourseExecutionSubscriptions tournamentCourseExecutionSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
         return domainEventDispatcherFactory.make("tournament_execution_events", tournamentCourseExecutionSubscriptions.domainEventHandlers());
+    }
+
+    @Bean
+    public DomainEventDispatcher domainEventDispatcherUser(TournamentUserSubscriptions tournamentUserSubscriptions, DomainEventDispatcherFactory domainEventDispatcherFactory) {
+        return domainEventDispatcherFactory.make("tournament_user_events", tournamentUserSubscriptions.domainEventHandlers());
     }
 
 }
