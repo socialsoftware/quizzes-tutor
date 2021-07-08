@@ -1,14 +1,12 @@
-package pt.ulisboa.tecnico.socialsoftware.apigateway.apis;
+package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionApplicationalService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
+import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.UserQuestionSubmissionInfoDto;
@@ -48,9 +46,9 @@ public class QuestionSubmissionController {
     @PostMapping("/submissions/{questionSubmissionId}/reviews")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#questionSubmissionId,'SUBMISSION.ACCESS')")
     public ReviewDto createReview(Authentication authentication, @PathVariable int questionSubmissionId, @Valid @RequestBody ReviewDto reviewDto) {
-        AuthUser authUser = (AuthUser) authentication.getPrincipal();
+        UserInfo userInfo = (UserInfo) authentication.getPrincipal();
 
-        return questionSubmissionApplicationalService.createReview(authUser.getUserSecurityInfo().getRole(), reviewDto);
+        return questionSubmissionApplicationalService.createReview(userInfo.getRole(), reviewDto);
     }
 
     @PutMapping("/submissions/{questionSubmissionId}/topics")
@@ -62,11 +60,11 @@ public class QuestionSubmissionController {
     @GetMapping(value = "/submissions/{executionId}/student")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Principal principal, @Valid @PathVariable int executionId) {
-        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
-        if (authUser == null)
+        UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
+        if (userInfo == null)
             throw new TutorException(AUTHENTICATION_ERROR);
 
-        return questionSubmissionService.getStudentQuestionSubmissions(authUser.getUserSecurityInfo().getId(), executionId);
+        return questionSubmissionService.getStudentQuestionSubmissions(userInfo.getId(), executionId);
 
  }
 

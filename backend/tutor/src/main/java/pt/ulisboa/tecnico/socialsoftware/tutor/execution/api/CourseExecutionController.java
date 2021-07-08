@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.apigateway.apis;
+package pt.ulisboa.tecnico.socialsoftware.tutor.execution.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -6,13 +6,13 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TarGZip;
@@ -51,17 +51,17 @@ public class CourseExecutionController {
     @GetMapping("/executions")
     @PreAuthorize("hasRole('ROLE_ADMIN') or hasRole('ROLE_DEMO_ADMIN')")
     public List<CourseExecutionDto> getCourseExecutions(Principal principal) {
-        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
+        UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
 
-        if (authUser.getUserSecurityInfo() == null) {
+        if (userInfo == null) {
             throw new TutorException(AUTHENTICATION_ERROR);
         }
 
         Role role;
-        if (authUser.getUserSecurityInfo().isAdmin()) {
+        if (userInfo.getAdmin()) {
             role = Role.ADMIN;
         } else {
-            role = authUser.getUserSecurityInfo().getRole();
+            role = userInfo.getRole();
         }
 
         return courseExecutionService.getCourseExecutions(role);
@@ -90,9 +90,8 @@ public class CourseExecutionController {
     public CourseExecutionDto activateCourseExecution(Authentication authentication, @RequestBody CourseExecutionDto courseExecutionDto) {
         CourseExecutionDto result = courseExecutionService.createTecnicoCourseExecution(courseExecutionDto);
 
-        Integer userId = ((AuthUser) authentication.getPrincipal()).getUserSecurityInfo().getId();
+        Integer userId = ((UserInfo) authentication.getPrincipal()).getId();
 
-        // it may abort due to a failure, but the previous transaction is idempotent
         courseExecutionService.addUserToTecnicoCourseExecution(userId, result.getCourseExecutionId());
 
         return result;

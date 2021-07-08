@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.apigateway.apis;
+package pt.ulisboa.tecnico.socialsoftware.auth.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;

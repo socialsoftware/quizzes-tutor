@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.apigateway.config;
+package pt.ulisboa.tecnico.socialsoftware.tutor.config;
 
 import io.swagger.v3.oas.models.Components;
 import io.swagger.v3.oas.models.OpenAPI;

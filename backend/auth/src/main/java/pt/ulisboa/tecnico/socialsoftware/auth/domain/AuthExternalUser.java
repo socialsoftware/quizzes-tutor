@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.auth.domain;
 
 import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 
@@ -74,7 +75,7 @@ public class AuthExternalUser extends AuthUser {
     }
 
     @Override
-    public Type getType() {return Type.EXTERNAL;}
+    public AuthUserType getType() {return AuthUserType.EXTERNAL;}
 
     public String generateConfirmationToken() {
         String token = KeyGenerators.string().generateKey();

@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.auth.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.auth.services.FenixEduInterface
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
@@ -108,7 +109,7 @@ class FenixAuthTest extends SpockTest {
 
     def "teacher has courses"() {
         given: 'a teacher'
-        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.TEACHER, AuthUser.Type.TECNICO)
+        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.TEACHER, AuthUserType.TECNICO)
 
         and:
         client.getPersonName() >> USER_1_NAME
@@ -134,7 +135,7 @@ class FenixAuthTest extends SpockTest {
 
     def "teacher does not have courses"() {
         given: 'a teacher'
-        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.TEACHER, AuthUser.Type.TECNICO)
+        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.TEACHER, AuthUserType.TECNICO)
 
         and:
         client.getPersonName() >> USER_1_NAME
@@ -160,7 +161,7 @@ class FenixAuthTest extends SpockTest {
 
     def "teacher has course and is in database, then add"() {
         given: 'a teacher'
-        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.TEACHER, AuthUser.Type.TECNICO)
+        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.TEACHER, AuthUserType.TECNICO)
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -256,7 +257,7 @@ class FenixAuthTest extends SpockTest {
 
     def "student does not have courses and it is in the database"() {
         given: 'a student'
-        def authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUser.Type.TECNICO)
+        def authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUserType.TECNICO)
         def user = userRepository.findById(authUser.getUserSecurityInfo().getId()).orElse(null)
 
         and:
@@ -282,7 +283,7 @@ class FenixAuthTest extends SpockTest {
         courseRepository.deleteAll()
 
         given: 'a student'
-        def authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUser.Type.TECNICO)
+        def authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUserType.TECNICO)
         def user = userRepository.findById(authUser.getUserSecurityInfo().getId()).orElse(null)
 
         and:
@@ -303,7 +304,7 @@ class FenixAuthTest extends SpockTest {
 
     def "student has courses and in the database, add course"() {
         given: 'a student'
-        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUser.Type.TECNICO)
+        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUserType.TECNICO)
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -330,7 +331,7 @@ class FenixAuthTest extends SpockTest {
 
     def "student has teaching courses"() {
         given: 'a student'
-        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUser.Type.TECNICO)
+        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUserType.TECNICO)
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -352,7 +353,7 @@ class FenixAuthTest extends SpockTest {
 
     def "teacher has attending courses, does not add course"() {
         given: 'a teacher'
-        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.TEACHER, AuthUser.Type.TECNICO)
+        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.TEACHER, AuthUserType.TECNICO)
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -378,7 +379,7 @@ class FenixAuthTest extends SpockTest {
 
     def "student has attending and teaching courses, add attending course"() {
         given: 'a teacher'
-        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.TEACHER, AuthUser.Type.TECNICO)
+        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.TEACHER, AuthUserType.TECNICO)
 
         client.getPersonName() >> USER_1_NAME
         client.getPersonUsername() >> USER_1_USERNAME
@@ -405,7 +406,7 @@ class FenixAuthTest extends SpockTest {
 
     def "username is associated with a different auth type, throw exception"() {
         given: 'a student'
-        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUser.Type.EXTERNAL)
+        authUserService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, Role.STUDENT, AuthUserType.EXTERNAL)
 
         and:
         client.getPersonName() >> USER_1_NAME

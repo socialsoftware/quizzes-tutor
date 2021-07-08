@@ -1,14 +1,12 @@
-package pt.ulisboa.tecnico.socialsoftware.apigateway.apis;
+package pt.ulisboa.tecnico.socialsoftware.tutor.discussion;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.ReplyDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionApplicationalService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
+import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -25,9 +23,9 @@ public class DiscussionController {
     @GetMapping("/discussions/courseexecutions/{courseExecutionId}/users")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')")
     public List<DiscussionDto> getDiscussionsByUserId(Principal principal, @PathVariable int courseExecutionId) {
-        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
+        UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
 
-        return this.discussionService.findByCourseExecutionIdAndUserId(courseExecutionId, authUser.getUserSecurityInfo().getId());
+        return this.discussionService.findByCourseExecutionIdAndUserId(courseExecutionId, userInfo.getId());
     }
 
     @GetMapping("/discussions/courseexecutions/{courseExecutionId}")
@@ -69,8 +67,8 @@ public class DiscussionController {
     @PostMapping(value = "/discussions/{discussionId}/replies/add")
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#discussionId, 'DISCUSSION.ACCESS')) or (hasRole('ROLE_STUDENT') and hasPermission(#discussionId, 'DISCUSSION.OWNER'))")
     public ReplyDto addReply(Principal principal, @Valid @RequestBody ReplyDto reply, @PathVariable int discussionId) {
-        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
-        return discussionApplicationalService.addReply(authUser.getUserSecurityInfo().getId(),
-                authUser.getUserSecurityInfo().getRole(), discussionId, reply);
+        UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
+        return discussionApplicationalService.addReply(userInfo.getId(),
+                userInfo.getRole(), discussionId, reply);
     }
 }
