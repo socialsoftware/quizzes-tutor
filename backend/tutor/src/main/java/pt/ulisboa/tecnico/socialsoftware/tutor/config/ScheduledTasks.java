@@ -1,9 +1,8 @@
-package pt.ulisboa.tecnico.socialsoftware.apigateway.config;
+package pt.ulisboa.tecnico.socialsoftware.tutor.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
-import pt.ulisboa.tecnico.socialsoftware.tournament.demoutils.TournamentDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.ImpExpService;
@@ -15,9 +14,6 @@ public class ScheduledTasks {
 
 	@Autowired
 	private TutorDemoUtils tutorDemoUtils;
-
-	@Autowired
-	private TournamentDemoUtils tournamentDemoUtils;
 
 	@Autowired
 	private AnswerService answerService;
@@ -34,7 +30,6 @@ public class ScheduledTasks {
 
 	@Scheduled(cron = "0 0 1 * * *")
     public void resetDemoInfo() {
-		tournamentDemoUtils.resetDemoInfo();
 		tutorDemoUtils.resetDemoInfo();
 	}
 }

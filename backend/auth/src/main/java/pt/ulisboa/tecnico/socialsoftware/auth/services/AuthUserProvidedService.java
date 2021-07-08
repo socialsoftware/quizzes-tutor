@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthUserRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
@@ -145,13 +146,13 @@ public class AuthUserProvidedService {
 
         // If user is student and is not in db
         if (!activeAttendingCourses.isEmpty()) {
-            authUser = (AuthTecnicoUser) createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), Role.STUDENT, AuthUser.Type.TECNICO);
+            authUser = (AuthTecnicoUser) createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), Role.STUDENT, AuthUserType.TECNICO);
             updateStudentCourses(authUser, fenixAttendingCourses);
         }
 
         // If user is teacher and is not in db
         if (!fenixTeachingCourses.isEmpty()) {
-            authUser = (AuthTecnicoUser) createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), Role.TEACHER, AuthUser.Type.TECNICO);
+            authUser = (AuthTecnicoUser) createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), Role.TEACHER, AuthUserType.TECNICO);
             updateTeacherCourses(authUser, fenixTeachingCourses);
         }
 
@@ -163,11 +164,11 @@ public class AuthUserProvidedService {
 
     //Was from user service
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthUser createUserWithAuth(String name, String username, String email, Role role, AuthUser.Type type) {
+    public AuthUser createUserWithAuth(String name, String username, String email, Role role, AuthUserType type) {
         if (authUserRepository.findAuthUserByUsername(username).isPresent()) {
             throw new TutorException(ErrorMessage.DUPLICATE_USER, username);
         }
-        UserDto userDto = authRequiredService.createUser(name, role, username, type != AuthUser.Type.EXTERNAL, false);
+        UserDto userDto = authRequiredService.createUser(name, role, username, type != AuthUserType.EXTERNAL, false);
 
         AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(userDto.getId(), name, role, false), username, email, type);
         authUserRepository.save(authUser);
@@ -268,7 +269,7 @@ public class AuthUserProvidedService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AuthUser createDemoStudent() {
         String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
-        AuthUser authUser = createUserWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", Role.STUDENT, AuthUser.Type.DEMO);
+        AuthUser authUser = createUserWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO);
         CourseExecution courseExecution = authRequiredService.getDemoCourseExecution();
 
         if (courseExecution != null) {
@@ -381,7 +382,7 @@ public class AuthUserProvidedService {
 
     private AuthUser getDemoTeacher() {
         return authUserRepository.findAuthUserByUsername(TutorDemoUtils.TEACHER_USERNAME).orElseGet(() -> {
-            AuthUser authUser = createUserWithAuth("Demo Teacher", TutorDemoUtils.TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUser.Type.DEMO);
+            AuthUser authUser = createUserWithAuth("Demo Teacher", TutorDemoUtils.TEACHER_USERNAME, "demo_teacher@mail.com",  Role.TEACHER, AuthUserType.DEMO);
             authRequiredService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), authRequiredService.getDemoCourseExecution().getId());
             return authUser;
         });
@@ -389,7 +390,7 @@ public class AuthUserProvidedService {
 
     private AuthUser getDemoStudent() {
         return authUserRepository.findAuthUserByUsername(TutorDemoUtils.STUDENT_USERNAME).orElseGet(() -> {
-            AuthUser authUser = createUserWithAuth("Demo Student", TutorDemoUtils.STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUser.Type.DEMO);
+            AuthUser authUser = createUserWithAuth("Demo Student", TutorDemoUtils.STUDENT_USERNAME, "demo_student@mail.com", Role.STUDENT, AuthUserType.DEMO);
             authRequiredService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), authRequiredService.getDemoCourseExecution().getId());
             return authUser;
         });
@@ -397,7 +398,7 @@ public class AuthUserProvidedService {
 
     private AuthUser getDemoAdmin() {
         return authUserRepository.findAuthUserByUsername(TutorDemoUtils.ADMIN_USERNAME).orElseGet(() -> {
-            AuthUser authUser = createUserWithAuth("Demo Admin", TutorDemoUtils.ADMIN_USERNAME, "demo_admin@mail.com", Role.DEMO_ADMIN, AuthUser.Type.DEMO);
+            AuthUser authUser = createUserWithAuth("Demo Admin", TutorDemoUtils.ADMIN_USERNAME, "demo_admin@mail.com", Role.DEMO_ADMIN, AuthUserType.DEMO);
             authRequiredService.addUserToTecnicoCourseExecution(authUser.getUserSecurityInfo().getId(), authRequiredService.getDemoCourseExecution().getId());
             return authUser;
         });
@@ -414,7 +415,7 @@ public class AuthUserProvidedService {
                     UserDto userDto = authRequiredService.createUser(externalUserDto.getName(), externalUserDto.getRole(), username, false, false);
                     AuthUser authUser = AuthUser.createAuthUser(new UserSecurityInfo(userDto.getId(),
                                     externalUserDto.getName(), externalUserDto.getRole(), false),
-                            username, externalUserDto.getEmail(), AuthUser.Type.EXTERNAL);
+                            username, externalUserDto.getEmail(), AuthUserType.EXTERNAL);
                     authUserRepository.save(authUser);
                     return authUser;
                 });

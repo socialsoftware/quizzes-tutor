@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
@@ -27,7 +28,7 @@ class ExternalUserAuthTest extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.STUDENT, AuthUser.Type.EXTERNAL)
+        authUser = authUserService.createUserWithAuth(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, Role.STUDENT, AuthUserType.EXTERNAL)
         user = userRepository.findAll().get(0)
         user.addCourse(courseExecution)
         user.setActive(true)

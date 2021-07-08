@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.auth.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
+
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.util.Locale;
@@ -15,7 +17,7 @@ public class AuthDemoUser extends AuthUser {
     }
 
     @Override
-    public Type getType() {return Type.DEMO;}
+    public AuthUserType getType() {return AuthUserType.DEMO;}
 
     @Override
     public boolean isDemoStudent() {

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.apigateway.apis;
+package pt.ulisboa.tecnico.socialsoftware.tutor.impexp;
 
 import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
@@ -9,7 +9,6 @@ import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.ImpExpService;
 
 import javax.servlet.http.HttpServletResponse;
 import java.io.File;
