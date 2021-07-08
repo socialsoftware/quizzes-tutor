@@ -2,7 +2,6 @@
 
 FROM maven:3-jdk-11 as base
 
-#COPY ./pom.xml ./pom.xml
 COPY . .
 RUN mvn dependency:go-offline -B
 
