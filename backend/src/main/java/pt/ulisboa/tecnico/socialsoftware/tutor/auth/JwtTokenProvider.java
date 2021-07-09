@@ -16,7 +16,7 @@ import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
 import java.security.PublicKey;
-import java.util.Date;
+import java.util.*;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AUTHUSER_NOT_FOUND;
 
@@ -51,6 +51,9 @@ public class JwtTokenProvider {
 
         Claims claims = Jwts.claims().setSubject(String.valueOf(authUser.getId()));
         claims.put("role", authUser.getUser().getRole());
+        Set<Integer> courseExecution = new HashSet<>();
+        authUser.getUser().getCourseExecutions().forEach(c -> courseExecution.add(c.getId()));
+        claims.put("executions", courseExecution);
 
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 1000*60*60*24);
@@ -75,13 +78,17 @@ public class JwtTokenProvider {
         }
         return "";
     }
-    static int getAuthUserId(String token) {
-        return Integer.parseInt(Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody().getSubject());
+
+    private static Claims getAllClaimsFromToken(String token) {
+        return Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody();
     }
 
     Authentication getAuthentication(String token) {
-        int authUserId = getAuthUserId(token);
+        Claims tokenClaims = getAllClaimsFromToken(token);
+        int authUserId = Integer.parseInt(tokenClaims.getSubject());
+        List<Integer> executions = (ArrayList<Integer>) tokenClaims.get("executions");
         AuthUser authUser = this.authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(AUTHUSER_NOT_FOUND, authUserId));
+        authUser.setCourseExecutionsIds(executions);
         return new UsernamePasswordAuthenticationToken(authUser, "", authUser.getAuthorities());
     }
 }

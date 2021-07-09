@@ -4,10 +4,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
@@ -17,6 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyReposi
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
@@ -29,6 +33,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import java.io.Serializable;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND;
 
 @Component
 public class TutorPermissionEvaluator implements PermissionEvaluator {
@@ -68,6 +74,9 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     @Autowired
     private ReplyRepository replyRepository;
 
+    @Autowired
+    private CourseRepository courseRepository;
+
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
         AuthUser authUser = ((AuthUser) authentication.getPrincipal());
@@ -94,37 +103,37 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     CourseExecutionDto courseExecutionDto = courseExecutionService.getCourseExecutionById(id);
                     return courseExecutionDto.getName().equals("Demo Course");
                 case "COURSE.ACCESS":
-                    return userService.userHasAnExecutionOfCourse(userId, id);
+                    return userHasAnExecutionOfCourse(authUser, id);
                 case "EXECUTION.ACCESS":
-                    return userHasThisExecution(userId, id);
+                    return userHasThisExecution(authUser, id);
                 case "QUESTION.ACCESS":
                     Question question = questionRepository.findQuestionWithCourseById(id).orElse(null);
                     if (question != null) {
-                        return userService.userHasAnExecutionOfCourse(userId, question.getCourse().getId());
+                        return userHasAnExecutionOfCourse(authUser, question.getCourse().getId());
                     }
                     return false;
                 case "TOPIC.ACCESS":
                     Topic topic = topicRepository.findTopicWithCourseById(id).orElse(null);
                     if (topic != null) {
-                        return userService.userHasAnExecutionOfCourse(userId, topic.getCourse().getId());
+                        return userHasAnExecutionOfCourse(authUser, topic.getCourse().getId());
                     }
                     return false;
                 case "ASSESSMENT.ACCESS":
                     Integer courseExecutionId = assessmentRepository.findCourseExecutionIdById(id).orElse(null);
                     if (courseExecutionId != null) {
-                        return userHasThisExecution(userId, courseExecutionId);
+                        return userHasThisExecution(authUser, courseExecutionId);
                     }
                     return false;
                 case "QUIZ.ACCESS":
                     courseExecutionId = quizRepository.findCourseExecutionIdById(id).orElse(null);
                     if (courseExecutionId != null) {
-                        return userHasThisExecution(userId, courseExecutionId);
+                        return userHasThisExecution(authUser, courseExecutionId);
                     }
                     return false;
                 case "TOURNAMENT.ACCESS":
                     courseExecutionId = tournamentRepository.findCourseExecutionIdByTournamentId(id).orElse(null);
                     if (courseExecutionId != null) {
-                        return userHasThisExecution(userId, courseExecutionId);
+                        return userHasThisExecution(authUser, courseExecutionId);
                     }
                     return false;
                 case "TOURNAMENT.PARTICIPANT":
@@ -138,7 +147,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                 case "SUBMISSION.ACCESS":
                     QuestionSubmission questionSubmission = questionSubmissionRepository.findById(id).orElse(null);
                     if (questionSubmission != null) {
-                        boolean hasCourseExecutionAccess = userHasThisExecution(userId, questionSubmission.getCourseExecution().getId());
+                        boolean hasCourseExecutionAccess = userHasThisExecution(authUser, questionSubmission.getCourseExecution().getId());
                         if (authUser.getUser().getRole() == User.Role.STUDENT) {
                             return hasCourseExecutionAccess && questionSubmission.getSubmitter().getId() == userId;
                         } else {
@@ -154,10 +163,10 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     return discussion != null && discussion.getUser().getId().equals(userId);
                 case "DISCUSSION.ACCESS":
                     discussion = discussionRepository.findById(id).orElse(null);
-                    return discussion != null && authUser.getUser().isTeacher() && userHasThisExecution(userId, discussion.getCourseExecution().getId());
+                    return discussion != null && authUser.getUser().isTeacher() && userHasThisExecution(authUser, discussion.getCourseExecution().getId());
                 case "REPLY.ACCESS":
                     Reply reply = replyRepository.findById(id).orElse(null);
-                    return reply != null && userHasThisExecution(userId, reply.getDiscussion().getCourseExecution().getId());
+                    return reply != null && userHasThisExecution(authUser, reply.getDiscussion().getCourseExecution().getId());
                 default: return false;
             }
         }
@@ -165,8 +174,8 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
         return false;
     }
 
-    private boolean userHasThisExecution(int userId, int courseExecutionId) {
-        return userRepository.countUserCourseExecutionsPairById(userId, courseExecutionId) == 1;
+    private boolean userHasThisExecution(AuthUser authUser, int courseExecutionId) {
+        return authUser.getCourseExecutionsIds().contains(courseExecutionId);
     }
 
     private boolean userParticipatesInTournament(int userId, int tournamentId) {
@@ -176,5 +185,13 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     @Override
     public boolean hasPermission(Authentication authentication, Serializable serializable, String s, Object o) {
         return false;
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public boolean userHasAnExecutionOfCourse(AuthUser authUser, int courseId) {
+        return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId))
+                .getCourseExecutions()
+                .stream()
+                .anyMatch(courseExecution ->  userHasThisExecution(authUser, courseExecution.getId()));
     }
 }

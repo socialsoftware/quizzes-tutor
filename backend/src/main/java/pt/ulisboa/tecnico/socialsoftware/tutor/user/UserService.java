@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -10,6 +12,7 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.api.QuestionController;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
@@ -45,14 +48,12 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private AuthUserRepository authUserRepository;
-
-    @Autowired
-    private CourseRepository courseRepository;
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
@@ -86,14 +87,6 @@ public class UserService {
         User user = new User(name, username, email, role, false, type);
         userRepository.save(user);
         return user.getAuthUser();
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public boolean userHasAnExecutionOfCourse(int userId, int courseId) {
-        return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId))
-                .getCourseExecutions()
-                .stream()
-                .anyMatch(courseExecution ->  userRepository.countUserCourseExecutionsPairById(userId, courseExecution.getId()) == 1);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

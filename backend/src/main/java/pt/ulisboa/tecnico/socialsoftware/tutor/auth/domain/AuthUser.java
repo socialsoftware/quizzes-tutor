@@ -44,6 +44,9 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     @Column(name = "last_access")
     private LocalDateTime lastAccess;
 
+    @Transient
+    private List<Integer> courseExecutionsIds;
+
     protected AuthUser() {}
 
     protected AuthUser(User user, String username, String email) {
@@ -128,6 +131,14 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
         if (!isActive && !(user.getRole().equals(User.Role.STUDENT) || user.getRole().equals(User.Role.TEACHER))) {
             throw new TutorException(INVALID_ROLE, user.getRole().toString());
         }
+    }
+
+    public List<Integer> getCourseExecutionsIds() {
+        return courseExecutionsIds;
+    }
+
+    public void setCourseExecutionsIds(List<Integer> courseExecutionsIds) {
+        this.courseExecutionsIds = courseExecutionsIds;
     }
 
     @Override
