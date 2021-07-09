@@ -277,14 +277,14 @@ public class AnswerService {
         // Quiz Answer cannot be created because it prevents tournaments from being updated
         /*QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
         return quizAnswer.getDto(false);*/
-        return createExternalQuiz(quizDetails, courseExecution, availableQuestions);
+        return createExternalQuizTransactional(quizDetails, courseExecution, availableQuestions);
     }
 
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public Quiz createExternalQuiz(ExternalStatementCreationDto quizDetails, CourseExecution courseExecution, List<Question> availableQuestions) {
+    public Quiz createExternalQuizTransactional(ExternalStatementCreationDto quizDetails, CourseExecution courseExecution, List<Question> availableQuestions) {
         Quiz quiz = new Quiz();
         quiz.setType(QuizType.GENERATED.toString());
         quiz.setCreationDate(DateHandler.now());

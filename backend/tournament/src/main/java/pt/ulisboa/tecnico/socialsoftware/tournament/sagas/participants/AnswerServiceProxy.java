@@ -12,5 +12,4 @@ public class AnswerServiceProxy {
             .withChannel(ServiceChannels.ANSWER_SERVICE_COMMAND_CHANNEL)
             .withReply(Integer.class)
             .build();
-
 }

@@ -160,7 +160,7 @@ public class TournamentProvidedService {
         tournament.setState(UPDATE_PENDING);
         tournamentRepository.save(tournament);
 
-        UpdateTournamentSagaData data = new UpdateTournamentSagaData(tournament.getId(), tournamentDto,
+        UpdateTournamentSagaData data = new UpdateTournamentSagaData(tournament.getId(), tournamentDto, tournament.getDto(),
                 topicsList, oldTopics, tournament.getCourseExecution().getId());
         sagaInstanceFactory.create(updateTournamentSaga, data);
     }

@@ -47,8 +47,10 @@ public class TournamentServiceOrchestratorConfiguration {
     public CreateTournamentSaga createTournamentSaga(TournamentServiceProxy tournamentService,
                                                      AnswerServiceProxy answerService,
                                                      CourseExecutionServiceProxy executionService,
-                                                     QuestionServiceProxy questionService) {
-        return new CreateTournamentSaga(tournamentService, answerService, executionService, questionService);
+                                                     QuestionServiceProxy questionService,
+                                                     QuizServiceProxy quizService) {
+        return new CreateTournamentSaga(tournamentService, answerService, executionService, questionService,
+                quizService);
     }
 
     @Bean
