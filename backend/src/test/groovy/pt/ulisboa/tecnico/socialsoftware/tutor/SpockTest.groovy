@@ -5,47 +5,41 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.TopicConjunctionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.TopicConjunctionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Languages
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemRepository
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
-import spock.lang.Shared
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserApplicationalService
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
+import spock.lang.Shared
 import spock.lang.Specification
 
 import java.time.LocalDateTime
-
 
 class SpockTest extends Specification {
 

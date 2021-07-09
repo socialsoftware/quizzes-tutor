@@ -5,7 +5,10 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderQuestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderSlotDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 
 @DataJpaTest
 class ImportExportCodeOrderQuestionsTest extends SpockTest {

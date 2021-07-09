@@ -2,8 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 
 import javax.persistence.*;
 
