@@ -499,14 +499,14 @@ public class QuizService {
 
         availableQuestions = user.filterQuestionsByStudentModel(tournamentDto.getNumberOfQuestions(), availableQuestions);
 
-        updateExternalQuizDetails(tournamentDto, quiz, availableQuestions);
+        updateExternalQuizDetailsTransactional(tournamentDto, quiz, availableQuestions);
     }
 
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void updateExternalQuizDetails(TournamentDto tournamentDto, Quiz quiz, List<Question> availableQuestions) {
+    public void updateExternalQuizDetailsTransactional(TournamentDto tournamentDto, Quiz quiz, List<Question> availableQuestions) {
         if (DateHandler.isValidDateFormat(tournamentDto.getStartTime()))
             quiz.setAvailableDate(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
         if (DateHandler.isValidDateFormat(tournamentDto.getEndTime())) {
@@ -521,5 +521,26 @@ public class QuizService {
 
         IntStream.range(0, availableQuestions.size())
                 .forEach(index -> new QuizQuestion(quiz, availableQuestions.get(index), index));
+    }
+
+    public void removeExternalQuiz(Integer quizId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        deleteExternalQuizTransactional(quiz);
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void deleteExternalQuizTransactional(Quiz quiz) {
+        quiz.getCourseExecution().getQuizzes().remove(this);
+        quiz.setCourseExecution(null);
+
+        Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
+        quizQuestions.forEach(QuizQuestion::remove);
+        quizQuestions.forEach(quizQuestion -> quizQuestionRepository.delete(quizQuestion));
+
+        quizRepository.delete(quiz);
     }
 }

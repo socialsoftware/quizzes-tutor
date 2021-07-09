@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import pt.ulisboa.tecnico.socialsoftware.common.commands.answer.DeleteQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.answer.GenerateQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.execution.GetCourseExecutionCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.question.GetTopicsCommand;
@@ -166,6 +167,21 @@ public class CreateTournamentSagaData {
         return new GetTopicsCommand(getTopicListDto());
     }
 
+    StoreTournamentTopicsCommand storeTopics() {
+        logger.info("Sent StoreTournamentTopicsCommand");
+        return new StoreTournamentTopicsCommand(getTournamentId(), getTournamentTopics());
+    }
+
+    StoreTournamentCourseExecutionCommand storeCourseExecution() {
+        logger.info("Sent StoreTournamentCourseExecutionCommand");
+        return new StoreTournamentCourseExecutionCommand(getTournamentId(), getTournamentCourseExecution());
+    }
+
+    DeleteQuizCommand deleteQuiz() {
+        logger.info("Sent DeleteQuizCommand");
+        return new DeleteQuizCommand(getQuizId());
+    }
+
     @Override
     public String toString() {
         return "CreateTournamentSagaData{" +
@@ -180,13 +196,4 @@ public class CreateTournamentSagaData {
                 '}';
     }
 
-    StoreTournamentTopicsCommand storeTopics() {
-        logger.info("Sent StoreTournamentTopicsCommand");
-        return new StoreTournamentTopicsCommand(getTournamentId(), getTournamentTopics());
-    }
-
-    StoreTournamentCourseExecutionCommand storeCourseExecution() {
-        logger.info("Sent StoreTournamentCourseExecutionCommand");
-        return new StoreTournamentCourseExecutionCommand(getTournamentId(), getTournamentCourseExecution());
-    }
 }

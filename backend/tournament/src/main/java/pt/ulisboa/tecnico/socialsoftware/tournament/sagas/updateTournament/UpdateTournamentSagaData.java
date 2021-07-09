@@ -29,17 +29,19 @@ public class UpdateTournamentSagaData {
     private QuizDto quizDto;
     private Set<TournamentTopic> newTopics = new HashSet<>();
     private Set<TournamentTopic> oldTopics = new HashSet<>();
-    private TournamentDto tournamentDto;
+    private TournamentDto newTournamentDto;
+    private TournamentDto oldTournamentDto;
     private TopicListDto topicListDto;
     private Integer executionId;
 
     public UpdateTournamentSagaData() {
     }
 
-    public UpdateTournamentSagaData(Integer tournamentId, TournamentDto tournamentDto, TopicListDto topicListDto,
-                                    Set<TournamentTopic> oldTopics, Integer executionId) {
+    public UpdateTournamentSagaData(Integer tournamentId, TournamentDto newTournamentDto, TournamentDto oldTournamentDto,
+                                    TopicListDto topicListDto, Set<TournamentTopic> oldTopics, Integer executionId) {
         this.tournamentId = tournamentId;
-        this.tournamentDto = tournamentDto;
+        this.newTournamentDto = newTournamentDto;
+        this.oldTournamentDto = oldTournamentDto;
         this.topicListDto = topicListDto;
         this.oldTopics = oldTopics;
         this.executionId = executionId;
@@ -69,12 +71,12 @@ public class UpdateTournamentSagaData {
         this.newTopics = newTopics;
     }
 
-    public TournamentDto getTournamentDto() {
-        return tournamentDto;
+    public TournamentDto getNewTournamentDto() {
+        return newTournamentDto;
     }
 
-    public void setTournamentDto(TournamentDto tournamentDto) {
-        this.tournamentDto = tournamentDto;
+    public void setNewTournamentDto(TournamentDto newTournamentDto) {
+        this.newTournamentDto = newTournamentDto;
     }
 
     public TopicListDto getTopicListDto() {
@@ -101,15 +103,23 @@ public class UpdateTournamentSagaData {
         this.executionId = executionId;
     }
 
+    public TournamentDto getOldTournamentDto() {
+        return oldTournamentDto;
+    }
+
+    public void setOldTournamentDto(TournamentDto oldTournamentDto) {
+        this.oldTournamentDto = oldTournamentDto;
+    }
+
     UpdateQuizCommand updateQuiz() {
         logger.info("Sent UpdateQuizCommand");
-        return new UpdateQuizCommand(getTournamentDto().getCreator().getId(), executionId, tournamentDto.getQuizId(),
-                getTournamentDto());
+        return new UpdateQuizCommand(getNewTournamentDto().getCreator().getId(), executionId, newTournamentDto.getQuizId(),
+                getNewTournamentDto());
     }
 
     ConfirmUpdateTournamentQuizCommand confirmUpdateTournamentQuiz() {
         logger.info("Sent ConfirmUpdateTournamentQuizCommand");
-        return new ConfirmUpdateTournamentQuizCommand(getTournamentId(), getTournamentDto());
+        return new ConfirmUpdateTournamentQuizCommand(getTournamentId(), getNewTournamentDto());
     }
 
     GetTopicsCommand getNewTopics() {
@@ -128,7 +138,7 @@ public class UpdateTournamentSagaData {
                 TopicDto topic = new TopicDto();
                 topic.setId(topicWithCourseDto.getId());
                 topic.setName(topicWithCourseDto.getName());
-                tournamentDto.getTopicsDto().add(topic);
+                newTournamentDto.getTopicsDto().add(topic);
 
                 newTopics.add(new TournamentTopic(topicWithCourseDto.getId(), topicWithCourseDto.getName(),
                         topicWithCourseDto.getCourseId()));
@@ -149,5 +159,11 @@ public class UpdateTournamentSagaData {
     UndoUpdateTopicsTournamentCommand undoUpdateTopics() {
         logger.info("Sent UndoUpdateTopicsTournamentCommand");
         return new UndoUpdateTopicsTournamentCommand(getTournamentId(), getOldTopics());
+    }
+
+    UpdateQuizCommand undoUpdateQuiz() {
+        logger.info("Sent UpdateQuizCommand");
+        return new UpdateQuizCommand(getNewTournamentDto().getCreator().getId(), executionId,
+                getNewTournamentDto().getQuizId(), getOldTournamentDto());
     }
 }
