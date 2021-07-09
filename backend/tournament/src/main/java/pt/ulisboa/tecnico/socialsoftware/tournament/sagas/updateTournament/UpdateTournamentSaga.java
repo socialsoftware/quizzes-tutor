@@ -24,6 +24,7 @@ public class UpdateTournamentSaga implements SimpleSaga<UpdateTournamentSagaData
                 .withCompensation(tournamentService.undoUpdateTopics, UpdateTournamentSagaData::undoUpdateTopics)
             .step()
                 .invokeParticipant(quizService.updateQuiz, UpdateTournamentSagaData::updateQuiz)
+                .withCompensation(quizService.undoUpdateQuiz, UpdateTournamentSagaData::undoUpdateQuiz)
             .step()
                 .invokeParticipant(tournamentService.confirmUpdate, UpdateTournamentSagaData::confirmUpdateTournamentQuiz)
             .build();

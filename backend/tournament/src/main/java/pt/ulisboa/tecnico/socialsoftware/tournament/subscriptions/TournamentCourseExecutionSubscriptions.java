@@ -9,6 +9,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentState;
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
 
 import java.util.List;
@@ -35,8 +36,7 @@ public class TournamentCourseExecutionSubscriptions implements DomainEvent {
 
         tournamentList.forEach(tournament -> {
             if (tournament.getCourseExecution().getId().equals(removeCourseExecutionEvent.getCourseExecutionId())) {
-                tournament.remove();
-                tournamentRepository.delete(tournament);
+                tournament.setState(TournamentState.REMOVED);
             }
         });
     }
