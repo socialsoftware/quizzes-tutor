@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.common.events;
+package pt.ulisboa.tecnico.socialsoftware.common.events.execution;
 
 public class AnonymizeUserEvent{
 

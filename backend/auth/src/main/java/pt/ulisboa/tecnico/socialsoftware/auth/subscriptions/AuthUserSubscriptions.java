@@ -7,10 +7,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
-import pt.ulisboa.tecnico.socialsoftware.common.events.AddCourseExecutionEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.AnonymizeUserEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveCourseExecutionEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.auth.DeleteAuthUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.execution.AddCourseExecutionEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.execution.AnonymizeUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.execution.RemoveCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 
 import java.util.List;
