@@ -10,7 +10,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
-import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.auth.DeleteAuthUserEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;

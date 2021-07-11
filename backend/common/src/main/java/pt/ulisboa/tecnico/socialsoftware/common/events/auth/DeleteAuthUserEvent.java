@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.common.events;
+package pt.ulisboa.tecnico.socialsoftware.common.events.auth;
 
 public class DeleteAuthUserEvent {
     private Integer userId;
