@@ -8,7 +8,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
-import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
+import pt.ulisboa.tecnico.socialsoftware.common.security.token.UserInfo;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService;
 

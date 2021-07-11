@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.common.security;
+package pt.ulisboa.tecnico.socialsoftware.common.security.token;
 
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;

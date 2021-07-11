@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.common.security;
+package pt.ulisboa.tecnico.socialsoftware.common.security.token;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
@@ -9,6 +9,7 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
+import pt.ulisboa.tecnico.socialsoftware.common.security.RSAUtil;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.InputStream;

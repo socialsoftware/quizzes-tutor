@@ -14,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
+import pt.ulisboa.tecnico.socialsoftware.common.security.token.UserInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TarGZip;

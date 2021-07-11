@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
-import pt.ulisboa.tecnico.socialsoftware.common.events.AnonymizeUserEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveUserFromTecnicoCourseExecutionEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.auth.DeleteAuthUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.execution.AnonymizeUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.execution.RemoveUserFromTecnicoCourseExecutionEvent;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.USER_AGGREGATE_TYPE;
 
@@ -45,25 +45,6 @@ public class AuthUserUserSubscriptions {
         logger.info("Received deleteAuthUser event!");
         DeleteAuthUserEvent deleteAuthUserEvent = event.getEvent();
         AuthUser authUser = authUserRepository.findAuthUserById(deleteAuthUserEvent.getUserId())
-                .orElse(null);
-
-        if (authUser != null) {
-            if (authUser.getState().equals(AuthUserState.APPROVED)) {
-                authUser.remove();
-                authUserRepository.delete(authUser);
-            }
-            else {
-                authUser.setState(AuthUserState.REJECTED);
-            }
-        }
-    }
-
-    public void anonymizeUserEvent(DomainEventEnvelope<AnonymizeUserEvent> event) {
-        logger.info("Received deleteAuthUser event!");
-        AnonymizeUserEvent anonymizeUserEventUserEvent = event.getEvent();
-        AuthUser authUser = authUserRepository.findAuthUserById(anonymizeUserEventUserEvent.getId())
-                // Does not throw exception because when we anonymize users,
-                // events are sent even if authUser does not exist
                 .orElse(null);
 
         if (authUser != null) {

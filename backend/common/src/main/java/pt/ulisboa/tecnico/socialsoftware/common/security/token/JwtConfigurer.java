@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.config;
+package pt.ulisboa.tecnico.socialsoftware.common.security.token;
 
 import org.springframework.security.config.annotation.SecurityConfigurerAdapter;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;

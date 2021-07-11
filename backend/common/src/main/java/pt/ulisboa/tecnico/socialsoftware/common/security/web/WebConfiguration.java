@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.config;
+package pt.ulisboa.tecnico.socialsoftware.common.security.web;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.ComponentScan;
@@ -20,11 +20,11 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/images/questions/**").addResourceLocations("file:" + figuresDir);
 
         registry.addResourceHandler("/swagger-ui/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/3.50.0/");
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/3.49.0/");
 
 
         registry.addResourceHandler("/swagger/**")
-                    .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/3.50.0/");
+                    .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/3.49.0/");
 
 
         registry.addResourceHandler("/webjars/**")

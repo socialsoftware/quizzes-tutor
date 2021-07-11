@@ -1,15 +1,16 @@
-package pt.ulisboa.tecnico.socialsoftware.common.events;
+package pt.ulisboa.tecnico.socialsoftware.common.events.execution;
 
 import io.eventuate.tram.events.common.DomainEvent;
 
-public class AddCourseExecutionEvent implements DomainEvent {
+public class RemoveUserFromTecnicoCourseExecutionEvent implements DomainEvent {
+
     private Integer userId;
     private Integer courseExecutionId;
 
-    public AddCourseExecutionEvent() {
+    public RemoveUserFromTecnicoCourseExecutionEvent() {
     }
 
-    public AddCourseExecutionEvent(Integer userId, Integer courseExecutionId) {
+    public RemoveUserFromTecnicoCourseExecutionEvent(Integer userId, Integer courseExecutionId) {
         this.userId = userId;
         this.courseExecutionId = courseExecutionId;
     }

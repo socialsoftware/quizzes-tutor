@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.common.events;
+package pt.ulisboa.tecnico.socialsoftware.common.events.answer;
 
 import io.eventuate.tram.events.common.DomainEvent;
 
