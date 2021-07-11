@@ -6,8 +6,8 @@ import io.eventuate.tram.events.subscriber.DomainEventHandlersBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import pt.ulisboa.tecnico.socialsoftware.common.events.TopicDeletedEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.TopicUpdatedEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.topic.TopicDeletedEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.topic.TopicUpdatedEvent;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
 
