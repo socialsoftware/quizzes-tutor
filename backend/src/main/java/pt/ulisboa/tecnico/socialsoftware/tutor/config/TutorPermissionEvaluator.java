@@ -4,8 +4,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser;
@@ -14,13 +12,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
@@ -33,8 +30,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.io.Serializable;
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_NOT_FOUND;
 
 @Component
 public class TutorPermissionEvaluator implements PermissionEvaluator {
@@ -60,9 +55,6 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     private CourseExecutionService courseExecutionService;
 
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private TournamentRepository tournamentRepository;
 
     @Autowired
@@ -75,7 +67,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     private ReplyRepository replyRepository;
 
     @Autowired
-    private CourseRepository courseRepository;
+    private CourseExecutionRepository courseExecutionRepository;
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
@@ -187,11 +179,9 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
         return false;
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean userHasAnExecutionOfCourse(AuthUser authUser, int courseId) {
-        return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId))
-                .getCourseExecutions()
+        return courseExecutionRepository.getCourseExecutionsIdByCourseId(courseId)
                 .stream()
-                .anyMatch(courseExecution ->  userHasThisExecution(authUser, courseExecution.getId()));
+                .anyMatch(courseExecutionId ->  userHasThisExecution(authUser, courseExecutionId));
     }
 }

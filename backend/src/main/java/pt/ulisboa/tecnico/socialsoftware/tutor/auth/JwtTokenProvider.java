@@ -10,6 +10,7 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import javax.servlet.http.HttpServletRequest;
 import java.security.KeyPair;
@@ -25,11 +26,13 @@ public class JwtTokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
     private AuthUserRepository authUserRepository;
+    private static UserRepository userRepository;
     private static PublicKey publicKey;
     private static PrivateKey privateKey;
 
-    public JwtTokenProvider(AuthUserRepository authUserRepository) {
+    public JwtTokenProvider(AuthUserRepository authUserRepository, UserRepository userRepository) {
         this.authUserRepository = authUserRepository;
+        this.userRepository = userRepository;
     }
 
     public static void generateKeys() {
@@ -51,8 +54,7 @@ public class JwtTokenProvider {
 
         Claims claims = Jwts.claims().setSubject(String.valueOf(authUser.getId()));
         claims.put("role", authUser.getUser().getRole());
-        Set<Integer> courseExecution = new HashSet<>();
-        authUser.getUser().getCourseExecutions().forEach(c -> courseExecution.add(c.getId()));
+        Set<Integer> courseExecution = userRepository.getUserCourseExecutionsIds(authUser.getUser().getId());
         claims.put("executions", courseExecution);
 
         Date now = new Date();
