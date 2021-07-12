@@ -4,6 +4,7 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
@@ -23,16 +24,14 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AU
 
 @Component
 public class JwtTokenProvider {
-
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
+
     private AuthUserRepository authUserRepository;
-    private static UserRepository userRepository;
     private static PublicKey publicKey;
     private static PrivateKey privateKey;
 
-    public JwtTokenProvider(AuthUserRepository authUserRepository, UserRepository userRepository) {
+    public JwtTokenProvider(AuthUserRepository authUserRepository) {
         this.authUserRepository = authUserRepository;
-        this.userRepository = userRepository;
     }
 
     public static void generateKeys() {
@@ -47,7 +46,7 @@ public class JwtTokenProvider {
         }
     }
 
-    static String generateToken(AuthUser authUser) {
+    static String generateToken(AuthUser authUser, UserRepository userRepository) {
         if (publicKey == null) {
             generateKeys();
         }
