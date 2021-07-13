@@ -1,14 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
+
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DISCUSSION_MISSING_QUESTION;
 

@@ -1,6 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Languages;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import java.util.ArrayList;
 import java.util.Comparator;

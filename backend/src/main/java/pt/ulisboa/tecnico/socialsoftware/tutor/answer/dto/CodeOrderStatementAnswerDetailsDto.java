@@ -1,11 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.CodeOrderAnswerItem;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 
 import javax.persistence.Transient;
 import java.util.ArrayList;

@@ -1,14 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_TYPE_FOR_REVIEW;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.REVIEW_MISSING_COMMENT;
 
 @Entity
 @Table(name = "reviews")

@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto;
 
-import java.io.Serializable;
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
+
+import java.io.Serializable;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.REPLY_MISSING_DATA;
 

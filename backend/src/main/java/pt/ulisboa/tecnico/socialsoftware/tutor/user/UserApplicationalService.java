@@ -4,12 +4,12 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.LinkHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer;
 
 import java.io.InputStream;
 

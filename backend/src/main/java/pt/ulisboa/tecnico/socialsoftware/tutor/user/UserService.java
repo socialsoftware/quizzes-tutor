@@ -8,25 +8,24 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.Notification;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.NotificationResponse;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.io.BufferedReader;
@@ -45,14 +44,12 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class UserService {
+
     @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private AuthUserRepository authUserRepository;
-
-    @Autowired
-    private CourseRepository courseRepository;
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
@@ -86,14 +83,6 @@ public class UserService {
         User user = new User(name, username, email, role, false, type);
         userRepository.save(user);
         return user.getAuthUser();
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public boolean userHasAnExecutionOfCourse(int userId, int courseId) {
-        return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId))
-                .getCourseExecutions()
-                .stream()
-                .anyMatch(courseExecution ->  userRepository.countUserCourseExecutionsPairById(userId, courseExecution.getId()) == 1);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

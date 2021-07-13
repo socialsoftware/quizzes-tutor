@@ -7,24 +7,22 @@ import org.springframework.context.annotation.PropertySource
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
-import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserApplicationalService
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
 
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")

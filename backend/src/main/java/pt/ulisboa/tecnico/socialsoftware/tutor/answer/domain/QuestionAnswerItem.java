@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;

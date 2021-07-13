@@ -1,9 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.io.Serializable;
 import java.util.*;

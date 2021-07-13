@@ -4,7 +4,10 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import java.util.List;
 

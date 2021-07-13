@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository;
+package pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository;
 
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
@@ -8,6 +8,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @Transactional
@@ -19,4 +20,6 @@ public interface CourseExecutionRepository extends JpaRepository<CourseExecution
     @Query(value = "delete from users_course_executions uce where uce.course_executions_id = :courseExecutionId", nativeQuery = true)
     void dissociateCourseExecutionUsers(int courseExecutionId);
 
+    @Query(value = "SELECT ce.id FROM CourseExecution ce WHERE ce.course.id = :courseId")
+    Set<Integer> getCourseExecutionsIdByCourseId(int courseId);
 }

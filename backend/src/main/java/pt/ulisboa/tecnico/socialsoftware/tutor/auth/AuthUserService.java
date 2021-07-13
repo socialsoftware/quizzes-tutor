@@ -7,20 +7,21 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 
 import java.sql.SQLException;
@@ -41,6 +42,9 @@ public class AuthUserService {
 
     @Autowired
     private AuthUserRepository authUserRepository;
+
+    @Autowired
+    private UserRepository userRepository;
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
@@ -70,9 +74,9 @@ public class AuthUserService {
         authUser.setLastAccess(DateHandler.now());
 
         if (authUser.getUser().isTeacher()) {
-            return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser, fenix.getPersonTeachingCourses()));
+            return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser, fenix.getPersonTeachingCourses()));
         } else {
-            return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser));
+            return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser));
         }
     }
 
@@ -159,7 +163,7 @@ public class AuthUserService {
         }
         authUser.setLastAccess(DateHandler.now());
 
-        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser));
     }
 
     @Retryable(
@@ -176,7 +180,7 @@ public class AuthUserService {
         else {
             authUser = userService.createDemoStudent();
         }
-        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser));
     }
 
     @Retryable(
@@ -187,7 +191,7 @@ public class AuthUserService {
     public AuthDto demoTeacherAuth() {
         AuthUser authUser = getDemoTeacher();
 
-        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser));
     }
 
     @Retryable(
@@ -198,7 +202,7 @@ public class AuthUserService {
     public AuthDto demoAdminAuth() {
         AuthUser authUser = getDemoAdmin();
 
-        return new AuthDto(JwtTokenProvider.generateToken(authUser), new AuthUserDto(authUser));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser));
     }
 
     private List<CourseExecution> getActiveTecnicoCourses(List<CourseExecutionDto> courses) {

@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.io.Serializable;
 import java.util.ArrayList;
