@@ -29,10 +29,11 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Reply from '@/models/management/Reply';
 import RemoteServices from '@/services/RemoteServices';
+
 @Component
 export default class ClarificationComponent extends Vue {
   @Prop() readonly clarifications!: Reply[];

@@ -26,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Review from '@/models/management/Review';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import RemoteServices from '@/services/RemoteServices';

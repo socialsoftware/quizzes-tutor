@@ -56,9 +56,7 @@
 
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
-import RemoteServices from '@/services/RemoteServices';
 import Course from '@/models/user/Course';
-import ExternalUser from '@/models/user/ExternalUser';
 import User from '@/models/user/User';
 
 @Component

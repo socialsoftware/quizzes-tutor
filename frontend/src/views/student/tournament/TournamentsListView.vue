@@ -218,10 +218,10 @@
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import CreateTournamentDialog from '@/views/student/tournament/TournamentForm.vue';
+import EditTournamentDialog from '@/views/student/tournament/TournamentForm.vue';
 import EditPasswordDialog from '@/views/student/tournament/PasswordTournamentView.vue';
 import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
 import Tournament from '@/models/user/Tournament';
-import EditTournamentDialog from '@/views/student/tournament/TournamentForm.vue';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 
 @Component({
