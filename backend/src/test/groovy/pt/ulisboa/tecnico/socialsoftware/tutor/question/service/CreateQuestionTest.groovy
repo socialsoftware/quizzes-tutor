@@ -63,7 +63,6 @@ class CreateQuestionTest extends SpockTest {
         questionDto.setContent(QUESTION_1_CONTENT)
         questionDto.setStatus(Question.Status.AVAILABLE.name())
         questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
-
         and: 'an image'
         def image = new ImageDto()
         image.setUrl(IMAGE_1_URL)

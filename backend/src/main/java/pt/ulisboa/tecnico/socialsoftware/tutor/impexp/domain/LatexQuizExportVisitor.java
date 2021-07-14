@@ -9,21 +9,20 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public class LatexQuizExportVisitor extends LatexVisitor {
-    public String export(Quiz quiz) {
+    public String exportQuiz(Quiz quiz) {
         quiz.accept(this);
-
-        List<QuizQuestion> quizQuestions = new ArrayList<>(quiz.getQuizQuestions());
-
-        quizQuestions.forEach(quizQuestion -> quizQuestion.accept(this));
-
-        exportQuestions(quizQuestions.stream().map(QuizQuestion::getQuestion).collect(Collectors.toList()));
 
         return this.result;
     }
 
-    private void exportQuestions(List<Question> questions) {
+    public String exportQuestions(List<Question> questions) {
+        String result = "";
+
         for (Question question : questions) {
             question.accept(this);
+            result = result + this.result;
         }
+
+        return result;
     }
 }

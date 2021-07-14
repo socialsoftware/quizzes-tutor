@@ -109,7 +109,7 @@ public class Question implements DomainEntity {
         if (this.key == null)
             generateKeys();
 
-        return key;
+        return this.key;
     }
 
     public void setKey(Integer key) {
