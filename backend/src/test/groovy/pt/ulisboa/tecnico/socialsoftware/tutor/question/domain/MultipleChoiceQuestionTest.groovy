@@ -10,14 +10,11 @@ import spock.lang.Unroll
 class MultipleChoiceQuestionTest extends SpockTest {
 
     @Unroll
-    def "convertSequenceToLetter static method performs correctly"() {
-
+    def "convertSequenceToLetter"() {
         when:
         def code = MultipleChoiceQuestion.convertSequenceToLetter(sequenceNumber)
-
-        then: 'the return statement contains one quiz'
+        then:
         result == code
-
         where:
         sequenceNumber  | result
         0               | "A"
