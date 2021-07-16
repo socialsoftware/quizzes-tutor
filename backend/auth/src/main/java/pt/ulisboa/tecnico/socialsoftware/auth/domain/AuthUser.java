@@ -214,7 +214,8 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         return dto;
     }
 
-    public AuthUserDto getAuthUserDto(List<CourseExecutionDto> currentCourses, List<CourseExecutionDto> courseExecutionList) {
+    public AuthUserDto getAuthUserDto(List<CourseExecutionDto> currentCourses,
+                                      List<CourseExecutionDto> courseExecutionList) {
         AuthUserDto dto = new AuthUserDto();
         dto.setId(getUserSecurityInfo().getId());
         dto.setName(getUserSecurityInfo().getName());
@@ -222,7 +223,8 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         dto.setEmail(getEmail());
         dto.setRole(getUserSecurityInfo().getRole());
         dto.setAdmin(getUserSecurityInfo().isAdmin());
-        dto.setCourses(getActiveAndInactiveCourses(courseExecutionList, Objects.requireNonNullElseGet(currentCourses, ArrayList::new)));
+        dto.setCourses(getActiveAndInactiveCourses(courseExecutionList,
+                Objects.requireNonNullElseGet(currentCourses, ArrayList::new)));
         return dto;
     }
 

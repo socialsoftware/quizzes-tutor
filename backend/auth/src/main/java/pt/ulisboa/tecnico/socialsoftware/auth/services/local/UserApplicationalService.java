@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.auth.services;
+package pt.ulisboa.tecnico.socialsoftware.auth.services.local;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.auth.services;
+package pt.ulisboa.tecnico.socialsoftware.auth.services.local;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;

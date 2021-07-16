@@ -548,7 +548,6 @@ public class User implements DomainEntity {
         dto.setRole(getRole().toString());
         dto.setActive(isActive());
         dto.setCreationDate(DateHandler.toISOString(getCreationDate()));
-        //dto.setLastAccess(DateHandler.toISOString(getAuthUser().getLastAccess()));
         return dto;
     }
 
