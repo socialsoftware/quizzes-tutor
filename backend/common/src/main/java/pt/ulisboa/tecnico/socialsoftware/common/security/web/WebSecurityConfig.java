@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.config;
+package pt.ulisboa.tecnico.socialsoftware.common.security.web;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
@@ -13,6 +13,7 @@ import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
+import pt.ulisboa.tecnico.socialsoftware.common.security.token.JwtConfigurer;
 
 @Configuration
 @EnableWebSecurity

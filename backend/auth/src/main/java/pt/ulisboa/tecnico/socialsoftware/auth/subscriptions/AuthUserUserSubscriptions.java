@@ -10,9 +10,9 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
-import pt.ulisboa.tecnico.socialsoftware.common.events.AnonymizeUserEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.RemoveUserFromTecnicoCourseExecutionEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.auth.DeleteAuthUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.execution.AnonymizeUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.execution.RemoveUserFromTecnicoCourseExecutionEvent;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.USER_AGGREGATE_TYPE;
 
