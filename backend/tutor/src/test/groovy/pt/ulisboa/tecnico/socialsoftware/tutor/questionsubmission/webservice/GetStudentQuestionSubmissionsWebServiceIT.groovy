@@ -4,7 +4,16 @@ import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthTecnicoUser
+
+<<<<<<< HEAD:backend/apigateway/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/apigateway/webservice/questionsubmission/GetStudentQuestionSubmissionsWebServiceIT.groovy
+
+
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
+
+=======
+>>>>>>> microservices:backend/tutor/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/tutor/questionsubmission/webservice/GetStudentQuestionSubmissionsWebServiceIT.groovy
+
+
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
@@ -37,7 +46,7 @@ class GetStudentQuestionSubmissionsWebServiceIT extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        student = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
+        student = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT)
         student.setActive(true)
         student.addCourse(courseExecution)
         userRepository.save(student)

@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.auth.services;
+package pt.ulisboa.tecnico.socialsoftware.auth.services.local;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;

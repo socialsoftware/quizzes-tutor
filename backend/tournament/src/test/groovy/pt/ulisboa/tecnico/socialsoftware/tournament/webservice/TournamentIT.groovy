@@ -4,9 +4,18 @@ import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.BeanConfigurationIT
+import pt.ulisboa.tecnico.socialsoftware.apigateway.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser
+
+<<<<<<< HEAD:backend/apigateway/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/apigateway/webservice/tournament/TournamentIT.groovy
+=======
+
+
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
+
+>>>>>>> microservices:backend/tournament/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/tournament/webservice/TournamentIT.groovy
+
+
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto
@@ -42,7 +51,7 @@ class TournamentIT extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT)
         user.setActive(true)
         user.addCourse(courseExecution)
         userRepository.save(user)
@@ -84,5 +93,5 @@ class TournamentIT extends SpockTest {
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfigurationIT {}
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

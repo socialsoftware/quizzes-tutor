@@ -71,4 +71,5 @@ public class TournamentTopic {
         dto.setName(getName());
         return dto;
     }
+
 }

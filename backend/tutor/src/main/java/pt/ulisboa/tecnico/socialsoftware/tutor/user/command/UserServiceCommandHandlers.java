@@ -52,10 +52,9 @@ public class UserServiceCommandHandlers {
         Role role = cm.getCommand().getRole();
         String username = cm.getCommand().getUsername();
         boolean isActive = cm.getCommand().isActive();
-        boolean isAdmin = cm.getCommand().isAdmin();
 
         try {
-            UserDto userDto = userService.createUser(name, role, username, isActive, isAdmin);
+            UserDto userDto = userService.createUser(name, role, username, isActive);
             return withSuccess(userDto);
         } catch (Exception e) {
             return withFailure();

@@ -12,45 +12,41 @@ class CreateUserTest extends SpockTest {
 
     def "create User: name, username, email, role, state, admin" () {
         when:
-        def result = new User(USER_1_NAME, Role.STUDENT, false)
+        def result = new User(USER_1_NAME, Role.STUDENT)
 
         then:
         result.getName() == USER_1_NAME
         result.getRole() == Role.STUDENT
-        !result.isAdmin()
     }
 
     def "create Tecnico User: name, username, email, role, state, admin" () {
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT)
 
         then:
         result.getName() == USER_1_NAME
         result.getUsername() == USER_1_USERNAME
         result.getRole() == Role.STUDENT
-        !result.isAdmin()
     }
 
     def "create External User: name, username, email, role, state, admin" () {
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT)
 
         then:
         result.getName() == USER_1_NAME
         result.getUsername() == USER_1_USERNAME
         result.getRole() == Role.STUDENT
-        !result.isAdmin()
     }
 
     def "create Demo User: name, username, email, role, state, admin" () {
         when:
-        def result = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
+        def result = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT)
 
         then:
         result.getName() == USER_1_NAME
         result.getUsername() == USER_1_USERNAME
         result.getRole() == Role.STUDENT
-        !result.isAdmin()
     }
 
     @TestConfiguration

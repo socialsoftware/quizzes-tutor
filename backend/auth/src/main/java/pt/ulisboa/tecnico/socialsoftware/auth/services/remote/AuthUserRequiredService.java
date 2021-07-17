@@ -31,5 +31,4 @@ public class AuthUserRequiredService {
     public CourseExecutionDto getCourseExecutionByFields(String acronym, String academicTerm, String type) {
         return courseExecutionInterface.findCourseExecutionByFields(acronym, academicTerm, type);
     }
-
 }

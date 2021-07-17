@@ -6,10 +6,19 @@ import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
 import org.springframework.test.context.ActiveProfiles
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository
-import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserProvidedService
-import pt.ulisboa.tecnico.socialsoftware.auth.services.UserApplicationalService
+import pt.ulisboa.tecnico.socialsoftware.auth.services.local.AuthUserProvidedService
+import pt.ulisboa.tecnico.socialsoftware.auth.services.local.UserApplicationalService
+
+<<<<<<< HEAD
+=======
+
+
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages
+
+>>>>>>> microservices
+
+
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import spock.lang.Specification
 
@@ -107,6 +116,15 @@ class SpockTest extends Specification {
 
     @Autowired
     AuthUserProvidedService authUserService
+<<<<<<< HEAD
+
+    @Autowired
+    QuestionSubmissionService questionSubmissionService
+
+    @Autowired
+    QuestionSubmissionRepository questionSubmissionRepository
+=======
+>>>>>>> microservices
 
     @Autowired
     PasswordEncoder passwordEncoder

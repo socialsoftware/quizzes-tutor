@@ -23,13 +23,13 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest {
         createExternalCourseAndExecution()
 
         student1 = new User(USER_1_NAME, USER_1_USERNAME,
-                Role.STUDENT, false)
+                Role.STUDENT)
         userRepository.save(student1)
         student2 = new User(USER_2_NAME, USER_2_USERNAME,
-                Role.STUDENT, false)
+                Role.STUDENT)
         userRepository.save(student2)
         teacher = new User(USER_3_NAME, USER_3_USERNAME,
-                Role.TEACHER, false)
+                Role.TEACHER)
         userRepository.save(teacher)
         question = new Question()
         question.setKey(1)

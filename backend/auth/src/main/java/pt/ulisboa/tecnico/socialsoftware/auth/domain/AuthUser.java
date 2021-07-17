@@ -20,6 +20,7 @@ import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.*;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.utils.Utils.MAIL_FORMAT;
 
 @Entity
 @Table(name = "auth_users",
@@ -30,8 +31,6 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 @DiscriminatorColumn(name="auth_type",
         discriminatorType = DiscriminatorType.STRING)// TODO: Uncomment when impexp is working again
 public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
-
-    public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -228,7 +227,8 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         return dto;
     }
 
-    public AuthUserDto getAuthUserDto(List<CourseExecutionDto> currentCourses, List<CourseExecutionDto> courseExecutionList) {
+    public AuthUserDto getAuthUserDto(List<CourseExecutionDto> currentCourses,
+                                      List<CourseExecutionDto> courseExecutionList) {
         AuthUserDto dto = new AuthUserDto();
         dto.setId(getUserSecurityInfo().getId());
         dto.setName(getUserSecurityInfo().getName());
@@ -236,7 +236,8 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         dto.setEmail(getEmail());
         dto.setRole(getUserSecurityInfo().getRole());
         dto.setAdmin(getUserSecurityInfo().isAdmin());
-        dto.setCourses(getActiveAndInactiveCourses(courseExecutionList, Objects.requireNonNullElseGet(currentCourses, ArrayList::new)));
+        dto.setCourses(getActiveAndInactiveCourses(courseExecutionList,
+                Objects.requireNonNullElseGet(currentCourses, ArrayList::new)));
         return dto;
     }
 

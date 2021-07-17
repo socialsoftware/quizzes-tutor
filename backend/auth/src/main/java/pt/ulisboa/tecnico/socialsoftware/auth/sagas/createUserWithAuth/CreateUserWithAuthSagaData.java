@@ -22,20 +22,18 @@ public class CreateUserWithAuthSagaData {
     private Role role;
     private String username;
     private boolean isActive;
-    private boolean isAdmin;
     private Integer userId;
     private List<CourseExecutionDto> courseExecutionDtoList;
 
     public CreateUserWithAuthSagaData() {}
 
     public CreateUserWithAuthSagaData(Integer authUserId, String name, Role role, String username, boolean isActive,
-                                      boolean isAdmin, List<CourseExecutionDto> courseExecutionDtoList) {
+                                      List<CourseExecutionDto> courseExecutionDtoList) {
         this.authUserId = authUserId;
         this.name = name;
         this.role = role;
         this.username = username;
         this.isActive = isActive;
-        this.isAdmin = isAdmin;
         this.courseExecutionDtoList = courseExecutionDtoList;
     }
 
@@ -53,10 +51,6 @@ public class CreateUserWithAuthSagaData {
 
     public boolean isActive() {
         return isActive;
-    }
-
-    public boolean isAdmin() {
-        return isAdmin;
     }
 
     public Integer getUserId() {
@@ -87,7 +81,7 @@ public class CreateUserWithAuthSagaData {
 
     CreateUserCommand createUser() {
         logger.info("Sent CreateUserCommand");
-        return new CreateUserCommand(getName(), getRole(), getUsername(), isActive(), isAdmin());
+        return new CreateUserCommand(getName(), getRole(), getUsername(), isActive());
     }
 
     RejectAuthUserCommand rejectAuthUser() {
@@ -113,7 +107,6 @@ public class CreateUserWithAuthSagaData {
                 ", role=" + role +
                 ", username='" + username + '\'' +
                 ", isActive=" + isActive +
-                ", isAdmin=" + isAdmin +
                 ", userId=" + userId +
                 ", courseExecutionDtoList=" + courseExecutionDtoList +
                 '}';

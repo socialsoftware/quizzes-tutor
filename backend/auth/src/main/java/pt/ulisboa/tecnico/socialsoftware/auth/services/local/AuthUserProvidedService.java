@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.auth.services;
+package pt.ulisboa.tecnico.socialsoftware.auth.services.local;
 
 import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
 import org.slf4j.Logger;
@@ -445,7 +445,7 @@ public class AuthUserProvidedService {
 
         CreateUserWithAuthSagaData data = new CreateUserWithAuthSagaData(authUser.getId(), authUser.getUserSecurityInfo().getName(),
                 authUser.getUserSecurityInfo().getRole(), authUser.getUsername(), authUser.getType() != AuthUserType.EXTERNAL,
-                false, courseExecutionDtos);
+                courseExecutionDtos);
         sagaInstanceFactory.create(createUserWithAuthSaga, data);
         return authUser;
     }

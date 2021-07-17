@@ -9,17 +9,15 @@ public class CreateUserCommand implements Command {
     private Role role;
     private String username;
     private boolean isActive;
-    private boolean isAdmin;
 
     public CreateUserCommand() {
     }
 
-    public CreateUserCommand(String name, Role role, String username, boolean isActive, boolean isAdmin) {
+    public CreateUserCommand(String name, Role role, String username, boolean isActive) {
         this.name = name;
         this.role = role;
         this.username = username;
         this.isActive = isActive;
-        this.isAdmin = isAdmin;
     }
 
     public String getName() {
@@ -38,10 +36,6 @@ public class CreateUserCommand implements Command {
         return isActive;
     }
 
-    public boolean isAdmin() {
-        return isAdmin;
-    }
-
     @Override
     public String toString() {
         return "CreateUserCommand{" +
@@ -49,7 +43,6 @@ public class CreateUserCommand implements Command {
                 ", role=" + role +
                 ", username='" + username + '\'' +
                 ", isActive=" + isActive +
-                ", isAdmin=" + isAdmin +
                 '}';
     }
 }

@@ -5,6 +5,10 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 
+<<<<<<< HEAD:backend/apigateway/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/apigateway/webservice/execution/ExportCourseExecutionInfoWebServiceIT.groovy
+=======
+>>>>>>> microservices:backend/tutor/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/tutor/execution/webservice/ExportCourseExecutionInfoWebServiceIT.groovy
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ExportCourseExecutionInfoWebServiceIT extends SpockTest {
     @LocalServerPort

@@ -69,7 +69,7 @@ class TournamentTest extends SpockTest {
     }
 
     def createUser(String name, String username, String email, Role role, CourseExecution courseExecution) {
-        def user = new User(name, username, role, false)
+        def user = new User(name, username, role)
         user.addCourse(courseExecution)
         userRepository.save(user)
 

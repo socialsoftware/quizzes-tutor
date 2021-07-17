@@ -46,7 +46,7 @@ public class QuestionSubmissionController {
         UserInfo userInfo = (UserInfo) authentication.getPrincipal();
 
         return questionSubmissionApplicationalService.createReview(userInfo.getRole(), reviewDto);
-  }
+    }
 
     @PutMapping("/submissions/{questionSubmissionId}/topics")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionSubmissionId, 'SUBMISSION.ACCESS')")
@@ -60,7 +60,7 @@ public class QuestionSubmissionController {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
 
         return questionSubmissionService.getStudentQuestionSubmissions(userInfo.getId(), executionId);
-   }
+    }
 
     @GetMapping("/submissions/{executionId}/execution")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")

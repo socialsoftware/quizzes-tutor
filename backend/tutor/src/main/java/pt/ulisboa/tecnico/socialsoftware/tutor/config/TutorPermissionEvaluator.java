@@ -6,8 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.PermissionEvaluator;
 import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
-import org.springframework.transaction.annotation.Isolation;
-import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
@@ -28,7 +26,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicReposito
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.io.Serializable;
 
@@ -68,9 +65,6 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     private CourseRepository courseRepository;
-
-    @Autowired
-    private UserRepository userRepository;
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
@@ -122,8 +116,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                 case "QUIZ.ACCESS":
                     courseExecutionId = quizRepository.findCourseExecutionIdById(id).orElse(null);
                     if (courseExecutionId != null) {
-                        return userHasThisExecution(userInfo, courseExecutionId);
-                    }
+                        return userHasThisExecution(userInfo, courseExecutionId); }
                     return false;
                 case "SUBMISSION.ACCESS":
                     QuestionSubmission questionSubmission = questionSubmissionRepository.findById(id).orElse(null);
@@ -159,14 +152,11 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
         return userInfo.getCourseExecutions().contains(courseExecutionId);
     }
 
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public boolean userHasAnExecutionOfCourse(UserInfo userInfo, int courseId) {
         return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId))
                 .getCourseExecutions()
                 .stream()
                 .anyMatch(courseExecution ->  userHasThisExecution(userInfo, courseExecution.getId()));
-                //.anyMatch(courseExecution ->  userRepository.countUserCourseExecutionsPairById(userInfo.getId(), courseExecution.getId()) == 1);
-
     }
 
     @Override

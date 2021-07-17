@@ -1,10 +1,10 @@
-package pt.ulisboa.tecnico.socialsoftware.auth.apis;
+package pt.ulisboa.tecnico.socialsoftware.auth.api;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import pt.ulisboa.tecnico.socialsoftware.auth.services.UserApplicationalService;
+import pt.ulisboa.tecnico.socialsoftware.auth.services.local.UserApplicationalService;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.NotificationResponse;
@@ -13,7 +13,7 @@ import javax.validation.Valid;
 import java.io.IOException;
 
 @RestController
-public class UserController {
+public class ExternalUserController {
 
     @Autowired
     private UserApplicationalService userApplicationalService;

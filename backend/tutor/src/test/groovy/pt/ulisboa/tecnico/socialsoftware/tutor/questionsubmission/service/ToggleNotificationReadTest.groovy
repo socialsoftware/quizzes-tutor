@@ -23,7 +23,7 @@ class ToggleNotificationReadTest extends SpockTest {
         createExternalCourseAndExecution()
 
         student = new User(USER_1_NAME, USER_1_USERNAME,
-                Role.STUDENT, false)
+                Role.STUDENT)
         userRepository.save(student)
 
         question = new Question()

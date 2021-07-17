@@ -62,6 +62,7 @@ public class MonolithService implements UserContract, AnswerContract, QuestionCo
         return topicService.findTopicById(topicsList.getTopicList());
     }
 
+    @Override
     public StatementQuizDto startQuiz(Integer userId, Integer quizId) {
         return answerService.startQuiz(userId, quizId);
     }

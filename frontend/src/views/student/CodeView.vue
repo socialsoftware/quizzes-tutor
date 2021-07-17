@@ -1,23 +1,30 @@
 <template>
-  <div class="container">
-    <v-card v-if="!hasCode" class="justify-center">
-      <v-card-text class="justify-center">
-        <v-form ref="form" v-if="!hasCode">
-          <v-row justify="center">
-            <v-col cols="8" sm="4" md="2">
-              <v-text-field label="Code" v-model="code" outlined></v-text-field>
-              <v-btn color="blue darken-1" @click="setCode">Send</v-btn>
-            </v-col>
-          </v-row>
-        </v-form>
-      </v-card-text>
-    </v-card>
-    <v-card v-else>
-      <v-card-title class="justify-center">
-        Hold on and wait {{ timer }} to start the quiz!
-      </v-card-title>
-    </v-card>
-  </div>
+  <v-container fluid>
+    <h2>Quiz by Code</h2>
+    <v-container class="input-box">
+      <v-card v-if="!hasCode">
+        <v-card-text>
+          <v-form ref="form" v-if="!hasCode">
+            <v-row justify="center">
+              <v-col cols="8" sm="4" md="2">
+                <v-text-field
+                  label="Code"
+                  v-model="code"
+                  outlined
+                ></v-text-field>
+                <v-btn color="primary" @click="setCode">Send</v-btn>
+              </v-col>
+            </v-row>
+          </v-form>
+        </v-card-text>
+      </v-card>
+      <v-card v-else>
+        <v-card-title class="justify-center">
+          Hold on and wait {{ timer }} to start the quiz!
+        </v-card-title>
+      </v-card>
+    </v-container>
+  </v-container>
 </template>
 
 <script lang="ts">
@@ -70,4 +77,12 @@ export default class CodeView extends Vue {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.input-box {
+  width: 40% !important;
+  background-color: white;
+  border-width: 10px;
+  border-style: solid;
+  border-color: #818181;
+}
+</style>

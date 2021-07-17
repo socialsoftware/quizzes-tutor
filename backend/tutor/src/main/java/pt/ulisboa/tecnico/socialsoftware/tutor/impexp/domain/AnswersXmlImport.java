@@ -180,7 +180,6 @@ public class AnswersXmlImport {
                     .filter(qa -> qa.getSequence().equals(answerSequence)).findAny()
                     .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, answerSequence));
 
-
             String timeTakenValue = questionAnswerElement.getAttributeValue("timeTaken");
             if (timeTakenValue != null) {
                 Integer timeTaken = Integer.valueOf(timeTakenValue);

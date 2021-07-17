@@ -173,7 +173,6 @@ public class CourseExecutionService {
         domainEventPublisher.publish(COURSE_EXECUTION_AGGREGATE_TYPE, String.valueOf(courseExecutionId),
                 Collections.singletonList(removeCourseExecutionEvent));
 
-        courseExecutionRepository.delete(courseExecution);
     }
 
     @Retryable(
@@ -184,7 +183,6 @@ public class CourseExecutionService {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         for (User user : courseExecution.getUsers()) {
             String oldUsername = user.getUsername();
-
             String newUsername = user.getUsername();
             questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
             String role = user.getRole().toString();

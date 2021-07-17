@@ -30,7 +30,6 @@ public class TournamentController {
     public TournamentDto createTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @PathVariable int executionId, @RequestParam Set<Integer> topicsId) {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
         formatDates(tournamentDto);
-
         return tournamentProvidedService.createTournament(userInfo.getId(), executionId, topicsId, tournamentDto,
                 userInfo.getUsername(), userInfo.getName());
     }
@@ -66,7 +65,7 @@ public class TournamentController {
 
         tournamentProvidedService.joinTournament(userInfo.getId(), tournamentId, password, userInfo.getUsername(),
                 userInfo.getName());
-   }
+    }
 
     @PutMapping(value = "/tournaments/{executionId}/solveQuiz/{tournamentId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#tournamentId, 'TOURNAMENT.PARTICIPANT')")

@@ -17,7 +17,7 @@ import java.io.IOException;
 
 public class JwtTokenFilter extends GenericFilterBean {
 
-    public JwtTokenFilter() { ;
+    public JwtTokenFilter() {
     }
 
     @Override

@@ -7,9 +7,15 @@ spring.datasource.password= <DATABASE PASSWORD>
 spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect
 
 ## Resources
+<<<<<<< HEAD:backend/apigateway/src/test/resources/application-test-int.properties
+figures.dir=${maven.basedir}/../../data/images/
+export.dir=${maven.basedir}/../../data/export/
+load.dir=${maven.basedir}/../../data/load/
+=======
 figures.dir=${maven.basedir}/../data/images/
 export.dir=${maven.basedir}/../data/export/
 load.dir=${maven.basedir}/../data/load/
+>>>>>>> microservices:backend/tutor/src/main/resources/application-dev.properties.example
 
 ## Fenix oauth
 oauth.consumer.key=<FENIX CLIENT KEY>

@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.common.dtos.question;
 
-
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.List;
