@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.common.events.topic;
 
-public class TopicDeletedEvent{
+import io.eventuate.tram.events.common.DomainEvent;
+
+public class TopicDeletedEvent implements DomainEvent {
 
     private Integer topicId;
 

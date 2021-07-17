@@ -4,49 +4,37 @@ import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.core.Authentication;
+import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
-import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
+import pt.ulisboa.tecnico.socialsoftware.common.security.RSAUtil;
 
-import javax.servlet.http.HttpServletRequest;
-import java.security.KeyPair;
-import java.security.KeyPairGenerator;
+import java.io.InputStream;
 import java.security.PrivateKey;
-import java.security.PublicKey;
-import java.util.ArrayList;
 import java.util.Date;
-import java.util.List;
 
 @Component
 public class JwtTokenProvider {
 
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
-    private static PublicKey publicKey;
     private static PrivateKey privateKey;
+
+    private static final String PRIVATE_KEY_FILENAME = "private_key.der";
 
     public JwtTokenProvider() {
     }
 
-    public static void generateKeys() {
-        try {
-            KeyPairGenerator keyPairGenerator = KeyPairGenerator.getInstance("RSA");
-            keyPairGenerator.initialize(2048);
-            KeyPair keyPair = keyPairGenerator.generateKeyPair();
-            privateKey = keyPair.getPrivate();
-            publicKey = keyPair.getPublic();
-        } catch (Exception e) {
-            logger.error("Unable to generate keys");
-        }
-    }
-
     static String generateToken(AuthUser authUser) {
-        if (publicKey == null) {
-            generateKeys();
+        if (privateKey == null) {
+            try {
+                InputStream resource = new ClassPathResource(PRIVATE_KEY_FILENAME).getInputStream();
+                privateKey = RSAUtil.getPrivateKey(resource);
+            } catch (Exception e) {
+                logger.info("Failed reading key");
+                logger.info(e.getMessage());
+            }
         }
 
         Claims claims = Jwts.claims().setSubject(String.valueOf(authUser.getId()));
@@ -68,36 +56,5 @@ public class JwtTokenProvider {
                 .setExpiration(expiryDate)
                 .signWith(privateKey)
                 .compact();
-    }
-
-    public static String getToken(HttpServletRequest req) {
-        String authHeader = req.getHeader("Authorization");
-
-        if (authHeader != null && authHeader.startsWith("Bearer ")) {
-            return authHeader.substring(7);
-        } else if (authHeader != null && authHeader.startsWith("AUTH")) {
-            return authHeader.substring(4);
-        } else if (authHeader != null) {
-            return authHeader;
-        }
-        return "";
-    }
-
-    public static Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody();
-    }
-
-    public Authentication getAuthentication(String token) {
-        Claims tokenClaims = getAllClaimsFromToken(token);
-        int userId = tokenClaims.get("userId", Integer.class);
-        Role role = Role.valueOf(tokenClaims.get("role", String.class));
-        boolean isAdmin = tokenClaims.get("isAdmin", Boolean.class);
-        String username = tokenClaims.get("username", String.class);
-        List<Integer> executions = (ArrayList<Integer>) tokenClaims.get("executions");
-        String enrolledCourseAcronyms = tokenClaims.get("courseAcronyms", String.class);
-        String name = tokenClaims.get("name", String.class);
-
-        UserInfo userInfo = new UserInfo(userId, role, isAdmin, username, executions, enrolledCourseAcronyms, name);
-        return new UsernamePasswordAuthenticationToken(userInfo, "", userInfo.getAuthorities());
     }
 }

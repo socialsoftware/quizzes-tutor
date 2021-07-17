@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.common.events.execution;
 
-public class RemoveCourseExecutionEvent {
+import io.eventuate.tram.events.common.DomainEvent;
+
+public class RemoveCourseExecutionEvent implements DomainEvent {
 
     private Integer courseExecutionId;
 

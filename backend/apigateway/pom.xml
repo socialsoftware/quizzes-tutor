@@ -10,34 +10,69 @@
   <groupId>pt.ulisboa.tecnico.socialsoftware.apigateway</groupId>
   <artifactId>apigateway</artifactId>
   <packaging>jar</packaging>
-  <name>apigateway</name>
-  <url>http://maven.apache.org</url>
-  <build>
-    <plugins>
-      <plugin>
-        <groupId>org.springframework.boot</groupId>
-        <artifactId>spring-boot-maven-plugin</artifactId>
-      </plugin>
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-compiler-plugin</artifactId>
-        <configuration>
-          <source>11</source>
-          <target>11</target>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+  <name>API Gateway</name>
+
+  <repositories>
+    <repository>
+      <id>maven-central-repository</id>
+      <url>https://repo1.maven.org/maven2/</url>
+    </repository>
+  </repositories>
+
+  <properties>
+    <spring-cloud.version>2020.0.2</spring-cloud.version>
+    <spring-cloud-starter-gateway.version>3.0.2</spring-cloud-starter-gateway.version>
+    <spring-cloud-starter-netflix-hystrix.version>2.2.8.RELEASE</spring-cloud-starter-netflix-hystrix.version>
+  </properties>
+
   <dependencies>
     <dependency>
-      <groupId>pt.ulisboa.tecnico.socialsoftware.tournament</groupId>
-      <artifactId>tournament</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-starter-actuator</artifactId>
     </dependency>
     <dependency>
-      <groupId>pt.ulisboa.tecnico.socialsoftware.auth</groupId>
-      <artifactId>auth</artifactId>
-      <version>${project.version}</version>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-gateway</artifactId>
+      <version>${spring-cloud-starter-gateway.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.cloud</groupId>
+      <artifactId>spring-cloud-starter-netflix-hystrix</artifactId>
+      <version>${spring-cloud-starter-netflix-hystrix.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.springframework.boot</groupId>
+      <artifactId>spring-boot-configuration-processor</artifactId>
+      <optional>true</optional>
     </dependency>
   </dependencies>
+
+  <dependencyManagement>
+    <dependencies>
+      <dependency>
+        <groupId>org.springframework.cloud</groupId>
+        <artifactId>spring-cloud-dependencies</artifactId>
+        <version>${spring-cloud.version}</version>
+        <type>pom</type>
+        <scope>import</scope>
+      </dependency>
+    </dependencies>
+  </dependencyManagement>
+
+  <!-- https://javahungry.blogspot.com/2019/05/solved-no-main-manifest-attribute-in-jar.html -->
+  <build>
+      <plugins>
+        <plugin>
+          <groupId>org.springframework.boot</groupId>
+          <artifactId>spring-boot-maven-plugin</artifactId>
+          <executions>
+            <execution>
+              <goals>
+                <goal>repackage</goal>
+              </goals>
+            </execution>
+          </executions>
+        </plugin>
+      </plugins>
+  </build>
 </project>

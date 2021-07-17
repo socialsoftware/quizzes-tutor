@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.common.events.execution;
 
-public class AnonymizeUserEvent{
+import io.eventuate.tram.events.common.DomainEvent;
+
+public class AnonymizeUserEvent implements DomainEvent {
 
     private Integer id;
     private String username;

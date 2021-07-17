@@ -10,9 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
 class ExternalUserAuthTest extends SpockTest {

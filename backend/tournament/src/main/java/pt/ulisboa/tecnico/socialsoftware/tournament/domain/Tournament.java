@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatemen
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentParticipantDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.UnsupportedStateTransitionException;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.persistence.*;
@@ -14,6 +15,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentState.*;
 
 @Entity
 @Table(name = "tournaments")
@@ -21,6 +23,9 @@ public class Tournament  {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Enumerated(EnumType.STRING)
+    private TournamentState state;
 
     @Column(name = "start_time")
     private LocalDateTime startTime;
@@ -37,14 +42,14 @@ public class Tournament  {
     @Column(name = "is_canceled")
     private boolean isCanceled;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "tournaments_participants")
     private Set<TournamentParticipant> participants = new HashSet<>();
 
     @Embedded
     private TournamentCourseExecution courseExecution;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "tournaments_topics")
     private Set<TournamentTopic> topics = new HashSet<>();
 
@@ -60,16 +65,15 @@ public class Tournament  {
     public Tournament() {
     }
 
-    public Tournament(TournamentCreator creator, TournamentCourseExecution courseExecution, Set<TournamentTopic> topics, TournamentDto tournamentDto) {
+    public Tournament(TournamentCreator creator, TournamentDto tournamentDto) {
         setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
         setEndTime(DateHandler.toLocalDateTime(tournamentDto.getEndTime()));
         setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
         setCanceled(tournamentDto.isCanceled());
         setCreator(creator);
-        setCourseExecution(courseExecution);
-        setTopics(topics);
         setPassword(tournamentDto.getPassword());
         setPrivateTournament(tournamentDto.isPrivateTournament());
+        setState(APPROVAL_PENDING);
     }
 
     public Integer getId() { return id; }
@@ -146,26 +150,29 @@ public class Tournament  {
     public Set<TournamentTopic> getTopics() { return topics; }
 
     public void setTopics(Set<TournamentTopic> topics) {
-        Set<TournamentTopic> topicsList = new HashSet<>();
         for (TournamentTopic topic: topics) {
             checkTopicCourse(topic);
-            topicsList.add(topic);
         }
 
-        this.topics = topicsList;
+        this.topics = topics;
+    }
+
+    public TournamentState getState() {
+        return state;
+    }
+
+    public void setState(TournamentState state) {
+        this.state = state;
     }
 
     public void updateTopics(Set<TournamentTopic> newTopics) {
         if (newTopics.isEmpty()) throw new TutorException(TOURNAMENT_MUST_HAVE_ONE_TOPIC);
 
-        Set<TournamentTopic> topicsList = new HashSet<>();
-
         for (TournamentTopic topic : newTopics) {
             checkTopicCourse(topic);
-            topicsList.add(topic);
         }
 
-        this.topics = topicsList;
+        this.topics = newTopics;
     }
 
     public void checkTopicCourse(TournamentTopic topic) {
@@ -212,8 +219,6 @@ public class Tournament  {
     public boolean hasQuiz() { return getQuizId() != null; }
 
     public void remove() {
-        checkCanChange();
-
         creator = null;
         courseExecution = null;
 
@@ -239,9 +244,7 @@ public class Tournament  {
         }
     }
 
-    public void updateTournament(TournamentDto tournamentDto, Set<TournamentTopic> topics) {
-        checkCanChange();
-
+    public void updateTournament(TournamentDto tournamentDto) {
         if (DateHandler.isValidDateFormat(tournamentDto.getStartTime())) {
             DateHandler.toISOString(getStartTime());
             setStartTime(DateHandler.toLocalDateTime(tournamentDto.getStartTime()));
@@ -253,8 +256,6 @@ public class Tournament  {
         }
 
         setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
-
-        updateTopics(topics);
     }
 
     public boolean isPrivateTournament() { return privateTournament; }
@@ -274,6 +275,7 @@ public class Tournament  {
     public String toString() {
         return "Tournament{" +
                 "id=" + id +
+                ", state=" + state +
                 ", startTime=" + startTime +
                 ", endTime=" + endTime +
                 ", numberOfQuestions=" + numberOfQuestions +
@@ -320,5 +322,48 @@ public class Tournament  {
         dto.setEndTime(getEndTime());
         dto.setId(getId());
         return dto;
+    }
+
+    public void undoUpdate() {
+        switch (getState()) {
+            case UPDATE_PENDING:
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void confirmUpdateQuiz(TournamentDto tournamentDto) {
+        switch (getState()) {
+            case UPDATE_PENDING:
+                updateTournament(tournamentDto);
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void confirmTournament(Integer quizId) {
+        switch (getState()) {
+            case APPROVAL_PENDING:
+                setQuizId(quizId);
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void rejectTournament() {
+        switch (getState()) {
+            case APPROVAL_PENDING:
+                remove();
+                setState(REJECTED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
     }
 }

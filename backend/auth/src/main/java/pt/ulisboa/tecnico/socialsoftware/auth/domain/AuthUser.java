@@ -10,14 +10,17 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDt
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.UnsupportedStateTransitionException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUserState.*;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService.MAIL_FORMAT;
+import static pt.ulisboa.tecnico.socialsoftware.common.utils.Utils.MAIL_FORMAT;
 
 @Entity
 @Table(name = "auth_users",
@@ -26,12 +29,15 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService.MAIL_FORM
         })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name="auth_type",
-        discriminatorType = DiscriminatorType.STRING)
+        discriminatorType = DiscriminatorType.STRING)// TODO: Uncomment when impexp is working again
 public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
+    @Enumerated(EnumType.STRING)
+    private AuthUserState state;
 
     private String email;
     private String password;
@@ -45,9 +51,9 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
     @Embedded
     private UserSecurityInfo userSecurityInfo;
 
-    @ElementCollection
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(name = "authuser_course_executions")
-    private Set<Integer> userCourseExecutions = new HashSet<>();
+    private List<Integer> userCourseExecutions = new ArrayList<>();
 
     protected AuthUser() {}
 
@@ -55,6 +61,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         setUserSecurityInfo(userSecurityInfo);
         setUsername(username);
         setEmail(email);
+        setState(APPROVAL_PENDING);
     }
 
     public static AuthUser createAuthUser(UserSecurityInfo userSecurityInfo, String username, String email, AuthUserType type) {
@@ -106,11 +113,11 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         this.email = email.toLowerCase();
     }
 
-    public Set<Integer> getUserCourseExecutions() {
+    public List<Integer> getUserCourseExecutions() {
         return userCourseExecutions;
     }
 
-    public void setUserCourseExecutions(Set<Integer> userCourseExecutions) {
+    public void setUserCourseExecutions(List<Integer> userCourseExecutions) {
         this.userCourseExecutions = userCourseExecutions;
     }
 
@@ -143,14 +150,19 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         }
     }
 
+    public AuthUserState getState() {
+        return state;
+    }
+
+    public void setState(AuthUserState state) {
+        this.state = state;
+    }
+
+    // TODO: Uncomment when impexp is working again
     /*@Override
     public void accept(Visitor visitor) {
         visitor.visitAuthUser(this);
     }*/
- 
-    public boolean isDemoStudent() {
-        return false;
-    }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
@@ -197,6 +209,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
     public String toString() {
         return "AuthUser{" +
                 "id=" + id +
+                ", state=" + state +
                 ", email='" + email + '\'' +
                 ", password='" + password + '\'' +
                 ", username='" + username + '\'' +
@@ -242,5 +255,44 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         return courseExecutions.stream().sorted(Comparator.comparing(CourseExecutionDto::getName))
                 .collect(Collectors.groupingBy(CourseExecutionDto::getAcademicTerm,
                         Collectors.mapping(courseDto -> courseDto, Collectors.toList())));
+    }
+
+    public void authUserApproved(Integer userId, List<CourseExecutionDto> courseExecutionList) {
+        switch (state) {
+            case APPROVAL_PENDING:
+                getUserSecurityInfo().setId(userId);
+                for (CourseExecutionDto courseExecutionDto: courseExecutionList) {
+                    addCourseExecution(courseExecutionDto.getCourseExecutionId());
+                }
+                this.state = APPROVED;
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(state);
+        }
+    }
+
+    public void authUserRejected() {
+        switch (state) {
+            case APPROVAL_PENDING:
+                this.state = REJECTED;
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(state);
+        }
+    }
+
+    public void authUserConfirmUpdateCourseExecutions(List<CourseExecutionDto> courseExecutionDtoList) {
+        switch (getState()) {
+            case UPDATE_PENDING:
+                for(CourseExecutionDto dto : courseExecutionDtoList) {
+                    addCourseExecution(dto.getCourseExecutionId());
+                }
+
+                setLastAccess(DateHandler.now());
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
     }
 }

@@ -65,7 +65,7 @@ public class QuestionService {
 
     @Retryable(
             value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
+            backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuestionDto findQuestionById(Integer questionId) {
         return questionRepository.findById(questionId).map(Question::getDto)

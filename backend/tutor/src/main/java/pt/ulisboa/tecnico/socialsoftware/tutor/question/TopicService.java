@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question;
 
-import com.google.common.eventbus.EventBus;
+import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -24,12 +24,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseReposit
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 
 import java.sql.SQLException;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.TOPIC_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Service
@@ -48,7 +46,7 @@ public class TopicService {
     private TopicRepository topicRepository;
 
     @Autowired
-    private EventBus eventBus;
+    private DomainEventPublisher domainEventPublisher;
 
     @Retryable(
       value = { SQLException.class },
@@ -96,7 +94,8 @@ public class TopicService {
         topic.setName(topicDto.getName());
 
         TopicUpdatedEvent event = new TopicUpdatedEvent(topic.getId(), topicDto.getName());
-        eventBus.post(event);
+        domainEventPublisher.publish(TOPIC_AGGREGATE_TYPE, String.valueOf(topic.getId()),
+                Collections.singletonList(event));
 
         return topic.getDto();
     }
@@ -113,7 +112,8 @@ public class TopicService {
         topicRepository.delete(topic);
 
         TopicDeletedEvent event = new TopicDeletedEvent(topicId);
-        eventBus.post(event);
+        domainEventPublisher.publish(TOPIC_AGGREGATE_TYPE, String.valueOf(topicId),
+                Collections.singletonList(event));
     }
 
     @Retryable(
@@ -150,10 +150,6 @@ public class TopicService {
                 });
     }
 
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public FindTopicsDto findTopicById(Set<Integer> topicsList) {
         List<TopicWithCourseDto> topicWithCourseDtoList = new ArrayList<>();
         for (Integer topicId : topicsList) {

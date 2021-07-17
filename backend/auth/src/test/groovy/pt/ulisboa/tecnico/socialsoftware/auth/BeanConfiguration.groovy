@@ -13,18 +13,12 @@ import pt.ulisboa.tecnico.socialsoftware.auth.services.local.AuthUserProvidedSer
 import pt.ulisboa.tecnico.socialsoftware.auth.services.local.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthUserRequiredService
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.CourseService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
+
+<<<<<<< HEAD
+=======
+
+
+>>>>>>> microservices
 
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")
@@ -55,6 +49,7 @@ class BeanConfiguration {
     private String debug
 
     @Bean
+<<<<<<< HEAD
     AnswersXmlImport answersXmlImport() {
         return new AnswersXmlImport()
     }
@@ -82,6 +77,10 @@ class BeanConfiguration {
     @Bean
     UserService userService() {
         return new UserService()
+=======
+    AuthUserProvidedService authUserService() {
+        return new AuthUserProvidedService()
+>>>>>>> microservices
     }
 
     @Bean
@@ -92,46 +91,6 @@ class BeanConfiguration {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder()
-    }
-
-    @Bean
-    QuestionService questionService() {
-        return new QuestionService()
-    }
-
-    @Bean
-    CourseExecutionService courseExecutionService() {
-        return new CourseExecutionService()
-    }
-
-    @Bean
-    TopicService topicService() {
-        return new TopicService()
-    }
-
-    @Bean
-    AssessmentService assessmentService() {
-        return new AssessmentService()
-    }
-
-    @Bean
-    DiscussionService discussionService() {
-        return new DiscussionService()
-    }
-
-    @Bean
-    QuestionSubmissionService questionSubmissionService() {
-        return new QuestionSubmissionService()
-    }
-
-    @Bean
-    TutorDemoUtils demoUtils() {
-        return new TutorDemoUtils();
-    }
-
-    @Bean
-    CourseService courseService() {
-        return new CourseService();
     }
 
     @Bean

@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
 
-import com.google.common.eventbus.EventBus;
+import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -46,6 +46,7 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionTypes.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.QUIZ_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Service
@@ -84,7 +85,7 @@ public class AnswerService {
     private CourseExecutionService courseExecutionService;
 
     @Autowired
-    private EventBus eventBus;
+    private DomainEventPublisher domainEventPublisher;
 
     @Retryable(
             value = {SQLException.class},
@@ -140,7 +141,8 @@ public class AnswerService {
                             quizAnswer.getUser().getId(), quizAnswer.getNumberOfAnsweredQuestions(),
                             quizAnswer.getNumberOfCorrectAnswers());
 
-                    eventBus.post(event);
+                    domainEventPublisher.publish(QUIZ_AGGREGATE_TYPE, String.valueOf(quizAnswer.getQuiz().getId()),
+                            Collections.singletonList(event));
                 }
 
                 return correctAnswerDtoList;
@@ -251,16 +253,9 @@ public class AnswerService {
         return quizAnswer.getDto(false);
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuizDto generateTournamentQuiz(int userId, int executionId, ExternalStatementCreationDto quizDetails) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        Quiz quiz = new Quiz();
-        quiz.setType(QuizType.GENERATED.toString());
-        quiz.setCreationDate(DateHandler.now());
+    public Quiz generateExternalQuiz(int userId, int executionId, ExternalStatementCreationDto quizDetails) {
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
@@ -278,9 +273,23 @@ public class AnswerService {
 
         availableQuestions = user.filterQuestionsByStudentModel(quizDetails.getNumberOfQuestions(), availableQuestions);
 
-        quiz.generateQuiz(availableQuestions);
 
-        QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+        // Quiz Answer cannot be created because it prevents tournaments from being updated
+        /*QuizAnswer quizAnswer = new QuizAnswer(user, quiz);
+        return quizAnswer.getDto(false);*/
+        return createExternalQuizTransactional(quizDetails, courseExecution, availableQuestions);
+    }
+
+    @Retryable(
+            value = { SQLException.class },
+            backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Quiz createExternalQuizTransactional(ExternalStatementCreationDto quizDetails, CourseExecution courseExecution, List<Question> availableQuestions) {
+        Quiz quiz = new Quiz();
+        quiz.setType(QuizType.GENERATED.toString());
+        quiz.setCreationDate(DateHandler.now());
+
+        quiz.generateQuiz(availableQuestions);
 
         quiz.setCourseExecution(courseExecution);
 
@@ -293,8 +302,7 @@ public class AnswerService {
         quiz.setType(QuizType.EXTERNAL_QUIZ.toString());
 
         quizRepository.save(quiz);
-
-        return quizAnswer.getDto(false);
+        return quiz;
     }
 
     @Retryable(
@@ -493,4 +501,11 @@ public class AnswerService {
         });
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public StatementQuizDto getStatementQuiz(Integer userId, Integer quizId) {
+        QuizAnswer quizAnswer = quizAnswerRepository.findQuizAnswer(quizId, userId)
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizId));
+
+        return quizAnswer.getDto(false);
+    }
 }

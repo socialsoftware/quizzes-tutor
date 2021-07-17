@@ -7,7 +7,16 @@ import pt.ulisboa.tecnico.socialsoftware.auth.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.auth.services.local.FenixEduInterface
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType
+
+<<<<<<< HEAD
+=======
+
+
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto
+
+>>>>>>> microservices
+
+
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException

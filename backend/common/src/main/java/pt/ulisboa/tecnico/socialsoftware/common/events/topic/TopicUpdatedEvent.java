@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.common.events.topic;
 
-public class TopicUpdatedEvent {
+import io.eventuate.tram.events.common.DomainEvent;
+
+public class TopicUpdatedEvent implements DomainEvent {
     private Integer topicId;
     private String newName;
 
