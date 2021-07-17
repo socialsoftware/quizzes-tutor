@@ -33,7 +33,7 @@ class GetExternalUserAuthWebServiceIT extends SpockTest {
 
     def "external user makes a login"() {
         given: "one inactive user with an expired "
-        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT)
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
         user.setActive(false)

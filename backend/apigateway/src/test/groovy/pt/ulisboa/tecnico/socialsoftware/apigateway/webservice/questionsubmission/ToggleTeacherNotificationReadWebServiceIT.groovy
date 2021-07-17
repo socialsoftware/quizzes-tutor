@@ -38,7 +38,7 @@ class ToggleTeacherNotificationReadWebServiceIT extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        student = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
+        student = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT)
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         student.setActive(false)

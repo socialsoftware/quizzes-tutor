@@ -42,7 +42,7 @@ class TournamentIT extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT)
         user.setActive(true)
         user.addCourse(courseExecution)
         userRepository.save(user)

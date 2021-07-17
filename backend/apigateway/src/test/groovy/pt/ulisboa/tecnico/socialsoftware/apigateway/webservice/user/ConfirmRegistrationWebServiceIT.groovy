@@ -34,7 +34,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest {
 
     def "user confirms registration"() {
         given: "one inactive user"
-        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT)
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
         userRepository.save(user)
@@ -72,7 +72,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest {
 
     def "user tries to confirm registration with an expired token"() {
         given: "one inactive user with an expired token"
-        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT)
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
         userRepository.save(user)

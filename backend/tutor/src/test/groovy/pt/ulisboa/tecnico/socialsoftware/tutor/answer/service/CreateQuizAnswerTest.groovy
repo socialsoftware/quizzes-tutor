@@ -15,7 +15,7 @@ class CreateQuizAnswerTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        User user = new User(USER_1_NAME, Role.STUDENT, false)
+        User user = new User(USER_1_NAME, Role.STUDENT)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
 

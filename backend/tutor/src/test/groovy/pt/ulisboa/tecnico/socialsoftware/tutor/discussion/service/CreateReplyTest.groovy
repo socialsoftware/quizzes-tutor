@@ -18,10 +18,10 @@ class CreateReplyTest extends DiscussionFixtureSpockTest {
     def discussion
 
     def setup(){
-        student2 = new User(USER_3_NAME, USER_3_USERNAME, Role.STUDENT, true)
+        student2 = new User(USER_3_NAME, USER_3_USERNAME, Role.STUDENT)
         userRepository.save(student2)
 
-        teacher = new User(USER_2_NAME, USER_2_USERNAME, Role.TEACHER, true)
+        teacher = new User(USER_2_NAME, USER_2_USERNAME, Role.TEACHER)
         userRepository.save(teacher)
 
         defineBaseFixture()

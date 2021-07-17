@@ -42,7 +42,7 @@ class CreateReviewWebServiceIT extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        teacher = new User(USER_1_NAME, USER_1_EMAIL, Role.TEACHER, false)
+        teacher = new User(USER_1_NAME, USER_1_EMAIL, Role.TEACHER)
         teacher.setActive(true)
         teacher.addCourse(courseExecution)
         userRepository.save(teacher)
@@ -53,7 +53,7 @@ class CreateReviewWebServiceIT extends SpockTest {
         courseExecution.addUser(teacher)
         authUserRepository.save(authTeacher)
 
-        student = new User(USER_2_NAME, USER_2_EMAIL, Role.STUDENT, false)
+        student = new User(USER_2_NAME, USER_2_EMAIL, Role.STUDENT)
         student.setActive(true)
         student.addCourse(courseExecution)
         userRepository.save(student)

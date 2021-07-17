@@ -43,7 +43,7 @@ class FilterQuestionsByStudentModelTest extends SpockTest {
         quizQuestionFive = new QuizQuestion(quiz, questionFive, 4)
         quizQuestionSix = new QuizQuestion(quiz, questionSix, 5)
 
-        user = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT)
         userRepository.save(user)
 
         availableQuestions = [questionOne, questionTwo, questionThree, questionFour, questionFive, questionSix]

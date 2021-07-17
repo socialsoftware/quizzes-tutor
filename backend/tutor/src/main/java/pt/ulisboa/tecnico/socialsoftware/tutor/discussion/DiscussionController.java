@@ -68,7 +68,6 @@ public class DiscussionController {
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#discussionId, 'DISCUSSION.ACCESS')) or (hasRole('ROLE_STUDENT') and hasPermission(#discussionId, 'DISCUSSION.OWNER'))")
     public ReplyDto addReply(Principal principal, @Valid @RequestBody ReplyDto reply, @PathVariable int discussionId) {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
-        return discussionApplicationalService.addReply(userInfo.getId(),
-                userInfo.getRole(), discussionId, reply);
+        return discussionApplicationalService.addReply(userInfo.getId(), userInfo.getRole(), discussionId, reply);
     }
 }
