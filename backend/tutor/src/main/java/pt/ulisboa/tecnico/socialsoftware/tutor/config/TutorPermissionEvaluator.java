@@ -8,7 +8,6 @@ import org.springframework.security.core.Authentication;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.security.token.UserInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
@@ -25,11 +24,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
 import java.io.Serializable;
-
-import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.COURSE_NOT_FOUND;
 
 @Component
 public class TutorPermissionEvaluator implements PermissionEvaluator {
@@ -65,6 +63,9 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     private CourseRepository courseRepository;
+
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
 
     @Override
     public boolean hasPermission(Authentication authentication, Object targetDomainObject, Object permission) {
@@ -124,7 +125,8 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                         boolean hasCourseExecutionAccess = userHasThisExecution(userInfo, questionSubmission.getCourseExecution().getId());
                         if (userInfo.getRole() == Role.STUDENT) {
                             return hasCourseExecutionAccess && questionSubmission.getSubmitter().getId() == userId;
-                        } else {
+                        }
+                        else {
                             return hasCourseExecutionAccess;
                         }
                     }
@@ -141,7 +143,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                 case "REPLY.ACCESS":
                     Reply reply = replyRepository.findById(id).orElse(null);
                     return reply != null && userHasThisExecution(userInfo, reply.getDiscussion().getCourseExecution().getId());
-                default: return false;
+                    default: return false;
             }
         }
 
@@ -153,14 +155,14 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     }
 
     public boolean userHasAnExecutionOfCourse(UserInfo userInfo, int courseId) {
-        return courseRepository.findCourseWithCourseExecutionsById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId))
-                .getCourseExecutions()
+        return courseExecutionRepository.getCourseExecutionsIdByCourseId(courseId)
                 .stream()
-                .anyMatch(courseExecution ->  userHasThisExecution(userInfo, courseExecution.getId()));
+                .anyMatch(courseExecutionId ->  userHasThisExecution(userInfo, courseExecutionId));
     }
 
     @Override
     public boolean hasPermission(Authentication authentication, Serializable serializable, String s, Object o) {
         return false;
     }
+
 }

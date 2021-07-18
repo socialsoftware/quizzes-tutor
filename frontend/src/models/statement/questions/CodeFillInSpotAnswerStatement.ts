@@ -1,6 +1,3 @@
-import StatementOption from '@/models/statement/StatementOption';
-import { _ } from 'vue-underscore';
-
 export default class CodeFillInSpotAnswerStatement {
   sequence!: number;
   optionId!: number | undefined;

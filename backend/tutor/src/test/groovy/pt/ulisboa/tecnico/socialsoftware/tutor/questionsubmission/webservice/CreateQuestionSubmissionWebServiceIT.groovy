@@ -5,17 +5,17 @@ import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthTecnicoUser
+import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
 
 <<<<<<< HEAD:backend/apigateway/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/apigateway/webservice/questionsubmission/CreateQuestionSubmissionWebServiceIT.groovy
 
 
-import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 
 =======
 >>>>>>> microservices:backend/tutor/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/tutor/questionsubmission/webservice/CreateQuestionSubmissionWebServiceIT.groovy
 
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto

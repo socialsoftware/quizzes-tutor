@@ -21,7 +21,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import { Quiz } from '@/models/management/Quiz';
 import ShowQuestionList from '@/views/teacher/questions/ShowQuestionList.vue';
 

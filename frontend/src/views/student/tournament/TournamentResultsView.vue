@@ -136,7 +136,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import Tournament from '@/models/user/Tournament';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';

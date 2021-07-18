@@ -6,7 +6,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
-
 @Component
 public class UsersXmlImport {
 	private UserService userService;

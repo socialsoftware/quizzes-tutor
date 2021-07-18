@@ -1,0 +1,74 @@
+\usepackage{fancyhdr,verbatim,tikz,color,url}
+\usepackage{inconsolata}                   % new texttt font
+\renewcommand{\familydefault}{\sfdefault}  % change normal font
+
+\pagestyle{fancy}
+\renewcommand{\headrulewidth}{0pt}
+\cfoot{}
+
+\newcommand{\project}{\textsc{\sffamily{Adventure Builder}}}
+
+\newcommand{\missing}{\textcolor{red}{??}}
+
+\setlength{\parindent}{0pt}
+
+\newcounter{questionNumber}
+\setcounter{questionNumber}{0}
+
+\newcommand{\makeAnswerSpace}[1]{\vspace*{#1}}
+
+\newlength{\answerLen}
+\newenvironment{Question}[2]{%
+  \setlength{\answerLen}{#2cm plus 2cm minus 1cm}%
+  \addtocounter{questionNumber}{1}%
+  \makebox[0pt][r]{\textbf{\arabic{questionNumber}.}~(#1)~}\unskip\relax\begin{minipage}[t]{1.0\linewidth}}{
+    \makeAnswerSpace{\answerLen}\end{minipage}
+}
+
+% ommit the answers for now
+\let\Answer=\comment
+\let\endAnswer=\endcomment
+
+\newcommand{\pattern}[1]{\textbf{\textsc{#1}}}
+
+\newcounter{optionNumber}
+\setcounter{optionNumber}{0}
+
+\newenvironment{ClosedQuestion}{%
+  \setcounter{optionNumber}{0}
+  \addtocounter{questionNumber}{1}%
+  \makebox[0pt][r]{\textbf{\arabic{questionNumber}.}~}\unskip\relax\begin{minipage}[t]{1.0\linewidth}}{
+  \end{minipage}
+}
+
+\newenvironment{options}{%
+  \begin{quote}}{
+  \end{quote}
+}
+
+\newcommand{\option}{%
+  \addtocounter{optionNumber}{1}%
+  \par\makebox[0pt][r]{\textbf{\Alph{optionNumber})}~}\unskip\relax
+}
+
+\newcommand{\rightOption}{%
+  \addtocounter{optionNumber}{1}%
+  %\par\makebox[0pt][r]{\ifx\relax#1\else\markRightAnswer\fi\textbf{\Alph{optionNumber})}~}\unskip\relax
+  \par\makebox[0pt][r]{\markRightAnswer\textbf{\Alph{optionNumber})}~}\unskip\relax
+}
+
+\newcommand{\markRightAnswer}{}
+
+\newcommand{\showAnswers}{
+  \renewcommand{\markRightAnswer}{$\Rightarrow$~~}
+  \renewcommand{\makeAnswerSpace}[1]{}
+  \renewenvironment{Answer}{%
+    \begin{quote}
+      \textbf{Solução:}\\}{
+    \end{quote}
+  }
+}
+
+\newcommand{\comentario}[1]{\centering{\parbox{.7\textwidth}{\Large \textcolor{red}{#1}}}}
+
+\newcommand{\eat}[1]{}

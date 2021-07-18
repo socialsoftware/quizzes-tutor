@@ -50,9 +50,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+import { Component, Model, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import Course from '@/models/user/Course';
 
 @Component
 export default class UploadQuestionsDialog extends Vue {

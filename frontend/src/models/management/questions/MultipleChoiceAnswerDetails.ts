@@ -1,6 +1,6 @@
 import Option from '@/models/management/Option';
 import AnswerDetails from '@/models/management/questions/AnswerDetails';
-import { QuestionTypes, convertToLetter } from '@/services/QuestionHelpers';
+import { convertToLetter, QuestionTypes } from '@/services/QuestionHelpers';
 
 export default class MultipleChoiceAnswerType extends AnswerDetails {
   option!: Option;

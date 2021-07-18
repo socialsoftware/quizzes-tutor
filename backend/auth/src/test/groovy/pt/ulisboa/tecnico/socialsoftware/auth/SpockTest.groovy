@@ -8,18 +8,18 @@ import org.springframework.test.context.ActiveProfiles
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.auth.services.local.AuthUserProvidedService
 import pt.ulisboa.tecnico.socialsoftware.auth.services.local.UserApplicationalService
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 
 <<<<<<< HEAD
 =======
 
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.Languages
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 
 >>>>>>> microservices
 
 
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import spock.lang.Specification
 
 import java.time.LocalDateTime

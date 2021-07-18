@@ -2,19 +2,26 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.ImageDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuizExportVisitor
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+
+import java.util.stream.Collectors
 
 @DataJpaTest
 class ImportExportQuizzesTest extends SpockTest {
-    def quiz
+    def quizDto
     def creationDate
     def availableDate
     def conclusionDate
@@ -29,16 +36,24 @@ class ImportExportQuizzesTest extends SpockTest {
         questionDto.setStatus(Question.Status.AVAILABLE.name())
         questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
 
+        def image = new ImageDto()
+        image.setUrl(IMAGE_1_URL)
+        image.setWidth(20)
+        questionDto.setImage(image)
+
         def optionDto = new OptionDto()
         optionDto.setSequence(1)
         optionDto.setContent(OPTION_1_CONTENT)
         optionDto.setCorrect(true)
         def options = new ArrayList<OptionDto>()
         options.add(optionDto)
+        optionDto = new OptionDto()
+        optionDto.setContent(OPTION_2_CONTENT)
+        optionDto.setCorrect(false)
+        options.add(optionDto)
 
         questionDto.getQuestionDetailsDto().setOptions(options)
         questionDto = questionService.createQuestion(externalCourse.getId(), questionDto)
-
 
         def quizDto = new QuizDto()
         quizDto.setKey(1)
@@ -53,9 +68,8 @@ class ImportExportQuizzesTest extends SpockTest {
         quizDto.setAvailableDate(DateHandler.toISOString(availableDate))
         quizDto.setConclusionDate(DateHandler.toISOString(conclusionDate))
         quizDto.setType(QuizType.EXAM.toString())
-        quiz = quizService.createQuiz(externalCourseExecution.getId(), quizDto)
-
-        quizService.addQuestionToQuiz(questionDto.getId(), quiz.getId())
+        this.quizDto = quizService.createQuiz(externalCourseExecution.getId(), quizDto)
+        quizService.addQuestionToQuiz(questionDto.getId(), this.quizDto.getId())
     }
 
     def 'export and import quizzes'() {
@@ -63,7 +77,7 @@ class ImportExportQuizzesTest extends SpockTest {
         def quizzesXml = quizService.exportQuizzesToXml()
         and: 'delete quiz and quizQuestion'
         print quizzesXml
-        quizService.removeQuiz(quiz.getId())
+        quizService.removeQuiz(quizDto.getId())
 
         when:
         quizService.importQuizzesFromXml(quizzesXml)
@@ -89,11 +103,29 @@ class ImportExportQuizzesTest extends SpockTest {
     }
 
     def 'export quiz to latex'() {
+        given:
+        Quiz quiz = quizRepository.findById(quizDto.getId()).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();
+
         when:
-        def quizzesLatex = quizService.exportQuizzesToLatex(quiz.getId())
+        def quizzesLatex = latexExport.exportQuiz(quiz)
+        print quizzesLatex;
 
         then:
         quizzesLatex != null
+    }
+
+    def 'export questions to latex'() {
+        given:
+        Quiz quiz = quizRepository.findById(quizDto.getId()).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+        LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();
+
+        when:
+        def questionsLatex = latexExport.exportQuestions(quiz.getQuizQuestions().stream().map(QuizQuestion::getQuestion).collect(Collectors.toList()))
+        print questionsLatex;
+
+        then:
+        questionsLatex != null
     }
 
     @TestConfiguration

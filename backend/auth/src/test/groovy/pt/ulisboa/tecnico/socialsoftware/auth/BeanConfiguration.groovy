@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.auth
 
-import com.google.common.eventbus.EventBus
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -13,12 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.auth.services.local.AuthUserProvidedSer
 import pt.ulisboa.tecnico.socialsoftware.auth.services.local.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthUserRequiredService
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer
-
-<<<<<<< HEAD
-=======
-
-
->>>>>>> microservices
 
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")
@@ -48,21 +41,6 @@ class BeanConfiguration {
     @Value('${spring.mail.properties.mail.debug}')
     private String debug
 
-    @Bean
-<<<<<<< HEAD
-    AnswersXmlImport answersXmlImport() {
-        return new AnswersXmlImport()
-    }
-
-    @Bean
-    QuizService quizService() {
-        return new QuizService()
-    }
-
-    @Bean
-    AnswerService answerService() {
-        return new AnswerService()
-    }
 
     @Bean
     AuthUserProvidedService authUserService() {
@@ -72,15 +50,6 @@ class BeanConfiguration {
     @Bean
     AuthUserRequiredService authRequiredService() {
         return new AuthUserRequiredService()
-    }
-
-    @Bean
-    UserService userService() {
-        return new UserService()
-=======
-    AuthUserProvidedService authUserService() {
-        return new AuthUserProvidedService()
->>>>>>> microservices
     }
 
     @Bean
@@ -114,10 +83,5 @@ class BeanConfiguration {
         props.put("mail.debug", debug);
 
         return mailSender;
-    }
-
-    @Bean
-    EventBus eventBus() {
-        return new EventBus()
     }
 }

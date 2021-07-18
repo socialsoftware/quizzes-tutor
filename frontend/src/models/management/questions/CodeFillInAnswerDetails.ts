@@ -1,6 +1,6 @@
 import Option from '@/models/management/Option';
 import AnswerDetails from '@/models/management/questions/AnswerDetails';
-import { QuestionTypes, convertToLetter } from '@/services/QuestionHelpers';
+import { QuestionTypes } from '@/services/QuestionHelpers';
 import CodeFillInQuestionDetails from '@/models/management/questions/CodeFillInQuestionDetails';
 
 export default class CodeFillInAnswerType extends AnswerDetails {

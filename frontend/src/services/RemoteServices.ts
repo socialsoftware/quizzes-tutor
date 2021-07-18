@@ -22,7 +22,6 @@ import Review from '@/models/management/Review';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import router from '@/router';
-import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;

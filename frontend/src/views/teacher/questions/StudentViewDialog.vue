@@ -44,7 +44,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAnswer.vue';
 import CodeFillInAnswer from '@/components/code-fill-in/CodeFillInAnswer.vue';

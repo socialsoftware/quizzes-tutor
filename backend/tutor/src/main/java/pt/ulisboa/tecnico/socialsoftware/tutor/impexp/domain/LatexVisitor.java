@@ -4,7 +4,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 
+import java.util.ArrayList;
 import java.util.Comparator;
+import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class LatexVisitor implements Visitor {
@@ -13,7 +15,7 @@ public abstract class LatexVisitor implements Visitor {
 
     @Override
     public void visitQuiz(Quiz quiz) {
-        this.result = this.result +
+        this.result =
                 "% Title: " + quiz.getTitle() + "\n" +
                 "% Available date: " + quiz.getAvailableDate() + "\n" +
                 "% Conclusion date: " + quiz.getConclusionDate() + "\n" +
@@ -21,6 +23,32 @@ public abstract class LatexVisitor implements Visitor {
                 "% Scramble: " + quiz.getScramble() + "\n" +
                 "% OneWay: " + quiz.isOneWay() + "\n" +
                 "% QrCodeOnly: " + quiz.isQrCodeOnly() + "\n\n";
+
+        this.result = this.result +
+                "\\documentclass{sty/docist}\n" +
+                "\\usepackage[answers]{sty/exameIST}\n" +
+                "\\usepackage{listings}\n" +
+                "\\usepackage{subfig}\n\n" +
+                "\\input{sty/macros}\n\n" +
+                "\\title{{\\Huge Course Name}\\\\\n" +
+                "{\\large LEIC/LETI, 3\\ro{} Ano, 2\\ro{} Semestre}\\\\\n" +
+                "{\\Large Exame, 8 de julho de 2021}\\\\\n" +
+                "{\\Large Duração: XX minutos}\n" +
+                "}\n\n" +
+                "\\date{}\n" +
+                "\\author{}\n\n" +
+                "\\showAnswers\n\n" +
+                "\\begin{document}\n" +
+                "\\input{sty/exame}\n\n" +
+                "\\section*{Multiple Choice Questions}\n\n" +
+                "\\input{questions}\n\n";
+
+        List<QuizQuestion> quizQuestions = new ArrayList<>(quiz.getQuizQuestions());
+
+        quizQuestions.forEach(quizQuestion -> quizQuestion.accept(this));
+
+        this.result = this.result +
+                "\\end{document}";
     }
 
     @Override
@@ -33,8 +61,8 @@ public abstract class LatexVisitor implements Visitor {
 
     @Override
     public void visitQuestion(Question question) {
-        this.result = this.result
-                + "\\newcommand{\\q"
+        this.result =
+                "\\newcommand{\\q"
                 + question.getTitle().replaceAll("\\s+", "")
                 + convertToAlphabet(question.getKey())
                 + "}{\n"
@@ -42,8 +70,9 @@ public abstract class LatexVisitor implements Visitor {
 
         this.questionContent = question.getContent();
 
-        if (question.getImage() != null)
+        if (question.getImage() != null) {
             question.getImage().accept(this);
+        }
 
         this.result = this.result + "\t" + this.questionContent + "\n\n";
 
@@ -52,9 +81,9 @@ public abstract class LatexVisitor implements Visitor {
 
     @Override
     public void visitQuestionDetails(MultipleChoiceQuestion question) {
+        this.result = this.result + "\t\\begin{options}\n";
         question.visitOptions(this);
-
-        this.result = this.result + "\\putOptions\n";
+        this.result = this.result + "\t\\end{options}\n";
 
         this.result = this.result + "% Answer: " + question.getCorrectAnswerRepresentation() + "\n";
 
@@ -63,14 +92,9 @@ public abstract class LatexVisitor implements Visitor {
 
     @Override
     public void visitQuestionDetails(CodeFillInQuestion question) {
-
-        this.result +=
-                String.format("\n\tCode snippet language: %s", question.getLanguage()) +
-                        "\n\\begin{lstlisting}\n" + question.getCode() + "\n\\end{lstlisting}\n\n";
+        this.result += "% Code snippet language: " + question.getLanguage() + "\n\n" + question.getCode() + "\\\\\n\n";
 
         question.visitFillInSpots(this);
-
-        this.result = this.result + "\\putOptions\n";
 
         this.result = this.result + "% Answer: " +
                 question.getFillInSpots()
@@ -89,19 +113,18 @@ public abstract class LatexVisitor implements Visitor {
 
     @Override
     public void visitQuestionDetails(CodeOrderQuestion question) {
-
-        this.result += String.format("\n\tCode snippet language: %s", question.getLanguage()) + "\n\n";
-        this.result += "\\begin{lstlisting}\n";
+        this.result += "% Code snippet language: " + question.getLanguage() + "\n\n";
+        this.result += "\\begin{enumerate}\n";
         question.visitCodeOrderSlots(this);
-        this.result += "\\end{lstlisting}\n";
+        this.result += "\\end{enumerate}\n";
 
-        this.result = this.result + "% Answer: \n\\begin{lstlisting}\n" +
+        this.result = this.result + "% Answer: " +
                 question.getCodeOrderSlots()
                         .stream()
                         .filter(x -> x.getOrder() != null)
                         .sorted(Comparator.comparing(CodeOrderSlot::getOrder))
                         .map(CodeOrderSlot::getContent
-                        ).collect(Collectors.joining("\n")) + "\n\\end{lstlisting}\n";
+                        ).collect(Collectors.joining(" ")) + "\n";
 
         this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
     }
@@ -109,31 +132,34 @@ public abstract class LatexVisitor implements Visitor {
     @Override
     public void visitImage(Image image) {
         String imageString = "\n\t\\begin{center}\n";
-        imageString = imageString + "\t\t\\includegraphics[width=" + image.getWidth() + "cm]{" + image.getUrl() + "}\n";
+        String width = image.getWidth() != null ? "[width=" + image.getWidth() + "cm]" : "[width=8cm]";
+        imageString = imageString + "\t\t\\includegraphics" + width + "{" + image.getUrl() + "}\n";
         imageString = imageString + "\t\\end{center}\n\t";
 
-        this.questionContent = this.questionContent.replace("!\\[image\\]\\[image\\]", imageString);
+        this.questionContent = this.questionContent.replace("![image][image]", imageString);
     }
 
     @Override
     public void visitCodeOrderSlot(CodeOrderSlot slot) {
-        this.result += String.format("%s\n", slot.getContent());
+        this.result = this.result + "\\item " + slot.getContent();
     }
 
     @Override
     public void visitFillInSpot(CodeFillInSpot spot) {
-        this.result += String.format("\n\t Spot -> {{slot-%d}}\n", spot.getSequence());
+        this.result += String.format("Spot -> {{slot-%d}} \\\\\n", spot.getSequence());
         spot.visitOptions(this);
     }
 
     @Override
     public void visitFillInOption(CodeFillInOption option) {
-        this.result += "\t\\fillInOption{" + option.getContent() + "}\n";
+        this.result += option.getContent() + "\\\\\n";
     }
 
     @Override
     public void visitOption(Option option) {
-        this.result = this.result + "\t\\option" + MultipleChoiceQuestion.convertSequenceToLetter(option.getSequence()) + "{" + option.getContent() + "}\n";
+        var optionItem = option.isCorrect() ? "\t\t\\rightOption " : "\t\t\\option ";
+
+        this.result = this.result + optionItem + option.getContent() + "\n";
     }
 
     private String convertToAlphabet(int number) {

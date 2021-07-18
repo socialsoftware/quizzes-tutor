@@ -33,4 +33,5 @@ public class CommonModuleConfiguration {
     public AnswerInterface answerInterface() {
         return new AnswerInterface();
     }
+
 }

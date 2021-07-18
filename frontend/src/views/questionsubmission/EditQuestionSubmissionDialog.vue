@@ -124,7 +124,7 @@ import QuestionSubmission from '../../models/management/QuestionSubmission';
 import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 import CodeFillInCreate from '@/components/code-fill-in/CodeFillInCreate.vue';
 import CodeOrderCreate from '@/components/code-order/CodeOrderCreate.vue';
-import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers';
+import { QuestionFactory, QuestionTypes } from '@/services/QuestionHelpers';
 
 @Component({
   components: {

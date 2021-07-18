@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model, Emit } from 'vue-property-decorator';
+import { Component, Emit, Model, Prop, Vue } from 'vue-property-decorator';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';

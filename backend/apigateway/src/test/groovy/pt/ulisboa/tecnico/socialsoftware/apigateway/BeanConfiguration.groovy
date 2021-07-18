@@ -17,7 +17,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.CourseService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
@@ -120,11 +119,6 @@ class BeanConfiguration {
     @Bean
     TutorDemoUtils demoUtils() {
         return new TutorDemoUtils();
-    }
-
-    @Bean
-    CourseService courseService() {
-        return new CourseService();
     }
 
     @Bean

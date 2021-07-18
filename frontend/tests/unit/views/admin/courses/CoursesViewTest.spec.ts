@@ -1,11 +1,7 @@
 import { mount, Wrapper } from '@vue/test-utils';
 import Vue from 'vue';
 import Vuetify from 'vuetify';
-import {
-  filledCourse,
-  filledCourseWithUsers,
-  filledOldISTCourse,
-} from '../../../samples/Course';
+import { filledCourse, filledCourseWithUsers } from '../../../samples/Course';
 import RemoteServices from '@/services/RemoteServices';
 import Vuex from 'vuex';
 import CoursesView from '@/views/admin/courses/CoursesView.vue';

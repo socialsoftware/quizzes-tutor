@@ -46,10 +46,8 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model, Watch } from 'vue-property-decorator';
-import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
-import { QuestionAnswer } from '@/models/management/QuestionAnswer';
 import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
 @Component({
