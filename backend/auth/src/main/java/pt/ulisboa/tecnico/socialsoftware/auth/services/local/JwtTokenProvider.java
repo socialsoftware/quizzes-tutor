@@ -8,7 +8,6 @@ import org.springframework.core.io.ClassPathResource;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
 import pt.ulisboa.tecnico.socialsoftware.common.security.RSAUtil;
 

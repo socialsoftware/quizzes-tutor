@@ -4,12 +4,9 @@ import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.auth.SpockTest
-
-<<<<<<< HEAD:backend/apigateway/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/apigateway/webservice/auth/GetDemoAuthWebServiceIT.groovy
-
-
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 
+<<<<<<< HEAD:backend/apigateway/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/apigateway/webservice/auth/GetDemoAuthWebServiceIT.groovy
 =======
 >>>>>>> microservices:backend/auth/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/auth/webservice/GetDemoAuthWebServiceIT.groovy
 
