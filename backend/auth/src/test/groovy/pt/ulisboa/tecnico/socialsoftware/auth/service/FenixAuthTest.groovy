@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.auth.services.FenixEduInterface
+import pt.ulisboa.tecnico.socialsoftware.auth.services.local.FenixEduInterface
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role

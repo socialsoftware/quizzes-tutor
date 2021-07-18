@@ -5,8 +5,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
-import pt.ulisboa.tecnico.socialsoftware.auth.services.AuthUserProvidedService;
-import pt.ulisboa.tecnico.socialsoftware.auth.services.FenixEduInterface;
+import pt.ulisboa.tecnico.socialsoftware.auth.services.local.AuthUserProvidedService;
+import pt.ulisboa.tecnico.socialsoftware.auth.services.local.FenixEduInterface;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 
