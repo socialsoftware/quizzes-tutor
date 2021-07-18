@@ -2,11 +2,11 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.DiscussionDto
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.DiscussionDto
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import spock.lang.Unroll
 
 @DataJpaTest

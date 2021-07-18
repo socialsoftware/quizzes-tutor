@@ -11,11 +11,9 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
         cy.get('.headline').should('contain', title);
         cy.get('span > p').should('contain', content);
         cy.get('li').each(($el, index, $list) => {
-          cy.get($el).should('contain', optionPrefix + index);
-          if (index === correctIndex) {
-            cy.get($el).should('contain', '[★]');
-          } else {
-            cy.get($el).should('not.contain', '[★]');
+          cy.get($el).should('contain', optionPrefix);
+          if ($el.text().includes('[★]')) {
+            cy.get($el).should('contain', optionPrefix + correctIndex);
           }
         });
       });
@@ -47,8 +45,8 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
   beforeEach(() => {
     cy.demoTeacherLogin();
     cy.server();
-    cy.route('GET', '/courses/*/questions').as('getQuestions');
-    cy.route('GET', '/courses/*/topics').as('getTopics');
+    cy.route('GET', '/questions/courses/*').as('getQuestions');
+    cy.route('GET', '/topics/courses/*').as('getTopics');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="questionsTeacherMenuButton"]').click();
 
@@ -70,12 +68,14 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('span.headline').should('contain', 'New Question');
 
-    cy.get(
-      '[data-cy="questionTitleTextArea"]'
-    ).type('Cypress Question Example - 01', { force: true });
-    cy.get(
-      '[data-cy="questionQuestionTextArea"]'
-    ).type('Cypress Question Example - Content - 01', { force: true });
+    cy.get('[data-cy="questionTitleTextArea"]').type(
+      'Cypress Question Example - 01',
+      { force: true }
+    );
+    cy.get('[data-cy="questionQuestionTextArea"]').type(
+      'Cypress Question Example - Content - 01',
+      { force: true }
+    );
 
     cy.get('[data-cy="questionOptionsInput"')
       .should('have.length', 4)
@@ -88,7 +88,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
         });
       });
 
-    cy.route('POST', '/courses/*/questions/').as('postQuestion');
+    cy.route('POST', '/questions/courses/*').as('postQuestion');
 
     cy.get('button').contains('Save').click();
 
@@ -217,11 +217,11 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
       .should('have.length', 4)
       .each(($el, index, $list) => {
         cy.get($el).within(($ls) => {
-          cy.get('textarea').should('have.value', 'Option ' + index);
+          cy.get('textarea').should('contain.value', 'Option ');
         });
       });
 
-    cy.route('POST', '/courses/*/questions/').as('postQuestion');
+    cy.route('POST', '/questions/courses/*').as('postQuestion');
 
     cy.get('button').contains('Save').click();
 
@@ -257,9 +257,10 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('span.headline').should('contain', 'New Question');
 
-    cy.get(
-      '[data-cy="questionTitleTextArea"]'
-    ).type('Cypress Question Example - 01 (2 Options)', { force: true });
+    cy.get('[data-cy="questionTitleTextArea"]').type(
+      'Cypress Question Example - 01 (2 Options)',
+      { force: true }
+    );
     cy.get('[data-cy="questionQuestionTextArea"]').type(
       'Cypress Question Example - Content - 01 (2 Options)',
       {
@@ -276,7 +277,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
     cy.get(`[data-cy="Delete4"]`).click({ force: true });
     cy.get(`[data-cy="Delete3"]`).click({ force: true });
 
-    cy.route('POST', '/courses/*/questions/').as('postQuestion');
+    cy.route('POST', '/questions/courses/*').as('postQuestion');
 
     cy.get('button').contains('Save').click();
 
@@ -303,9 +304,10 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('span.headline').should('contain', 'New Question');
 
-    cy.get(
-      '[data-cy="questionTitleTextArea"]'
-    ).type('Cypress Question Example - 01 (10 Options)', { force: true });
+    cy.get('[data-cy="questionTitleTextArea"]').type(
+      'Cypress Question Example - 01 (10 Options)',
+      { force: true }
+    );
     cy.get('[data-cy="questionQuestionTextArea"]').type(
       'Cypress Question Example - Content - 01 (10 Options)',
       {
@@ -331,7 +333,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
         });
       });
 
-    cy.route('POST', '/courses/*/questions/').as('postQuestion');
+    cy.route('POST', '/questions/courses/*').as('postQuestion');
 
     cy.get('button').contains('Save').click();
 

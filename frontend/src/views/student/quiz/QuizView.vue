@@ -23,32 +23,39 @@
 
     <div class="question-navigation">
       <div data-cy="navigationButtons" class="navigation-buttons">
-        <span
-          :questionNumber="statementQuiz.questions.length"
-          v-for="index in +statementQuiz.questions.length"
-          v-bind:class="[
-            'question-button',
-            index === questionOrder + 1 ? 'current-question-button' : '',
-          ]"
-          :key="index"
-          @click="changeOrder(index - 1)"
-        >
-          {{ index }}
-        </span>
+        <v-sheet class="mx-auto" max-width="300">
+          <v-slide-group v-model="slideItemPosition" show-arrows center-active>
+            <v-slide-item
+              v-for="index in +statementQuiz.questions.length"
+              :key="index"
+            >
+              <span
+                :questionNumber="statementQuiz.questions.length"
+                v-bind:class="[
+                  'question-button',
+                  statementQuiz.answers[
+                    index - 1
+                  ].answerDetails.isQuestionAnswered()
+                    ? 'answered-question-button'
+                    : '',
+                  index === questionOrder + 1 ? 'current-question-button' : '',
+                ]"
+                @click="changeOrder(index - 1)"
+              >
+                {{ index }}
+              </span>
+            </v-slide-item>
+          </v-slide-group>
+        </v-sheet>
       </div>
-      <span
-        class="left-button"
-        @click="decreaseOrder"
-        v-if="questionOrder !== 0 && !statementQuiz.oneWay"
-        ><i class="fas fa-chevron-left"
-      /></span>
-      <span
-        class="right-button"
-        data-cy="nextQuestionButton"
-        @click="confirmAnswer"
-        v-if="questionOrder !== statementQuiz.questions.length - 1"
-        ><i class="fas fa-chevron-right"
-      /></span>
+      <span class="number-of-questions"
+        >{{
+          statementQuiz.answers.filter((q) =>
+            q.answerDetails.isQuestionAnswered()
+          ).length
+        }}
+        / {{ statementQuiz.questions.length }}
+      </span>
     </div>
     <question-component
       v-model="questionOrder"
@@ -142,10 +149,10 @@
 <script lang="ts">
 import { Component, Vue, Watch } from 'vue-property-decorator';
 import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
-import StatementManager from '@/models/statement/StatementManager';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
+import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 
 @Component({
   components: {
@@ -153,20 +160,19 @@ import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
   },
 })
 export default class QuizView extends Vue {
-  statementManager: StatementManager = StatementManager.getInstance;
-  statementQuiz: StatementQuiz | null =
-    StatementManager.getInstance.statementQuiz;
+  statementQuiz: StatementQuiz | null = this.$store.getters.getStatementQuiz;
   confirmationDialog: boolean = false;
   confirmed: boolean = false;
   nextConfirmationDialog: boolean = false;
   startTime: Date = new Date();
   questionOrder: number = 0;
+  slideItemPosition: number = 1;
   hideTime: boolean = false;
   quizSubmitted: boolean = false;
 
   async created() {
     if (!this.statementQuiz?.id) {
-      await this.$router.push({ name: 'create-quiz' });
+      await this.$router.push({ name: 'create-quizzes' });
     }
     await this.setCurrentQuestion(0);
   }
@@ -186,6 +192,7 @@ export default class QuizView extends Vue {
         question.questionDetails;
     }
 
+    this.slideItemPosition = order + 1;
     this.questionOrder = order;
   }
 
@@ -256,9 +263,16 @@ export default class QuizView extends Vue {
     try {
       this.calculateTime();
       this.confirmed = true;
-      await this.statementManager.concludeQuiz();
 
-      if (this.statementManager.correctAnswers.length !== 0) {
+      let correctAnswers: StatementCorrectAnswer[] = [];
+      if (this.statementQuiz) {
+        correctAnswers = await RemoteServices.concludeQuiz(this.statementQuiz);
+      } else {
+        throw Error('No quiz');
+      }
+
+      if (correctAnswers.length !== 0) {
+        await this.$store.dispatch('correctAnswers', correctAnswers);
         await this.$router.push({ name: 'quiz-results' });
       } else {
         this.quizSubmitted = true;

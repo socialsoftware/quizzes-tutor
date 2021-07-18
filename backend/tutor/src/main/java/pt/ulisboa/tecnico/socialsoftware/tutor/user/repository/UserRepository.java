@@ -17,5 +17,4 @@ public interface UserRepository extends JpaRepository<User, Integer> {
 
     @Query(value = "select * from users u where u.key = :key", nativeQuery = true)
     Optional<User> findByKey(Integer key);
-
 }

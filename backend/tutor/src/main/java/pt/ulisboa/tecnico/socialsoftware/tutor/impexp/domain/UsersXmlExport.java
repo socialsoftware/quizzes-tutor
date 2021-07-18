@@ -1,16 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
-import org.jdom2.Document;
-import org.jdom2.Element;
-import org.jdom2.output.Format;
-import org.jdom2.output.XMLOutputter;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-
-import java.util.List;
-import java.util.Set;
-
 public class UsersXmlExport {
     //TODO: Uncomment when export works again
 	/*public String export(List<User> users) {

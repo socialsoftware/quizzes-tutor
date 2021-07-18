@@ -1,9 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 
-import org.apache.commons.io.IOUtils;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -12,8 +10,8 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
@@ -36,23 +34,27 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRe
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
-import java.io.*;
-import java.nio.charset.StandardCharsets;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
+import java.nio.file.StandardCopyOption;
 import java.sql.SQLException;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
-import java.util.zip.ZipEntry;
-import java.util.zip.ZipOutputStream;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
 
 @Service
 public class QuizService {
-    @SuppressWarnings("unused")
-    private static final Logger logger = LoggerFactory.getLogger(QuizService.class);
+    public static final String LATEX_MACROS_DIR = System.getProperty("user.dir") + "/src/main/resources/latex/";
+
+    @Value("${figures.dir}")
+    private String figuresDir;
+
     @Autowired
     private CourseRepository courseRepository;
 
@@ -86,7 +88,6 @@ public class QuizService {
     @Autowired
     private CourseExecutionService courseExecutionService;
 
-
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
@@ -107,7 +108,7 @@ public class QuizService {
                 .thenComparing(Quiz::getVersion, Comparator.nullsFirst(Comparator.reverseOrder()));
 
         return quizRepository.findQuizzesOfExecution(executionId).stream()
-                .filter(quiz -> !quiz.getType().equals(QuizType.GENERATED))
+                .filter(quiz -> !(quiz.getType().equals(QuizType.GENERATED) || quiz.getType().equals(QuizType.EXTERNAL_QUIZ)))
                 .sorted(comparator)
                 .map(quiz -> quiz.getDto(false))
                 .collect(Collectors.toList());
@@ -119,6 +120,9 @@ public class QuizService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto createQuiz(int executionId, QuizDto quizDto) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+        if (quizDto.isQrCodeOnly() && quizDto.getCode() == null) {
+            quizDto.setCode(quizRepository.getMaxCode(executionId).orElse(0) + 1);
+        }
         Quiz quiz = new Quiz(quizDto);
 
         if (quizDto.getCreationDate() == null) {
@@ -159,6 +163,9 @@ public class QuizService {
             quiz.setResultsDate(DateHandler.toLocalDateTime(quizDto.getResultsDate()));
         quiz.setScramble(quizDto.isScramble());
         quiz.setQrCodeOnly(quizDto.isQrCodeOnly());
+        if (quizDto.isQrCodeOnly() && quiz.getCode() == null) {
+            quiz.setCode(quizRepository.getMaxCode(quiz.getCourseExecution().getId()).orElse(0) + 1);
+        }
         quiz.setOneWay(quizDto.isOneWay());
 
         if (quizDto.isTimed())
@@ -281,85 +288,6 @@ public class QuizService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public String exportQuizzesToLatex(int quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
-
-        LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();
-
-        return latexExport.export(quiz);
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public ByteArrayOutputStream exportQuiz(int quizId) {
-        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
-
-        List<QuestionAnswerItem> questionAnswerItems = questionAnswerItemRepository.findQuestionAnswerItemsByQuizId(quizId);
-
-        try (ByteArrayOutputStream baos = new ByteArrayOutputStream();
-             ZipOutputStream zos = new ZipOutputStream(baos)) {
-
-            List<Quiz> quizzes = new ArrayList<>();
-            quizzes.add(quiz);
-
-            CSVQuizExportVisitor csvExport = new CSVQuizExportVisitor();
-            zos.putNextEntry(new ZipEntry(quizId + ".csv"));
-            InputStream in = IOUtils.toInputStream(csvExport.export(quiz, questionAnswerItems), StandardCharsets.UTF_8);
-            copyToZipStream(zos, in);
-            zos.closeEntry();
-
-            LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();
-            zos.putNextEntry(new ZipEntry(quizId + ".tex"));
-            in = IOUtils.toInputStream(latexExport.export(quiz), StandardCharsets.UTF_8);
-            copyToZipStream(zos, in);
-            zos.closeEntry();
-
-            XMLQuestionExportVisitor questionsXmlExport = new XMLQuestionExportVisitor();
-            in = IOUtils.toInputStream(questionsXmlExport.export(
-                    quizzes.get(0).getQuizQuestions().stream()
-                            .map(QuizQuestion::getQuestion)
-                            .collect(Collectors.toList())),
-                    StandardCharsets.UTF_8);
-            zos.putNextEntry(new ZipEntry("questions-" + quizId + ".xml"));
-            copyToZipStream(zos, in);
-            zos.closeEntry();
-
-            QuizzesXmlExport quizzesXmlExport = new QuizzesXmlExport();
-            in = IOUtils.toInputStream(quizzesXmlExport.export(quizzes), StandardCharsets.UTF_8);
-            zos.putNextEntry(new ZipEntry("quiz-" + quizId + ".xml"));
-            copyToZipStream(zos, in);
-            zos.closeEntry();
-
-            AnswersXmlExportVisitor answersXmlExport = new AnswersXmlExportVisitor();
-            in = IOUtils.toInputStream(answersXmlExport.export(
-                    quizzes.get(0).getQuizAnswers().stream()
-                            .sorted(Comparator.comparing(quizAnswer -> quizAnswer.getUser().getId()))
-                            .collect(Collectors.toList())),
-                    StandardCharsets.UTF_8);
-            zos.putNextEntry(new ZipEntry("answers-" + quizId + ".xml"));
-            copyToZipStream(zos, in);
-            zos.closeEntry();
-
-            baos.flush();
-
-            return baos;
-        } catch (IOException ex) {
-            throw new TutorException(ErrorMessage.CANNOT_OPEN_FILE);
-        }
-    }
-
-    private void copyToZipStream(ZipOutputStream zos, InputStream in) throws IOException {
-        byte[] buffer = new byte[1024];
-        int len;
-        while ((len = in.read(buffer)) > 0) {
-            zos.write(buffer, 0, len);
-        }
-        in.close();
-    }
-
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void createQuizXmlDirectory(int quizId, String path) throws IOException {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
         String directoryPath = path + "/" + quiz.getId();
@@ -375,12 +303,45 @@ public class QuizService {
             myWriter.close();
         }
 
+        String latexDirectoryPath = directoryPath + "/latex/";
+        File latexDirectory = new File(latexDirectoryPath);
+        latexDirectory.mkdir();
         LatexQuizExportVisitor latexExport = new LatexQuizExportVisitor();
-        myObj = new File(directoryPath + "/" + quiz.getId() + ".tex");
+        myObj = new File(latexDirectoryPath + "quiz.tex");
         if (myObj.createNewFile()) {
             FileWriter myWriter = new FileWriter(myObj);
-            myWriter.write(latexExport.export(quiz));
+            myWriter.write(latexExport.exportQuiz(quiz));
             myWriter.close();
+        }
+        myObj = new File(latexDirectoryPath + "questions.tex");
+        if (myObj.createNewFile()) {
+            FileWriter myWriter = new FileWriter(myObj);
+            myWriter.write(latexExport.exportQuestions(quiz.getQuizQuestions().stream().map(QuizQuestion::getQuestion).collect(Collectors.toList())));
+            myWriter.close();
+        }
+        // export images
+        for (Question question: quiz.getQuizQuestions().stream().map(QuizQuestion::getQuestion).collect(Collectors.toList())) {
+            if (question.getImage() != null) {
+                try {
+                    File figureFile = new File(figuresDir + question.getImage().getUrl());
+                    Files.copy(figureFile.toPath(),
+                            (new File(latexDirectoryPath + figureFile.getName())).toPath(),
+                            StandardCopyOption.REPLACE_EXISTING);
+                } catch (NoSuchFileException noSuchFileException) {
+                    // if image does not exist do nothing
+                }
+            }
+        }
+        // export latex macros
+        String latexStyDirectoryPath = latexDirectoryPath + "/sty/";
+        File latexStyDirectory = new File(latexStyDirectoryPath);
+        latexStyDirectory.mkdir();
+        String[] latexFileNames = {"docist.cls", "macros.tex", "exameIST.sty",  "exame.tex", "LogoIST-novo.pdf"};
+        for (String latexFileName : latexFileNames) {
+            File latexFile = new File(LATEX_MACROS_DIR + latexFileName);
+            Files.copy(latexFile.toPath(),
+                    (new File(latexStyDirectoryPath + latexFile.getName())).toPath(),
+                    StandardCopyOption.REPLACE_EXISTING);
         }
 
         QuizzesXmlExport xmlExport = new QuizzesXmlExport();

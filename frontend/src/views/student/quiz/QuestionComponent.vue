@@ -15,7 +15,7 @@
         class="question-content"
         v-html="convertMarkDown(question.content, question.image)"
       ></div>
-      <div class="square" @click="increaseOrder">
+      <div class="square" @click="increaseOrder" data-cy="nextQuestionButton">
         <i
           v-if="questionOrder !== questionNumber - 1"
           class="fas fa-chevron-right"
@@ -33,7 +33,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model, Emit } from 'vue-property-decorator';
+import { Component, Emit, Model, Prop, Vue } from 'vue-property-decorator';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';

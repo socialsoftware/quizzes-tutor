@@ -78,6 +78,8 @@
           >?
           <br />
           (Once activated students will be able to login and use this platform)
+          <br />
+          (You have to logout and login to start managing it)
         </v-card-text>
 
         <v-divider />

@@ -122,7 +122,7 @@ class RemoveQuestionTest extends SpockTest {
     def "remove a question that was submitted"() {
         given: "a student"
         def student = new User(USER_1_NAME, USER_1_USERNAME,
-                Role.STUDENT, false)
+                Role.STUDENT)
         userRepository.save(student)
 
         and: "a questionSubmission"

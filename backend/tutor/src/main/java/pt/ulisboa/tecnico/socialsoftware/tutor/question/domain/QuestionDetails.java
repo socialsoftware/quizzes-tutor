@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.AnswerDetailsDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.QuestionDetailsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CorrectAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 
 import javax.persistence.*;

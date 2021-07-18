@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
@@ -8,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.time.Duration;
 import java.util.*;
@@ -28,50 +28,18 @@ public class CSVQuizExportVisitor implements Visitor {
         Map<Integer, QuizQuestion> quizQuestions = quizQuestionsList.stream()
                 .collect(Collectors.toMap(QuizQuestion::getId, Function.identity()));
 
-        // add header
-        line = new String[lineSize];
-        Arrays.fill(line, "");
-        line[0] = "Username";
-        line[1] = "Name";
-        line[2] = "Start";
-        line[3] = "Delivered";
-        line[4] = "Delay in Seconds";
-        column = 4;
+        addHeader(quizQuestionsList, lineSize);
 
-        quizQuestionsList.stream()
-                .forEach(quizQuestion ->
-                    line[++column] = String.valueOf(quizQuestion.getSequence()+1)
-                );
+        addStudentAnswer(quiz, lineSize);
 
-        table.add(line);
+        addKey(quizQuestionsList, lineSize);
 
-        // add student answer
-        for (QuizAnswer quizAnswer : quiz.getQuizAnswers()) {
-            line = new String[lineSize];
-            Arrays.fill(line, "");
-            column = 0;
-            quizAnswer.getUser().accept(this);
+        addLogOfQuestionAnswers(questionAnswerItems, lineSize, quizQuestions);
 
-            quizAnswer.accept(this);
+        return table.stream().map(this::convertToCSV).collect(Collectors.joining("\n"));
+    }
 
-            quizAnswer.getQuestionAnswers().stream()
-                    .sorted(Comparator.comparing(questionAnswer -> questionAnswer.getQuizQuestion().getSequence()))
-                    .collect(Collectors.toList())
-                    .forEach(questionAnswer -> questionAnswer.accept(this));
-
-            table.add(line);
-        }
-
-        // add key
-        line = new String[lineSize];
-        Arrays.fill(line, "");
-        line[4] = "KEYS";
-        column = 5;
-        quizQuestionsList.stream()
-                .forEach(quizQuestion -> quizQuestion.accept(this));
-        table.add(line);
-
-        // add log of question answers
+    private void addLogOfQuestionAnswers(List<QuestionAnswerItem> questionAnswerItems, int lineSize, Map<Integer, QuizQuestion> quizQuestions) {
         line = new String[lineSize];
         Arrays.fill(line, "");
         table.add(line);
@@ -104,8 +72,52 @@ public class CSVQuizExportVisitor implements Visitor {
             line[5] = convertMiliseconds(questionAnswerItem.getTimeTaken());
             table.add(line);
         }
+    }
 
-        return table.stream().map(this::convertToCSV).collect(Collectors.joining("\n"));
+    private void addKey(List<QuizQuestion> quizQuestionsList, int lineSize) {
+        line = new String[lineSize];
+        Arrays.fill(line, "");
+        line[4] = "KEYS";
+        column = 5;
+        quizQuestionsList.stream()
+                .forEach(quizQuestion -> quizQuestion.accept(this));
+        table.add(line);
+    }
+
+    private void addStudentAnswer(Quiz quiz, int lineSize) {
+        for (QuizAnswer quizAnswer : quiz.getQuizAnswers()) {
+            line = new String[lineSize];
+            Arrays.fill(line, "");
+            column = 0;
+            quizAnswer.getUser().accept(this);
+
+            quizAnswer.accept(this);
+
+            quizAnswer.getQuestionAnswers().stream()
+                    .sorted(Comparator.comparing(questionAnswer -> questionAnswer.getQuizQuestion().getSequence()))
+                    .collect(Collectors.toList())
+                    .forEach(questionAnswer -> questionAnswer.accept(this));
+
+            table.add(line);
+        }
+    }
+
+    private void addHeader(List<QuizQuestion> quizQuestionsList, int lineSize) {
+        line = new String[lineSize];
+        Arrays.fill(line, "");
+        line[0] = "Username";
+        line[1] = "Name";
+        line[2] = "Start";
+        line[3] = "Delivered";
+        line[4] = "Delay in Seconds";
+        column = 4;
+
+        quizQuestionsList.stream()
+                .forEach(quizQuestion ->
+                    line[++column] = String.valueOf(quizQuestion.getSequence()+1)
+                );
+
+        table.add(line);
     }
 
     @Override

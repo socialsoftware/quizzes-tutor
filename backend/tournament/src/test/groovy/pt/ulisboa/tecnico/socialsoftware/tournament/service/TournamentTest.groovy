@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionSt
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tournament.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tournament.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*
@@ -17,7 +18,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQue
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 
 import java.time.LocalDateTime
 
@@ -69,7 +69,7 @@ class TournamentTest extends SpockTest {
     }
 
     def createUser(String name, String username, String email, Role role, CourseExecution courseExecution) {
-        def user = new User(name, username, role, false)
+        def user = new User(name, username, role)
         user.addCourse(courseExecution)
         userRepository.save(user)
 

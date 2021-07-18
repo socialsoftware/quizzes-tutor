@@ -39,12 +39,12 @@ class DeleteExternalInactiveUsersTest extends SpockTest {
         tecnicoCourseExecution = new CourseExecution(tecnicoCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, CourseType.TECNICO, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(tecnicoCourseExecution)
 
-        user1 = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
+        user1 = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT)
         userRepository.save(user1)
         externalCourseExecution.addUser(user1)
         user1.addCourse(externalCourseExecution)
 
-        user2 = new User(USER_2_NAME, USER_2_USERNAME, Role.STUDENT, false)
+        user2 = new User(USER_2_NAME, USER_2_USERNAME, Role.STUDENT)
         userRepository.save(user2)
         externalCourseExecution.addUser(user2)
         user2.addCourse(externalCourseExecution)

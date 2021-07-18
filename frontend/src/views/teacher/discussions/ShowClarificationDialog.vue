@@ -10,7 +10,11 @@
         <span class="headline">Clarifications</span>
       </v-card-title>
 
-      <clarification-component :clarifications="clarifications">
+      <clarification-component
+        :clarifications="clarifications"
+        :can-change="true"
+        v-on:make-private="onMakePrivate"
+      >
       </clarification-component>
 
       <v-card-actions>
@@ -22,7 +26,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
 import Reply from '@/models/management/Reply';
@@ -48,6 +52,13 @@ export default class ShowClarificationDialog extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  onMakePrivate(clarificationId: number) {
+    this.clarifications = this.clarifications.filter(
+      (clarification) => clarification.id !== clarificationId
+    );
+    this.$emit('remove-clarification', this.question.id);
   }
 }
 </script>

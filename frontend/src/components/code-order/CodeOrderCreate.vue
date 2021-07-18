@@ -79,8 +79,8 @@ export default class CodeOrderCreate extends Vue {
   }
 
   updateList() {
-    this.sQuestionDetails.codeOrderSlots = this.sQuestionDetails.codeOrderSlots.sort(
-      (a, b) => {
+    this.sQuestionDetails.codeOrderSlots =
+      this.sQuestionDetails.codeOrderSlots.sort((a, b) => {
         if (a.order == null) {
           return 1;
         }
@@ -88,8 +88,7 @@ export default class CodeOrderCreate extends Vue {
           return -1;
         }
         return a.order > b.order ? 1 : -1;
-      }
-    );
+      });
     this.endedReorder();
   }
 

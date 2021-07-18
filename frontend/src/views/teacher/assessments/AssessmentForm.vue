@@ -189,7 +189,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Assessment from '@/models/management/Assessment';
 import Question from '@/models/management/Question';
@@ -342,9 +342,10 @@ export default class AssessmentForm extends Vue {
 
   removeTopicConjunction(topicConjuntion: TopicConjunction) {
     this.topicConjunctions.push(topicConjuntion);
-    this.assessment.topicConjunctions = this.assessment.topicConjunctions.filter(
-      (tc) => tc.sequence != topicConjuntion.sequence
-    );
+    this.assessment.topicConjunctions =
+      this.assessment.topicConjunctions.filter(
+        (tc) => tc.sequence != topicConjuntion.sequence
+      );
   }
 
   addTopicConjunction(topicConjuntion: TopicConjunction) {

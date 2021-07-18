@@ -15,9 +15,12 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
-import pt.ulisboa.tecnico.socialsoftware.common.events.AddCourseExecutionEvent;
-import pt.ulisboa.tecnico.socialsoftware.common.events.DeleteAuthUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.auth.DeleteAuthUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.execution.AddCourseExecutionEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.execution.AnonymizeUserEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.execution.RemoveCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
@@ -29,7 +32,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseReposit
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 
 import java.io.InputStream;
 import java.sql.SQLException;
@@ -139,8 +141,10 @@ public class CourseExecutionService {
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
         courseExecution.remove();
-
         courseExecutionRepository.delete(courseExecution);
+
+        RemoveCourseExecutionEvent removeCourseExecutionEvent = new RemoveCourseExecutionEvent(courseExecutionId);
+        eventBus.post(removeCourseExecutionEvent);
     }
 
     @Retryable(
@@ -151,14 +155,15 @@ public class CourseExecutionService {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         for (User user : courseExecution.getUsers()) {
             String oldUsername = user.getUsername();
-            DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(user.getId());
-            eventBus.post(deleteAuthUser);
             String newUsername = user.getUsername();
             questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
             String role = user.getRole().toString();
             String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();
             user.setName(String.format("%s %s", roleCapitalized, user.getId()));
             user.setUsername(null);
+
+            AnonymizeUserEvent anonymizeUserEvent = new AnonymizeUserEvent(user.getId(), user.getUsername(), user.getName());
+            eventBus.post(anonymizeUserEvent);
         }
     }
 

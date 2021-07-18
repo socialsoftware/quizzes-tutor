@@ -6,13 +6,12 @@ import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class CreateExternalCourseExecutionWebServiceIT extends SpockTestIT {
+class CreateExternalCourseExecutionWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 

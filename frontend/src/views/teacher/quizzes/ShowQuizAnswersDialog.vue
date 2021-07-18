@@ -95,10 +95,9 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Model, Watch } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
-import { QuestionAnswer } from '@/models/management/QuestionAnswer';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 import ShowQuizAnswersDetailsDialog from '@/views/teacher/quizzes/ShowQuizAnswersDetailsDialog.vue';
 

@@ -2,13 +2,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.ReplyDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.ReplyDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Unroll
 
 @DataJpaTest
@@ -18,10 +18,10 @@ class CreateReplyTest extends DiscussionFixtureSpockTest {
     def discussion
 
     def setup(){
-        student2 = new User(USER_3_NAME, USER_3_USERNAME, Role.STUDENT, true)
+        student2 = new User(USER_3_NAME, USER_3_USERNAME, Role.STUDENT)
         userRepository.save(student2)
 
-        teacher = new User(USER_2_NAME, USER_2_USERNAME, Role.TEACHER, true)
+        teacher = new User(USER_2_NAME, USER_2_USERNAME, Role.TEACHER)
         userRepository.save(teacher)
 
         defineBaseFixture()

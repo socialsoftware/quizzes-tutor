@@ -55,7 +55,8 @@ export default class TeacherDiscussionsView extends Vue {
     if (this.showClosedDiscussions) {
       this.discussions = await RemoteServices.getCourseExecutionDiscussions();
     } else {
-      this.discussions = await RemoteServices.getOpenCourseExecutionDiscussions();
+      this.discussions =
+        await RemoteServices.getOpenCourseExecutionDiscussions();
     }
     await this.$store.dispatch('clearLoading');
   }

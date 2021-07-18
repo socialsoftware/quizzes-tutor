@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.apigateway.webservice.questionsubmissi
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthTecnicoUser
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
@@ -20,7 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetQuestionSubmissionReviewsWebServiceIT extends SpockTestIT {
+class GetQuestionSubmissionReviewsWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
@@ -41,7 +41,7 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTestIT {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, CourseType.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        student = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
+        student = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT)
         student.setActive(true)
         student.addCourse(courseExecution)
         userRepository.save(student)
@@ -71,7 +71,7 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTestIT {
         questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
         questionSubmission = questionSubmissionRepository.findAll().get(0)
 
-        teacher = new User(USER_2_NAME, USER_2_EMAIL, Role.TEACHER, false)
+        teacher = new User(USER_2_NAME, USER_2_EMAIL, Role.TEACHER)
         teacher.setActive(true)
         teacher.addCourse(courseExecution)
         userRepository.save(teacher)

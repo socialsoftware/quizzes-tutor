@@ -57,9 +57,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
-import RemoteServices from '@/services/RemoteServices';
 import Discussion from '@/models/management/Discussion';
-import User from '@/models/user/User';
 import ShowDiscussionDialog from '@/views/student/discussions/ShowDiscussionDialog.vue';
 
 @Component({

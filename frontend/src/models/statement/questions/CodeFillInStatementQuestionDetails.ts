@@ -1,7 +1,6 @@
 import StatementQuestionDetails from '@/models/statement/questions/StatementQuestionDetails';
 import { QuestionTypes } from '@/services/QuestionHelpers';
 import CodeFillInSpotStatement from '@/models/statement/questions/CodeFillInSpotStatement';
-import { _ } from 'vue-underscore';
 
 export default class CodeFillInStatementQuestionDetails extends StatementQuestionDetails {
   language: string = 'Java';

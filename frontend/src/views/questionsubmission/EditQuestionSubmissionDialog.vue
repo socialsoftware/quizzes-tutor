@@ -124,7 +124,7 @@ import QuestionSubmission from '../../models/management/QuestionSubmission';
 import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
 import CodeFillInCreate from '@/components/code-fill-in/CodeFillInCreate.vue';
 import CodeOrderCreate from '@/components/code-order/CodeOrderCreate.vue';
-import { QuestionTypes, QuestionFactory } from '@/services/QuestionHelpers';
+import { QuestionFactory, QuestionTypes } from '@/services/QuestionHelpers';
 
 @Component({
   components: {
@@ -142,8 +142,8 @@ export default class EditQuestionSubmissionDialog extends Vue {
     this.questionSubmission
   );
   comment: string = '';
-  questionType: string = this.questionSubmission.question.questionDetailsDto
-    .type;
+  questionType: string =
+    this.questionSubmission.question.questionDetailsDto.type;
 
   get questionTypesOptions() {
     return Object.values(QuestionTypes).map((qt) => ({
@@ -153,9 +153,10 @@ export default class EditQuestionSubmissionDialog extends Vue {
   }
 
   updateQuestionType() {
-    this.editQuestionSubmission.question.questionDetailsDto = QuestionFactory.getFactory(
-      this.questionType
-    ).createEmptyQuestionDetails();
+    this.editQuestionSubmission.question.questionDetailsDto =
+      QuestionFactory.getFactory(
+        this.questionType
+      ).createEmptyQuestionDetails();
   }
 
   @Watch('questionSubmission', { immediate: true, deep: true })

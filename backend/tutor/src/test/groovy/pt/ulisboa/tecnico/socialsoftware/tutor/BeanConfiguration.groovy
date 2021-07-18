@@ -22,7 +22,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
-
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")
 @ActiveProfiles("test")

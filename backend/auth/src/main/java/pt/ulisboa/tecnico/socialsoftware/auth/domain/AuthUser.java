@@ -5,11 +5,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionStatus;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
@@ -17,6 +17,7 @@ import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService.MAIL_FORMAT;
 
 @Entity
 @Table(name = "auth_users",
@@ -27,7 +28,6 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 @DiscriminatorColumn(name="auth_type",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
-    public enum Type { EXTERNAL, TECNICO, DEMO }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,7 +57,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         setEmail(email);
     }
 
-    public static AuthUser createAuthUser(UserSecurityInfo userSecurityInfo, String username, String email, Type type) {
+    public static AuthUser createAuthUser(UserSecurityInfo userSecurityInfo, String username, String email, AuthUserType type) {
         switch (type) {
             case EXTERNAL:
                 return new AuthExternalUser(userSecurityInfo, username, email);
@@ -100,7 +100,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
     }
 
     public void setEmail(String email) {
-        if (email == null || !email.matches(UserService.MAIL_FORMAT))
+        if (email == null || !email.matches(MAIL_FORMAT))
             throw new TutorException(INVALID_EMAIL, email);
 
         this.email = email.toLowerCase();
@@ -135,7 +135,7 @@ public abstract class AuthUser implements /*DomainEntity,*/ UserDetails {
         return true;
     }
 
-    public abstract Type getType();
+    public abstract AuthUserType getType();
 
     public void checkRole(boolean isActive) {
         if (!isActive && !(userSecurityInfo.getRole().equals(Role.STUDENT) || userSecurityInfo.getRole().equals(Role.TEACHER))) {

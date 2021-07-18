@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.apigateway.webservice.user
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.apigateway.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ConfirmRegistrationWebServiceIT extends SpockTestIT {
+class ConfirmRegistrationWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
@@ -34,7 +34,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
 
     def "user confirms registration"() {
         given: "one inactive user"
-        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT)
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
         userRepository.save(user)
@@ -72,7 +72,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
 
     def "user tries to confirm registration with an expired token"() {
         given: "one inactive user with an expired token"
-        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_EMAIL, Role.STUDENT)
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
         userRepository.save(user)

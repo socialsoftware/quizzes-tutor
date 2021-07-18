@@ -1,0 +1,47 @@
+\NeedsTeXFormat{LaTeX2e}
+\ProvidesPackage{sty/exameIST}
+\RequirePackage{palatino}
+\RequirePackage{color}
+\RequirePackage{ifthen}
+\RequirePackage[portuges]{babel}
+\RequirePackage{graphicx}
+\RequirePackage{lastpage}
+\newboolean{@answers}
+\DeclareOption{answers}{\setboolean{@answers}{true}}
+\DeclareOption{noanswers}{\setboolean{@answers}{false}}
+\ProcessOptions
+
+\newenvironment{questions}{\begin{enumerate}\setlength{\itemindent}{-0.5cm}}{\end{enumerate}}
+
+\newcommand{\question}[1][0]{\item (#1)}
+\newcommand{\extraspace}[1]{\par\vspace*{#1cm plus 1cm}}
+
+\newenvironment{answer}{\begingroup\sloppy\bfseries\slshape\Large\ifthenelse{\boolean{@answers}}{}{\color{white}}}{\fussy\endgroup}
+
+\newcommand{\answerspace}[1]{\vspace*{#1cm plus 2cm minus 1cm}}
+\newcommand{\istexamheader}[5]{
+  \thispagestyle{empty}
+  \newsavebox{\header}
+  \savebox{\header}{\flushright \small Número234090394: \rule{3cm}{1pt}}
+  \markboth{\usebox{\header}}{\usebox{\header}}
+  \pagestyle{myheadings}
+  \begingroup\noindent\raisebox{0pt}[0pt][0pt]{\makebox[23mm]{\includegraphics[height=57mm]{LogoIST-cor}}}\hfill%
+  \begin{minipage}[b]{10cm}
+    \begin{center}
+      {\Large Instituto Superior Técnico\\~\\}
+      {\huge #2 -- #3\\~\\}
+      {\LARGE #1 -- #4\\}
+    \end{center}
+  \end{minipage}\hfill\hfill\\
+  \begin{flushright}
+    Número: \rule{6cm}{0.1pt}\\~\\
+    Nome: \rule{10cm}{0.1pt}\\~\\
+  \end{flushright}
+  
+\begingroup\small Escreva o seu número em todas as folhas do teste.  O
+tamanho das respostas deve ser limitado ao espaço fornecido para cada
+pergunta.  Pode usar os versos das folhas para rascunho.  O exame tem
+\textbf{\pageref{LastPage}} páginas e a duração é de \textbf{#5}.  A
+cotação de cada questão encontra-se indicada entre parêntesis.  Boa
+sorte.
+\endgroup\endgroup}

@@ -24,7 +24,7 @@ class FindQuestionsTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        user = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT, false)
+        user = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT)
 
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
@@ -109,6 +109,7 @@ class FindQuestionsTest extends SpockTest {
         resQuestion.getId() != null
         resQuestion.getStatus() == Question.Status.AVAILABLE.name()
         resQuestion.getContent() == QUESTION_1_CONTENT
+        resQuestion.getNumberOfClarifications() == 0
         resQuestion.getNumberOfAnswers() == 2
         resQuestion.getNumberOfCorrect() == 1
         resQuestion.getDifficulty() == 50

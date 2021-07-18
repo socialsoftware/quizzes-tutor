@@ -1,9 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementFillInSpotsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.CodeFillInSpotDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementFillInSpotsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 

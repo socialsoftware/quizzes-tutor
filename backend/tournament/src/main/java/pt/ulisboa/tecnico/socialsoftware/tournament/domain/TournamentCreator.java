@@ -38,6 +38,14 @@ public class TournamentCreator {
         return name;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setName(String name) {
+        this.name = name;
+    }
+
     public StudentDto getStudentDto() {
         StudentDto dto = new StudentDto();
         dto.setId(getId());

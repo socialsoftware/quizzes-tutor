@@ -26,10 +26,10 @@ class CreateReviewTest extends SpockTest {
         createExternalCourseAndExecution()
 
         student = new User(USER_1_NAME, USER_1_USERNAME,
-                Role.STUDENT, false)
+                Role.STUDENT)
         userRepository.save(student)
         teacher = new User(USER_2_NAME, USER_2_USERNAME,
-                Role.TEACHER, false)
+                Role.TEACHER)
         userRepository.save(teacher)
         question = new Question()
         question.setKey(1)

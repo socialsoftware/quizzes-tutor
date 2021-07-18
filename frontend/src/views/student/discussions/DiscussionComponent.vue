@@ -8,7 +8,10 @@
         >
           Clarifications
         </v-card-title>
-        <clarification-component :clarifications="clarifications">
+        <clarification-component
+          :clarifications="clarifications"
+          :can-change="false"
+        >
         </clarification-component>
       </v-card>
     </div>
@@ -78,7 +81,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue, Prop, Emit, Watch } from 'vue-property-decorator';
+import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Discussion from '@/models/management/Discussion';
 import ReplyComponent from '@/views/student/discussions/ReplyComponent.vue';
