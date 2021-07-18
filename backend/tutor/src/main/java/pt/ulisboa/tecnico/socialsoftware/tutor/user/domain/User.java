@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizType;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserCourseExecutionsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
@@ -429,6 +430,11 @@ public class User implements DomainEntity {
         course.addUser(this);
     }
 
+    public void removeCourse(CourseExecution course) {
+        this.courseExecutions.remove(course);
+        course.removeUser(this);
+    }
+
     public void addQuestionSubmission(QuestionSubmission questionSubmission) {
         questionSubmissions.add(questionSubmission);
     }
@@ -559,5 +565,12 @@ public class User implements DomainEntity {
             studentDto.setPercentageOfCorrectAnswers((getNumberOfCorrectTeacherAnswers() + getNumberOfCorrectInClassAnswers() + getNumberOfCorrectStudentAnswers())  * 100 / studentDto.getNumberOfAnswers());
 
         return studentDto;
+    }
+
+    public UserCourseExecutionsDto getUserCourseExecutionsDto() {
+        UserCourseExecutionsDto userCourseExecutions = new UserCourseExecutionsDto();
+        userCourseExecutions.setCourseExecutionDtoList(getCourseExecutions().stream().map(CourseExecution::getDto)
+                .collect(Collectors.toList()));
+        return userCourseExecutions;
     }
 }

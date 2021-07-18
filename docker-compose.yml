@@ -1,40 +1,189 @@
 version: '3.3'
 
 services:
-  postgres:
-    image: postgres:alpine
-    container_name: postgres
-    command: postgres -c 'max_connections=50'
+  zookeeper:
+    image: confluentinc/cp-zookeeper:latest
+    container_name: zookeeper
     ports:
-      - 5433:5432
+      - "2181:2181"
     restart: unless-stopped
-    volumes:
-      - ./data/dumps:/dumps
-    env_file:
-      - ./data/env/database.dev.env
-
-  backend:
-    build:
-      context: ./backend/
-      args:
-        PROFILE: dev
-    image: tutor-backend
-    container_name: backend
+    environment:
+      ZOOKEEPER_CLIENT_PORT: 2181
+  kafka:
+    image: confluentinc/cp-kafka:latest
+    container_name: kafka
+    ports:
+      - "9092:9092"
+    depends_on:
+      - zookeeper
+    restart: unless-stopped
+    environment:
+      KAFKA_LISTENERS: LC://kafka:29092,LX://kafka:9092
+      KAFKA_ADVERTISED_LISTENERS: LC://kafka:29092,LX://${DOCKER_HOST_IP:-localhost}:9092
+      KAFKA_LISTENER_SECURITY_PROTOCOL_MAP: LC:PLAINTEXT,LX:PLAINTEXT
+      KAFKA_INTER_BROKER_LISTENER_NAME: LC
+      KAFKA_ZOOKEEPER_CONNECT: zookeeper:2181
+      KAFKA_OFFSETS_TOPIC_REPLICATION_FACTOR: 1
+  postgres:
+    build: ./backend/postgres
+    container_name: postgres
+    ports:
+      - "5432:5432"
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: root
+      USE_DB_ID: "false"
+      USE_JSON_PAYLOAD_AND_HEADERS: "false"
+  cdc-service:
+    image: eventuateio/eventuate-cdc-service:latest
+    container_name: eventuate-cdc-service
+    ports:
+      - "8099:8080"
+    restart: unless-stopped
     depends_on:
       - postgres
+      - kafka
+    links:
+      - zookeeper
+      - kafka
+      - postgres
+    environment:
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+      EVENTUATE_CDC_PIPELINE_PIPELINE1_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE1_READER: reader1
+      EVENTUATE_CDC_PIPELINE_PIPELINE1_EVENTUATEDATABASESCHEMA: public
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_READER: reader2
+      EVENTUATE_CDC_PIPELINE_PIPELINE2_EVENTUATEDATABASESCHEMA: public
+
+      EVENTUATE_CDC_PIPELINE_PIPELINE3_TYPE: eventuate-tram
+      EVENTUATE_CDC_PIPELINE_PIPELINE3_READER: reader3
+      EVENTUATE_CDC_PIPELINE_PIPELINE3_EVENTUATEDATABASESCHEMA: public
+
+      SPRING_PROFILES_ACTIVE: EventuatePolling
+      EVENTUATE_CDC_READER_READER1_TYPE: polling
+      EVENTUATE_CDC_READER_READER1_DATASOURCEURL: jdbc:postgresql://postgres/tutormicrodb
+      EVENTUATE_CDC_READER_READER1_DATASOURCEUSERNAME: tutormicrodb_user
+      EVENTUATE_CDC_READER_READER1_DATASOURCEPASSWORD: tutormicrodb_password
+      EVENTUATE_CDC_READER_READER1_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
+      EVENTUATE_CDC_READER_READER1_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/common1
+      EVENTUATE_CDC_READER_READER1_POLLINGINTERVALINMILLISECONDS: 100
+      EVENTUATE_CDC_READER_READER1_MAXEVENTSPERPOLLING: 1000
+      EVENTUATE_CDC_READER_READER1_MAXATTEMPTSFORPOLLING: 100
+      EVENTUATE_CDC_READER_READER1_POLLINGRETRYINTERVALINMILLISECONDS: 500
+
+      EVENTUATE_CDC_READER_READER2_TYPE: polling
+      EVENTUATE_CDC_READER_READER2_DATASOURCEURL: jdbc:postgresql://postgres/authdb
+      EVENTUATE_CDC_READER_READER2_DATASOURCEUSERNAME: authdb_user
+      EVENTUATE_CDC_READER_READER2_DATASOURCEPASSWORD: authdb_password
+      EVENTUATE_CDC_READER_READER2_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
+      EVENTUATE_CDC_READER_READER2_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/common2
+      EVENTUATE_CDC_READER_READER2_POLLINGINTERVALINMILLISECONDS: 100
+      EVENTUATE_CDC_READER_READER2_MAXEVENTSPERPOLLING: 1000
+      EVENTUATE_CDC_READER_READER2_MAXATTEMPTSFORPOLLING: 100
+      EVENTUATE_CDC_READER_READER2_POLLINGRETRYINTERVALINMILLISECONDS: 500
+
+      EVENTUATE_CDC_READER_READER3_TYPE: polling
+      EVENTUATE_CDC_READER_READER3_DATASOURCEURL: jdbc:postgresql://postgres/tournamentdb
+      EVENTUATE_CDC_READER_READER3_DATASOURCEUSERNAME: tournamentdb_user
+      EVENTUATE_CDC_READER_READER3_DATASOURCEPASSWORD: tournamentdb_password
+      EVENTUATE_CDC_READER_READER3_DATASOURCEDRIVERCLASSNAME: org.postgresql.Driver
+      EVENTUATE_CDC_READER_READER3_LEADERSHIPLOCKPATH: /eventuate/cdc/leader/common3
+      EVENTUATE_CDC_READER_READER3_POLLINGINTERVALINMILLISECONDS: 100
+      EVENTUATE_CDC_READER_READER3_MAXEVENTSPERPOLLING: 1000
+      EVENTUATE_CDC_READER_READER3_MAXATTEMPTSFORPOLLING: 100
+      EVENTUATE_CDC_READER_READER3_POLLINGRETRYINTERVALINMILLISECONDS: 500
+      JAVA_OPTS: -Xmx64m
+  tutor-service:
+    build: ./backend/tutor
+    container_name: tutor-service
+    ports:
+      - "8084:8084"
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - kafka
+      - cdc-service
     links:
       - postgres
-    ports:
-      - 8080:8080
-    restart: unless-stopped
-    volumes:
-      - ./data/images:/images
-      - ./data/load:/load
-      - ./data/export:/export
-    env_file:
-      - ./data/env/backend.dev.env
+      - kafka
+      - zookeeper
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tutordb
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/tutormicrodb
+      SPRING_DATASOURCE_USERNAME: tutormicrodb_user
+      SPRING_DATASOURCE_PASSWORD: tutormicrodb_password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+      EVENTUATE_DATABASE_SCHEMA: none
+  auth-service:
+    build: ./backend/auth
+    container_name: auth-service
+    ports:
+      - "8082:8082"
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - kafka
+      - cdc-service
+    links:
+      - postgres
+      - kafka
+      - zookeeper
+      - tutor-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/authdb
+      SPRING_DATASOURCE_USERNAME: authdb_user
+      SPRING_DATASOURCE_PASSWORD: authdb_password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+      EVENTUATE_DATABASE_SCHEMA: none
+  tournament-service:
+    build: ./backend/tournament
+    container_name: tournament-service
+    ports:
+      - "8083:8083"
+    restart: unless-stopped
+    depends_on:
+      - postgres
+      - kafka
+      - cdc-service
+      - tutor-service
+    links:
+      - postgres
+      - kafka
+      - zookeeper
+      - tutor-service
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres/tournamentdb
+      SPRING_DATASOURCE_USERNAME: tournamentdb_user
+      SPRING_DATASOURCE_PASSWORD: tournamentdb_password
+      SPRING_DATASOURCE_DRIVER_CLASS_NAME: org.postgresql.Driver
+      EVENTUATELOCAL_KAFKA_BOOTSTRAP_SERVERS: kafka:29092
+      EVENTUATELOCAL_ZOOKEEPER_CONNECTION_STRING: zookeeper:2181
+      EVENTUATE_DATABASE_SCHEMA: none
+  api-gateway:
+    build: ./backend/apigateway
+    container_name: api-gateway
+    depends_on:
+      - auth-service
+      - tournament-service
+      - tutor-service
+    links:
+      - auth-service
+      - tournament-service
+      - tutor-service
+    ports:
+      - "8080:8080"
+    restart: unless-stopped
+    environment:
+      DESTINATIONS_AUTHSERVICEURL: http://auth-service:8082
+      DESTINATIONS_TOURNAMENTSERVICEURL: http://tournament-service:8083
+      DESTINATIONS_TUTORSERVICEURL: http://tutor-service:8084
 
   frontend:
     build:
@@ -45,9 +194,9 @@ services:
     image: tutor-frontend                                                     
     container_name: frontend
     depends_on:
-      - backend
+      - api-gateway
     links:
-      - backend
+      - api-gateway
     ports:
       - 8081:80
     restart: unless-stopped
@@ -55,42 +204,5 @@ services:
       - ./data/localhost-nginx.conf:/etc/nginx/nginx.conf
       - ./data/error.log:/var/log/nginx/error.log
       - ./data/access.log:/var/log/nginx/access.log
-
-  be-unit-tests:
-    image: maven:3
-    stop_signal: SIGKILL
-    stdin_open: true
-    tty: true
-    working_dir: $PWD/backend/
-    volumes:
-      - $PWD:$PWD
-      - ~/.m2:/root/.m2
-    command: mvn -Ptest test
-
-  integration-tests:
-    image: maven:3
-    stop_signal: SIGKILL
-    stdin_open: true
-    tty: true
-    depends_on:
-      - postgres
     environment:
-      - SPRING_DATASOURCE_URL=jdbc:postgresql://postgres:5432/tutordb
-      - PSQL_INT_TEST_DB_USERNAME=engineer
-      - PSQL_INT_TEST_DB_PASSWORD=password
-    working_dir: $PWD/backend/
-    volumes:
-      - $PWD:$PWD
-      - ~/.m2:/root/.m2
-    command: mvn -Ptest-int integration-test
-
-  fe-unit-tests:
-    image: node:15.14.0-alpine3.13
-    stop_signal: SIGKILL
-    stdin_open: true
-    tty: true
-    working_dir: $PWD/frontend/
-    volumes:
-      - $PWD:$PWD
-    command: /bin/sh -c "npm install && npm run test:unit"
-
+      VUE_APP_ROOT_API: http://api-gateway:8080

@@ -141,6 +141,8 @@ public class Quiz implements DomainEntity {
         this.qrCodeOnly = qrCodeOnly;
     }
 
+    public boolean isExternalQuiz() { return type == QuizType.EXTERNAL_QUIZ; }
+
     public Integer getCode() {
         return this.code;
     }
@@ -148,8 +150,6 @@ public class Quiz implements DomainEntity {
     public void setCode(Integer code) {
         this.code = code;
     }
-
-    public boolean isExternalQuiz() { return type == QuizType.EXTERNAL_QUIZ; }
 
     public boolean isOneWay() {
         return oneWay;
@@ -339,16 +339,9 @@ public class Quiz implements DomainEntity {
     public void remove() {
         checkCanChange();
 
-        if(this.getType().equals(QuizType.EXTERNAL_QUIZ)) {
+        if (getType().equals(QuizType.EXTERNAL_QUIZ)) {
             throw new TutorException(EXTERNAL_CANNOT_BE_REMOVED);
         }
-
-        this.courseExecution.getQuizzes().remove(this);
-        this.courseExecution = null;
-    }
-
-    public void removeExternal() {
-        checkCanChange();
 
         this.courseExecution.getQuizzes().remove(this);
         this.courseExecution = null;

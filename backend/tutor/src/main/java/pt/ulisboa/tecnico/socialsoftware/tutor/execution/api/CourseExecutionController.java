@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.api;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -12,7 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
+import pt.ulisboa.tecnico.socialsoftware.common.security.token.UserInfo;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TarGZip;
@@ -33,6 +35,9 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.A
 
 @RestController
 public class CourseExecutionController {
+
+    private static final Logger logger = LoggerFactory.getLogger(CourseExecutionController.class);
+
     @Autowired
     private CourseExecutionService courseExecutionService;
 
@@ -92,8 +97,7 @@ public class CourseExecutionController {
 
         Integer userId = ((UserInfo) authentication.getPrincipal()).getId();
 
-        courseExecutionService.addUserToTecnicoCourseExecution(userId, result.getCourseExecutionId());
-
+        courseExecutionService.addUserToActivatedTecnicoCourseExecution(userId, result.getCourseExecutionId());
         return result;
     }
 

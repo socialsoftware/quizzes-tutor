@@ -15,8 +15,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
 

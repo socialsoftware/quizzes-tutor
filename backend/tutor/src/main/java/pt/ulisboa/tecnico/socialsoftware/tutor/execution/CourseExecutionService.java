@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution;
 
-import com.google.common.eventbus.EventBus;
+import io.eventuate.tram.events.publisher.DomainEventPublisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -19,10 +19,10 @@ import pt.ulisboa.tecnico.socialsoftware.common.events.auth.DeleteAuthUserEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.events.execution.AddCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.events.execution.AnonymizeUserEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.events.execution.RemoveCourseExecutionEvent;
+import pt.ulisboa.tecnico.socialsoftware.common.events.execution.RemoveUserFromTecnicoCourseExecutionEvent;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
@@ -36,11 +36,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import java.io.InputStream;
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.COURSE_EXECUTION_AGGREGATE_TYPE;
+import static pt.ulisboa.tecnico.socialsoftware.common.events.EventAggregateTypes.USER_AGGREGATE_TYPE;
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.common.utils.Utils.*;
 
 @Service
 public class CourseExecutionService {
@@ -60,7 +64,7 @@ public class CourseExecutionService {
     private QuestionAnswerItemRepository questionAnswerItemRepository;
 
     @Autowired
-    private EventBus eventBus;
+    private DomainEventPublisher domainEventPublisher;
 
     @Retryable(
             value = { SQLException.class },
@@ -79,7 +83,7 @@ public class CourseExecutionService {
     public List<CourseExecutionDto> getCourseExecutions(Role role) {
         return courseExecutionRepository.findAll().stream()
                 .filter(courseExecution -> role.equals(Role.ADMIN) ||
-                        (role.equals(Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(TutorDemoUtils.COURSE_NAME)))
+                        (role.equals(Role.DEMO_ADMIN) && courseExecution.getCourse().getName().equals(COURSE_NAME)))
                 .map(CourseExecution::getDto)
                 .sorted(Comparator
                         .comparing(CourseExecutionDto::getName)
@@ -104,16 +108,39 @@ public class CourseExecutionService {
     }
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void addUserToTecnicoCourseExecution(Integer userId, int courseExecutionId) {
+    public void addUserToActivatedTecnicoCourseExecution(Integer userId, int courseExecutionId) {
         CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);
         User user = this.userRepository.findById(userId).orElse(null);
 
         if (user != null && courseExecution != null) {
-            courseExecution.addUser(user);
             user.addCourse(courseExecution);
             //Auth subscribes to this event and adds course execution to authUser
             AddCourseExecutionEvent addCourseExecutionEvent = new AddCourseExecutionEvent(userId, courseExecutionId);
-            eventBus.post(addCourseExecutionEvent);
+            domainEventPublisher.publish(COURSE_EXECUTION_AGGREGATE_TYPE, String.valueOf(courseExecutionId),
+                    Collections.singletonList(addCourseExecutionEvent));
+        }
+    }
+
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public void addUserToCourseExecution(Integer userId, int courseExecutionId) {
+        CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);
+        User user = this.userRepository.findById(userId).orElse(null);
+
+        if (user != null && courseExecution != null) {
+            user.addCourse(courseExecution);
+        }
+    }
+
+    public void removeUserFromTecnicoCourseExecution(Integer userId, int courseExecutionId) {
+        CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);
+        User user = this.userRepository.findById(userId).orElse(null);
+
+        if (user != null && courseExecution != null) {
+            user.removeCourse(courseExecution);
+            RemoveUserFromTecnicoCourseExecutionEvent userFromTecnicoCourseExecutionEvent =
+                    new RemoveUserFromTecnicoCourseExecutionEvent(userId, courseExecutionId);
+            domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
+                    Collections.singletonList(userFromTecnicoCourseExecutionEvent));
         }
     }
 
@@ -141,10 +168,11 @@ public class CourseExecutionService {
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
         courseExecution.remove();
-        courseExecutionRepository.delete(courseExecution);
 
         RemoveCourseExecutionEvent removeCourseExecutionEvent = new RemoveCourseExecutionEvent(courseExecutionId);
-        eventBus.post(removeCourseExecutionEvent);
+        domainEventPublisher.publish(COURSE_EXECUTION_AGGREGATE_TYPE, String.valueOf(courseExecutionId),
+                Collections.singletonList(removeCourseExecutionEvent));
+
     }
 
     @Retryable(
@@ -163,7 +191,8 @@ public class CourseExecutionService {
             user.setUsername(null);
 
             AnonymizeUserEvent anonymizeUserEvent = new AnonymizeUserEvent(user.getId(), user.getUsername(), user.getName());
-            eventBus.post(anonymizeUserEvent);
+            domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
+                    Collections.singletonList(anonymizeUserEvent));
         }
     }
 
@@ -223,10 +252,10 @@ public class CourseExecutionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto getDemoCourse() {
-        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElse(null);
+        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(COURSE_ACRONYM, COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElse(null);
 
         if (courseExecution == null) {
-            return createTecnicoCourseExecution(new CourseExecutionDto(TutorDemoUtils.COURSE_NAME, TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM));
+            return createTecnicoCourseExecution(new CourseExecutionDto(COURSE_NAME, COURSE_ACRONYM, COURSE_ACADEMIC_TERM));
         }
         return courseExecution.getDto();
     }
@@ -245,9 +274,9 @@ public class CourseExecutionService {
     }
 
     public CourseExecution getDemoCourseExecution() {
-        return this.courseExecutionRepository.findByFields(TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElseGet(() -> {
-            Course course = getCourse(TutorDemoUtils.COURSE_NAME, CourseType.TECNICO);
-            CourseExecution courseExecution = new CourseExecution(course, TutorDemoUtils.COURSE_ACRONYM, TutorDemoUtils.COURSE_ACADEMIC_TERM, CourseType.TECNICO, DateHandler.now().plusDays(1));
+        return this.courseExecutionRepository.findByFields(COURSE_ACRONYM, COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElseGet(() -> {
+            Course course = getCourse(COURSE_NAME, CourseType.TECNICO);
+            CourseExecution courseExecution = new CourseExecution(course, COURSE_ACRONYM, COURSE_ACADEMIC_TERM, CourseType.TECNICO, DateHandler.now().plusDays(1));
             return courseExecutionRepository.save(courseExecution);
         });
     }
@@ -290,8 +319,9 @@ public class CourseExecutionService {
             user.remove();
             userRepository.delete(user);
 
-            DeleteAuthUserEvent deleteAuthUser = new DeleteAuthUserEvent(id);
-            eventBus.post(deleteAuthUser);
+            DeleteAuthUserEvent deleteAuthUserEvent = new DeleteAuthUserEvent(id);
+            domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
+                    Collections.singletonList(deleteAuthUserEvent));
         }
     }
 
@@ -318,7 +348,30 @@ public class CourseExecutionService {
                 ", courseExecutionRepository=" + courseExecutionRepository +
                 ", userRepository=" + userRepository +
                 ", questionAnswerItemRepository=" + questionAnswerItemRepository +
-                ", eventBus=" + eventBus +
                 '}';
+    }
+
+
+    public void addCourseExecutions(Integer userId, List<CourseExecutionDto> courseExecutionDtoList) {
+        checkCourseExecutionsExist(courseExecutionDtoList);
+        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+
+        addExecutionsToUser(user, courseExecutionDtoList);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void addExecutionsToUser(User user, List<CourseExecutionDto> courseExecutionDtoList) {
+
+        for (CourseExecutionDto dto: courseExecutionDtoList) {
+            CourseExecution courseExecution = courseExecutionRepository.findById(dto.getCourseExecutionId()).get();
+            user.addCourse(courseExecution);
+        }
+    }
+
+    private void checkCourseExecutionsExist(List<CourseExecutionDto> courseExecutionDtoList) {
+        for (CourseExecutionDto dto: courseExecutionDtoList) {
+            courseExecutionRepository.findById(dto.getCourseExecutionId()).
+                    orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
+        }
     }
 }

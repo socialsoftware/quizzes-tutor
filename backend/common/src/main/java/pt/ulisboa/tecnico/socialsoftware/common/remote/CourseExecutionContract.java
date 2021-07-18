@@ -5,5 +5,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDt
 public interface CourseExecutionContract {
     CourseExecutionDto findCourseExecution(Integer courseExecutionId);
 
-    Integer getDemoCourseExecutionId();
+    CourseExecutionDto findCourseExecutionByFields(String acronym, String academicTerm, String type);
+
+    CourseExecutionDto findDemoCourseExecution();
 }

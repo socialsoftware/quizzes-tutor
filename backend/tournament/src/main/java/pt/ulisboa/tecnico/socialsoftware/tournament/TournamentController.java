@@ -1,12 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
-import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
+import pt.ulisboa.tecnico.socialsoftware.common.security.token.UserInfo;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService;
 
@@ -18,6 +20,8 @@ import java.util.Set;
 @RestController
 public class TournamentController {
 
+    private final Logger logger = LoggerFactory.getLogger(TournamentController.class);
+
     @Autowired
     private TournamentProvidedService tournamentProvidedService;
 
@@ -26,8 +30,8 @@ public class TournamentController {
     public TournamentDto createTournament(Principal principal, @Valid @RequestBody TournamentDto tournamentDto, @PathVariable int executionId, @RequestParam Set<Integer> topicsId) {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
         formatDates(tournamentDto);
-
-        return tournamentProvidedService.createTournament(userInfo.getId(), executionId, topicsId, tournamentDto);
+        return tournamentProvidedService.createTournament(userInfo.getId(), executionId, topicsId, tournamentDto,
+                userInfo.getUsername(), userInfo.getName());
     }
 
     @GetMapping(value = "/tournaments/{executionId}/getTournaments")
@@ -59,7 +63,8 @@ public class TournamentController {
     public void joinTournament(Principal principal, @PathVariable int executionId, @PathVariable Integer tournamentId, @RequestParam String password) {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
 
-        tournamentProvidedService.joinTournament(userInfo.getId(), tournamentId, password);
+        tournamentProvidedService.joinTournament(userInfo.getId(), tournamentId, password, userInfo.getUsername(),
+                userInfo.getName());
     }
 
     @PutMapping(value = "/tournaments/{executionId}/solveQuiz/{tournamentId}")

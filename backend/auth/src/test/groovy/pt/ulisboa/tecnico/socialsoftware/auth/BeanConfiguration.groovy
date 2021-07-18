@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.auth
 
-import com.google.common.eventbus.EventBus
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.context.annotation.Bean
@@ -13,17 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.auth.services.local.AuthUserProvidedSer
 import pt.ulisboa.tecnico.socialsoftware.auth.services.local.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthUserRequiredService
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Mailer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
-import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 
 @TestConfiguration
 @PropertySource("classpath:application-test.properties")
@@ -53,20 +41,6 @@ class BeanConfiguration {
     @Value('${spring.mail.properties.mail.debug}')
     private String debug
 
-    @Bean
-    AnswersXmlImport answersXmlImport() {
-        return new AnswersXmlImport()
-    }
-
-    @Bean
-    QuizService quizService() {
-        return new QuizService()
-    }
-
-    @Bean
-    AnswerService answerService() {
-        return new AnswerService()
-    }
 
     @Bean
     AuthUserProvidedService authUserService() {
@@ -79,11 +53,6 @@ class BeanConfiguration {
     }
 
     @Bean
-    UserService userService() {
-        return new UserService()
-    }
-
-    @Bean
     UserApplicationalService userServiceApplicational() {
         return new UserApplicationalService()
     }
@@ -91,41 +60,6 @@ class BeanConfiguration {
     @Bean
     PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder()
-    }
-
-    @Bean
-    QuestionService questionService() {
-        return new QuestionService()
-    }
-
-    @Bean
-    CourseExecutionService courseExecutionService() {
-        return new CourseExecutionService()
-    }
-
-    @Bean
-    TopicService topicService() {
-        return new TopicService()
-    }
-
-    @Bean
-    AssessmentService assessmentService() {
-        return new AssessmentService()
-    }
-
-    @Bean
-    DiscussionService discussionService() {
-        return new DiscussionService()
-    }
-
-    @Bean
-    QuestionSubmissionService questionSubmissionService() {
-        return new QuestionSubmissionService()
-    }
-
-    @Bean
-    TutorDemoUtils demoUtils() {
-        return new TutorDemoUtils();
     }
 
     @Bean
@@ -149,10 +83,5 @@ class BeanConfiguration {
         props.put("mail.debug", debug);
 
         return mailSender;
-    }
-
-    @Bean
-    EventBus eventBus() {
-        return new EventBus()
     }
 }

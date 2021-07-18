@@ -6,7 +6,7 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.discussion.ReplyDto;
-import pt.ulisboa.tecnico.socialsoftware.common.security.UserInfo;
+import pt.ulisboa.tecnico.socialsoftware.common.security.token.UserInfo;
 
 import javax.validation.Valid;
 import java.security.Principal;
@@ -24,7 +24,6 @@ public class DiscussionController {
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')")
     public List<DiscussionDto> getDiscussionsByUserId(Principal principal, @PathVariable int courseExecutionId) {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
-
         return this.discussionService.findByCourseExecutionIdAndUserId(courseExecutionId, userInfo.getId());
     }
 
@@ -68,6 +67,7 @@ public class DiscussionController {
     @PreAuthorize("(hasRole('ROLE_TEACHER') and hasPermission(#discussionId, 'DISCUSSION.ACCESS')) or (hasRole('ROLE_STUDENT') and hasPermission(#discussionId, 'DISCUSSION.OWNER'))")
     public ReplyDto addReply(Principal principal, @Valid @RequestBody ReplyDto reply, @PathVariable int discussionId) {
         UserInfo userInfo = (UserInfo) ((Authentication) principal).getPrincipal();
-        return discussionApplicationalService.addReply(userInfo.getId(), userInfo.getRole(), discussionId, reply);
-    }
+        return discussionApplicationalService.addReply(userInfo.getId(),
+                userInfo.getRole(), discussionId, reply);
+     }
 }

@@ -5,6 +5,7 @@ import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
@@ -12,12 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 
 @Component
 public class TutorDemoUtils {
-    public static final String COURSE_NAME = "Demo Course";
-    public static final String COURSE_ACRONYM = "DemoCourse";
-    public static final String COURSE_ACADEMIC_TERM = "1st Semester";
-    public static final String STUDENT_USERNAME = "demo-student";
-    public static final String TEACHER_USERNAME = "demo-teacher";
-    public static final String ADMIN_USERNAME = "demo-admin";
 
     @Autowired
     private UserService userService;
@@ -39,6 +34,9 @@ public class TutorDemoUtils {
 
     @Autowired
     private DiscussionService discussionService;
+
+    @Autowired
+    private CourseExecutionService courseExecutionService;
 
 
     public void resetDemoInfo() {

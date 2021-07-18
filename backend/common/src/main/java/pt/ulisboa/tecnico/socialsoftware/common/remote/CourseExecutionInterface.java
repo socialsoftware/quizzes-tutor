@@ -7,18 +7,18 @@ import org.springframework.web.client.RestTemplate;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.RemoteAccessException;
 
-public class CourseExecutionInterface implements CourseExecutionContract{
+public class CourseExecutionInterface implements CourseExecutionContract {
     private static final Logger logger = LoggerFactory.getLogger(CourseExecutionInterface.class);
 
-    private static final String ENDPOINT = "http://localhost:8080";
+    private static final String ENDPOINT = "http://tutor-service:8084";
 
     @Override
     public CourseExecutionDto findCourseExecution(Integer courseExecutionId) {
         logger.info("findCourseExecution id:{}", courseExecutionId);
         RestTemplate restTemplate = new RestTemplate();
         try {
-            CourseExecutionDto courseExecutionDto = restTemplate.postForObject(ENDPOINT + "rest/execution/find?courseExecutionId=" + courseExecutionId,
-                    null, CourseExecutionDto.class);
+            CourseExecutionDto courseExecutionDto = restTemplate.getForObject(ENDPOINT + "/rest/execution/find?courseExecutionId=" + courseExecutionId,
+                    CourseExecutionDto.class);
             logger.info("CourseExecutionDto: {}", courseExecutionDto);
             return courseExecutionDto;
         } catch (HttpClientErrorException e) {
@@ -31,18 +31,33 @@ public class CourseExecutionInterface implements CourseExecutionContract{
     }
 
     @Override
-    public Integer getDemoCourseExecutionId() {
-        return null;
+    public CourseExecutionDto findCourseExecutionByFields(String acronym, String academicTerm, String type) {
+        logger.info("findCourseExecutionByFields");
+        RestTemplate restTemplate = new RestTemplate();
+        try {
+            CourseExecutionDto courseExecutionDto = restTemplate.getForObject(ENDPOINT + "/rest/execution/findByFields?acronym="
+                            + acronym + "&academicTerm=" + academicTerm + "&type=" + type,
+                    CourseExecutionDto.class);
+            logger.info("findCourseExecutionByFields: {}", courseExecutionDto);
+            return courseExecutionDto;
+        } catch (HttpClientErrorException e) {
+            logger.info("findCourseExecutionByFields HttpClientErrorException errorMessage:{}", e.getMessage());
+            throw e;
+        } catch (Exception e) {
+            logger.info("findCourseExecutionByFields Exception errorMessage:{}", e.getMessage());
+            throw new RemoteAccessException();
+        }
     }
 
-    public Integer findDemoCourseExecution() {
+    @Override
+    public CourseExecutionDto findDemoCourseExecution() {
         logger.info("findDemoCourseExecution");
         RestTemplate restTemplate = new RestTemplate();
         try {
-            Integer demoCourseExecutionId = restTemplate.postForObject(ENDPOINT + "rest/execution/demo",
-                    null, Integer.class);
-            logger.info("findDemoCourseExecution: {}", demoCourseExecutionId);
-            return demoCourseExecutionId;
+            CourseExecutionDto demoCourseExecution = restTemplate.getForObject(ENDPOINT + "/rest/execution/demo",
+                    CourseExecutionDto.class);
+            logger.info("findDemoCourseExecution: {}", demoCourseExecution);
+            return demoCourseExecution;
         } catch (HttpClientErrorException e) {
             logger.info("findDemoCourseExecution HttpClientErrorException errorMessage:{}", e.getMessage());
             throw e;

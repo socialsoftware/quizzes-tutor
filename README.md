@@ -88,40 +88,28 @@ Students can then answer those questions in sugested quizzes or generated quizze
 
 # Installation
 
+This system can only run with Docker Compose due to Eventuate CDC Service. Our Docker build uses an image of this service to be able to process Eventuate transactional messaging, events and sagas:
+
 * **Install**
 ```
 sudo apt update && sudo apt upgrade
 sudo apt install openjdk-11-jdk postgresql
 ```
-* **Start db, change to postgres user and create DB**
-```
-sudo service postgresql start
-sudo su -l postgres
-dropdb tutordb
-createdb tutordb
-```
-* **Create user to access db**
-```
-psql tutordb
-CREATE USER your-username WITH SUPERUSER LOGIN PASSWORD 'yourpassword';
-\q
-exit
-```
 * **Go to [API Service Agreement](https://fenix.tecnico.ulisboa.pt/personal/external-applications/api-service-agreement) and then to [Applications](https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications)  and create an application that redirects to http://localhost:8081/login and accessess curricular and information**
 * **Rename `backend/src/main/resources/application-dev.properties.example` to `application-dev.properties` and fill its fields**
-* **Run server**
+* **Rename `frontend/example.env` to `.env` and fill its fields**
+* **Generate service jars**
 ```
 cd backend
-sh start-tutor.sh
+mvn clean package
 ```
-* **See documentation on http://localhost:8080/swagger-ui.html**
-* **Rename `frontend/example.env` to `.env` and fill its fields**
-* **Run frontend**
+* **Build docker images and run**
 ```
-cd frontend
-npm i
-npm start
+cd ..
+docker-compose build
+docker-compose up
 ```
+* **See documentation on http://localhost:[service port]/swagger-ui.html**
 * **Access http://localhost:8081**
 
 # Patreons
