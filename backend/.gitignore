@@ -26,9 +26,6 @@ HELP.md
 /build/
 
 
-application-dev.properties
-application-prod.properties
-
 ### images location ###
 /src/main/resources/static/images/questions/
 /src/main/resources/static/load/

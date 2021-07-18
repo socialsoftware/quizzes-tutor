@@ -1,0 +1,63 @@
+package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain
+
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
+import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
+
+@DataJpaTest
+class RemoveTest extends SpockTest {
+    def user
+
+    def setup() {
+        user = new User(USER_1_NAME, USER_1_USERNAME, Role.STUDENT)
+        user.setActive(false)
+        userRepository.save(user)
+    }
+
+    def "remove inactive user from course executions" (){
+        given:
+        def course = new Course(COURSE_2_NAME, CourseType.TECNICO)
+        courseRepository.save(course)
+        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, CourseType.TECNICO, LOCAL_DATE_TOMORROW)
+        courseExecutionRepository.save(courseExecution)
+        user.addCourse(courseExecution)
+        def previousNumberOfUsers = courseExecution.getUsers().size()
+
+        when:
+        user.remove()
+
+        then:
+        courseExecution.getUsers().size() == previousNumberOfUsers - 1
+    }
+
+    def "remove active user from course executions" (){
+        given:
+        user.setActive(true)
+        and:
+        def course = new Course(COURSE_2_NAME, CourseType.TECNICO)
+        courseRepository.save(course)
+        def courseExecution = new CourseExecution(course, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, CourseType.TECNICO, LOCAL_DATE_TOMORROW)
+        courseExecutionRepository.save(courseExecution)
+        user.addCourse(courseExecution)
+        def previousNumberOfUsers = courseExecution.getUsers().size()
+
+        when:
+        user.remove()
+
+        then:
+        def error = thrown(TutorException)
+        error.getErrorMessage() == ErrorMessage.USER_IS_ACTIVE
+        and:
+        courseExecution.getUsers().size() == previousNumberOfUsers
+    }
+
+    @TestConfiguration
+    static class LocalBeanConfiguration extends BeanConfiguration { }
+}

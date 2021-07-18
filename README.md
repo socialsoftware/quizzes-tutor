@@ -112,7 +112,7 @@ exit
 * **Run server**
 ```
 cd backend
-mvn clean spring-boot:run
+sh start-tutor.sh
 ```
 * **See documentation on http://localhost:8080/swagger-ui.html**
 * **Rename `frontend/example.env` to `.env` and fill its fields**

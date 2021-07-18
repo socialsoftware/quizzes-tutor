@@ -1,6 +1,7 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<project
+        xmlns="http://maven.apache.org/POM/4.0.0"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
     <parent>
         <groupId>org.springframework.boot</groupId>
@@ -9,26 +10,22 @@
         <relativePath/>
     </parent>
     <groupId>pt.ulisboa.tecnico.socialsoftware</groupId>
-    <artifactId>quizzes-tutor-backend</artifactId>
-    <version>0.0.1-SNAPSHOT</version>
+    <artifactId>backend</artifactId>
+    <packaging>pom</packaging>
+    <version>1.0-SNAPSHOT</version>
     <name>Quizzes Tutor Backend</name>
     <description>Tutor System for the Software Architecture Course</description>
-
-    <packaging>jar</packaging>
-
     <repositories>
         <repository>
             <id>fenix-ashes-maven-repository</id>
             <url>https://repo.fenixedu.org/fenixedu-maven-repository</url>
         </repository>
     </repositories>
-
     <properties>
         <java.version>11</java.version>
         <maven.compiler.source>11</maven.compiler.source>
         <maven.compiler.target>11</maven.compiler.target>
     </properties>
-
     <!-- Allows multiple properties files-->
     <profiles>
         <profile>
@@ -159,7 +156,6 @@
             </build>
         </profile>
     </profiles>
-
     <dependencies>
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -202,7 +198,6 @@
             <artifactId>spring-boot-configuration-processor</artifactId>
             <optional>true</optional>
         </dependency>
-
         <!-- Access Control -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -213,21 +208,18 @@
             <artifactId>spring-security-test</artifactId>
             <scope>test</scope>
         </dependency>
-
         <!-- Postgres -->
         <dependency>
             <groupId>org.postgresql</groupId>
             <artifactId>postgresql</artifactId>
             <scope>runtime</scope>
         </dependency>
-
         <!-- In memory database for tests -->
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
             <version>1.4.200</version>
         </dependency>
-
         <!-- Swagger -->
         <dependency>
             <groupId>org.springdoc</groupId>
@@ -239,7 +231,6 @@
             <artifactId>swagger-ui</artifactId>
             <version>3.50.0</version>
         </dependency>
-
         <!-- Fenix -->
         <dependency>
             <groupId>org.fenixedu</groupId>
@@ -251,7 +242,6 @@
             <artifactId>feaf4j-okhttp</artifactId>
             <version>2.3.1</version>
         </dependency>
-
         <!-- https://www.baeldung.com/spring-retry -->
         <dependency>
             <groupId>org.springframework.retry</groupId>
@@ -261,7 +251,6 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-aspects</artifactId>
         </dependency>
-
         <!-- For Working with Json Web Tokens (JWT) -->
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
@@ -280,9 +269,8 @@
             <version>0.11.2</version>
             <scope>runtime</scope>
         </dependency>
-
         <!-- Import/Export -->
-         <dependency>
+        <dependency>
             <groupId>jaxen</groupId>
             <artifactId>jaxen</artifactId>
         </dependency>
@@ -295,7 +283,6 @@
             <artifactId>commons-io</artifactId>
             <version>2.9.0</version>
         </dependency>
-
         <!-- Spock testing framework -->
         <dependency>
             <groupId>org.spockframework</groupId>
@@ -314,7 +301,6 @@
             <artifactId>http-builder</artifactId>
             <version>0.7.1</version>
         </dependency>
-
         <!-- Specific Groovy version rather than the one specified by spock-core -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
@@ -327,7 +313,6 @@
             <version>3.0.8</version>
             <type>pom</type>
         </dependency>
-
         <!-- Enables mocking of classes without default constructor (together with CGLIB) -->
         <dependency>
             <groupId>org.objenesis</groupId>
@@ -335,29 +320,32 @@
             <version>3.1</version>
             <scope>test</scope>
         </dependency>
-
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
             <version>1.20</version>
         </dependency>
-
+        <!-- Google Guava (events)-->
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>30.1-jre</version>
+        </dependency>
     </dependencies>
-
-    <build>
-        <plugins>
-            <plugin>
-                <groupId>org.springframework.boot</groupId>
-                <artifactId>spring-boot-maven-plugin</artifactId>
-            </plugin>
-            <plugin>
-                <groupId>org.apache.maven.plugins</groupId>
-                <artifactId>maven-compiler-plugin</artifactId>
-                <configuration>
-                    <source>11</source>
-                    <target>11</target>
-                </configuration>
-            </plugin>
-        </plugins>
-    </build>
+    <modules>
+        <module>tutor</module>
+        <module>tournament</module>
+        <module>apigateway</module>
+        <module>answer</module>
+        <module>common</module>
+        <module>discussion</module>
+        <module>execution</module>
+        <module>impexp</module>
+        <module>question</module>
+        <module>questionsubmission</module>
+        <module>quiz</module>
+        <module>statistics</module>
+        <module>user</module>
+        <module>auth</module>
+    </modules>
 </project>
