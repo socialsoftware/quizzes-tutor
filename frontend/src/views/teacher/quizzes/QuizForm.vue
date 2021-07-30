@@ -94,175 +94,219 @@
         </v-row>
       </v-container>
 
-      <v-data-table
-        :headers="headers"
-        :custom-filter="customFilter"
-        :custom-sort="customSort"
-        :items="questions"
-        :search="search"
-        :sort-by="['sequence']"
-        :sort-desc="[false]"
-        :mobile-breakpoint="0"
-        must-sort
-        :items-per-page="15"
-        :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-      >
-        <template v-slot:top>
-          <v-container fluid>
-            <v-row>
-              <v-col>
-                <v-text-field v-model="search" label="Search" class="mx-4" />
-              </v-col>
-              <v-col>
-                <v-btn
-                  v-if="quizQuestions.length !== 0"
-                  color="primary"
-                  dark
-                  @click="openShowQuiz"
-                  >Show Quiz</v-btn
-                >
-              </v-col>
-            </v-row>
-          </v-container>
-        </template>
-
-        <template v-slot:[`item.title`]="{ item }">
-          <div
-            @click="showQuestionDialog(item)"
-            @contextmenu="rightClickEditQuestion($event, item)"
-            class="clickableTitle"
+      <v-card>
+        <v-card-title>
+          Quiz
+          <v-spacer></v-spacer>
+          <v-btn
+            v-if="quizQuestions.length !== 0"
+            color="primary"
+            dark
+            @click="openShowQuiz"
+            >Show Quiz</v-btn
           >
-            {{ item.title }}
-          </div>
-        </template>
+        </v-card-title>
 
-        <template v-slot:[`item.topics`]="{ item }">
-          <span v-for="topic in item.topics" :key="topic.id">
-            {{ topic.name }}
-          </span>
-        </template>
+        <v-data-table
+          :headers="headers"
+          :custom-filter="customFilter"
+          :custom-sort="customSort"
+          :items="quizQuestions"
+          :sort-by="['sequence']"
+          :sort-desc="[false]"
+          :mobile-breakpoint="0"
+          must-sort
+          :items-per-page="15"
+          :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+        >
+          <template v-slot:[`item.title`]="{ item }">
+            <div @click="showQuestionDialog(item)" class="clickableTitle">
+              {{ item.title }}
+            </div>
+          </template>
 
-        <template v-slot:[`item.action`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-icon
-                class="mr-2 action-button"
-                v-on="on"
-                @click="showQuestionDialog(item)"
-              >
-                visibility</v-icon
-              >
-            </template>
-            <span>Show Question</span>
-          </v-tooltip>
-          <v-tooltip bottom v-if="!item.sequence">
-            <template v-slot:activator="{ on }">
-              <v-icon
-                id="addToQuizButton1"
-                class="mr-2 action-button"
-                v-on="on"
-                @click="addToQuiz(item)"
-                data-cy="addToQuizButton"
-              >
-                add</v-icon
-              >
-            </template>
-            <span>Add to Quiz</span>
-          </v-tooltip>
-          <div v-if="item.sequence" :key="item.sequence">
+          <template v-slot:[`item.topics`]="{ item }">
+            <span v-for="topic in item.topics" :key="topic.id">
+              {{ topic.name }}
+            </span>
+          </template>
+
+          <template v-slot:[`item.action`]="{ item }">
             <v-tooltip bottom>
               <template v-slot:activator="{ on }">
                 <v-icon
                   class="mr-2 action-button"
                   v-on="on"
-                  @click="removeFromQuiz(item)"
+                  @click="showQuestionDialog(item)"
                 >
-                  remove</v-icon
-                >
-              </template>
-              <span>Remove from Quiz</span>
-            </v-tooltip>
-            <v-tooltip bottom v-if="item.sequence !== 1">
-              <template v-slot:activator="{ on }">
-                <v-icon
-                  class="mr-2 action-button"
-                  v-on="on"
-                  @click="changeQuestionPosition(item, 0)"
-                >
-                  mdi-chevron-double-up</v-icon
+                  visibility</v-icon
                 >
               </template>
-              <span>Move to first</span>
+              <span>Show Question</span>
             </v-tooltip>
-            <v-tooltip bottom v-if="item.sequence !== 1">
-              <template v-slot:activator="{ on }">
-                <v-icon
-                  class="mr-2 action-button"
-                  v-on="on"
-                  @click="
-                    changeQuestionPosition(
-                      item,
-                      quizQuestions.indexOf(item) - 1
-                    )
-                  "
-                >
-                  mdi-chevron-up</v-icon
-                >
-              </template>
-              <span>Move up</span>
-            </v-tooltip>
-            <v-tooltip bottom v-if="quizQuestions.length > 1">
-              <template v-slot:activator="{ on }">
-                <v-icon
-                  class="mr-2 action-button"
-                  v-on="on"
-                  @click="openSetPosition(item)"
-                >
-                  mdi-weather-sunny</v-icon
-                >
-              </template>
-              <span>Set Position</span>
-            </v-tooltip>
-            <v-tooltip bottom v-if="item.sequence !== quizQuestions.length">
-              <template v-slot:activator="{ on }">
-                <v-icon
-                  class="mr-2 action-button"
-                  v-on="on"
-                  @click="
-                    changeQuestionPosition(
-                      item,
-                      quizQuestions.indexOf(item) + 1
-                    )
-                  "
-                >
-                  mdi-chevron-down</v-icon
-                >
-              </template>
-              <span>Move down</span>
-            </v-tooltip>
-            <v-tooltip bottom v-if="item.sequence !== quizQuestions.length">
-              <template v-slot:activator="{ on }">
-                <v-icon
-                  class="mr-2 action-button"
-                  v-on="on"
-                  @click="
-                    changeQuestionPosition(item, quizQuestions.length - 1)
-                  "
-                >
-                  mdi-chevron-double-down</v-icon
-                >
-              </template>
-              <span>Move to last</span>
-            </v-tooltip>
-          </div>
-        </template>
-      </v-data-table>
+            <div v-if="item.sequence">
+              <v-tooltip bottom>
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    class="mr-2 action-button"
+                    v-on="on"
+                    @click="removeFromQuiz(item)"
+                  >
+                    remove</v-icon
+                  >
+                </template>
+                <span>Remove from Quiz</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="item.sequence !== 1">
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    class="mr-2 action-button"
+                    v-on="on"
+                    @click="changeQuestionPosition(item, 0)"
+                  >
+                    mdi-chevron-double-up</v-icon
+                  >
+                </template>
+                <span>Move to first</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="item.sequence !== 1">
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    class="mr-2 action-button"
+                    v-on="on"
+                    @click="
+                      changeQuestionPosition(
+                        item,
+                        quizQuestions.indexOf(item) - 1
+                      )
+                    "
+                  >
+                    mdi-chevron-up</v-icon
+                  >
+                </template>
+                <span>Move up</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="quizQuestions.length > 1">
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    class="mr-2 action-button"
+                    v-on="on"
+                    @click="openSetPosition(item)"
+                  >
+                    mdi-weather-sunny</v-icon
+                  >
+                </template>
+                <span>Set Position</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="item.sequence !== quizQuestions.length">
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    class="mr-2 action-button"
+                    v-on="on"
+                    @click="
+                      changeQuestionPosition(
+                        item,
+                        quizQuestions.indexOf(item) + 1
+                      )
+                    "
+                  >
+                    mdi-chevron-down</v-icon
+                  >
+                </template>
+                <span>Move down</span>
+              </v-tooltip>
+              <v-tooltip bottom v-if="item.sequence !== quizQuestions.length">
+                <template v-slot:activator="{ on }">
+                  <v-icon
+                    class="mr-2 action-button"
+                    v-on="on"
+                    @click="
+                      changeQuestionPosition(item, quizQuestions.length - 1)
+                    "
+                  >
+                    mdi-chevron-double-down</v-icon
+                  >
+                </template>
+                <span>Move to last</span>
+              </v-tooltip>
+            </div>
+          </template>
+        </v-data-table>
+      </v-card>
 
-      <footer>
-        <v-icon class="mr-2 action-button">mouse</v-icon> Left-click on title to
-        view question. <v-icon class="mr-2 action-button">mouse</v-icon>Right
-        -click on title to edit question.
-      </footer>
+      <v-card>
+        <v-card-title>
+          Available Questions
+          <v-spacer></v-spacer>
+          <v-text-field
+            v-model="search"
+            append-icon="mdi-magnify"
+            label="Search"
+            single-line
+            hide-details
+          ></v-text-field>
+          <v-spacer></v-spacer>
+          <v-btn
+            color="primary"
+            dark
+            @click="queryQuestions"
+            data-cy="queryQuestions"
+            >Query Questions</v-btn
+          >
+        </v-card-title>
+        <v-data-table
+          :headers="
+            headers.filter((v, i) => i !== 0 && i !== headers.length - 1)
+          "
+          :custom-filter="customFilter"
+          :items="questions"
+          :search="search"
+          :mobile-breakpoint="0"
+          :items-per-page="15"
+          :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+        >
+          <template v-slot:[`item.title`]="{ item }">
+            <div @click="showQuestionDialog(item)" class="clickableTitle">
+              {{ item.title }}
+            </div>
+          </template>
+
+          <template v-slot:[`item.topics`]="{ item }">
+            <span v-for="topic in item.topics" :key="topic.id">
+              {{ topic.name }}
+            </span>
+          </template>
+
+          <template v-slot:[`item.action`]="{ item }">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ on }">
+                <v-icon
+                  class="mr-2 action-button"
+                  v-on="on"
+                  @click="showQuestionDialog(item)"
+                >
+                  visibility</v-icon
+                >
+              </template>
+              <span>Show Question</span>
+            </v-tooltip>
+            <v-tooltip bottom v-if="!item.sequence">
+              <template v-slot:activator="{ on }">
+                <v-icon
+                  id="addToQuizButton1"
+                  class="mr-2 action-button"
+                  v-on="on"
+                  @click="addToQuiz(item)"
+                  data-cy="addToQuizButton"
+                >
+                  add</v-icon
+                >
+              </template>
+              <span>Add to Quiz</span>
+            </v-tooltip>
+          </template>
+        </v-data-table>
+      </v-card>
     </v-card-text>
 
     <show-quiz-dialog
@@ -314,29 +358,29 @@ Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 export default class QuizForm extends Vue {
   @Prop(Quiz) readonly quiz!: Quiz;
   @Prop(Boolean) readonly editMode!: boolean;
+  quizQuestions: Question[] = [];
   questions: Question[] = [];
   search: string = '';
   currentQuestion: Question | null | undefined = null;
-  quizQuestions: Question[] = [];
   position: number | null = null;
 
   positionDialog: boolean = false;
   questionDialog: boolean = false;
   quizDialog: boolean = false;
 
-  headers: object = [
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'left',
-      width: '5px',
-      sortable: false,
-    },
+  headers: object[] = [
     {
       text: 'Sequence',
       value: 'sequence',
       align: 'center',
       width: '5px',
+    },
+    {
+      text: 'Actions',
+      value: 'action',
+      align: 'left',
+      width: '250px',
+      sortable: false,
     },
     {
       text: 'Title',
@@ -359,10 +403,21 @@ export default class QuizForm extends Vue {
     },
   ];
 
-  async created() {
+  async queryQuestions() {
+    let quizQuestionIds: number[] = [];
+    if (this.quiz && this.quiz.questions) {
+      this.quizQuestions.forEach((quizQuestion) => {
+        if (quizQuestion.id) quizQuestionIds.push(quizQuestion.id);
+      });
+    }
+
     await this.$store.dispatch('loading');
     try {
       this.questions = await RemoteServices.getAvailableQuestions();
+
+      this.questions = this.questions.filter(
+        (question) => question.id && !quizQuestionIds.includes(question.id)
+      );
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -371,27 +426,12 @@ export default class QuizForm extends Vue {
 
   @Watch('quiz')
   onQuizChange() {
-    let questionIds: number[] = [];
-    if (this.quiz && this.quiz.questions) {
-      this.quiz.questions.forEach((question) => {
-        if (!this.quizQuestions.includes(question) && question.id) {
-          questionIds.push(question.id);
-        }
+    if (this.quiz) {
+      this.quiz.questions.forEach((question, index) => {
+        question.sequence = index + 1;
+        this.quizQuestions.push(question);
       });
     }
-
-    this.questions.forEach((question) => {
-      if (
-        question.id &&
-        questionIds.includes(question.id) &&
-        !this.quizQuestions
-          .map((quizQuestion) => quizQuestion.id)
-          .includes(question.id)
-      ) {
-        question.sequence = questionIds.indexOf(question.id) + 1;
-        this.quizQuestions.push(question);
-      }
-    });
   }
 
   get canSave(): boolean {
@@ -404,7 +444,7 @@ export default class QuizForm extends Vue {
   }
 
   switchMode() {
-    this.cleanQuizQuestions();
+    this.clean();
     this.$emit('switchMode');
   }
 
@@ -412,7 +452,7 @@ export default class QuizForm extends Vue {
     try {
       this.quiz.questions = this.quizQuestions;
       let updatedQuiz = await RemoteServices.saveQuiz(this.quiz);
-      this.cleanQuizQuestions();
+      this.clean();
       this.$emit('updateQuiz', updatedQuiz);
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -472,6 +512,8 @@ export default class QuizForm extends Vue {
   addToQuiz(question: Question) {
     question.sequence = this.quizQuestions.length + 1;
     this.quizQuestions.push(question);
+    let index: number = this.questions.indexOf(question);
+    this.questions.splice(index, 1);
   }
 
   removeFromQuiz(question: Question) {
@@ -483,6 +525,7 @@ export default class QuizForm extends Vue {
       .forEach((question, index) => {
         question.sequence = index + 1;
       });
+    this.questions.push(question);
   }
 
   openSetPosition(question: Question) {
@@ -529,11 +572,12 @@ export default class QuizForm extends Vue {
     }
   }
 
-  cleanQuizQuestions() {
+  clean() {
     this.quizQuestions.forEach((question) => {
       question.sequence = null;
     });
     this.quizQuestions = [];
+    this.questions = [];
   }
 
   openShowQuiz() {

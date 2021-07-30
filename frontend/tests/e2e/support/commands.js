@@ -429,6 +429,7 @@ Cypress.Commands.add(
     cy.get('[data-cy="quizzesTeacherMenuButton"]').click();
 
     cy.get('[data-cy="newQuizButton"]').click();
+    cy.get('[data-cy="queryQuestions"]').click();
     cy.get('[data-cy="quizTitleTextArea"]').type(quizTitle);
 
     cy.get('#availableDateInput-input').click();
@@ -441,7 +442,7 @@ Cypress.Commands.add(
       .should('have.length', 1)
       .parent()
       .children()
-      .should('have.length', 5)
+      .should('have.length', 3)
       .find('[data-cy="addToQuizButton"]')
       .click();
 
@@ -450,7 +451,7 @@ Cypress.Commands.add(
       .should('have.length', 1)
       .parent()
       .children()
-      .should('have.length', 5)
+      .should('have.length', 3)
       .find('[data-cy="addToQuizButton"]')
       .click();
 
