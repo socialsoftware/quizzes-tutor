@@ -120,7 +120,11 @@
           :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
         >
           <template v-slot:[`item.title`]="{ item }">
-            <div @click="showQuestionDialog(item)" class="clickableTitle">
+            <div
+              @click="showQuestionDialog(item)"
+              @contextmenu="editQuestion(item, $event)"
+              class="clickableTitle"
+            >
               {{ item.title }}
             </div>
           </template>
@@ -266,7 +270,11 @@
           :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
         >
           <template v-slot:[`item.title`]="{ item }">
-            <div @click="showQuestionDialog(item)" class="clickableTitle">
+            <div
+              @click="showQuestionDialog(item)"
+              @contextmenu="editQuestion(item, $event)"
+              class="clickableTitle"
+            >
               {{ item.title }}
             </div>
           </template>
@@ -306,6 +314,12 @@
             </v-tooltip>
           </template>
         </v-data-table>
+        <footer>
+          <v-icon class="mr-2 action-button">mouse</v-icon>Left-click on
+          question's title to view it.
+          <v-icon class="mr-2 action-button">mouse</v-icon>Right-click on
+          question's title to edit it.
+        </footer>
       </v-card>
     </v-card-text>
 
@@ -334,6 +348,12 @@
       :question="currentQuestion"
       v-on:close-show-question-dialog="onCloseShowQuestionDialog"
     />
+    <edit-question-dialog
+      v-if="currentQuestion && editQuestionDialog"
+      v-model="editQuestionDialog"
+      :question="currentQuestion"
+      v-on:save-question="onSaveQuestion"
+    />
   </v-card>
 </template>
 
@@ -342,6 +362,7 @@ import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import { Quiz } from '@/models/management/Quiz';
 import Question from '@/models/management/Question';
+import EditQuestionDialog from '@/views/teacher/questions/EditQuestionDialog.vue';
 import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
@@ -352,6 +373,7 @@ Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 @Component({
   components: {
     'show-question-dialog': ShowQuestionDialog,
+    'edit-question-dialog': EditQuestionDialog,
     'show-quiz-dialog': ShowQuizDialog,
   },
 })
@@ -366,6 +388,7 @@ export default class QuizForm extends Vue {
 
   positionDialog: boolean = false;
   questionDialog: boolean = false;
+  editQuestionDialog: boolean = false;
   quizDialog: boolean = false;
 
   headers: object[] = [
@@ -507,6 +530,31 @@ export default class QuizForm extends Vue {
   onCloseShowQuestionDialog() {
     this.currentQuestion = null;
     this.questionDialog = false;
+  }
+
+  editQuestion(question: Question, e?: Event) {
+    if (e) e.preventDefault();
+    this.currentQuestion = question;
+    this.editQuestionDialog = true;
+  }
+
+  async onSaveQuestion(question: Question) {
+    if (this.questions.find((q) => q.id !== question.id)) {
+      this.questions = this.questions.filter((q) => q.id !== question.id);
+      this.questions.unshift(question);
+    } else {
+      let quizQuestion = this.quizQuestions.find((q) => q.id == question.id);
+      if (quizQuestion) {
+        this.quizQuestions = this.quizQuestions.filter(
+          (q) => q.id !== question.id
+        );
+        question.sequence = quizQuestion.sequence;
+        this.quizQuestions.unshift(question);
+      }
+    }
+
+    this.editQuestionDialog = false;
+    this.currentQuestion = null;
   }
 
   addToQuiz(question: Question) {
