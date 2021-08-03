@@ -14,7 +14,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 
-
 @PropertySource({ "classpath:application.properties" })
 @EnableJpaRepositories
 @EnableTransactionManagement
