@@ -26,7 +26,6 @@ public class CodeOrderQuestion extends QuestionDetails {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails", fetch = FetchType.LAZY, orphanRemoval = true)
     private final List<CodeOrderSlot> codeOrderSlots = new ArrayList<>();
 
-
     public CodeOrderQuestion() {
         super();
     }
@@ -89,7 +88,6 @@ public class CodeOrderQuestion extends QuestionDetails {
         setLanguage(questionDetails.getLanguage());
         setCodeOrderSlots(questionDetails.getCodeOrderSlots());
     }
-
 
     @Override
     public CorrectAnswerDetailsDto getCorrectAnswerDetailsDto() {

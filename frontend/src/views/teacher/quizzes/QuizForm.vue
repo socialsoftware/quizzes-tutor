@@ -238,6 +238,12 @@
         </v-data-table>
       </v-card>
 
+      <query-question-form
+        v-show="showQueryForm"
+        :availableOnly="true"
+        v-on:query-questions="onQueryQuestions"
+      />
+
       <v-card>
         <v-card-title>
           Available Questions
@@ -253,9 +259,9 @@
           <v-btn
             color="primary"
             dark
-            @click="queryQuestions"
-            data-cy="queryQuestions"
-            >Query Questions</v-btn
+            v-on:click="showQueryForm = !showQueryForm"
+          >
+            {{ !showQueryForm ? 'Open Query Form' : 'Close Query Form' }}</v-btn
           >
         </v-card-title>
         <v-data-table
@@ -367,11 +373,13 @@ import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
 import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
 import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
+import QueryQuestionForm from '@/views/teacher/questions/QueryQuestionForm.vue';
 
 Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
 
 @Component({
   components: {
+    'query-question-form': QueryQuestionForm,
     'show-question-dialog': ShowQuestionDialog,
     'edit-question-dialog': EditQuestionDialog,
     'show-quiz-dialog': ShowQuizDialog,
@@ -390,6 +398,8 @@ export default class QuizForm extends Vue {
   questionDialog: boolean = false;
   editQuestionDialog: boolean = false;
   quizDialog: boolean = false;
+
+  showQueryForm: boolean = true;
 
   headers: object[] = [
     {
@@ -426,7 +436,7 @@ export default class QuizForm extends Vue {
     },
   ];
 
-  async queryQuestions() {
+  async onQueryQuestions(questions: Question[]) {
     let quizQuestionIds: number[] = [];
     if (this.quiz && this.quiz.questions) {
       this.quizQuestions.forEach((quizQuestion) => {
@@ -434,17 +444,11 @@ export default class QuizForm extends Vue {
       });
     }
 
-    await this.$store.dispatch('loading');
-    try {
-      this.questions = await RemoteServices.getAvailableQuestions();
+    this.questions = questions.filter(
+      (question) => question.id && !quizQuestionIds.includes(question.id)
+    );
 
-      this.questions = this.questions.filter(
-        (question) => question.id && !quizQuestionIds.includes(question.id)
-      );
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+    this.showQueryForm = false;
   }
 
   @Watch('quiz')

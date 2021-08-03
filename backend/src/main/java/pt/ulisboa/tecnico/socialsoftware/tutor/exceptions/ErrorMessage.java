@@ -27,6 +27,7 @@ public enum ErrorMessage {
     INVALID_QUESTION_SEQUENCE_FOR_QUIZ("Invalid question sequence for quiz"),
     INVALID_TYPE_FOR_AUTH_USER("Invalid type for auth user"),
     INVALID_AUTH_USERNAME("Username: %s, belongs to a different authentication method"),
+    INVALID_DATE_INTERVAL("Invalid date interval"),
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
@@ -34,7 +35,6 @@ public enum ErrorMessage {
     INVALID_EMAIL("The mail %s is invalid."),
     INVALID_PASSWORD("The password %s is invalid."),
     INVALID_ROLE("The Role %s is invalid."),
-    OPTION_NOT_FOUND("Option not found with id %d"),
     FILL_IN_SPOT_NOT_FOUND("Fill in spot not found with id %d"),
     ORDER_SLOT_NOT_FOUND("Order slot not found with id %d"),
     QUESTION_ANSWER_HAS_DISCUSSION("Question answers has discussion"),
@@ -130,7 +130,6 @@ public enum ErrorMessage {
     REVIEW_MISSING_COMMENT("Review must have comment"),
     REVIEW_MISSING_QUESTION_SUBMISSION("Review is missing associated question submission"),
     REVIEW_MISSING_USER("Review is missing associated user"),
-    INVALID_STATUS_FOR_QUESTION("Invalid status for question"),
     INVALID_TYPE_FOR_REVIEW("Invalid type for review"),
     QUESTION_SUBMISSION_NOT_FOUND("Question submission not found with id %d"),
     CANNOT_DELETE_REVIEWED_QUESTION("Question submission already in review or reviewed by teacher cannot be deleted"),

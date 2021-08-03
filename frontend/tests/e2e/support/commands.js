@@ -429,13 +429,13 @@ Cypress.Commands.add(
     cy.get('[data-cy="quizzesTeacherMenuButton"]').click();
 
     cy.get('[data-cy="newQuizButton"]').click();
-    cy.get('[data-cy="queryQuestions"]').click();
+    cy.get('[data-cy="submitQueryButton"]').click();
     cy.get('[data-cy="quizTitleTextArea"]').type(quizTitle);
 
     cy.get('#availableDateInput-input').click();
     cy.get(
       '.datetimepicker > .datepicker > .datepicker-buttons-container > .datepicker-button > .datepicker-button-content'
-    ).click();
+    ).first().click();
 
     cy.contains(questionTitle)
       .parent()

@@ -257,9 +257,7 @@ public class Question implements DomainEntity {
 
     public boolean hasTopics(Set<Integer> chosenTopicsIds) {
         return !getTopics().isEmpty()
-                && chosenTopicsIds.containsAll(getTopics().stream()
-                .map(Topic::getId)
-                .collect(Collectors.toList()));
+                && getTopics().stream().map(Topic::getId).collect(Collectors.toSet()).containsAll(chosenTopicsIds);
     }
 
     public void update(QuestionDto questionDto) {

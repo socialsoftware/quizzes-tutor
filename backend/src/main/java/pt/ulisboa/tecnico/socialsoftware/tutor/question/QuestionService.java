@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.LatexQuestionExportVisitor;
@@ -17,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Image;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionQuery;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService;
@@ -24,6 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Questio
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
@@ -32,6 +35,7 @@ import java.nio.charset.StandardCharsets;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.zip.ZipEntry;
@@ -49,9 +53,6 @@ public class QuestionService {
     private QuestionRepository questionRepository;
 
     @Autowired
-    private QuestionDetailsRepository questionDetailsRepository;
-
-    @Autowired
     private TopicRepository topicRepository;
 
     @Autowired
@@ -64,7 +65,13 @@ public class QuestionService {
     private OptionRepository optionRepository;
 
     @Autowired
-    private QuestionSubmissionService questionSubmissionService;
+    private CodeFillInOptionRepository codeFillInOptionRepository;
+
+    @Autowired
+    private CodeFillInQuestionRepository codeFillInQuestionRepository;
+
+    @Autowired
+    private CodeOrderSlotRepository codeOrderSlotRepository;
 
     @Autowired
     private QuestionSubmissionRepository questionSubmissionRepository;
@@ -103,6 +110,47 @@ public class QuestionService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findQuestions(int courseId) {
         return questionRepository.findQuestions(courseId).stream().filter(q -> !q.isInSubmission()).map(QuestionDto::new).collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<QuestionDto> findQuestionsByQuery(int courseId, QuestionQuery query) {
+        if (query.getBeginCreationDate() != null && query.getEndCreationDate() != null
+                && DateHandler.toLocalDateTime(query.getBeginCreationDate()).isAfter(DateHandler.toLocalDateTime(query.getEndCreationDate()))) {
+            throw new TutorException(INVALID_DATE_INTERVAL);
+        }
+
+        Collection<Question> questions;
+        if  (query.getContent().trim().length() == 0) {
+            questions = questionRepository.findQuestions(courseId);
+        } else {
+            questions = questionRepository.findQuestionsByContent(courseId, query.getContent().trim());
+            questions.addAll(optionRepository.findQuestionsByOptionContent(courseId, query.getContent().trim()));
+            questions.addAll(codeFillInQuestionRepository.findQuestionsByCodeFillInQuestionContent(courseId, query.getContent().trim()));
+            questions.addAll(codeFillInOptionRepository.findQuestionsByCodeFillInOptionContent(courseId, query.getContent().trim()));
+            questions.addAll(codeOrderSlotRepository.findQuestionsByCodeOrderSlotContent(courseId, query.getContent().trim()));
+        }
+
+        List<QuestionDto> result = new ArrayList<>();
+        for (Question question: questions) {
+            if (!question.isInSubmission()
+                    && (query.getBeginCreationDate() == null
+                        || (question.getCreationDate() != null && DateHandler.toLocalDateTime(query.getBeginCreationDate()).isBefore(question.getCreationDate())))
+                    && (query.getEndCreationDate() == null
+                        || (question.getCreationDate() != null && DateHandler.toLocalDateTime(query.getEndCreationDate()).isAfter(question.getCreationDate())))
+                    && (!query.isClarificationsOnly() || question.getDiscussions().stream().flatMap(discussion -> discussion.getReplies().stream()).anyMatch(Reply::isPublic))
+                    && (!query.isNoAnswersOnly() || question.getNumberOfAnswers() == 0)
+                    && ((question.getDifficulty() == null && query.getDifficulty()[0] == 0 && query.getDifficulty()[1] == 100)
+                        || (question.getDifficulty() != null && question.getDifficulty() >= query.getDifficulty()[0]  && question.getDifficulty() <= query.getDifficulty()[1]))
+                    && (query.getStatus().size() == 0 || query.getStatus().size() == 3 || query.getStatus().contains(question.getStatus().name()))
+                    && (query.getTopics().isEmpty() || question.hasTopics(query.getTopics()))) {
+                result.add(new QuestionDto(question));
+            }
+        }
+
+        return result;
     }
 
     @Retryable(

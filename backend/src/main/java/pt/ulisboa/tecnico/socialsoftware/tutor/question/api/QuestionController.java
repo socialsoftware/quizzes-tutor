@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionQuery;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 
 import javax.servlet.http.HttpServletResponse;
@@ -39,6 +40,12 @@ public class QuestionController {
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
     public List<QuestionDto> getCourseQuestions(@PathVariable int courseId) {
         return this.questionService.findQuestions(courseId);
+    }
+
+    @PutMapping("/questions/courses/{courseId}")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public List<QuestionDto> getCourseQuestionsByQuery(@PathVariable int courseId, @RequestBody QuestionQuery query) {
+        return this.questionService.findQuestionsByQuery(courseId, query);
     }
 
     @GetMapping(value = "/questions/courses/{courseId}/export")

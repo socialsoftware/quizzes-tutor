@@ -26,10 +26,8 @@ public class CodeFillInQuestion extends QuestionDetails {
     @Column(columnDefinition = "TEXT")
     private String code;
 
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "questionDetails", fetch = FetchType.LAZY, orphanRemoval = true)
     private final List<CodeFillInSpot> codeFillInSpots = new ArrayList<>();
-
 
     public CodeFillInQuestion() {
         super();

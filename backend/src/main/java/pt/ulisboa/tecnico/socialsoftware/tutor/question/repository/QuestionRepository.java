@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 
 @Repository
 @Transactional
@@ -18,6 +19,9 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
 
     @Query(value = "SELECT * FROM questions q WHERE q.course_id = :courseId", nativeQuery = true)
     List<Question> findQuestions(int courseId);
+
+    @Query(value = "SELECT question FROM Question question WHERE question.course.id = :courseId AND (question.title LIKE %:content% OR question.content LIKE %:content%)")
+    Set<Question> findQuestionsByContent(int courseId, String content);
 
     @Query(value = "SELECT * FROM questions q WHERE q.course_id = :courseId AND q.status = 'AVAILABLE'", nativeQuery = true)
     List<Question> findAvailableQuestions(int courseId);

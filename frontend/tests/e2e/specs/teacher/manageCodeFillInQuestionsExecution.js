@@ -35,12 +35,13 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
   beforeEach(() => {
     cy.demoTeacherLogin();
-    cy.route('GET', '/questions/courses/*').as('getQuestions');
+    cy.route('PUT', '/questions/courses/*').as('putQuestions');
     cy.route('GET', '/topics/courses/*').as('getTopics');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="questionsTeacherMenuButton"]').click();
+    cy.get('[data-cy="submitQueryButton"]').click();
 
-    cy.wait('@getQuestions').its('status').should('eq', 200);
+    cy.wait('@putQuestions').its('status').should('eq', 200);
 
     cy.wait('@getTopics').its('status').should('eq', 200);
   });
@@ -161,10 +162,6 @@ describe('Manage Code Fill In Questions Walk-through', () => {
       });
 
     cy.wait('@updateQuestion').its('status').should('eq', 200);
-
-    cy.get('[data-cy="questionTitleGrid"]')
-      .first()
-      .should('contain', 'Cypress Question Example - 01 - Edited');
 
     validateQuestionFull(
       (title = 'Cypress Question Example - 01 - Edited'),
