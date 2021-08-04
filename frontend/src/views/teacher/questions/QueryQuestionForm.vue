@@ -1,7 +1,7 @@
 <template>
   <v-card>
     <v-card-title>
-      <span>Query Questions Form</span>
+      <span class="text-subtitle-1">Query Questions Form</span>
     </v-card-title>
 
     <v-card-text class="text-left">

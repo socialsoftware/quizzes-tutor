@@ -94,7 +94,7 @@
         </v-row>
       </v-container>
 
-      <v-card>
+      <v-card v-show="quizQuestions.length != 0">
         <v-card-title>
           Quiz
           <v-spacer></v-spacer>
@@ -238,17 +238,12 @@
         </v-data-table>
       </v-card>
 
-      <query-question-form
-        v-show="showQueryForm"
-        :availableOnly="true"
-        v-on:query-questions="onQueryQuestions"
-      />
-
       <v-card>
         <v-card-title>
           Available Questions
           <v-spacer></v-spacer>
           <v-text-field
+            v-show="questions.length != 0"
             v-model="search"
             append-icon="mdi-magnify"
             label="Search"
@@ -264,7 +259,13 @@
             {{ !showQueryForm ? 'Open Query Form' : 'Close Query Form' }}</v-btn
           >
         </v-card-title>
+        <query-question-form
+          v-show="showQueryForm"
+          :availableOnly="true"
+          v-on:query-questions="onQueryQuestions"
+        />
         <v-data-table
+          v-show="questions.length != 0"
           :headers="
             headers.filter((v, i) => i !== 0 && i !== headers.length - 1)
           "
