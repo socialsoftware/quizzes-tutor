@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
@@ -16,7 +17,7 @@ class ChangeStatusTest extends DiscussionFixtureSpockTest {
     def setup(){
         createExternalCourseAndExecution()
 
-        teacher = new User(USER_2_NAME,USER_2_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, AuthUser.Type.TECNICO)
+        teacher = new Teacher(USER_2_NAME,USER_2_USERNAME, USER_1_EMAIL,  true, AuthUser.Type.TECNICO)
         userRepository.save(teacher)
 
         defineBaseFixture()

@@ -148,10 +148,10 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     return false;
                 case "QUESTION_ANSWER.ACCESS":
                     QuestionAnswer questionAnswer = questionAnswerRepository.findById(id).orElse(null);
-                    return questionAnswer != null && questionAnswer.getQuizAnswer().getUser().getId().equals(userId);
+                    return questionAnswer != null && questionAnswer.getQuizAnswer().getStudent().getId().equals(userId);
                 case "DISCUSSION.OWNER":
                     Discussion discussion = discussionRepository.findById(id).orElse(null);
-                    return discussion != null && discussion.getUser().getId().equals(userId);
+                    return discussion != null && discussion.getStudent().getId().equals(userId);
                 case "DISCUSSION.ACCESS":
                     discussion = discussionRepository.findById(id).orElse(null);
                     return discussion != null && authUser.getUser().isTeacher() && userHasThisExecution(authUser, discussion.getCourseExecution().getId());

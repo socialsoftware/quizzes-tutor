@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -27,7 +27,7 @@ public class QuestionSubmission {
 
     @ManyToOne
     @JoinColumn(name = "submitter_id")
-    private User submitter;
+    private Student submitter;
 
     @ManyToOne
     @JoinColumn(name = "course_execution_id")
@@ -48,7 +48,7 @@ public class QuestionSubmission {
     public QuestionSubmission() {
     }
 
-    public QuestionSubmission(CourseExecution courseExecution, Question question, User submitter) {
+    public QuestionSubmission(CourseExecution courseExecution, Question question, Student submitter) {
         setCourseExecution(courseExecution);
         setQuestion(question);
         setSubmitter(submitter);
@@ -69,9 +69,9 @@ public class QuestionSubmission {
 
     public void setQuestion(Question question) { this.question = question; }
 
-    public User getSubmitter() { return submitter; }
+    public Student getSubmitter() { return submitter; }
 
-    public void setSubmitter(User submitter) { this.submitter = submitter; }
+    public void setSubmitter(Student submitter) { this.submitter = submitter; }
 
     public CourseExecution getCourseExecution() { return courseExecution; }
 

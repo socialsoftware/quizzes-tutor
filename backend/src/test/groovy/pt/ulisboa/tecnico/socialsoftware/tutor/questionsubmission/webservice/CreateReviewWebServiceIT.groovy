@@ -14,6 +14,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -37,15 +39,15 @@ class CreateReviewWebServiceIT extends SpockTest {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        teacher = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
-                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
+        teacher = new Teacher(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
+                 false, AuthUser.Type.TECNICO)
         teacher.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         teacher.addCourse(courseExecution)
         courseExecution.addUser(teacher)
         userRepository.save(teacher)
 
-        student = new User(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        student = new Student(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL,
+                 false, AuthUser.Type.TECNICO)
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         userRepository.save(student)

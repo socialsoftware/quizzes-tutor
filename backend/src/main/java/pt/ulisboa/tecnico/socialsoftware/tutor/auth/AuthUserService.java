@@ -129,13 +129,13 @@ public class AuthUserService {
 
         // If user is student and is not in db
         if (!activeAttendingCourses.isEmpty()) {
-            authUser = (AuthTecnicoUser) userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.STUDENT, AuthUser.Type.TECNICO);
+            authUser = (AuthTecnicoUser) userService.createStudentWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), AuthUser.Type.TECNICO);
             updateStudentCourses(authUser, fenixAttendingCourses);
         }
 
         // If user is teacher and is not in db
         if (!fenixTeachingCourses.isEmpty()) {
-            authUser = (AuthTecnicoUser) userService.createUserWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), User.Role.TEACHER, AuthUser.Type.TECNICO);
+            authUser = (AuthTecnicoUser) userService.createTeacherWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), AuthUser.Type.TECNICO);
             updateTeacherCourses(authUser, fenixTeachingCourses);
         }
 
@@ -216,7 +216,7 @@ public class AuthUserService {
 
     private AuthUser getDemoTeacher() {
         return authUserRepository.findAuthUserByUsername(DemoUtils.TEACHER_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Teacher", DemoUtils.TEACHER_USERNAME, "demo_teacher@mail.com",  User.Role.TEACHER, AuthUser.Type.DEMO);
+            AuthUser authUser = userService.createTeacherWithAuth("Demo Teacher", DemoUtils.TEACHER_USERNAME, "demo_teacher@mail.com", AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseExecutionService.getDemoCourseExecution());
             return authUser;
         });
@@ -224,7 +224,7 @@ public class AuthUserService {
 
     private AuthUser getDemoStudent() {
         return authUserRepository.findAuthUserByUsername(DemoUtils.STUDENT_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Student", DemoUtils.STUDENT_USERNAME, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
+            AuthUser authUser = userService.createStudentWithAuth("Demo Student", DemoUtils.STUDENT_USERNAME, "demo_student@mail.com", AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseExecutionService.getDemoCourseExecution());
             return authUser;
         });
@@ -232,7 +232,7 @@ public class AuthUserService {
 
     private AuthUser getDemoAdmin() {
         return authUserRepository.findAuthUserByUsername(DemoUtils.ADMIN_USERNAME).orElseGet(() -> {
-            AuthUser authUser = userService.createUserWithAuth("Demo Admin", DemoUtils.ADMIN_USERNAME, "demo_admin@mail.com", User.Role.DEMO_ADMIN, AuthUser.Type.DEMO);
+            AuthUser authUser = userService.createDemoAdminWithAuth("Demo Admin", DemoUtils.ADMIN_USERNAME, "demo_admin@mail.com", AuthUser.Type.DEMO);
             authUser.getUser().addCourse(courseExecutionService.getDemoCourseExecution());
             return authUser;
         });

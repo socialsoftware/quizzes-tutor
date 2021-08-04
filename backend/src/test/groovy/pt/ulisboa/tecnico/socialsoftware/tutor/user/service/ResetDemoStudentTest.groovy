@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 import java.time.LocalDateTime
@@ -27,12 +28,12 @@ class ResetDemoStudentTest extends SpockTest {
     def "reset all demo students"() {
         given:
         def birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
-        def user1 = new User("Demo-Student-" + birthDate, "Demo-Student-" + birthDate,
-                USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.DEMO)
+        def user1 = new Student("Demo-Student-" + birthDate, "Demo-Student-" + birthDate,
+                USER_1_EMAIL,  false, AuthUser.Type.DEMO)
         userRepository.save(user1)
         def user1Username = user1.username
-        def user2 = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.DEMO)
+        def user2 = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
+                 false, AuthUser.Type.DEMO)
         userRepository.save(user2)
 
         when:

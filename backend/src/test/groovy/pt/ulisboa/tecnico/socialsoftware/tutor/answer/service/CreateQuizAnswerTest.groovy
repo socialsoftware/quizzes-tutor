@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
@@ -13,7 +14,7 @@ class CreateQuizAnswerTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        User user = new User(USER_1_NAME, User.Role.STUDENT, false)
+        User user = new Student(USER_1_NAME, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
 
@@ -39,8 +40,8 @@ class CreateQuizAnswerTest extends SpockTest {
         def quizAnswer = quizAnswerRepository.findAll().get(0)
         quizAnswer.getId() != null
         !quizAnswer.isCompleted()
-        quizAnswer.getUser().getId() == userId
-        quizAnswer.getUser().getQuizAnswers().contains(quizAnswer)
+        quizAnswer.getStudent().getId() == userId
+        quizAnswer.getStudent().getQuizAnswers().contains(quizAnswer)
         quizAnswer.getQuiz().getId() == quizId
         quizAnswer.getQuiz().getQuizAnswers().contains(quizAnswer)
     }

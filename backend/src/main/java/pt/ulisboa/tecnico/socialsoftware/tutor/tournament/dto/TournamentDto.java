@@ -41,7 +41,7 @@ public class TournamentDto implements Serializable {
                 .collect(Collectors.toSet());
         this.creator = new StudentDto(tournament.getCreator());
         this.participants = tournament.getParticipants().stream()
-                .map(user -> new TournamentParticipantDto(user, tournament.getQuiz()))
+                .map(student -> new TournamentParticipantDto(student, tournament.getQuiz()))
                 .sorted(Comparator.comparing(TournamentParticipantDto::getScore).reversed())
                 .collect(Collectors.toList());
         this.privateTournament = tournament.isPrivateTournament();

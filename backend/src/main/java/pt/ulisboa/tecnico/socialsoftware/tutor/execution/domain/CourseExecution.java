@@ -10,6 +10,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import javax.persistence.*;
@@ -254,9 +256,17 @@ public class CourseExecution implements DomainEntity {
         return this.course.getQuestions().size();
     }
 
-    public Set<User> getStudents() {
+    public Set<Student> getStudents() {
         return getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
+                .map(Student.class::cast)
+                .collect(Collectors.toSet());
+    }
+
+    public Set<Teacher> getTeachers() {
+        return getUsers().stream()
+                .filter(user -> user.getRole().equals(User.Role.TEACHER))
+                .map(Teacher.class::cast)
                 .collect(Collectors.toSet());
     }
 
@@ -281,11 +291,5 @@ public class CourseExecution implements DomainEntity {
         }
 
         return result;
-    }
-
-    public Set<User> getTeachers() {
-        return getUsers().stream()
-                .filter(user -> user.getRole().equals(User.Role.TEACHER))
-                .collect(Collectors.toSet());
     }
 }

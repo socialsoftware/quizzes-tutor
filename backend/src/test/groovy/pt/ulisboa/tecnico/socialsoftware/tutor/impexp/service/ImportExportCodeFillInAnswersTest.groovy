@@ -67,7 +67,7 @@ class ImportExportCodeFillInAnswersTest extends SpockTest {
         quizQuestion.setQuestion(question)
         quizQuestionRepository.save(quizQuestion)
 
-        User user = userService.createUserWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, AuthUser.Type.EXTERNAL).getUser()
+        User user = userService.createStudentWithAuth(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, AuthUser.Type.EXTERNAL).getUser()
 
         quizAnswer = new QuizAnswer(user, quiz)
         quizAnswer.setAnswerDate(LOCAL_DATE_TODAY)
@@ -97,8 +97,8 @@ class ImportExportCodeFillInAnswersTest extends SpockTest {
         def quizAnswerResult = quizAnswerRepository.findAll().get(0)
         quizAnswerResult.getAnswerDate() == LOCAL_DATE_TODAY
         quizAnswerResult.isCompleted()
-        quizAnswerResult.getUser().getName() == USER_1_NAME
-        quizAnswerResult.getUser().getUsername() == USER_1_USERNAME
+        quizAnswerResult.getStudent().getName() == USER_1_NAME
+        quizAnswerResult.getStudent().getUsername() == USER_1_USERNAME
         quizAnswerResult.getQuiz().getKey() == 1
         questionAnswerRepository.findAll().size() == 1
         def questionAnswerResult = questionAnswerRepository.findAll().get(0)

@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.util.ArrayList;
@@ -18,12 +19,12 @@ public class UserQuestionSubmissionInfoDto {
     private String username;
     private String name;
 
-    public UserQuestionSubmissionInfoDto(User user) {
-        setUserId(user.getId());
-        setQuestionSubmissions(user.getQuestionSubmissions().stream().map(QuestionSubmissionDto::new).collect(Collectors.toList()));
+    public UserQuestionSubmissionInfoDto(Student student) {
+        setUserId(student.getId());
+        setQuestionSubmissions(student.getQuestionSubmissions().stream().map(QuestionSubmissionDto::new).collect(Collectors.toList()));
         setNumQuestionSubmissions();
-        setUsername(user.getUsername());
-        setName(user.getName());
+        setUsername(student.getUsername());
+        setName(student.getName());
     }
 
     public int getSubmitterId() { return submitterId; }

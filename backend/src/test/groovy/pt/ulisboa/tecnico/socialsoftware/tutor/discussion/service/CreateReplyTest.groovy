@@ -7,6 +7,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import spock.lang.Unroll
@@ -18,10 +20,10 @@ class CreateReplyTest extends DiscussionFixtureSpockTest {
     def discussion
 
     def setup(){
-        student2 = new User(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL, User.Role.STUDENT, true, AuthUser.Type.TECNICO)
+        student2 = new Student(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL, true, AuthUser.Type.TECNICO)
         userRepository.save(student2)
 
-        teacher = new User(USER_2_NAME,USER_2_USERNAME, USER_1_EMAIL, User.Role.TEACHER, true, AuthUser.Type.TECNICO)
+        teacher = new Teacher(USER_2_NAME,USER_2_USERNAME, USER_1_EMAIL, true, AuthUser.Type.TECNICO)
         userRepository.save(teacher)
 
         defineBaseFixture()

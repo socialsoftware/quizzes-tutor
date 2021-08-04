@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.io.Serializable;
@@ -18,11 +19,11 @@ public class TournamentParticipantDto implements Serializable {
     public TournamentParticipantDto() {
     }
 
-    public TournamentParticipantDto(User user, Quiz quiz) {
-        QuizAnswer quizAnswer = user.getQuizAnswer(quiz);
-        this.userId = user.getId();
-        this.name = user.getName();
-        this.username = user.getUsername();
+    public TournamentParticipantDto(Student student, Quiz quiz) {
+        QuizAnswer quizAnswer = student.getQuizAnswer(quiz);
+        this.userId = student.getId();
+        this.name = student.getName();
+        this.username = student.getUsername();
         this.answered = quizAnswer != null;
         this.numberOfAnswered = quizAnswer != null ? Math.toIntExact(quizAnswer.getNumberOfAnsweredQuestions()) : 0;
         this.numberOfCorrect = quizAnswer != null ? Math.toIntExact(quizAnswer.getNumberOfCorrectAnswers()) : 0;

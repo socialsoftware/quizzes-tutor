@@ -20,6 +20,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -169,6 +170,7 @@ public class CourseExecutionService {
         return courseExecution.getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
                 .sorted(Comparator.comparing(User::getName))
+                .map(Student.class::cast)
                 .map(StudentDto::new)
                 .collect(Collectors.toList());
     }

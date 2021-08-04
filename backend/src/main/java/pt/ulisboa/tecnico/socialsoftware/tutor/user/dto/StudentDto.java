@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.io.Serializable;
@@ -19,23 +20,23 @@ public class StudentDto extends UserDto implements Serializable {
 
     public StudentDto() {}
 
-    public StudentDto(User user) {
-        super(user);
-        this.numberOfInClassQuizzes = user.getNumberOfInClassQuizzes();
-        this.numberOfStudentQuizzes = user.getNumberOfStudentQuizzes();
-        this.numberOfAnswers = user.getNumberOfTeacherAnswers() + user.getNumberOfInClassAnswers() + user.getNumberOfStudentAnswers();
-        this.numberOfTeacherAnswers = user.getNumberOfTeacherAnswers();
-        this.numberOfInClassAnswers = user.getNumberOfInClassAnswers();
-        this.numberOfStudentAnswers = user.getNumberOfStudentAnswers();
+    public StudentDto(Student student) {
+        super(student);
+        this.numberOfInClassQuizzes = student.getNumberOfInClassQuizzes();
+        this.numberOfStudentQuizzes = student.getNumberOfStudentQuizzes();
+        this.numberOfAnswers = student.getNumberOfTeacherAnswers() + student.getNumberOfInClassAnswers() + student.getNumberOfStudentAnswers();
+        this.numberOfTeacherAnswers = student.getNumberOfTeacherAnswers();
+        this.numberOfInClassAnswers = student.getNumberOfInClassAnswers();
+        this.numberOfStudentAnswers = student.getNumberOfStudentAnswers();
 
         if (this.numberOfTeacherAnswers != 0)
-            this.percentageOfCorrectTeacherAnswers = user.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;
+            this.percentageOfCorrectTeacherAnswers = student.getNumberOfCorrectTeacherAnswers() * 100 / this.numberOfTeacherAnswers;
         if (this.numberOfInClassAnswers != 0)
-            this.percentageOfCorrectInClassAnswers = user.getNumberOfCorrectInClassAnswers() * 100 / this.numberOfInClassAnswers;
+            this.percentageOfCorrectInClassAnswers = student.getNumberOfCorrectInClassAnswers() * 100 / this.numberOfInClassAnswers;
         if (this.numberOfStudentAnswers != 0)
-            this.percentageOfCorrectStudentAnswers = user.getNumberOfCorrectStudentAnswers() * 100 / this.numberOfStudentAnswers;
+            this.percentageOfCorrectStudentAnswers = student.getNumberOfCorrectStudentAnswers() * 100 / this.numberOfStudentAnswers;
         if (this.numberOfAnswers != 0)
-            this.percentageOfCorrectAnswers = (user.getNumberOfCorrectTeacherAnswers() + user.getNumberOfCorrectInClassAnswers() + user.getNumberOfCorrectStudentAnswers())  * 100 / this.numberOfAnswers;
+            this.percentageOfCorrectAnswers = (student.getNumberOfCorrectTeacherAnswers() + student.getNumberOfCorrectInClassAnswers() + student.getNumberOfCorrectStudentAnswers())  * 100 / this.numberOfAnswers;
 
     }
 

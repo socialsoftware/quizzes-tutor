@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
@@ -120,8 +121,8 @@ class RemoveQuestionTest extends SpockTest {
 
     def "remove a question that was submitted"() {
         given: "a student"
-        def student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        def student = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
+                 false, AuthUser.Type.TECNICO)
         userRepository.save(student)
 
         and: "a questionSubmission"

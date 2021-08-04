@@ -8,6 +8,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
@@ -20,11 +22,11 @@ class GetQuestionSubmissionReviewsTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        student = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
+                false, AuthUser.Type.TECNICO)
         userRepository.save(student)
-        teacher = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
-                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
+        teacher = new Teacher(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
+                 false, AuthUser.Type.TECNICO)
         userRepository.save(teacher)
         question = new Question()
         question.setKey(1)

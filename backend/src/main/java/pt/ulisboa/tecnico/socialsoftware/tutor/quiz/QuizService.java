@@ -31,6 +31,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
@@ -351,7 +352,7 @@ public class QuizService {
         if (myObj.createNewFile()) {
             FileWriter myWriter = new FileWriter(myObj);
             myWriter.write(answersXmlExport.export(quiz.getQuizAnswers().stream()
-                    .sorted(Comparator.comparing(quizAnswer -> quizAnswer.getUser().getId()))
+                    .sorted(Comparator.comparing(quizAnswer -> quizAnswer.getStudent().getId()))
                     .collect(Collectors.toList())));
             myWriter.close();
         }
@@ -387,7 +388,7 @@ public class QuizService {
     public QuizDto populateWithQuizAnswers(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
-        for (User student : quiz.getCourseExecution().getStudents()) {
+        for (Student student : quiz.getCourseExecution().getStudents()) {
             if (student.getQuizAnswer(quiz) == null) {
                 answerService.createQuizAnswer(student.getId(), quizId);
             }

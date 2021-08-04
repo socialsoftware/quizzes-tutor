@@ -14,8 +14,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.StudentRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
@@ -33,7 +34,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.US
 public class StatsService {
 
     @Autowired
-    private UserRepository userRepository;
+    private StudentRepository studentRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -46,21 +47,21 @@ public class StatsService {
       backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public StatsDto getStats(int userId, int executionId) {
-        User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        Student student = studentRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         StatsDto statsDto = new StatsDto();
 
-        int totalQuizzes = (int) user.getQuizAnswers().stream()
+        int totalQuizzes = (int) student.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .count();
 
-        int totalAnswers = (int) user.getQuizAnswers().stream()
+        int totalAnswers = (int) student.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .map(QuizAnswer::getQuestionAnswers)
                 .mapToLong(Collection::size)
                 .sum();
 
-        int uniqueQuestions = (int) user.getQuizAnswers().stream()
+        int uniqueQuestions = (int) student.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
@@ -69,14 +70,14 @@ public class StatsService {
                 .map(Question::getId)
                 .distinct().count();
 
-        int correctAnswers = (int) user.getQuizAnswers().stream()
+        int correctAnswers = (int) student.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .filter(QuestionAnswer::isCorrect)
                 .count();
 
-        int uniqueCorrectAnswers = (int) user.getQuizAnswers().stream()
+        int uniqueCorrectAnswers = (int) student.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId) && quizAnswer.getAnswerDate() != null)
                 .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
                 .map(QuizAnswer::getQuestionAnswers)
@@ -99,7 +100,7 @@ public class StatsService {
             statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
         }
 
-        statsDto.setCreatedDiscussions(user.getDiscussions().size());
+        statsDto.setCreatedDiscussions(student.getDiscussions().size());
         return statsDto;
     }
 }

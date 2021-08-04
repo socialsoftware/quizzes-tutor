@@ -15,7 +15,7 @@ class LeaveTournamentTest extends TournamentTest {
     def user2
 
     def setup() {
-        user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, externalCourseExecution)
+        user2 = createStudent(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, externalCourseExecution)
 
         tournamentDto = createTournament(user1, STRING_DATE_TODAY, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
 

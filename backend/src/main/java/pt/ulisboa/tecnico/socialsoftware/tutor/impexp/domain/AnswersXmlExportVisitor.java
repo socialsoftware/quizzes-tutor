@@ -69,7 +69,7 @@ public class AnswersXmlExportVisitor implements Visitor {
         quizAnswerElement.addContent(quizElement);
 
         Element userElement = new Element("user");
-        userElement.setAttribute("key", String.valueOf(quizAnswer.getUser().getKey()));
+        userElement.setAttribute("key", String.valueOf(quizAnswer.getStudent().getKey()));
         quizAnswerElement.addContent(userElement);
 
         exportQuestionAnswers(quizAnswer.getQuestionAnswers());

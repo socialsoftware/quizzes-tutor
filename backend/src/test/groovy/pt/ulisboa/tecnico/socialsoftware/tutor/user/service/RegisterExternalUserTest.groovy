@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
@@ -43,7 +44,7 @@ class RegisterExternalUserTest extends SpockTest {
         externalUserDto.setEmail(USER_1_EMAIL)
         externalUserDto.setRole(User.Role.STUDENT)
         and: "an already created user"
-        def user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
+        def user = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
         ((AuthExternalUser)user.authUser).setActive(true)
         userRepository.save(user)
         and: 'enrolled'
@@ -90,7 +91,7 @@ class RegisterExternalUserTest extends SpockTest {
 
     def "the course execution exists, the user exists but he's not enrolled and enroll him in the course execution"() {
         given: "a user"
-        def user = new User(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
+        def user = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user)
         ((AuthExternalUser)user.authUser).setActive(true)
 

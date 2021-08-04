@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
@@ -35,7 +36,7 @@ class TournamentTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        user1 = createUser(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, externalCourseExecution)
+        user1 = createStudent(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, externalCourseExecution)
 
         def topicDto1 = new TopicDto()
         topicDto1.setName(TOPIC_1_NAME)
@@ -56,8 +57,8 @@ class TournamentTest extends SpockTest {
         STRING_DATE_TODAY = DateHandler.toISOString(DateHandler.now())
     }
 
-    def createUser(String name, String username, String email, User.Role role, CourseExecution courseExecution) {
-        def user = new User(name, username, email, role, false, AuthUser.Type.EXTERNAL)
+    def createStudent(String name, String username, String email, CourseExecution courseExecution) {
+        def user = new Student(name, username, email, false, AuthUser.Type.EXTERNAL)
         user.addCourse(courseExecution)
         userRepository.save(user)
 

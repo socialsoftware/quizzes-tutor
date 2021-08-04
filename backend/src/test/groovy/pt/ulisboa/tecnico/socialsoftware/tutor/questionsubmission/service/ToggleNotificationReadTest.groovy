@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQue
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Unroll
 
@@ -22,8 +23,8 @@ class ToggleNotificationReadTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        student = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        student = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
+                false, AuthUser.Type.TECNICO)
         userRepository.save(student)
 
         question = new Question()

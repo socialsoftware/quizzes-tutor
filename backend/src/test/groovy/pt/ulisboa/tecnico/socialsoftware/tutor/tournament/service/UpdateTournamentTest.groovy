@@ -23,7 +23,7 @@ class UpdateTournamentTest extends TournamentTest {
     def user2
 
     def setup() {
-        user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, externalCourseExecution)
+        user2 = createStudent(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, externalCourseExecution)
 
         def topicDto3 = new TopicDto()
         topicDto3.setName(TOPIC_3_NAME)

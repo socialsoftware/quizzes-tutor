@@ -82,7 +82,7 @@ class QuizTournamentGenerateTest extends TournamentTest {
 
     def "generate a quiz with 2 student solving" () {
         given:
-        def user2 = createUser(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, User.Role.STUDENT, externalCourseExecution)
+        def user2 = createStudent(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, externalCourseExecution)
         and:
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user1, "")
         tournamentRepository.findById(tournamentDto.getId()).orElse(null).addParticipant(user2, "")

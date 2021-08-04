@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthDemoUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Unroll
 
@@ -18,7 +19,7 @@ class CreateAuthUserTest  extends SpockTest {
     def authUser
 
     def setup() {
-        user = new User(USER_1_NAME, User.Role.STUDENT, false)
+        user = new Student(USER_1_NAME, false)
         userRepository.save(user)
     }
 

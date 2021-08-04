@@ -25,7 +25,7 @@ class IncreaseNumberOfQuizzesTest extends SpockTest{
     def setup() {
         createExternalCourseAndExecution()
 
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
+        user = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user)
 
         QuizDto quizDto = new QuizDto()

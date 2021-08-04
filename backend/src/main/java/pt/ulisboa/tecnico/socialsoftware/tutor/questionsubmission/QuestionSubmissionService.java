@@ -26,7 +26,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.Que
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.StudentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.sql.SQLException;
@@ -50,25 +52,19 @@ public class QuestionSubmissionService {
     private UserRepository userRepository;
 
     @Autowired
+    private StudentRepository studentRepository;
+
+    @Autowired
     private QuestionRepository questionRepository;
 
     @Autowired
-    private QuizRepository quizRepository;
-
-    @Autowired
     private QuestionSubmissionRepository questionSubmissionRepository;
-
-    @Autowired
-    private TournamentRepository tournamentRepository;
 
     @Autowired
     private ReviewRepository reviewRepository;
 
     @Autowired
     private QuestionService questionService;
-
-    @Autowired
-    private AnswerService answerService;
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
@@ -79,9 +75,10 @@ public class QuestionSubmissionService {
 
         Question question = createQuestion(courseExecution.getCourse(), questionSubmissionDto.getQuestion());
 
-        User user = getUser(questionSubmissionDto.getSubmitterId());
+        Student student = studentRepository.findById(questionSubmissionDto.getSubmitterId())
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, questionSubmissionDto.getSubmitterId()));
 
-        QuestionSubmission questionSubmission = new QuestionSubmission(courseExecution, question, user);
+        QuestionSubmission questionSubmission = new QuestionSubmission(courseExecution, question, student);
 
         questionSubmissionRepository.save(questionSubmission);
         return new QuestionSubmissionDto(questionSubmission);
@@ -179,11 +176,11 @@ public class QuestionSubmissionService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<UserQuestionSubmissionInfoDto> getAllStudentsQuestionSubmissionsInfo(Integer courseExecutionId) {
         CourseExecution courseExecution = getCourseExecution(courseExecutionId);
-        Set<User> students = courseExecution.getStudents();
+        Set<Student> students = courseExecution.getStudents();
 
         List<UserQuestionSubmissionInfoDto> userQuestionSubmissionInfoDtos = new ArrayList<>();
 
-        for (User student: students) {
+        for (Student student: students) {
             userQuestionSubmissionInfoDtos.add(new UserQuestionSubmissionInfoDto(student));
         }
 

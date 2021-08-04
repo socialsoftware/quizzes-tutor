@@ -117,7 +117,7 @@ public class Reply implements DomainEntity {
     }
 
     private void checkReplyAuthorization(User user, Discussion discussion) {
-        if (user.getRole() != User.Role.TEACHER && !user.getId().equals(discussion.getUser().getId())) {
+        if (user.getRole() != User.Role.TEACHER && !user.getId().equals(discussion.getStudent().getId())) {
             throw new TutorException(REPLY_UNAUTHORIZED_USER);
         }
     }

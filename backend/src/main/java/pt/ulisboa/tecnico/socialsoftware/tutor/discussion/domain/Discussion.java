@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
@@ -22,7 +23,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "discussions")
 public class Discussion implements DomainEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -33,7 +33,7 @@ public class Discussion implements DomainEntity {
 
     @ManyToOne(fetch=FetchType.EAGER, optional=false)
     @JoinColumn(name="user_id")
-    private User user;
+    private Student student;
 
     @NotNull
     @Column(name="message", columnDefinition="text")
@@ -60,7 +60,7 @@ public class Discussion implements DomainEntity {
     public Discussion(QuestionAnswer questionAnswer, DiscussionDto discussionDto) {
         checkConsistentDiscussion(discussionDto);
         checkExistingDiscussion(questionAnswer);
-        setUser(questionAnswer.getQuizAnswer().getUser());
+        setStudent(questionAnswer.getQuizAnswer().getStudent());
         setMessage(discussionDto.getMessage());
         setDate(DateHandler.toLocalDateTime(discussionDto.getDate()));
         setQuestion(questionAnswer.getQuizQuestion().getQuestion());
@@ -84,14 +84,14 @@ public class Discussion implements DomainEntity {
         }
     }
 
-    public User getUser() {
-        return user;
+    public Student getStudent() {
+        return student;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-        if (user != null) {
-            this.user.addDiscussion(this);
+    public void setStudent(Student student) {
+        this.student = student;
+        if (student != null) {
+            this.student.addDiscussion(this);
         }
     }
 
@@ -175,8 +175,8 @@ public class Discussion implements DomainEntity {
     }
 
     public void remove() {
-        user.getDiscussions().remove(this);
-        user = null;
+        student.getDiscussions().remove(this);
+        student = null;
 
         courseExecution.getDiscussions().remove(this);
         courseExecution = null;

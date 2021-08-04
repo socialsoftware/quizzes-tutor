@@ -4,7 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import javax.persistence.*;
@@ -42,7 +42,7 @@ public class QuizAnswer implements DomainEntity {
 
     @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "user_id")
-    private User user;
+    private Student student;
 
     @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "quiz_id")
@@ -54,10 +54,10 @@ public class QuizAnswer implements DomainEntity {
     public QuizAnswer() {
     }
 
-    public QuizAnswer(User user, Quiz quiz) {
+    public QuizAnswer(Student student, Quiz quiz) {
         setCompleted(false);
         setUsedInStatistics(false);
-        setUser(user);
+        setStudent(student);
         setQuiz(quiz);
 
         List<QuizQuestion> quizQuestions = new ArrayList<>(quiz.getQuizQuestions());
@@ -111,13 +111,13 @@ public class QuizAnswer implements DomainEntity {
         this.usedInStatistics = usedInStatistics;
     }
 
-    public User getUser() {
-        return user;
+    public Student getStudent() {
+        return student;
     }
 
-    public void setUser(User user) {
-        this.user = user;
-        user.addQuizAnswer(this);
+    public void setStudent(Student student) {
+        this.student = student;
+        student.addQuizAnswer(this);
     }
 
     public Quiz getQuiz() {
@@ -167,12 +167,12 @@ public class QuizAnswer implements DomainEntity {
 
     public void calculateStatistics() {
         if (!this.usedInStatistics) {
-            user.increaseNumberOfQuizzes(getQuiz().getType());
+            student.increaseNumberOfQuizzes(getQuiz().getType());
 
             getQuestionAnswers().forEach(questionAnswer -> {
-                user.increaseNumberOfAnswers(getQuiz().getType());
+                student.increaseNumberOfAnswers(getQuiz().getType());
                 if (questionAnswer.isCorrect()) {
-                    user.increaseNumberOfCorrectAnswers(getQuiz().getType());
+                    student.increaseNumberOfCorrectAnswers(getQuiz().getType());
                 }
             });
 
@@ -184,8 +184,8 @@ public class QuizAnswer implements DomainEntity {
     }
 
     public void remove() {
-        user.getQuizAnswers().remove(this);
-        user = null;
+        student.getQuizAnswers().remove(this);
+        student = null;
 
         quiz.getQuizAnswers().remove(this);
         quiz = null;

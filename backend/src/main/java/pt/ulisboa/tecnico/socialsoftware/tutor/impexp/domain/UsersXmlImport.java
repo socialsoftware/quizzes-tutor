@@ -136,7 +136,23 @@ public class UsersXmlImport {
 			isActive = Boolean.parseBoolean(authUserElement.getAttributeValue("isActive"));
 		}
 
-		AuthUser authUser = userService.createUserWithAuth(name, username, email, role, type);
+		AuthUser authUser;
+
+		switch (role) {
+			case STUDENT:
+				authUser = userService.createStudentWithAuth(name, username, email, type);
+				break;
+			case TEACHER:
+				authUser = userService.createTeacherWithAuth(name, username, email, type);
+				break;
+			case DEMO_ADMIN:
+				authUser = userService.createDemoAdminWithAuth(name, username, email, type);
+				break;
+			case ADMIN:
+			default:
+				throw new TutorException(USERS_IMPORT_ERROR, "Not allowed role " + role);
+		}
+
 		authUser.getUser().setKey(key);
 		authUser.setPassword(password);
 		if (type == AuthUser.Type.EXTERNAL) {

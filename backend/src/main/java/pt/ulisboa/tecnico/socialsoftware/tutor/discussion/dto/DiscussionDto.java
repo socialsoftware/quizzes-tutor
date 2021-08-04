@@ -39,8 +39,8 @@ public class DiscussionDto implements Serializable {
         }
 
 
-        this.name = discussion.getUser().getName();
-        this.username = discussion.getUser().getUsername();
+        this.name = discussion.getStudent().getName();
+        this.username = discussion.getStudent().getUsername();
         this.message = discussion.getMessage();
         this.date = DateHandler.toISOString(discussion.getDate());
         this.courseExecutionId = discussion.getCourseExecution().getId();

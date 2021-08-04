@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 
 import java.util.stream.Collectors
 
@@ -28,7 +28,7 @@ class GenerateStudentQuizTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
 
-        user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, User.Role.STUDENT, false, AuthUser.Type.TECNICO)
+        user = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.TECNICO)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
 
@@ -85,7 +85,7 @@ class GenerateStudentQuizTest extends SpockTest {
         result.getQuizAnswers().size() == 1
         def resQuizAnswer = result.getQuizAnswers().stream().collect(Collectors.toList()).get(0)
         resQuizAnswer.getQuiz() == result
-        resQuizAnswer.getUser() == user
+        resQuizAnswer.getStudent() == user
         resQuizAnswer.getQuestionAnswers().size() == 1
         result.getQuizQuestionsNumber() == 1
         def resQuizQuestion = result.getQuizQuestions().get(0)
@@ -110,7 +110,7 @@ class GenerateStudentQuizTest extends SpockTest {
         result.getQuizAnswers().size() == 1
         def resQuizAnswer = result.getQuizAnswers().stream().collect(Collectors.toList()).get(0)
         resQuizAnswer.getQuiz() == result
-        resQuizAnswer.getUser() == user
+        resQuizAnswer.getStudent() == user
         resQuizAnswer.getQuestionAnswers().size() == 2
         result.getQuizQuestionsNumber() == 2
         result.getQuizQuestions().stream().map{quizQuestion -> quizQuestion.getQuestion()}.allMatch{question -> question == questionOne || question == questionTwo}

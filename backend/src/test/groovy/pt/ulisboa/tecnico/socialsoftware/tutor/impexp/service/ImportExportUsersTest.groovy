@@ -6,6 +6,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
@@ -17,8 +19,8 @@ class ImportExportUsersTest extends SpockTest {
     def 'export and import with a AuthUser'() {
         given: 'two users with a auth user'
         def existingUsers = userRepository.findAll().size()
-        User user = new User(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
-                User.Role.TEACHER, false, AuthUser.Type.TECNICO)
+        User user = new Teacher(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
+                 false, AuthUser.Type.TECNICO)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyOne = user.getId()
@@ -26,8 +28,8 @@ class ImportExportUsersTest extends SpockTest {
         authUser.setPassword(USER_1_PASSWORD)
         authUser.setLastAccess(LOCAL_DATE_TODAY)
 
-        user = new User(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
-                User.Role.STUDENT, false, AuthUser.Type.EXTERNAL)
+        user = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
+                 false, AuthUser.Type.EXTERNAL)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyTwo = user.getId()
@@ -79,12 +81,12 @@ class ImportExportUsersTest extends SpockTest {
     def 'export and import users without a AuthUser'() {
         given: 'two users without a auth user'
         def existingUsers = userRepository.findAll().size()
-        User user = new User(USER_1_NAME, User.Role.TEACHER, false)
+        User user = new Teacher(USER_1_NAME, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyOne = user.getId()
 
-        user = new User(USER_2_NAME, User.Role.STUDENT, false)
+        user = new Student(USER_2_NAME, false)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyTwo = user.getId()

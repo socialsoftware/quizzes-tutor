@@ -89,7 +89,7 @@ public class CSVQuizExportVisitor implements Visitor {
             line = new String[lineSize];
             Arrays.fill(line, "");
             column = 0;
-            quizAnswer.getUser().accept(this);
+            quizAnswer.getStudent().accept(this);
 
             quizAnswer.accept(this);
 

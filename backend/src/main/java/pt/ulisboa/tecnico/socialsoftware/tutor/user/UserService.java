@@ -23,6 +23,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecut
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.UsersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.DemoAdmin;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
@@ -69,20 +72,55 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public User createUser(String name, User.Role role) {
-        User user = new User(name, role, false);
+        User user;
+        switch (role) {
+            case STUDENT:
+                user = new Student(name, false);
+                break;
+            case TEACHER:
+                user = new Teacher(name, false);
+                break;
+            case DEMO_ADMIN:
+                user = new DemoAdmin(name, false);
+                break;
+            default:
+                throw new TutorException(USERS_IMPORT_ERROR, "Not allowed role " + role);
+        }
         userRepository.save(user);
         return user;
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthUser createUserWithAuth(String name, String username, String email, User.Role role, AuthUser.Type type) {
+    public AuthUser createStudentWithAuth(String name, String username, String email, AuthUser.Type type) {
         if (authUserRepository.findAuthUserByUsername(username).isPresent()) {
             throw new TutorException(DUPLICATE_USER, username);
         }
 
-        User user = new User(name, username, email, role, false, type);
-        userRepository.save(user);
-        return user.getAuthUser();
+        Student student = new Student(name, username, email, false, type);
+        userRepository.save(student);
+        return student.getAuthUser();
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public AuthUser createTeacherWithAuth(String name, String username, String email, AuthUser.Type type) {
+        if (authUserRepository.findAuthUserByUsername(username).isPresent()) {
+            throw new TutorException(DUPLICATE_USER, username);
+        }
+
+        Teacher teacher = new Teacher(name, username, email, false, type);
+        userRepository.save(teacher);
+        return teacher.getAuthUser();
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public AuthUser createDemoAdminWithAuth(String name, String username, String email, AuthUser.Type type) {
+        if (authUserRepository.findAuthUserByUsername(username).isPresent()) {
+            throw new TutorException(DUPLICATE_USER, username);
+        }
+
+        DemoAdmin demoAdmin = new DemoAdmin(name, username, email, false, type);
+        userRepository.save(demoAdmin);
+        return demoAdmin.getAuthUser();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -97,7 +135,7 @@ public class UserService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AuthUser createDemoStudent() {
         String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
-        AuthUser authUser = createUserWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", User.Role.STUDENT, AuthUser.Type.DEMO);
+        AuthUser authUser = createStudentWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", AuthUser.Type.DEMO);
         CourseExecution courseExecution = courseExecutionService.getDemoCourseExecution();
         if (courseExecution != null) {
             courseExecution.addUser(authUser.getUser());
@@ -259,9 +297,17 @@ public class UserService {
         String username = externalUserDto.getUsername() != null ? externalUserDto.getUsername() : externalUserDto.getEmail();
         return (AuthExternalUser) authUserRepository.findAuthUserByUsername(username)
                 .orElseGet(() -> {
-                    User user = new User(externalUserDto.getName(),
-                            username, externalUserDto.getEmail(),
-                            externalUserDto.getRole(), false, AuthUser.Type.EXTERNAL);
+                    User user;
+                    if (externalUserDto.getRole() == User.Role.STUDENT) {
+                         user = new Student(externalUserDto.getName(),
+                                username, externalUserDto.getEmail(),false, AuthUser.Type.EXTERNAL);
+                    } else if (externalUserDto.getRole() == User.Role.TEACHER) {
+                        user = new Teacher(externalUserDto.getName(),
+                                username, externalUserDto.getEmail(),false, AuthUser.Type.EXTERNAL);
+                    } else {
+                        throw new TutorException(INVALID_ROLE, externalUserDto.getRole() == null ? "null" : externalUserDto.getRole().name());
+                    }
+
                     userRepository.save(user);
                     return user.getAuthUser();
                 });
