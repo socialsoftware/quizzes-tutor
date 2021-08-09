@@ -27,7 +27,7 @@ public class AuthUserCourseExecutionSubscriptions {
         return DomainEventHandlersBuilder
                 .forAggregateType(COURSE_EXECUTION_AGGREGATE_TYPE)
                 .onEvent(AddCourseExecutionEvent.class, this::addCourseExecution)
-                .onEvent(RemoveCourseExecutionEvent.class, this::removeTournamentsFromCourseExecution)
+                .onEvent(RemoveCourseExecutionEvent.class, this::removeCourseExecution)
                 .build();
     }
 
@@ -40,7 +40,7 @@ public class AuthUserCourseExecutionSubscriptions {
         authUser.addCourseExecution(addCourseExecutionEvent.getCourseExecutionId());
     }
 
-    public void removeTournamentsFromCourseExecution(DomainEventEnvelope<RemoveCourseExecutionEvent> event) {
+    public void removeCourseExecution(DomainEventEnvelope<RemoveCourseExecutionEvent> event) {
         logger.info("Received RemoveCourseExecutionEvent!");
         RemoveCourseExecutionEvent removeCourseExecutionEvent = event.getEvent();
         List<AuthUser> authUsersList = authUserRepository.findAll();
