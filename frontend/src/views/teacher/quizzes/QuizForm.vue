@@ -130,7 +130,7 @@
           </template>
 
           <template v-slot:[`item.topics`]="{ item }">
-            <span v-for="topic in item.topics" :key="topic.id">
+            <span v-for="topic in item.topics" :key="'A-' + topic.id">
               {{ topic.name }}
             </span>
           </template>
@@ -287,7 +287,7 @@
           </template>
 
           <template v-slot:[`item.topics`]="{ item }">
-            <span v-for="topic in item.topics" :key="topic.id">
+            <span v-for="topic in item.topics" :key="'B-' + topic.id">
               {{ topic.name }}
             </span>
           </template>
@@ -454,7 +454,7 @@ export default class QuizForm extends Vue {
 
   @Watch('quiz')
   onQuizChange() {
-    if (this.quiz) {
+    if (this.quiz && this.quizQuestions.length === 0) {
       this.quiz.questions.forEach((question, index) => {
         question.sequence = index + 1;
         this.quizQuestions.push(question);
