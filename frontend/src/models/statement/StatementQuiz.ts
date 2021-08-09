@@ -12,12 +12,13 @@ export default class StatementQuiz {
   timed!: boolean;
   availableDate!: string;
   conclusionDate!: string;
+  questionOrder: number = 0;
   timeToAvailability!: number | null;
   timeToSubmission!: number | null;
   questions: StatementQuestion[] = [];
   answers: StatementAnswer[] = [];
-  private lastTimeCalled: number = Date.now();
-  private timerId!: number;
+  lastTimeCalled: number = Date.now();
+  timerId!: number;
 
   constructor(jsonObj?: StatementQuiz) {
     if (jsonObj) {
@@ -30,6 +31,7 @@ export default class StatementQuiz {
       this.timed = jsonObj.timed;
       this.availableDate = ISOtoString(jsonObj.availableDate);
       this.conclusionDate = ISOtoString(jsonObj.conclusionDate);
+      this.questionOrder = jsonObj.questionOrder;
 
       this.timeToAvailability = jsonObj.timeToAvailability;
       this.timeToSubmission = jsonObj.timeToSubmission;

@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
@@ -84,14 +83,15 @@ class StartQuizTest extends SpockTest {
         answerDto.quizQuestionId == quizQuestion.id
 
         where:
-        quizType                | oneWay | qRCodeOnly | availableDate     | conclusionDate      | resultsDate      || content
-        Quiz.QuizType.PROPOSED  | true   | false      | LOCAL_DATE_BEFORE | null                | null             || null
-        Quiz.QuizType.PROPOSED  | false  | false      | LOCAL_DATE_BEFORE | null                | null             || QUESTION_1_CONTENT
-        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null             || null
-        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER || null
-        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null             || QUESTION_1_CONTENT
-        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER || QUESTION_1_CONTENT
-        Quiz.QuizType.GENERATED | false  | false      | LOCAL_DATE_BEFORE | null                | null             || QUESTION_1_CONTENT
+        quizType                | oneWay | qRCodeOnly | availableDate         | conclusionDate      | resultsDate      || content
+        Quiz.QuizType.PROPOSED  | true   | false      | LOCAL_DATE_BEFORE     | null                | null             || null
+        Quiz.QuizType.PROPOSED  | false  | false      | LOCAL_DATE_BEFORE     | null                | null             || QUESTION_1_CONTENT
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW | null             || null
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER || null
+        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW | null             || QUESTION_1_CONTENT
+        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER || QUESTION_1_CONTENT
+        Quiz.QuizType.GENERATED | false  | false      | LOCAL_DATE_BEFORE     | null                | null             || QUESTION_1_CONTENT
+
     }
 
     @Unroll
@@ -128,6 +128,8 @@ class StartQuizTest extends SpockTest {
         Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_YESTERDAY  | null                 | null             || CANNOT_START_QRCODE_QUIZ
         Quiz.QuizType.PROPOSED  | true   | false      | LOCAL_DATE_TOMORROW   | null                 | null             || QUIZ_NOT_YET_AVAILABLE
         Quiz.QuizType.PROPOSED  | true   | true       | LOCAL_DATE_YESTERDAY  | null                 | null             || CANNOT_START_QRCODE_QUIZ
+        Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_BEFORE     | null                 | null             || CANNOT_START_QRCODE_QUIZ
+        Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_BEFORE     | null                 | null             || CANNOT_START_QRCODE_QUIZ
         Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_TOMORROW   | LOCAL_DATE_LATER     | null             || QUIZ_NOT_YET_AVAILABLE
         Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_YESTERDAY | null             || QUIZ_NO_LONGER_AVAILABLE
         Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_YESTERDAY | LOCAL_DATE_LATER || QUIZ_NO_LONGER_AVAILABLE
@@ -136,6 +138,9 @@ class StartQuizTest extends SpockTest {
         Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_YESTERDAY | null             || QUIZ_NO_LONGER_AVAILABLE
         Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_YESTERDAY | LOCAL_DATE_LATER || QUIZ_NO_LONGER_AVAILABLE
         Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_TOMORROW  | null             || CANNOT_START_QRCODE_QUIZ
+        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | null             || CANNOT_START_QRCODE_QUIZ
+        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | LOCAL_DATE_LATER || CANNOT_START_QRCODE_QUIZ
+        Quiz.QuizType.IN_CLASS  | false  | true       | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | LOCAL_DATE_LATER || CANNOT_START_QRCODE_QUIZ
     }
 
     @Unroll
@@ -182,19 +187,18 @@ class StartQuizTest extends SpockTest {
         answerDto.quizQuestionId == quizQuestion.id
 
         where:
-        quizType                | oneWay | qRCodeOnly | availableDate     | conclusionDate      | resultsDate      | creationDate         || content
-        Quiz.QuizType.PROPOSED  | true   | false      | LOCAL_DATE_BEFORE | null                | null             | null                 || null
-        Quiz.QuizType.PROPOSED  | false  | false      | LOCAL_DATE_BEFORE | null                | null             | null                 || QUESTION_1_CONTENT
-        Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_BEFORE | null                | null             | null                 || QUESTION_1_CONTENT
-        Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_BEFORE | null                | null             | LOCAL_DATE_YESTERDAY || QUESTION_1_CONTENT
-        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null             | null                 || null
-        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | null                 || null
-        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null             | null                 || null
-        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | null                 || null
-        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null             | null                 || QUESTION_1_CONTENT
-        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | null                 || QUESTION_1_CONTENT
-        Quiz.QuizType.IN_CLASS  | false  | true       | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | LOCAL_DATE_YESTERDAY || QUESTION_1_CONTENT
-        Quiz.QuizType.GENERATED | false  | false      | LOCAL_DATE_BEFORE | null                | null             | LOCAL_DATE_YESTERDAY || QUESTION_1_CONTENT
+        quizType                | oneWay | qRCodeOnly | availableDate        | conclusionDate      | resultsDate      | creationDate         || content
+        Quiz.QuizType.PROPOSED  | true   | false      | LOCAL_DATE_BEFORE    | null                | null             | null                 || null
+        Quiz.QuizType.PROPOSED  | false  | false      | LOCAL_DATE_BEFORE    | null                | null             | null                 || QUESTION_1_CONTENT
+        Quiz.QuizType.PROPOSED  | true   | false      | LOCAL_DATE_YESTERDAY | null                | null             | LOCAL_DATE_YESTERDAY || null
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE    | LOCAL_DATE_TOMORROW | null             | null                 || null
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE    | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | null                 || null
+        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE    | LOCAL_DATE_TOMORROW | null             | null                 || QUESTION_1_CONTENT
+        Quiz.QuizType.IN_CLASS  | false  | false      | LOCAL_DATE_BEFORE    | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | null                 || QUESTION_1_CONTENT
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE    | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | LOCAL_DATE_YESTERDAY || null
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_BEFORE    | LOCAL_DATE_TOMORROW | null             | LOCAL_DATE_YESTERDAY || null
+        Quiz.QuizType.IN_CLASS  | true   | false      | LOCAL_DATE_YESTERDAY | LOCAL_DATE_LATER    | null             | LOCAL_DATE_YESTERDAY || null
+        Quiz.QuizType.GENERATED | false  | false      | LOCAL_DATE_BEFORE    | null                | null             | LOCAL_DATE_YESTERDAY || QUESTION_1_CONTENT
     }
 
     @Unroll
@@ -233,23 +237,19 @@ class StartQuizTest extends SpockTest {
         where:
         quizType                 | oneWay | qRCodeOnly | availableDate         | conclusionDate       | resultsDate      | creationDate         | completed || errorMessage
         Quiz.QuizType.PROPOSED   | false  | false      | LOCAL_DATE_BEFORE     | null                 | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.PROPOSED   | false  | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.PROPOSED   | true   | false      | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | false     || QUIZ_ALREADY_COMPLETED
+        Quiz.QuizType.PROPOSED   | false  | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | true      || CANNOT_START_QRCODE_QUIZ
         Quiz.QuizType.PROPOSED   | true   | false      | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.PROPOSED   | true   | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | false     || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.PROPOSED   | true   | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
+        Quiz.QuizType.PROPOSED   | true   | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | false     || CANNOT_START_QRCODE_QUIZ
+        Quiz.QuizType.PROPOSED   | true   | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | true      || CANNOT_START_QRCODE_QUIZ
         Quiz.QuizType.IN_CLASS   | false  | false      | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_LATER     | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
         Quiz.QuizType.IN_CLASS   | false  | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
         Quiz.QuizType.IN_CLASS   | false  | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | LOCAL_DATE_LATER | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.IN_CLASS   | false  | true       | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
+        Quiz.QuizType.IN_CLASS   | false  | true       | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true      || CANNOT_START_QRCODE_QUIZ
         Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_LATER     | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_LATER     | null             | LOCAL_DATE_YESTERDAY | false     || QUIZ_ALREADY_COMPLETED
         Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | false     || QUIZ_ALREADY_COMPLETED
         Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | LOCAL_DATE_LATER | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.IN_CLASS   | true   | false      | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | LOCAL_DATE_LATER | LOCAL_DATE_YESTERDAY | false     || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.IN_CLASS   | true   | true       | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.IN_CLASS   | true   | true       | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | false     || QUIZ_ALREADY_COMPLETED
+        Quiz.QuizType.IN_CLASS   | true   | true       | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true      || CANNOT_START_QRCODE_QUIZ
+        Quiz.QuizType.IN_CLASS   | true   | true       | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | false     || CANNOT_START_QRCODE_QUIZ
         Quiz.QuizType.GENERATED  | false  | false      | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_TODAY     | true      || QUIZ_ALREADY_COMPLETED
     }
 

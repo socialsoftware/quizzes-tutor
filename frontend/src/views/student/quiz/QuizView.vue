@@ -174,10 +174,11 @@ export default class QuizView extends Vue {
     if (!this.statementQuiz?.id) {
       await this.$router.push({ name: 'create-quizzes' });
     }
-    await this.setCurrentQuestion(0);
+    await this.setCurrentQuestion(this.statementQuiz?.questionOrder);
   }
 
-  async setCurrentQuestion(order: number) {
+  async setCurrentQuestion(order: number | undefined) {
+    if (!order) order = 0;
     if (
       this.statementQuiz != null &&
       !this.statementQuiz.questions[order].content
@@ -196,10 +197,26 @@ export default class QuizView extends Vue {
     this.questionOrder = order;
   }
 
-  increaseOrder(): void {
+  async increaseOrder() {
     if (this.questionOrder + 1 < +this.statementQuiz!.questions.length) {
-      this.calculateTime();
-      this.setCurrentQuestion(this.questionOrder + 1);
+      try {
+        this.calculateTime();
+
+        if (
+          !!this.statementQuiz &&
+          this.statementQuiz.timed &&
+          this.statementQuiz.oneWay
+        ) {
+          let newAnswer = this.statementQuiz.answers[this.questionOrder];
+          newAnswer.timeToSubmission = this.statementQuiz.timeToSubmission;
+          newAnswer.finalSubmission = true;
+          RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
+        }
+
+        await this.setCurrentQuestion(this.questionOrder + 1);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
     }
     this.nextConfirmationDialog = false;
   }
@@ -224,9 +241,9 @@ export default class QuizView extends Vue {
     if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
       try {
         this.calculateTime();
-        let newAnswer = this.statementQuiz.answers[this.questionOrder];
 
         if (!!this.statementQuiz && this.statementQuiz.timed) {
+          let newAnswer = this.statementQuiz.answers[this.questionOrder];
           newAnswer.timeToSubmission = this.statementQuiz.timeToSubmission;
           RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
         }

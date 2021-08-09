@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Questio
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @DataJpaTest
 class RemoveQuestionTest extends SpockTest {

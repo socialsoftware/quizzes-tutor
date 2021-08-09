@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.CODE_FILL_IN_QUESTION)
 public class CodeFillInAnswerItem extends QuestionAnswerItem {
-
     @ElementCollection
     private List<Integer> optionIds;
 
@@ -33,5 +32,9 @@ public class CodeFillInAnswerItem extends QuestionAnswerItem {
     @Override
     public String getAnswerRepresentation(QuestionDetails questionDetails) {
         return questionDetails.getAnswerRepresentation(optionIds);
+    }
+
+    public List<Integer> getOptionIds() {
+        return optionIds;
     }
 }

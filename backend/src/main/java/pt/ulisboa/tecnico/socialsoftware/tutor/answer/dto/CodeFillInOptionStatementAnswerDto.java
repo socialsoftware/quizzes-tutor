@@ -5,7 +5,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInOption;
 import java.io.Serializable;
 
 public class CodeFillInOptionStatementAnswerDto implements Serializable {
-
     private Integer sequence;
     private Integer optionSequence;
     private Integer optionId;

@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;

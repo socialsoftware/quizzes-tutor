@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.AnswerDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.Updator;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import java.io.Serializable;
 
@@ -27,4 +28,6 @@ public abstract class StatementAnswerDetailsDto implements Updator, Serializable
     public abstract boolean emptyAnswer();
 
     public abstract QuestionAnswerItem getQuestionAnswerItem(String username, int quizId, StatementAnswerDto statementAnswerDto);
+
+    public abstract void setAnswer(QuestionAnswerItem item, QuestionDetails questionDetails);
 }

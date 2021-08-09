@@ -1,7 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswerItem;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.io.Serializable;
@@ -9,6 +13,8 @@ import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class StatementQuizDto implements Serializable {
@@ -19,6 +25,7 @@ public class StatementQuizDto implements Serializable {
     private boolean timed;
     private String availableDate;
     private String conclusionDate;
+    private Integer questionOrder = 0;
     private Long timeToAvailability;
     private Long timeToSubmission;
     private List<StatementQuestionDto> questions = new ArrayList<>();
@@ -49,6 +56,34 @@ public class StatementQuizDto implements Serializable {
                 .map(StatementAnswerDto::new)
                 .sorted(Comparator.comparing(StatementAnswerDto::getSequence))
                 .collect(Collectors.toList());
+    }
+
+    public StatementQuizDto(QuizAnswer quizAnswer, List<QuestionAnswerItem> items) {
+        this(quizAnswer, false);
+
+        List<QuestionAnswerItem> finalItems = new ArrayList<>();
+        for (int i = 0; i < items.size() - 1; i++) {
+            if (!items.get(i).getQuizQuestionId().equals(items.get(i+1).getQuizQuestionId())) {
+                finalItems.add(items.get(i));
+            }
+        }
+        finalItems.add(items.get(items.size() - 1));
+
+        Map<Integer, StatementAnswerDto> mapAnswers = this.answers.stream()
+                .collect(Collectors.toMap(StatementAnswerDto::getQuizQuestionId, Function.identity()));
+        Map<Integer, QuestionDetails> mapQuestionDetails = quizAnswer.getQuestionAnswers().stream()
+                .map(QuestionAnswer::getQuizQuestion)
+                .collect(Collectors.toMap(QuizQuestion::getId, quizQuestion -> quizQuestion.getQuestion().getQuestionDetails()));
+        for (int i = 0; i < finalItems.size(); i++) {
+            StatementAnswerDto answerDto = mapAnswers.get(finalItems.get(i).getQuizQuestionId());
+
+            answerDto.setTimeTaken(finalItems.get(i).getTimeTaken());
+            answerDto.setTimeToSubmission(finalItems.get(i).getTimeToSubmission());
+            answerDto.getAnswerDetails().setAnswer(finalItems.get(i), mapQuestionDetails.get(finalItems.get(i).getQuizQuestionId()));
+        }
+
+        int sequenceOfLast = mapAnswers.get(finalItems.get(finalItems.size() - 1).getQuizQuestionId()).getSequence();
+        this.questionOrder = finalItems.get(finalItems.size() - 1).isFinalSubmission() ? sequenceOfLast + 1 : sequenceOfLast;
     }
 
     public Integer getId() {
@@ -101,6 +136,14 @@ public class StatementQuizDto implements Serializable {
 
     public void setConclusionDate(String conclusionDate) {
         this.conclusionDate = conclusionDate;
+    }
+
+    public Integer getQuestionOrder() {
+        return questionOrder;
+    }
+
+    public void setQuestionOrder(Integer questionOrder) {
+        this.questionOrder = questionOrder;
     }
 
     public Long getTimeToAvailability() {

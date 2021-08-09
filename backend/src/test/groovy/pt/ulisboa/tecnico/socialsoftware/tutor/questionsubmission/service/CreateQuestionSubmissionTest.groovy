@@ -15,7 +15,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Questio
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Shared
 import spock.lang.Unroll
 

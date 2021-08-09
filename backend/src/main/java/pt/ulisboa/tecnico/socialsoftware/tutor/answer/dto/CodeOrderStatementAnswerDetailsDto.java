@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import javax.persistence.Transient;
 import java.util.ArrayList;
@@ -41,6 +42,13 @@ public class CodeOrderStatementAnswerDetailsDto extends StatementAnswerDetailsDt
         codeOrderAnswer = new CodeOrderAnswer(questionAnswer);
         questionAnswer.getQuestion().getQuestionDetails().update(this);
         return codeOrderAnswer;
+    }
+
+    @Override
+    public void setAnswer(QuestionAnswerItem item, QuestionDetails questionDetails) {
+        this.orderedSlots = ((CodeOrderAnswerItem) item).getOrderedSlots().stream()
+                .map(slot -> new CodeOrderSlotStatementAnswerDetailsDto(slot.getSlotId(), slot.getAssignedOrder()))
+                .collect(Collectors.toList());
     }
 
     @Override

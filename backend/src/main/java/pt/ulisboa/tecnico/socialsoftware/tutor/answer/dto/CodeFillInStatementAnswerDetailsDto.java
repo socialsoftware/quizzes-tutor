@@ -1,11 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInOption;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 public class CodeFillInStatementAnswerDetailsDto extends StatementAnswerDetailsDto {
@@ -44,6 +48,17 @@ public class CodeFillInStatementAnswerDetailsDto extends StatementAnswerDetailsD
         codeFillInAnswer = new CodeFillInAnswer(questionAnswer);
         questionAnswer.getQuestion().getQuestionDetails().update(this);
         return codeFillInAnswer;
+    }
+
+    @Override
+    public void setAnswer(QuestionAnswerItem item, QuestionDetails questionDetails) {
+        Map<Integer, CodeFillInOption> mapCodeFillInOptions = ((CodeFillInQuestion) questionDetails).getFillInSpots().stream()
+                .flatMap(codeFillInSpot -> codeFillInSpot.getOptions().stream())
+                .collect(Collectors.toMap(CodeFillInOption::getId, Function.identity()));
+        this.selectedOptions = ((CodeFillInAnswerItem) item).getOptionIds().stream()
+                .map(optionId -> new CodeFillInOptionStatementAnswerDto(mapCodeFillInOptions.get(optionId)))
+               .collect(Collectors.toList());
+
     }
 
     @Override

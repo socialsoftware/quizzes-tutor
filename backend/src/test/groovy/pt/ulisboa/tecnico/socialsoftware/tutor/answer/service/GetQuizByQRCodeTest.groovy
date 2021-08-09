@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
@@ -209,12 +208,14 @@ class GetQuizByQRCodeTest extends SpockTest {
         answerDto.quizQuestionId == quizQuestion.id
 
         where:
-        quizType                | oneWay | qRCodeOnly | availableDate     | conclusionDate      | resultsDate      | creationDate          || content
-        Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_BEFORE | null                | null             | null                  || QUESTION_1_CONTENT
-        Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_BEFORE | null                | null             | LOCAL_DATE_YESTERDAY  || QUESTION_1_CONTENT
-        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | null             | null                  || null
-        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | null                  || null
-        Quiz.QuizType.IN_CLASS  | false  | true       | LOCAL_DATE_BEFORE | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | LOCAL_DATE_YESTERDAY  || QUESTION_1_CONTENT
+        quizType                | oneWay | qRCodeOnly | availableDate         | conclusionDate      | resultsDate      | creationDate          || content
+        Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_BEFORE     | null                | null             | null                  || QUESTION_1_CONTENT
+        Quiz.QuizType.PROPOSED  | false  | true       | LOCAL_DATE_BEFORE     | null                | null             | LOCAL_DATE_YESTERDAY  || QUESTION_1_CONTENT
+        Quiz.QuizType.PROPOSED  | true   | true       | LOCAL_DATE_YESTERDAY  | null                | null             | LOCAL_DATE_YESTERDAY  || null
+        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW | null             | null                  || null
+        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | null                  || null
+        Quiz.QuizType.IN_CLASS  | false  | true       | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW | LOCAL_DATE_LATER | LOCAL_DATE_YESTERDAY  || QUESTION_1_CONTENT
+        Quiz.QuizType.IN_CLASS  | true   | true       | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW | null             | LOCAL_DATE_YESTERDAY  || null
     }
 
     @Unroll
@@ -294,11 +295,9 @@ class GetQuizByQRCodeTest extends SpockTest {
         where:
         quizType                 | oneWay | qRCodeOnly | availableDate         | conclusionDate       | resultsDate      | creationDate         | completed || errorMessage
         Quiz.QuizType.PROPOSED   | false  | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.PROPOSED   | true   | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | false     || QUIZ_ALREADY_COMPLETED
         Quiz.QuizType.PROPOSED   | true   | true       | LOCAL_DATE_YESTERDAY  | null                 | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
         Quiz.QuizType.IN_CLASS   | false  | true       | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
         Quiz.QuizType.IN_CLASS   | true   | true       | LOCAL_DATE_YESTERDAY  | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | true      || QUIZ_ALREADY_COMPLETED
-        Quiz.QuizType.IN_CLASS   | true   | true       | LOCAL_DATE_BEFORE     | LOCAL_DATE_TOMORROW  | null             | LOCAL_DATE_YESTERDAY | false     || QUIZ_ALREADY_COMPLETED
     }
 
     @TestConfiguration

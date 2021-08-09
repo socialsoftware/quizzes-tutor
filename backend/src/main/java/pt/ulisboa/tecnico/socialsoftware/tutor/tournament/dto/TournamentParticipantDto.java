@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.io.Serializable;
 

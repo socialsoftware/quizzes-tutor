@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
 import java.io.Serializable;
 

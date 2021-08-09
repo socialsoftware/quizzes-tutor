@@ -6,11 +6,12 @@ import Discussion from '@/models/management/Discussion';
 
 export default class StatementAnswer {
   public timeTaken: number = 0;
+  public timeToSubmission: number | null = null;
   public sequence!: number;
   public questionAnswerId!: number;
   public quizQuestionId!: number;
+  public finalSubmission: boolean = false;
   public userDiscussion?: Discussion;
-  public timeToSubmission: number | null = null;
 
   answerDetails: StatementAnswerDetails =
     new MultipleChoiceStatementAnswerDetails();

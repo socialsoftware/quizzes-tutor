@@ -129,15 +129,15 @@ public class QuestionAnswer implements DomainEntity {
     }
 
     public void remove() {
-        if (discussion != null) {
+        if (this.discussion != null) {
             throw new TutorException(QUESTION_ANSWER_HAS_DISCUSSION);
         }
 
-        quizQuestion.getQuestionAnswers().remove(this);
-        quizQuestion = null;
+        this.quizQuestion.getQuestionAnswers().remove(this);
+        this.quizQuestion = null;
 
-        if (answerDetails != null) {
-            answerDetails.remove();
+        if (this.answerDetails != null) {
+            this.answerDetails.remove();
         }
     }
 
@@ -147,15 +147,15 @@ public class QuestionAnswer implements DomainEntity {
     }
 
     public StatementAnswerDetailsDto getStatementAnswerDetailsDto() {
-        if (this.getAnswerDetails() == null) {
-            return this.getQuestion().getEmptyStatementAnswerDetailsDto();
+        if (getAnswerDetails() == null) {
+            return getQuestion().getEmptyStatementAnswerDetailsDto();
         } else {
-            return this.getAnswerDetails().getStatementAnswerDetailsDto();
+            return getAnswerDetails().getStatementAnswerDetailsDto();
         }
     }
 
     public Discussion getDiscussion() {
-        return discussion;
+        return this.discussion;
     }
 
     public void setDiscussion(Discussion discussion) {
@@ -163,6 +163,6 @@ public class QuestionAnswer implements DomainEntity {
     }
 
     public boolean isAnswered() {
-        return this.getTimeTaken() != null && this.getAnswerDetails() != null && this.getAnswerDetails().isAnswered();
+        return getTimeTaken() != null && getAnswerDetails() != null && getAnswerDetails().isAnswered();
     }
 }

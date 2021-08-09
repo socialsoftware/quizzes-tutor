@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import javax.persistence.Transient;
 
@@ -43,6 +44,11 @@ public class MultipleChoiceStatementAnswerDetailsDto extends StatementAnswerDeta
     @Override
     public QuestionAnswerItem getQuestionAnswerItem(String username, int quizId, StatementAnswerDto statementAnswerDto) {
         return new MultipleChoiceAnswerItem(username, quizId, statementAnswerDto, this);
+    }
+
+    @Override
+    public void setAnswer(QuestionAnswerItem item, QuestionDetails questionDetails) {
+        this.optionId = ((MultipleChoiceAnswerItem) item).getOptionId();
     }
 
     @Override

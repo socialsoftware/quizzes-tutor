@@ -9,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import spock.lang.Unroll
 
 @DataJpaTest

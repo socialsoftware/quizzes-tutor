@@ -9,11 +9,12 @@ import java.io.Serializable;
 
 public class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
+    private Integer timeToSubmission;
     private Integer sequence;
     private Integer questionAnswerId;
-    private DiscussionDto userDiscussion;
     private Integer quizQuestionId;
-    private Integer timeToSubmission;
+    private boolean finalSubmission;
+    private DiscussionDto userDiscussion;
 
     private StatementAnswerDetailsDto answerDetails;
 
@@ -83,6 +84,14 @@ public class StatementAnswerDto implements Serializable {
 
     public void setAnswerDetails(StatementAnswerDetailsDto answerDetails) {
         this.answerDetails = answerDetails;
+    }
+
+    public boolean isFinalSubmission() {
+        return finalSubmission;
+    }
+
+    public void setFinalSubmission(boolean finalSubmission) {
+        this.finalSubmission = finalSubmission;
     }
 
     public DiscussionDto getUserDiscussion() {

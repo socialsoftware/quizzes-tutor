@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.CODE_ORDER_QUESTION)
 public class CodeOrderAnswerItem extends QuestionAnswerItem {
-
     @ElementCollection
     private List<CodeOrderSlotAnswerItem> orderedSlots;
 
@@ -37,5 +36,9 @@ public class CodeOrderAnswerItem extends QuestionAnswerItem {
                         .sorted(Comparator.comparing(CodeOrderSlotAnswerItem::getAssignedOrder))
                         .map(CodeOrderSlotAnswerItem::getSlotId)
                         .collect(Collectors.toList()));
+    }
+
+    public List<CodeOrderSlotAnswerItem> getOrderedSlots() {
+        return orderedSlots;
     }
 }

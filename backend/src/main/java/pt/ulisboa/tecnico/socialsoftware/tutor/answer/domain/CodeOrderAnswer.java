@@ -46,7 +46,7 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public String getAnswerRepresentation() {
-        return this.getOrderedSlots().stream()
+        return getOrderedSlots().stream()
                 .sorted(Comparator.comparing(CodeOrderAnswerSlot::getAssignedOrder))
                 .map(x -> x.getCodeOrderSlot().getSequence().toString())
                 .collect(Collectors.joining(" | "));
