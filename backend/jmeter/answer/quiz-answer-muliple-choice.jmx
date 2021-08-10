@@ -673,6 +673,13 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
                 <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
               </JSONPostProcessor>
               <hashTree/>
+              <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="Store correct option id" enabled="true">
+                <stringProp name="filename"></stringProp>
+                <stringProp name="parameters"></stringProp>
+                <boolProp name="resetInterpreter">false</boolProp>
+                <stringProp name="script">vars.putObject(&quot;optionId_&quot; + ${question_number}, ${option_id_1});</stringProp>
+              </BeanShellPostProcessor>
+              <hashTree/>
             </hashTree>
             <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Submit answer" enabled="true">
               <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -835,8 +842,14 @@ int numberOfQuestions = Integer.parseInt(vars.get(&quot;number_of_questions&quot
 
 for (int i = 1; i &lt;= numberOfQuestions; i++) {
 	result.append(&quot;{&quot;);
+
+	result.append(&quot;\&quot;answerDetails\&quot;: &quot;);
+	result.append(&quot;{&quot;);
+	result.append(&quot;\&quot;type\&quot;: \&quot;multiple_choice\&quot;,&quot;);
 	result.append(&quot;\&quot;optionId\&quot;: &quot;);
-	result.append(vars.get(&quot;option_id_&quot;+i));
+	result.append(vars.get(&quot;optionId_&quot;+i));
+	result.append(&quot;}&quot;);
+	
 	result.append(&quot;,  \&quot;timeTaken\&quot;: &quot;);
 	result.append(i);
 	result.append(&quot;,  \&quot;sequence\&quot;: &quot;);
