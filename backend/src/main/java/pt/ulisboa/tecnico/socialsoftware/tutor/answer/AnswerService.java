@@ -27,7 +27,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.StudentRepository;
@@ -106,7 +105,7 @@ public class AnswerService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<CorrectAnswerDto> concludeQuiz(StatementQuizDto statementQuizDto) {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(statementQuizDto.getQuizAnswerId())
-                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, statementQuizDto.getId()));
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, statementQuizDto.getQuizAnswerId()));
 
         if (quizAnswer.getQuiz().getAvailableDate() != null && quizAnswer.getQuiz().getAvailableDate().isAfter(DateHandler.now())) {
             throw new TutorException(QUIZ_NOT_YET_AVAILABLE);
@@ -147,11 +146,19 @@ public class AnswerService {
 
         List<QuizAnswerItem> quizAnswerItems = quizAnswerItemRepository.findQuizAnswerItemsByQuizId(quizId);
 
+        Map<String,List<QuestionAnswerItem>> questionAnswerMap =  questionAnswerItemRepository.findQuestionAnswerItemsByQuizId(quiz.getId()).stream()
+                .collect(Collectors.groupingBy(
+                        QuestionAnswerItem::getUsername,
+                        Collectors.mapping(qai -> qai, Collectors.toList())
+                ));
+
         quizAnswerItems.forEach(quizAnswerItem -> {
             QuizAnswer quizAnswer = quizAnswersMap.get(quizAnswerItem.getQuizAnswerId());
 
             if (quiz.isOneWay()) {
-                checkFraud(quizAnswer);
+                fraudDetection(quizAnswer, questionAnswerMap.get(quizAnswer.getStudent().getUsername()).stream()
+                        .sorted(Comparator.comparing(QuestionAnswerItem::getAnswerDate))
+                        .collect(Collectors.toList()));
             }
 
             if (quizAnswer.getAnswerDate() == null) {
@@ -165,28 +172,22 @@ public class AnswerService {
         });
     }
 
-    private void checkFraud(QuizAnswer quizAnswer) {
+    private void fraudDetection(QuizAnswer quizAnswer, List<QuestionAnswerItem> questionAnswerItems) {
         Student student = quizAnswer.getStudent();
 
-        List<Integer> quizQuestionIds = questionAnswerItemRepository
-                .findQuestionAnswerItemsByUsernameAndQuizId(student.getUsername(), quizAnswer.getQuiz().getId()).stream()
-                .sorted(Comparator.comparing(QuestionAnswerItem::getAnswerDate))
-                .map(QuestionAnswerItem::getQuizQuestionId)
-                .collect(Collectors.toList());
-
         Set<Integer> uniqueQuestionQuizIds = new HashSet<>();
-        for (int i = 0; i < quizQuestionIds.size(); i++) {
-           if (!uniqueQuestionQuizIds.contains(quizQuestionIds.get(i))) {
-               uniqueQuestionQuizIds.add(quizQuestionIds.get(i));
-           } else if (!quizQuestionIds.get(i).equals(quizQuestionIds.get(i-1))) {
-               for (Teacher teacher: quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
-                   mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
-                           Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion",
-                           "Student " + student.getName() + "(" + student.getUsername() + ") may have answered OneWay quiz " +
-                           quizAnswer.getQuiz().getTitle() + " on " + quizAnswer.getAnswerDate() + " by changing previous answers. Check the log in the exported .csv file");
-               }
-           }
-       }
+        for (int i = 0; i < questionAnswerItems.size(); i++) {
+            if (!uniqueQuestionQuizIds.contains(questionAnswerItems.get(i).getQuizQuestionId())) {
+                uniqueQuestionQuizIds.add(questionAnswerItems.get(i).getQuizQuestionId());
+            } else if (!questionAnswerItems.get(i).getQuizQuestionId().equals(questionAnswerItems.get(i - 1).getQuizQuestionId())) {
+                for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
+                    mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
+                            Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion",
+                            "Student " + student.getName() + "(" + student.getUsername() + ") may have answered OneWay quiz " +
+                                    quizAnswer.getQuiz().getTitle() + " on " + quizAnswer.getAnswerDate() + " by changing previous answers. Check the log in the exported .csv file");
+                }
+            }
+        }
     }
 
     private void writeQuestionAnswer(QuestionAnswer questionAnswer, List<StatementAnswerDto> statementAnswerDtoList) {
