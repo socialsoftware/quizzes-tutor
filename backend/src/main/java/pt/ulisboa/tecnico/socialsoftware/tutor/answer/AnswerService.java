@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -26,9 +27,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.StudentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -42,6 +46,12 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class AnswerService {
+    @Autowired
+    private Mailer mailer;
+
+    @Value("${spring.mail.username}")
+    private String mailUsername;
+
     @Autowired
     private StudentRepository studentRepository;
 
@@ -140,6 +150,10 @@ public class AnswerService {
         quizAnswerItems.forEach(quizAnswerItem -> {
             QuizAnswer quizAnswer = quizAnswersMap.get(quizAnswerItem.getQuizAnswerId());
 
+            if (quiz.isOneWay()) {
+                checkFraud(quizAnswer);
+            }
+
             if (quizAnswer.getAnswerDate() == null) {
                 quizAnswer.setAnswerDate(quizAnswerItem.getAnswerDate());
 
@@ -149,6 +163,29 @@ public class AnswerService {
             }
             quizAnswerItemRepository.deleteById(quizAnswerItem.getId());
         });
+    }
+
+    private void checkFraud(QuizAnswer quizAnswer) {
+        Student student = quizAnswer.getStudent();
+
+        List<Integer> quizQuestionIds = questionAnswerItemRepository.findQuestionAnswerItemsByUsername(student.getUsername()).stream()
+                .sorted(Comparator.comparing(QuestionAnswerItem::getAnswerDate))
+                .map(QuestionAnswerItem::getQuizQuestionId)
+                .collect(Collectors.toList());
+
+        Set<Integer> uniqueQuestionQuizIds = new HashSet<>();
+        for (int i = 0; i < quizQuestionIds.size(); i++) {
+           if (!uniqueQuestionQuizIds.contains(quizQuestionIds.get(i))) {
+               uniqueQuestionQuizIds.add(quizQuestionIds.get(i));
+           } else if (!quizQuestionIds.get(i).equals(quizQuestionIds.get(i-1))) {
+               for (Teacher teacher: quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
+                   mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
+                           Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion",
+                           "Student " + student.getName() + "(" + student.getUsername() + ") may have answered OneWay quiz " +
+                           quizAnswer.getQuiz().getTitle() + " on " + quizAnswer.getAnswerDate() + " by changing previous answers. Check the log in the exported .csv file");
+               }
+           }
+       }
     }
 
     private void writeQuestionAnswer(QuestionAnswer questionAnswer, List<StatementAnswerDto> statementAnswerDtoList) {
