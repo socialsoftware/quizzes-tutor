@@ -168,7 +168,8 @@ public class AnswerService {
     private void checkFraud(QuizAnswer quizAnswer) {
         Student student = quizAnswer.getStudent();
 
-        List<Integer> quizQuestionIds = questionAnswerItemRepository.findQuestionAnswerItemsByUsername(student.getUsername()).stream()
+        List<Integer> quizQuestionIds = questionAnswerItemRepository
+                .findQuestionAnswerItemsByUsernameAndQuizId(student.getUsername(), quizAnswer.getQuiz().getId()).stream()
                 .sorted(Comparator.comparing(QuestionAnswerItem::getAnswerDate))
                 .map(QuestionAnswerItem::getQuizQuestionId)
                 .collect(Collectors.toList());
@@ -385,7 +386,8 @@ public class AnswerService {
 
     private StatementQuizDto getPreparedStatementQuizDto(Student student, Quiz quiz, QuizAnswer quizAnswer) {
         if (quiz.getType().equals(Quiz.QuizType.IN_CLASS) && quizAnswer.getCreationDate() != null) {
-            List<QuestionAnswerItem> items = questionAnswerItemRepository.findQuestionAnswerItemsByUsername(student.getUsername()).stream()
+            List<QuestionAnswerItem> items = questionAnswerItemRepository
+                    .findQuestionAnswerItemsByUsernameAndQuizId(student.getUsername(), quiz.getId()).stream()
                     .sorted(Comparator.comparing(QuestionAnswerItem::getQuizQuestionId).thenComparing(QuestionAnswerItem::getAnswerDate))
                     .collect(Collectors.toList());
 

@@ -74,12 +74,12 @@ public class StatementQuizDto implements Serializable {
         Map<Integer, QuestionDetails> mapQuestionDetails = quizAnswer.getQuestionAnswers().stream()
                 .map(QuestionAnswer::getQuizQuestion)
                 .collect(Collectors.toMap(QuizQuestion::getId, quizQuestion -> quizQuestion.getQuestion().getQuestionDetails()));
-        for (int i = 0; i < finalItems.size(); i++) {
-            StatementAnswerDto answerDto = mapAnswers.get(finalItems.get(i).getQuizQuestionId());
+        for (QuestionAnswerItem finalItem : finalItems) {
+            StatementAnswerDto answerDto = mapAnswers.get(finalItem.getQuizQuestionId());
 
-            answerDto.setTimeTaken(finalItems.get(i).getTimeTaken());
-            answerDto.setTimeToSubmission(finalItems.get(i).getTimeToSubmission());
-            answerDto.getAnswerDetails().setAnswer(finalItems.get(i), mapQuestionDetails.get(finalItems.get(i).getQuizQuestionId()));
+            answerDto.setTimeTaken(finalItem.getTimeTaken());
+            answerDto.setTimeToSubmission(finalItem.getTimeToSubmission());
+            answerDto.getAnswerDetails().setAnswer(finalItem, mapQuestionDetails.get(finalItem.getQuizQuestionId()));
         }
 
         int sequenceOfLast = mapAnswers.get(finalItems.get(finalItems.size() - 1).getQuizQuestionId()).getSequence();
