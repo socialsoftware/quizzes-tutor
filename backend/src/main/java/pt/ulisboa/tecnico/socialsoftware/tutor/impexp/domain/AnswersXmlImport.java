@@ -135,6 +135,11 @@ public class AnswersXmlImport {
             completed = Boolean.parseBoolean(answerElement.getAttributeValue("completed"));
         }
 
+        boolean fraud = false;
+        if (answerElement.getAttributeValue("fraud") != null) {
+            fraud = Boolean.parseBoolean(answerElement.getAttributeValue("fraud"));
+        }
+
         Element quizElement = answerElement.getChild("quiz");
 
         String courseName = quizElement.getAttributeValue("courseName");
@@ -162,6 +167,7 @@ public class AnswersXmlImport {
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizAnswerDto.getId()));
         quizAnswer.setAnswerDate(answerDate);
         quizAnswer.setCompleted(completed);
+        quizAnswer.setFraud(fraud);
 
         importQuestionAnswers(answerElement.getChild("questionAnswers"), quizAnswer);
     }

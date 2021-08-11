@@ -34,6 +34,8 @@ public class CSVQuizExportVisitor implements Visitor {
 
         addKey(quizQuestionsList, lineSize);
 
+        addFraudMessage(lineSize);
+
         addLogOfQuestionAnswers(questionAnswerItems, lineSize, quizQuestions);
 
         return table.stream().map(this::convertToCSV).collect(Collectors.joining("\n"));
@@ -72,6 +74,16 @@ public class CSVQuizExportVisitor implements Visitor {
             line[5] = convertMiliseconds(questionAnswerItem.getTimeTaken());
             table.add(line);
         }
+    }
+
+    private void addFraudMessage(int lineSize) {
+        line = new String[lineSize];
+        Arrays.fill(line, "");
+        table.add(line);
+        line = new String[lineSize];
+        Arrays.fill(line, "");
+        line[2] = "(*) Fraud Suspicion: students with (*) may have returned to a previous questions in the OneWay quiz please check log";
+        table.add(line);
     }
 
     private void addKey(List<QuizQuestion> quizQuestionsList, int lineSize) {
@@ -128,7 +140,7 @@ public class CSVQuizExportVisitor implements Visitor {
 
     @Override
     public void visitQuizAnswer(QuizAnswer quizAnswer) {
-        line[column++] = quizAnswer.getCreationDate() != null ? DateHandler.toHumanReadableString(quizAnswer.getCreationDate()) : "";
+        line[column++] = (quizAnswer.isFraud() ? "(*) " : "") + (quizAnswer.getCreationDate() != null ? DateHandler.toHumanReadableString(quizAnswer.getCreationDate()) : "");
         line[column++] = quizAnswer.getAnswerDate() != null ? DateHandler.toHumanReadableString(quizAnswer.getAnswerDate()) : "";
         if (quizAnswer.getAnswerDate() != null &&
                 quizAnswer.getQuiz().getConclusionDate() != null &&

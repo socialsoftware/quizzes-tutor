@@ -15,6 +15,7 @@ public class QuizAnswerDto implements Serializable {
     private String username;
     private String creationDate;
     private String answerDate;
+    private boolean fraud;
     private List<QuestionAnswerDto> questionAnswers = new ArrayList<>();
 
 
@@ -27,6 +28,7 @@ public class QuizAnswerDto implements Serializable {
         this.name = quizAnswer.getStudent().getName();
         this.answerDate = DateHandler.toISOString(quizAnswer.getAnswerDate());
         this.creationDate = DateHandler.toISOString(quizAnswer.getCreationDate());
+        this.fraud = quizAnswer.isFraud();
 
         this.questionAnswers = quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(qa -> qa.getQuizQuestion().getSequence()))
@@ -68,6 +70,14 @@ public class QuizAnswerDto implements Serializable {
 
     public void setAnswerDate(String answerDate) {
         this.answerDate = answerDate;
+    }
+
+    public boolean isFraud() {
+        return fraud;
+    }
+
+    public void setFraud(boolean fraud) {
+        this.fraud = fraud;
     }
 
     public List<QuestionAnswerDto> getQuestionAnswers() {

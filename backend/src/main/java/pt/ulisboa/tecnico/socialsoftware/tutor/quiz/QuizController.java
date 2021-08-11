@@ -69,7 +69,10 @@ public class QuizController {
     @GetMapping(value = "/quizzes/{quizId}/export")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public void exportQuiz(HttpServletResponse response, @PathVariable Integer quizId) throws IOException {
+        answerService.writeQuizAnswers(quizId);
+
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
         response.setHeader("Content-Disposition", "attachment; filename=file.tar.gz");
         response.setContentType("application/tar.gz");
         String sourceFolder = exportDir + "/quiz-" + quizId;

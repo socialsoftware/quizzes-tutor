@@ -4,8 +4,8 @@ export class QuizAnswers {
   correctSequence!: string[];
   timeToSubmission!: number;
   quizAnswers: QuizAnswer[] = [];
-  private lastTimeCalled: number = Date.now();
-  private timerId!: number;
+  lastTimeCalled: number = Date.now();
+  timerId!: number;
 
   constructor(jsonObj?: QuizAnswers) {
     if (jsonObj) {

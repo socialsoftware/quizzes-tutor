@@ -156,10 +156,13 @@ public class AnswerService {
             QuizAnswer quizAnswer = quizAnswersMap.get(quizAnswerItem.getQuizAnswerId());
 
             if (quiz.isOneWay()) {
-                fraudDetection(quizAnswer, questionAnswerMap.get(quizAnswer.getStudent().getUsername()).stream()
-                        .sorted(Comparator.comparing(QuestionAnswerItem::getAnswerDate))
-                        .collect(Collectors.toList()));
-            }
+                List<QuestionAnswerItem> questionAnswerItems = questionAnswerMap.get(quizAnswer.getStudent().getUsername());
+                if (questionAnswerItems != null && !questionAnswerItems.isEmpty()) {
+                    fraudDetection(quizAnswer, questionAnswerItems.stream()
+                            .sorted(Comparator.comparing(QuestionAnswerItem::getAnswerDate))
+                            .collect(Collectors.toList()));
+                }
+           }
 
             if (quizAnswer.getAnswerDate() == null) {
                 quizAnswer.setAnswerDate(quizAnswerItem.getAnswerDate());
@@ -181,6 +184,7 @@ public class AnswerService {
                 uniqueQuestionQuizIds.add(questionAnswerItems.get(i).getQuizQuestionId());
             } else if (!questionAnswerItems.get(i).getQuizQuestionId().equals(questionAnswerItems.get(i - 1).getQuizQuestionId())) {
                 for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
+                    quizAnswer.setFraud(true);
                     mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
                             Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion",
                             "Student " + student.getName() + "(" + student.getUsername() + ") may have answered OneWay quiz " +

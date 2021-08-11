@@ -29,6 +29,15 @@
           </v-card-title>
         </template>
 
+        <template v-slot:[`item.name`]="{ item }">
+          <span>
+            {{ item.name }}
+          </span>
+          <span v-if="item.fraud" v-bind:class="'red darken'"
+            >(Fraud Suspicion: check log)</span
+          >
+        </template>
+
         <template v-slot:[`item.submissionLag`]="{ item }">
           <span
             v-bind:class="[

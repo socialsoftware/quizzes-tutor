@@ -58,6 +58,8 @@ public class AnswersXmlExportVisitor implements Visitor {
         }
 
         quizAnswerElement.setAttribute("completed", String.valueOf(quizAnswer.isCompleted()));
+        quizAnswerElement.setAttribute("fraud", String.valueOf(quizAnswer.isFraud()));
+
 
         Element quizElement = new Element("quiz");
         quizElement.setAttribute("courseName", quizAnswer.getQuiz().getCourseExecution().getCourse().getName());

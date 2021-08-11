@@ -37,6 +37,8 @@ public class QuizAnswer implements DomainEntity {
 
     private boolean completed;
 
+    private Boolean fraud = false;
+
     @Column(columnDefinition = "boolean default false")
     private boolean usedInStatistics;
 
@@ -56,6 +58,7 @@ public class QuizAnswer implements DomainEntity {
 
     public QuizAnswer(Student student, Quiz quiz) {
         setCompleted(false);
+        setFraud(false);
         setUsedInStatistics(false);
         setStudent(student);
         setQuiz(quiz);
@@ -101,6 +104,14 @@ public class QuizAnswer implements DomainEntity {
 
     public void setCompleted(boolean completed) {
         this.completed = completed;
+    }
+
+    public boolean isFraud() {
+        return fraud;
+    }
+
+    public void setFraud(boolean fraud) {
+        this.fraud = fraud;
     }
 
     public boolean isUsedInStatistics() {

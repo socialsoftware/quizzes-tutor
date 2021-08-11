@@ -6,6 +6,7 @@ export class QuizAnswer {
   username!: number;
   creationDate!: string;
   answerDate!: string;
+  fraud: boolean = false;
   questionAnswers: QuestionAnswer[] = [];
 
   constructor(jsonObj?: QuizAnswer) {
@@ -14,6 +15,7 @@ export class QuizAnswer {
       this.username = jsonObj.username;
       this.creationDate = ISOtoString(jsonObj.creationDate);
       this.answerDate = ISOtoString(jsonObj.answerDate);
+      this.fraud = jsonObj.fraud;
 
       if (jsonObj.questionAnswers) {
         this.questionAnswers = jsonObj.questionAnswers.map(
