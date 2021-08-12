@@ -335,15 +335,18 @@ export default class QuizList extends Vue {
   }
 
   async populateWithQuizAnswers(quizId: number) {
+    await this.$store.dispatch('loading');
     try {
       let quiz: Quiz = await RemoteServices.populateWithQuizAnswers(quizId);
       this.$emit('updateQuiz', quiz);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
   }
 
   async removeNonAnsweredQuizAnswers(quizId: number) {
+    await this.$store.dispatch('loading');
     try {
       let quiz: Quiz = await RemoteServices.removeNonAnsweredQuizAnswers(
         quizId
@@ -352,6 +355,7 @@ export default class QuizList extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>
