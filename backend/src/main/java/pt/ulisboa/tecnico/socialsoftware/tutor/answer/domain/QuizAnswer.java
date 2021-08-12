@@ -107,7 +107,7 @@ public class QuizAnswer implements DomainEntity {
     }
 
     public boolean isFraud() {
-        return fraud;
+        return this.fraud != null ? this.fraud : false;
     }
 
     public void setFraud(boolean fraud) {

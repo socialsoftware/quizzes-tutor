@@ -283,6 +283,7 @@ export default class QuizList extends Vue {
   }
 
   async showQuizAnswers(quiz: Quiz) {
+    await this.$store.dispatch('loading');
     try {
       this.quizAnswers = await RemoteServices.getQuizAnswers(quiz.id);
 
@@ -291,6 +292,7 @@ export default class QuizList extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
   }
 
   editQuiz(quiz: Quiz, e?: Event) {
@@ -304,6 +306,7 @@ export default class QuizList extends Vue {
   }
 
   async exportQuiz(quizId: number) {
+    await this.$store.dispatch('loading');
     let fileName =
       this.quizzes.filter((quiz) => quiz.id == quizId)[0].title + '.zip';
     try {
@@ -317,6 +320,7 @@ export default class QuizList extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
   }
 
   async deleteQuiz(quizId: number) {
