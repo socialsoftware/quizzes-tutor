@@ -75,10 +75,12 @@ public class AnswerController {
         return answerService.startQuiz(authUser.getUser().getId(), quizId);
     }
 
-    @GetMapping("/answers/{quizId}/question/{questionId}")
+    @PostMapping("/answers/{quizId}/question/{questionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public StatementQuestionDto getQuestionForQuizAnswer(@PathVariable int quizId, @PathVariable int questionId) {
-        return answerService.getQuestionForQuizAnswer(quizId, questionId);
+    public StatementQuestionDto getQuestionForQuizAnswer(Principal principal, @PathVariable int quizId, @PathVariable int questionId, @Valid @RequestBody StatementAnswerDto answer) {
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
+
+        return answerService.getQuestionForQuizAnswer(authUser.getUser().getUsername(), quizId, questionId, answer);
     }
 
     @PostMapping("/answers/{quizId}/submit")

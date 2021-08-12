@@ -82,8 +82,7 @@ public class StatementQuizDto implements Serializable {
             answerDto.getAnswerDetails().setAnswer(finalItem, mapQuestionDetails.get(finalItem.getQuizQuestionId()));
         }
 
-        int sequenceOfLast = mapAnswers.get(finalItems.get(finalItems.size() - 1).getQuizQuestionId()).getSequence();
-        this.questionOrder = finalItems.get(finalItems.size() - 1).isFinalSubmission() ? sequenceOfLast + 1 : sequenceOfLast;
+        this.questionOrder = mapAnswers.get(finalItems.get(finalItems.size() - 1).getQuizQuestionId()).getSequence();
     }
 
     public Integer getId() {

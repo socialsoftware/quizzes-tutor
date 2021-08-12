@@ -10,7 +10,6 @@ export default class StatementAnswer {
   public sequence!: number;
   public questionAnswerId!: number;
   public quizQuestionId!: number;
-  public finalSubmission: boolean = false;
   public userDiscussion?: Discussion;
 
   answerDetails: StatementAnswerDetails =

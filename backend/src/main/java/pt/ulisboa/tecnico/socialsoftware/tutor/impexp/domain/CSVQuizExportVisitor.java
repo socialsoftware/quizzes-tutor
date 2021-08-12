@@ -82,7 +82,7 @@ public class CSVQuizExportVisitor implements Visitor {
         table.add(line);
         line = new String[lineSize];
         Arrays.fill(line, "");
-        line[2] = "(*) Fraud Suspicion: students with (*) may have returned to a previous questions in the OneWay quiz please check log";
+        line[2] = "(*) Fraud Suspicion: students with (*) may not follow predefined order of OneWay quiz please check log";
         table.add(line);
     }
 

@@ -183,10 +183,15 @@ export default class QuizView extends Vue {
       this.statementQuiz != null &&
       !this.statementQuiz.questions[order].content
     ) {
+      let newAnswer = this.statementQuiz.answers[order];
+      newAnswer.timeTaken = 0;
+      newAnswer.timeToSubmission = this.statementQuiz.timeToSubmission;
       const question = await RemoteServices.getQuestion(
         this.statementQuiz.id,
-        this.statementQuiz.questions[order].questionId
+        this.statementQuiz.questions[order].questionId,
+        newAnswer
       );
+
       this.statementQuiz.questions[order].content = question.content;
       this.statementQuiz.questions[order].image = question.image;
       this.statementQuiz.questions[order].questionDetails =
@@ -201,18 +206,6 @@ export default class QuizView extends Vue {
     if (this.questionOrder + 1 < +this.statementQuiz!.questions.length) {
       try {
         this.calculateTime();
-
-        if (
-          !!this.statementQuiz &&
-          this.statementQuiz.timed &&
-          this.statementQuiz.oneWay
-        ) {
-          let newAnswer = this.statementQuiz.answers[this.questionOrder];
-          newAnswer.timeToSubmission = this.statementQuiz.timeToSubmission;
-          newAnswer.finalSubmission = true;
-          RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
-        }
-
         await this.setCurrentQuestion(this.questionOrder + 1);
       } catch (error) {
         await this.$store.dispatch('error', error);

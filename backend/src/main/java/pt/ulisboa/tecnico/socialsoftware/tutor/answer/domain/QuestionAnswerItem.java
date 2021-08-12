@@ -27,7 +27,6 @@ public abstract class QuestionAnswerItem {
     private LocalDateTime answerDate;
     private Integer timeTaken;
     private Integer timeToSubmission;
-    private Boolean finalSubmission = false;
 
     protected QuestionAnswerItem() {
     }
@@ -39,7 +38,6 @@ public abstract class QuestionAnswerItem {
         this.answerDate = DateHandler.now();
         this.timeTaken = answer.getTimeTaken();
         this.timeToSubmission = answer.getTimeToSubmission();
-        this.finalSubmission = answer.isFinalSubmission();
     }
 
     public Integer getId() {
@@ -99,12 +97,4 @@ public abstract class QuestionAnswerItem {
     }
 
     public abstract String getAnswerRepresentation(QuestionDetails questionDetails);
-
-    public boolean isFinalSubmission() {
-        return finalSubmission;
-    }
-
-    public void setFinalSubmission(boolean finalSubmission) {
-        this.finalSubmission = finalSubmission;
-    }
 }

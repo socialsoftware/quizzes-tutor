@@ -24,6 +24,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
@@ -141,8 +142,7 @@ public class AnswerService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void writeQuizAnswers(Integer quizId) {
-        Quiz quiz = quizRepository.findQuizWithAnswersAndQuestionsById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
-        Map<Integer, QuizAnswer> quizAnswersMap = quiz.getQuizAnswers().stream().collect(Collectors.toMap(QuizAnswer::getId, Function.identity()));
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
         List<QuizAnswerItem> quizAnswerItems = quizAnswerItemRepository.findQuizAnswerItemsByQuizId(quizId);
 
@@ -153,7 +153,7 @@ public class AnswerService {
                 ));
 
         quizAnswerItems.forEach(quizAnswerItem -> {
-            QuizAnswer quizAnswer = quizAnswersMap.get(quizAnswerItem.getQuizAnswerId());
+            QuizAnswer quizAnswer = quizAnswerRepository.getById(quizAnswerItem.getQuizAnswerId());
 
             if (quiz.isOneWay()) {
                 List<QuestionAnswerItem> questionAnswerItems = questionAnswerMap.get(quizAnswer.getStudent().getUsername());
@@ -176,20 +176,35 @@ public class AnswerService {
     }
 
     private void fraudDetection(QuizAnswer quizAnswer, List<QuestionAnswerItem> questionAnswerItems) {
-        Student student = quizAnswer.getStudent();
+        List<QuestionAnswerItem> finalItems = new ArrayList<>();
+        for (int i = 0; i < questionAnswerItems.size() - 1; i++) {
+            if (!questionAnswerItems.get(i).getQuizQuestionId().equals(questionAnswerItems.get(i+1).getQuizQuestionId())) {
+                finalItems.add(questionAnswerItems.get(i));
+            }
+        }
+        finalItems.add(questionAnswerItems.get(questionAnswerItems.size() - 1));
 
-        Set<Integer> uniqueQuestionQuizIds = new HashSet<>();
-        for (int i = 0; i < questionAnswerItems.size(); i++) {
-            if (!uniqueQuestionQuizIds.contains(questionAnswerItems.get(i).getQuizQuestionId())) {
-                uniqueQuestionQuizIds.add(questionAnswerItems.get(i).getQuizQuestionId());
-            } else if (!questionAnswerItems.get(i).getQuizQuestionId().equals(questionAnswerItems.get(i - 1).getQuizQuestionId())) {
-                for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
+        if (finalItems.size() > quizAnswer.getQuestionAnswers().size()) {
+            quizAnswer.setFraud(true);
+        } else {
+            List<QuizQuestion> quizQuestions = quizAnswer.getQuestionAnswers().stream()
+                    .sorted(Comparator.comparing(QuestionAnswer::getSequence))
+                    .map(QuestionAnswer::getQuizQuestion)
+                    .collect(Collectors.toList());
+            for (int i = 0; i < finalItems.size(); i++) {
+                if (!finalItems.get(i).getQuizQuestionId().equals(quizQuestions.get(i).getId())) {
                     quizAnswer.setFraud(true);
-                    mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
-                            Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion",
-                            "Student " + student.getName() + "(" + student.getUsername() + ") may have answered OneWay quiz " +
-                                    quizAnswer.getQuiz().getTitle() + " on " + quizAnswer.getAnswerDate() + " by changing previous answers. Check the log in the exported .csv file");
                 }
+            }
+        }
+
+        if (quizAnswer.isFraud()) {
+            Student student = quizAnswer.getStudent();
+            for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
+                mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
+                        Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion",
+                        "Student " + student.getName() + "(" + student.getUsername() + ") may have answered OneWay quiz " +
+                                quizAnswer.getQuiz().getTitle() + " on " + quizAnswer.getCreationDate() + " by not following the predefined order. Check the log in the exported .csv file");
             }
         }
     }
@@ -441,10 +456,13 @@ public class AnswerService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuestionDto getQuestionForQuizAnswer(Integer quizId, Integer questionId) {
-            Question question = questionRepository.findById(questionId)
-                    .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
-            return new StatementQuestionDto(question);
+    public StatementQuestionDto getQuestionForQuizAnswer(String username, Integer quizId, Integer questionId, StatementAnswerDto answer) {
+        submitAnswer(username,quizId, answer);
+
+        Question question = questionRepository.findById(questionId)
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
+
+        return new StatementQuestionDto(question);
     }
 
     @Retryable(

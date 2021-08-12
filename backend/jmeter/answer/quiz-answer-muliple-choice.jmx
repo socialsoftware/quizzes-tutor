@@ -646,8 +646,18 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
                 <collectionProp name="Arguments.arguments">
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">&#xd;
-</stringProp>
+                    <stringProp name="Argument.value">{&#xd;
+	&quot;answerDetails&quot;: {&#xd;
+		&quot;optionId&quot;: null,&#xd;
+		&quot;type&quot;: &quot;multiple_choice&quot;&#xd;
+	},&#xd;
+	&quot;timeTaken&quot;:1278,&#xd;
+	&quot;questionAnswerId&quot;:${__V(question_answer_id_${question_number})},&#xd;
+	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${question_number})},&#xd;
+	&quot;sequence&quot;:${question_number},&#xd;
+	&quot;timeToSubmission&quot;: 12345,&#xd;
+	&quot;finalSubmission&quot;: true&#xd;
+}</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -657,7 +667,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
               <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
               <stringProp name="HTTPSampler.path">${prefix}/answers/${__property(quiz_id)}/question/${__V(question_id_${question_number})}</stringProp>
-              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
               <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
@@ -697,45 +707,6 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
 	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${question_number})},&#xd;
 	&quot;sequence&quot;:${question_number},&#xd;
 	&quot;timeToSubmission&quot;: 12345&#xd;
-}&#xd;
-&#xd;
-</stringProp>
-                    <stringProp name="Argument.metadata">=</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </elementProp>
-              <stringProp name="HTTPSampler.domain">${server}</stringProp>
-              <stringProp name="HTTPSampler.port">${port}</stringProp>
-              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
-              <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
-              <stringProp name="HTTPSampler.path">${prefix}/answers/${__property(quiz_id)}/submit</stringProp>
-              <stringProp name="HTTPSampler.method">POST</stringProp>
-              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-              <stringProp name="HTTPSampler.response_timeout"></stringProp>
-            </HTTPSamplerProxy>
-            <hashTree/>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Move next question" enabled="true">
-              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-                <collectionProp name="Arguments.arguments">
-                  <elementProp name="" elementType="HTTPArgument">
-                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">{&#xd;
-	&quot;answerDetails&quot;: {&#xd;
-		&quot;optionId&quot;:${option_id_1},&#xd;
-		&quot;type&quot;: &quot;multiple_choice&quot;&#xd;
-	},&#xd;
-	&quot;timeTaken&quot;:1278,&#xd;
-	&quot;questionAnswerId&quot;:${__V(question_answer_id_${question_number})},&#xd;
-	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${question_number})},&#xd;
-	&quot;sequence&quot;:${question_number},&#xd;
-	&quot;timeToSubmission&quot;: 12345,&#xd;
-	&quot;finalSubmission&quot;: true&#xd;
 }&#xd;
 &#xd;
 </stringProp>

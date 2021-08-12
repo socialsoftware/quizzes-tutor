@@ -806,10 +806,11 @@ export default class RemoteServices {
 
   static async getQuestion(
     quizId: number,
-    questionId: number
+    questionId: number,
+    newAnswer: StatementAnswer
   ): Promise<StatementQuestion> {
     return httpClient
-      .get(`/answers/${quizId}/question/${questionId}`)
+      .post(`/answers/${quizId}/question/${questionId}`, newAnswer)
       .then((response) => {
         return new StatementQuestion(response.data);
       })
