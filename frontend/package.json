@@ -14,7 +14,7 @@
     "test:unit": "vue-cli-service test:unit"
   },
   "dependencies": {
-    "@fortawesome/fontawesome-free": "~5.15.3",
+    "@fortawesome/fontawesome-free": "~5.15.4",
     "axios": "~0.21.1",
     "material-design-icons-iconfont": "~6.1.0",
     "qrcode": "~1.4.4",
