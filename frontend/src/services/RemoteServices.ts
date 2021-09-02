@@ -731,10 +731,10 @@ export default class RemoteServices {
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
-      })
+      });
   }
+
   // Answer Controller
-  
 
   static async getAvailableQuizzes(): Promise<StatementQuiz[]> {
     return httpClient
@@ -1113,7 +1113,7 @@ export default class RemoteServices {
     return httpClient
       .put(
         `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/joinTournament/${tournamentId}?password=` +
-        password
+          password
       )
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));

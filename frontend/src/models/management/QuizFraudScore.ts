@@ -1,11 +1,11 @@
-export default class QuizFraudScore{
-    userId!: string;
-    score!: number;
+export default class QuizFraudScore {
+  userId!: string;
+  score!: number;
 
-    constructor(jsonObj?:QuizFraudScore){
-        if(jsonObj){
-            this.userId = jsonObj.userId;
-            this.score = jsonObj.score;
-        }
+  constructor(jsonObj?: QuizFraudScore) {
+    if (jsonObj) {
+      this.userId = jsonObj.userId;
+      this.score = jsonObj.score;
     }
+  }
 }
