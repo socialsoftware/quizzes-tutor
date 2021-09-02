@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TarGZip;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizFraudScoreDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
 import javax.servlet.http.HttpServletResponse;
@@ -18,6 +19,7 @@ import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
+import java.util.Arrays;
 import java.util.List;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_FOUND;
@@ -106,6 +108,13 @@ public class QuizController {
         answerService.writeQuizAnswers(quizId);
         return this.quizService.getQuizAnswers(quizId);
     }
+
+    @GetMapping("/quizzes/{quizId}/fraud-scores")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public List<QuizFraudScoreDto> getQuizFraudScores(@PathVariable Integer quizId) {
+        return Arrays.asList(new QuizFraudScoreDto(1,1.0f), new QuizFraudScoreDto(2,2.0f));
+    }
+
 
     boolean deleteDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();
