@@ -23,6 +23,7 @@ import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissi
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import router from '@/router';
 import QuestionQuery from '@/models/management/QuestionQuery';
+import QuizFraudScores from '@/models/management/QuizFraudScores';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -722,7 +723,18 @@ export default class RemoteServices {
       });
   }
 
+  static async getQuizFraudScores(quizId: number): Promise<QuizFraudScores> {
+    return httpClient
+      .get(`/quizzes/${quizId}/fraud-scores`)
+      .then((response) => {
+        return new QuizFraudScores(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      })
+  }
   // Answer Controller
+  
 
   static async getAvailableQuizzes(): Promise<StatementQuiz[]> {
     return httpClient
@@ -1101,7 +1113,7 @@ export default class RemoteServices {
     return httpClient
       .put(
         `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/joinTournament/${tournamentId}?password=` +
-          password
+        password
       )
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
