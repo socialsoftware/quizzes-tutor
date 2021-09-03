@@ -725,7 +725,7 @@ export default class RemoteServices {
 
   static async getQuizFraudScores(quizId: number): Promise<QuizFraudScores> {
     return httpClient
-      .get(`/quizzes/${quizId}/fraud-scores`)
+      .get(`/fraud/quiz/${quizId}`)
       .then((response) => {
         return new QuizFraudScores(response.data);
       })

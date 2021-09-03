@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto;
+package pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto;
 
 import java.io.Serializable;
 
