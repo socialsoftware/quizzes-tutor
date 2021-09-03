@@ -2,8 +2,13 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.ParameterizedTypeReference;
+import org.springframework.http.MediaType;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.reactive.function.client.WebClient;
+import org.springframework.web.reactive.function.client.WebClient.RequestBodySpec;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -12,6 +17,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizFraudScoreDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
+import reactor.core.publisher.Flux;
+import reactor.core.publisher.Mono;
 
 import javax.servlet.http.HttpServletResponse;
 import javax.validation.Valid;
@@ -80,7 +87,7 @@ public class QuizController {
         String sourceFolder = exportDir + "/quiz-" + quizId;
         File file = new File(sourceFolder);
         file.mkdir();
-            this.quizService.createQuizXmlDirectory(quiz.getId(), sourceFolder);
+        this.quizService.createQuizXmlDirectory(quiz.getId(), sourceFolder);
         TarGZip tGzipDemo = new TarGZip(sourceFolder);
         tGzipDemo.createTarFile();
         response.getOutputStream().write(Files.readAllBytes(Paths.get(sourceFolder + ".tar.gz")));
@@ -112,9 +119,14 @@ public class QuizController {
     @GetMapping("/quizzes/{quizId}/fraud-scores")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public List<QuizFraudScoreDto> getQuizFraudScores(@PathVariable Integer quizId) {
-        return Arrays.asList(new QuizFraudScoreDto(1,1.0f), new QuizFraudScoreDto(2,2.0f));
+        WebClient client = WebClient.create("http://localhost:5000");
+        List<QuizFraudScoreDto> fraudScores = client.get().uri("/fraud-scores/" + quizId.toString()).accept(MediaType.APPLICATION_JSON)
+                .retrieve().bodyToMono(new ParameterizedTypeReference<List<QuizFraudScoreDto>>() {
+                }).log().block();
+        return fraudScores;
+        // return Arrays.asList(new QuizFraudScoreDto(1, 1.0f), new QuizFraudScoreDto(2,
+        // 2.0f));
     }
-
 
     boolean deleteDirectory(File directoryToBeDeleted) {
         File[] allContents = directoryToBeDeleted.listFiles();

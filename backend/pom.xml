@@ -203,6 +203,12 @@
             <optional>true</optional>
         </dependency>
 
+        <!-- Rest Client -->
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-webflux</artifactId>
+        </dependency>
+
         <!-- Access Control -->
         <dependency>
             <groupId>org.springframework.boot</groupId>
@@ -341,7 +347,7 @@
             <artifactId>commons-compress</artifactId>
             <version>1.21</version>
         </dependency>
-
+        
     </dependencies>
 
     <build>
