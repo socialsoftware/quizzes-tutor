@@ -308,7 +308,7 @@ export default class QuizList extends Vue {
   async exportQuiz(quizId: number) {
     await this.$store.dispatch('loading');
     let fileName =
-      this.quizzes.filter((quiz) => quiz.id == quizId)[0].title + '.zip';
+      this.quizzes.filter((quiz) => quiz.id == quizId)[0].title + '.tar.gz';
     try {
       let result = await RemoteServices.exportQuiz(quizId);
       const url = window.URL.createObjectURL(result);
