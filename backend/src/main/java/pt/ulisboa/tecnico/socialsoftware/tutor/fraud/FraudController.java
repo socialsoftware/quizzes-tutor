@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.QuizFraudGraphScoreDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.QuizFraudScoreDto;
 
 @RestController
@@ -36,11 +37,24 @@ public class FraudController {
     public List<QuizFraudScoreDto> getQuizFraudScores(@PathVariable Integer quizId) {
         return getFraudScoresFromURI("/quiz/" + quizId.toString());
     }
-
     private List<QuizFraudScoreDto> getFraudScoresFromURI(String uri) {
         WebClient client = WebClient.create(fraudServiceURL);
         return client.get().uri(uri).accept(MediaType.APPLICATION_JSON).retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<QuizFraudScoreDto>>() {
+                }).log().block();
+    }
+
+    @GetMapping("/fraud/graph/quiz/{quizId}")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public QuizFraudGraphScoreDto getQuizGraphFraudScores(@PathVariable Integer quizId) {
+        return getFraudGraphScoresFromURI("/graph/quiz/" + quizId.toString());
+    }
+
+
+    private QuizFraudGraphScoreDto getFraudGraphScoresFromURI(String uri) {
+        WebClient client = WebClient.create(fraudServiceURL);
+        return client.get().uri(uri).accept(MediaType.APPLICATION_JSON).retrieve()
+                .bodyToMono(new ParameterizedTypeReference<QuizFraudGraphScoreDto>() {
                 }).log().block();
     }
 }

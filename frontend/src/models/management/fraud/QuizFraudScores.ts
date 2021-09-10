@@ -1,4 +1,4 @@
-import QuizFraudScore from '@/models/management/QuizFraudScore';
+import QuizFraudScore from '@/models/management/fraud/QuizFraudScore';
 
 export default class QuizFraudScores {
   fraudScores: QuizFraudScore[] = [];
