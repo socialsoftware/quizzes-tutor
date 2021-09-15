@@ -200,7 +200,7 @@
     </v-dialog>
 
     <show-quiz-fraud-scores-dialog
-      v-if="quiz"
+      v-if="quiz && quizFraudScores"
       v-model="quizFraudScoresDialog"
       :quiz="quiz"
       :quizFraudScores="quizFraudScores"
