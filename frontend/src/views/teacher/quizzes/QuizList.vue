@@ -204,7 +204,9 @@
       v-model="quizFraudScoresDialog"
       :quiz="quiz"
       :quizFraudScores="quizFraudScores"
-    />
+      :quizGraphFraudScoresIn="quizGraphFraudScoresIn"
+      :quizGraphFraudScoresOut="quizGraphFraudScoresOut"
+    /> 
   </v-card>
 </template>
 
@@ -216,7 +218,7 @@ import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
 import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog.vue';
 import VueQrcode from 'vue-qrcode';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
-import QuizFraudScores from '@/models/management/QuizFraudScores';
+import QuizFraudScores from '@/models/management/fraud/QuizFraudScores';
 import ShowQuizFraudScoresDialog from './ShowQuizFraudScoresDialog.vue';
 
 @Component({
@@ -232,6 +234,8 @@ export default class QuizList extends Vue {
   quiz: Quiz | null = null;
   quizAnswers: QuizAnswers | null = null;
   quizFraudScores: QuizFraudScores | null = null;
+  quizGraphFraudScoresIn: QuizFraudScores | null = null;
+  quizGraphFraudScoresOut: QuizFraudScores | null = null;
   correctSequence: number[] = [];
   timeToSubmission: number = 0;
   search: string = '';
@@ -322,6 +326,8 @@ export default class QuizList extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.quizFraudScores = await RemoteServices.getQuizFraudScores(quiz.id);
+      [this.quizGraphFraudScoresIn, this.quizGraphFraudScoresOut] =
+        await RemoteServices.getQuizGraphFraudScores(quiz.id);
       this.quiz = quiz;
       this.quizFraudScoresDialog = true;
     } catch (error) {
