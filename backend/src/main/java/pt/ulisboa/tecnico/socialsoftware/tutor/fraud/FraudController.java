@@ -78,8 +78,8 @@ public class FraudController {
         if (!quiz.isOneWay() || !quiz.getType().equals(Quiz.QuizType.IN_CLASS.toString())) {
             throw new TutorException(FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED);
 
-        } else if (ZonedDateTime.parse(quiz.getConclusionDate()).isAfter(ZonedDateTime.now())) {
-            throw new TutorException(QUIZ_NOT_YET_CONCLUDED);
+//        } else if (ZonedDateTime.parse(quiz.getConclusionDate()).isAfter(ZonedDateTime.now())) {
+//            throw new TutorException(QUIZ_NOT_YET_CONCLUDED);
 
         } else if (quiz.getNumberOfAnswers() == 0) {
             throw new TutorException(QUIZ_HAS_NO_ANSWERS);
