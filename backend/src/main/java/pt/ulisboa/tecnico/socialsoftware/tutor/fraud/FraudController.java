@@ -48,13 +48,13 @@ public class FraudController {
         WebClient client = WebClient.create(fraudServiceURL);
         return client.get().uri(uri).accept(MediaType.APPLICATION_JSON).retrieve()
                 .bodyToMono(new ParameterizedTypeReference<List<QuizFraudScoreDto>>() {
-                }).log().block();
+                }).block();
     }
     
     private QuizFraudGraphScoreDto getFraudGraphScoresFromURI(String uri) {
         WebClient client = WebClient.create(fraudServiceURL);
         return client.get().uri(uri).accept(MediaType.APPLICATION_JSON).retrieve()
                 .bodyToMono(new ParameterizedTypeReference<QuizFraudGraphScoreDto>() {
-                }).log().block();
+                }).block();
     }
 }
