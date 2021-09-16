@@ -108,7 +108,9 @@ public enum ErrorMessage {
     ONE_CORRECT_OPTION_NEEDED("Questions need to have 1 and only 1 correct option"),
     CANNOT_CHANGE_ANSWERED_QUESTION("Can not change answered question"),
     QUIZ_HAS_ANSWERS("Quiz already has answers"),
+    QUIZ_HAS_NO_ANSWERS("Quiz has no answers"),
     QUIZ_ALREADY_COMPLETED("Quiz already completed"),
+    QUIZ_NOT_YET_CONCLUDED("Quiz not yet concluded"),
     QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
     FENIX_ERROR("Fenix Error"),
     AUTHENTICATION_ERROR("Authentication Error"),
@@ -143,8 +145,10 @@ public enum ErrorMessage {
     CANNOT_OPEN_FILE("Cannot open file"),
 
     INVALID_CSV_FILE_FORMAT("The csv file uploaded has a wrong format"),
-    WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on line: %d");
+    WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on line: %d"),
 
+    FRAUD_SERVICE_NOT_AVAILABLE("Fraud service not available"),
+    FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED("Fraud service only supports timed, one way, in class quizzes");
 
     public final String label;
 
