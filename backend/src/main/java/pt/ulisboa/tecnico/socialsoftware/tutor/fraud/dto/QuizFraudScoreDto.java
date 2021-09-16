@@ -3,12 +3,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto;
 import java.io.Serializable;
 
 public class QuizFraudScoreDto implements Serializable{
-    public Integer username;
+    public String username;
     public Float score;
 
     public QuizFraudScoreDto(){}
 
-    public QuizFraudScoreDto(Integer username, Float score){
+    public QuizFraudScoreDto(String username, Float score){
         this.username = username;
         this.score = score;
     }
