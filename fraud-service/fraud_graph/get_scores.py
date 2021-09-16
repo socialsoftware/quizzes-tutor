@@ -247,7 +247,8 @@ def create_network (correct_answers, data, p_factor, realmodelQ, n_edges_score):
                                     connected_students.add_weighted_edges_from([(userj, userk, 1/num_questions)])
 
             #Sort the dictionary for each question by student username
-            correct_question_per_student[question] = dict(sorted(correct_question_per_student[question].items(), key=lambda item: float(item[0])))
+            # FIX: A Username may not be transformable into a float. Re 
+            # correct_question_per_student[question] = dict(sorted(correct_question_per_student[question].items(), key=lambda item: float(item[0])))
 
             if realmodelQ:
                 #Compute the solution frequency for each question
