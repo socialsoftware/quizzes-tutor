@@ -8,6 +8,7 @@ import numpy as np
 from sqlalchemy.orm.base import state_attribute_str
 from sqlalchemy.sql.schema import Table
 from datetime import timedelta
+import os
 Base = declarative_base()
 
 
@@ -44,7 +45,7 @@ class Answer_Details(Base):
 
     def is_answered(self):
         return self.option != None
-    
+
     def is_correct(self):
         if not self.option:
             return False
@@ -169,18 +170,20 @@ class Quiz_Question(Base):
                            back_populates="quiz_question")  # One to Many
     avg_time = None
     relative_avg_time = None
-    
+
     def __repr__(self):
         return f"<Quiz_question(question_id: {self.question_id}, quiz_id: {self.quiz_id})>"
 
     def get_avg_time(self):
         if not self.avg_time:
-            self.avg_time = np.average([answer.get_time_taken() for answer in self.answers])
+            self.avg_time = np.average(
+                [answer.get_time_taken() for answer in self.answers])
         return self.avg_time
 
     def get_avg_relative_time(self):
         if not self.relative_avg_time:
-            self.relative_avg_time = np.average([answer.get_relative_time_taken() for answer in self.answers])
+            self.relative_avg_time = np.average(
+                [answer.get_relative_time_taken() for answer in self.answers])
         return self.relative_avg_time
 
     def get_difficulty_score(self):
@@ -221,14 +224,15 @@ class Quiz_Answer(Base):
             if answer.is_correct():
                 grade += 1
         return grade/len(self.answers) if self.answers else 0
+
     def is_fully_answered(self):
         if self.answers:
             return all([answer.is_answered() for answer in self.answers])
         return False
-        
+
     def get_nr_answered_questions(self):
         return len([ans for ans in self.answers if ans.is_answered()])
-        
+
     def get_time_taken(self):
         return sum([answer.get_time_taken() for answer in self.answers])
 
@@ -270,9 +274,9 @@ class Quiz(Base):
 
     def get_title(self):
         return self.title.upper()
-        
+
     def get_quiz_questions(self):
-        return sorted(self.quiz_questions,lambda q_q: 1 - q_q.get_difficulty_score())
+        return sorted(self.quiz_questions, lambda q_q: 1 - q_q.get_difficulty_score())
 
     def get_length(self):
         return self.conclusion_date - self.available_date
@@ -317,14 +321,16 @@ class Quiz(Base):
 
     def get_sequence_avg_relative_time(self, sequence):
         if not self.sequence_avg_relative_time:
-            self.sequence_avg_relative_time = np.average([answer.get_relative_time_taken() for quiz_answer in self.quiz_answers for answer in quiz_answer.answers if answer.sequence == sequence])
+            self.sequence_avg_relative_time = np.average([answer.get_relative_time_taken(
+            ) for quiz_answer in self.quiz_answers for answer in quiz_answer.answers if answer.sequence == sequence])
         return self.sequence_avg_relative_time
 
     def get_sequence_avg_time(self, sequence):
         if not self.sequence_avg_time:
-            self.sequence_avg_time = np.average([answer.get_time_taken() for quiz_answer in self.quiz_answers for answer in quiz_answer.answers if answer.sequence == sequence])
+            self.sequence_avg_time = np.average([answer.get_time_taken(
+            ) for quiz_answer in self.quiz_answers for answer in quiz_answer.answers if answer.sequence == sequence])
         return self.sequence_avg_time
-        
+
     def to_dict(self):
         return {
             "id": self.id,
@@ -339,9 +345,12 @@ class Quiz(Base):
 
 
 user_course_executions_table = Table('users_course_executions', Base.metadata,
-    Column('users_id', Integer, ForeignKey('users.id')),
-    Column('course_executions_id', Integer, ForeignKey('course_executions.id'))
-)
+                                     Column('users_id', Integer,
+                                            ForeignKey('users.id')),
+                                     Column('course_executions_id', Integer,
+                                            ForeignKey('course_executions.id'))
+                                     )
+
 
 class User(Base):
     __tablename__ = "users"
@@ -354,7 +363,7 @@ class User(Base):
     number_of_in_class_quizzes = Column(Integer)
     quiz_answers = relationship("Quiz_Answer", back_populates="user")
     course_executions = relationship(
-        "Course_Execution",secondary=user_course_executions_table, back_populates="users")
+        "Course_Execution", secondary=user_course_executions_table, back_populates="users")
 
     def __repr__(self):
         return f"<User(id: {self.id}, role: {self.role})>"
@@ -393,10 +402,10 @@ class Course_Execution(Base):
     course_id = Column(Integer)
     type = Column(String)
     end_date = Column(DateTime)
-    
+
     users = relationship("User",
-                    secondary=user_course_executions_table,
-                    back_populates="course_executions")
+                         secondary=user_course_executions_table,
+                         back_populates="course_executions")
 
     def __repr__(self):
         return f"<Course Execution(id: {self.id},type:{self.type}, academic term: {self.academic_term}, status: {self.status},acronym: {self.acronym},course id: {self.course_id},)>"
@@ -404,9 +413,14 @@ class Course_Execution(Base):
 
 class QuizzesDBConnector():
 
-    def __init__(self, db_name, port):
+    def __init__(self):
+        user = os.getenv("POSTGRES_USER", "engineer")
+        password = os.getenv("POSTGRES_PASSWORD", "password")
+        host = os.getenv('POSTGRES_HOST', 'localhost')
+        port = os.getenv("POSTGRES_PORT", "5432")
+        database = os.getenv("POSTGRES_DB","tutordb")
         engine = create_engine(
-            f'postgresql://postgres:pedro123@localhost:{port}/{db_name}')
+            f'postgresql://{user}:{password}@{host}:{port}/{database}')
         Session = sessionmaker(bind=engine)
         self.session = Session()
 
@@ -424,4 +438,3 @@ class QuizzesDBConnector():
 
     def get_answers_from_course_execution(self, course_execution):
         return self.session.query(Question_Answer).join(Quiz_Answer).join(Quiz).filter(Quiz.course_execution_id == course_execution).filter(Quiz.type == "IN_CLASS").filter(Quiz.conclusion_date < '2021-07-19').filter(Question_Answer.time_taken != None).all()
-    

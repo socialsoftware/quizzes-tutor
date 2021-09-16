@@ -1,17 +1,18 @@
 import psycopg2
 import pandas.io.sql as psql
 import create_query2
-
+import os
 class Database(object):
 
     def __init__(self):
         
         #A: connection details
-        user = 'postgres'
-        password = 'pedro123'
-        host = 'localhost' #localhost
-        port = '5432'
-        database = 'tutordb'
+        user = os.getenv('POSTGRES_USER', 'engineer')
+        password = os.getenv('POSTGRES_PASSWORD', 'password')
+        host = os.getenv('POSTGRES_HOST', 'localhost')
+        port = os.getenv('POSTGRES_PORT', '5432')
+        database = os.getenv('POSTGRES_DB', 'tutordb')
+        
         
         #B: database connection
         self.conn = psycopg2.connect(user=user,password=password,host=host,port=port,database=database)
