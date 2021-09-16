@@ -111,7 +111,7 @@
               class="mr-2 action-button"
               v-on="on"
               @click="showQuizFraudScores(item)"
-              >mdi-table</v-icon
+              >mdi-account-alert</v-icon
             >
           </template>
           <span>View Fraud Scores</span>
@@ -219,7 +219,7 @@ import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog
 import VueQrcode from 'vue-qrcode';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import QuizFraudScores from '@/models/management/fraud/QuizFraudScores';
-import ShowQuizFraudScoresDialog from './ShowQuizFraudScoresDialog.vue';
+import ShowQuizFraudScoresDialog from '../fraud/ShowQuizFraudScoresDialog.vue';
 
 @Component({
   components: {
