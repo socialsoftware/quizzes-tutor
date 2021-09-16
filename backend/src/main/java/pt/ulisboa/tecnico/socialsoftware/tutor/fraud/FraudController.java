@@ -75,7 +75,7 @@ public class FraudController {
 
     private void validateQuizId(Integer quizId) {
         QuizDto quiz = quizService.findById(quizId);
-        if (!quiz.isOneWay() || !quiz.isTimed() || !quiz.getType().equals(Quiz.QuizType.IN_CLASS.toString())) {
+        if (!quiz.isOneWay() || !quiz.getType().equals(Quiz.QuizType.IN_CLASS.toString())) {
             throw new TutorException(FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED);
 
         } else if (ZonedDateTime.parse(quiz.getConclusionDate()).isAfter(ZonedDateTime.now())) {
