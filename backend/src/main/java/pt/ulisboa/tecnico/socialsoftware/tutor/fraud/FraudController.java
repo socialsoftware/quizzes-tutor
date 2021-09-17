@@ -13,6 +13,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.QuizFraudGraphScoreDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.QuizFraudScoreDto;
@@ -32,6 +33,9 @@ public class FraudController {
 
     @Autowired
     private QuizService quizService;
+    
+    @Autowired
+    private AnswerService answerService;
 
     @GetMapping("/fraud/execution/{executionId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
@@ -48,6 +52,7 @@ public class FraudController {
     @GetMapping("/fraud/quiz/{quizId}")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public List<QuizFraudScoreDto> getQuizFraudScores(@PathVariable Integer quizId) {
+        answerService.writeQuizAnswers(quizId);
         validateQuizId(quizId);
         return getFraudScoresFromURI("/quiz/" + quizId.toString());
     }
