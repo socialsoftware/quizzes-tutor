@@ -418,11 +418,18 @@ class QuizzesDBConnector():
         password = os.getenv("POSTGRES_PASSWORD", "password")
         host = os.getenv('POSTGRES_HOST', 'localhost')
         port = os.getenv("POSTGRES_PORT", "5432")
-        database = os.getenv("POSTGRES_DB","tutordb")
+        database = os.getenv("POSTGRES_DB", "tutordb")
         engine = create_engine(
             f'postgresql://{user}:{password}@{host}:{port}/{database}')
         Session = sessionmaker(bind=engine)
         self.session = Session()
+
+    def __end__(self):
+        if (self.session):
+            self.session.close()
+
+    def close(self):
+        self.session.close()
 
     def get_quiz(self, quiz_id):
         return self.session.query(Quiz).filter(Quiz.id == quiz_id).one()
