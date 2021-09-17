@@ -12,6 +12,7 @@ services:
       - ./data/dumps:/dumps
     env_file:
       - ./data/env/database.dev.env
+      
   fraud-service:
     build:
       context: ./fraud-service/
