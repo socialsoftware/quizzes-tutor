@@ -13,13 +13,14 @@ public class TopicDto implements Serializable {
     public TopicDto() {
     }
 
+    public TopicDto(String name) {
+        this.name = name;
+    }
+
     public TopicDto(Topic topic) {
         this.id = topic.getId();
         this.name = topic.getName();
         this.numberOfQuestions = topic.getQuestions().size();
-    }
-
-    public TopicDto(TopicDto topicDto) {
     }
 
     public Integer getId() {

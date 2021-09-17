@@ -478,6 +478,7 @@ export default class QuestionsView extends Vue {
   }
 
   async exportCourseQuestions() {
+    await this.$store.dispatch('loading');
     let fileName = this.$store.getters.getCurrentCourse.name + '-Questions.zip';
     try {
       let result = await RemoteServices.exportCourseQuestions();
@@ -490,6 +491,7 @@ export default class QuestionsView extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
   }
 
   importCourseQuestions() {

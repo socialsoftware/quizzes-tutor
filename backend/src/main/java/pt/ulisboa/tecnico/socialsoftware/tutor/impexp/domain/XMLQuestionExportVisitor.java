@@ -7,6 +7,8 @@ import org.jdom2.output.XMLOutputter;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -47,9 +49,9 @@ public class XMLQuestionExportVisitor implements Visitor {
             this.currentElement.addContent(courseElement);
             this.currentElement = courseElement;
 
-            for (Question question : courseQuestions.getValue()) {
-                question.accept(this);
-            }
+            courseQuestions.getValue().stream()
+                    .sorted(Comparator.comparing(Question::getStatus))
+                    .forEach(question -> question.accept(this));
 
             this.currentElement = this.rootElement;
         }
@@ -72,6 +74,14 @@ public class XMLQuestionExportVisitor implements Visitor {
 
         if (question.getImage() != null)
             question.getImage().accept(this);
+
+        Element questionTopics = new Element("topics");
+        for (var topic: question.getTopics()) {
+            Element questionTopic = new Element("topic");
+            questionTopic.setAttribute("name", topic.getName());
+            questionTopics.addContent(questionTopic);
+        }
+        questionElement.addContent(questionTopics);
 
         question.getQuestionDetails().accept(this);
 

@@ -180,7 +180,7 @@ public class ImpExpService {
 
                 File questionsFile = new File(directory.getPath() + PATH_DELIMITER + "questions.xml");
                 QuestionsXmlImport questionsXmlImport = new QuestionsXmlImport();
-                questionsXmlImport.importQuestions(new FileInputStream(questionsFile), questionService, courseRepository, null);
+                questionsXmlImport.importQuestions(new FileInputStream(questionsFile), questionService, this.topicService, courseRepository, null);
 
                 File topicsFile = new File(directory.getPath() + PATH_DELIMITER + "topics.xml");
                 TopicsXmlImport topicsXmlImport = new TopicsXmlImport();

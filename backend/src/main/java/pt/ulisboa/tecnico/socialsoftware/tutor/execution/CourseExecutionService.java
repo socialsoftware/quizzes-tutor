@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.QuestionsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
@@ -41,6 +42,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class CourseExecutionService {
     @Autowired
     private QuestionService questionService;
+
+    @Autowired
+    private TopicService topicService;
 
     @Autowired
     private CourseRepository courseRepository;
@@ -193,7 +197,7 @@ public class CourseExecutionService {
 
         QuestionsXmlImport questionsXmlImport = new QuestionsXmlImport();
 
-        return questionsXmlImport.importQuestions(inputStream, this.questionService, this.courseRepository, courseExecution);
+        return questionsXmlImport.importQuestions(inputStream, this.questionService, this.topicService, this.courseRepository, courseExecution);
     }
 
     private Course getCourse(String name, Course.Type type) {
