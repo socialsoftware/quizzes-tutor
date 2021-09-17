@@ -6,6 +6,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.util.FileCopyUtils;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,7 +18,6 @@ import java.io.IOException;
 import java.io.InputStream;
 
 @Controller
-@Secured({"ROLE_ADMIN"})
 public class ImportExportController {
     private static Logger logger = LoggerFactory.getLogger(ImportExportController.class);
 
@@ -28,6 +28,7 @@ public class ImportExportController {
     private String exportDir;
 
     @GetMapping(value = "/admin/export")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void exportAll(HttpServletResponse response) throws IOException {
         logger.debug("exportAll");
 
@@ -42,6 +43,7 @@ public class ImportExportController {
         response.flushBuffer();
     }
 
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @GetMapping(value = "/admin/import")
     public void importAll() {
         logger.debug("importAll");

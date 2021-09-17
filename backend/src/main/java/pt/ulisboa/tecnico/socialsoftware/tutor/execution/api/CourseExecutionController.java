@@ -118,7 +118,7 @@ public class CourseExecutionController {
     }
 
     @GetMapping(value = "/executions/{executionId}/export")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS'))")
     public void exportCourseExecutionInfo(HttpServletResponse response, @PathVariable Integer executionId) throws IOException {
         List<Quiz> courseExecutionQuizzes = quizRepository.findQuizzesOfExecution(executionId);
         response.setHeader("Content-Disposition", "attachment; filename=file.tar.gz");

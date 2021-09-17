@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.quiz;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.ResourceLoader;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
@@ -37,6 +39,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import java.io.File;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Files;
 import java.nio.file.NoSuchFileException;
 import java.nio.file.StandardCopyOption;
@@ -49,7 +52,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class QuizService {
-    public static final String LATEX_MACROS_DIR = System.getProperty("user.dir") + "/src/main/resources/latex/";
+    @Autowired
+    private ResourceLoader resourceLoader;
 
     @Value("${figures.dir}")
     private String figuresDir;
@@ -320,9 +324,10 @@ public class QuizService {
         latexStyDirectory.mkdir();
         String[] latexFileNames = {"docist.cls", "macros.tex", "exameIST.sty",  "exame.tex", "LogoIST-novo.pdf"};
         for (String latexFileName : latexFileNames) {
-            File latexFile = new File(LATEX_MACROS_DIR + latexFileName);
-            Files.copy(latexFile.toPath(),
-                    (new File(latexStyDirectoryPath + latexFile.getName())).toPath(),
+            Resource resource = resourceLoader.getResource("classpath:/latex/" + latexFileName);
+            InputStream latexFile = resource.getInputStream();
+            Files.copy(latexFile,
+                    (new File(latexStyDirectoryPath + latexFileName)).toPath(),
                     StandardCopyOption.REPLACE_EXISTING);
         }
 

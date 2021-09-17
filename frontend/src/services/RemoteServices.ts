@@ -682,7 +682,7 @@ export default class RemoteServices {
       })
       .then((response) => {
         return new Blob([response.data], {
-          type: 'application/zip, application/octet-stream',
+          type: 'application/tar.gz, application/octet-stream',
         });
       })
       .catch(async (error) => {
