@@ -36,7 +36,7 @@ def quizFraudScores(quizId):
 def quizFraudScoresGraph(quizId):
     data = create_dataset.create_dataset(quizId, "*")
     scores_in, scores_out = get_scores.create_network(
-        "All", data, True, True, 2)
+        "All", data, True, True, 1)
     scores_in = [{"username": k, "score": v}
                  for k, v in scores_in.items()]
     scores_out = [{"username": k, "score": v}

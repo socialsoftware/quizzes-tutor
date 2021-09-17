@@ -7,35 +7,52 @@
   >
     <v-card v-if="quizFraudScores">
       <v-card-title> Fraud Scores </v-card-title>
-      <div width="75%">
-        <div id="violinScores"></div>
-        <v-data-table
-          :headers="headers"
-          :items="quizFraudScores.fraudScores"
-          :sort-by="['score']"
-          sort-desc
-          :mobile-breakpoint="0"
-          :items-per-page="15"
-          :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-        />
-        <v-data-table
-          :headers="headers"
-          :items="quizGraphFraudScoresIn.fraudScores"
-          :sort-by="['score']"
-          sort-desc
-          :mobile-breakpoint="0"
-          :items-per-page="15"
-          :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-        />
-        <v-data-table
-          :headers="headers"
-          :items="quizGraphFraudScoresOut.fraudScores"
-          :sort-by="['score']"
-          sort-desc
-          :mobile-breakpoint="0"
-          :items-per-page="15"
-          :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-        />
+      <div style="margin: 0px 5px">
+        <v-alert dense type="warning" elevation="2">
+          THIS IS A WIP FEATURE, DO NOT CONSIDER THE VALUES BELOW
+        </v-alert>
+
+        <div width="75%">
+          <v-container>
+            <v-row>
+              <v-col>
+                <v-card style="display:flex; justify-content:center"
+                  ><fraud-violin
+                    :quizFraudScores="quizFraudScores"
+                  ></fraud-violin
+                ></v-card>
+              </v-col>
+            </v-row>
+          </v-container>
+
+          <v-data-table
+            :headers="headers"
+            :items="quizFraudScores.fraudScores"
+            :sort-by="['score']"
+            sort-desc
+            :mobile-breakpoint="0"
+            :items-per-page="15"
+            :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+          />
+          <v-data-table
+            :headers="headers"
+            :items="quizGraphFraudScoresIn.fraudScores"
+            :sort-by="['score']"
+            sort-desc
+            :mobile-breakpoint="0"
+            :items-per-page="15"
+            :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+          />
+          <v-data-table
+            :headers="headers"
+            :items="quizGraphFraudScoresOut.fraudScores"
+            :sort-by="['score']"
+            sort-desc
+            :mobile-breakpoint="0"
+            :items-per-page="15"
+            :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+          />
+        </div>
       </div>
     </v-card>
   </v-dialog>
@@ -44,8 +61,8 @@
 <script lang="ts">
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import QuizFraudScores from '@/models/management/fraud/QuizFraudScores';
-const Plotly = require('plotly.js-cartesian-dist');
-@Component({})
+import FraudViolin from '@/views/teacher/fraud/FraudViolin.vue';
+@Component({ components: { 'fraud-violin': FraudViolin } })
 export default class ShowQuizFraudScoresDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
   @Prop({ type: QuizFraudScores, required: true })
@@ -58,39 +75,5 @@ export default class ShowQuizFraudScoresDialog extends Vue {
     { text: 'Username', value: 'username' },
     { text: 'Score', value: 'score' },
   ];
-  mounted() {
-    var data = [
-      {
-        type: 'violin',
-        y: this.quizFraudScores?.fraudScores.map((qfs) => qfs.score),
-        points: 'all',
-        box: {
-          visible: true,
-        },
-        boxpoints: true,
-        line: {
-          color: 'black',
-        },
-        text: this.quizFraudScores?.fraudScores.map(
-          (qfs) => `(Username, ${qfs.username})`
-        ),
-        fillcolor: '#1876d1',
-        opacity: 0.6,
-        meanline: {
-          visible: true,
-        },
-        x0: 'Scores',
-      },
-    ];
-
-    var layout = {
-      title: '',
-      yaxis: {
-        zeroline: false,
-      },
-    };
-
-    Plotly.newPlot('violinScores', data, layout);
-  }
 }
 </script>

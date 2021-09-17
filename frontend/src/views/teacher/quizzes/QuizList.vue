@@ -105,7 +105,7 @@
           </template>
           <span>Remove non answered</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip bottom v-if="isFraudServiceAvailableToQuiz(item)">
           <template v-slot:activator="{ on }">
             <v-icon
               class="mr-2 action-button"
@@ -394,6 +394,15 @@ export default class QuizList extends Vue {
       await this.$store.dispatch('error', error);
     }
   }
+
+  isFraudServiceAvailableToQuiz(quiz: Quiz) {
+    return (
+      quiz.timed && quiz.oneWay &&
+      new Date(quiz.conclusionDate) < new Date() &&
+      quiz.numberOfAnswers > 0
+    );
+  }
+  
 }
 </script>
 
