@@ -1,5 +1,7 @@
 <template>
-    <div id="violin"></div>
+  <div class="graph-container">
+    <div :id="graphId" ></div>
+  </div>
 </template>
 
 <script lang="ts">
@@ -10,6 +12,9 @@ const Plotly = require('plotly.js-cartesian-dist');
 export default class FraudViolin extends Vue {
   @Prop({ type: QuizFraudScores, required: true })
   readonly quizFraudScores!: QuizFraudScores | null;
+  @Prop({required: true })
+  readonly graphId!:string;
+  
   mounted() {
     let data = [
       {
@@ -37,12 +42,14 @@ export default class FraudViolin extends Vue {
 
     let layout = {
       title: '',
+      autosize: false,
+      width: 0.3,
       yaxis: {
         zeroline: false,
       },
     };
 
-    Plotly.newPlot("violin", data, layout);
+    Plotly.newPlot(this.graphId, data, layout,{responsive: true});
   }
 }
 </script>

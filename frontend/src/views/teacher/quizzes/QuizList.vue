@@ -200,12 +200,12 @@
     </v-dialog>
 
     <show-quiz-fraud-scores-dialog
-      v-if="quiz && quizFraudScores"
+      v-if="quiz && quizTimeFraudScores"
       v-model="quizFraudScoresDialog"
       :quiz="quiz"
-      :quizFraudScores="quizFraudScores"
-      :quizGraphFraudScoresIn="quizGraphFraudScoresIn"
-      :quizGraphFraudScoresOut="quizGraphFraudScoresOut"
+      :quizTimeFraudScores="quizTimeFraudScores"
+      :quizCommunicationFraudScoresIn="quizCommunicationFraudScoresIn"
+      :quizCommunicationFraudScoresOut="quizCommunicationFraudScoresOut"
     /> 
   </v-card>
 </template>
@@ -233,9 +233,9 @@ export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz | null = null;
   quizAnswers: QuizAnswers | null = null;
-  quizFraudScores: QuizFraudScores | null = null;
-  quizGraphFraudScoresIn: QuizFraudScores | null = null;
-  quizGraphFraudScoresOut: QuizFraudScores | null = null;
+  quizTimeFraudScores: QuizFraudScores | null = null;
+  quizCommunicationFraudScoresIn: QuizFraudScores | null = null;
+  quizCommunicationFraudScoresOut: QuizFraudScores | null = null;
   correctSequence: number[] = [];
   timeToSubmission: number = 0;
   search: string = '';
@@ -325,9 +325,9 @@ export default class QuizList extends Vue {
   async showQuizFraudScores(quiz: Quiz) {
     await this.$store.dispatch('loading');
     try {
-      this.quizFraudScores = await RemoteServices.getQuizFraudScores(quiz.id);
-      [this.quizGraphFraudScoresIn, this.quizGraphFraudScoresOut] =
-        await RemoteServices.getQuizGraphFraudScores(quiz.id);
+      this.quizTimeFraudScores = await RemoteServices.getQuizTimeFraudScores(quiz.id);
+      [this.quizCommunicationFraudScoresIn, this.quizCommunicationFraudScoresOut] =
+        await RemoteServices.getQuizCommunicationFraudScores(quiz.id);
       this.quiz = quiz;
       this.quizFraudScoresDialog = true;
     } catch (error) {

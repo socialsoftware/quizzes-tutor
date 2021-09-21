@@ -723,21 +723,21 @@ export default class RemoteServices {
       });
   }
 
-  static async getQuizFraudScores(quizId: number): Promise<QuizFraudScores> {
+  static async getQuizTimeFraudScores(quizId: number): Promise<QuizFraudScores> {
     return httpClient
-      .get(`/fraud/quiz/${quizId}`)
+      .get(`/fraud/time/quiz/${quizId}`)
       .then((response) => {
-        return new QuizFraudScores(response.data);
+        return new QuizFraudScores(response.data.scores);
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
-  static async getQuizGraphFraudScores(
+  static async getQuizCommunicationFraudScores(
     quizId: number
   ): Promise<QuizFraudScores[]> {
     return httpClient
-      .get(`/fraud/graph/quiz/${quizId}`)
+      .get(`/fraud/communication/quiz/${quizId}`)
       .then((response) => {
         return [
           new QuizFraudScores(response.data.scoresIn),

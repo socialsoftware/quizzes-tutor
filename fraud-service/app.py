@@ -18,20 +18,19 @@ load_dotenv()
 app = flask.Flask(__name__)
 
 
-@app.route('/quiz/<quizId>')
+@app.route('/time/quiz/<quizId>')
 def quizFraudScores(quizId):
     dbConnector = quiz_orm.QuizzesDBConnector()
     quiz = dbConnector.get_quiz(quizId)
     statistic = quiz_stats.Quiz_Statistic(
         quiz, quiz_stats.QUIZ_SCORERS["Diff. Mean (Question ID)"])
     dbConnector.close()
-    
-    result = [{"username": k, "score": v}
-              for k, v in statistic.statistic.items()]
+    result = {"scores":[{"username": k, "score": v}
+              for k, v in statistic.statistic.items()]}
     return flask.jsonify(result)
 
 
-@app.route('/graph/quiz/<quizId>')
+@app.route('/communication/quiz/<quizId>')
 def quizFraudScoresGraph(quizId):
     data = create_dataset.create_dataset(quizId, "*")
     scores_in, scores_out = get_scores.create_network(
