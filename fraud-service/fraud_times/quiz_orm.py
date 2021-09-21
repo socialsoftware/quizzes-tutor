@@ -8,6 +8,7 @@ import numpy as np
 from sqlalchemy.orm.base import state_attribute_str
 from sqlalchemy.sql.schema import Table
 from datetime import timedelta
+import urllib.parse
 import os
 Base = declarative_base()
 
@@ -414,11 +415,11 @@ class Course_Execution(Base):
 class QuizzesDBConnector():
 
     def __init__(self):
-        user = os.getenv("POSTGRES_USER", "engineer")
-        password = os.getenv("POSTGRES_PASSWORD", "password")
-        host = os.getenv('POSTGRES_HOST', 'localhost')
-        port = os.getenv("POSTGRES_PORT", "5432")
-        database = os.getenv("POSTGRES_DB", "tutordb")
+        user = urllib.parse.quote_plus(os.getenv("POSTGRES_USER", "engineer"))
+        password = urllib.parse.quote_plus(os.getenv("POSTGRES_PASSWORD", "password123"))
+        host = urllib.parse.quote_plus(os.getenv('POSTGRES_HOST', 'localhost'))
+        port = urllib.parse.quote_plus(os.getenv("POSTGRES_PORT", "5432"))
+        database = urllib.parse.quote_plus(os.getenv("POSTGRES_DB", "tutordb"))
         engine = create_engine(
             f'postgresql://{user}:{password}@{host}:{port}/{database}')
         Session = sessionmaker(bind=engine)
