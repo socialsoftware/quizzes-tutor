@@ -26,7 +26,6 @@ def quizFraudScores(quizId):
         quiz, quiz_stats.QUIZ_SCORERS["Diff. Mean (Question ID)"])
     dbConnector.close()
     
-    print("HI")
     result = [{"username": k, "score": v}
               for k, v in statistic.statistic.items()]
     return flask.jsonify(result)
