@@ -1,18 +1,17 @@
 import psycopg2
 import pandas.io.sql as psql
 import create_query2
-import urllib.parse
 import os
 class Database(object):
 
     def __init__(self):
         
         #A: connection details
-        user = urllib.parse.quote_plus(os.getenv('POSTGRES_USER', 'engineer'))
-        password = urllib.parse.quote_plus(os.getenv('POSTGRES_PASSWORD', 'password'))
-        host = urllib.parse.quote_plus(os.getenv('POSTGRES_HOST', 'localhost'))
-        port = urllib.parse.quote_plus(os.getenv('POSTGRES_PORT', '5432'))
-        database = urllib.parse.quote_plus(os.getenv('POSTGRES_DB', 'tutordb'))
+        user = os.getenv('POSTGRES_USER', 'engineer')
+        password = os.getenv('POSTGRES_PASSWORD', 'password')
+        host = os.getenv('POSTGRES_HOST', 'localhost')
+        port = os.getenv('POSTGRES_PORT', '5432')
+        database = os.getenv('POSTGRES_DB', 'tutordb')
         
         
         #B: database connection
