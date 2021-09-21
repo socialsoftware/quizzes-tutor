@@ -1,5 +1,5 @@
 export default class QuizFraudScore {
-  username!: number;
+  username!: string;
   score!: number;
   
 
