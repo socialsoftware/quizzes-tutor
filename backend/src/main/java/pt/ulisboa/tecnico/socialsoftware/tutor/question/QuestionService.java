@@ -44,7 +44,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class QuestionService {
-
     @Autowired
     private CourseRepository courseRepository;
 
@@ -53,6 +52,9 @@ public class QuestionService {
 
     @Autowired
     private TopicRepository topicRepository;
+
+    @Autowired
+    private TopicService topicService;
 
     @Autowired
     private ImageRepository imageRepository;
@@ -258,7 +260,7 @@ public class QuestionService {
     public void importQuestionsFromXml(String questionsXML) {
         QuestionsXmlImport xmlImporter = new QuestionsXmlImport();
 
-        xmlImporter.importQuestions(questionsXML, this, courseRepository);
+        xmlImporter.importQuestions(questionsXML, this, this.topicService, courseRepository);
     }
 
 

@@ -10,6 +10,7 @@ import org.jdom2.xpath.XPathFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Languages;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -27,12 +28,14 @@ public class QuestionsXmlImport {
     public static final String CONTENT = "content";
     public static final String SEQUENCE = "sequence";
     private QuestionService questionService;
+    private TopicService topicService;
     private CourseRepository courseRepository;
     private CourseExecution loadCourseExecution;
     private List<QuestionDto> questions;
 
-    public List<QuestionDto> importQuestions(InputStream inputStream, QuestionService questionService, CourseRepository courseRepository, CourseExecution loadCourseExecution) {
+    public List<QuestionDto> importQuestions(InputStream inputStream, QuestionService questionService, TopicService topicService, CourseRepository courseRepository, CourseExecution loadCourseExecution) {
         this.questionService = questionService;
+        this.topicService = topicService;
         this.courseRepository = courseRepository;
         this.loadCourseExecution = loadCourseExecution;
         this.questions = new ArrayList<>();
@@ -61,13 +64,13 @@ public class QuestionsXmlImport {
         return questions;
     }
 
-    public void importQuestions(String questionsXml, QuestionService questionService, CourseRepository courseRepository) {
+    public void importQuestions(String questionsXml, QuestionService questionService, TopicService topicService, CourseRepository courseRepository) {
         SAXBuilder builder = new SAXBuilder();
         builder.setIgnoringElementContentWhitespace(true);
 
         InputStream stream = new ByteArrayInputStream(questionsXml.getBytes());
 
-        importQuestions(stream, questionService, courseRepository, null);
+        importQuestions(stream, questionService, topicService, courseRepository, null);
     }
 
     private void importQuestions(Document doc) {
@@ -150,7 +153,28 @@ public class QuestionsXmlImport {
 
         questionDto.setQuestionDetailsDto(questionDetailsDto);
 
-        questions.add(questionService.createQuestion(course.getId(), questionDto));
+        importQuestionTopics(questionElement, course, questionDto);
+    }
+
+    private void importQuestionTopics(Element questionElement, Course course, QuestionDto questionDto) {
+        QuestionDto questionDtoResult = questionService.createQuestion(course.getId(), questionDto);
+        questions.add(questionDtoResult);
+
+        List<TopicDto> courseTopics = topicService.findTopics(course.getId());
+        List<TopicDto> questionTopicDtos = new ArrayList<>();
+        for (var topicElement: questionElement.getChild("topics").getChildren("topic")) {
+            TopicDto topicDto = courseTopics.stream().
+                    filter(topicDto1 -> topicDto1.getName().equals(topicElement.getAttributeValue("name")))
+                    .findAny()
+                    .orElse(null);
+            if (topicDto == null) {
+                topicDto = topicService.createTopic(course.getId(), new TopicDto(topicElement.getAttributeValue("name")));
+                courseTopics.add(topicDto);
+            }
+            questionTopicDtos.add(topicDto);
+        }
+
+        questionService.updateQuestionTopics(questionDtoResult.getId(), questionTopicDtos.toArray(new TopicDto[questionTopicDtos.size()]));
     }
 
     private QuestionDetailsDto importMultipleChoiceQuestion(Element questionElement) {

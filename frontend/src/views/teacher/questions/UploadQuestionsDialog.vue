@@ -40,6 +40,7 @@
         >
         <v-btn
           color="green darken-1"
+          :disabled="disabled"
           @click="uploadQuestions()"
           data-cy="uploadFileButton"
           >Upload File</v-btn
@@ -57,11 +58,16 @@ import RemoteServices from '@/services/RemoteServices';
 export default class UploadQuestionsDialog extends Vue {
   @Model('dialog', Boolean) dialog!: boolean;
 
+  disabled: boolean = false;
+
   chosenFile: File | null = null;
 
   async uploadQuestions() {
+    await this.$store.dispatch('loading');
     try {
       if (this.chosenFile != null) {
+        this.disabled = true;
+
         let uploadedQuestions = await RemoteServices.importQuestions(
           this.chosenFile
         );
@@ -77,6 +83,7 @@ export default class UploadQuestionsDialog extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>
