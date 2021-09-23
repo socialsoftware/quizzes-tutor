@@ -26,3 +26,5 @@ spring.mail.properties.mail.transport.protocol="smtp"
 spring.mail.properties.mail.smtp.auth=false
 spring.mail.properties.mail.smtp.starttls.enable=true
 
+## Fraud service
+fraud.service.url=http://<FRAUD SERVICE HOST>:<FRAUD SERVICE PORT>/

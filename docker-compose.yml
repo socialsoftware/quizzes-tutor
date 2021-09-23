@@ -12,6 +12,21 @@ services:
       - ./data/dumps:/dumps
     env_file:
       - ./data/env/database.dev.env
+      
+  fraud-service:
+    build:
+      context: ./fraud-service/
+    image: fraud-service:latest
+    container_name: fraud-service
+    depends_on: 
+      - postgres
+    links:
+      - postgres
+    ports:
+      - 5000:5000
+    restart: unless-stopped
+    env_file:
+      - ./data/env/fraud-service.dev.env
 
   backend:
     build:
@@ -22,6 +37,7 @@ services:
     container_name: backend
     depends_on:
       - postgres
+      - fraud-service
     links:
       - postgres
     ports:

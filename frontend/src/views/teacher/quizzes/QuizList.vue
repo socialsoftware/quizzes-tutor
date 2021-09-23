@@ -105,6 +105,17 @@
           </template>
           <span>Remove non answered</span>
         </v-tooltip>
+        <v-tooltip bottom v-if="isFraudServiceAvailableToQuiz(item)">
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
+              @click="showQuizFraudScores(item)"
+              >mdi-account-alert</v-icon
+            >
+          </template>
+          <span>View Fraud Scores</span>
+        </v-tooltip>
         <v-tooltip bottom v-if="item.numberOfAnswers === 0">
           <template v-slot:activator="{ on }">
             <v-icon
@@ -187,6 +198,13 @@
         />
       </v-card>
     </v-dialog>
+
+    <show-quiz-fraud-scores-dialog
+      v-if="quiz && quizFraudInformation"
+      v-model="quizFraudScoresDialog"
+      :quiz="quiz"
+      :quizFraudInformation="quizFraudInformation"
+    /> 
   </v-card>
 </template>
 
@@ -198,11 +216,14 @@ import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
 import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog.vue';
 import VueQrcode from 'vue-qrcode';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
+import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
+import ShowQuizFraudScoresDialog from '@/views/teacher/fraud/ShowQuizFraudScoresDialog.vue';
 
 @Component({
   components: {
     'show-quiz-answers-dialog': ShowQuizAnswersDialog,
     'show-quiz-dialog': ShowQuizDialog,
+    'show-quiz-fraud-scores-dialog': ShowQuizFraudScoresDialog,
     'vue-qrcode': VueQrcode,
   },
 })
@@ -210,6 +231,7 @@ export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz | null = null;
   quizAnswers: QuizAnswers | null = null;
+  quizFraudInformation: QuizFraudInformation | null = null;
   correctSequence: number[] = [];
   timeToSubmission: number = 0;
   search: string = '';
@@ -217,6 +239,7 @@ export default class QuizList extends Vue {
   quizDialog: boolean = false;
   quizAnswersDialog: boolean = false;
   qrcodeDialog: boolean = false;
+  quizFraudScoresDialog: boolean = false;
 
   qrValue: number | null = null;
   headers: object = [
@@ -295,6 +318,20 @@ export default class QuizList extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
+  async showQuizFraudScores(quiz: Quiz) {
+    await this.$store.dispatch('loading');
+    try {
+      this.quizFraudInformation = await RemoteServices.getQuizFraudInformation(
+        quiz.id
+      );
+      this.quiz = quiz;
+      this.quizFraudScoresDialog = true;
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
   editQuiz(quiz: Quiz, e?: Event) {
     if (e) e.preventDefault();
     this.$emit('editQuiz', quiz.id);
@@ -356,6 +393,15 @@ export default class QuizList extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
+  }
+
+  isFraudServiceAvailableToQuiz(quiz: Quiz) {
+    return (
+      quiz.timed &&
+      quiz.oneWay &&
+      new Date(quiz.conclusionDate) < new Date() &&
+      quiz.numberOfAnswers > 0
+    );
   }
 }
 </script>

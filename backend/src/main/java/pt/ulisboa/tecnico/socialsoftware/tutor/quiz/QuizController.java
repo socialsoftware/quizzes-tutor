@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuizAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -78,7 +79,7 @@ public class QuizController {
         String sourceFolder = exportDir + "/quiz-" + quizId;
         File file = new File(sourceFolder);
         file.mkdir();
-            this.quizService.createQuizXmlDirectory(quiz.getId(), sourceFolder);
+        this.quizService.createQuizXmlDirectory(quiz.getId(), sourceFolder);
         TarGZip tGzipDemo = new TarGZip(sourceFolder);
         tGzipDemo.createTarFile();
         response.getOutputStream().write(Files.readAllBytes(Paths.get(sourceFolder + ".tar.gz")));

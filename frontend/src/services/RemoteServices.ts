@@ -23,6 +23,8 @@ import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissi
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import router from '@/router';
 import QuestionQuery from '@/models/management/QuestionQuery';
+import { FraudScores } from '@/models/management/fraud/FraudScores';
+import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -720,6 +722,47 @@ export default class RemoteServices {
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
+  }
+
+  static async getQuizTimeFraudScores(quizId: number): Promise<FraudScores> {
+    return httpClient
+      .get(`/fraud/time/quiz/${quizId}`)
+      .then((response) => {
+        return new FraudScores(response.data.scores);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+  static async getQuizCommunicationFraudScores(
+    quizId: number
+  ): Promise<FraudScores[]> {
+    return httpClient
+      .get(`/fraud/communication/quiz/${quizId}`)
+      .then((response) => {
+        return [
+          new FraudScores(response.data.scoresIn),
+          new FraudScores(response.data.scoresOut),
+        ];
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getQuizFraudInformation(
+    quizId: number
+  ): Promise<QuizFraudInformation> {
+    const communicationScores: FraudScores[] =
+      await RemoteServices.getQuizCommunicationFraudScores(quizId);
+    const timeScores: FraudScores = await RemoteServices.getQuizTimeFraudScores(
+      quizId
+    );
+    return new QuizFraudInformation(
+      timeScores,
+      communicationScores[0],
+      communicationScores[1]
+    );
   }
 
   // Answer Controller
