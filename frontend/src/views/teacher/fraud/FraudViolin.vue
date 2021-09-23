@@ -4,7 +4,7 @@
 
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
-import Plotly, { Layout, ViolinData } from 'plotly.js-dist-min';
+import Plotly, { Layout, ViolinData } from 'plotly.js-cartesian-dist-min';
 import QuizFraudScore from '@/models/management/fraud/QuizFraudScore';
 @Component({})
 export default class FraudViolin extends Vue {
