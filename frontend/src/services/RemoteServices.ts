@@ -24,6 +24,7 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import router from '@/router';
 import QuestionQuery from '@/models/management/QuestionQuery';
 import QuizFraudScores from '@/models/management/fraud/QuizFraudScores';
+import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -747,6 +748,12 @@ export default class RemoteServices {
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
+  }
+
+  static async getQuizFraudInformation(quizId: number): Promise<QuizFraudInformation>{
+    let communicationScores : QuizFraudScores[] = await RemoteServices.getQuizCommunicationFraudScores(quizId)
+    let timeScores: QuizFraudScores = await RemoteServices.getQuizTimeFraudScores(quizId)
+    return new QuizFraudInformation(timeScores,communicationScores[0],communicationScores[1]);
   }
 
   // Answer Controller

@@ -4,30 +4,30 @@ import UserFraudScore from '@/models/management/fraud/UserFraudScore';
 export class QuizFraudInformation {
   users: { [username: string]: UserFraudScore } = {};
   constructor(
-    fraudTimeScores: QuizFraudScores,
-    fraudCommunicationProducerScores: QuizFraudScores,
-    fraudCommunicationConsumerScores: QuizFraudScores
+    timeScores: QuizFraudScores,
+    communicationProducerScores: QuizFraudScores,
+    communicationConsumerScores: QuizFraudScores
   ) {
-    for (let fraudTimeScore of fraudTimeScores.fraudScores) {
-      this.users[fraudTimeScore.username] = {
-        ...this.users[fraudTimeScore.username],
-        username: fraudTimeScore.username,
-        scoreTime: fraudTimeScore.score,
+    for (let timeScore of timeScores.fraudScores) {
+      this.users[timeScore.username] = {
+        ...this.users[timeScore.username],
+        username: timeScore.username,
+        scoreTime: timeScore.score,
       };
     }
-    for (let fraudProducerScore of fraudCommunicationProducerScores.fraudScores) {
-      this.users[fraudProducerScore.username] = {
-        ...this.users[fraudProducerScore.username],
-        username: fraudProducerScore.username,
-        scoreCommunicationProducer: fraudProducerScore.score,
+    for (let producerScore of communicationProducerScores.fraudScores) {
+      this.users[producerScore.username] = {
+        ...this.users[producerScore.username],
+        username: producerScore.username,
+        scoreCommunicationProducer: producerScore.score,
       };
     }
 
-    for (let fraudConsumerScore of fraudCommunicationConsumerScores.fraudScores) {
-      this.users[fraudConsumerScore.username] = {
-        ...this.users[fraudConsumerScore.username],
-        username: fraudConsumerScore.username,
-        scoreCommunicationConsumer: fraudConsumerScore.score,
+    for (let consumerScore of communicationConsumerScores.fraudScores) {
+      this.users[consumerScore.username] = {
+        ...this.users[consumerScore.username],
+        username: consumerScore.username,
+        scoreCommunicationConsumer: consumerScore.score,
       };
     }
   }

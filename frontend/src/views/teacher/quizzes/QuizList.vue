@@ -200,12 +200,10 @@
     </v-dialog>
 
     <show-quiz-fraud-scores-dialog
-      v-if="quiz && quizTimeFraudScores"
+      v-if="quiz && quizFraudInformation"
       v-model="quizFraudScoresDialog"
       :quiz="quiz"
-      :quizTimeFraudScores="quizTimeFraudScores"
-      :quizCommunicationFraudScoresIn="quizCommunicationFraudScoresIn"
-      :quizCommunicationFraudScoresOut="quizCommunicationFraudScoresOut"
+      :quizFraudInformation="quizFraudInformation"
     /> 
   </v-card>
 </template>
@@ -218,8 +216,8 @@ import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
 import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog.vue';
 import VueQrcode from 'vue-qrcode';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
-import QuizFraudScores from '@/models/management/fraud/QuizFraudScores';
-import ShowQuizFraudScoresDialog from '../fraud/ShowQuizFraudScoresDialog.vue';
+import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
+import ShowQuizFraudScoresDialog from '@views/teacher/fraud/ShowQuizFraudScoresDialog.vue';
 
 @Component({
   components: {
@@ -233,9 +231,7 @@ export default class QuizList extends Vue {
   @Prop({ type: Array, required: true }) readonly quizzes!: Quiz[];
   quiz: Quiz | null = null;
   quizAnswers: QuizAnswers | null = null;
-  quizTimeFraudScores: QuizFraudScores | null = null;
-  quizCommunicationFraudScoresIn: QuizFraudScores | null = null;
-  quizCommunicationFraudScoresOut: QuizFraudScores | null = null;
+  quizFraudInformation: QuizFraudInformation | null = null;
   correctSequence: number[] = [];
   timeToSubmission: number = 0;
   search: string = '';
@@ -325,9 +321,7 @@ export default class QuizList extends Vue {
   async showQuizFraudScores(quiz: Quiz) {
     await this.$store.dispatch('loading');
     try {
-      this.quizTimeFraudScores = await RemoteServices.getQuizTimeFraudScores(quiz.id);
-      [this.quizCommunicationFraudScoresIn, this.quizCommunicationFraudScoresOut] =
-        await RemoteServices.getQuizCommunicationFraudScores(quiz.id);
+      this.quizFraudInformation = await RemoteServices.getQuizFraudInformation(quiz.id)
       this.quiz = quiz;
       this.quizFraudScoresDialog = true;
     } catch (error) {

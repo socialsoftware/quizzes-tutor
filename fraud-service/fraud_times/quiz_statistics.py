@@ -114,7 +114,6 @@ class Quiz_Statistic():
 
     def test_normal_statistic(self):
         if (len(self.statistic) < 4):
-            print(self.quiz.title)
             return False
         shapiro_test = stats.shapiro(list(self.statistic.values()))
         return shapiro_test

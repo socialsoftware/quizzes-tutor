@@ -1,36 +1,54 @@
 <template>
-  <div class="graph-container">
-    <div :id="graphId" ></div>
-  </div>
+  <div :id="elementId"></div>
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import QuizFraudScores from '@/models/management/fraud/QuizFraudScores';
-const Plotly = require('plotly.js-cartesian-dist');
+import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import Plotly, { Layout, ViolinData } from 'plotly.js-dist-min';
+import QuizFraudScore from '@/models/management/fraud/QuizFraudScore';
 @Component({})
 export default class FraudViolin extends Vue {
-  @Prop({ type: QuizFraudScores, required: true })
-  readonly quizFraudScores!: QuizFraudScores | null;
-  @Prop({required: true })
-  readonly graphId!:string;
-  
+  @Prop({ required: true, default: [] })
+  readonly quizFraudScores!: QuizFraudScore[];
+  @Prop({ required: true })
+  readonly graphId!: string;
+  @Prop({ required: true })
+  readonly title!: string;
+
+  get scores() {
+    return this.quizFraudScores.map((qfs) => qfs.score);
+  }
+
+  get labels() {
+    return this.quizFraudScores.map((qfs) => `(Username, ${qfs.username})`);
+  }
+
+  @Watch('quizFraudScores', { deep: true })
+  onQuizFraudScoresChange() {
+    this.drawPlot();
+  }
+  get elementId(){
+    return "fraud-graph-" + this.graphId;
+  }
   mounted() {
-    let data = [
+    this.drawPlot();
+
+    
+  }
+
+  drawPlot() {
+    let data: Partial<ViolinData>[] = [
       {
         type: 'violin',
-        y: this.quizFraudScores?.fraudScores.map((qfs) => qfs.score),
+        y: this.scores,
         points: 'all',
         box: {
           visible: true,
         },
-        boxpoints: true,
         line: {
           color: 'black',
         },
-        text: this.quizFraudScores?.fraudScores.map(
-          (qfs) => `(Username, ${qfs.username})`
-        ),
+        text: this.labels,
         fillcolor: '#1876d1',
         opacity: 0.6,
         meanline: {
@@ -40,20 +58,25 @@ export default class FraudViolin extends Vue {
       },
     ];
 
-    let layout = {
-      title: '',
-      autosize: false,
-      width: 0.3,
+    const layout: Partial<Layout> = {
+      title: this.title,
+      autosize: true,
       yaxis: {
         zeroline: false,
       },
+      width: 280,
+      showlegend: false,
+      margin: {
+        r: 25,
+        l: 25,
+      },
     };
 
-    Plotly.newPlot(this.graphId, data, layout,{responsive: true});
+    Plotly.newPlot(this.elementId, data, layout, { responsive: true });
+    
+
   }
 }
 </script>
 
-<style>
-
-</style>
+<style></style>
