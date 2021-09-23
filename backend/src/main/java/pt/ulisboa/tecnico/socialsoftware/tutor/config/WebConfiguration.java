@@ -20,11 +20,11 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/images/questions/**").addResourceLocations("file:" + figuresDir);
 
         registry.addResourceHandler("/swagger-ui/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/3.51.0/");
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/3.52.1/");
 
 
         registry.addResourceHandler("/swagger/**")
-                    .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/3.51.0/");
+                    .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/3.52.1/");
 
 
         registry.addResourceHandler("/webjars/**")

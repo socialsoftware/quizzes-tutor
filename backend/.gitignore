@@ -35,4 +35,4 @@ application-prod.properties
 /src/main/resources/static/export/
 
 ### jmeter ###
-/jmeter.log
+jmeter.log
