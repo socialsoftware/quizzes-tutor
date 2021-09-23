@@ -67,7 +67,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import FraudViolin from '@/views/teacher/fraud/FraudViolin.vue';
 import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
 import UserFraudScore from '@/models/management/fraud/UserFraudScore';

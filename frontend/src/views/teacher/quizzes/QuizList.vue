@@ -217,7 +217,7 @@ import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog
 import VueQrcode from 'vue-qrcode';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
-import ShowQuizFraudScoresDialog from '@views/teacher/fraud/ShowQuizFraudScoresDialog.vue';
+import ShowQuizFraudScoresDialog from '@/views/teacher/fraud/ShowQuizFraudScoresDialog.vue';
 
 @Component({
   components: {
