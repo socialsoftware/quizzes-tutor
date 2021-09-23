@@ -1200,7 +1200,7 @@ vars.put(&quot;answers&quot;, result.toString());</stringProp>
               <stringProp name="HTTPSampler.port">${port}</stringProp>
               <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
-              <stringProp name="HTTPSampler.path">${prefix}/fraud/quiz/${__property(quiz_id)} </stringProp>
+              <stringProp name="HTTPSampler.path">${prefix}/fraud/time/quiz/${__property(quiz_id)} </stringProp>
               <stringProp name="HTTPSampler.method">GET</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
@@ -1375,7 +1375,7 @@ vars.put(&quot;answers&quot;, result.toString());</stringProp>
               <stringProp name="HTTPSampler.port">${port}</stringProp>
               <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
-              <stringProp name="HTTPSampler.path">${prefix}/fraud/graph/quiz/${__property(quiz_id)} </stringProp>
+              <stringProp name="HTTPSampler.path">${prefix}/fraud/communication/quiz/${__property(quiz_id)} </stringProp>
               <stringProp name="HTTPSampler.method">GET</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
