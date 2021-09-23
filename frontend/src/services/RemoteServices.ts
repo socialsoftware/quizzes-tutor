@@ -23,7 +23,7 @@ import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissi
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import router from '@/router';
 import QuestionQuery from '@/models/management/QuestionQuery';
-import QuizFraudScores from '@/models/management/fraud/QuizFraudScores';
+import { FraudScores } from '@/models/management/fraud/FraudScores';
 import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
 
 const httpClient = axios.create();
@@ -724,11 +724,11 @@ export default class RemoteServices {
       });
   }
 
-  static async getQuizTimeFraudScores(quizId: number): Promise<QuizFraudScores> {
+  static async getQuizTimeFraudScores(quizId: number): Promise<FraudScores> {
     return httpClient
       .get(`/fraud/time/quiz/${quizId}`)
       .then((response) => {
-        return new QuizFraudScores(response.data.scores);
+        return new FraudScores(response.data.scores);
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
@@ -736,13 +736,13 @@ export default class RemoteServices {
   }
   static async getQuizCommunicationFraudScores(
     quizId: number
-  ): Promise<QuizFraudScores[]> {
+  ): Promise<FraudScores[]> {
     return httpClient
       .get(`/fraud/communication/quiz/${quizId}`)
       .then((response) => {
         return [
-          new QuizFraudScores(response.data.scoresIn),
-          new QuizFraudScores(response.data.scoresOut),
+          new FraudScores(response.data.scoresIn),
+          new FraudScores(response.data.scoresOut),
         ];
       })
       .catch(async (error) => {
@@ -750,10 +750,19 @@ export default class RemoteServices {
       });
   }
 
-  static async getQuizFraudInformation(quizId: number): Promise<QuizFraudInformation>{
-    let communicationScores : QuizFraudScores[] = await RemoteServices.getQuizCommunicationFraudScores(quizId)
-    let timeScores: QuizFraudScores = await RemoteServices.getQuizTimeFraudScores(quizId)
-    return new QuizFraudInformation(timeScores,communicationScores[0],communicationScores[1]);
+  static async getQuizFraudInformation(
+    quizId: number
+  ): Promise<QuizFraudInformation> {
+    const communicationScores: FraudScores[] =
+      await RemoteServices.getQuizCommunicationFraudScores(quizId);
+    const timeScores: FraudScores = await RemoteServices.getQuizTimeFraudScores(
+      quizId
+    );
+    return new QuizFraudInformation(
+      timeScores,
+      communicationScores[0],
+      communicationScores[1]
+    );
   }
 
   // Answer Controller

@@ -70,7 +70,7 @@
 import { Component, Model, Prop, Vue } from 'vue-property-decorator';
 import FraudViolin from '@/views/teacher/fraud/FraudViolin.vue';
 import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
-import UserFraudScore from '@/models/management/fraud/UserFraudScore';
+import { UserFraudScore } from '@/models/management/fraud/UserFraudScore';
 import { Quiz } from '@/models/management/Quiz';
 
 @Component({ components: { 'fraud-violin': FraudViolin } })
@@ -89,13 +89,11 @@ export default class ShowQuizFraudScoresDialog extends Vue {
     { text: 'Production Score', value: 'scoreCommunicationProducer' },
   ];
   get quizFraudScores() {
-    
     const result: UserFraudScore[] = [];
     for (let entry in this.quizFraudInformation.users) {
       result.push(this.quizFraudInformation.users[entry]);
     }
     return result;
   }
-  
 }
 </script>

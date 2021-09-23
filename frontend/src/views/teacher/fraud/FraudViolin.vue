@@ -5,11 +5,11 @@
 <script lang="ts">
 import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
 import Plotly, { Layout, ViolinData } from 'plotly.js-cartesian-dist-min';
-import QuizFraudScore from '@/models/management/fraud/QuizFraudScore';
+import { FraudScore } from '@/models/management/fraud/FraudScore';
 @Component({})
 export default class FraudViolin extends Vue {
   @Prop({ required: true, default: [] })
-  readonly quizFraudScores!: QuizFraudScore[];
+  readonly quizFraudScores!: FraudScore[];
   @Prop({ required: true })
   readonly graphId!: string;
   @Prop({ required: true })
@@ -27,13 +27,11 @@ export default class FraudViolin extends Vue {
   onQuizFraudScoresChange() {
     this.drawPlot();
   }
-  get elementId(){
-    return "fraud-graph-" + this.graphId;
+  get elementId() {
+    return 'fraud-graph-' + this.graphId;
   }
   mounted() {
     this.drawPlot();
-
-    
   }
 
   drawPlot() {
@@ -73,8 +71,6 @@ export default class FraudViolin extends Vue {
     };
 
     Plotly.newPlot(this.elementId, data, layout, { responsive: true });
-    
-
   }
 }
 </script>

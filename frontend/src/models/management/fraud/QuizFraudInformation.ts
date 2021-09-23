@@ -1,21 +1,21 @@
-import QuizFraudScores from '@/models/management/fraud/QuizFraudScores';
-import UserFraudScore from '@/models/management/fraud/UserFraudScore';
+import { FraudScores } from '@/models/management/fraud/FraudScores';
+import { UserFraudScore } from '@/models/management/fraud/UserFraudScore';
 
 export class QuizFraudInformation {
   users: { [username: string]: UserFraudScore } = {};
   constructor(
-    timeScores: QuizFraudScores,
-    communicationProducerScores: QuizFraudScores,
-    communicationConsumerScores: QuizFraudScores
+    timeScores: FraudScores,
+    communicationProducerScores: FraudScores,
+    communicationConsumerScores: FraudScores
   ) {
-    for (let timeScore of timeScores.fraudScores) {
+    for (const timeScore of timeScores.fraudScores) {
       this.users[timeScore.username] = {
         ...this.users[timeScore.username],
         username: timeScore.username,
         scoreTime: timeScore.score,
       };
     }
-    for (let producerScore of communicationProducerScores.fraudScores) {
+    for (const producerScore of communicationProducerScores.fraudScores) {
       this.users[producerScore.username] = {
         ...this.users[producerScore.username],
         username: producerScore.username,
@@ -23,7 +23,7 @@ export class QuizFraudInformation {
       };
     }
 
-    for (let consumerScore of communicationConsumerScores.fraudScores) {
+    for (const consumerScore of communicationConsumerScores.fraudScores) {
       this.users[consumerScore.username] = {
         ...this.users[consumerScore.username],
         username: consumerScore.username,
