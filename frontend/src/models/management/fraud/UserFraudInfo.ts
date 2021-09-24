@@ -2,7 +2,6 @@ export class UserFraudInfo {
     username!: string;
     name!: string;
     user_id!: string;
-    scoreCommunicationConsumer!: number;
   
     constructor(jsonObj?: UserFraudInfo) {
       if (jsonObj) {

@@ -65,14 +65,14 @@ public class FraudController {
         WebClient client = WebClient.create(fraudServiceURL);
         return client.get().uri(uri).accept(MediaType.APPLICATION_JSON).retrieve()
                 .bodyToMono(new ParameterizedTypeReference<QuizFraudTimeScoreDto>() {
-                }).log().block();
+                }).block();
     }
 
     private QuizFraudCommunicationScoreDto getFraudCommunicationScoresFromURI(String uri) {
         WebClient client = WebClient.create(fraudServiceURL);
         return client.get().uri(uri).accept(MediaType.APPLICATION_JSON).retrieve()
                 .bodyToMono(new ParameterizedTypeReference<QuizFraudCommunicationScoreDto>() {
-                }).log().block();
+                }).block();
     }
 
     private void validateQuizId(Integer quizId) {
