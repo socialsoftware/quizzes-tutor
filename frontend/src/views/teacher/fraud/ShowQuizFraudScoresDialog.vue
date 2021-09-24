@@ -20,7 +20,7 @@
               title="Time Scores"
               :quizFraudScores="
                 quizFraudScores.map((e) => ({
-                  username: e.username,
+                  userInfo: e.userInfo,
                   score: e.scoreTime,
                 }))
               "
@@ -33,7 +33,7 @@
               class="fraudViolin"
               :quizFraudScores="
                 quizFraudScores.map((e) => ({
-                  username: e.username,
+                  userInfo: e.userInfo,
                   score: e.scoreCommunicationConsumer,
                 }))
               "
@@ -46,7 +46,7 @@
               class="fraudViolin"
               :quizFraudScores="
                 quizFraudScores.map((e) => ({
-                  username: e.username,
+                  userInfo: e.userInfo,
                   score: e.scoreCommunicationProducer,
                 }))
               "
@@ -56,7 +56,7 @@
       <v-data-table
         :headers="headers"
         :items="quizFraudScores"
-        :sort-by="['score']"
+        :sort-by="['scoreTime']"
         sort-desc
         :mobile-breakpoint="0"
         :items-per-page="15"
@@ -83,7 +83,7 @@ export default class ShowQuizFraudScoresDialog extends Vue {
   readonly quiz!: Quiz;
 
   headers: any[] = [
-    { text: 'Username', value: 'username' },
+    { text: 'User', value: 'userInfo.name' },
     { text: 'Time Score', value: 'scoreTime' },
     { text: 'Consumer Score', value: 'scoreCommunicationConsumer' },
     { text: 'Production Score', value: 'scoreCommunicationProducer' },

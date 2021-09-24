@@ -1,12 +1,14 @@
+import { UserFraudInfo } from "@/models/management/fraud/UserFraudInfo";
+
 export class UserFraudScore {
-  username!: string;
+  userInfo!: UserFraudInfo;
   scoreTime!: number;
   scoreCommunicationProducer!: number;
   scoreCommunicationConsumer!: number;
 
   constructor(jsonObj?: UserFraudScore) {
     if (jsonObj) {
-      this.username = jsonObj.username;
+      this.userInfo = jsonObj.userInfo;
       this.scoreTime = jsonObj.scoreTime;
       this.scoreCommunicationProducer = jsonObj.scoreCommunicationProducer;
       this.scoreCommunicationConsumer = jsonObj.scoreCommunicationConsumer;

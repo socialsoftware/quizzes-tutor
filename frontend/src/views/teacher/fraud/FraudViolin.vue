@@ -20,7 +20,7 @@ export default class FraudViolin extends Vue {
   }
 
   get labels() {
-    return this.quizFraudScores.map((qfs) => `(Username, ${qfs.username})`);
+    return this.quizFraudScores.map((qfs) => `(User, ${qfs.userInfo.name})`);
   }
 
   @Watch('quizFraudScores', { deep: true })
