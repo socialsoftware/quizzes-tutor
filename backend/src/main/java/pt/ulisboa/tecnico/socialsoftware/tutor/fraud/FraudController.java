@@ -1,8 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.fraud;
 
-import java.time.ZonedDateTime;
-import java.util.List;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.ParameterizedTypeReference;

@@ -1,10 +1,12 @@
+import { UserFraudInfo } from "./UserFraudInfo";
+
 export class FraudScore {
-  username!: string;
+  userInfo!: UserFraudInfo;
   score!: number;
 
   constructor(jsonObj?: FraudScore) {
     if (jsonObj) {
-      this.username = jsonObj.username;
+      this.userInfo = new UserFraudInfo(jsonObj.userInfo);
       if (jsonObj.score) this.score = jsonObj.score;
     }
   }

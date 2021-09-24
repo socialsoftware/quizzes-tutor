@@ -358,16 +358,18 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     role = Column(String)
+    name= Column(String)
     number_of_student_quizzes = Column(Integer)
     number_of_in_class_answers = Column(Integer)
     number_of_correct_in_class_answers = Column(Integer)
     number_of_in_class_quizzes = Column(Integer)
     quiz_answers = relationship("Quiz_Answer", back_populates="user")
+    auth_user = relationship("Auth_User", back_populates="user")
     course_executions = relationship(
         "Course_Execution", secondary=user_course_executions_table, back_populates="users")
 
     def __repr__(self):
-        return f"<User(id: {self.id}, role: {self.role})>"
+        return f"<User(id: {self.id}, role: {self.role}), name: {self.name}>"
 
     def get_in_class_quiz_answers(self, course_execution_id=False):
         if course_execution_id:
@@ -381,16 +383,47 @@ class User(Base):
     def get_quiz_answers(self, quiz_id):
         return [answer for quiz_answer in self.quiz_answers for answer in quiz_answer.answers if answer.details and quiz_answer.quiz.id == quiz_id]
 
-    def to_dict(self):
-        return {
+    def to_dict(self, deep=False):
+        result = {
             "id": self.id,
             "role": self.role,
+            "name": self.name,
             "number_of_student_quizzes": self.number_of_student_quizzes,
             "number_of_in_class_answers": self.number_of_in_class_answers,
             "number_of_correct_in_class_answers": self.number_of_correct_in_class_answers,
             "number_of_in_class_quizzes": self.number_of_in_class_quizzes,
-            "quiz_answers": self.quiz_answers,
+            "auth_user": self.auth_user.to_dict() if self.auth_user else None
+            }
+        if deep:
+            result["quiz_answers"] = self.quiz_answers
+        return result
+
+class Auth_User(Base):
+    __tablename__ = "auth_users"
+
+    id = Column(Integer, primary_key=True)
+    auth_type = Column(String)
+    email = Column(String)
+    username = Column(String)
+    user_id = Column(Integer, ForeignKey('users.id'))
+
+    user = relationship("User", back_populates="auth_user", uselist=False)
+
+    def __repr__(self):
+        return f"<Auth_User(id: {self.id}, auth_type: {self.auth_type}), email: {self.email}>"
+
+    def to_dict(self):
+        return {
+            "id": self.id,
+            "auth_type": self.auth_type,
+            "email": self.email,
+            "username": self.username,
+            "user_id": self.user_id,
+            "name": self.user.name
         }
+    
+    def __repr__(self):
+        return f"<Auth_User(id: {self.id}, auth_type: {self.auth_type}, username: {self.username}, user_id: {self.user_id})>"
 
 
 class Course_Execution(Base):
@@ -403,7 +436,6 @@ class Course_Execution(Base):
     course_id = Column(Integer)
     type = Column(String)
     end_date = Column(DateTime)
-
     users = relationship("User",
                          secondary=user_course_executions_table,
                          back_populates="course_executions")
@@ -443,6 +475,12 @@ class QuizzesDBConnector():
 
     def get_course_execution(self, course_execution):
         return self.session.query(Course_Execution).filter(Course_Execution.id == course_execution).one()
+
+    def getAuthUserInformationByUserId(self, user_id):
+        return self.session.query(Auth_User).join(User).filter(User.id == user_id).one()
+    
+    def getAuthUserInformationByUsername(self, username):
+        return self.session.query(Auth_User).filter(Auth_User.username == username).one()
 
     def get_answers_from_course_execution(self, course_execution):
         return self.session.query(Question_Answer).join(Quiz_Answer).join(Quiz).filter(Quiz.course_execution_id == course_execution).filter(Quiz.type == "IN_CLASS").filter(Quiz.conclusion_date < '2021-07-19').filter(Question_Answer.time_taken != None).all()
