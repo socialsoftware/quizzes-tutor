@@ -218,6 +218,10 @@ public class Tournament  {
 
     public boolean hasQuiz() { return getQuizId() != null; }
 
+    public boolean hasCourseExecution() { return getCourseExecution() != null; }
+
+    public boolean hasTopics() { return getTopics() != null; }
+
     public void remove() {
         creator = null;
         courseExecution = null;
@@ -293,13 +297,13 @@ public class Tournament  {
     public TournamentDto getDto() {
         TournamentDto dto = new TournamentDto();
         dto.setId(getId());
-        dto.setCourseAcronym(getCourseExecution().getCourseAcronym());
+        if (hasCourseExecution()) dto.setCourseAcronym(getCourseExecution().getCourseAcronym());
         if (hasQuiz()) dto.setQuizId(getQuizId());
         dto.setStartTime(DateHandler.toISOString(getStartTime()));
         dto.setEndTime(DateHandler.toISOString(getEndTime()));
         dto.setNumberOfQuestions(getNumberOfQuestions());
         dto.setCanceled(isCanceled());
-        dto.setTopicsDto(getTopics().stream()
+        if (hasTopics()) dto.setTopicsDto(getTopics().stream()
                 .map(TournamentTopic::getTopicDto)
                 .collect(Collectors.toSet()));
         dto.setCreator(getCreator().getStudentDto());
@@ -361,6 +365,16 @@ public class Tournament  {
             case APPROVAL_PENDING:
                 remove();
                 setState(REJECTED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void beginUpdateTournament() {
+        switch (getState()) {
+            case APPROVED:
+                setState(UPDATE_PENDING);
                 break;
             default:
                 throw new UnsupportedStateTransitionException(getState());

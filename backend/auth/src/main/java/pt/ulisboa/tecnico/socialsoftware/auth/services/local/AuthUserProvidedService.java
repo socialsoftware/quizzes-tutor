@@ -146,7 +146,7 @@ public class AuthUserProvidedService {
 
         updateCourseExecutionsSaga(authUser, authUser.getUserSecurityInfo().getId(), ids, courseExecutionDtoList, email);
 
-        // Waits for saga to finish
+        // Only return when AuthUser becomes approved
         AuthUser authUserFinal = authUserRepository.findById(authUser.getId()).get();
         while (!(authUserFinal.getState().equals(AuthUserState.APPROVED))) {
 
@@ -273,7 +273,7 @@ public class AuthUserProvidedService {
 
         confirmRegistrationSaga(authUser, authUser.getId(), authUser.getUserSecurityInfo().getId(), password);
 
-        // Waits for saga to finish
+        // Only return when AuthUser becomes approved
         AuthUser authUserFinal = authUserRepository.findById(authUser.getId()).get();
         while (!(authUserFinal.getState().equals(AuthUserState.APPROVED))) {
             authUserFinal = authUserRepository.findById(authUser.getId()).get();
@@ -420,7 +420,7 @@ public class AuthUserProvidedService {
                                     List<CourseExecutionDto> courseExecutionDtoList, String ids) {
         AuthUser authUser = createAuthUserSaga(name, username, email, role, type, courseExecutionDtoList, ids);
 
-        // Waits for saga to finish
+        // Only return when AuthUser becomes approved
         AuthUser authUserFinal = authUserRepository.findById(authUser.getId()).get();
         while (!(authUserFinal.getState().equals(AuthUserState.APPROVED) ||
                 authUserFinal.getState().equals(AuthUserState.REJECTED))) {

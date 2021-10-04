@@ -42,7 +42,21 @@ public class TournamentServiceCommandHandlers {
                 .onMessage(StoreTournamentCourseExecutionCommand.class, this::storeCourseExecution)
                 .onMessage(UpdateTopicsTournamentCommand.class, this::updateTopics)
                 .onMessage(UndoUpdateTopicsTournamentCommand.class, this::undoUpdateTopics)
+                .onMessage(BeginUpdateTournamentCommand.class, this::beginUpdateTournament)
                 .build();
+    }
+
+    private Message beginUpdateTournament(CommandMessage<BeginUpdateTournamentCommand> cm) {
+        logger.info("Received BeginUpdateTournamentCommand");
+
+        Integer tournamentId = cm.getCommand().getTournamentId();
+
+        try {
+            tournamentProvidedService.beginUpdateTournament(tournamentId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
     }
 
     private Message undoUpdateTopics(CommandMessage<UndoUpdateTopicsTournamentCommand> cm) {

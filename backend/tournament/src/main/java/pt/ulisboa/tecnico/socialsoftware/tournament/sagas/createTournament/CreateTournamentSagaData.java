@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament;
 
+import io.eventuate.tram.commands.common.Command;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.answer.DeleteQuizCommand;
@@ -13,12 +14,10 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tournament.command.ConfirmCreateTournamentCommand;
-import pt.ulisboa.tecnico.socialsoftware.tournament.command.RejectCreateTournamentCommand;
-import pt.ulisboa.tecnico.socialsoftware.tournament.command.StoreTournamentCourseExecutionCommand;
-import pt.ulisboa.tecnico.socialsoftware.tournament.command.StoreTournamentTopicsCommand;
+import pt.ulisboa.tecnico.socialsoftware.tournament.command.*;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
+import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSagaData;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -195,5 +194,4 @@ public class CreateTournamentSagaData {
                 ", topicListDto=" + topicListDto +
                 '}';
     }
-
 }

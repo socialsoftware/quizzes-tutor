@@ -20,6 +20,12 @@ public class TournamentServiceProxy {
             .withReply(Success.class)
             .build();
 
+    public final CommandEndpoint<BeginUpdateTournamentCommand> beginUpdate = CommandEndpointBuilder
+            .forCommand(BeginUpdateTournamentCommand.class)
+            .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
+            .withReply(Success.class)
+            .build();
+
     public final CommandEndpoint<ConfirmCreateTournamentCommand> confirmCreate = CommandEndpointBuilder
             .forCommand(ConfirmCreateTournamentCommand.class)
             .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)

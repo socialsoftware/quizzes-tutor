@@ -31,7 +31,6 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
-import static pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentState.UPDATE_PENDING;
 
 @Service
 public class TournamentProvidedService {
@@ -53,24 +52,10 @@ public class TournamentProvidedService {
     @Autowired
     private CreateTournamentSaga createTournamentSaga;
 
-
-    public TournamentDto createTournament(Integer userId, Integer executionId, Set<Integer> topicsId,
-                                          TournamentDto tournamentDto, String username, String name) {
-        Tournament tournament = createTournamentSaga(userId, executionId, topicsId, tournamentDto, username, name);
-
-        // Waits for saga to finish
-        Tournament approvedTournament = tournamentRepository.findById(tournament.getId()).get();
-        while (!(approvedTournament.getState().equals(TournamentState.APPROVED))) {
-            approvedTournament = tournamentRepository.findById(tournament.getId()).get();
-        }
-
-        return approvedTournament.getDto();
-    }
-
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public Tournament createTournamentSaga(Integer userId, Integer executionId, Set<Integer> topicsId,
-                                           TournamentDto tournamentDto, String username, String name) {
+    public TournamentDto createTournament(Integer userId, Integer executionId, Set<Integer> topicsId,
+                                          TournamentDto tournamentDto, String username, String name) {
         checkInput(userId, topicsId, tournamentDto);
 
         Tournament tournament = new Tournament(new TournamentCreator(userId, username, name), tournamentDto);
@@ -79,7 +64,8 @@ public class TournamentProvidedService {
         CreateTournamentSagaData data = new CreateTournamentSagaData(tournament.getId(), tournament.getCreator().getId(),
                 executionId, tournament.getExternalStatementCreationDto(), new TopicListDto(topicsId));
         sagaInstanceFactory.create(createTournamentSaga, data);
-        return tournament;
+
+        return tournament.getDto();
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -138,31 +124,16 @@ public class TournamentProvidedService {
     }
 
 
+    @Transactional
     public TournamentDto updateTournament(Set<Integer> topicsId, TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
         tournament.checkCanChange();
 
-        updateTournamentQuizSaga(tournament, tournamentDto, new TopicListDto(topicsId),
-                tournament.getTopics());
-
-        // Waits for saga to finish
-        Tournament tournamentFinal = tournamentRepository.findById(tournament.getId()).get();
-        while (!(tournamentFinal.getState().equals(TournamentState.APPROVED))) {
-            tournamentFinal = tournamentRepository.findById(tournament.getId()).get();
-        }
-
-        return tournamentFinal.getDto();
-    }
-
-    @Transactional
-    public void updateTournamentQuizSaga(Tournament tournament, TournamentDto tournamentDto,
-                                         TopicListDto topicsList, Set<TournamentTopic> oldTopics) {
-        tournament.setState(UPDATE_PENDING);
-        tournamentRepository.save(tournament);
-
         UpdateTournamentSagaData data = new UpdateTournamentSagaData(tournament.getId(), tournamentDto, tournament.getDto(),
-                topicsList, oldTopics, tournament.getCourseExecution().getId());
+                new TopicListDto(topicsId), tournament.getTopics(), tournament.getCourseExecution().getId());
         sagaInstanceFactory.create(updateTournamentSaga, data);
+
+        return tournament.getDto();
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
@@ -279,5 +250,11 @@ public class TournamentProvidedService {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.setTopics(topics);
+    }
+
+    public void beginUpdateTournament(Integer tournamentId) {
+        Tournament tournament = tournamentRepository.findById(tournamentId)
+                .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
+        tournament.beginUpdateTournament();
     }
 }
