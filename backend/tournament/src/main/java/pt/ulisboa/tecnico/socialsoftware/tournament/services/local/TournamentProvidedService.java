@@ -110,7 +110,11 @@ public class TournamentProvidedService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatementQuizDto solveQuiz(Integer userId, Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
-        return tournamentRequiredService.startTournamentQuiz(userId, tournament.getQuizId());
+        StatementQuizDto statementQuizDto = tournamentRequiredService.startTournamentQuiz(userId, tournament.getQuizId());
+
+        tournament.findParticipant(userId).setAnswered(true);
+
+        return statementQuizDto;
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))

@@ -35,7 +35,6 @@ public class TournamentQuizSubscriptions {
                 new TutorException(NO_TOURNAMENT_WITH_QUIZ_ID, externalQuizSolvedEvent.getQuizId()));
 
         TournamentParticipant participant = tournament.findParticipant(externalQuizSolvedEvent.getParticipantId());
-        participant.setAnswered(true);
         participant.setNumberOfAnswered(externalQuizSolvedEvent.getNumberOfAnswered());
         participant.setNumberOfCorrect(externalQuizSolvedEvent.getNumberOfCorrect());
     }
