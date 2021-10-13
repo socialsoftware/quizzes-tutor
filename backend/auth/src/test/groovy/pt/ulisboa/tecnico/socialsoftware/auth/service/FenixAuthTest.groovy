@@ -8,17 +8,17 @@ import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.auth.services.local.FenixEduInterface
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.auth.AuthUserType
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 
 <<<<<<< HEAD
 =======
 
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
+import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 
 >>>>>>> microservices
 
 
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User

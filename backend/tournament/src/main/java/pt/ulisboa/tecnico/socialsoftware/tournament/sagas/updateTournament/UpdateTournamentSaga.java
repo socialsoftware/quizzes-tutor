@@ -4,7 +4,6 @@ import io.eventuate.tram.sagas.orchestration.SagaDefinition;
 import io.eventuate.tram.sagas.simpledsl.SimpleSaga;
 import org.springframework.util.Assert;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament.CreateTournamentSagaData;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.QuestionServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.QuizServiceProxy;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.TournamentServiceProxy;

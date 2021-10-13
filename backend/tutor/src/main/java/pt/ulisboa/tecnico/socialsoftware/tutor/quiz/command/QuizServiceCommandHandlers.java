@@ -8,9 +8,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.answer.DeleteQuizCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.GetQuizCommand;
 import pt.ulisboa.tecnico.socialsoftware.common.commands.quiz.UpdateQuizCommand;
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.quiz.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
@@ -36,7 +34,6 @@ public class QuizServiceCommandHandlers {
         return SagaCommandHandlersBuilder
                 .fromChannel(ServiceChannels.QUIZ_SERVICE_COMMAND_CHANNEL)
                 .onMessage(UpdateQuizCommand.class, this::updateQuiz)
-                .onMessage(GetQuizCommand.class, this::getQuiz)
                 .onMessage(DeleteQuizCommand.class, this::deleteQuiz)
                 .build();
     }
@@ -49,19 +46,6 @@ public class QuizServiceCommandHandlers {
         try {
             quizService.removeExternalQuiz(quizId);
             return withSuccess();
-        } catch (Exception e) {
-            return withFailure();
-        }
-    }
-
-    public Message getQuiz(CommandMessage<GetQuizCommand> cm) {
-        logger.info("Received GetQuizCommand");
-
-        Integer quizId = cm.getCommand().getQuizId();
-
-        try {
-            QuizDto quizDto = quizService.findById(quizId);
-            return withSuccess(quizDto);
         } catch (Exception e) {
             return withFailure();
         }

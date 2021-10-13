@@ -369,7 +369,7 @@ public class QuizService {
         quizRepository.findQuizzesOfExecution(courseExecutionService.getDemoCourse().getCourseExecutionId())
                 .stream()
                 .sorted(Comparator.comparing(Quiz::getId))
-                .skip(2)
+                .filter(q -> !q.isExternalQuiz())
                 .forEach(quiz -> {
                     quiz.remove();
                     this.quizRepository.delete(quiz);

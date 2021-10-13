@@ -7,15 +7,15 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
 
 <<<<<<< HEAD:backend/apigateway/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/apigateway/webservice/execution/GetCourseExecutionsWebServiceIT.groovy
 
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 
 =======
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 
 >>>>>>> microservices:backend/tutor/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/tutor/execution/webservice/GetCourseExecutionsWebServiceIT.groovy

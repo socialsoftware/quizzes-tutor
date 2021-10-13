@@ -150,7 +150,8 @@ public enum ErrorMessage {
     CANNOT_OPEN_FILE("Cannot open file"),
 
     INVALID_CSV_FILE_FORMAT("The csv file uploaded has a wrong format"),
-    WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on line: %d");
+    WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on line: %d"),
+    UNSUPPORTED_STATE("Unsupported intermediate state: %s");
 
 
     public final String label;

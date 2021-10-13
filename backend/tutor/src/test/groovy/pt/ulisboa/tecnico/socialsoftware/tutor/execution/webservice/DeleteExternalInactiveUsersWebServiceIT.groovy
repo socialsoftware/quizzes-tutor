@@ -5,17 +5,17 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 
 <<<<<<< HEAD:backend/apigateway/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/apigateway/webservice/execution/DeleteExternalInactiveUsersWebServiceIT.groovy
 
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 
 =======
 >>>>>>> microservices:backend/tutor/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/tutor/execution/webservice/DeleteExternalInactiveUsersWebServiceIT.groovy
 
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course

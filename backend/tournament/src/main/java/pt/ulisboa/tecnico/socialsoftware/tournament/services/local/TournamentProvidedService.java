@@ -1,8 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.services.local;
 
 import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -35,8 +33,6 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 @Service
 public class TournamentProvidedService {
 
-    private final Logger logger = LoggerFactory.getLogger(TournamentProvidedService.class);
-
     @Autowired
     private TournamentRepository tournamentRepository;
 
@@ -52,7 +48,7 @@ public class TournamentProvidedService {
     @Autowired
     private CreateTournamentSaga createTournamentSaga;
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament(Integer userId, Integer executionId, Set<Integer> topicsId,
                                           TournamentDto tournamentDto, String username, String name) {
@@ -68,45 +64,59 @@ public class TournamentProvidedService {
         return tournament.getDto();
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getTournamentsForCourseExecution(Integer executionId) {
-        return tournamentRepository.getTournamentsForCourseExecution(executionId).stream().map(Tournament::getDto)
+        return tournamentRepository.getTournamentsForCourseExecution(executionId).stream()
+                .filter(t -> t.getState().equals(TournamentState.APPROVED))
+                .map(Tournament::getDto)
                 .collect(Collectors.toList());
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getOpenedTournamentsForCourseExecution(Integer executionId) {
         LocalDateTime now = DateHandler.now();
-        return tournamentRepository.getOpenedTournamentsForCourseExecution(executionId, now).stream().map(Tournament::getDto)
+        return tournamentRepository.getOpenedTournamentsForCourseExecution(executionId, now).stream()
+                .filter(t -> t.getState().equals(TournamentState.APPROVED))
+                .map(Tournament::getDto)
                 .collect(Collectors.toList());
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<TournamentDto> getClosedTournamentsForCourseExecution(Integer executionId) {
         LocalDateTime now = DateHandler.now();
-        return tournamentRepository.getClosedTournamentsForCourseExecution(executionId, now).stream().map(Tournament::getDto)
+        return tournamentRepository.getClosedTournamentsForCourseExecution(executionId, now).stream()
+                .filter(t -> t.getState().equals(TournamentState.APPROVED))
+                .map(Tournament::getDto)
                 .collect(Collectors.toList());
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto getTournament(Integer tournamentId) {
-        return tournamentRepository.findApprovedTournamentById(tournamentId)
+        return tournamentRepository.findById(tournamentId)
+                .filter(t -> t.getState().equals(TournamentState.APPROVED))
                 .map(Tournament::getDto)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 
-    @Retryable(value = { SQLException.class}, maxAttempts = 6, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class, TutorException.class}, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void joinTournament(Integer userId, Integer tournamentId, String password, String username, String name) {
         Tournament tournament = checkTournament(tournamentId);
-        tournament.addParticipant(new TournamentParticipant(userId, username, name), password);
+
+        if (tournament.getState().equals(TournamentState.APPROVED)) {
+            tournament.addParticipant(new TournamentParticipant(userId, username, name), password);
+        }
+        else {
+            throw new TutorException(UNSUPPORTED_STATE, tournament.getState().toString());
+        }
+
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatementQuizDto solveQuiz(Integer userId, Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
@@ -117,18 +127,22 @@ public class TournamentProvidedService {
         return statementQuizDto;
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class, TutorException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void leaveTournament(Integer userId, Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
 
-        TournamentParticipant participant = tournament.findParticipant(userId);
-
-        tournament.removeParticipant(participant);
+        if (tournament.getState().equals(TournamentState.APPROVED)) {
+            TournamentParticipant participant = tournament.findParticipant(userId);
+            tournament.removeParticipant(participant);
+        }
+        else {
+            throw new TutorException(UNSUPPORTED_STATE, tournament.getState().toString());
+        }
     }
 
-
-    @Transactional
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 2000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto updateTournament(Set<Integer> topicsId, TournamentDto tournamentDto) {
         Tournament tournament = checkTournament(tournamentDto.getId());
         tournament.checkCanChange();
@@ -140,24 +154,33 @@ public class TournamentProvidedService {
         return tournament.getDto();
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class,TutorException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto cancelTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
 
-        tournament.cancel();
+        if (tournament.getState().equals(TournamentState.APPROVED)) {
+            tournament.cancel();
+        }
+        else {
+            throw new TutorException(UNSUPPORTED_STATE, tournament.getState().toString());
+        }
 
         return tournament.getDto();
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class, TutorException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
 
-        tournament.remove();
-
-        tournamentRepository.delete(tournament);
+        if (tournament.getState().equals(TournamentState.APPROVED)) {
+            tournament.remove();
+            tournamentRepository.delete(tournament);
+        }
+        else {
+            throw new TutorException(UNSUPPORTED_STATE, tournament.getState().toString());
+        }
     }
 
     private void checkInput(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
@@ -179,7 +202,7 @@ public class TournamentProvidedService {
     }
 
     private Tournament checkTournament(Integer tournamentId) {
-        return tournamentRepository.findApprovedTournamentById(tournamentId)
+        return tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 
@@ -201,7 +224,8 @@ public class TournamentProvidedService {
             }
         }
 
-        tournamentRepository.getTournamentsForCourseExecution(demoCourseExecution.getCourseExecutionId())
+        tournamentRepository.getTournamentsForCourseExecution(demoCourseExecution.getCourseExecutionId()).stream()
+            .filter(tournament -> tournament.getState().equals(TournamentState.APPROVED))
             .forEach(tournament -> {
                 tournament.remove();
                 tournamentRepository.delete(tournament);

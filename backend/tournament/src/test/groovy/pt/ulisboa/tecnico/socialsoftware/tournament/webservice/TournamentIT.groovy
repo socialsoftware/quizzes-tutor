@@ -7,17 +7,17 @@ import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.apigateway.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.AuthExternalUser
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.UserSecurityInfo
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
 
 <<<<<<< HEAD:backend/apigateway/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/apigateway/webservice/tournament/TournamentIT.groovy
 =======
 
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.course.CourseType
+import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto
 
 >>>>>>> microservices:backend/tournament/src/test/groovy/pt/ulisboa/tecnico/socialsoftware/tournament/webservice/TournamentIT.groovy
 
 
-import pt.ulisboa.tecnico.socialsoftware.common.dtos.question.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.user.Role
 import pt.ulisboa.tecnico.socialsoftware.tournament.SpockTest
