@@ -90,22 +90,15 @@ Students can then answer those questions in sugested quizzes or generated quizze
 
 This system can only run with Docker Compose due to Eventuate CDC Service. Our Docker build uses an image of this service to be able to process Eventuate transactional messaging, events and sagas:
 
-* **Install**
-```
-sudo apt update && sudo apt upgrade
-sudo apt install openjdk-11-jdk postgresql
-```
 * **Go to [API Service Agreement](https://fenix.tecnico.ulisboa.pt/personal/external-applications/api-service-agreement) and then to [Applications](https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications)  and create an application that redirects to http://localhost:8081/login and accessess curricular and information**
-* **Rename `backend/src/main/resources/application-dev.properties.example` to `application-dev.properties` and fill its fields**
+* **Fill the fields in `auth/src/main/resources/application-dev.properties`**
 * **Rename `frontend/example.env` to `.env` and fill its fields**
 * **Generate service jars**
 ```
-cd backend
-mvn clean package
+sh generate-service-jars.sh
 ```
 * **Build docker images and run**
 ```
-cd ..
 docker-compose build
 docker-compose up
 ```
