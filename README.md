@@ -93,6 +93,9 @@ This system can only run with Docker Compose due to Eventuate CDC Service. Our D
 * **Go to [API Service Agreement](https://fenix.tecnico.ulisboa.pt/personal/external-applications/api-service-agreement) and then to [Applications](https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications)  and create an application that redirects to http://localhost:8081/login and accessess curricular and information**
 * **Fill the fields in `auth/src/main/resources/application-dev.properties`**
 * **Rename `frontend/example.env` to `.env` and fill its fields**
+* **Rename `data/access.log.example` to `access.log`**
+* **Rename `data/error.log.example` to `error.log`**
+* **Rename `data/localhost-nginx.conf.example` to `localhost-nginx.conf`**
 * **Generate service jars**
 ```
 sh generate-service-jars.sh
