@@ -8,6 +8,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Import;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament.CreateTournamentSaga;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.participants.*;
+import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.removeTournament.RemoveTournamentSaga;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSaga;
 
 /**
@@ -58,5 +59,11 @@ public class TournamentServiceOrchestratorConfiguration {
                                                         QuizServiceProxy quizService,
                                                         QuestionServiceProxy questionService) {
         return new UpdateTournamentSaga(tournamentService, quizService, questionService);
+    }
+
+    @Bean
+    public RemoveTournamentSaga removeTournamentSaga(TournamentServiceProxy tournamentService,
+                                                     QuizServiceProxy quizService) {
+        return new RemoveTournamentSaga(tournamentService, quizService);
     }
 }

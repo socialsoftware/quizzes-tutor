@@ -5,6 +5,9 @@ import io.eventuate.tram.sagas.simpledsl.CommandEndpoint;
 import io.eventuate.tram.sagas.simpledsl.CommandEndpointBuilder;
 import pt.ulisboa.tecnico.socialsoftware.common.serviceChannels.ServiceChannels;
 import pt.ulisboa.tecnico.socialsoftware.tournament.command.*;
+import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.removeTournament.RemoveTournamentSagaData;
+
+import java.util.function.Predicate;
 
 public class TournamentServiceProxy {
 
@@ -58,6 +61,24 @@ public class TournamentServiceProxy {
 
     public final CommandEndpoint<UndoUpdateTopicsTournamentCommand> undoUpdateTopics = CommandEndpointBuilder
             .forCommand(UndoUpdateTopicsTournamentCommand.class)
+            .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
+            .withReply(Success.class)
+            .build();
+
+    public final CommandEndpoint<BeginRemoveTournamentCommand> beginRemove = CommandEndpointBuilder
+            .forCommand(BeginRemoveTournamentCommand.class)
+            .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
+            .withReply(Success.class)
+            .build();
+
+    public final CommandEndpoint<UndoRemoveTournamentCommand> undoRemove = CommandEndpointBuilder
+            .forCommand(UndoRemoveTournamentCommand.class)
+            .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
+            .withReply(Success.class)
+            .build();
+
+    public final CommandEndpoint<ConfirmRemoveTournamentCommand> confirmRemove = CommandEndpointBuilder
+            .forCommand(ConfirmRemoveTournamentCommand.class)
             .withChannel(ServiceChannels.TOURNAMENT_SERVICE_COMMAND_CHANNEL)
             .withReply(Success.class)
             .build();

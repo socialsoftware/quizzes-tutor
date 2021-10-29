@@ -43,7 +43,49 @@ public class TournamentServiceCommandHandlers {
                 .onMessage(UpdateTopicsTournamentCommand.class, this::updateTopics)
                 .onMessage(UndoUpdateTopicsTournamentCommand.class, this::undoUpdateTopics)
                 .onMessage(BeginUpdateTournamentCommand.class, this::beginUpdateTournament)
+                .onMessage(BeginRemoveTournamentCommand.class, this::beginRemoveTournament)
+                .onMessage(ConfirmRemoveTournamentCommand.class, this::confirmRemoveTournament)
+                .onMessage(UndoRemoveTournamentCommand.class, this::undoRemoveTournament)
                 .build();
+    }
+
+    private Message undoRemoveTournament(CommandMessage<UndoRemoveTournamentCommand> cm) {
+        logger.info("Received UndoRemoveTournamentCommand");
+
+        Integer tournamentId = cm.getCommand().getTournamentId();
+
+        try {
+            tournamentProvidedService.undoRemoveTournament(tournamentId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+    private Message confirmRemoveTournament(CommandMessage<ConfirmRemoveTournamentCommand> cm) {
+        logger.info("Received ConfirmRemoveTournamentCommand");
+
+        Integer tournamentId = cm.getCommand().getTournamentId();
+
+        try {
+            tournamentProvidedService.confirmRemoveTournament(tournamentId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
+    }
+
+    private Message beginRemoveTournament(CommandMessage<BeginRemoveTournamentCommand> cm) {
+        logger.info("Received BeginRemoveTournamentCommand");
+
+        Integer tournamentId = cm.getCommand().getTournamentId();
+
+        try {
+            tournamentProvidedService.beginRemoveTournament(tournamentId);
+            return withSuccess();
+        } catch (Exception e) {
+            return withFailure();
+        }
     }
 
     private Message beginUpdateTournament(CommandMessage<BeginUpdateTournamentCommand> cm) {

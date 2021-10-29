@@ -218,6 +218,10 @@ public class QuizService {
     public void removeQuiz(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
+        if (quiz.getType().equals(QuizType.EXTERNAL_QUIZ)) {
+            throw new TutorException(EXTERNAL_CANNOT_BE_REMOVED);
+        }
+
         quiz.remove();
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
@@ -489,10 +493,10 @@ public class QuizService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteExternalQuizTransactional(Quiz quiz) {
-        quiz.getCourseExecution().getQuizzes().remove(this);
-        quiz.setCourseExecution(null);
+        quiz.remove();
 
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
+
         quizQuestions.forEach(QuizQuestion::remove);
         quizQuestions.forEach(quizQuestion -> quizQuestionRepository.delete(quizQuestion));
 

@@ -2,13 +2,13 @@ package pt.ulisboa.tecnico.socialsoftware.tournament.command;
 
 import io.eventuate.tram.commands.common.Command;
 
-public class BeginUpdateTournamentQuizCommand implements Command {
+public class BeginRemoveTournamentCommand implements Command {
     private Integer tournamentId;
 
-    public BeginUpdateTournamentQuizCommand() {
+    public BeginRemoveTournamentCommand() {
     }
 
-    public BeginUpdateTournamentQuizCommand(Integer tournamentId) {
+    public BeginRemoveTournamentCommand(Integer tournamentId) {
         this.tournamentId = tournamentId;
     }
 
@@ -22,7 +22,7 @@ public class BeginUpdateTournamentQuizCommand implements Command {
 
     @Override
     public String toString() {
-        return "BeginUpdateTournamentQuizCommand{" +
+        return "BeginRemoveTournamentCommand{" +
                 "tournamentId=" + tournamentId +
                 '}';
     }

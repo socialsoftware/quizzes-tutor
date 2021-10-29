@@ -386,4 +386,37 @@ public class Tournament  {
                 throw new UnsupportedStateTransitionException(getState());
         }
     }
+
+    public void beginRemoveTournament() {
+        switch (getState()) {
+            case APPROVED:
+                setState(REMOVAL_PENDING);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void confirmRemoveTournament() {
+        switch (getState()) {
+            case REMOVAL_PENDING:
+                remove();
+                setState(REMOVED);
+                break;
+            case REMOVED:
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
+
+    public void undoRemoveTournament() {
+        switch (getState()) {
+            case REMOVAL_PENDING:
+                setState(APPROVED);
+                break;
+            default:
+                throw new UnsupportedStateTransitionException(getState());
+        }
+    }
 }
