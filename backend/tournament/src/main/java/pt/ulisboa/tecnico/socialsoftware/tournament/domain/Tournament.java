@@ -333,6 +333,9 @@ public class Tournament  {
             case UPDATE_PENDING:
                 setState(APPROVED);
                 break;
+            case REMOVED:
+                remove();
+                break;
             default:
                 throw new UnsupportedStateTransitionException(getState());
         }
@@ -365,6 +368,9 @@ public class Tournament  {
             case APPROVAL_PENDING:
                 remove();
                 setState(REJECTED);
+                break;
+            case REMOVED:
+                remove();
                 break;
             default:
                 throw new UnsupportedStateTransitionException(getState());
