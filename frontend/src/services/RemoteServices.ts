@@ -33,7 +33,7 @@ httpClient.defaults.baseURL =
 httpClient.defaults.headers.post['Content-Type'] = 'application/json';
 httpClient.interceptors.request.use(
   (config) => {
-    if (!config.headers.Authorization) {
+    if (config.headers !== undefined && !config.headers.Authorization) {
       const token = Store.getters.getToken;
 
       if (token) {
