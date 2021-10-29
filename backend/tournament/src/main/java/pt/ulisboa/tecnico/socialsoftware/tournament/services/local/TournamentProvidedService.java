@@ -129,13 +129,6 @@ public class TournamentProvidedService {
 
         tournament.updateTournament(tournamentDto, topics);
 
-        if (tournament.hasQuiz()) {
-            QuizDto quizDto = tournamentRequiredService.getQuiz(tournamentDto.getQuizId());
-            quizDto.setNumberOfQuestions(tournamentDto.getNumberOfQuestions());
-
-            tournamentRequiredService.updateQuiz(quizDto);
-        }
-
         return tournament.getDto();
     }
 
@@ -161,14 +154,6 @@ public class TournamentProvidedService {
         tournament.remove();
 
         tournamentRepository.delete(tournament);
-    }
-
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public List<TournamentParticipantDto> getTournamentParticipants(TournamentDto tournamentDto) {
-        Tournament tournament = checkTournament(tournamentDto.getId());
-
-        return tournament.getParticipants().stream().map(TournamentParticipant::getDto).collect(Collectors.toList());
     }
 
     private void checkInput(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
