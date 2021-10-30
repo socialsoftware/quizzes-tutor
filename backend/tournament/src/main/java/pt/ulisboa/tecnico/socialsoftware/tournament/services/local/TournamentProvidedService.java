@@ -178,6 +178,7 @@ public class TournamentProvidedService {
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
+        tournament.checkCanChange();
 
         RemoveTournamentSagaData data = new RemoveTournamentSagaData(tournament.getId(), tournament.getQuizId());
         sagaInstanceFactory.create(removeTournamentSaga, data);
