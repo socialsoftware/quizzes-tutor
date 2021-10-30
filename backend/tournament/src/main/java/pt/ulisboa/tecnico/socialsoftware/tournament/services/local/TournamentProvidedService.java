@@ -121,13 +121,19 @@ public class TournamentProvidedService {
 
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 2000))
+    @Retryable(value = { SQLException.class, TutorException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public StatementQuizDto solveQuiz(Integer userId, Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
-        StatementQuizDto statementQuizDto = tournamentRequiredService.startTournamentQuiz(userId, tournament.getQuizId());
+        StatementQuizDto statementQuizDto;
 
-        tournament.findParticipant(userId).setAnswered(true);
+        if (tournament.getState().equals(TournamentState.APPROVED)) {
+            statementQuizDto = tournamentRequiredService.startTournamentQuiz(userId, tournament.getQuizId());
+            tournament.findParticipant(userId).setAnswered(true);
+        }
+        else {
+            throw new TutorException(UNSUPPORTED_STATE, tournament.getState().toString());
+        }
 
         return statementQuizDto;
     }
