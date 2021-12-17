@@ -134,7 +134,11 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
   it('Can update title (with right-click)', function () {
     cy.route('PUT', '/questions/*').as('updateQuestion');
 
-    cy.get('[data-cy="questionTitleGrid"]').first().rightclick();
+    cy.get('tbody tr')
+      .first()
+      .within(($list) => {
+        cy.get('button').contains('edit').click();
+      });
 
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
@@ -156,8 +160,8 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
       .should('contain', 'Cypress Question Example - 01 - Edited');
 
     validateQuestionFull(
-      (title = 'Cypress Question Example - 01 - Edited'),
-      (content = 'Cypress Question Example - Content - 01')
+      'Cypress Question Example - 01 - Edited',
+      'Cypress Question Example - Content - 01'
     );
   });
 
@@ -186,8 +190,8 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
     cy.wait('@updateQuestion').its('status').should('eq', 200);
 
     validateQuestionFull(
-      (title = 'Cypress Question Example - 01 - Edited'),
-      (content = 'Cypress New Content For Question!')
+      'Cypress Question Example - 01 - Edited',
+      'Cypress New Content For Question!'
     );
   });
 
