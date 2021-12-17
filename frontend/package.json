@@ -16,10 +16,10 @@
   "dependencies": {
     "@fortawesome/fontawesome-free": "~5.15.4",
     "axios": "~0.24.0",
-    "material-design-icons-iconfont": "~6.1.0",
-    "plotly.js-cartesian-dist-min": "^2.5.1",
-    "qrcode": "~1.4.4",
-    "sanitize-html": "~2.5.1",
+    "material-design-icons-iconfont": "~6.1.1",
+    "plotly.js-cartesian-dist-min": "^2.6.3",
+    "qrcode": "~1.5.0",
+    "sanitize-html": "~2.6.0",
     "showdown": "~1.9.1",
     "typeface-roboto": "~1.1.13",
     "vue": "~2.6.14",
@@ -32,7 +32,7 @@
     "vue-router": "~3.5.2",
     "vue-underscore": "~0.1.4",
     "vuedraggable": "~2.24.3",
-    "vuetify": "~2.5.9",
+    "vuetify": "~2.6.0",
     "vuex": "~3.6.2"
   },
   "devDependencies": {
