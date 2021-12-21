@@ -189,14 +189,9 @@ public class Quiz implements DomainEntity {
     }
 
     public void setAvailableDate(LocalDateTime availableDate) {
-        if (availableDate == null) {
-            throw new TutorException(INVALID_AVAILABLE_DATE_FOR_QUIZ);
-        }
-        if (this.conclusionDate != null && conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(INVALID_AVAILABLE_DATE_FOR_QUIZ);
-        }
-
         this.availableDate = availableDate;
+
+        checkAvailableDate();
     }
 
     public LocalDateTime getConclusionDate() {
@@ -204,15 +199,9 @@ public class Quiz implements DomainEntity {
     }
 
     public void setConclusionDate(LocalDateTime conclusionDate) {
-        if (conclusionDate != null && conclusionDate.isBefore(availableDate)) {
-            throw new TutorException(INVALID_CONCLUSION_DATE_FOR_QUIZ);
-        }
-
-        if (conclusionDate == null && type.equals(QuizType.IN_CLASS)) {
-            throw new TutorException(INVALID_CONCLUSION_DATE_FOR_QUIZ);
-        }
-
         this.conclusionDate = conclusionDate;
+
+        checkConclusionDate();
     }
 
     public LocalDateTime getResultsDate() {
@@ -222,14 +211,49 @@ public class Quiz implements DomainEntity {
     }
 
     public void setResultsDate(LocalDateTime resultsDate) {
-        if (resultsDate != null && resultsDate.isBefore(availableDate)) {
-            throw new TutorException(INVALID_RESULTS_DATE_FOR_QUIZ);
-        }
-        if (resultsDate != null && conclusionDate != null && resultsDate.isBefore(conclusionDate)) {
-            throw new TutorException(INVALID_RESULTS_DATE_FOR_QUIZ);
-        }
-
         this.resultsDate = resultsDate;
+
+        checkResultsDate();
+    }
+
+    public void updateDates(QuizDto quizDto) {
+        if (DateHandler.isValidDateFormat(quizDto.getAvailableDate()))
+            this.availableDate = DateHandler.toLocalDateTime(quizDto.getAvailableDate());
+        if (DateHandler.isValidDateFormat(quizDto.getConclusionDate()))
+            this.conclusionDate = DateHandler.toLocalDateTime(quizDto.getConclusionDate());
+        if (DateHandler.isValidDateFormat(quizDto.getResultsDate()))
+            this.resultsDate = DateHandler.toLocalDateTime(quizDto.getResultsDate());
+
+        checkAvailableDate();
+        checkConclusionDate();
+        checkResultsDate();
+    }
+
+    private void checkResultsDate() {
+        if (this.resultsDate != null && resultsDate.isBefore(this.availableDate)) {
+            throw new TutorException(INVALID_RESULTS_DATE_FOR_QUIZ);
+        }
+        if (resultsDate != null && this.conclusionDate != null && this.resultsDate.isBefore(this.conclusionDate)) {
+            throw new TutorException(INVALID_RESULTS_DATE_FOR_QUIZ);
+        }
+    }
+
+    private void checkConclusionDate() {
+        if (this.conclusionDate == null && type.equals(QuizType.IN_CLASS)) {
+            throw new TutorException(INVALID_CONCLUSION_DATE_FOR_QUIZ);
+        }
+        if (this.conclusionDate != null && this.conclusionDate.isBefore(this.availableDate)) {
+            throw new TutorException(INVALID_CONCLUSION_DATE_FOR_QUIZ);
+        }
+    }
+
+    private void checkAvailableDate() {
+        if (this.availableDate == null) {
+            throw new TutorException(INVALID_AVAILABLE_DATE_FOR_QUIZ);
+        }
+        if (this.conclusionDate != null && this.conclusionDate.isBefore(this.availableDate)) {
+            throw new TutorException(INVALID_AVAILABLE_DATE_FOR_QUIZ);
+        }
     }
 
     public QuizType getType() {
