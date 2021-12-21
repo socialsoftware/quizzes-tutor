@@ -69,6 +69,7 @@
         <v-btn
           color="green darken-1"
           @click="saveQuestion"
+          :disabled="disableCreateButton"
           data-cy="saveQuestionButton"
           >Save</v-btn
         >
@@ -99,6 +100,7 @@ export default class EditQuestionDialog extends Vue {
 
   editQuestion: Question = new Question(this.question);
   questionType: string = this.editQuestion.questionDetailsDto.type;
+  disableCreateButton: Boolean = false;
 
   get questionTypesOptions() {
     return Object.values(QuestionTypes).map((qt) => ({
@@ -128,6 +130,8 @@ export default class EditQuestionDialog extends Vue {
   // };
 
   async saveQuestion() {
+    this.disableCreateButton = true;
+    await this.$store.dispatch('loading');
     (this.$refs.form as Vue & { validate: () => boolean }).validate();
     try {
       const result =
@@ -137,8 +141,10 @@ export default class EditQuestionDialog extends Vue {
 
       this.$emit('save-question', result);
     } catch (error) {
+      this.disableCreateButton = false;
       await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
   }
 }
 </script>

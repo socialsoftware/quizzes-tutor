@@ -269,21 +269,6 @@ export default class RemoteServices {
       });
   }
 
-  static async getAvailableQuestions(): Promise<Question[]> {
-    return httpClient
-      .get(
-        `/questions/courses/${Store.getters.getCurrentCourse.courseId}/available`
-      )
-      .then((response) => {
-        return response.data.map((question: any) => {
-          return new Question(question);
-        });
-      })
-      .catch(async (error) => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
   static async createQuestion(question: Question): Promise<Question> {
     return httpClient
       .post(

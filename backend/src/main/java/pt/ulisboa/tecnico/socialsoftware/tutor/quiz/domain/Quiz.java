@@ -233,7 +233,7 @@ public class Quiz implements DomainEntity {
         if (this.resultsDate != null && resultsDate.isBefore(this.availableDate)) {
             throw new TutorException(INVALID_RESULTS_DATE_FOR_QUIZ);
         }
-        if (resultsDate != null && this.conclusionDate != null && this.resultsDate.isBefore(this.conclusionDate)) {
+        if (this.resultsDate != null && this.conclusionDate != null && this.resultsDate.isBefore(this.conclusionDate)) {
             throw new TutorException(INVALID_RESULTS_DATE_FOR_QUIZ);
         }
     }

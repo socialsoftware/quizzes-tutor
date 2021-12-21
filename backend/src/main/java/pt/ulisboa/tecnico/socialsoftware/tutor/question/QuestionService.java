@@ -174,7 +174,6 @@ public class QuestionService {
         return new QuestionDto(question);
     }
 
-
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
@@ -211,7 +210,6 @@ public class QuestionService {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         question.setStatus(status);
     }
-
 
     @Retryable(
             value = {SQLException.class},
