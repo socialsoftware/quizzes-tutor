@@ -29,7 +29,7 @@
     "vue-property-decorator": "~9.1.2",
     "vue-qrcode": "~0.4.0",
     "vue-qrcode-reader": "~2.3.18",
-    "vue-router": "~3.5.2",
+    "vue-router": "~3.5.3",
     "vue-underscore": "~0.1.4",
     "vuedraggable": "~2.24.3",
     "vuetify": "~2.6.0",
