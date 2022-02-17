@@ -250,7 +250,7 @@
 	&quot;title&quot;:&quot;12345&quot;,&#xd;
 	&quot;availableDate&quot;:&quot;2019-05-01T19:58:00+01:00&quot;,&#xd;
 	&quot;timed&quot;:true,&#xd;
-	&quot;conclusionDate&quot;:&quot;2021-08-29T22:59:00+01:00&quot;&#xd;
+	&quot;conclusionDate&quot;:&quot;2031-08-29T22:59:00+01:00&quot;&#xd;
 }</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
@@ -556,8 +556,18 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
                 <collectionProp name="Arguments.arguments">
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">&#xd;
-</stringProp>
+                    <stringProp name="Argument.value">{&#xd;
+	&quot;answerDetails&quot;: {&#xd;
+		&quot;optionId&quot;: null,&#xd;
+		&quot;type&quot;: &quot;code_fill_in&quot;&#xd;
+	},&#xd;
+	&quot;timeTaken&quot;:1278,&#xd;
+	&quot;questionAnswerId&quot;:${__V(question_answer_id_${question_number})},&#xd;
+	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${question_number})},&#xd;
+	&quot;sequence&quot;:${question_number},&#xd;
+	&quot;timeToSubmission&quot;: 12345,&#xd;
+	&quot;finalSubmission&quot;: true&#xd;
+}</stringProp>
                     <stringProp name="Argument.metadata">=</stringProp>
                   </elementProp>
                 </collectionProp>
@@ -567,7 +577,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
               <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
               <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
               <stringProp name="HTTPSampler.path">${prefix}/answers/${__property(quiz_id)}/question/${__V(question_id_${question_number})}</stringProp>
-              <stringProp name="HTTPSampler.method">GET</stringProp>
+              <stringProp name="HTTPSampler.method">POST</stringProp>
               <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
               <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
               <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
