@@ -1,9 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.FailedAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.time.LocalDateTime;
 
@@ -32,10 +32,14 @@ public class FailedAnswer implements DomainEntity {
     @JoinColumn(name = "quiz_answer_id")
     private QuestionAnswer questionAnswer;
 
-    public FailedAnswer(boolean answered, QuestionAnswer questionAnswer){
-        this.collected = DateHandler.now();
-        this.questionAnswer = questionAnswer;
-        this.answered = answered;
+    public FailedAnswer(){
+    }
+
+    public FailedAnswer(FailedAnswerDto failedAnswerDto){
+        setCollected(failedAnswerDto.getCollected());
+        setQuestionAnswer(failedAnswerDto.getQuestionAnswer());
+        setAnswered(failedAnswerDto.getAnswered());
+        setRemoved(failedAnswerDto.getRemoved());
     }
 
     public Integer getId() {
@@ -77,5 +81,15 @@ public class FailedAnswer implements DomainEntity {
     @Override
     public void accept(Visitor visitor) {
         // TODO Auto-generated method stub
+    }
+
+    @Override
+    public String toString() {
+        return "FailedAnswer{" +
+            "id=" + id +
+            ", answered=" + answered +
+            ", removed=" + removed +
+            ", questionAnswer=" + questionAnswer +
+            "}";
     }
 }
