@@ -66,10 +66,9 @@ public class DifficultQuestionDto implements Serializable {
 
     @Override
     public String toString() {
-        return "FailedAnswerDto{" +
+        return "DifficultQuestion{" +
                 "id=" + id +
                 ", percentage=" + percentage +
-                ", collected=" + collected +
                 ", removed=" + removed +
                 ", question=" + question +
                 "}";

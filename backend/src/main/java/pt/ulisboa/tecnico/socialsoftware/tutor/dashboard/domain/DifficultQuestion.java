@@ -78,6 +78,12 @@ public class DifficultQuestion implements DomainEntity {
         this.question = question;
     }
 
+    public void update(DifficultQuestionDto difficultQuestionDto) {
+
+        difficultQuestionDto.setPercentage(difficultQuestionDto.getQuestion().getDifficulty());
+        difficultQuestionDto.setCollected(LocalDateTime.now());
+    }
+
     @Override
     public void accept(Visitor visitor) {
         // TODO Auto-generated method stub
@@ -85,7 +91,7 @@ public class DifficultQuestion implements DomainEntity {
 
     @Override
     public String toString() {
-        return "FailedAnswer{" +
+        return "DifficultQuestion{" +
                 "id=" + id +
                 ", percentage=" + percentage +
                 ", removed=" + removed +
