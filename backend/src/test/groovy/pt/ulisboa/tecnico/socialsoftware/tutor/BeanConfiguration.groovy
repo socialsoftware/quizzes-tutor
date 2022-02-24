@@ -123,6 +123,11 @@ class BeanConfiguration {
     }
 
     @Bean
+    DifficultQuestionService difficultQuestionService() {
+        return new DifficultQuestionService()
+    }
+
+    @Bean
     DemoUtils demoUtils() {
         return new DemoUtils();
     }
