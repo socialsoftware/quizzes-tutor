@@ -8,6 +8,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 
 import java.time.LocalDateTime;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -27,6 +29,9 @@ public class Dashboard implements DomainEntity {
 
     @ManyToOne
     private Student student;
+
+    @OneToMany(mappedBy = "dashboard")
+    private Set<WeeklyScore> weeklyScores = new HashSet<>();
 
     public Dashboard() {
     }
@@ -81,6 +86,10 @@ public class Dashboard implements DomainEntity {
             return;
 
         student.getDashboards().remove(this);
+    }
+
+    public void addWeeklyScore(WeeklyScore weeklyScore) {
+        weeklyScores.add(weeklyScore);
     }
 
     public void accept(Visitor visitor) {
