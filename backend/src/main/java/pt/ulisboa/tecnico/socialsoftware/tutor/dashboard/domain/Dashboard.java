@@ -76,6 +76,13 @@ public class Dashboard implements DomainEntity {
         this.student.addDashboard(this);
     }
 
+    public void remove() {
+        if (student == null)
+            return;
+
+        student.getDashboards().remove(this);
+    }
+
     public void accept(Visitor visitor) {
     }
 
