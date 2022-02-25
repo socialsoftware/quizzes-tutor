@@ -140,6 +140,9 @@ public enum ErrorMessage {
     CANNOT_REVIEW_QUESTION_SUBMISSION("Question submission already reviewed by teacher cannot be reviewed again"),
 
     CANNOT_CONCLUDE_QUIZ("Cannot conclude quiz."),
+    
+    DASHBOARD_NOT_FOUND("Dashboard not found: %d"),
+    STUDENT_ALREADY_HAS_DASHBOARD("The student already has a dashboard for this course execution"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file"),
