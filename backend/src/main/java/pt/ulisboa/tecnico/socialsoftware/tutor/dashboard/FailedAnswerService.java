@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 
@@ -40,12 +41,13 @@ public class FailedAnswerService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<FailedAnswerDto> updateFailedAnswers(int dashboardId) {
 
-        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(DASHBOARD_NOT_FOUND, dashboardId));
-
-        //TODO map to failed answer?
+        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
         Set<Integer> newFailedAnswers = failedAnswerRepository.findNewFailedAnswer(dashboardId, DateHandler.now());
 
-        dashboard.updateFailedAnswers(newFailedAnswers);
+        for(Integer failedAnswerId: newFailedAnswers){
+            FailedAnswer toAdd = failedAnswerRepository.findById(failedAnswerId).orElseThrow(() -> new TutorException(ErrorMessage.FAILED_ANSWER_NOT_FOUND, dashboardId));
+            dashboard.addFailedAnswer(toAdd);
+        }
 
         return null;
     }
@@ -56,9 +58,16 @@ public class FailedAnswerService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<FailedAnswerDto> getFailedAnswers(int dashboardId) {
 
-        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(DASHBOARD_NOT_FOUND, dashboardId));
+        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
-        return dashboard.getFailedAnswers();
+        List<FailedAnswer> failedAnswers = dashboard.getFailedAnswers();
+        List<FailedAnswerDto> failedAnswersDto = new ArrayList<>();
+
+        for(FailedAnswer fa: failedAnswers){
+            failedAnswersDto.add(new FailedAnswerDto(fa));
+        }
+
+        return failedAnswersDto;
     }
 
     @Retryable(
@@ -67,9 +76,9 @@ public class FailedAnswerService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeFailedAnswer(int failedAnswerId, int userId, int dashboardId) {
 
-        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(DASHBOARD_NOT_FOUND, dashboardId));
+        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
-        FailedAnswer toRemove = failedAnswerRepository.findById(failedAnswerId).orElseThrow(() -> new TutorException(FAILED_ANSWER_NOT_FOUND, failedAnswerId));
+        FailedAnswer toRemove = failedAnswerRepository.findById(failedAnswerId).orElseThrow(() -> new TutorException(ErrorMessage.FAILED_ANSWER_NOT_FOUND, failedAnswerId));
 
         dashboard.removeFailedAnswer(toRemove);
         failedAnswerRepository.delete(toRemove);
@@ -82,9 +91,9 @@ public class FailedAnswerService {
     public List<FailedAnswerDto> reAddFailedAnswers(int courseExecutionId, int dashboardId, int userId, String startDate, String endDate) {
         //TODO
 
-        Student student = studentRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        Student student = studentRepository.findById(userId).orElseThrow(() -> new TutorException(ErrorMessage.USER_NOT_FOUND, userId));
 
-        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(DASHBOARD_NOT_FOUND, dashboardId));
+        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
 
         return null;
@@ -96,9 +105,9 @@ public class FailedAnswerService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<FailedAnswerDto> getFilteredFailedAnswers(int courseExecutionId, int dashboardId, int userId, String startDate, String endDate) {
         //TODO
-        Student student = studentRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        Student student = studentRepository.findById(userId).orElseThrow(() -> new TutorException(ErrorMessage.USER_NOT_FOUND, userId));
 
-        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(DASHBOARD_NOT_FOUND, dashboardId));
+        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
 
         return null;

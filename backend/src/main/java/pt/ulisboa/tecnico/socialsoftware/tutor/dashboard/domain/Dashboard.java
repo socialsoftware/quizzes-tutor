@@ -8,10 +8,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 import javax.persistence.*;
 
 @Entity
+@Table(name = "dashboard")
 public class Dashboard implements DomainEntity {
 
     @Id
@@ -27,6 +30,9 @@ public class Dashboard implements DomainEntity {
 
     @ManyToOne
     private Student student;
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dashboard", fetch = FetchType.LAZY, orphanRemoval=true)
+    private final List<FailedAnswer> failedAnswers = new ArrayList<>();
 
     public Dashboard() {
     }
@@ -84,6 +90,18 @@ public class Dashboard implements DomainEntity {
     }
 
     public void accept(Visitor visitor) {
+    }
+
+    public void addFailedAnswer(FailedAnswer failedAnswer) {
+        this.failedAnswers.add(failedAnswer);
+    }
+
+    public void removeFailedAnswer(FailedAnswer failedAnswer) {
+        this.failedAnswers.remove(failedAnswer);
+    }
+
+    public List<FailedAnswer> getFailedAnswers(){
+        return this.failedAnswers;
     }
 
     @Override
