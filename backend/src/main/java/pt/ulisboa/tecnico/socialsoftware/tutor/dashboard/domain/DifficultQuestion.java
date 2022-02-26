@@ -78,10 +78,9 @@ public class DifficultQuestion implements DomainEntity {
         this.question = question;
     }
 
-    public void update(DifficultQuestionDto difficultQuestionDto) {
-
-        difficultQuestionDto.setPercentage(difficultQuestionDto.getQuestion().getDifficulty());
-        difficultQuestionDto.setCollected(LocalDateTime.now());
+    public void update() {
+        this.setPercentage(this.getQuestion().getDifficulty());
+        this.setCollected(LocalDateTime.now());
     }
 
     @Override
