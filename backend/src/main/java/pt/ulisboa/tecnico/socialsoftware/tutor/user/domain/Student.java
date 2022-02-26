@@ -3,6 +3,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.DashboardService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
@@ -41,6 +43,9 @@ public class Student extends User {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "submitter", fetch = FetchType.LAZY)
     private Set<QuestionSubmission> questionSubmissions = new HashSet<>();
+
+    @OneToMany(mappedBy = "student")
+    private Set<Dashboard> dashboards = new HashSet<>();
 
     public Student() {}
 
@@ -346,6 +351,14 @@ public class Student extends User {
     }
 
     public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
+
+    public Set<Dashboard> getDashboards() {
+        return dashboards;
+    }
+    
+    public void addDashboard(Dashboard dashboard) {
+        dashboards.add(dashboard);
+    }
 
     @Override
     public String toString() {

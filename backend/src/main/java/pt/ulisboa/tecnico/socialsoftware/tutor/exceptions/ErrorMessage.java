@@ -59,7 +59,7 @@ public enum ErrorMessage {
     INVALID_LOGIN_CREDENTIALS("Invalid login credentials"),
 
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
-
+    
     QUESTION_KEY_ALREADY_EXISTS("Questions already exists with key %d"),
     QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
     QUESTION_ORDER_SLOT_MISMATCH("Question %d does not have slot %d"),
@@ -67,7 +67,7 @@ public enum ErrorMessage {
     DUPLICATE_TOPIC("Duplicate topic: %s"),
     DUPLICATE_USER("Duplicate user: %s"),
     DUPLICATE_COURSE_EXECUTION("Duplicate course execution: %s"),
-
+    
     USERS_IMPORT_ERROR("Error importing users: %s"),
     QUESTIONS_IMPORT_ERROR("Error importing questions: %s"),
     TOPICS_IMPORT_ERROR("Error importing topics: %s"),
@@ -140,18 +140,22 @@ public enum ErrorMessage {
     CANNOT_REVIEW_QUESTION_SUBMISSION("Question submission already reviewed by teacher cannot be reviewed again"),
 
     CANNOT_CONCLUDE_QUIZ("Cannot conclude quiz."),
+    
+    DASHBOARD_NOT_FOUND("Dashboard not found: %d"),
+    STUDENT_ALREADY_HAS_DASHBOARD("The student already has a dashboard for this course execution"),
 
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file"),
-
+    
     INVALID_CSV_FILE_FORMAT("The csv file uploaded has a wrong format"),
     WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on line: %d"),
-
+    
     FRAUD_SERVICE_NOT_AVAILABLE("Fraud service not available"),
     FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED("Fraud service only supports timed, one way, in class quizzes");
 
+    
     public final String label;
-
+    
     ErrorMessage(String label) {
         this.label = label;
     }
