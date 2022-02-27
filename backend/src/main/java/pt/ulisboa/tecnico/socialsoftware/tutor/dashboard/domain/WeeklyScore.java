@@ -14,25 +14,32 @@ import java.time.LocalDate;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Collection;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
+@Table(name = "weekly_scores")
 public class WeeklyScore implements DomainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    @Column(nullable = false)
     private int numberAnswered;
 
+    @Column(nullable = false)
     private int uniquelyAnswered;
 
+    @Column(nullable = false)
     private int percentageCorrect;
 
+    @Column(nullable = false)
     private LocalDate week;
 
     @ManyToOne
+    @JoinColumn(name = "dashboard_id", nullable = false)
     private Dashboard dashboard;
 
     public WeeklyScore() {}
@@ -50,8 +57,8 @@ public class WeeklyScore implements DomainEntity {
 
         numberAnswered = (int) weeklyQuestionsAnswered.stream().map(Question::getId).count();
         uniquelyAnswered = (int) weeklyQuestionsAnswered.stream().map(Question::getId).distinct().count();
-        percentageCorrect = (int) Math.round((weeklyQuestionAnswers.stream().map(QuestionAnswer::isCorrect).count() /
-                (double) weeklyQuestionAnswers.size()) * 100.0);
+        percentageCorrect = weeklyQuestionAnswers.size() > 0 ? (int) Math.round((weeklyQuestionAnswers.stream().map(QuestionAnswer::isCorrect).count() /
+                (double) weeklyQuestionAnswers.size()) * 100.0) : 0;
     }
 
     private Set<QuestionAnswer> getWeeklyQuestionAnswers(Dashboard dashboard) {
@@ -105,6 +112,24 @@ public class WeeklyScore implements DomainEntity {
     }
 
     public void accept(Visitor visitor) {
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        WeeklyScore that = (WeeklyScore) o;
+        return numberAnswered == that.numberAnswered &&
+                uniquelyAnswered == that.uniquelyAnswered &&
+                percentageCorrect == that.percentageCorrect &&
+                id.equals(that.id) &&
+                week.equals(that.week) &&
+                dashboard.equals(that.dashboard);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, numberAnswered, uniquelyAnswered, percentageCorrect, week);
     }
 
     @Override

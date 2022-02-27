@@ -30,7 +30,7 @@ public class Dashboard implements DomainEntity {
     @ManyToOne
     private Student student;
 
-    @OneToMany(mappedBy = "dashboard")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dashboard", orphanRemoval = true)
     private Set<WeeklyScore> weeklyScores = new HashSet<>();
 
     public Dashboard() {
@@ -86,6 +86,10 @@ public class Dashboard implements DomainEntity {
             return;
 
         student.getDashboards().remove(this);
+    }
+
+    public Set<WeeklyScore> getWeeklyScores() {
+        return weeklyScores;
     }
 
     public void addWeeklyScore(WeeklyScore weeklyScore) {
