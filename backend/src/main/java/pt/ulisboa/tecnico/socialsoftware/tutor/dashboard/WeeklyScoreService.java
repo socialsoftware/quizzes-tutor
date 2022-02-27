@@ -70,9 +70,17 @@ public class WeeklyScoreService {
     WeeklyScore weeklyScore = weeklyScoreRepository.findById(weeklyScoreId)
             .orElseThrow(() -> new TutorException(WEEKLY_SCORE_NOT_FOUND, weeklyScoreId));
 
-    return new WeeklyScoreDto();
+    TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY);
+    LocalDate currentWeek = DateHandler.now().with(weekSunday).toLocalDate();
 
-    /* Todo */
+    // Check if weekly score is not from current week
+    if (!weeklyScore.getWeek().isEqual(currentWeek)) {
+      throw new TutorException(UPDATE_WEEKLY_SCORE_NOT_POSSIBLE, DateHandler.toISOString(weeklyScore.getWeek().atStartOfDay()));
+    }
+
+    weeklyScore.computeStatistics();
+
+    return new WeeklyScoreDto(weeklyScore);
   }
 
   @Retryable(
