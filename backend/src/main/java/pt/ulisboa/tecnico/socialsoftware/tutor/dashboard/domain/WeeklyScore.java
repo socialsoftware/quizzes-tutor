@@ -44,15 +44,7 @@ public class WeeklyScore implements DomainEntity {
         setWeek(DateHandler.now().with(weekSunday).toLocalDate());
         setDashboard(dashboard);
 
-        Set<QuestionAnswer> weeklyQuestionAnswers = getWeeklyQuestionAnswers(dashboard);
-        Set<Question> weeklyQuestionsAnswered = weeklyQuestionAnswers.stream()
-                .map(QuestionAnswer::getQuizQuestion)
-                .map(QuizQuestion::getQuestion).collect(Collectors.toSet());
-
-        numberAnswered = (int) weeklyQuestionsAnswered.stream().map(Question::getId).count();
-        uniquelyAnswered = (int) weeklyQuestionsAnswered.stream().map(Question::getId).distinct().count();
-        percentageCorrect = weeklyQuestionAnswers.size() > 0 ? (int) Math.round((weeklyQuestionAnswers.stream().map(QuestionAnswer::isCorrect).count() /
-                (double) weeklyQuestionAnswers.size()) * 100.0) : 0;
+        computeStatistics();
     }
 
     private Set<QuestionAnswer> getWeeklyQuestionAnswers(Dashboard dashboard) {
@@ -108,6 +100,20 @@ public class WeeklyScore implements DomainEntity {
     public void accept(Visitor visitor) {
     }
 
+    public void computeStatistics() {
+        Set<QuestionAnswer> weeklyQuestionAnswers = getWeeklyQuestionAnswers(dashboard);
+        Set<Question> weeklyQuestionsAnswered = weeklyQuestionAnswers.stream()
+                .map(QuestionAnswer::getQuizQuestion)
+                .map(QuizQuestion::getQuestion).collect(Collectors.toSet());
+
+        setNumberAnswered((int) weeklyQuestionsAnswered.stream()
+                .map(Question::getId).count());
+        setUniquelyAnswered((int) weeklyQuestionsAnswered.stream()
+                .map(Question::getId).distinct().count());
+        setPercentageCorrect(weeklyQuestionAnswers.size() > 0 ? (int) Math.round((weeklyQuestionAnswers.stream().filter(QuestionAnswer::isCorrect).count() /
+                (double) weeklyQuestionAnswers.size()) * 100.0) : 0);
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -116,7 +122,6 @@ public class WeeklyScore implements DomainEntity {
         return numberAnswered == that.numberAnswered &&
                 uniquelyAnswered == that.uniquelyAnswered &&
                 percentageCorrect == that.percentageCorrect &&
-                id.equals(that.id) &&
                 week.equals(that.week) &&
                 dashboard.equals(that.dashboard);
     }

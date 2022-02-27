@@ -154,7 +154,8 @@ public enum ErrorMessage {
     FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED("Fraud service only supports timed, one way, in class quizzes"),
 
     WEEKLY_SCORE_ALREADY_CREATED("Weekly Score already created for this week"),
-    WEEKLY_SCORE_NOT_FOUND("Weekly Score not found; %d");
+    WEEKLY_SCORE_NOT_FOUND("Weekly Score not found: %d"),
+    UPDATE_WEEKLY_SCORE_NOT_POSSIBLE("Impossible to update old Weekly Score: %s");
 
     
     public final String label;
