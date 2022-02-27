@@ -66,7 +66,6 @@ class CreateDifficultQuestionTest extends SpockTest {
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getDifficultQuestions().contains(result)
-        dashboard.getLastCheckDifficultQuestions().isAfter(DateHandler.now().minusMinutes(1))
         and:
         sameDifficultyRepository.findAll().size() == 1
 

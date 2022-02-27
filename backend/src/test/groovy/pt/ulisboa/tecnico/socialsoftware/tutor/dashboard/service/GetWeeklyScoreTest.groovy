@@ -36,14 +36,14 @@ class GetWeeklyScoreTest extends SpockTest {
     }
 
     def "get ordered weekly scores"() {
-        given: "two weekly scores"
+        given:
         TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)
-        LocalDate currentWeek = DateHandler.now().with(weekSunday).toLocalDate()
-        def weeklyScoreTwo = dashboard.getWeeklyScores().iterator().next()
-
-        LocalDate week = DateHandler.now().minusDays(30).with(weekSunday).toLocalDate()
-        WeeklyScore weeklyScoreOne = new WeeklyScore(dashboard, week)
+        LocalDate week = DateHandler.now().with(weekSunday).toLocalDate()
+        def weeklyScoreOne = new WeeklyScore(dashboard, week.minusDays(50))
         weeklyScoreRepository.save(weeklyScoreOne)
+        and:
+        WeeklyScore weeklyScoreTwo = new WeeklyScore(dashboard, week)
+        weeklyScoreRepository.save(weeklyScoreTwo)
 
         when: "get weekly scores"
         def weeklyScoreDtos = weeklyScoreService.getWeeklyScores(dashboard.getId())
@@ -55,13 +55,13 @@ class GetWeeklyScoreTest extends SpockTest {
         weeklyScoreDtoOne.getNumberAnswered() == weeklyScoreTwo.getNumberAnswered()
         weeklyScoreDtoOne.getUniquelyAnswered() == weeklyScoreTwo.getUniquelyAnswered()
         weeklyScoreDtoOne.getPercentageCorrect() == weeklyScoreTwo.getPercentageCorrect()
-        weeklyScoreDtoOne.getWeek() == DateHandler.toISOString(currentWeek.atStartOfDay())
+        weeklyScoreDtoOne.getWeek() == DateHandler.toISOString(week.atStartOfDay())
         def weeklyScoreDtoTwo = weeklyScoreDtos.get(1)
         weeklyScoreDtoTwo.getId() == weeklyScoreOne.getId()
         weeklyScoreDtoTwo.getNumberAnswered() == weeklyScoreOne.getNumberAnswered()
         weeklyScoreDtoTwo.getUniquelyAnswered() == weeklyScoreOne.getUniquelyAnswered()
         weeklyScoreDtoTwo.getPercentageCorrect() == weeklyScoreOne.getPercentageCorrect()
-        weeklyScoreDtoTwo.getWeek() == DateHandler.toISOString(week.atStartOfDay())
+        weeklyScoreDtoTwo.getWeek() == DateHandler.toISOString(week.minusDays(50).atStartOfDay())
     }
 
     @Unroll
