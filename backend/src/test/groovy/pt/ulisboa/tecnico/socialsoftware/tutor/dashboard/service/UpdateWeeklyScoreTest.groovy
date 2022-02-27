@@ -97,33 +97,107 @@ class UpdateWeeklyScoreTest extends SpockTest {
 
     def "update weekly score"() {
         given: "a correct question answer"
+        def quizAnswer = new QuizAnswer()
+        quizAnswer.setCompleted(true)
+        quizAnswer.setStudent(student)
+        quizAnswer.setQuiz(quiz)
+        quizAnswer.setAnswerDate(DateHandler.now())
+        quizAnswerRepository.save(quizAnswer)
 
-        expect: true
+        def questionAnswer = new QuestionAnswer()
+        def answerDetails = new MultipleChoiceAnswer(questionAnswer, optionOK)
+        questionAnswer.setAnswerDetails(answerDetails)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswerRepository.save(questionAnswer)
+        answerDetailsRepository.save(answerDetails)
+
+        when: "a answer is submitted"
+        weeklyScoreService.updateWeeklyScore(weeklyScore.getId())
+
+        then: "the weekly score is inside the weekly score repository and with the correct data"
+        weeklyScoreRepository.count() == 1L
+        def result = weeklyScoreRepository.findAll().get(0)
+        result.getId() != null
+        result.getDashboard().getId() == dashboard.getId()
+        result.getNumberAnswered() == 1
+        result.getUniquelyAnswered() == 1
+        result.getPercentageCorrect() == 100
     }
 
     def "update weekly score without answers in the current week"() {
         when: "no answer is submitted"
+        weeklyScoreService.updateWeeklyScore(weeklyScore.getId())
 
-        expect: true
+        then: "the weekly score is inside the weekly score repository and with the correct data"
+        weeklyScoreRepository.count() == 1L
+        def result = weeklyScoreRepository.findAll().get(0)
+        result.getId() != null
+        result.getDashboard().getId() == dashboard.getId()
+        result.getNumberAnswered() == 0
+        result.getUniquelyAnswered() == 0
+        result.getPercentageCorrect() == 0
     }
 
     def "update weekly score with wrong answers in the current week"() {
         given: "a wrong question answer"
+        def quizAnswer = new QuizAnswer()
+        quizAnswer.setCompleted(true)
+        quizAnswer.setStudent(student)
+        quizAnswer.setQuiz(quiz)
+        quizAnswer.setAnswerDate(DateHandler.now())
+        quizAnswerRepository.save(quizAnswer)
 
-        expect: true
+        def questionAnswer = new QuestionAnswer()
+        def answerDetails = new MultipleChoiceAnswer(questionAnswer, optionKO)
+        questionAnswer.setAnswerDetails(answerDetails)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswerRepository.save(questionAnswer)
+        answerDetailsRepository.save(answerDetails)
+
+        when: "a answer is submitted"
+        weeklyScoreService.updateWeeklyScore(weeklyScore.getId())
+
+        then: "the weekly score is inside the weekly score repository and with the correct data"
+        weeklyScoreRepository.count() == 1L
+        def result = weeklyScoreRepository.findAll().get(0)
+        result.getId() != null
+        result.getDashboard().getId() == dashboard.getId()
+        result.getNumberAnswered() == 1
+        result.getUniquelyAnswered() == 1
+        result.getPercentageCorrect() == 0
     }
 
     def "cannot update old WeeklyScore"() {
         given: "old a weekly score"
+        WeeklyScore oldWeeklyScore = new WeeklyScore(dashboard)
+        TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)
+        LocalDate week = DateHandler.now().minusDays(20).with(weekSunday).toLocalDate()
+        oldWeeklyScore.setWeek(week)
+        weeklyScoreRepository.save(oldWeeklyScore)
 
-        expect: true
+        when:
+        weeklyScoreService.updateWeeklyScore(oldWeeklyScore.getId())
+
+        then: "UPDATE_WEEKLY_SCORE_NOT_POSSIBLE exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.UPDATE_WEEKLY_SCORE_NOT_POSSIBLE
     }
 
     @Unroll
     def "#test - cannot update WeeklyScore with weeklyScore=#weeklyScoreId"() {
         when: "a weekly score is updated"
+        weeklyScoreService.updateWeeklyScore(weeklyScoreId)
 
-        expect: true
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == errorMessage
+
+        where:
+        test                                              | weeklyScoreId || errorMessage
+        "update weekly score with null id"         | null        || WEEKLY_SCORE_NOT_FOUND
+        "update weekly score with non-existing id" | 100         || WEEKLY_SCORE_NOT_FOUND
     }
 
     @TestConfiguration
