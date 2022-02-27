@@ -19,27 +19,21 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 @Entity
-@Table(name = "weekly_scores")
 public class WeeklyScore implements DomainEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(nullable = false)
     private int numberAnswered;
 
-    @Column(nullable = false)
     private int uniquelyAnswered;
 
-    @Column(nullable = false)
     private int percentageCorrect;
 
-    @Column(nullable = false)
     private LocalDate week;
 
     @ManyToOne
-    @JoinColumn(name = "dashboard_id", nullable = false)
     private Dashboard dashboard;
 
     public WeeklyScore() {}

@@ -30,7 +30,7 @@ public class Dashboard implements DomainEntity {
     @ManyToOne
     private Student student;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dashboard", orphanRemoval = true)
+    @OneToMany(mappedBy = "dashboard")
     private Set<WeeklyScore> weeklyScores = new HashSet<>();
 
     public Dashboard() {

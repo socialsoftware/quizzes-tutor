@@ -38,7 +38,10 @@ public class WeeklyScoreService {
           value = {SQLException.class},
           backoff = @Backoff(delay = 5000))
   @Transactional(isolation = Isolation.READ_COMMITTED)
-  public WeeklyScoreDto createWeeklyScore(int dashboardId) {
+  public WeeklyScoreDto createWeeklyScore(Integer dashboardId) {
+    if (dashboardId == null) {
+      throw new TutorException(DASHBOARD_NOT_FOUND);
+    }
     Dashboard dashboard = dashboardRepository.findById(dashboardId)
             .orElseThrow(() -> new TutorException(DASHBOARD_NOT_FOUND, dashboardId));
 
@@ -63,7 +66,7 @@ public class WeeklyScoreService {
           value = {SQLException.class},
           backoff = @Backoff(delay = 5000))
   @Transactional(isolation = Isolation.READ_COMMITTED)
-  public WeeklyScoreDto updateWeeklyScore(int weeklyScoreId) {
+  public WeeklyScoreDto updateWeeklyScore(Integer weeklyScoreId) {
     WeeklyScore weeklyScore = weeklyScoreRepository.findById(weeklyScoreId)
             .orElseThrow(() -> new TutorException(WEEKLY_SCORE_NOT_FOUND, weeklyScoreId));
 
@@ -76,7 +79,7 @@ public class WeeklyScoreService {
           value = {SQLException.class},
           backoff = @Backoff(delay = 5000))
   @Transactional(isolation = Isolation.READ_COMMITTED)
-  public void removeWeeklyScore(int weeklyScoreId) {
+  public void removeWeeklyScore(Integer weeklyScoreId) {
     WeeklyScore weeklyScore = weeklyScoreRepository.findById(weeklyScoreId)
             .orElseThrow(() -> new TutorException(WEEKLY_SCORE_NOT_FOUND, weeklyScoreId));
 

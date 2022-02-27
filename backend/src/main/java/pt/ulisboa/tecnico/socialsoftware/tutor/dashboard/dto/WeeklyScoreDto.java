@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -22,17 +23,17 @@ public class WeeklyScoreDto implements Serializable {
   private int percentageCorrect;
 
   @JsonProperty("week")
-  private LocalDate week;
+  private String week;
 
-  public WeeklyScoreDto(){
+  public WeeklyScoreDto() {
   }
 
-  public WeeklyScoreDto(WeeklyScore weeklyScore){
+  public WeeklyScoreDto(WeeklyScore weeklyScore) {
     setId(weeklyScore.getId());
     setNumberAnswered(weeklyScore.getNumberAnswered());
     setUniquelyAnswered(weeklyScore.getUniquelyAnswered());
     setPercentageCorrect(weeklyScore.getPercentageCorrect());
-    setWeek(weeklyScore.getWeek());
+    setWeek(DateHandler.toISOString(weeklyScore.getWeek().atStartOfDay()));
   }
 
   public Integer getId() {
@@ -67,11 +68,11 @@ public class WeeklyScoreDto implements Serializable {
     this.percentageCorrect = percentageCorrect;
   }
 
-  public LocalDate getWeek() {
+  public String getWeek() {
     return week;
   }
 
-  public void setWeek(LocalDate week) {
+  public void setWeek(String week) {
     this.week = week;
   }
 
