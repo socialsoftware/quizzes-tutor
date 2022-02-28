@@ -96,6 +96,10 @@ public class Dashboard implements DomainEntity {
         this.failedAnswers.add(failedAnswer);
     }
 
+    public boolean hasFailedAnswer(FailedAnswer failedAnswer) {
+        return this.failedAnswers.contains(failedAnswer);
+    }
+
     public void removeFailedAnswer(FailedAnswer failedAnswer) {
         this.failedAnswers.remove(failedAnswer);
     }

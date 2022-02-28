@@ -13,8 +13,8 @@ import java.util.Set;
 @Transactional
 public interface FailedAnswerRepository extends JpaRepository<FailedAnswer, Integer> {
 
-    @Query(value = "SELECT fa.failed_answer_id FROM failed_answer JOIN dashboard da WHERE da.dashboard_id = :dashboardId AND fa.collected > :now", nativeQuery = true)
-    Set<Integer> findNewFailedAnswer(int dashboardId, LocalDateTime last);
+    @Query(value = "SELECT fa.failed_answer_id FROM failed_answer fa JOIN dashboard da WHERE da.dashboard_id = :dashboardId AND fa.collected > :from AND fa.removed = false", nativeQuery = true)
+    Set<Integer> findNewFailedAnswer(int dashboardId, LocalDateTime from);
 
     @Query(value = "SELECT fa.failed_answer_id FROM failed_answer JOIN dashboard da WHERE da.dashboard_id = :dashboardId AND fa.collected BETWEEN :from AND :until", nativeQuery = true)
     Set<Integer> findFailedAnswerFromDate(int dashboardId, LocalDateTime from, LocalDateTime until);
