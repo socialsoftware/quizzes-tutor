@@ -42,15 +42,17 @@ public class FailedAnswerService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<FailedAnswerDto> updateFailedAnswers(int dashboardId, int courseExecutionId, int studentId) {
+    public List<FailedAnswerDto> updateFailedAnswers(int dashboardId) {
 
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
+        int courseExecutionId = dashboard.getCourseExecution().getId();
+        int studentId = dashboard.getStudent().getId();
 
         Set<QuizAnswer> quizAnswers = quizAnswerRepository.findByStudentAndExecutionCourseId(courseExecutionId, studentId);
         List<FailedAnswerDto> failedAnswerDtos = new ArrayList<>();
 
         for(QuizAnswer quizAnswer: quizAnswers){
-            if(quizAnswer.getCreationDate().isAfter(dashboard.getLastCheckFailedAnswers())){
+            if(quizAnswer.getCreationDate().isAfter(dashboard.getLastCheckFailedAnswers()) && quizAnswer.isCompleted()){
                 for(QuestionAnswer qa: quizAnswer.getQuestionAnswers()){
                     if(!qa.isCorrect()){
                         FailedAnswer fa = new FailedAnswer();
@@ -58,6 +60,7 @@ public class FailedAnswerService {
                         fa.setQuestionAnswer(qa);
                         fa.setRemoved(false);
                         fa.setAnswered(qa.isAnswered());
+                        fa.setDashboard(dashboard);
 
                         failedAnswerDtos.add(new FailedAnswerDto(fa));
                         dashboard.addFailedAnswer(fa);

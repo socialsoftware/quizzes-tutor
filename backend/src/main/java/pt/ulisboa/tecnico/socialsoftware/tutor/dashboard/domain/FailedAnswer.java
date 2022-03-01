@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.FailedAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 
 import java.time.LocalDateTime;
 
@@ -31,6 +32,9 @@ public class FailedAnswer implements DomainEntity {
     @OneToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "quiz_answer_id")
     private QuestionAnswer questionAnswer;
+
+    @ManyToOne
+    private Dashboard dashboard;
 
     public FailedAnswer(){
     }
@@ -78,6 +82,13 @@ public class FailedAnswer implements DomainEntity {
         this.questionAnswer = questionAnswer;
     }
 
+    public Dashboard getDashboard() {
+        return dashboard;
+    }
+
+    public void setDashboard(Dashboard dashboard) {
+        this.dashboard = dashboard;
+    }
     @Override
     public void accept(Visitor visitor) {
         // TODO Auto-generated method stub
