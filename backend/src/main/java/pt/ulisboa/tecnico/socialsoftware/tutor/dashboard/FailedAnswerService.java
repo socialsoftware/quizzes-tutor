@@ -6,6 +6,9 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.FailedAnswerDto;
@@ -21,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class FailedAnswerService {
 
@@ -28,27 +32,41 @@ public class FailedAnswerService {
     private DashboardRepository dashboardRepository;
 
     @Autowired
-    private FailedAnswerRepository failedAnswerRepository;
+    private FailedAnswerRepository failedAnswerRepository;   
+
+    @Autowired
+    private QuizAnswerRepository quizAnswerRepository;
 
 
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<FailedAnswerDto> updateFailedAnswers(int dashboardId) {
+    public List<FailedAnswerDto> updateFailedAnswers(int dashboardId, int courseExecutionId, int studentId) {
 
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
-        Set<Integer> newFailedAnswers = failedAnswerRepository.findNewFailedAnswer(dashboardId, dashboard.getLastCheckFailedAnswers());
 
+        Set<QuizAnswer> quizAnswers = quizAnswerRepository.findByStudentAndExecutionCourseId(courseExecutionId, studentId);
         List<FailedAnswerDto> failedAnswerDtos = new ArrayList<>();
 
-        for(Integer failedAnswerId: newFailedAnswers){
-            FailedAnswer toAdd = failedAnswerRepository.findById(failedAnswerId).orElseThrow(() -> new TutorException(ErrorMessage.FAILED_ANSWER_NOT_FOUND, dashboardId));
-            dashboard.addFailedAnswer(toAdd);
+        for(QuizAnswer quizAnswer: quizAnswers){
+            if(quizAnswer.getCreationDate().isAfter(dashboard.getLastCheckFailedAnswers())){
+                for(QuestionAnswer qa: quizAnswer.getQuestionAnswers()){
+                    if(!qa.isCorrect()){
+                        FailedAnswer fa = new FailedAnswer();
+                        fa.setCollected(LocalDateTime.now());
+                        fa.setQuestionAnswer(qa);
+                        fa.setRemoved(false);
+                        fa.setAnswered(qa.isAnswered());
 
-            failedAnswerDtos.add(new FailedAnswerDto(toAdd));
+                        failedAnswerDtos.add(new FailedAnswerDto(fa));
+                        dashboard.addFailedAnswer(fa);
+                        failedAnswerRepository.save(fa);
+                    }
+                }
+
+            }
         }
-
         return failedAnswerDtos;
     }
 
@@ -74,7 +92,7 @@ public class FailedAnswerService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void removeFailedAnswer(int failedAnswerId, int userId, int dashboardId) {
+    public void removeFailedAnswer(int failedAnswerId, int dashboardId) {
 
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
@@ -92,15 +110,18 @@ public class FailedAnswerService {
 
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
-        Set<Integer> filteredFailedAnswers = failedAnswerRepository.findFailedAnswerFromDate(dashboardId, startDate, endDate);
+        List<FailedAnswer> fas = dashboard.getFailedAnswers().stream().filter(fa -> fa.getCollected().isAfter(startDate) &&
+                                                                                    fa.getCollected().isBefore(endDate) &&
+                                                                                    fa.getRemoved() == true) .collect(Collectors.toList());
+
         List<FailedAnswerDto> failedAnswerDtos = new ArrayList<>();
 
-        for(Integer failedAnswerId: filteredFailedAnswers){
-            FailedAnswer toAdd = failedAnswerRepository.findById(failedAnswerId).orElseThrow(() -> new TutorException(ErrorMessage.FAILED_ANSWER_NOT_FOUND, dashboardId));
-            
-            if(dashboard.hasFailedAnswer(toAdd)){
-                dashboard.addFailedAnswer(toAdd);
-                failedAnswerDtos.add(new FailedAnswerDto(toAdd));
+        for(FailedAnswer fa: fas){
+
+            if(!dashboard.hasFailedAnswer(fa)){
+                dashboard.addFailedAnswer(fa);
+                fa.setRemoved(false);
+                failedAnswerDtos.add(new FailedAnswerDto(fa));
             }
         }
 
@@ -113,12 +134,15 @@ public class FailedAnswerService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<FailedAnswerDto> getFilteredFailedAnswers(int dashboardId, LocalDateTime startDate, LocalDateTime endDate) {
 
-        Set<Integer> filteredFailedAnswers = failedAnswerRepository.findFailedAnswerFromDate(dashboardId, startDate, endDate);
+        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
+
+        List<FailedAnswer> fas = dashboard.getFailedAnswers().stream().filter(fa -> fa.getCollected().isAfter(startDate) &&
+                                                                                    fa.getCollected().isBefore(endDate) &&
+                                                                                    fa.getRemoved() == true) .collect(Collectors.toList());
+
         List<FailedAnswerDto> failedAnswerDtos = new ArrayList<>();
 
-        for(Integer failedAnswerId: filteredFailedAnswers){
-            FailedAnswer fa = failedAnswerRepository.findById(failedAnswerId).orElseThrow(() -> new TutorException(ErrorMessage.FAILED_ANSWER_NOT_FOUND, dashboardId));
-            
+        for(FailedAnswer fa: fas){
             failedAnswerDtos.add(new FailedAnswerDto(fa));
         }
 

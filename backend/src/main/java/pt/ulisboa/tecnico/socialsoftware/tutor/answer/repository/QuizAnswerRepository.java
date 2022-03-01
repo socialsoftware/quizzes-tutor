@@ -31,5 +31,8 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Integer>
 
     @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.courseExecution.id = :courseExecutionId")
     Set<QuizAnswer>  findByExecutionCourseId(int courseExecutionId);
+
+    @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.courseExecution.id = :courseExecutionId AND qa.student.id = :userId")
+    Set<QuizAnswer>  findByStudentAndExecutionCourseId(int courseExecutionId, int userId);
 }
 
