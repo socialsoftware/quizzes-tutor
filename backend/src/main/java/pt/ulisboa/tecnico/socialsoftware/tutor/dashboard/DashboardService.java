@@ -34,6 +34,10 @@ public class DashboardService {
     @Autowired
     private DashboardRepository dashboardRepository;
 
+    @Autowired
+    private DifficultQuestionService difficultQuestionService;
+
+
     @Retryable(
             value = { SQLException.class }, 
             backoff = @Backoff(delay = 5000))
@@ -56,7 +60,11 @@ public class DashboardService {
             throw new TutorException(STUDENT_NO_COURSE_EXECUTION);
 
         Dashboard dashboard = new Dashboard(courseExecution, student);
+
         dashboardRepository.save(dashboard);
+
+        difficultQuestionService.updateDifficultQuestions(dashboard.getId());
+
         return new DashboardDto(dashboard);
     }
 

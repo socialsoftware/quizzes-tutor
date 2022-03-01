@@ -31,6 +31,9 @@ public class DifficultQuestion implements DomainEntity {
     @JoinColumn(name = "question_id")
     private Question question;
 
+    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @JoinColumn(name = "dashboard_id")
+    private Dashboard dashboard;
 
     public DifficultQuestion(){
     }
@@ -40,6 +43,15 @@ public class DifficultQuestion implements DomainEntity {
         setCollected(difficultQuestionDto.getCollected());
         setRemoved(difficultQuestionDto.isRemoved());
         setQuestion(difficultQuestionDto.getQuestion());
+        setDashboard(difficultQuestionDto.getDashboard());
+    }
+
+    public Dashboard getDashboard() {
+        return dashboard;
+    }
+
+    public void setDashboard(Dashboard dashboard) {
+        this.dashboard = dashboard;
     }
 
     public Integer getId() {
@@ -80,7 +92,6 @@ public class DifficultQuestion implements DomainEntity {
 
     public void update() {
         this.setPercentage(this.getQuestion().getDifficulty());
-        this.setCollected(LocalDateTime.now());
     }
 
     @Override

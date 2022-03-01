@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto;
 import java.io.Serializable;
 import java.time.LocalDateTime;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion;
 
@@ -18,6 +19,8 @@ public class DifficultQuestionDto implements Serializable {
 
     private Question question;
 
+    private Dashboard dashboard;
+
     public DifficultQuestionDto(){
     }
 
@@ -26,6 +29,15 @@ public class DifficultQuestionDto implements Serializable {
         setCollected(difficultQuestion.getCollected());
         setRemoved(difficultQuestion.isRemoved());
         setQuestion(difficultQuestion.getQuestion());
+        setDashboard(difficultQuestion.getDashboard());
+    }
+
+    public Dashboard getDashboard() {
+        return dashboard;
+    }
+
+    public void setDashboard(Dashboard dashboard) {
+        this.dashboard = dashboard;
     }
 
     public Integer getId() {

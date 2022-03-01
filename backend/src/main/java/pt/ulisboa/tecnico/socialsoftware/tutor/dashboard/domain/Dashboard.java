@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -24,6 +25,9 @@ public class Dashboard implements DomainEntity {
 
     @ManyToOne
     private CourseExecution courseExecution;
+
+    @OneToMany
+    private List<DifficultQuestion> difficultQuestions;
 
     @ManyToOne
     private Student student;
@@ -74,6 +78,14 @@ public class Dashboard implements DomainEntity {
     public void setStudent(Student student) {
         this.student = student;
         this.student.addDashboard(this);
+    }
+
+    public List<DifficultQuestion> getDifficultQuestions() {
+        return difficultQuestions;
+    }
+
+    public void setDifficultQuestions(List<DifficultQuestion> difficultQuestions) {
+        this.difficultQuestions = difficultQuestions;
     }
 
     public void remove() {
