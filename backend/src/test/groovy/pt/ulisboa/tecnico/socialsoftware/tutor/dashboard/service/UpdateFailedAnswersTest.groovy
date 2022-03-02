@@ -2,101 +2,17 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service
 
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import spock.lang.Unroll
-import java.time.LocalDateTime
 
 
 @DataJpaTest
-class UpdateFailedAnswersTest extends SpockTest {
-
-    def student
-    def dashboard
-    def quiz1
-    def quizQuestion1
-    def quiz2
-    def quizQuestion2
-    def optionKO
-
-    def createQuiz(count) {
-        def quiz = new Quiz()
-        quiz.setKey(count)
-        quiz.setTitle("Quiz Title")
-        quiz.setType(Quiz.QuizType.PROPOSED.toString())
-        quiz.setCourseExecution(externalCourseExecution)
-        quiz.setAvailableDate(DateHandler.now())
-        quizRepository.save(quiz)
-        return quiz
-    }
-
-    def createQuestion(count, quiz) {
-        def question = new Question()
-        question.setKey(count)
-        question.setTitle("Question Title")
-        question.setCourse(externalCourse)
-        def questionDetails = new MultipleChoiceQuestion()
-        question.setQuestionDetails(questionDetails)
-        questionRepository.save(question)
-
-        def option = new Option()
-        option.setContent("Option Content")
-        option.setCorrect(true)
-        option.setSequence(0)
-        option.setQuestionDetails(questionDetails)
-        optionRepository.save(option)
-        optionKO = new Option()
-        optionKO.setContent("Option Content")
-        optionKO.setCorrect(false)
-        optionKO.setSequence(1)
-        optionKO.setQuestionDetails(questionDetails)
-        optionRepository.save(optionKO)
-
-        def quizQuestion = new QuizQuestion(quiz, question, 0)
-        quizQuestionRepository.save(quizQuestion)
-        return quizQuestion
-    }
-
-    def answerQuiz(answered, correct, completed, question, quiz) {
-        def quizAnswer = new QuizAnswer()
-        quizAnswer.setCompleted(completed)
-        quizAnswer.setCreationDate(LocalDateTime.now())
-        quizAnswer.setAnswerDate(LocalDateTime.now())
-        quizAnswer.setStudent(student)
-        quizAnswer.setQuiz(quiz)
-        quizAnswerRepository.save(quizAnswer)
-
-        def questionAnswer = new QuestionAnswer()
-        questionAnswer.setTimeTaken(1)
-        questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswer.setQuizQuestion(question)
-
-        def answerDetails
-        if (answered && correct) answerDetails = new MultipleChoiceAnswer(questionAnswer, optionRepository.findAll().get(0))
-        else if (answered && !correct ) answerDetails = new MultipleChoiceAnswer(questionAnswer, optionRepository.findAll().get(1))
-        else {
-            questionAnswerRepository.save(questionAnswer)
-            return questionAnswer
-        }
-        questionAnswer.setAnswerDetails(answerDetails)
-        answerDetailsRepository.save(answerDetails)
-        questionAnswerRepository.save(questionAnswer)
-        return questionAnswer
-    }
+class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
 
     def setup() {
         createExternalCourseAndExecution()
@@ -247,7 +163,7 @@ class UpdateFailedAnswersTest extends SpockTest {
 
         where:
         dashboardId    || errorMessage
-        -1           || ErrorMessage.DASHBOARD_NOT_FOUND
+        -1             || ErrorMessage.DASHBOARD_NOT_FOUND
         100            || ErrorMessage.DASHBOARD_NOT_FOUND
     }
 
