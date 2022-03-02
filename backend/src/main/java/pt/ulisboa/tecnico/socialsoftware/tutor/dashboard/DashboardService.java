@@ -1,10 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard;
 
-import java.sql.SQLException;
+import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Isolation;
 
@@ -23,6 +22,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ST
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.STUDENT_NO_COURSE_EXECUTION;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DASHBOARD_NOT_FOUND;
 
+@Service
 public class DashboardService {
 
     @Autowired
@@ -34,20 +34,33 @@ public class DashboardService {
     @Autowired
     private DashboardRepository dashboardRepository;
 
-    @Retryable(
-            value = { SQLException.class }, 
-            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public DashboardDto createDashboard(Integer courseExecutionId, Integer userId) {
-        if (courseExecutionId == null)
-            throw new TutorException(COURSE_EXECUTION_NOT_FOUND);
-        if (userId == null)
-            throw new TutorException(USER_NOT_FOUND);
-
+    public DashboardDto getDashboard(int courseExecutionId, int studentId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
-        Student student = studentRepository.findById(userId)
-                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, studentId));
+
+        if (!student.getCourseExecutions().contains(courseExecution))
+            throw new TutorException(STUDENT_NO_COURSE_EXECUTION);
+
+        Optional<Dashboard> dashboardOptional = student.getDashboards().stream()
+                .filter(dashboard -> dashboard.getCourseExecution().getId() == courseExecutionId)
+                .findAny();
+
+        if (dashboardOptional.isPresent()) {
+            return new DashboardDto(dashboardOptional.get());
+        } else {
+            return createAndReturnDashboardDto(courseExecution, student);
+        }
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public DashboardDto createDashboard(int courseExecutionId, int studentId) {
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
+        Student student = studentRepository.findById(studentId)
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, studentId));
 
         if (student.getDashboards().stream().anyMatch(dashboard -> dashboard.getCourseExecution() == courseExecution))
             throw new TutorException(STUDENT_ALREADY_HAS_DASHBOARD);
@@ -55,14 +68,15 @@ public class DashboardService {
         if (!student.getCourseExecutions().contains(courseExecution))
             throw new TutorException(STUDENT_NO_COURSE_EXECUTION);
 
+        return createAndReturnDashboardDto(courseExecution, student);
+    }
+
+    private DashboardDto createAndReturnDashboardDto(CourseExecution courseExecution, Student student) {
         Dashboard dashboard = new Dashboard(courseExecution, student);
         dashboardRepository.save(dashboard);
         return new DashboardDto(dashboard);
     }
 
-    @Retryable(
-            value = { SQLException.class }, 
-            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeDashboard(Integer dashboardId) {
         if (dashboardId == null)
@@ -72,4 +86,5 @@ public class DashboardService {
         dashboard.remove();
         dashboardRepository.delete(dashboard);
     }
+
 }

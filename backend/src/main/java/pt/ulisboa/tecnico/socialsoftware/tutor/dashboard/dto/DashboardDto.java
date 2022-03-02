@@ -7,12 +7,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 public class DashboardDto {
     private Integer id;
     private String lastCheckFailedAnswers;
-    private String lastCheckDifficultAnswers;
+    private String lastCheckDifficultQuestions;
+    private String currentWeek;
 
     public DashboardDto(Dashboard dashboard) {
         id = dashboard.getId();
         lastCheckFailedAnswers = DateHandler.toISOString(dashboard.getLastCheckFailedAnswers());
-        lastCheckDifficultAnswers = DateHandler.toISOString(dashboard.getLastCheckDifficultAnswers());
+        lastCheckDifficultQuestions = DateHandler.toISOString(dashboard.getLastCheckDifficultQuestions());
+        currentWeek = DateHandler.toISOString(dashboard.getCurrentWeek());
     }
 
     public Integer getId() {
@@ -31,12 +33,20 @@ public class DashboardDto {
         this.lastCheckFailedAnswers = lastCheckFailedAnswers;
     }
 
-    public String getLastCheckDifficultAnswers() {
-        return lastCheckDifficultAnswers;
+    public String getLastCheckDifficultQuestions() {
+        return lastCheckDifficultQuestions;
     }
 
-    public void setLastCheckDifficultAnswers(String lastCheckDifficultAnswers) {
-        this.lastCheckDifficultAnswers = lastCheckDifficultAnswers;
+    public void setLastCheckDifficultQuestions(String lastCheckDifficultQuestions) {
+        this.lastCheckDifficultQuestions = lastCheckDifficultQuestions;
+    }
+
+    public String getCurrentWeek() {
+        return currentWeek;
+    }
+
+    public void setCurrentWeek(String currentWeek) {
+        this.currentWeek = currentWeek;
     }
 
     @Override
@@ -44,7 +54,8 @@ public class DashboardDto {
         return "DashboardDto{" +
                 "id=" + id +
                 ", lastCheckFailedAnswers=" + lastCheckFailedAnswers +
-                ", lastCheckDifficultAnswers=" + lastCheckDifficultAnswers +
+                ", lastCheckDifficultAnswers=" + lastCheckDifficultQuestions +
+                ", currentWeek=" + currentWeek +
                 "}";
     }
 }

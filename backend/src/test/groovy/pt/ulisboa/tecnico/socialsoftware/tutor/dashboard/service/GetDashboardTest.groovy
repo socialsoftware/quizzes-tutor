@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.question.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -6,26 +6,21 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import spock.lang.Unroll
 
 @DataJpaTest
-class CreateDashboardTest extends SpockTest {
-    def student
+class GetDashboardTest extends SpockTest {
+    def authUserDto
+    def courseExecutionDto
 
     def setup() {
-        createExternalCourseAndExecution()
-
-        student = new Student(USER_1_NAME, false)
-        userRepository.save(student)
+        courseExecutionDto = courseService.getDemoCourse()
+        authUserDto = authUserService.demoStudentAuth(false).getUser()
     }
 
-    def "create an empty dashboard"() {
-        given: "a student in a course execution"
-        student.addCourse(externalCourseExecution)
-
-        when: "a dashboard is created"
-        dashboardService.createDashboard(externalCourseExecution.getId(), student.getId())
+    def "get a dashboard when dashboard does not exist"() {
+        when: "getting a dashboard"
+        dashboardService.getDashboard(courseExecutionDto.getCourseExecutionId(), authUserDto.getId())
 
         then: "an empty dashboard is created"
         dashboardRepository.count() == 1L
@@ -35,42 +30,42 @@ class CreateDashboardTest extends SpockTest {
         result.getLastCheckDifficultQuestions() != null
         result.getLastCheckFailedAnswers() == result.getLastCheckDifficultQuestions()
         result.getCurrentWeek() != null
-        result.getCourseExecution().getId() == externalCourseExecution.getId()
-        result.getStudent().getId() == student.getId()
+        result.getCourseExecution().getId() == courseExecutionDto.getCourseExecutionId()
+        result.getStudent().getId() == authUserDto.getId()
 
         and: "the student has a reference for the dashboard"
+        def student = userRepository.getById(authUserDto.getId())
         student.getDashboards().size() == 1
         student.getDashboards().contains(result)
     }
 
-    def "cannot create multiple dashboards for a student on a course execution"() {
-        given: "a student in a course execution"
-        student.addCourse(externalCourseExecution)
-
-        and: "an empty dashboard for the student"
-        dashboardService.createDashboard(externalCourseExecution.getId(), student.getId())
+    def "get a dashboard and it already exists"() {
+        given: "an empty dashboard for the student"
+        def dashboardDto = dashboardService.createDashboard(courseExecutionDto.getCourseExecutionId(), authUserDto.getId())
 
         when: "a second dashboard is created"
-        dashboardService.createDashboard(externalCourseExecution.getId(), student.getId())
+        def getDashboardDto = dashboardService.getDashboard(courseExecutionDto.getCourseExecutionId(), authUserDto.getId())
 
-        then: "exception is thrown"        
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.STUDENT_ALREADY_HAS_DASHBOARD
+        then: "it is the same dashboard"
+        dashboardDto.getId() == getDashboardDto.getId()
     }
 
-    def "cannot create a dashboard for a user that does not belong to the course execution"() {
-        when: "a dashboard is created"
-        dashboardService.createDashboard(externalCourseExecution.getId(), student.getId())
+    def "cannot get a dashboard for a user that does not belong to the course execution"() {
+        given: "another course execution"
+        createExternalCourseAndExecution()
 
-        then: "exception is thrown"        
+        when: "get a dashboard"
+        dashboardService.getDashboard(externalCourseExecution.getId(), authUserDto.getId())
+
+        then: "exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.STUDENT_NO_COURSE_EXECUTION
     }
 
     @Unroll
     def "cannot create a dashboard with courseExecutionId=#courseExecutionId | studentId=#studentId"() {
-        when: "a dashboard is created"
-        dashboardService.createDashboard(courseExecutionId, studentId)
+        when: "get a dashboard"
+        dashboardService.getDashboard(courseExecutionId, studentId)
 
         then: "an exception is thrown"
         def exception = thrown(TutorException)
