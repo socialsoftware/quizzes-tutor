@@ -14,17 +14,19 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.FailedAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.FailedAnswerRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 public class FailedAnswerService {
 
@@ -95,37 +97,28 @@ public class FailedAnswerService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void removeFailedAnswer(int failedAnswerId, int dashboardId) {
-
-        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
-
+    public void removeFailedAnswer(int failedAnswerId) {
         FailedAnswer toRemove = failedAnswerRepository.findById(failedAnswerId).orElseThrow(() -> new TutorException(ErrorMessage.FAILED_ANSWER_NOT_FOUND, failedAnswerId));
-
         toRemove.setRemoved(true);
-        dashboard.removeFailedAnswer(toRemove);
     }
 
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<FailedAnswerDto> reAddFailedAnswers(int dashboardId, LocalDateTime startDate, LocalDateTime endDate) {
-
+    public List<FailedAnswerDto> reAddFailedAnswers(int dashboardId, String startDate, String endDate) {
+        checkDates(startDate, endDate);
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
-        List<FailedAnswer> fas = dashboard.getFailedAnswers().stream().filter(fa -> fa.getCollected().isAfter(startDate) &&
-                                                                                    fa.getCollected().isBefore(endDate) &&
-                                                                                    fa.getRemoved() == true) .collect(Collectors.toList());
+        List<FailedAnswer> removedFailedAnswers = dashboard.getAllFailedAnswers().stream().filter(fa -> fa.getCollected().isAfter(LocalDateTime.parse(startDate, DateTimeFormatter.ISO_DATE_TIME)) &&
+                                                                                    fa.getCollected().isBefore(LocalDateTime.parse(endDate, DateTimeFormatter.ISO_DATE_TIME)) &&
+                                                                                    fa.getRemoved()).collect(Collectors.toList());
 
         List<FailedAnswerDto> failedAnswerDtos = new ArrayList<>();
 
-        for(FailedAnswer fa: fas){
-
-            if(!dashboard.hasFailedAnswer(fa)){
-                dashboard.addFailedAnswer(fa);
-                fa.setRemoved(false);
-                failedAnswerDtos.add(new FailedAnswerDto(fa));
-            }
+        for(FailedAnswer failedAnswer: removedFailedAnswers){
+            failedAnswer.setRemoved(false);
+            failedAnswerDtos.add(new FailedAnswerDto(failedAnswer));
         }
 
         return failedAnswerDtos;
@@ -135,13 +128,13 @@ public class FailedAnswerService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<FailedAnswerDto> getFilteredFailedAnswers(int dashboardId, LocalDateTime startDate, LocalDateTime endDate) {
-
+    public List<FailedAnswerDto> getFilteredFailedAnswers(int dashboardId, String startDate, String endDate) {
+        checkDates(startDate, endDate);
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
-        List<FailedAnswer> fas = dashboard.getFailedAnswers().stream().filter(fa -> fa.getCollected().isAfter(startDate) &&
-                                                                                    fa.getCollected().isBefore(endDate) &&
-                                                                                    fa.getRemoved() == true) .collect(Collectors.toList());
+        List<FailedAnswer> fas = dashboard.getFailedAnswers().stream().filter(fa -> fa.getCollected().isAfter(LocalDateTime.parse(startDate, DateTimeFormatter.ISO_DATE_TIME)) &&
+                                                                                    fa.getCollected().isBefore(LocalDateTime.parse(endDate, DateTimeFormatter.ISO_DATE_TIME)) &&
+                                                                                    !fa.getRemoved()) .collect(Collectors.toList());
 
         List<FailedAnswerDto> failedAnswerDtos = new ArrayList<>();
 
@@ -150,5 +143,12 @@ public class FailedAnswerService {
         }
 
         return failedAnswerDtos;
+    }
+
+    private void checkDates(String startDate, String endDate) {
+        if (startDate == null) throw new TutorException(FAILED_ANSWER_MISSING_START_TIME);
+        if (endDate == null) throw new TutorException(FAILED_ANSWER_MISSING_END_TIME);
+        if (LocalDateTime.parse(endDate, DateTimeFormatter.ISO_DATE_TIME).isBefore(LocalDateTime.parse(startDate, DateTimeFormatter.ISO_DATE_TIME)))
+            throw new TutorException(INVALID_DATE_INTERVAL);
     }
 }

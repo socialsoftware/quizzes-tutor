@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 
@@ -96,15 +97,11 @@ public class Dashboard implements DomainEntity {
         this.failedAnswers.add(failedAnswer);
     }
 
-    public boolean hasFailedAnswer(FailedAnswer failedAnswer) {
-        return this.failedAnswers.contains(failedAnswer);
-    }
-
-    public void removeFailedAnswer(FailedAnswer failedAnswer) {
-        this.failedAnswers.remove(failedAnswer);
-    }
-
     public List<FailedAnswer> getFailedAnswers(){
+        return this.failedAnswers.stream().filter(fa -> !fa.getRemoved()).collect(Collectors.toList());
+    }
+
+    public List<FailedAnswer> getAllFailedAnswers(){
         return this.failedAnswers;
     }
 

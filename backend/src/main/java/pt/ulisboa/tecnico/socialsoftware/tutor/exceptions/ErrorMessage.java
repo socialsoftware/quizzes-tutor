@@ -151,7 +151,9 @@ public enum ErrorMessage {
     WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on line: %d"),
 
     FAILED_ANSWER_NOT_FOUND("Failed answer not found"),
-    
+    FAILED_ANSWER_MISSING_START_TIME("Failed answer filter requires the definition of the start date"),
+    FAILED_ANSWER_MISSING_END_TIME("Failed answer filter requires the definition of the end date"),
+
     FRAUD_SERVICE_NOT_AVAILABLE("Fraud service not available"),
     FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED("Fraud service only supports timed, one way, in class quizzes");
 
