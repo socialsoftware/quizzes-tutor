@@ -114,6 +114,11 @@ public class WeeklyScore implements DomainEntity {
                 (double) weeklyQuestionAnswers.size()) * 100.0) : 0);
     }
 
+    public void remove() {
+        this.dashboard.getWeeklyScores().remove(this);
+        this.dashboard = null;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
