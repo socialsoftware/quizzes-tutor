@@ -6,27 +6,16 @@ import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GetFailedAnswersWebServiceIT extends SpockTest {
@@ -37,8 +26,8 @@ class GetFailedAnswersWebServiceIT extends SpockTest {
     def courseExecution
     def option
     def option2
-    def quizAnswer
     def quiz
+    def question
 
 
     def setup() {
@@ -57,7 +46,7 @@ class GetFailedAnswersWebServiceIT extends SpockTest {
         quizDto.setConclusionDate(STRING_DATE_TOMORROW)
 
 
-        def question = new QuestionDto()
+        question = new QuestionDto()
         question.setKey(1)
         question.setTitle("Question Title")
         question.setContent("Question Content")
@@ -86,7 +75,6 @@ class GetFailedAnswersWebServiceIT extends SpockTest {
 
         def questions = new ArrayList<QuestionDto>()
         questions.add(questionDto)
-        quizDto.setQuestions(questions)
 
         quiz = quizService.createQuiz(courseExecution.getCourseExecutionId(), quizDto)
     }
@@ -96,7 +84,6 @@ class GetFailedAnswersWebServiceIT extends SpockTest {
         given: 'a student login'
         demoStudentLogin()
         def student = authUserService.demoStudentAuth(false).getUser()
-        courseExecution.addUser(student)
 
         and: 'a failed answer to the quiz'
         def quizAnswer = answerService.createQuizAnswer(student.getId(), quiz.getId())
@@ -104,6 +91,7 @@ class GetFailedAnswersWebServiceIT extends SpockTest {
         def statementQuizDto = new StatementQuizDto()
         statementQuizDto.id = quiz.getId()
         statementQuizDto.quizAnswerId = quizAnswer.getId()
+
         def statementAnswerDto = new StatementAnswerDto()
         def multipleChoiceAnswerDto = new MultipleChoiceStatementAnswerDetailsDto()
         multipleChoiceAnswerDto.setOptionId(option.getId())
@@ -111,17 +99,17 @@ class GetFailedAnswersWebServiceIT extends SpockTest {
         statementAnswerDto.setAnswerDetails(multipleChoiceAnswerDto)
         statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)
-        statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getQuestion().getId())
+        statementAnswerDto.setQuestionAnswerId(question.getId())
         statementQuizDto.getAnswers().add(statementAnswerDto)
 
         answerService.concludeQuiz(statementQuizDto)
 
         and: 'a dashboard'
-        def dashboardDto = dashboardService.createDashboard(courseExecution.getId(), student.getId())
+        def dashboardDto = dashboardService.createDashboard(courseExecution.getCourseExecutionId(), student.getId())
 
         when: 'the web service is invoked'
         response = restClient.get(
-                path: '/students/dashboards/executions/' + courseExecution.getId(),
+                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId(),
                 requestContentType: 'application/json'
         )
 
