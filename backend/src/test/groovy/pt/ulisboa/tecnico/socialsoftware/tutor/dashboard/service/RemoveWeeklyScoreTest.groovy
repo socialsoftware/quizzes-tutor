@@ -1,4 +1,4 @@
-package groovy.pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -33,11 +33,9 @@ class RemoveWeeklyScoreTest extends SpockTest {
 
     def student
     def dashboard
-    def weeklyScore
     def quiz
     def quizQuestion
     def optionOK
-    def OptionKO
 
     def setup() {
         createExternalCourseAndExecution()
@@ -67,13 +65,6 @@ class RemoveWeeklyScoreTest extends SpockTest {
         optionOK.setQuestionDetails(questionDetails)
         optionRepository.save(optionOK)
 
-        optionKO = new Option()
-        optionKO.setContent(OPTION_1_CONTENT)
-        optionKO.setCorrect(false)
-        optionKO.setSequence(0)
-        optionKO.setQuestionDetails(questionDetails)
-        optionRepository.save(optionKO)
-
         quiz = new Quiz()
         quiz.setType(Quiz.QuizType.PROPOSED.toString())
         quiz.setKey(1)
@@ -87,34 +78,80 @@ class RemoveWeeklyScoreTest extends SpockTest {
     }
 
     def "remove weekly score with answers within its week"() {
-        given: "a correct question answer"
+        given: "a past weekly score"
+        WeeklyScore weeklyScore = new WeeklyScore(dashboard)
+        TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY);
+        LocalDate week = DateHandler.now().minusDays(30).with(weekSunday).toLocalDate();
+        weeklyScore.setWeek(week)
+        weeklyScoreRepository.save(weeklyScore)
 
-        and: "a answer submitted in the weekly score week"
-        
+        and: "a answer submitted in a past weekly score week"
+        def quizAnswer = new QuizAnswer()
+        quizAnswer.setCompleted(true)
+        quizAnswer.setStudent(student)
+        quizAnswer.setQuiz(quiz)
+        quizAnswer.setAnswerDate(DateHandler.now().minusDays(30))
+        quizAnswerRepository.save(quizAnswer)
+
+        def questionAnswer = new QuestionAnswer()
+        def answerDetails = new MultipleChoiceAnswer(questionAnswer, optionOK)
+        questionAnswer.setAnswerDetails(answerDetails)
+        questionAnswer.setQuizAnswer(quizAnswer)
+        questionAnswer.setQuizQuestion(quizQuestion)
+        questionAnswerRepository.save(questionAnswer)
+        answerDetailsRepository.save(answerDetails)
+
         when: "the weekly score is removed"
+        weeklyScoreService.removeWeeklyScore(weeklyScore.getId())
 
-        expect: true
+        then: "the weekly score is not inside the weekly score repository"
+        weeklyScoreRepository.count() == 0L
     }
 
     def "remove weekly score without answers whitin its week"() {
-        when: "the weekly score is removed and no answer is submitted"
+        given: "a past weekly score"
+        WeeklyScore weeklyScore = new WeeklyScore(dashboard)
+        TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY);
+        LocalDate week = DateHandler.now().minusDays(30).with(weekSunday).toLocalDate();
+        weeklyScore.setWeek(week)
+        weeklyScoreRepository.save(weeklyScore)
 
-        expect: true
+        when: "the weekly score is removed and no answer is submitted"
+        weeklyScoreService.removeWeeklyScore(weeklyScore.getId())
+
+        then: "the weekly score is not inside the weekly score repository"
+        weeklyScoreRepository.count() == 0L
     }
 
     def "cannot remove current weekly score"() {
-        given: "this week's weekly score"
+        given: "a current weekly score"
+        WeeklyScore weeklyScore = new WeeklyScore(dashboard)
+        TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY);
+        LocalDate week = DateHandler.now().with(weekSunday).toLocalDate();
+        weeklyScore.setWeek(week)
+        weeklyScoreRepository.save(weeklyScore)
 
         when: "try to remove the current weekly score"
+        weeklyScoreService.removeWeeklyScore(weeklyScore.getId())
 
-        expect: true
+        then: "CANNOT_REMOVE_WEEKLY_SCORE exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.CANNOT_REMOVE_WEEKLY_SCORE
     }
 
     @Unroll
     def "#test - cannot remove WeeklyScore with weeklyScore=#weeklyScoreId"() {
         when: "a weekly score is removed"
+        weeklyScoreService.removeWeeklyScore(weeklyScoreId)
 
-        expect: true
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == errorMessage
+
+        where:
+        test                                              | weeklyScoreId || errorMessage
+        "remove weekly score with null id"         | null        || WEEKLY_SCORE_NOT_FOUND
+        "remove weekly score with non-existing id" | 100         || WEEKLY_SCORE_NOT_FOUND
     }
 
     @TestConfiguration
