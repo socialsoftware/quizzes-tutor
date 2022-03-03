@@ -19,13 +19,10 @@ public class FailedAnswer implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "answered")
     private boolean answered;
 
-    @Column(name = "collected")
     private LocalDateTime collected;
 
-    @Column(name = "removed", columnDefinition = "boolean default false")
     private boolean removed = false;
 
     // TODO: Add orphan removal? Since removing the question answer should remove the failed answer (?)

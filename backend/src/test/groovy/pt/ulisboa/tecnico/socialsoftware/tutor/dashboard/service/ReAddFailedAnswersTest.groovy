@@ -90,11 +90,9 @@ class ReAddFailedAnswersTest extends FailedAnswersSpockTest {
     def "cannot re-add failed answers for invalid dashboard (#dashboardId) | invalid period (#startDate, #endDate) "() {
         when:
         failedAnswerService.reAddFailedAnswers(dashboardId, startDate, endDate)
-
         then: "an exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == errorMessage
-
         where:
         dashboardId   | startDate             | endDate               || errorMessage
         -1            | STRING_DATE_YESTERDAY | STRING_DATE_LATER     || ErrorMessage.DASHBOARD_NOT_FOUND
@@ -102,7 +100,6 @@ class ReAddFailedAnswersTest extends FailedAnswersSpockTest {
         1             | STRING_DATE_YESTERDAY | null                  || ErrorMessage.FAILED_ANSWER_MISSING_END_TIME
         1             | STRING_DATE_LATER     | STRING_DATE_YESTERDAY || ErrorMessage.INVALID_DATE_INTERVAL
     }
-
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
