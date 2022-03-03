@@ -66,6 +66,8 @@ class RemoveWeeklyScoreTest extends SpockTest {
         then: "CANNOT_REMOVE_WEEKLY_SCORE exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_REMOVE_WEEKLY_SCORE
+        and: "it is in the database"
+        weeklyScoreRepository.count() == 1
     }
 
     @Unroll
@@ -79,8 +81,8 @@ class RemoveWeeklyScoreTest extends SpockTest {
 
         where:
         test                                       | weeklyScoreId || errorMessage
-        "remove weekly score with null id"         | null        || WEEKLY_SCORE_NOT_FOUND
-        "remove weekly score with non-existing id" | 100         || WEEKLY_SCORE_NOT_FOUND
+        "remove weekly score with null id"         | null          || WEEKLY_SCORE_NOT_FOUND
+        "remove weekly score with non-existing id" | 100           || WEEKLY_SCORE_NOT_FOUND
     }
 
     @TestConfiguration

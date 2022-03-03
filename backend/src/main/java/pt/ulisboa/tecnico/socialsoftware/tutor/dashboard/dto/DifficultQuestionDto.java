@@ -12,7 +12,7 @@ public class DifficultQuestionDto implements Serializable {
 
     private int percentage;
 
-    private LocalDateTime collected;
+    private LocalDateTime removedDate;
 
     private boolean removed;
 
@@ -24,7 +24,7 @@ public class DifficultQuestionDto implements Serializable {
     public DifficultQuestionDto(DifficultQuestion difficultQuestion){
         setId(id);
         setPercentage(difficultQuestion.getPercentage());
-        setCollected(difficultQuestion.getCollected());
+        setRemovedDate(difficultQuestion.getRemovedDate());
         setRemoved(difficultQuestion.isRemoved());
         setQuestionDto(new QuestionDto(difficultQuestion.getQuestion()));
     }
@@ -37,12 +37,12 @@ public class DifficultQuestionDto implements Serializable {
         return id;
     }
 
-    public LocalDateTime getCollected() {
-        return collected;
+    public LocalDateTime getRemovedDate() {
+        return removedDate;
     }
 
-    public void setCollected(LocalDateTime collected) {
-        this.collected = collected;
+    public void setRemovedDate(LocalDateTime removedDate) {
+        this.removedDate = removedDate;
     }
 
     public boolean isRemoved() {

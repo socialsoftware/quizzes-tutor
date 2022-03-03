@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
@@ -33,14 +35,14 @@ public class Dashboard implements DomainEntity {
     @ManyToOne
     private CourseExecution courseExecution;
 
-    @OneToMany
-    private List<DifficultQuestion> difficultQuestions;
-
     @ManyToOne
     private Student student;
 
     @OneToMany(mappedBy = "dashboard")
     private Set<WeeklyScore> weeklyScores = new HashSet<>();
+
+    @OneToMany(mappedBy = "dashboard")
+    private Set<DifficultQuestion> difficultQuestions = new HashSet<>();
 
     public Dashboard() {
     }
@@ -99,11 +101,11 @@ public class Dashboard implements DomainEntity {
         this.student.addDashboard(this);
     }
 
-    public List<DifficultQuestion> getDifficultQuestions() {
+    public Set<DifficultQuestion> getDifficultQuestions() {
         return difficultQuestions;
     }
 
-    public void setDifficultQuestions(List<DifficultQuestion> difficultQuestions) {
+    public void setDifficultQuestions(Set<DifficultQuestion> difficultQuestions) {
         this.difficultQuestions = difficultQuestions;
     }
 
@@ -125,6 +127,15 @@ public class Dashboard implements DomainEntity {
         }
     }
 
+    public void addDifficultQuestion(DifficultQuestion difficultQuestion) {
+        if (difficultQuestions.stream()
+                .anyMatch(difficultQuestion1 -> difficultQuestion1.getQuestion() == difficultQuestion.getQuestion())) {
+            throw new TutorException(ErrorMessage.DIFFICULT_QUESTION_ALREADY_CREATED);
+        }
+
+        difficultQuestions.add(difficultQuestion);
+    }
+
     public void accept(Visitor visitor) {
     }
 
@@ -136,4 +147,5 @@ public class Dashboard implements DomainEntity {
                 ", lastCheckDifficultAnswers=" + lastCheckDifficultQuestions +
                 "}";
     }
+
 }

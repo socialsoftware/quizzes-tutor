@@ -1,9 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
-import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -14,20 +11,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRep
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DifficultQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-
-import java.sql.SQLException;
-import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.stream.Collectors;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -43,22 +29,23 @@ public class DifficultQuestionService {
     private DifficultQuestionRepository difficultQuestionRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public DifficultQuestionDto createDifficultQuestions(int dashboardId, int questionId, int percentage, LocalDateTime collected) {
+    public DifficultQuestionDto createDifficultQuestions(int dashboardId, int questionId, int percentage) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
-        DifficultQuestion difficultQuestion = new DifficultQuestion(dashboard, question, percentage, collected);
+        DifficultQuestion difficultQuestion = new DifficultQuestion(dashboard, question, percentage);
         difficultQuestionRepository.save(difficultQuestion);
+
+        dashboard.setLastCheckDifficultQuestions(DateHandler.now());
 
         return new DifficultQuestionDto(difficultQuestion);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public DifficultQuestionDto removeDifficultQuestion(int difficultQuestionId) {
-        DifficultQuestion difficultQuestion = difficultQuestionRepository.findById(difficultQuestionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, difficultQuestionId));
+    public void removeDifficultQuestion(int difficultQuestionId) {
+        DifficultQuestion difficultQuestion = difficultQuestionRepository.findById(difficultQuestionId).orElseThrow(() -> new TutorException(DIFFICULT_QUESTION_NOT_FOUND, difficultQuestionId));
 
         difficultQuestion.remove();
-
-        return new DifficultQuestionDto(difficultQuestion);
+        difficultQuestionRepository.delete(difficultQuestion);
     }
 }

@@ -20,9 +20,9 @@ public class DifficultQuestion implements DomainEntity {
 
     private int percentage;
 
-    private LocalDateTime collected;
-
     private boolean removed = false;
+
+    private LocalDateTime removedDate;
 
     @ManyToOne
     private Question question;
@@ -33,9 +33,12 @@ public class DifficultQuestion implements DomainEntity {
     public DifficultQuestion(){
     }
 
-    public DifficultQuestion(Dashboard dashboard, Question question, int percentage, LocalDateTime collected){
+    public DifficultQuestion(Dashboard dashboard, Question question, int percentage){
+        if (percentage < 0 || percentage > 24)
+            throw new TutorException(ErrorMessage.CANNOT_CREATE_DIFFICULT_QUESTION);
+
         setPercentage(percentage);
-        setCollected(collected);
+        setRemovedDate(null);
         setRemoved(false);
         setQuestion(question);
         setDashboard(dashboard);
@@ -44,7 +47,7 @@ public class DifficultQuestion implements DomainEntity {
     public void remove() {
         if (!removed) {
             throw new TutorException(ErrorMessage.CANNOT_REMOVE_DIFFICULT_QUESTION);
-        } else if (collected.isBefore(DateHandler.now().minusDays(7))) {
+        } else if (removedDate.isBefore(DateHandler.now().minusDays(7))) {
             throw new TutorException(ErrorMessage.CANNOT_REMOVE_DIFFICULT_QUESTION);
         }
 
@@ -57,6 +60,7 @@ public class DifficultQuestion implements DomainEntity {
 
     public void setDashboard(Dashboard dashboard) {
         this.dashboard = dashboard;
+        this.dashboard.addDifficultQuestion(this);
     }
 
     public Integer getId() {
@@ -79,12 +83,12 @@ public class DifficultQuestion implements DomainEntity {
         this.removed = removed;
     }
 
-    public LocalDateTime getCollected() {
-        return collected;
+    public LocalDateTime getRemovedDate() {
+        return removedDate;
     }
 
-    public void setCollected(LocalDateTime collected) {
-        this.collected = collected;
+    public void setRemovedDate(LocalDateTime collected) {
+        this.removedDate = collected;
     }
 
     public Question getQuestion() {
