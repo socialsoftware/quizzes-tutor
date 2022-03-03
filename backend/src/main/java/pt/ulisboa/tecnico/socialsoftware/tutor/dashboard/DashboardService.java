@@ -34,6 +34,9 @@ public class DashboardService {
     @Autowired
     private DashboardRepository dashboardRepository;
 
+    @Autowired
+    private DifficultQuestionService difficultQuestionService;
+
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public DashboardDto getDashboard(int courseExecutionId, int studentId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
@@ -73,7 +76,9 @@ public class DashboardService {
 
     private DashboardDto createAndReturnDashboardDto(CourseExecution courseExecution, Student student) {
         Dashboard dashboard = new Dashboard(courseExecution, student);
+
         dashboardRepository.save(dashboard);
+
         return new DashboardDto(dashboard);
     }
 

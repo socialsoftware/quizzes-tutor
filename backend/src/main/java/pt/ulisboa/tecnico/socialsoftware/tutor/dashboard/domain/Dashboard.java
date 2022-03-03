@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.List;
 
 import javax.persistence.*;
 
@@ -31,6 +32,9 @@ public class Dashboard implements DomainEntity {
 
     @ManyToOne
     private CourseExecution courseExecution;
+
+    @OneToMany
+    private List<DifficultQuestion> difficultQuestions;
 
     @ManyToOne
     private Student student;
@@ -93,6 +97,14 @@ public class Dashboard implements DomainEntity {
     public void setStudent(Student student) {
         this.student = student;
         this.student.addDashboard(this);
+    }
+
+    public List<DifficultQuestion> getDifficultQuestions() {
+        return difficultQuestions;
+    }
+
+    public void setDifficultQuestions(List<DifficultQuestion> difficultQuestions) {
+        this.difficultQuestions = difficultQuestions;
     }
 
     public void remove() {
