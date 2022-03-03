@@ -37,7 +37,7 @@ public class Dashboard implements DomainEntity {
     private Student student;
 
     @OneToMany
-    private List<FailedAnswer> failedAnswers = new ArrayList<>();
+    private final List<FailedAnswer> failedAnswers = new ArrayList<>();
 
     public Dashboard() {
     }
