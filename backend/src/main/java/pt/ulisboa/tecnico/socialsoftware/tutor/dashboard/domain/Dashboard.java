@@ -15,7 +15,6 @@ import java.util.stream.Collectors;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "dashboard")
 public class Dashboard implements DomainEntity {
 
     @Id
@@ -32,7 +31,7 @@ public class Dashboard implements DomainEntity {
     @ManyToOne
     private Student student;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dashboard", fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToMany
     private final List<FailedAnswer> failedAnswers = new ArrayList<>();
 
     public Dashboard() {
