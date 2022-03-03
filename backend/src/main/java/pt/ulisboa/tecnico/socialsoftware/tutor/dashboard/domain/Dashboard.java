@@ -11,6 +11,8 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.temporal.TemporalAdjusters;
+import java.util.HashSet;
+import java.util.Set;
 
 import javax.persistence.*;
 
@@ -32,6 +34,9 @@ public class Dashboard implements DomainEntity {
 
     @ManyToOne
     private Student student;
+
+    @OneToMany(mappedBy = "dashboard")
+    private Set<WeeklyScore> weeklyScores = new HashSet<>();
 
     public Dashboard() {
     }
@@ -95,6 +100,17 @@ public class Dashboard implements DomainEntity {
             return;
 
         student.getDashboards().remove(this);
+    }
+
+    public Set<WeeklyScore> getWeeklyScores() {
+        return weeklyScores;
+    }
+
+    public void addWeeklyScore(WeeklyScore weeklyScore) {
+        weeklyScores.add(weeklyScore);
+        if (currentWeek.isBefore(weeklyScore.getWeek().atStartOfDay())) {
+            currentWeek = weeklyScore.getWeek().atStartOfDay();
+        }
     }
 
     public void accept(Visitor visitor) {

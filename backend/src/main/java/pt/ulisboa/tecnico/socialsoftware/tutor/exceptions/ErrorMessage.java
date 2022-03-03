@@ -151,7 +151,12 @@ public enum ErrorMessage {
     WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on line: %d"),
     
     FRAUD_SERVICE_NOT_AVAILABLE("Fraud service not available"),
-    FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED("Fraud service only supports timed, one way, in class quizzes");
+    FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED("Fraud service only supports timed, one way, in class quizzes"),
+
+    WEEKLY_SCORE_ALREADY_CREATED("Weekly Score already created for this week"),
+    WEEKLY_SCORE_NOT_FOUND("Weekly Score not found: %d"),
+    UPDATE_WEEKLY_SCORE_NOT_POSSIBLE("Impossible to update old Weekly Score: %s"),
+    CANNOT_REMOVE_WEEKLY_SCORE("Impossible to remove current Weekly Score");
 
     
     public final String label;
