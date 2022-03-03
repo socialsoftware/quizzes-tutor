@@ -4,7 +4,7 @@ import Question from '@/models/management/Question';
 import { Quiz } from '@/models/management/Quiz';
 import Course from '@/models/user/Course';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
-import StudentStats from '@/models/statement/StudentStats';
+import StudentStats from '@/models/dashboard/StudentStats';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import SolvedQuiz from '@/models/statement/SolvedQuiz';
 import Topic from '@/models/management/Topic';
@@ -25,6 +25,7 @@ import router from '@/router';
 import QuestionQuery from '@/models/management/QuestionQuery';
 import { FraudScores } from '@/models/management/fraud/FraudScores';
 import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
+import Dashboard from "@/models/dashboard/Dashboard";
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -169,7 +170,20 @@ export default class RemoteServices {
       });
   }
 
-  // Statistics Controller
+  // Dashboard and Statistics Controller
+
+  static async getUserDashboard(): Promise<Dashboard> {
+    return httpClient
+      .get(
+        `/students/dashboards/executions/${Store.getters.getCurrentCourse.courseExecutionId}`
+      )
+      .then((response) => {
+        return new Dashboard(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
 
   static async getUserStats(): Promise<StudentStats> {
     return httpClient
@@ -183,6 +197,7 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
 
   // Questions Controller
 

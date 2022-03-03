@@ -224,8 +224,8 @@
           <v-icon>fa-user-edit</v-icon>
         </v-btn>
 
-        <v-btn to="/student/stats" v-if="isStudent && currentCourse" text dark>
-          Stats
+        <v-btn to="/student/dashboard" v-if="isStudent && currentCourse" text dark>
+          Dashboard
           <v-icon>fas fa-user</v-icon>
         </v-btn>
 
@@ -453,11 +453,11 @@
             <v-list-item-title>Submissions</v-list-item-title>
           </v-list-item>
 
-          <v-list-item to="/student/stats">
+          <v-list-item to="/student/dashboard">
             <v-list-item-action>
               <v-icon>fas fa-user</v-icon>
             </v-list-item-action>
-            <v-list-item-title>Stats</v-list-item-title>
+            <v-list-item-title>Dashboard</v-list-item-title>
           </v-list-item>
 
           <v-list-item to="/student/discussions">

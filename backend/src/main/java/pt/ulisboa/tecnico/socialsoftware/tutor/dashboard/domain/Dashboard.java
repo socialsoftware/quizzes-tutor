@@ -7,7 +7,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjusters;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -15,7 +18,6 @@ import java.util.stream.Collectors;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "dashboard")
 public class Dashboard implements DomainEntity {
 
     @Id
@@ -24,7 +26,9 @@ public class Dashboard implements DomainEntity {
 
     private LocalDateTime lastCheckFailedAnswers;
 
-    private LocalDateTime lastCheckDifficultAnswers;
+    private LocalDateTime lastCheckDifficultQuestions;
+
+    private LocalDateTime currentWeek;
 
     @ManyToOne
     private CourseExecution courseExecution;
@@ -32,8 +36,8 @@ public class Dashboard implements DomainEntity {
     @ManyToOne
     private Student student;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dashboard", fetch = FetchType.LAZY, orphanRemoval=true)
-    private final List<FailedAnswer> failedAnswers = new ArrayList<>();
+    @OneToMany
+    private List<FailedAnswer> failedAnswers = new ArrayList<>();
 
     public Dashboard() {
     }
@@ -41,7 +45,8 @@ public class Dashboard implements DomainEntity {
     public Dashboard(CourseExecution courseExecution, Student student) {
         LocalDateTime currentDate = DateHandler.now();
         setLastCheckFailedAnswers(currentDate);
-        setLastCheckDifficultAnswers(currentDate);
+        setLastCheckDifficultQuestions(currentDate);
+        setCurrentWeek(LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).atStartOfDay());
         setCourseExecution(courseExecution);
         setStudent(student);
     }
@@ -58,12 +63,20 @@ public class Dashboard implements DomainEntity {
         this.lastCheckFailedAnswers = lastCheckFailedAnswer;
     }
 
-    public LocalDateTime getLastCheckDifficultAnswers() {
-        return lastCheckDifficultAnswers;
+    public LocalDateTime getLastCheckDifficultQuestions() {
+        return lastCheckDifficultQuestions;
     }
 
-    public void setLastCheckDifficultAnswers(LocalDateTime lastCheckDifficultAnswers) {
-        this.lastCheckDifficultAnswers = lastCheckDifficultAnswers;
+    public void setLastCheckDifficultQuestions(LocalDateTime lastCheckDifficultAnswers) {
+        this.lastCheckDifficultQuestions = lastCheckDifficultAnswers;
+    }
+
+    public LocalDateTime getCurrentWeek() {
+        return currentWeek;
+    }
+
+    public void setCurrentWeek(LocalDateTime currentWeek) {
+        this.currentWeek = currentWeek;
     }
 
     public CourseExecution getCourseExecution() {
@@ -93,24 +106,30 @@ public class Dashboard implements DomainEntity {
     public void accept(Visitor visitor) {
     }
 
-    public void addFailedAnswer(FailedAnswer failedAnswer) {
-        this.failedAnswers.add(failedAnswer);
+    public List<FailedAnswer> getAllFailedAnswers(){
+        return this.failedAnswers;
     }
 
     public List<FailedAnswer> getFailedAnswers(){
         return this.failedAnswers.stream().filter(fa -> !fa.getRemoved()).collect(Collectors.toList());
     }
-
-    public List<FailedAnswer> getAllFailedAnswers(){
-        return this.failedAnswers;
+    
+    public void addFailedAnswer(FailedAnswer failedAnswer){
+        failedAnswers.add(failedAnswer);
     }
+
+    public void removeFailedAnswer(FailedAnswer fa){
+        failedAnswers.remove(fa);
+    }
+
+    
 
     @Override
     public String toString() {
         return "Dashboard{" +
                 "id=" + id +
                 ", lastCheckFailedAnswers=" + lastCheckFailedAnswers +
-                ", lastCheckDifficultAnswers=" + lastCheckDifficultAnswers +
+                ", lastCheckDifficultAnswers=" + lastCheckDifficultQuestions +
                 "}";
     }
 }

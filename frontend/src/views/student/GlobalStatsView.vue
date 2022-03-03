@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <h2>Statistics</h2>
+    <h3>Statistics</h3>
     <div v-if="stats != null" class="stats-container">
       <div class="items">
         <div class="icon-wrapper" ref="totalQuizzes">
@@ -71,14 +71,14 @@
 
 <script lang="ts">
 import { Component, Vue } from 'vue-property-decorator';
-import StudentStats from '@/models/statement/StudentStats';
+import StudentStats from '@/models/dashboard/StudentStats';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
 
 @Component({
   components: { AnimatedNumber },
 })
-export default class StatsView extends Vue {
+export default class GlobalStatsView extends Vue {
   stats: StudentStats | null = null;
 
   async created() {
