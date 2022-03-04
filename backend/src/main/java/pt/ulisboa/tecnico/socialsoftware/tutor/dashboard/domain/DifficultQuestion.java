@@ -37,6 +37,10 @@ public class DifficultQuestion implements DomainEntity {
         if (percentage < 0 || percentage > 24)
             throw new TutorException(ErrorMessage.CANNOT_CREATE_DIFFICULT_QUESTION);
 
+        if (question.getCourse() != dashboard.getCourseExecution().getCourse()) {
+            throw new TutorException(ErrorMessage.CANNOT_CREATE_DIFFICULT_QUESTION);
+        }
+
         setPercentage(percentage);
         setRemovedDate(null);
         setRemoved(false);

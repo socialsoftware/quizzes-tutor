@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -24,8 +25,6 @@ class CreateDifficultQuestionTest extends SpockTest {
     def student
     def dashboard
     def question
-    def optionOK
-    def optionKO
 
     def setup() {
         createExternalCourseAndExecution()
@@ -35,7 +34,6 @@ class CreateDifficultQuestionTest extends SpockTest {
         userRepository.save(student)
 
         question = new Question()
-        question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
         question.setStatus(Question.Status.AVAILABLE)
@@ -46,20 +44,6 @@ class CreateDifficultQuestionTest extends SpockTest {
         question.setQuestionDetails(questionDetails)
         questionDetailsRepository.save(questionDetails)
         questionRepository.save(question)
-
-        optionOK = new Option()
-        optionOK.setContent(OPTION_1_CONTENT)
-        optionOK.setCorrect(true)
-        optionOK.setSequence(0)
-        optionOK.setQuestionDetails(questionDetails)
-        optionRepository.save(optionOK)
-
-        optionKO = new Option()
-        optionKO.setContent(OPTION_1_CONTENT)
-        optionKO.setCorrect(false)
-        optionKO.setSequence(1)
-        optionKO.setQuestionDetails(questionDetails)
-        optionRepository.save(optionKO)
 
         dashboard = new Dashboard(externalCourseExecution, student)
         dashboardRepository.save(dashboard)
@@ -99,7 +83,34 @@ class CreateDifficultQuestionTest extends SpockTest {
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.DIFFICULT_QUESTION_ALREADY_CREATED
         and: "there is a difficult question in the database"
-        dashboardRepository.count() == 1L
+        difficultQuestionRepository.count() == 1L
+    }
+
+    def "cannot create a difficult question that does not belong to the course"() {
+        given: "another course"
+        def alienCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
+        courseRepository.save(alienCourse)
+        and: "a difficult question"
+        def alienQuestion = new Question()
+        alienQuestion.setTitle(QUESTION_1_TITLE)
+        alienQuestion.setContent(QUESTION_1_CONTENT)
+        alienQuestion.setStatus(Question.Status.AVAILABLE)
+        alienQuestion.setNumberOfAnswers(2)
+        alienQuestion.setNumberOfCorrect(1)
+        alienQuestion.setCourse(alienCourse)
+        def questionDetails = new MultipleChoiceQuestion()
+        alienQuestion.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
+        questionRepository.save(alienQuestion)
+
+        when: "when it is created a new difficult question for the same question"
+        difficultQuestionService.createDifficultQuestions(dashboard.getId(), alienQuestion.getId(), 22)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.CANNOT_CREATE_DIFFICULT_QUESTION
+        and: "there is a difficult question in the database"
+        difficultQuestionRepository.count() == 0L
     }
 
     @Unroll

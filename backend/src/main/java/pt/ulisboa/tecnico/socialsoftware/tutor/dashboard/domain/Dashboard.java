@@ -16,10 +16,13 @@ import java.time.temporal.TemporalAdjusters;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 import javax.persistence.*;
 
 @Entity
+@Table(name = "dashboard")
 public class Dashboard implements DomainEntity {
 
     @Id
@@ -43,6 +46,9 @@ public class Dashboard implements DomainEntity {
 
     @OneToMany(mappedBy = "dashboard")
     private Set<DifficultQuestion> difficultQuestions = new HashSet<>();
+
+    @OneToMany(mappedBy = "dashboard")
+    private final List<FailedAnswer> failedAnswers = new ArrayList<>();
 
     public Dashboard() {
     }
@@ -134,6 +140,18 @@ public class Dashboard implements DomainEntity {
         }
 
         difficultQuestions.add(difficultQuestion);
+    }
+
+    public void addFailedAnswer(FailedAnswer failedAnswer) {
+        this.failedAnswers.add(failedAnswer);
+    }
+
+    public List<FailedAnswer> getFailedAnswers(){
+        return this.failedAnswers.stream().filter(fa -> !fa.getRemoved()).collect(Collectors.toList());
+    }
+
+    public List<FailedAnswer> getAllFailedAnswers(){
+        return this.failedAnswers;
     }
 
     public void accept(Visitor visitor) {
