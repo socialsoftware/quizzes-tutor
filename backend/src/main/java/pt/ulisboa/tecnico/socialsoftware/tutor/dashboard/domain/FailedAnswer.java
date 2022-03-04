@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.time.LocalDateTime;
 
@@ -19,11 +20,9 @@ public class FailedAnswer implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private boolean answered;
-
     private LocalDateTime collected;
 
-    private boolean removed = false;
+    private boolean answered;
 
     @OneToOne
     private QuestionAnswer questionAnswer;
@@ -34,26 +33,36 @@ public class FailedAnswer implements DomainEntity {
     public FailedAnswer(){
     }
 
-    public FailedAnswer(Dashboard dashboard, QuestionAnswer questionAnswer){
+    public FailedAnswer(Dashboard dashboard, QuestionAnswer questionAnswer, LocalDateTime collected){
         if (dashboard.getCourseExecution() != questionAnswer.getQuizAnswer().getQuiz().getCourseExecution()) {
             throw new TutorException(ErrorMessage.CANNOT_CREATE_FAILED_ANSWER);
         }
 
+        if (dashboard.getStudent() != questionAnswer.getQuizAnswer().getStudent()) {
+            throw new TutorException(ErrorMessage.CANNOT_CREATE_FAILED_ANSWER);
+        }
+
+        if (!questionAnswer.getQuizAnswer().isCompleted() || questionAnswer.isCorrect()) {
+            throw new TutorException(ErrorMessage.CANNOT_CREATE_FAILED_ANSWER);
+        }
+
+        setCollected(collected);
         setAnswered(questionAnswer.isAnswered());
         setQuestionAnswer(questionAnswer);
         setDashboard(dashboard);
     }
 
+    public void remove() {
+        if (collected.isAfter(DateHandler.now().minusDays(5))) {
+            throw new TutorException(ErrorMessage.CANNOT_REMOVE_FAILED_ANSWER);
+        }
+
+        dashboard.getFailedAnswers().remove(this);
+        dashboard = null;
+    }
+
     public Integer getId() {
         return id;
-    }
-
-    public boolean getAnswered() {
-        return answered;
-    }
-
-    public void setAnswered(boolean answered) {
-        this.answered = answered;
     }
 
     public LocalDateTime getCollected() {
@@ -64,12 +73,12 @@ public class FailedAnswer implements DomainEntity {
         this.collected = collected;
     }
 
-    public boolean getRemoved() {
-        return removed;
+    public boolean getAnswered() {
+        return answered;
     }
 
-    public void setRemoved(boolean removed) {
-        this.removed = removed;
+    public void setAnswered(boolean answered) {
+        this.answered = answered;
     }
 
     public QuestionAnswer getQuestionAnswer() {
@@ -99,8 +108,8 @@ public class FailedAnswer implements DomainEntity {
         return "FailedAnswer{" +
             "id=" + id +
             ", answered=" + answered +
-            ", removed=" + removed +
             ", questionAnswer=" + questionAnswer +
             "}";
     }
+
 }

@@ -51,10 +51,10 @@ class CreateDifficultQuestionTest extends SpockTest {
 
     @Unroll
     def "create difficult question with percentage #percentage"() {
-        when: "a weekly score is created"
+        when:
         difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), percentage)
 
-        then: "the weekly score is inside the weekly score repository and with the correct data"
+        then:
         difficultQuestionRepository.count() == 1L
         def result = difficultQuestionRepository.findAll().get(0)
         result.getId() != null
@@ -109,19 +109,19 @@ class CreateDifficultQuestionTest extends SpockTest {
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_CREATE_DIFFICULT_QUESTION
-        and: "there is a difficult question in the database"
+        and:
         difficultQuestionRepository.count() == 0L
     }
 
     @Unroll
     def "cannot create difficult question with percentage=#percentage"() {
-        when: "a weekly score is created"
+        when:
         difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), percentage)
 
         then: "an exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == CANNOT_CREATE_DIFFICULT_QUESTION
-        weeklyScoreRepository.count() == 0L
+        difficultQuestionRepository.count() == 0L
 
         where:
         percentage << [-100, -1, 25, 50, 150]
@@ -130,13 +130,13 @@ class CreateDifficultQuestionTest extends SpockTest {
 
     @Unroll
     def "cannot create difficult question with dashboardId=#dashboardId"() {
-        when: "a weekly score is created"
+        when:
         difficultQuestionService.createDifficultQuestions(dashboardId, question.getId(), 20)
 
         then: "an exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == DASHBOARD_NOT_FOUND
-        weeklyScoreRepository.count() == 0L
+        difficultQuestionRepository.count() == 0L
 
         where:
         dashboardId << [0, 100]
@@ -144,13 +144,13 @@ class CreateDifficultQuestionTest extends SpockTest {
 
     @Unroll
     def "cannot create difficult question with questionId=#questionId"() {
-        when: "a weekly score is created"
+        when:
         difficultQuestionService.createDifficultQuestions(dashboard.getId(), questionId, 20)
 
         then: "an exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == QUESTION_NOT_FOUND
-        weeklyScoreRepository.count() == 0L
+        difficultQuestionRepository.count() == 0L
 
         where:
         questionId << [0, 100]

@@ -115,6 +115,10 @@ public class Dashboard implements DomainEntity {
         this.difficultQuestions = difficultQuestions;
     }
 
+    public List<FailedAnswer> getFailedAnswers() {
+        return failedAnswers;
+    }
+
     public void remove() {
         if (student == null)
             return;
@@ -138,20 +142,14 @@ public class Dashboard implements DomainEntity {
                 .anyMatch(difficultQuestion1 -> difficultQuestion1.getQuestion() == difficultQuestion.getQuestion())) {
             throw new TutorException(ErrorMessage.DIFFICULT_QUESTION_ALREADY_CREATED);
         }
-
         difficultQuestions.add(difficultQuestion);
     }
 
     public void addFailedAnswer(FailedAnswer failedAnswer) {
-        this.failedAnswers.add(failedAnswer);
-    }
-
-    public List<FailedAnswer> getFailedAnswers(){
-        return this.failedAnswers.stream().filter(fa -> !fa.getRemoved()).collect(Collectors.toList());
-    }
-
-    public List<FailedAnswer> getAllFailedAnswers(){
-        return this.failedAnswers;
+        if (failedAnswers.stream().anyMatch(failedAnswer1 -> failedAnswer1.getQuestionAnswer() == failedAnswer.getQuestionAnswer())) {
+            throw new TutorException(ErrorMessage.FAILED_ANSWER_ALREADY_CREATED);
+        }
+        failedAnswers.add(failedAnswer);
     }
 
     public void accept(Visitor visitor) {

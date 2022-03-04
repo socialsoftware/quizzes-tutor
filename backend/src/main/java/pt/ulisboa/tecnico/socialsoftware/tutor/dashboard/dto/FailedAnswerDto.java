@@ -4,6 +4,7 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.QuestionAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer;
 
 public class FailedAnswerDto implements Serializable {
@@ -12,20 +13,14 @@ public class FailedAnswerDto implements Serializable {
 
     private boolean answered;
 
-    private LocalDateTime collected;
-
-    private boolean removed;
-
-    private QuestionAnswer questionAnswer;
+    private QuestionAnswerDto questionAnswerDto;
 
     public FailedAnswerDto(){
     }
 
     public FailedAnswerDto(FailedAnswer failedAnswer){
-        setCollected(failedAnswer.getCollected());
-        setQuestionAnswer(failedAnswer.getQuestionAnswer());
         setAnswered(failedAnswer.getAnswered());
-        setRemoved(failedAnswer.getRemoved());
+        setQuestionAnswerDto(new QuestionAnswerDto(failedAnswer.getQuestionAnswer()));
     }
 
     public Integer getId() {
@@ -40,28 +35,12 @@ public class FailedAnswerDto implements Serializable {
         this.answered = answered;
     }
 
-    public LocalDateTime getCollected() {
-        return collected;
+    public QuestionAnswerDto getQuestionAnswerDto() {
+        return questionAnswerDto;
     }
 
-    public void setCollected(LocalDateTime collected) {
-        this.collected = collected;
-    }
-
-    public boolean getRemoved() {
-        return removed;
-    }
-
-    public void setRemoved(boolean removed) {
-        this.removed = removed;
-    }
-
-    public QuestionAnswer getQuestionAnswer() {
-        return questionAnswer;
-    }
-
-    public void setQuestionAnswer(QuestionAnswer questionAnswer) {
-        this.questionAnswer = questionAnswer;
+    public void setQuestionAnswerDto(QuestionAnswerDto questionAnswerDto) {
+        this.questionAnswerDto = questionAnswerDto;
     }
 
     @Override
@@ -69,8 +48,6 @@ public class FailedAnswerDto implements Serializable {
         return "FailedAnswerDto{" +
             "id=" + id +
             ", answered=" + answered +
-            ", removed=" + removed +
-            ", questionAnswer=" + questionAnswer +
             "}";
     }
 }

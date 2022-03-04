@@ -36,8 +36,6 @@ public class DifficultQuestionService {
         DifficultQuestion difficultQuestion = new DifficultQuestion(dashboard, question, percentage);
         difficultQuestionRepository.save(difficultQuestion);
 
-        dashboard.setLastCheckDifficultQuestions(DateHandler.now());
-
         return new DifficultQuestionDto(difficultQuestion);
     }
 

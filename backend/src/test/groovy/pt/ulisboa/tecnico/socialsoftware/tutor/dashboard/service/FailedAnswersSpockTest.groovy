@@ -89,14 +89,12 @@ class FailedAnswersSpockTest extends SpockTest {
         return questionAnswer
     }
 
-    def createFailedAnswer(collected, removed, questionAnswer) {
+    def createFailedAnswer(questionAnswer, collected) {
         def failedAnswer = new FailedAnswer()
-        failedAnswer.setCollected(collected)
         failedAnswer.setQuestionAnswer(questionAnswer)
-        failedAnswer.setRemoved(removed)
         failedAnswer.setAnswered(questionAnswer.isAnswered())
+        failedAnswer.setCollected(collected)
         failedAnswer.setDashboard(dashboard)
-        dashboard.addFailedAnswer(failedAnswer)
         failedAnswerRepository.save(failedAnswer)
 
         return failedAnswer
