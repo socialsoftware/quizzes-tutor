@@ -53,7 +53,6 @@ class GetDashboardWebServiceIT extends SpockTest {
         demoStudentLogin()
         and: 'its dashboard'
         def student = authUserService.demoStudentAuth(false).getUser()
-//        def student = authUserRepository.findAuthUserByUsername(DemoUtils.STUDENT_USERNAME).get().getUser()
         def dashboardDto = dashboardService.createDashboard(courseExecutionDto.getCourseExecutionId(), student.getId())
 
         when: 'the web service is invoked'
