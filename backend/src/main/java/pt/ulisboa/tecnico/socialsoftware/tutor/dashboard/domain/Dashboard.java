@@ -9,15 +9,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 
-import java.time.DayOfWeek;
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.time.temporal.TemporalAdjusters;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
 import java.util.ArrayList;
-import java.util.stream.Collectors;
+
 
 import javax.persistence.*;
 
@@ -33,7 +30,7 @@ public class Dashboard implements DomainEntity {
 
     private LocalDateTime lastCheckDifficultQuestions;
 
-    private LocalDateTime currentWeek;
+    private LocalDateTime lastCheckWeeklyScores;
 
     @ManyToOne
     private CourseExecution courseExecution;
@@ -57,7 +54,7 @@ public class Dashboard implements DomainEntity {
         LocalDateTime currentDate = DateHandler.now();
         setLastCheckFailedAnswers(currentDate);
         setLastCheckDifficultQuestions(currentDate);
-        setCurrentWeek(LocalDate.now().with(TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)).atStartOfDay());
+        setLastCheckWeeklyScores(currentDate);
         setCourseExecution(courseExecution);
         setStudent(student);
     }
@@ -82,12 +79,12 @@ public class Dashboard implements DomainEntity {
         this.lastCheckDifficultQuestions = lastCheckDifficultAnswers;
     }
 
-    public LocalDateTime getCurrentWeek() {
-        return currentWeek;
+    public LocalDateTime getLastCheckWeeklyScores() {
+        return lastCheckWeeklyScores;
     }
 
-    public void setCurrentWeek(LocalDateTime currentWeek) {
-        this.currentWeek = currentWeek;
+    public void setLastCheckWeeklyScores(LocalDateTime currentWeek) {
+        this.lastCheckWeeklyScores = currentWeek;
     }
 
     public CourseExecution getCourseExecution() {
@@ -120,10 +117,8 @@ public class Dashboard implements DomainEntity {
     }
 
     public void remove() {
-        if (student == null)
-            return;
-
         student.getDashboards().remove(this);
+        student = null;
     }
 
     public Set<WeeklyScore> getWeeklyScores() {
@@ -131,10 +126,10 @@ public class Dashboard implements DomainEntity {
     }
 
     public void addWeeklyScore(WeeklyScore weeklyScore) {
-        weeklyScores.add(weeklyScore);
-        if (currentWeek.isBefore(weeklyScore.getWeek().atStartOfDay())) {
-            currentWeek = weeklyScore.getWeek().atStartOfDay();
+        if (weeklyScores.stream().anyMatch(weeklyScore1 -> weeklyScore1.getWeek().isEqual(weeklyScore.getWeek()))) {
+            throw new TutorException(ErrorMessage.WEEKLY_SCORE_ALREADY_CREATED);
         }
+        weeklyScores.add(weeklyScore);
     }
 
     public void addDifficultQuestion(DifficultQuestion difficultQuestion) {
@@ -159,6 +154,7 @@ public class Dashboard implements DomainEntity {
     public String toString() {
         return "Dashboard{" +
                 "id=" + id +
+                ", lastCheckWeeklyScores=" + lastCheckWeeklyScores +
                 ", lastCheckFailedAnswers=" + lastCheckFailedAnswers +
                 ", lastCheckDifficultAnswers=" + lastCheckDifficultQuestions +
                 "}";

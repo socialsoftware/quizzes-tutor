@@ -12,13 +12,13 @@ public class DashboardDto {
     private Integer id;
     private String lastCheckFailedAnswers;
     private String lastCheckDifficultQuestions;
-    private String currentWeek;
+    private String lastCheckWeeklyScores;
 
     public DashboardDto(Dashboard dashboard) {
         id = dashboard.getId();
         lastCheckFailedAnswers = DateHandler.toISOString(dashboard.getLastCheckFailedAnswers());
         lastCheckDifficultQuestions = DateHandler.toISOString(dashboard.getLastCheckDifficultQuestions());
-        currentWeek = DateHandler.toISOString(dashboard.getCurrentWeek());
+        lastCheckWeeklyScores = DateHandler.toISOString(dashboard.getLastCheckWeeklyScores());
     }
 
     public Integer getId() {
@@ -45,12 +45,12 @@ public class DashboardDto {
         this.lastCheckDifficultQuestions = lastCheckDifficultQuestions;
     }
 
-    public String getCurrentWeek() {
-        return currentWeek;
+    public String getLastCheckWeeklyScores() {
+        return lastCheckWeeklyScores;
     }
 
-    public void setCurrentWeek(String currentWeek) {
-        this.currentWeek = currentWeek;
+    public void setLastCheckWeeklyScores(String lastCheckWeeklyScores) {
+        this.lastCheckWeeklyScores = lastCheckWeeklyScores;
     }
 
     @Override
@@ -59,7 +59,7 @@ public class DashboardDto {
                 "id=" + id +
                 ", lastCheckFailedAnswers=" + lastCheckFailedAnswers +
                 ", lastCheckDifficultAnswers=" + lastCheckDifficultQuestions +
-                ", currentWeek=" + currentWeek +
+                ", lastWeeklyStats=" + lastCheckWeeklyScores +
                 "}";
     }
 }

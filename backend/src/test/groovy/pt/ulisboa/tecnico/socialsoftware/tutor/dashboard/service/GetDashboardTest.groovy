@@ -29,7 +29,7 @@ class GetDashboardTest extends SpockTest {
         result.getLastCheckFailedAnswers() != null
         result.getLastCheckDifficultQuestions() != null
         result.getLastCheckFailedAnswers() == result.getLastCheckDifficultQuestions()
-        result.getCurrentWeek() != null
+        result.getLastCheckWeeklyScores() != null
         result.getCourseExecution().getId() == courseExecutionDto.getCourseExecutionId()
         result.getStudent().getId() == authUserDto.getId()
 

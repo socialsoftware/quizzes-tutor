@@ -16,8 +16,8 @@
         <v-col>
           <v-btn color="primary"
                  dark
-                 v-on:click="show = 'Week'"
-          >Week Statistics <br/> {{dashboard != null ? dashboard.currentWeek : '-'}}</v-btn
+                 v-on:click="show = 'Weekly'"
+          >Weekly Scores <br/> {{dashboard != null ? dashboard.lastCheckWeeklyScores : '-'}}</v-btn
           >
         </v-col>
         <v-col>

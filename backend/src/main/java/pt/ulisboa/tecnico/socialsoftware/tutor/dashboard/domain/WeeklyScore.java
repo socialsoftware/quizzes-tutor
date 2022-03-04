@@ -42,11 +42,6 @@ public class WeeklyScore implements DomainEntity {
     public WeeklyScore() {}
 
     public WeeklyScore(Dashboard dashboard, LocalDate week) {
-        if (dashboard.getWeeklyScores().stream()
-                .anyMatch(weeklyScore -> weeklyScore.getWeek().isEqual(week))) {
-            throw new TutorException(WEEKLY_SCORE_ALREADY_CREATED);
-        }
-
         setWeek(week);
         setDashboard(dashboard);
     }

@@ -44,7 +44,7 @@ public class Student extends User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "submitter", fetch = FetchType.LAZY)
     private Set<QuestionSubmission> questionSubmissions = new HashSet<>();
 
-    @OneToMany(mappedBy = "student")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", orphanRemoval = true)
     private Set<Dashboard> dashboards = new HashSet<>();
 
     public Student() {}
@@ -129,6 +129,9 @@ public class Student extends User {
         if (!discussions.isEmpty()) {
             throw new TutorException(USER_HAS_DISCUSSIONS, getUsername());
         }
+
+        dashboards.forEach(Dashboard::remove);
+        dashboards.clear();
 
         super.remove();
     }
