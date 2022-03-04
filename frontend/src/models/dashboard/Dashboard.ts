@@ -4,7 +4,7 @@ export default class Dashboard {
   id!: number;
   lastCheckFailedAnswers!: string;
   lastCheckDifficultQuestions!: string;
-  currentWeek!: string;
+  lastCheckWeeklyScores!: string;
 
   constructor(jsonObj?: Dashboard) {
     if (jsonObj) {
@@ -13,8 +13,8 @@ export default class Dashboard {
         this.lastCheckFailedAnswers = ISOtoString(jsonObj.lastCheckFailedAnswers);
       if (jsonObj.lastCheckDifficultQuestions)
         this.lastCheckDifficultQuestions = ISOtoString(jsonObj.lastCheckDifficultQuestions);
-      if (jsonObj.currentWeek)
-        this.currentWeek = ISOtoString(jsonObj.currentWeek);
+      if (jsonObj.lastCheckWeeklyScores)
+        this.lastCheckWeeklyScores = ISOtoString(jsonObj.lastCheckWeeklyScores);
     }
   }
 }
