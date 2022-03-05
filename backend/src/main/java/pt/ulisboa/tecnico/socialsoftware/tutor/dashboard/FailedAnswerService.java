@@ -6,6 +6,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
@@ -18,8 +19,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
+import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -35,6 +38,9 @@ public class FailedAnswerService {
 
     @Autowired
     private QuestionAnswerRepository questionAnswerRepository;
+
+    @Autowired
+    private QuizAnswerRepository quizAnswerRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public FailedAnswerDto createFailedAnswer(int dashboardId, int questionAnswerId) {
@@ -63,6 +69,26 @@ public class FailedAnswerService {
         return failedAnswers.stream()
                 .map(FailedAnswerDto::new)
                 .sorted(Comparator.comparing(FailedAnswerDto::getCollected, Comparator.nullsLast(Comparator.reverseOrder())))
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<FailedAnswerDto> updateFailedAnswers(int dashboardId) {
+        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
+
+        int courseExecutionId = dashboard.getCourseExecution().getId();
+        int studentId = dashboard.getStudent().getId();
+
+        List<QuizAnswer> quizAnswers = quizAnswerRepository.findByStudentAndExecutionCourseId(courseExecutionId, studentId)
+                .stream()
+                .filter((quizAnswer -> (quizAnswer.getAnswerDate().isAfter(dashboard.getLastCheckFailedAnswers()) && quizAnswer.isCompleted())))
+                .collect(Collectors.toList());
+
+        return quizAnswers.stream()
+                .map(QuizAnswer::getQuestionAnswers)
+                .flatMap(Collection::stream)
+                .filter(Predicate.not(QuestionAnswer::isCorrect))
+                .map(questionAnswer -> createFailedAnswer(dashboardId, questionAnswer.getId()))
                 .collect(Collectors.toList());
     }
 }
