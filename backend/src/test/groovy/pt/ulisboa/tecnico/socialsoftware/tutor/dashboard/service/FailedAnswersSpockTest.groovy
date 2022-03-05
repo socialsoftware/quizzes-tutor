@@ -18,10 +18,6 @@ class FailedAnswersSpockTest extends SpockTest {
 
     def dashboard
     def student
-    def quiz1
-    def quizQuestion1
-    def quiz2
-    def quizQuestion2
     def optionKO
 
     def createQuiz(count) {
