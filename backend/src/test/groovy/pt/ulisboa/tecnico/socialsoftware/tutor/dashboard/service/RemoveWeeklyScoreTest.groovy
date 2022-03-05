@@ -85,11 +85,6 @@ class RemoveWeeklyScoreTest extends SpockTest {
         100           || WEEKLY_SCORE_NOT_FOUND
     }
 
-    @Unroll
-    def "cannot remove WeeklyScore  invalid weeklyScore=#weeklyScoreId"() {
-        expect: false
-    }
-
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }
