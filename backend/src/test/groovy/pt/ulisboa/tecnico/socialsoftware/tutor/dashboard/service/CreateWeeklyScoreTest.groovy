@@ -29,10 +29,10 @@ class CreateWeeklyScoreTest extends SpockTest {
     }
 
     def "create weekly score"() {
-        when: "a weekly score is created"
+        when:
         weeklyScoreService.createWeeklyScore(dashboard.getId())
 
-        then: "the weekly score is inside the weekly score repository and with the correct data"
+        then:
         weeklyScoreRepository.count() == 1L
         def result = weeklyScoreRepository.findAll().get(0)
         result.getId() != null
@@ -40,38 +40,38 @@ class CreateWeeklyScoreTest extends SpockTest {
         result.getNumberAnswered() == 0
         result.getUniquelyAnswered() == 0
         result.getPercentageCorrect() == 0
-        and: "dashboard contains the week score"
+        and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getWeeklyScores().contains(result)
     }
 
     def "cannot create multiple WeeklyScore for the same week"() {
-        given: "a week score"
+        given:
         weeklyScoreService.createWeeklyScore(dashboard.getId())
 
-        when: "when another is created for the same week"
+        when:
         weeklyScoreService.createWeeklyScore(dashboard.getId())
 
-        then: "WEEKLY_SCORE_ALREADY_CREATED exception is thrown"
+        then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.WEEKLY_SCORE_ALREADY_CREATED
         weeklyScoreRepository.count() == 1L
     }
 
     @Unroll
-    def "#test - cannot create WeeklyScore with dashboard=#dashboardId"() {
-        when: "a weekly score is created"
+    def "cannot create WeeklyScore with invalid dashboard=#dashboardId"() {
+        when:
         weeklyScoreService.createWeeklyScore(dashboardId)
 
-        then: "an exception is thrown"
+        then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == errorMessage
         weeklyScoreRepository.count() == 0L
 
         where:
-        test                                              | dashboardId || errorMessage
-        "create weekly score with null dashboard"         | null        || DASHBOARD_NOT_FOUND
-        "create weekly score with non-existing dashboard" | 100         || DASHBOARD_NOT_FOUND
+        dashboardId || errorMessage
+        null        || DASHBOARD_NOT_FOUND
+        100         || DASHBOARD_NOT_FOUND
     }
 
     @TestConfiguration

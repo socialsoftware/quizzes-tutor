@@ -37,52 +37,52 @@ class RemoveWeeklyScoreTest extends SpockTest {
     }
 
     def "remove past weekly score"() {
-        given: "a past weekly score"
+        given:
         TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY);
         LocalDate week = DateHandler.now().minusDays(30).with(weekSunday).toLocalDate();
         WeeklyScore weeklyScore = new WeeklyScore(dashboard, week)
         weeklyScoreRepository.save(weeklyScore)
 
-        when: "the weekly score is removed"
+        when:
         weeklyScoreService.removeWeeklyScore(weeklyScore.getId())
 
-        then: "the weekly score is not inside the weekly score repository"
+        then:
         weeklyScoreRepository.count() == 0L
-        and: "and it is not referenced from the dashboard"
+        and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getWeeklyScores().size() == 0
     }
 
     def "cannot remove current weekly score"() {
-        given: "a current weekly score"
+        given:
         TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY);
         LocalDate week = DateHandler.now().with(weekSunday).toLocalDate();
         WeeklyScore weeklyScore = new WeeklyScore(dashboard, week)
         weeklyScoreRepository.save(weeklyScore)
 
-        when: "try to remove the current weekly score"
+        when:
         weeklyScoreService.removeWeeklyScore(weeklyScore.getId())
 
-        then: "CANNOT_REMOVE_WEEKLY_SCORE exception is thrown"
+        then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_REMOVE_WEEKLY_SCORE
-        and: "it is in the database"
+        and:
         weeklyScoreRepository.count() == 1
     }
 
     @Unroll
-    def "#test - cannot remove WeeklyScore with weeklyScore=#weeklyScoreId"() {
-        when: "a weekly score is removed"
+    def "cannot remove WeeklyScore with invalid weeklyScore=#weeklyScoreId"() {
+        when:
         weeklyScoreService.removeWeeklyScore(weeklyScoreId)
 
-        then: "an exception is thrown"
+        then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == errorMessage
 
         where:
-        test                                       | weeklyScoreId || errorMessage
-        "remove weekly score with null id"         | null          || WEEKLY_SCORE_NOT_FOUND
-        "remove weekly score with non-existing id" | 100           || WEEKLY_SCORE_NOT_FOUND
+        weeklyScoreId || errorMessage
+        null          || WEEKLY_SCORE_NOT_FOUND
+        100           || WEEKLY_SCORE_NOT_FOUND
     }
 
     @TestConfiguration

@@ -36,9 +36,9 @@ class RemoveFailedAnswerTest extends FailedAnswersSpockTest {
         when:
         failedAnswerService.removeFailedAnswer(failedAnswer.getId())
 
-        then: "it is removed from the database"
+        then:
         failedAnswerRepository.findAll().size() == 0L
-        and: "the dashboard does not contain the failed answer"
+        and:
         def dashboard = dashboardRepository.findById(dashboard.getId()).get()
         dashboard.getStudent().getId() === student.getId()
         dashboard.getCourseExecution().getId() === externalCourseExecution.getId()
@@ -59,10 +59,10 @@ class RemoveFailedAnswerTest extends FailedAnswersSpockTest {
         when:
         failedAnswerService.removeFailedAnswer(failedAnswer.getId())
 
-        then: "an exception is thrown"
+        then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_REMOVE_FAILED_ANSWER
-        and: "it is in the database"
+        and:
         failedAnswerRepository.findAll().size() == 1L
 
         where:
@@ -74,7 +74,7 @@ class RemoveFailedAnswerTest extends FailedAnswersSpockTest {
         when:
         failedAnswerService.removeFailedAnswer(failedAnswerId)
 
-        then: "an exception is thrown"
+        then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == errorMessage
 
