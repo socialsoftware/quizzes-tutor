@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
@@ -63,7 +62,7 @@ class CreateDifficultQuestionTest extends SpockTest {
         result.isRemoved() == false
         result.getRemovedDate() == null
         result.getPercentage() == percentage
-        and: "dashboard contains the difficult question"
+        and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getDifficultQuestions().contains(result)
         dashboard.getLastCheckDifficultQuestions().isAfter(DateHandler.now().minusMinutes(1))
@@ -73,24 +72,24 @@ class CreateDifficultQuestionTest extends SpockTest {
     }
 
     def "cannot create two difficult questions for the same question"() {
-        given: "a difficult question"
+        given:
         difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), 13)
 
-        when: "when it is created a new difficult question for the same question"
+        when:
         difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), 24)
 
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.DIFFICULT_QUESTION_ALREADY_CREATED
-        and: "there is a difficult question in the database"
+        and:
         difficultQuestionRepository.count() == 1L
     }
 
-    def "cannot create a difficult question that does not belong to the course"() {
-        given: "another course"
+    def "cannot create a difficult question that does not belong to the student course"() {
+        given:
         def alienCourse = new Course(COURSE_1_NAME, Course.Type.TECNICO)
         courseRepository.save(alienCourse)
-        and: "a difficult question"
+        and:
         def alienQuestion = new Question()
         alienQuestion.setTitle(QUESTION_1_TITLE)
         alienQuestion.setContent(QUESTION_1_CONTENT)
@@ -103,7 +102,7 @@ class CreateDifficultQuestionTest extends SpockTest {
         questionDetailsRepository.save(questionDetails)
         questionRepository.save(alienQuestion)
 
-        when: "when it is created a new difficult question for the same question"
+        when:
         difficultQuestionService.createDifficultQuestions(dashboard.getId(), alienQuestion.getId(), 22)
 
         then:
@@ -114,11 +113,11 @@ class CreateDifficultQuestionTest extends SpockTest {
     }
 
     @Unroll
-    def "cannot create difficult question with percentage=#percentage"() {
+    def "cannot create difficult question with invalid percentage=#percentage"() {
         when:
         difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), percentage)
 
-        then: "an exception is thrown"
+        then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == CANNOT_CREATE_DIFFICULT_QUESTION
         difficultQuestionRepository.count() == 0L
@@ -129,11 +128,11 @@ class CreateDifficultQuestionTest extends SpockTest {
     }
 
     @Unroll
-    def "cannot create difficult question with dashboardId=#dashboardId"() {
+    def "cannot create difficult question with invalid dashboardId=#dashboardId"() {
         when:
         difficultQuestionService.createDifficultQuestions(dashboardId, question.getId(), 20)
 
-        then: "an exception is thrown"
+        then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == DASHBOARD_NOT_FOUND
         difficultQuestionRepository.count() == 0L
@@ -143,11 +142,11 @@ class CreateDifficultQuestionTest extends SpockTest {
     }
 
     @Unroll
-    def "cannot create difficult question with questionId=#questionId"() {
+    def "cannot create difficult question with invalid questionId=#questionId"() {
         when:
         difficultQuestionService.createDifficultQuestions(dashboard.getId(), questionId, 20)
 
-        then: "an exception is thrown"
+        then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == QUESTION_NOT_FOUND
         difficultQuestionRepository.count() == 0L
@@ -155,7 +154,6 @@ class CreateDifficultQuestionTest extends SpockTest {
         where:
         questionId << [0, 100]
     }
-
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

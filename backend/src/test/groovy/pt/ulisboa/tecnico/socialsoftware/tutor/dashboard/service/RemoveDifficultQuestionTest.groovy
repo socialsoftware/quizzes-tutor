@@ -64,8 +64,8 @@ class RemoveDifficultQuestionTest extends SpockTest {
         dashboardRepository.save(dashboard)
     }
 
-    def "student removes a difficult question from the dashboard"() {
-        given: "a difficult question"
+    def "student removes a difficult question from the dashboard with daysSince=#daysSince"() {
+        given:
         def difficultQuestion = new DifficultQuestion()
         difficultQuestion.setDashboard(dashboard)
         difficultQuestion.setQuestion(question)
@@ -77,9 +77,9 @@ class RemoveDifficultQuestionTest extends SpockTest {
         when:
         difficultQuestionService.removeDifficultQuestion(difficultQuestion.getId())
 
-        then: "it is removed from the database"
+        then:
         difficultQuestionRepository.count() == 0
-        and: "and it is not referenced from the dashboard"
+        and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getDifficultQuestions().size() == 0
 
@@ -88,7 +88,7 @@ class RemoveDifficultQuestionTest extends SpockTest {
     }
 
     @Unroll
-    def "the difficult question cannot be deleted days before #daysSince and removed #removed"() {
+    def "the difficult question cannot be deleted days before #daysSince or not removed #removed"() {
         given: "a difficult question"
         def difficultQuestion = new DifficultQuestion()
         difficultQuestion.setDashboard(dashboard)
@@ -101,10 +101,10 @@ class RemoveDifficultQuestionTest extends SpockTest {
         when:
         difficultQuestionService.removeDifficultQuestion(difficultQuestion.getId())
 
-        then: "an exception is thrown"
+        then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == errorMessage
-        and: "it is in the database"
+        and:
         difficultQuestionRepository.count() == 1
 
         where:
@@ -115,7 +115,7 @@ class RemoveDifficultQuestionTest extends SpockTest {
     }
 
     @Unroll
-    def "the difficult question cannot be deleted because id is #id"() {
+    def "the difficult question cannot be deleted because invalid difficultQuestionId #id"() {
         when:
         difficultQuestionService.removeDifficultQuestion(id)
 

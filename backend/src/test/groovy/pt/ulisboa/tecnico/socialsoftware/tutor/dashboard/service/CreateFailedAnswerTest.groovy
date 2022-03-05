@@ -112,7 +112,7 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
     }
 
     @Unroll
-    def "cannot create failed answer with correct=#correct and completed=#completed"() {
+    def "cannot create failed answer with invalid correct=#correct or completed=#completed"() {
         given:
         def questionAnswer = answerQuiz(true, correct, completed, quizQuestion, quiz)
 
@@ -132,7 +132,7 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
     }
 
     @Unroll
-    def "cannot create failed answer with dashboardId=#dashboardId"() {
+    def "cannot create failed answer with invalid dashboardId=#dashboardId"() {
         given:
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
 
@@ -150,7 +150,7 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
     }
 
     @Unroll
-    def "cannot create failed answer with questionAnswerId=#questionAnswerId"() {
+    def "cannot create failed answer with invalid questionAnswerId=#questionAnswerId"() {
         given:
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
 
