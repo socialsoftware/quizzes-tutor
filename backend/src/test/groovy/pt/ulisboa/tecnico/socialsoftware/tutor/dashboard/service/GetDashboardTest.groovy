@@ -63,20 +63,29 @@ class GetDashboardTest extends SpockTest {
     }
 
     @Unroll
-    def "cannot create a dashboard with courseExecutionId=#courseExecutionId | studentId=#studentId"() {
-        when: "get a dashboard"
-        dashboardService.getDashboard(courseExecutionId, studentId)
+    def "cannot get a dashboard with invalid courseExecutionId=#courseExecutionId"() {
+        when:
+        dashboardService.getDashboard(courseExecutionId, authUserDto.getId())
 
         then: "an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == errorMessage
+        exception.getErrorMessage() == ErrorMessage.COURSE_EXECUTION_NOT_FOUND
 
         where:
-        courseExecutionId       | studentId         || errorMessage
-        0                       | 1                 || ErrorMessage.COURSE_EXECUTION_NOT_FOUND
-        1                       | 0                 || ErrorMessage.USER_NOT_FOUND
-        100                     | 1                 || ErrorMessage.COURSE_EXECUTION_NOT_FOUND
-        1                       | 100               || ErrorMessage.USER_NOT_FOUND
+        courseExecutionId << [0, 100]
+    }
+
+    @Unroll
+    def "cannot get a dashboard with invalid studentId=#studentId"() {
+        when:
+        dashboardService.getDashboard(courseExecutionDto.getCourseExecutionId(), studentId)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.USER_NOT_FOUND
+
+        where:
+        studentId << [0, 100]
     }
 
     @TestConfiguration

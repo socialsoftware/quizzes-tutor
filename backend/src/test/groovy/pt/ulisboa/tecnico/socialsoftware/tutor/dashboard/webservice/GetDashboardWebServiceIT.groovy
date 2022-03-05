@@ -53,7 +53,6 @@ class GetDashboardWebServiceIT extends SpockTest {
         demoStudentLogin()
         and: 'its dashboard'
         def student = authUserService.demoStudentAuth(false).getUser()
-//        def student = authUserRepository.findAuthUserByUsername(DemoUtils.STUDENT_USERNAME).get().getUser()
         def dashboardDto = dashboardService.createDashboard(courseExecutionDto.getCourseExecutionId(), student.getId())
 
         when: 'the web service is invoked'
@@ -73,5 +72,24 @@ class GetDashboardWebServiceIT extends SpockTest {
         dashboardRepository.deleteAll()
     }
 
+    def "demo teacher does not have access"() {
+        given: 'demo teacher'
+        demoTeacherLogin()
+
+        when: 'the web service is invoked'
+        response = restClient.get(
+                path: '/students/dashboards/executions/' + courseExecutionDto.getCourseExecutionId(),
+                requestContentType: 'application/json'
+        )
+
+        then: "the server understands the request but refuses to authorize it"
+        def error = thrown(HttpResponseException)
+        error.response.status == HttpStatus.SC_FORBIDDEN
+        and: 'database is clean'
+        dashboardRepository.findAll().size() == 0
+
+        cleanup:
+        dashboardRepository.deleteAll()
+    }
 
 }
