@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
@@ -16,16 +17,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class RemoveFailedAnswersWebServiceIT extends SpockTest {
+class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
     @LocalServerPort
     private int port
 
     def response
     def courseExecution
-    def option
-    def option2
-    def quiz
-    def question
 
 
     def setup() {
@@ -36,79 +33,24 @@ class RemoveFailedAnswersWebServiceIT extends SpockTest {
         courseExecution = courseService.getDemoCourse()
 
         and: 'a quiz with future conclusionDate'
-        def quizDto = new QuizDto()
-        quizDto.setKey(1)
-        quizDto.setTitle("Quiz Title")
-        quizDto.setType(Quiz.QuizType.PROPOSED.toString())
-        quizDto.setAvailableDate(STRING_DATE_YESTERDAY)
-        quizDto.setConclusionDate(STRING_DATE_TOMORROW)
+        createQuizAndQuestionIT()
 
+        and: 'a student login'
+        demoStudentLogin()
+        student = authUserService.demoStudentAuth(false).getUser()
 
-        question = new QuestionDto()
-        question.setKey(1)
-        question.setTitle("Question Title")
-        question.setContent("Question Content")
-        question.setStatus(Question.Status.AVAILABLE.name())
-        
-        def questionDetails = new MultipleChoiceQuestionDto()
-
-        option = new OptionDto()
-        option.setContent("Option Content")
-        option.setCorrect(true)
-        option.setSequence(0)
-
-        option2 = new OptionDto()
-        option2.setContent("Option Content")
-        option2.setCorrect(false)
-        option2.setSequence(1)
-
-        def options = new ArrayList<OptionDto>()
-        options.add(option)
-        options.add(option2)
-
-        questionDetails.setOptions(options)
-        question.setQuestionDetailsDto(questionDetails)
-
-        def questionDto = questionService.createQuestion(courseExecution.getCourseExecutionId(), question)
-
-        def questions = new ArrayList<QuestionDto>()
-        questions.add(questionDto)
-
-        quiz = quizService.createQuiz(courseExecution.getCourseExecutionId(), quizDto)
+        and: 'a dashboard'
+        def dashboardDto = dashboardService.createDashboard(courseExecution.getCourseExecutionId(), student.getId())
     }
 
-    def "demo student gets failed answers from dashboard then removes it"() {
+    def "student gets failed answers from dashboard then removes it"() {
 
-        given: 'a student login'
-        demoStudentLogin()
-        def student = authUserService.demoStudentAuth(false).getUser()
-
-        and: 'a failed answer to the quiz'
-        def quizAnswer = answerService.createQuizAnswer(student.getId(), quiz.getId())
-
-        def statementQuizDto = new StatementQuizDto()
-        statementQuizDto.id = quiz.getId()
-        statementQuizDto.quizAnswerId = quizAnswer.getId()
-
-        def statementAnswerDto = new StatementAnswerDto()
-        def multipleChoiceAnswerDto = new MultipleChoiceStatementAnswerDetailsDto()
-        multipleChoiceAnswerDto.setOptionId(option.getId())
-        multipleChoiceAnswerDto.setOptionId(option2.getId())
-        statementAnswerDto.setAnswerDetails(multipleChoiceAnswerDto)
-        statementAnswerDto.setSequence(0)
-        statementAnswerDto.setTimeTaken(100)
-        statementAnswerDto.setQuestionAnswerId(question.getId())
-        statementQuizDto.getAnswers().add(statementAnswerDto)
-
-        answerService.concludeQuiz(statementQuizDto)
-
-        and: 'a dashboard with updated answers'
-        def dashboardDto = dashboardService.createDashboard(courseExecution.getCourseExecutionId(), student.getId())
-        failedAnswerService.updateFailedAnswers(dashboardDto.getId())
+        given: 'a failed answer to the quiz'
+        def answer = answerQuizIT()
 
         when: 'the web service is invoked'
         response = restClient.delete(
-                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId() +'/failedanswer/remove/' + statementAnswerDto.getQuestionAnswerId(),
+                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId() +'/failedanswer/remove/' + answer.getQuestionAnswerId(),
                 requestContentType: 'application/json'
         )
 
@@ -116,8 +58,8 @@ class RemoveFailedAnswersWebServiceIT extends SpockTest {
         response != null
         response.status == 200
 
-        and: 'it is in the database'
-        failedAnswerRepository.findAll().size() == 1
+        and: 'it is not in the database'
+        failedAnswerRepository.findAll().size() == 0
 
         and: 'it is not in the dashboard'
         def dashboard = dashboardRepository.findAll().get(0)
@@ -130,6 +72,59 @@ class RemoveFailedAnswersWebServiceIT extends SpockTest {
         failedAnswerRepository.deleteAll()
     }
 
+    def "teacher can't get remove student's failed answers from dashboard"() {
+
+        given: 'a failed answer to the quiz'
+        def answer = answerQuizIT()
+
+        and: 'a teacher login'
+        demoTeacherLogin()
+
+        when: 'the web service is invoked'
+        response = restClient.get(
+                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId() + '/failedanswer/remove/' + answer.getQuestionAnswerId(),
+                requestContentType: 'application/json'
+        )
+
+        then: "no permission to do the request"
+        response != null
+        response.status == 403
+
+        cleanup:
+        dashboardRepository.deleteAll()
+        quizAnswerRepository.deleteAll()
+        userRepository.deleteAll()
+        failedAnswerRepository.deleteAll()
+    }
+
+    def "student can't get another student's failed answers from dashboard"() {
+
+        given: 'a failed answer to the quiz'
+        def answer = answerQuizIT()
+
+        and: 'another student login'
+        demoStudentLogin()
+        def newStudent = authUserService.demoStudentAuth(true).getUser()
+
+        and: 'the new students dashboard'
+        def newDashboardDto = dashboardService.createDashboard(courseExecution.getCourseExecutionId(), newStudent.getId())
+
+        when: 'the web service is invoked'
+        response = restClient.get(
+                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId()+'/failedanswer/remove/' + answer.getQuestionAnswerId(),
+                requestContentType: 'application/json'
+        )
+
+        then: "no permission to do the request"
+        response != null
+        response.status == 403
+
+        cleanup:
+        dashboardRepository.deleteAll()
+        quizAnswerRepository.deleteAll()
+        userRepository.deleteAll()
+        failedAnswerRepository.deleteAll()
+    }
 
     def cleanup(){
         failedAnswerRepository.deleteAll()
