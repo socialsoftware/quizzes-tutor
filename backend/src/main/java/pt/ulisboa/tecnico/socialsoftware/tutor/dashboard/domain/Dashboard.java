@@ -19,7 +19,6 @@ import java.util.ArrayList;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "dashboard")
 public class Dashboard implements DomainEntity {
 
     @Id
@@ -112,15 +111,6 @@ public class Dashboard implements DomainEntity {
         this.difficultQuestions = difficultQuestions;
     }
 
-    public List<FailedAnswer> getFailedAnswers() {
-        return failedAnswers;
-    }
-
-    public void remove() {
-        student.getDashboards().remove(this);
-        student = null;
-    }
-
     public Set<WeeklyScore> getWeeklyScores() {
         return weeklyScores;
     }
@@ -130,6 +120,19 @@ public class Dashboard implements DomainEntity {
             throw new TutorException(ErrorMessage.WEEKLY_SCORE_ALREADY_CREATED);
         }
         weeklyScores.add(weeklyScore);
+    }
+
+    public List<FailedAnswer> getFailedAnswers() {
+        return failedAnswers;
+    }
+
+    public void remove() {
+        student.getDashboards().remove(this);
+        student = null;
+    }
+
+    public List<FailedAnswer> getAllFailedAnswers(){
+        return this.failedAnswers;
     }
 
     public void addDifficultQuestion(DifficultQuestion difficultQuestion) {
@@ -149,6 +152,8 @@ public class Dashboard implements DomainEntity {
 
     public void accept(Visitor visitor) {
     }
+
+    
 
     @Override
     public String toString() {

@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
+
 import java.time.LocalDateTime;
 
 import javax.persistence.*;
@@ -109,5 +110,4 @@ public class FailedAnswer implements DomainEntity {
             ", questionAnswer=" + questionAnswer +
             "}";
     }
-
 }

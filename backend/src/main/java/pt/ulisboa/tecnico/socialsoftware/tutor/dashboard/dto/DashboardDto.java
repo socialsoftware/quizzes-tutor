@@ -13,12 +13,19 @@ public class DashboardDto {
     private String lastCheckFailedAnswers;
     private String lastCheckDifficultQuestions;
     private String lastCheckWeeklyScores;
+    private List<FailedAnswerDto> failedAnswers = new ArrayList<>();
 
     public DashboardDto(Dashboard dashboard) {
         id = dashboard.getId();
         lastCheckFailedAnswers = DateHandler.toISOString(dashboard.getLastCheckFailedAnswers());
         lastCheckDifficultQuestions = DateHandler.toISOString(dashboard.getLastCheckDifficultQuestions());
         lastCheckWeeklyScores = DateHandler.toISOString(dashboard.getLastCheckWeeklyScores());
+
+        this.failedAnswers = dashboard.getFailedAnswers().stream()
+                .map(failedAnswer -> {
+                    return new FailedAnswerDto(failedAnswer);
+                })
+                .collect(Collectors.toList());
     }
 
     public Integer getId() {
@@ -60,6 +67,7 @@ public class DashboardDto {
                 ", lastCheckFailedAnswers=" + lastCheckFailedAnswers +
                 ", lastCheckDifficultAnswers=" + lastCheckDifficultQuestions +
                 ", lastWeeklyStats=" + lastCheckWeeklyScores +
+                ", failedAnswers=" + failedAnswers +
                 "}";
     }
 }
