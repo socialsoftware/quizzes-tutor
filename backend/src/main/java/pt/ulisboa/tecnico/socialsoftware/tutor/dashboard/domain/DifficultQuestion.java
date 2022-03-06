@@ -56,6 +56,7 @@ public class DifficultQuestion implements DomainEntity {
         }
 
         dashboard.getDifficultQuestions().remove(this);
+        dashboard = null;
     }
 
     public Dashboard getDashboard() {
