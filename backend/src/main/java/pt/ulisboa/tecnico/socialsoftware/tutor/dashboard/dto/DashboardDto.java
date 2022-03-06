@@ -60,6 +60,14 @@ public class DashboardDto {
         this.lastCheckWeeklyScores = lastCheckWeeklyScores;
     }
 
+    public List<FailedAnswerDto> getFailedAnswers(){
+        return failedAnswers;
+    }
+
+    public void setFailedAnswers(List<FailedAnswerDto> failedAnswers){
+        this.failedAnswers = failedAnswers;
+    }
+
     @Override
     public String toString() {
         return "DashboardDto{" +

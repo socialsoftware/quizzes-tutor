@@ -1,24 +1,22 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.webservice
 
-import groovyx.net.http.HttpResponseException
+
 import groovyx.net.http.RESTClient
-import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetFailedAnswersWebServiceIT extends SpockTest {
+class RemoveFailedAnswersWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
@@ -79,7 +77,7 @@ class GetFailedAnswersWebServiceIT extends SpockTest {
         quiz = quizService.createQuiz(courseExecution.getCourseExecutionId(), quizDto)
     }
 
-    def "demo student gets failed answers from dashboard"() {
+    def "demo student gets failed answers from dashboard then removes it"() {
 
         given: 'a student login'
         demoStudentLogin()
@@ -104,30 +102,26 @@ class GetFailedAnswersWebServiceIT extends SpockTest {
 
         answerService.concludeQuiz(statementQuizDto)
 
-        and: 'a dashboard'
+        and: 'a dashboard with updated answers'
         def dashboardDto = dashboardService.createDashboard(courseExecution.getCourseExecutionId(), student.getId())
+        failedAnswerService.updateFailedAnswers(dashboardDto.getId())
 
         when: 'the web service is invoked'
-        response = restClient.get(
-                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId() + '/failedanswers/',
+        response = restClient.delete(
+                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId() +'/failedanswer/remove/' + statementAnswerDto.getQuestionAnswerId(),
                 requestContentType: 'application/json'
         )
 
         then: "the request returns 200"
         response != null
         response.status == 200
-        and: "has value"
-        response.data.id != null
+
         and: 'it is in the database'
         failedAnswerRepository.findAll().size() == 1
 
-        and: 'it is the right failed answer'
-        def fa = failedAnswerRepository.findAll().get(0)
-        fa.getQuestionAnswer().getId() == statementAnswerDto.getQuestionAnswerId()
-
-        and: 'it is in the dashboard'
+        and: 'it is not in the dashboard'
         def dashboard = dashboardRepository.findAll().get(0)
-        dashboard.getAllFailedAnswers().get(0).getId() == fa.getId()
+        dashboard.getAllFailedAnswers().isEmpty()
 
         cleanup:
         dashboardRepository.deleteAll()
