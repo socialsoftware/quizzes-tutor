@@ -6,8 +6,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import spock.lang.Unroll
+
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjuster
+import java.time.temporal.TemporalAdjusters
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DASHBOARD_NOT_FOUND
 
@@ -28,12 +36,42 @@ class GetWeeklyScoreTest extends SpockTest {
     }
 
     def "get ordered weekly scores"() {
-        expect: true
+        given: "two weekly scores"
+        TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)
+        LocalDate currentWeek = DateHandler.now().with(weekSunday).toLocalDate()
+        def weeklyScoreTwo = dashboard.getWeeklyScores().iterator().next()
+
+        LocalDate week = DateHandler.now().minusDays(30).with(weekSunday).toLocalDate()
+        WeeklyScore weeklyScoreOne = new WeeklyScore(dashboard, week)
+        weeklyScoreRepository.save(weeklyScoreOne)
+
+        when: "get weekly scores"
+        def weeklyScoreDtos = weeklyScoreService.getWeeklyScores(dashboard.getId())
+
+        then: "get 2 weekly scores ordered by date"
+        weeklyScoreDtos.size() == 2
+        def weeklyScoreDtoOne = weeklyScoreDtos.get(0)
+        weeklyScoreDtoOne.getId() == weeklyScoreTwo.getId()
+        weeklyScoreDtoOne.getNumberAnswered() == weeklyScoreTwo.getNumberAnswered()
+        weeklyScoreDtoOne.getUniquelyAnswered() == weeklyScoreTwo.getUniquelyAnswered()
+        weeklyScoreDtoOne.getPercentageCorrect() == weeklyScoreTwo.getPercentageCorrect()
+        weeklyScoreDtoOne.getWeek() == DateHandler.toISOString(currentWeek.atStartOfDay())
+        def weeklyScoreDtoTwo = weeklyScoreDtos.get(1)
+        weeklyScoreDtoTwo.getId() == weeklyScoreOne.getId()
+        weeklyScoreDtoTwo.getNumberAnswered() == weeklyScoreOne.getNumberAnswered()
+        weeklyScoreDtoTwo.getUniquelyAnswered() == weeklyScoreOne.getUniquelyAnswered()
+        weeklyScoreDtoTwo.getPercentageCorrect() == weeklyScoreOne.getPercentageCorrect()
+        weeklyScoreDtoTwo.getWeek() == DateHandler.toISOString(week.atStartOfDay())
     }
 
     @Unroll
     def "cannot get WeeklyScores with invalid dashboard=#dashboardId"() {
-        expect: true
+        when:
+        weeklyScoreService.getWeeklyScores(dashboardId)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == errorMessage
 
         where:
         dashboardId  || errorMessage
