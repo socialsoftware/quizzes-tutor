@@ -1,8 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -11,15 +9,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.WeeklyScoreDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.WeeklyScoreRepository;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
-import java.sql.SQLException;
 import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -50,6 +48,23 @@ public class WeeklyScoreService {
     weeklyScoreRepository.save(weeklyScore);
 
     return new WeeklyScoreDto(weeklyScore);
+  }
+
+  @Transactional(isolation = Isolation.READ_COMMITTED)
+  public List<WeeklyScoreDto> getWeeklyScores(Integer dashboardId) {
+    if (dashboardId == null) {
+      throw new TutorException(DASHBOARD_NOT_FOUND);
+    }
+
+    Dashboard dashboard = dashboardRepository.findById(dashboardId)
+            .orElseThrow(() -> new TutorException(DASHBOARD_NOT_FOUND, dashboardId));
+
+    Set<WeeklyScore> weeklyScores = dashboard.getWeeklyScores();
+
+    return weeklyScores.stream()
+            .sorted(Comparator.comparing(WeeklyScore::getWeek, Comparator.reverseOrder()))
+            .map(WeeklyScoreDto::new)
+            .collect(Collectors.toList());
   }
 
   @Transactional(isolation = Isolation.READ_COMMITTED)
