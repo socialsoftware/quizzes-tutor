@@ -39,10 +39,14 @@ public class WeeklyScore implements DomainEntity {
     @ManyToOne
     private Dashboard dashboard;
 
+    @OneToOne
+    private SamePercentage samePercentage;
+
     public WeeklyScore() {}
 
     public WeeklyScore(Dashboard dashboard, LocalDate week) {
         setWeek(week);
+        setSamePercentage(new SamePercentage(this));
         setDashboard(dashboard);
     }
 
@@ -70,6 +74,14 @@ public class WeeklyScore implements DomainEntity {
 
     public void setWeek(LocalDate week) {
         this.week = week;
+    }
+
+    public SamePercentage getSamePercentage() {
+        return samePercentage;
+    }
+
+    public void setSamePercentage(SamePercentage samePercentage) {
+        this.samePercentage = samePercentage;
     }
 
     public Dashboard getDashboard() { return dashboard; }
