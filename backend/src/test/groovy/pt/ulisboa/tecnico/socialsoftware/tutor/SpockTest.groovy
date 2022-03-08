@@ -11,7 +11,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepositor
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.DashboardService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.DifficultQuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.WeeklyScoreService
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.SamePercentage
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DifficultQuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.SamePercentageRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.WeeklyScoreRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.FailedAnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository
@@ -174,6 +176,9 @@ class SpockTest extends Specification {
 
     @Autowired
     WeeklyScoreRepository weeklyScoreRepository
+
+    @Autowired
+    SamePercentageRepository samePercentageRepository
 
     @Autowired
     DifficultQuestionService difficultQuestionService

@@ -6,7 +6,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.WeeklyScoreRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
@@ -48,9 +47,12 @@ class CreateWeeklyScoreTest extends SpockTest {
         result.getNumberAnswered() == 0
         result.getUniquelyAnswered() == 0
         result.getPercentageCorrect() == 0
+        result.getSamePercentage().getWeeklyScores().size() == 0
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getWeeklyScores().contains(result)
+        and:
+        samePercentageRepository.findAll().size() == 1
     }
 
     def "create two weekly scores with same percentage"() {
@@ -61,19 +63,19 @@ class CreateWeeklyScoreTest extends SpockTest {
         weeklyScoreRepository.save(weeklyScore)
 
         when:
-        weeklyScoreService.createWeeklyScore(dashboard.getId())
+        def weeklyScoreDto = weeklyScoreService.createWeeklyScore(dashboard.getId())
 
         then:
         weeklyScoreRepository.count() == 2L
-        def result = weeklyScoreRepository.findAll().get(0)
-        result.getId() == 1
+        def result = weeklyScoreRepository.findById(weeklyScore.getId()).get()
+        result.getId() == weeklyScore.getId()
         result.getDashboard().getId() == dashboard.getId()
         result.getNumberAnswered() == 0
         result.getUniquelyAnswered() == 0
         result.getPercentageCorrect() == 0
         result.getSamePercentage().weeklyScores.size() == 1
-        def result2 = weeklyScoreRepository.findAll().get(1)
-        result2.getId() == 2
+        def result2 = weeklyScoreRepository.findById(weeklyScoreDto.getId()).get()
+        result2.getId() == weeklyScoreDto.getId()
         result2.getDashboard().getId() == dashboard.getId()
         result2.getNumberAnswered() == 0
         result2.getUniquelyAnswered() == 0
@@ -83,6 +85,50 @@ class CreateWeeklyScoreTest extends SpockTest {
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getWeeklyScores().contains(result)
+        and:
+        samePercentageRepository.findAll().size() == 2
+        def samePercentage1 = samePercentageRepository.findAll().get(0)
+        samePercentage1.getWeeklyScores().size() == 1
+        def samePercentage2 = samePercentageRepository.findAll().get(1)
+        samePercentage2.getWeeklyScores().size() == 1
+    }
+
+    def "create two weekly scores with different percentage"() {
+        given:
+        TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)
+        LocalDate week = DateHandler.now().with(weekSunday).toLocalDate()
+        def weeklyScore = new WeeklyScore(dashboard, week.minusDays(50))
+        weeklyScore.setPercentageCorrect(30)
+        weeklyScoreRepository.save(weeklyScore)
+
+        when:
+        def weeklyScoreDto = weeklyScoreService.createWeeklyScore(dashboard.getId())
+
+        then:
+        weeklyScoreRepository.count() == 2L
+        def result = weeklyScoreRepository.findById(weeklyScore.getId()).get()
+        result.getId() == weeklyScore.getId()
+        result.getDashboard().getId() == dashboard.getId()
+        result.getNumberAnswered() == 0
+        result.getUniquelyAnswered() == 0
+        result.getPercentageCorrect() == 30
+        result.getSamePercentage().weeklyScores.size() == 0
+        def result2 = weeklyScoreRepository.findById(weeklyScoreDto.getId()).get()
+        result2.getId() == weeklyScoreDto.getId()
+        result2.getDashboard().getId() == dashboard.getId()
+        result2.getNumberAnswered() == 0
+        result2.getUniquelyAnswered() == 0
+        result2.getPercentageCorrect() == 0
+        result2.getSamePercentage().weeklyScores.size() == 0
+        and:
+        def dashboard = dashboardRepository.getById(dashboard.getId())
+        dashboard.getWeeklyScores().contains(result)
+        and:
+        samePercentageRepository.findAll().size() == 2
+        def samePercentage1 = samePercentageRepository.findAll().get(0)
+        samePercentage1.getWeeklyScores().size() == 0
+        def samePercentage2 = samePercentageRepository.findAll().get(1)
+        samePercentage2.getWeeklyScores().size() == 0
     }
 
     def "cannot create multiple WeeklyScore for the same week"() {
@@ -95,7 +141,8 @@ class CreateWeeklyScoreTest extends SpockTest {
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.WEEKLY_SCORE_ALREADY_CREATED
-        weeklyScoreRepository.count() == 1L
+        weeklyScoreRepository.count() == 1
+        samePercentageRepository.findAll().size() == 1
     }
 
     @Unroll

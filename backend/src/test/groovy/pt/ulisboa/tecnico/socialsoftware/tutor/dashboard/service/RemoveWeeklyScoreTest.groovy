@@ -51,17 +51,19 @@ class RemoveWeeklyScoreTest extends SpockTest {
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getWeeklyScores().size() == 0
+        and:
+        samePercentageRepository.findAll().size() == 0
     }
 
     def "remove past weekly score when there is another with the same percentage"() {
         given:
         TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY);
         LocalDate week = DateHandler.now().with(weekSunday).toLocalDate();
-        WeeklyScore weeklyScore = new WeeklyScore(dashboard, week)
+        def weeklyScore = new WeeklyScore(dashboard, week)
         weeklyScoreRepository.save(weeklyScore)
         and:
         LocalDate weekOld = DateHandler.now().minusDays(30).with(weekSunday).toLocalDate();
-        WeeklyScore weeklyScoreOld = new WeeklyScore(dashboard, weekOld)
+        def weeklyScoreOld = new WeeklyScore(dashboard, weekOld)
         weeklyScoreRepository.save(weeklyScoreOld)
 
         when:
@@ -72,6 +74,13 @@ class RemoveWeeklyScoreTest extends SpockTest {
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getWeeklyScores().size() == 1
+        dashboard.getWeeklyScores().contains(weeklyScore)
+        weeklyScoreRepository.findAll().size() == 1
+        and:
+        weeklyScore.getSamePercentage().getWeeklyScores().size() == 0
+        and:
+        samePercentageRepository.findAll().size() == 1
+        weeklyScore.getSamePercentage() == samePercentageRepository.findAll().get(0)
     }
 
     def "cannot remove current weekly score"() {
