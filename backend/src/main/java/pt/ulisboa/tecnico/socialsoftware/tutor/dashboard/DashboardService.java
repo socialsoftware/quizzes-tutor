@@ -57,8 +57,6 @@ public class DashboardService {
         } else {
             return createAndReturnDashboardDto(courseExecution, student);
         }
-
-
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

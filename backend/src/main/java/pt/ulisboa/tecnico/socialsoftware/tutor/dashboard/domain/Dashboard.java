@@ -64,8 +64,6 @@ public class Dashboard implements DomainEntity {
 
         TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY);
         LocalDate week = DateHandler.now().with(weekSunday).toLocalDate();
-
-        new WeeklyScore(this, week);
     }
 
     public Integer getId() {
