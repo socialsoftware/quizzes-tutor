@@ -4,6 +4,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
 import javax.persistence.*;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class SamePercentage implements DomainEntity
@@ -15,8 +17,17 @@ public class SamePercentage implements DomainEntity
     @OneToOne
     private WeeklyScore weeklyScore;
 
+    @OneToMany(cascade = CascadeType.ALL)
+    private Set<WeeklyScore> weeklyScores = new HashSet<>();
+
+    public SamePercentage() {}
+
     public SamePercentage(WeeklyScore weeklyScore) {
         this.weeklyScore = weeklyScore;
+    }
+
+    public void remove() {
+        weeklyScores.clear();
     }
 
     public Integer getId() {
@@ -33,6 +44,14 @@ public class SamePercentage implements DomainEntity
 
     public void setWeeklyScore(WeeklyScore weeklyScore) {
         this.weeklyScore = weeklyScore;
+    }
+
+    public Set<WeeklyScore> getWeeklyScores() {
+        return weeklyScores;
+    }
+
+    public void setWeeklyScores(Set<WeeklyScore> weeklyScores) {
+        this.weeklyScores = weeklyScores;
     }
 
     @Override

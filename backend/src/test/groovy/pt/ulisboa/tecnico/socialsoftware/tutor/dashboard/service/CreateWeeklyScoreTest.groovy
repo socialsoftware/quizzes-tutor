@@ -5,10 +5,18 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.WeeklyScoreRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import spock.lang.Unroll
+
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjuster
+import java.time.temporal.TemporalAdjusters
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DASHBOARD_NOT_FOUND
 
@@ -40,6 +48,38 @@ class CreateWeeklyScoreTest extends SpockTest {
         result.getNumberAnswered() == 0
         result.getUniquelyAnswered() == 0
         result.getPercentageCorrect() == 0
+        and:
+        def dashboard = dashboardRepository.getById(dashboard.getId())
+        dashboard.getWeeklyScores().contains(result)
+    }
+
+    def "create two weekly scores with same percentage"() {
+        given:
+        TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY)
+        LocalDate week = DateHandler.now().with(weekSunday).toLocalDate()
+        def weeklyScore = new WeeklyScore(dashboard, week.minusDays(50))
+        weeklyScoreRepository.save(weeklyScore)
+
+        when:
+        weeklyScoreService.createWeeklyScore(dashboard.getId())
+
+        then:
+        weeklyScoreRepository.count() == 2L
+        def result = weeklyScoreRepository.findAll().get(0)
+        result.getId() == 1
+        result.getDashboard().getId() == dashboard.getId()
+        result.getNumberAnswered() == 0
+        result.getUniquelyAnswered() == 0
+        result.getPercentageCorrect() == 0
+        result.getSamePercentage().weeklyScores.size() == 1
+        def result2 = weeklyScoreRepository.findAll().get(1)
+        result2.getId() == 2
+        result2.getDashboard().getId() == dashboard.getId()
+        result2.getNumberAnswered() == 0
+        result2.getUniquelyAnswered() == 0
+        result2.getPercentageCorrect() == 0
+        result2.getSamePercentage().weeklyScores.size() == 1
+        result2.getSamePercentage().weeklyScores.contains(weeklyScore)
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getWeeklyScores().contains(result)

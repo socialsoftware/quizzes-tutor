@@ -39,14 +39,21 @@ public class WeeklyScore implements DomainEntity {
     @ManyToOne
     private Dashboard dashboard;
 
-    @OneToOne
+    @OneToOne(cascade = CascadeType.ALL)
     private SamePercentage samePercentage;
 
     public WeeklyScore() {}
 
     public WeeklyScore(Dashboard dashboard, LocalDate week) {
         setWeek(week);
-        setSamePercentage(new SamePercentage(this));
+        SamePercentage samePercentage = new SamePercentage(this);
+        dashboard.getWeeklyScores().stream().forEach(weeklyScore -> {
+            if (weeklyScore.getPercentageCorrect() == this.getPercentageCorrect()) {
+                samePercentage.getWeeklyScores().add(weeklyScore);
+                weeklyScore.getSamePercentage().getWeeklyScores().add(this);
+            }
+        });
+        setSamePercentage(samePercentage);
         setDashboard(dashboard);
     }
 
@@ -96,6 +103,11 @@ public class WeeklyScore implements DomainEntity {
 
     public void remove() {
         this.dashboard.getWeeklyScores().remove(this);
+
+        dashboard.getWeeklyScores().stream().filter(weeklyScore -> weeklyScore.getPercentageCorrect() == percentageCorrect).map(WeeklyScore::getSamePercentage)
+                .forEach(samePercentage1 -> samePercentage1.getWeeklyScores().remove(this));
+        samePercentage.remove();
+
         this.dashboard = null;
     }
 
