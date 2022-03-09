@@ -48,12 +48,93 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         result.getQuestionAnswer().getId() == questionAnswer.getId()
         result.getCollected().isAfter(DateHandler.now().minusMinutes(1))
         result.getAnswered() == answered
+        result.getSameQuestion().getFailedAnswers().size() == 0
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getFailedAnswers().contains(result)
+        and:
+        sameQuestionRepository.findAll().size() == 1
 
         where:
         answered << [true, false]
+    }
+
+    def "create two failed answers with the same question"() {
+        given:
+        def questionAnswer = answerQuiz(false, false, true, quizQuestion, quiz)
+        createFailedAnswer(questionAnswer, DateHandler.now())
+        and:
+        def quiz2 = createQuiz(2)
+        def quizQuestion2 = addExistingQuestionToQuiz(quiz2)
+        def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
+
+        when:
+        failedAnswerService.createFailedAnswer(dashboard.getId(), questionAnswer2.getId())
+
+        then:
+        failedAnswerRepository.count() == 2L
+        def result = failedAnswerRepository.findAll().get(0)
+        result.getId() != null
+        result.getDashboard().getId() == dashboard.getId()
+        result.getQuestionAnswer().getId() == questionAnswer.getId()
+        result.getCollected().isAfter(DateHandler.now().minusMinutes(1))
+        !result.getAnswered()
+        result.getSameQuestion().getFailedAnswers().size() == 1
+        def result2 = failedAnswerRepository.findAll().get(1)
+        result2.getId() != null
+        result2.getDashboard().getId() == dashboard.getId()
+        result2.getQuestionAnswer().getId() == questionAnswer2.getId()
+        result2.getCollected().isAfter(DateHandler.now().minusMinutes(1))
+        result2.getAnswered()
+        result2.getSameQuestion().getFailedAnswers().size() == 1
+        and:
+        def dashboard = dashboardRepository.getById(dashboard.getId())
+        dashboard.getFailedAnswers().contains(result)
+        and:
+        sameQuestionRepository.findAll().size() == 2
+        def sameQuestion1 = sameQuestionRepository.findAll().get(0)
+        sameQuestion1.getFailedAnswers().size() == 1
+        def sameQuestion2 = sameQuestionRepository.findAll().get(0)
+        sameQuestion2.getFailedAnswers().size() == 1
+    }
+
+    def "create two failed answers with with different questions"() {
+        given:
+        def questionAnswer = answerQuiz(false, false, true, quizQuestion, quiz)
+        createFailedAnswer(questionAnswer, DateHandler.now())
+        and:
+        def quiz2 = createQuiz(2)
+        def quizQuestion2 = createQuestion(2, quiz2)
+        def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
+
+        when:
+        failedAnswerService.createFailedAnswer(dashboard.getId(), questionAnswer2.getId())
+
+        then:
+        failedAnswerRepository.count() == 2L
+        def result = failedAnswerRepository.findAll().get(0)
+        result.getId() != null
+        result.getDashboard().getId() == dashboard.getId()
+        result.getQuestionAnswer().getId() == questionAnswer.getId()
+        result.getCollected().isAfter(DateHandler.now().minusMinutes(1))
+        !result.getAnswered()
+        result.getSameQuestion().getFailedAnswers().size() == 0
+        def result2 = failedAnswerRepository.findAll().get(1)
+        result2.getId() != null
+        result2.getDashboard().getId() == dashboard.getId()
+        result2.getQuestionAnswer().getId() == questionAnswer2.getId()
+        result2.getCollected().isAfter(DateHandler.now().minusMinutes(1))
+        result2.getAnswered()
+        result2.getSameQuestion().getFailedAnswers().size() == 0
+        and:
+        def dashboard = dashboardRepository.getById(dashboard.getId())
+        dashboard.getFailedAnswers().contains(result)
+        and:
+        sameQuestionRepository.findAll().size() == 2
+        def sameQuestion1 = sameQuestionRepository.findAll().get(0)
+        sameQuestion1.getFailedAnswers().size() == 0
+        def sameQuestion2 = sameQuestionRepository.findAll().get(0)
+        sameQuestion2.getFailedAnswers().size() == 0
     }
 
     def "cannot create two failed answer for the same question answer"() {
@@ -69,7 +150,8 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.FAILED_ANSWER_ALREADY_CREATED
         and:
-        failedAnswerRepository.count() == 1L
+        failedAnswerRepository.count() == 1
+        sameQuestionRepository.count() == 1
     }
 
     def "cannot create a failed answer that does not belong to the course execution"() {
@@ -88,7 +170,8 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_CREATE_FAILED_ANSWER
         and:
-        failedAnswerRepository.count() == 0L
+        failedAnswerRepository.count() == 0
+        sameQuestionRepository.count() == 0
     }
 
     def "cannot create a failed answer that was not answered by the student"() {
@@ -108,7 +191,8 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_CREATE_FAILED_ANSWER
         and:
-        failedAnswerRepository.count() == 0L
+        failedAnswerRepository.count() == 0
+        sameQuestionRepository.count() == 0
     }
 
     @Unroll
@@ -123,7 +207,8 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.CANNOT_CREATE_FAILED_ANSWER
         and:
-        failedAnswerRepository.count() == 0L
+        failedAnswerRepository.count() == 0
+        sameQuestionRepository.count() == 0
 
         where:
         correct | completed
@@ -143,7 +228,8 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.DASHBOARD_NOT_FOUND
         and:
-        failedAnswerRepository.count() == 0L
+        failedAnswerRepository.count() == 0
+        sameQuestionRepository.count() == 0
 
         where:
         dashboardId << [0, 100]
@@ -161,7 +247,8 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.QUESTION_ANSWER_NOT_FOUND
         and:
-        failedAnswerRepository.count() == 0L
+        failedAnswerRepository.count() == 0
+        sameQuestionRepository.count() == 0
 
         where:
         questionAnswerId << [0, 100]
