@@ -11,12 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
 import java.time.LocalDateTime
@@ -25,12 +21,9 @@ class FailedAnswersSpockTest extends SpockTest {
 
     def dashboard
     def student
-    def optionKO
-
-    def quiz
     def question
-    def option1
-    def option2
+    def option
+    def optionKO
 
     def createQuiz(count) {
         def quiz = new Quiz()
@@ -44,7 +37,7 @@ class FailedAnswersSpockTest extends SpockTest {
     }
 
     def createQuestion(count, quiz) {
-        def question = new Question()
+        question = new Question()
         question.setKey(count)
         question.setTitle("Question Title")
         question.setCourse(externalCourse)
@@ -52,7 +45,7 @@ class FailedAnswersSpockTest extends SpockTest {
         question.setQuestionDetails(questionDetails)
         questionRepository.save(question)
 
-        def option = new Option()
+        option = new Option()
         option.setContent("Option Content")
         option.setCorrect(true)
         option.setSequence(0)
@@ -65,6 +58,12 @@ class FailedAnswersSpockTest extends SpockTest {
         optionKO.setQuestionDetails(questionDetails)
         optionRepository.save(optionKO)
 
+        def quizQuestion = new QuizQuestion(quiz, question, 0)
+        quizQuestionRepository.save(quizQuestion)
+        return quizQuestion
+    }
+
+    def addExistingQuestionToQuiz(quiz, question=question) {
         def quizQuestion = new QuizQuestion(quiz, question, 0)
         quizQuestionRepository.save(quizQuestion)
         return quizQuestion
@@ -108,50 +107,9 @@ class FailedAnswersSpockTest extends SpockTest {
         return failedAnswer
     }
 
-    def createQuizAndQuestionIT(){
-        def quizDto = new QuizDto()
-        quizDto.setKey(1)
-        quizDto.setTitle("Quiz Title")
-        quizDto.setType(Quiz.QuizType.PROPOSED.toString())
-        quizDto.setAvailableDate(STRING_DATE_YESTERDAY)
-        quizDto.setConclusionDate(STRING_DATE_TOMORROW)
-
-
-        question = new QuestionDto()
-        question.setKey(1)
-        question.setTitle("Question Title")
-        question.setContent("Question Content")
-        question.setStatus(Question.Status.AVAILABLE.name())
-
-        def questionDetails = new MultipleChoiceQuestionDto()
-
-        option1 = new OptionDto()
-        option1.setContent("Option Content")
-        option1.setCorrect(true)
-        option1.setSequence(0)
-
-        option2 = new OptionDto()
-        option2.setContent("Option Content")
-        option2.setCorrect(false)
-        option2.setSequence(1)
-
-        def options = new ArrayList<OptionDto>()
-        options.add(option1)
-        options.add(option2)
-
-        questionDetails.setOptions(options)
-        question.setQuestionDetailsDto(questionDetails)
-
-        def questionDto = questionService.createQuestion(courseExecution.getCourseExecutionId(), question)
-
-        def questions = new ArrayList<QuestionDto>()
-        questions.add(questionDto)
-
-        quiz = quizService.createQuiz(courseExecution.getCourseExecutionId(), quizDto)
-    }
-
-    def answerQuizIT(){
-        def quizAnswer = answerService.createQuizAnswer(student.getId(), quiz.getId())
+    def answerQuizIT(answered, correct, question, quiz) {
+        def quizAnswer = new QuizAnswer(student, quiz)
+        quizAnswerRepository.save(quizAnswer)
 
         def statementQuizDto = new StatementQuizDto()
         statementQuizDto.id = quiz.getId()
@@ -159,16 +117,18 @@ class FailedAnswersSpockTest extends SpockTest {
 
         def statementAnswerDto = new StatementAnswerDto()
         def multipleChoiceAnswerDto = new MultipleChoiceStatementAnswerDetailsDto()
-        multipleChoiceAnswerDto.setOptionId(option1.getId())
-        multipleChoiceAnswerDto.setOptionId(option2.getId())
+
+        if (answered && correct) multipleChoiceAnswerDto.setOptionId(option.getId())
+        else if (answered && !correct ) multipleChoiceAnswerDto.setOptionId(optionKO.getId())
+
         statementAnswerDto.setAnswerDetails(multipleChoiceAnswerDto)
         statementAnswerDto.setSequence(0)
         statementAnswerDto.setTimeTaken(100)
-        statementAnswerDto.setQuestionAnswerId(question.getId())
+        statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
         statementQuizDto.getAnswers().add(statementAnswerDto)
 
         answerService.concludeQuiz(statementQuizDto)
 
-        return statementAnswerDto
+        return quizAnswer.getQuestionAnswers().get(0)
     }
 }
