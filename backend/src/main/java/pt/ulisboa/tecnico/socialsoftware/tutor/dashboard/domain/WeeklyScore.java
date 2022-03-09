@@ -39,11 +39,23 @@ public class WeeklyScore implements DomainEntity {
     @ManyToOne
     private Dashboard dashboard;
 
+    @OneToOne(cascade = CascadeType.ALL)
+    private SamePercentage samePercentage;
+
     public WeeklyScore() {}
 
     public WeeklyScore(Dashboard dashboard, LocalDate week) {
         setWeek(week);
+        SamePercentage samePercentage = new SamePercentage(this);
+        setSamePercentage(samePercentage);
         setDashboard(dashboard);
+
+        dashboard.getWeeklyScores().stream().forEach(weeklyScore -> {
+            if (weeklyScore.getPercentageCorrect() == this.getPercentageCorrect() && weeklyScore != this) {
+                samePercentage.getWeeklyScores().add(weeklyScore);
+                weeklyScore.getSamePercentage().getWeeklyScores().add(this);
+            }
+        });
     }
 
     public Integer getId() { return id; }
@@ -72,6 +84,14 @@ public class WeeklyScore implements DomainEntity {
         this.week = week;
     }
 
+    public SamePercentage getSamePercentage() {
+        return samePercentage;
+    }
+
+    public void setSamePercentage(SamePercentage samePercentage) {
+        this.samePercentage = samePercentage;
+    }
+
     public Dashboard getDashboard() { return dashboard; }
 
     public void setDashboard(Dashboard dashboard) {
@@ -84,6 +104,11 @@ public class WeeklyScore implements DomainEntity {
 
     public void remove() {
         this.dashboard.getWeeklyScores().remove(this);
+
+        dashboard.getWeeklyScores().stream().filter(weeklyScore -> weeklyScore.getPercentageCorrect() == percentageCorrect).map(WeeklyScore::getSamePercentage)
+                .forEach(samePercentage1 -> samePercentage1.getWeeklyScores().remove(this));
+        samePercentage.remove();
+
         this.dashboard = null;
     }
 

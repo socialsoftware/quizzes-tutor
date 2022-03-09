@@ -9,7 +9,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 
+import java.time.DayOfWeek;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.temporal.TemporalAdjuster;
+import java.time.temporal.TemporalAdjusters;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.List;
@@ -37,13 +41,13 @@ public class Dashboard implements DomainEntity {
     @ManyToOne
     private Student student;
 
-    @OneToMany(mappedBy = "dashboard")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dashboard", orphanRemoval = true)
     private Set<WeeklyScore> weeklyScores = new HashSet<>();
 
-    @OneToMany(mappedBy = "dashboard")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dashboard", orphanRemoval = true)
     private Set<DifficultQuestion> difficultQuestions = new HashSet<>();
 
-    @OneToMany(mappedBy = "dashboard")
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "dashboard", orphanRemoval = true)
     private final List<FailedAnswer> failedAnswers = new ArrayList<>();
 
     public Dashboard() {
@@ -56,6 +60,9 @@ public class Dashboard implements DomainEntity {
         setLastCheckWeeklyScores(currentDate);
         setCourseExecution(courseExecution);
         setStudent(student);
+
+        TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY);
+        LocalDate week = DateHandler.now().with(weekSunday).toLocalDate();
     }
 
     public Integer getId() {

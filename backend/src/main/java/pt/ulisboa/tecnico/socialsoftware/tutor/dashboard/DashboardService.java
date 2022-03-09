@@ -15,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.StudentRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND;
@@ -35,7 +36,7 @@ public class DashboardService {
     private DashboardRepository dashboardRepository;
 
     @Autowired
-    private DifficultQuestionService difficultQuestionService;
+    private UserRepository userRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public DashboardDto getDashboard(int courseExecutionId, int studentId) {
@@ -90,6 +91,19 @@ public class DashboardService {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(DASHBOARD_NOT_FOUND, dashboardId));
         dashboard.remove();
         dashboardRepository.delete(dashboard);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void resetDemoDashboards() {
+        userRepository.findAll()
+                .stream()
+                .filter(user -> user.getAuthUser().isDemoStudent())
+                .map(Student.class::cast)
+                .flatMap(student -> student.getDashboards().stream())
+                .forEach(dashboard -> {
+                    dashboard.remove();
+                    this.dashboardRepository.delete(dashboard);
+                });
     }
 
 }
