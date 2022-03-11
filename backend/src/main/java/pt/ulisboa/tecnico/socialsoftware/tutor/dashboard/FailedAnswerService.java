@@ -20,9 +20,12 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Collection;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -74,20 +77,27 @@ public class FailedAnswerService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<FailedAnswerDto> updateFailedAnswers(int dashboardId) {
+    public List<FailedAnswerDto> updateFailedAnswers(int dashboardId, String startDate, String endDate) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
         int courseExecutionId = dashboard.getCourseExecution().getId();
         int studentId = dashboard.getStudent().getId();
 
+        LocalDateTime start, end;
+        if (startDate == null) start = dashboard.getLastCheckFailedAnswers();
+        else start = LocalDateTime.parse(startDate, DateTimeFormatter.ISO_DATE_TIME);
+        if (endDate == null) end = LocalDateTime.now();
+        else end = LocalDateTime.parse(endDate, DateTimeFormatter.ISO_DATE_TIME);
+
         List<QuizAnswer> quizAnswers = quizAnswerRepository.findByStudentAndExecutionCourseId(courseExecutionId, studentId)
                 .stream()
-                .filter((quizAnswer -> (quizAnswer.getAnswerDate().isAfter(dashboard.getLastCheckFailedAnswers()) && quizAnswer.isCompleted())))
+                .filter((quizAnswer -> (quizAnswer.getAnswerDate().isAfter(start) && quizAnswer.getAnswerDate().isBefore(end)&& quizAnswer.isCompleted())))
                 .collect(Collectors.toList());
 
         return quizAnswers.stream()
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
+                .filter(qa -> dashboard.getFailedAnswers().stream().noneMatch(fa -> Objects.equals(fa.getQuestionAnswer().getId(), qa.getId())))
                 .filter(Predicate.not(QuestionAnswer::isCorrect))
                 .map(questionAnswer -> createFailedAnswer(dashboardId, questionAnswer.getId()))
                 .collect(Collectors.toList());

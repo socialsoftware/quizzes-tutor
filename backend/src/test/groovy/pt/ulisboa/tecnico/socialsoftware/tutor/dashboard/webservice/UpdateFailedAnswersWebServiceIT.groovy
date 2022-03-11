@@ -1,21 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.webservice
 
-import com.fasterxml.jackson.databind.ObjectMapper
+import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
+import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
@@ -23,44 +16,40 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
     private int port
 
     def response
-    def courseExecution
-
+    def quiz
+    def quizQuestion
 
     def setup() {
         given: 'a rest client'
         restClient = new RESTClient("http://localhost:" + port)
 
         and: 'a demo course execution'
-        courseExecution = courseService.getDemoCourse()
+        createExternalCourseAndExecution()
 
-        and: 'a quiz with future conclusionDate'
-        createQuizAndQuestionIT()
-
-        and: 'a student login'
-        demoStudentLogin()
-        student = authUserService.demoStudentAuth(false).getUser()
+        and: 'a student'
+        student = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
+        student.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+        student.addCourse(externalCourseExecution)
+        userRepository.save(student)
 
         and: 'a dashboard'
-        def dashboardDto = dashboardService.createDashboard(courseExecution.getCourseExecutionId(), student.getId())
+        dashboard = new Dashboard(externalCourseExecution, student)
+        dashboardRepository.save(dashboard)
+
+        and: 'a failed answer to the quiz'
+        quiz = createQuiz(1)
+        quizQuestion = createQuestion(1, quiz)
+        answerQuizIT(true, false, quiz)
     }
 
-    def "student removes failed answers from dashboard, then re-adds it"() {
-
-        given: 'a failed answer to the quiz'
-        def answer = answerQuizIT()
-
-        and: 'the failed answer is removed'
-        failedAnswerService.removeFailedAnswer(dashboardDto.getFailedAnswers().get(0))
+    def "student updates failed answers"() {
+        given: 'a student login'
+        createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
 
         when: 'the web service is invoked'
 
-        //TODO CHANGE TO POST WITH CORRECT DATA
-        def mapper = new ObjectMapper()
-        def stringJson = mapper.writeValueAsString(DateHandler.now().minusDays(1),DateHandler.now())
-
-        response = restClient.post(
-                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId() + '/failedanswers/update/' + answer.getQuestionAnswerId(),
-                body: stringJson,
+        response = restClient.get(
+                path: '/students/dashboards/' + dashboard.getId() + '/failedanswers/update',
                 requestContentType: 'application/json'
         )
 
@@ -70,109 +59,77 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         and: "has value"
         response.data.id != null
 
-        and: 'it is still in the database'
+        and: 'it is in the database'
         failedAnswerRepository.findAll().size() == 1
-
-        and: 'it is the right failed answer'
-        def fa = failedAnswerRepository.findAll().get(0)
-        fa.getQuestionAnswer().getId() == answer.getQuestionAnswerId()
-
-        and: 'it is in the dashboard'
-        def dashboard = dashboardRepository.findAll().get(0)
-        dashboard.getAllFailedAnswers().size() == 1
-        dashboard.getAllFailedAnswers().get(0).getId() == fa.getId()
-
-        cleanup:
-        dashboardRepository.deleteAll()
-        quizAnswerRepository.deleteAll()
-        userRepository.deleteAll()
-        failedAnswerRepository.deleteAll()
+        def failedAnswer = response.data.get(0)
+        failedAnswer.id == failedAnswerRepository.findAll().get(0).getId()
     }
 
-    def "teacher cant re-add failed answers to a students dashboard"() {
+    def "student updates failed answers in specific time period"() {
+        given: 'a student login'
+        createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
+        and: 'a wrong quiz answer'
+        def quiz2 = createQuiz(2)
+        quizQuestion = createQuestion(2, quiz2)
+        answerQuizIT(true, false, quiz2)
 
-        given: 'a failed answer to the quiz'
-        def answer = answerQuizIT()
+        when: 'the web service is invoked'
+        response = restClient.get(
+                path: '/students/dashboards/' + dashboard.getId() + '/failedanswers/update',
+                query: ['startDate': STRING_DATE_BEFORE, 'endDate': STRING_DATE_LATER],
+                requestContentType: 'application/json'
+        )
 
-        and: 'the failed answer is removed'
-        failedAnswerService.removeFailedAnswer(dashboardDto.getFailedAnswers().get(0))
+        then: "the request returns 200"
+        response != null
+        response.status == 200
+        and: "has value"
+        response.data.id != null
 
-        and: 'a teacher login'
+        and: 'the two failed answers are in the database'
+        failedAnswerRepository.findAll().size() == 2
+        def failedAnswer = response.data.get(0)
+        failedAnswer.id == failedAnswerRepository.findAll().get(0).getId()
+        def failedAnswer2 = response.data.get(1)
+        failedAnswer2.id == failedAnswerRepository.findAll().get(1).getId()
+    }
+
+    def "teacher cant update student's failed answers"() {
+        given: 'a teacher login'
         demoTeacherLogin()
 
         when: 'the web service is invoked'
-
-        //TODO CHANGE TO POST WITH CORRECT DATA
-        def mapper = new ObjectMapper()
-        def stringJson = mapper.writeValueAsString(DateHandler.now().minusDays(1),DateHandler.now())
-
-        response = restClient.post(
-                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId() + '/failedanswers/update/' + answer.getQuestionAnswerId(),
-                body: stringJson,
+        response = restClient.get(
+                path: '/students/dashboards/' + dashboard.getId() + '/failedanswers/update',
                 requestContentType: 'application/json'
         )
 
-        then: "no permission to do the request"
-        response != null
-        response.status == 403
-
-        cleanup:
-        dashboardRepository.deleteAll()
-        quizAnswerRepository.deleteAll()
-        userRepository.deleteAll()
-        failedAnswerRepository.deleteAll()
+        then: "the server understands the request but refuses to authorize it"
+        def error = thrown(HttpResponseException)
+        error.response.status == HttpStatus.SC_FORBIDDEN
     }
 
     def "student cant re-add another students failed answers"() {
-
-        given: 'a failed answer to the quiz'
-        def answer = answerQuizIT()
-
-        and: 'the failed answer is removed'
-        failedAnswerService.removeFailedAnswer(dashboardDto.getFailedAnswers().get(0))
-
-        and: 'another student login'
-        demoStudentLogin()
-        def newStudent = authUserService.demoStudentAuth(true).getUser()
-
-        and: 'a new dashboard'
-        def newDashboardDto = dashboardService.createDashboard(courseExecution.getCourseExecutionId(), newStudent.getId())
+        given: 'another student'
+        def newStudent = new Student(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, false, AuthUser.Type.EXTERNAL)
+        newStudent.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
+        userRepository.save(newStudent)
+        createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
 
         when: 'the web service is invoked'
-
-        //TODO CHANGE TO POST WITH CORRECT DATA
-        def mapper = new ObjectMapper()
-        def stringJson = mapper.writeValueAsString(DateHandler.now().minusDays(1),DateHandler.now())
-
-        response = restClient.post(
-                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId() + '/failedanswers/update/' + answer.getQuestionAnswerId(),
-                body: stringJson,
+        response = restClient.get(
+                path: '/students/dashboards/' + dashboard.getId() + '/failedanswers/update',
                 requestContentType: 'application/json'
         )
 
-        then: "no permission to do the request"
-        response != null
-        response.status == 403
-
-        cleanup:
-        dashboardRepository.deleteAll()
-        quizAnswerRepository.deleteAll()
-        userRepository.deleteAll()
-        failedAnswerRepository.deleteAll()
+        then: "the server understands the request but refuses to authorize it"
+        def error = thrown(HttpResponseException)
+        error.response.status == HttpStatus.SC_FORBIDDEN
     }
 
     def cleanup(){
-        failedAnswerRepository.deleteAll()
         dashboardRepository.deleteAll()
-        quizAnswerRepository.deleteAll()
         userRepository.deleteAll()
-        quizQuestionRepository.deleteAll()
-        questionRepository.deleteAll()
-        questionDetailsRepository.deleteAll()
-        quizRepository.deleteAll()
-        courseExecutionRepository.deleteAll()
         courseRepository.deleteAll()
     }
-
-
 }

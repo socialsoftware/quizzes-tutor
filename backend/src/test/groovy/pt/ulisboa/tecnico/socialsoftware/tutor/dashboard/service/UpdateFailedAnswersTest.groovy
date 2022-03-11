@@ -40,7 +40,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         def questionAnswer = answerQuiz(answered, false, true, quizQuestion, quiz)
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId())
+        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
 
         then: "a failed answer is saved in the database"
         failedAnswerRepository.count() == 1L
@@ -70,7 +70,32 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId())
+        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+
+        then: "both failed answers are saved in the database"
+        failedAnswerRepository.count() == 2L
+        def failedAnswer = failedAnswerRepository.findAll().get(0)
+        failedAnswer.getQuestionAnswer().getId() == questionAnswer.getId()
+        def failedAnswer2 = failedAnswerRepository.findAll().get(1)
+        failedAnswer2.getQuestionAnswer().getId() == questionAnswer2.getId()
+
+        and: "the updated failed answer is in the student dashboard"
+        def dashboard = dashboardRepository.getById(dashboard.getId())
+        dashboard.getFailedAnswers().size() == 2
+        dashboard.getFailedAnswers().contains(failedAnswer)
+        dashboard.getFailedAnswers().contains(failedAnswer2)
+    }
+
+    def "updates failed answers in specific time period"() {
+        given:
+        def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz, LocalDateTime.now().minusDays(1))
+
+        def quiz2 = createQuiz(2)
+        def quizQuestion2 = createQuestion(2, quiz2)
+        def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2, LocalDateTime.now().minusDays(1))
+
+        when:
+        failedAnswerService.updateFailedAnswers(dashboard.getId(), STRING_DATE_BEFORE, STRING_DATE_TODAY)
 
         then: "both failed answers are saved in the database"
         failedAnswerRepository.count() == 2L
@@ -91,7 +116,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         answerQuiz(true, correct, completed, quizQuestion, quiz)
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId())
+        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
 
         then: "no failed answer is updated in the database"
         failedAnswerRepository.findAll().size() == 0L
@@ -119,7 +144,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         answerQuiz(true, false, true, quizQuestion, quiz)
 
         when:
-        failedAnswerService.getFailedAnswers(dashboard.getId())
+        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
 
         then: "no failed answer is updated in the database"
         failedAnswerRepository.findAll().size() == 0L
@@ -141,7 +166,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         answerQuiz(true, false, true, quizQuestion, quiz)
 
         when:
-        failedAnswerService.getFailedAnswers(dashboard.getId())
+        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
 
         then: "no failed answer is updated in the database"
         failedAnswerRepository.findAll().size() == 0L
@@ -156,7 +181,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
     @Unroll
     def "cannot update failed answers with dashboardId=#dashboardId"() {
         when:
-        failedAnswerService.updateFailedAnswers(dashboardId)
+        failedAnswerService.updateFailedAnswers(dashboardId, null, null)
 
         then:
         def exception = thrown(TutorException)

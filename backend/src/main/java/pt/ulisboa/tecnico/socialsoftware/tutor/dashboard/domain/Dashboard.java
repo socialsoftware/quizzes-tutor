@@ -138,10 +138,6 @@ public class Dashboard implements DomainEntity {
         student = null;
     }
 
-    public List<FailedAnswer> getAllFailedAnswers(){
-        return this.failedAnswers;
-    }
-
     public void addDifficultQuestion(DifficultQuestion difficultQuestion) {
         if (difficultQuestions.stream()
                 .anyMatch(difficultQuestion1 -> difficultQuestion1.getQuestion() == difficultQuestion.getQuestion())) {

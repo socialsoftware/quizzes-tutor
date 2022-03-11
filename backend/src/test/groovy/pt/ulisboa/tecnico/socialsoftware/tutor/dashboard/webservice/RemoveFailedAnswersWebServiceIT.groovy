@@ -1,20 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.webservice
 
-
+import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
+import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+
+import java.time.LocalDateTime
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
@@ -23,34 +19,41 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
 
     def response
     def courseExecution
-
+    def quiz
+    def quizQuestion
+    def failedAnswer
 
     def setup() {
         given: 'a rest client'
         restClient = new RESTClient("http://localhost:" + port)
 
         and: 'a demo course execution'
-        courseExecution = courseService.getDemoCourse()
+        createExternalCourseAndExecution()
 
-        and: 'a quiz with future conclusionDate'
-        createQuizAndQuestionIT()
-
-        and: 'a student login'
-        demoStudentLogin()
-        student = authUserService.demoStudentAuth(false).getUser()
+        and: 'a student'
+        student = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
+        student.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
+        student.addCourse(externalCourseExecution)
+        userRepository.save(student)
 
         and: 'a dashboard'
-        def dashboardDto = dashboardService.createDashboard(courseExecution.getCourseExecutionId(), student.getId())
+        dashboard = new Dashboard(externalCourseExecution, student)
+        dashboardRepository.save(dashboard)
+
+        and: 'a failed answer to a quiz'
+        quiz = createQuiz(1)
+        quizQuestion = createQuestion(1, quiz)
+        def questionAnswer = answerQuizIT(true, false, quiz)
+        failedAnswer = createFailedAnswer(questionAnswer, LocalDateTime.now().minusDays(8))
     }
 
     def "student gets failed answers from dashboard then removes it"() {
-
-        given: 'a failed answer to the quiz'
-        def answer = answerQuizIT()
+        given: 'a student login'
+        createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
 
         when: 'the web service is invoked'
         response = restClient.delete(
-                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId() +'/failedanswer/remove/' + answer.getQuestionAnswerId(),
+                path: '/students/failedanswers/' + failedAnswer.getId(),
                 requestContentType: 'application/json'
         )
 
@@ -60,82 +63,44 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
 
         and: 'it is not in the database'
         failedAnswerRepository.findAll().size() == 0
-
-        and: 'it is not in the dashboard'
-        def dashboard = dashboardRepository.findAll().get(0)
-        dashboard.getAllFailedAnswers().isEmpty()
-
-        cleanup:
-        dashboardRepository.deleteAll()
-        quizAnswerRepository.deleteAll()
-        userRepository.deleteAll()
-        failedAnswerRepository.deleteAll()
     }
 
     def "teacher can't get remove student's failed answers from dashboard"() {
-
-        given: 'a failed answer to the quiz'
-        def answer = answerQuizIT()
-
-        and: 'a teacher login'
+        given: 'a teacher login'
         demoTeacherLogin()
 
         when: 'the web service is invoked'
-        response = restClient.get(
-                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId() + '/failedanswer/remove/' + answer.getQuestionAnswerId(),
+        response = restClient.delete(
+                path: '/students/failedanswers/' + failedAnswer.getId(),
                 requestContentType: 'application/json'
         )
 
-        then: "no permission to do the request"
-        response != null
-        response.status == 403
-
-        cleanup:
-        dashboardRepository.deleteAll()
-        quizAnswerRepository.deleteAll()
-        userRepository.deleteAll()
-        failedAnswerRepository.deleteAll()
+        then: "the server understands the request but refuses to authorize it"
+        def error = thrown(HttpResponseException)
+        error.response.status == HttpStatus.SC_FORBIDDEN
     }
 
     def "student can't get another student's failed answers from dashboard"() {
-
-        given: 'a failed answer to the quiz'
-        def answer = answerQuizIT()
-
-        and: 'another student login'
-        demoStudentLogin()
-        def newStudent = authUserService.demoStudentAuth(true).getUser()
-
-        and: 'the new students dashboard'
-        def newDashboardDto = dashboardService.createDashboard(courseExecution.getCourseExecutionId(), newStudent.getId())
+        given: 'another student'
+        def newStudent = new Student(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, false, AuthUser.Type.EXTERNAL)
+        newStudent.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
+        userRepository.save(newStudent)
+        createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
 
         when: 'the web service is invoked'
-        response = restClient.get(
-                path: '/students/dashboards/executions/' + courseExecution.getCourseExecutionId()+'/failedanswer/remove/' + answer.getQuestionAnswerId(),
+        response = restClient.delete(
+                path: '/students/failedanswers/' + failedAnswer.getId(),
                 requestContentType: 'application/json'
         )
 
-        then: "no permission to do the request"
-        response != null
-        response.status == 403
-
-        cleanup:
-        dashboardRepository.deleteAll()
-        quizAnswerRepository.deleteAll()
-        userRepository.deleteAll()
-        failedAnswerRepository.deleteAll()
+        then: "the server understands the request but refuses to authorize it"
+        def error = thrown(HttpResponseException)
+        error.response.status == HttpStatus.SC_FORBIDDEN
     }
 
     def cleanup(){
-        failedAnswerRepository.deleteAll()
         dashboardRepository.deleteAll()
-        quizAnswerRepository.deleteAll()
         userRepository.deleteAll()
-        quizQuestionRepository.deleteAll()
-        questionRepository.deleteAll()
-        questionDetailsRepository.deleteAll()
-        quizRepository.deleteAll()
-        courseExecutionRepository.deleteAll()
         courseRepository.deleteAll()
     }
 

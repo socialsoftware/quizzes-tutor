@@ -110,7 +110,7 @@ class FailedAnswersSpockTest extends SpockTest {
         return failedAnswer
     }
 
-    def answerQuizIT(answered, correct, question, quiz) {
+    def answerQuizIT(answered, correct, quiz, student=student) {
         def quizAnswer = new QuizAnswer(student, quiz)
         quizAnswerRepository.save(quizAnswer)
 
