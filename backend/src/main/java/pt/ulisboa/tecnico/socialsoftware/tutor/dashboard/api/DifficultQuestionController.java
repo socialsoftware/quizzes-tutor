@@ -12,7 +12,7 @@ import java.util.List;
 
 @RestController
 public class DifficultQuestionController {
-    private static final Logger logger = LoggerFactory.getLogger(FailedAnswerController.class);
+    private static final Logger logger = LoggerFactory.getLogger(DifficultQuestionController.class);
 
     @Autowired
     private DifficultQuestionService difficultQuestionService;
@@ -21,27 +21,15 @@ public class DifficultQuestionController {
         this.difficultQuestionService = difficultQuestionService;
     }
 
-    @PostMapping("/students/dashboards/{dashboardId}/difficultquestions/{questionAnswerId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
-    public DifficultQuestionDto createDifficultQuestion(@PathVariable int dashboardId, @PathVariable int questionAnswerId) {
-        return this.difficultQuestionService.createDifficultQuestion(dashboardId, questionAnswerId);
-    }
-
-    @DeleteMapping("/students/difficultquestions/{difficultQuestionId}")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#difficultQuestionId, 'DIFFICULTQUESTION.ACCESS')")
-    public void removeDifficultQuestion(@PathVariable int difficultQuestionId) {
-        this.difficultQuestionService.removeDifficultQuestion(difficultQuestionId);
-    }
-
     @GetMapping("/students/dashboards/{dashboardId}/difficultquestions")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
     public List<DifficultQuestionDto> getFailedAnswers(@PathVariable int dashboardId) {
         return this.difficultQuestionService.getDifficultQuestions(dashboardId);
     }
 
-    @GetMapping("/students/dashboards/{dashboardId}/difficultquestions/update")
+    @PutMapping("/students/dashboards/{dashboardId}/difficultquestions/update")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
-    public List<DifficultQuestionDto> updateDifficultQuestions(@PathVariable int dashboardId, @RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
-        return this.difficultQuestionService.updateDifficultQuestions(dashboardId, startDate, endDate);
+    public List<DifficultQuestionDto> updateDifficultQuestions(@PathVariable int dashboardId) {
+        return this.difficultQuestionService.updateDifficultQuestions(dashboardId);
     }
 }

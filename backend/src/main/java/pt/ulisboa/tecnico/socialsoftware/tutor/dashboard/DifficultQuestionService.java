@@ -65,40 +65,36 @@ public class DifficultQuestionService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<DifficultQuestionDto> updateDifficultQuestions(int dashboardId) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
-        List <DifficultQuestionDto> lastDifficultQuestionsDtos = new ArrayList();
-        List <Question> usedQuestions = new ArrayList<>();
+        List<DifficultQuestionDto> lastDifficultQuestionsDtos = new ArrayList();
+        List<Question> usedQuestions = new ArrayList<>();
 
-        for(DifficultQuestion dq: dashboard.getDifficultQuestions()){ //TODO: Change when Dashboard changed
+        for (DifficultQuestion dq : dashboard.getDifficultQuestions()) { //TODO: Change when Dashboard changed
             if ((dq.getCollected().isAfter(LocalDateTime.now().minusDays(7))) &&
-                    !dq.isRemoved()){
+                    !dq.isRemoved()) {
                 dq.update();
-                if(dq.getPercentage() < 0.25) //TODO: Depends of changes in difficulty
+                if (dq.getPercentage() < 0.25) //TODO: Depends of changes in difficulty
                 {
                     lastDifficultQuestionsDtos.add(new DifficultQuestionDto(dq));
                     usedQuestions.add(dq.getQuestion());
                 }
-            }
-            else if(dq.getCollected().isBefore(LocalDateTime.now().minusDays(7))){
+            } else if (dq.getCollected().isBefore(LocalDateTime.now().minusDays(7))) {
                 dq.remove();
                 difficultQuestionRepository.delete(dq);
             }
         }
 
-        List<Quiz> lastWeekQuizzes = dashboard.getCourseExecution().getQuizzes(). stream()
+        List<Quiz> lastWeekQuizzes = dashboard.getCourseExecution().getQuizzes().stream()
                 .filter(q -> q.getConclusionDate().isAfter(LocalDateTime.now().minusDays(7)))
                 .collect(Collectors.toList());
 
-        for(Quiz quiz: lastWeekQuizzes){
-            for(QuizQuestion q: quiz.getQuizQuestions()){
-                if(!usedQuestions.contains(q.getQuestion())){ //TODO: Might not work due to lack of equals
-                    DifficultQuestion dq = new DifficultQuestion();
-                    dq.setRemoved(false);
-                    dq.setQuestion(q.getQuestion());
-                    dq.setCollected(LocalDateTime.now());
-                    dq.setDashboard(dashboard);
-                    dq.update();
+        for (Quiz quiz : lastWeekQuizzes) {
+            for (QuizQuestion quizQuestion : quiz.getQuizQuestions()) {
+                if (!usedQuestions.contains(quizQuestion.getQuestion())) { //TODO: Might not work due to lack of equals
+                    question = quizQuestion.getQuestion();
 
-                    lastDifficultQuestionsDtos.add(new DifficultQuestionDto(dq));
+                    difficultQuestionDto = createDifficultQuestion(dashboardId, questin.getId(), question.getDifficulty());
+
+                    lastDifficultQuestionsDtos.add(difficultQuestionDto);
                 }
             }
         }
