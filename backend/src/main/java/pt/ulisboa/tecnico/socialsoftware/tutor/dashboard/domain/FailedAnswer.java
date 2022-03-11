@@ -54,8 +54,7 @@ public class FailedAnswer implements DomainEntity {
         setQuestionAnswer(questionAnswer);
         setDashboard(dashboard);
 
-        SameQuestion sameQuestion = new SameQuestion(this);
-        setSameQuestion(sameQuestion);
+        setSameQuestion(new SameQuestion(this));
 
         dashboard.getFailedAnswers().stream().forEach(failedAnswer -> {
             if (failedAnswer.getQuestionAnswer().getQuestion().getId() == this.getQuestionAnswer().getQuestion().getId()
@@ -72,7 +71,7 @@ public class FailedAnswer implements DomainEntity {
         }
 
         dashboard.getFailedAnswers().stream().filter(failedAnswer -> failedAnswer.getQuestionAnswer().getQuestion().getId()
-                        == getQuestionAnswer().getQuestion().getId()).map(FailedAnswer::getSameQuestion)
+                        == getQuestionAnswer().getQuestion().getId() && failedAnswer != this).map(FailedAnswer::getSameQuestion)
                 .forEach(sameQuestion1 -> sameQuestion1.getFailedAnswers().remove(this));
         sameQuestion.remove();
 

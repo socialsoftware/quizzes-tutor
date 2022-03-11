@@ -22,7 +22,7 @@ public class DifficultQuestionDto implements Serializable {
     }
 
     public DifficultQuestionDto(DifficultQuestion difficultQuestion){
-        setId(id);
+        setId(difficultQuestion.getId());
         setPercentage(difficultQuestion.getPercentage());
         setRemovedDate(difficultQuestion.getRemovedDate());
         setRemoved(difficultQuestion.isRemoved());

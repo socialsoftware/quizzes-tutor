@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
@@ -14,6 +15,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import spock.lang.Unroll
+
+import java.time.DayOfWeek
+import java.time.LocalDate
+import java.time.temporal.TemporalAdjuster
+import java.time.temporal.TemporalAdjusters
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CANNOT_REMOVE_DIFFICULT_QUESTION
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DIFFICULT_QUESTION_NOT_FOUND
@@ -66,10 +72,7 @@ class RemoveDifficultQuestionTest extends SpockTest {
 
     def "student removes a difficult question from the dashboard with daysSince=#daysSince"() {
         given:
-        def difficultQuestion = new DifficultQuestion()
-        difficultQuestion.setDashboard(dashboard)
-        difficultQuestion.setQuestion(question)
-        difficultQuestion.setPercentage(24)
+        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
         difficultQuestion.setRemovedDate(DateHandler.now().minusDays(daysSince))
         difficultQuestion.setRemoved(true)
         difficultQuestionRepository.save(difficultQuestion)
@@ -82,9 +85,51 @@ class RemoveDifficultQuestionTest extends SpockTest {
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getDifficultQuestions().size() == 0
+        and:
+        sameDifficultyRepository.findAll().size() == 0
 
         where:
         daysSince << [0, 1, 6]
+    }
+
+    def "remove difficult question when there is another with the same difficulty"() {
+        given:
+        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
+        difficultQuestionRepository.save(difficultQuestion)
+        and:
+        def otherQuestion = new Question()
+        otherQuestion.setTitle(QUESTION_1_TITLE)
+        otherQuestion.setContent(QUESTION_1_CONTENT)
+        otherQuestion.setStatus(Question.Status.AVAILABLE)
+        otherQuestion.setNumberOfAnswers(2)
+        otherQuestion.setNumberOfCorrect(1)
+        otherQuestion.setCourse(externalCourse)
+        def questionDetails = new MultipleChoiceQuestion()
+        otherQuestion.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
+        questionRepository.save(otherQuestion)
+        and:
+        def otherDifficultQuestion = new DifficultQuestion(dashboard, otherQuestion, 24)
+        difficultQuestionRepository.save(otherDifficultQuestion)
+        and:
+        difficultQuestion.setRemovedDate(DateHandler.now().minusDays(1))
+        difficultQuestion.setRemoved(true)
+
+        when:
+        difficultQuestionService.removeDifficultQuestion(difficultQuestion.getId())
+
+        then:
+        difficultQuestionRepository.count() == 1L
+        and:
+        def dashboard = dashboardRepository.getById(dashboard.getId())
+        dashboard.getDifficultQuestions().size() == 1
+        dashboard.getDifficultQuestions().contains(otherDifficultQuestion)
+        difficultQuestionRepository.findAll().size() == 1
+        and:
+        otherDifficultQuestion.getSameDifficulty().getDifficultQuestions().size() == 0
+        and:
+        sameDifficultyRepository.findAll().size() == 1
+        otherDifficultQuestion.getSameDifficulty() == sameDifficultyRepository.findAll().get(0)
     }
 
     @Unroll

@@ -1,25 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import javax.persistence.*;
-import java.time.DayOfWeek;
 import java.time.LocalDate;
-import java.time.temporal.TemporalAdjuster;
-import java.time.temporal.TemporalAdjusters;
-import java.util.Collection;
-import java.util.Objects;
-import java.util.Set;
-import java.util.stream.Collectors;
-
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.WEEKLY_SCORE_ALREADY_CREATED;
 
 @Entity
 public class WeeklyScore implements DomainEntity {
@@ -46,8 +31,7 @@ public class WeeklyScore implements DomainEntity {
 
     public WeeklyScore(Dashboard dashboard, LocalDate week) {
         setWeek(week);
-        SamePercentage samePercentage = new SamePercentage(this);
-        setSamePercentage(samePercentage);
+        setSamePercentage(new SamePercentage(this));
         setDashboard(dashboard);
 
         dashboard.getWeeklyScores().stream().forEach(weeklyScore -> {
@@ -56,6 +40,16 @@ public class WeeklyScore implements DomainEntity {
                 weeklyScore.getSamePercentage().getWeeklyScores().add(this);
             }
         });
+    }
+
+    public void remove() {
+        this.dashboard.getWeeklyScores().remove(this);
+
+        dashboard.getWeeklyScores().stream().filter(weeklyScore -> weeklyScore.getPercentageCorrect() == percentageCorrect && weeklyScore != this).map(WeeklyScore::getSamePercentage)
+                .forEach(samePercentage1 -> samePercentage1.getWeeklyScores().remove(this));
+        samePercentage.remove();
+
+        this.dashboard = null;
     }
 
     public Integer getId() { return id; }
@@ -100,16 +94,6 @@ public class WeeklyScore implements DomainEntity {
     }
 
     public void accept(Visitor visitor) {
-    }
-
-    public void remove() {
-        this.dashboard.getWeeklyScores().remove(this);
-
-        dashboard.getWeeklyScores().stream().filter(weeklyScore -> weeklyScore.getPercentageCorrect() == percentageCorrect).map(WeeklyScore::getSamePercentage)
-                .forEach(samePercentage1 -> samePercentage1.getWeeklyScores().remove(this));
-        samePercentage.remove();
-
-        this.dashboard = null;
     }
 
     @Override

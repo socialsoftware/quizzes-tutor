@@ -5,6 +5,7 @@ import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -13,7 +14,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import spock.lang.Unroll
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
-
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CANNOT_CREATE_DIFFICULT_QUESTION
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DASHBOARD_NOT_FOUND
@@ -62,13 +62,138 @@ class CreateDifficultQuestionTest extends SpockTest {
         result.isRemoved() == false
         result.getRemovedDate() == null
         result.getPercentage() == percentage
+        result.getSameDifficulty().getDifficultQuestions().size() == 0
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getDifficultQuestions().contains(result)
         dashboard.getLastCheckDifficultQuestions().isAfter(DateHandler.now().minusMinutes(1))
+        and:
+        sameDifficultyRepository.findAll().size() == 1
 
         where:
         percentage << [0, 12, 24]
+    }
+
+    def "create two difficulty questions with same difficulty"() {
+        given:
+        def otherQuestion = new Question()
+        otherQuestion.setTitle(QUESTION_1_TITLE)
+        otherQuestion.setContent(QUESTION_1_CONTENT)
+        otherQuestion.setStatus(Question.Status.AVAILABLE)
+        otherQuestion.setNumberOfAnswers(2)
+        otherQuestion.setNumberOfCorrect(1)
+        otherQuestion.setCourse(externalCourse)
+        def questionDetails = new MultipleChoiceQuestion()
+        otherQuestion.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
+        questionRepository.save(otherQuestion)
+        and:
+        def otherDifficultQuestionDto = difficultQuestionService.createDifficultQuestions(dashboard.getId(), otherQuestion.getId(), 20)
+
+        when:
+        def difficultQuestionDto = difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), 20)
+
+        then:
+        difficultQuestionRepository.count() == 2L
+        def result = difficultQuestionRepository.findById(otherDifficultQuestionDto.getId()).get()
+        result.getId() == otherDifficultQuestionDto.getId()
+        result.getSameDifficulty().getDifficultQuestions().size() == 1
+        def result2 = difficultQuestionRepository.findById(difficultQuestionDto.getId()).get()
+        result2.getId() == difficultQuestionDto.getId()
+        result2.getSameDifficulty().getDifficultQuestions().size() == 1
+        and:
+        def dashboard = dashboardRepository.getById(dashboard.getId())
+        dashboard.getDifficultQuestions().contains(result)
+        and:
+        sameDifficultyRepository.findAll().size() == 2
+        def sameDifficulty1 = sameDifficultyRepository.findAll().get(0)
+        sameDifficulty1.getDifficultQuestions().size() == 1
+        !sameDifficulty1.getDifficultQuestions().contains(sameDifficulty1.getDifficultQuestion())
+        def sameDifficulty2 = sameDifficultyRepository.findAll().get(1)
+        sameDifficulty2.getDifficultQuestions().size() == 1
+        !sameDifficulty2.getDifficultQuestions().contains(sameDifficulty2.getDifficultQuestion())
+    }
+
+    def "create two difficulty questions with same difficulty but one is removed"() {
+        given:
+        def otherQuestion = new Question()
+        otherQuestion.setTitle(QUESTION_1_TITLE)
+        otherQuestion.setContent(QUESTION_1_CONTENT)
+        otherQuestion.setStatus(Question.Status.AVAILABLE)
+        otherQuestion.setNumberOfAnswers(2)
+        otherQuestion.setNumberOfCorrect(1)
+        otherQuestion.setCourse(externalCourse)
+        def questionDetails = new MultipleChoiceQuestion()
+        otherQuestion.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
+        questionRepository.save(otherQuestion)
+        and:
+        def otherDifficultQuestion = new DifficultQuestion(dashboard, otherQuestion, 20)
+        otherDifficultQuestion.setRemovedDate(DateHandler.now().minusDays(1))
+        otherDifficultQuestion.setRemoved(true)
+        difficultQuestionRepository.save(otherDifficultQuestion)
+
+        when:
+        def difficultQuestionDto = difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), 20)
+
+        then:
+        difficultQuestionRepository.count() == 2L
+        def result = difficultQuestionRepository.findById(otherDifficultQuestion.getId()).get()
+        result.getId() == otherDifficultQuestion.getId()
+        result.getSameDifficulty().getDifficultQuestions().size() == 0
+        def result2 = difficultQuestionRepository.findById(difficultQuestionDto.getId()).get()
+        result2.getId() == difficultQuestionDto.getId()
+        result2.getSameDifficulty().getDifficultQuestions().size() == 0
+        and:
+        def dashboard = dashboardRepository.getById(dashboard.getId())
+        dashboard.getDifficultQuestions().contains(result)
+        and:
+        sameDifficultyRepository.findAll().size() == 2
+        def sameDifficulty1 = sameDifficultyRepository.findAll().get(0)
+        sameDifficulty1.getDifficultQuestions().size() == 0
+        !sameDifficulty1.getDifficultQuestions().contains(sameDifficulty1.getDifficultQuestion())
+        def sameDifficulty2 = sameDifficultyRepository.findAll().get(1)
+        sameDifficulty2.getDifficultQuestions().size() == 0
+        !sameDifficulty2.getDifficultQuestions().contains(sameDifficulty2.getDifficultQuestion())
+    }
+
+    def "create two difficulty questions with different difficulty"() {
+        given:
+        def otherQuestion = new Question()
+        otherQuestion.setTitle(QUESTION_1_TITLE)
+        otherQuestion.setContent(QUESTION_1_CONTENT)
+        otherQuestion.setStatus(Question.Status.AVAILABLE)
+        otherQuestion.setNumberOfAnswers(2)
+        otherQuestion.setNumberOfCorrect(1)
+        otherQuestion.setCourse(externalCourse)
+        def questionDetails = new MultipleChoiceQuestion()
+        otherQuestion.setQuestionDetails(questionDetails)
+        questionDetailsRepository.save(questionDetails)
+        questionRepository.save(otherQuestion)
+        and:
+        def otherDifficultQuestionDto = difficultQuestionService.createDifficultQuestions(dashboard.getId(), otherQuestion.getId(), 20)
+
+        when:
+        def difficultQuestionDto = difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), 15)
+
+        then:
+        difficultQuestionRepository.count() == 2L
+        def result = difficultQuestionRepository.findById(otherDifficultQuestionDto.getId()).get()
+        result.getId() == otherDifficultQuestionDto.getId()
+        result.getSameDifficulty().getDifficultQuestions().size() == 0
+        def result2 = difficultQuestionRepository.findById(difficultQuestionDto.getId()).get()
+        result2.getId() == difficultQuestionDto.getId()
+        result2.getSameDifficulty().getDifficultQuestions().size() == 0
+        and:
+        def dashboard = dashboardRepository.getById(dashboard.getId())
+        dashboard.getDifficultQuestions().contains(result)
+        and:
+        sameDifficultyRepository.findAll().size() == 2
+        def sameDifficulty1 = sameDifficultyRepository.findAll().get(0)
+        sameDifficulty1.getDifficultQuestions().size() == 0
+        !sameDifficulty1.getDifficultQuestions().contains(sameDifficulty1.getDifficultQuestion())
+        def sameDifficulty2 = sameDifficultyRepository.findAll().get(1)
+        sameDifficulty2.getDifficultQuestions().size() == 0
     }
 
     def "cannot create two difficult questions for the same question"() {
