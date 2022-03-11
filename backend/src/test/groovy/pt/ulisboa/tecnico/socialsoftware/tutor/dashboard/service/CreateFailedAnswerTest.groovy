@@ -80,7 +80,7 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         result.getCollected().isAfter(DateHandler.now().minusMinutes(1))
         !result.getAnswered()
         result.getSameQuestion().getFailedAnswers().size() == 1
-        def result2 = failedAnswerRepository.findAll().get(0)
+        def result2 = failedAnswerRepository.findAll().get(1)
         result2.getId() != null
         result2.getDashboard().getId() == dashboard.getId()
         result2.getQuestionAnswer().getId() == questionAnswer2.getId()
@@ -93,9 +93,9 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         and:
         sameQuestionRepository.findAll().size() == 2
         def sameQuestion1 = sameQuestionRepository.findAll().get(0)
-        sameQuestion1.getFailedAnswers().size == 1
+        sameQuestion1.getFailedAnswers().size() == 1
         def sameQuestion2 = sameQuestionRepository.findAll().get(0)
-        sameQuestion2.getFailedAnswers().size == 1
+        sameQuestion2.getFailedAnswers().size() == 1
     }
 
     def "create two failed answers with with different questions"() {
@@ -119,7 +119,7 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         result.getCollected().isAfter(DateHandler.now().minusMinutes(1))
         !result.getAnswered()
         result.getSameQuestion().getFailedAnswers().size() == 0
-        def result2 = failedAnswerRepository.findAll().get(0)
+        def result2 = failedAnswerRepository.findAll().get(1)
         result2.getId() != null
         result2.getDashboard().getId() == dashboard.getId()
         result2.getQuestionAnswer().getId() == questionAnswer2.getId()
@@ -132,9 +132,9 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         and:
         sameQuestionRepository.findAll().size() == 2
         def sameQuestion1 = sameQuestionRepository.findAll().get(0)
-        sameQuestion1.getFailedAnswers().size == 0
+        sameQuestion1.getFailedAnswers().size() == 0
         def sameQuestion2 = sameQuestionRepository.findAll().get(0)
-        sameQuestion2.getFailedAnswers().size == 0
+        sameQuestion2.getFailedAnswers().size() == 0
     }
 
     def "cannot create two failed answer for the same question answer"() {
