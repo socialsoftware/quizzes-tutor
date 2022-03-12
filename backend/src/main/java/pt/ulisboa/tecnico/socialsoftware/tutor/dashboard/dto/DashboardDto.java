@@ -1,9 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.stream.Collectors;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;

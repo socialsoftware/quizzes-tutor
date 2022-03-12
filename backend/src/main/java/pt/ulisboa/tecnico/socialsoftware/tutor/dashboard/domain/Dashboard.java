@@ -49,7 +49,7 @@ public class Dashboard implements DomainEntity {
     private Set<DifficultQuestion> difficultQuestions = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dashboard", orphanRemoval = true)
-    private final List<FailedAnswer> failedAnswers = new ArrayList<>();
+    private Set<FailedAnswer> failedAnswers = new HashSet<>();
 
     public Dashboard() {
     }
@@ -61,9 +61,6 @@ public class Dashboard implements DomainEntity {
         setLastCheckWeeklyScores(currentDate);
         setCourseExecution(courseExecution);
         setStudent(student);
-
-        TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY);
-        LocalDate week = DateHandler.now().with(weekSunday).toLocalDate();
     }
 
     public Integer getId() {
@@ -119,7 +116,7 @@ public class Dashboard implements DomainEntity {
         this.difficultQuestions = difficultQuestions;
     }
 
-    public List<FailedAnswer> getFailedAnswers() {
+    public Set<FailedAnswer> getFailedAnswers() {
         return failedAnswers;
     }
 
