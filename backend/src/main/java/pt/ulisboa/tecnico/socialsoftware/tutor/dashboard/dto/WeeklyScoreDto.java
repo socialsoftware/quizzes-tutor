@@ -5,8 +5,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.io.Serializable;
-import java.time.LocalDate;
-import java.util.Objects;
 
 public class WeeklyScoreDto implements Serializable {
 
