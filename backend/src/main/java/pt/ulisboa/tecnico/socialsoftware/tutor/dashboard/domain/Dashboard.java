@@ -23,7 +23,6 @@ import java.util.ArrayList;
 import javax.persistence.*;
 
 @Entity
-@Table(name = "dashboard")
 public class Dashboard implements DomainEntity {
 
     @Id
@@ -57,6 +56,11 @@ public class Dashboard implements DomainEntity {
     public Dashboard(CourseExecution courseExecution, Student student) {
         setCourseExecution(courseExecution);
         setStudent(student);
+    }
+
+    public void remove() {
+        student.getDashboards().remove(this);
+        student = null;
     }
 
     public Integer getId() {
@@ -116,11 +120,6 @@ public class Dashboard implements DomainEntity {
         return failedAnswers;
     }
 
-    public void remove() {
-        student.getDashboards().remove(this);
-        student = null;
-    }
-
     public Set<WeeklyScore> getWeeklyScores() {
         return weeklyScores;
     }
@@ -149,6 +148,8 @@ public class Dashboard implements DomainEntity {
 
     public void accept(Visitor visitor) {
     }
+
+    
 
     @Override
     public String toString() {

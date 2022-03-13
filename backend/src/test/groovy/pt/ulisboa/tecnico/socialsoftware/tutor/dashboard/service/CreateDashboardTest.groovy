@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import spock.lang.Unroll
 
 @DataJpaTest
-class CreateDashboardTest extends SpockTest {
+    class CreateDashboardTest extends SpockTest {
     def student
 
     def setup() {

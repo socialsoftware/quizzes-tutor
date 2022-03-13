@@ -10,6 +10,8 @@ public class DashboardDto {
     private String lastCheckDifficultQuestions;
     private String lastCheckWeeklyScores;
 
+    public DashboardDto() {}
+
     public DashboardDto(Dashboard dashboard) {
         id = dashboard.getId();
         lastCheckFailedAnswers = DateHandler.toISOString(dashboard.getLastCheckFailedAnswers());
@@ -54,7 +56,7 @@ public class DashboardDto {
         return "DashboardDto{" +
                 "id=" + id +
                 ", lastCheckFailedAnswers=" + lastCheckFailedAnswers +
-                ", lastCheckDifficultAnswers=" + lastCheckDifficultQuestions +
+                ", lastCheckDifficultQuestions" + lastCheckDifficultQuestions +
                 ", lastWeeklyStats=" + lastCheckWeeklyScores +
                 "}";
     }

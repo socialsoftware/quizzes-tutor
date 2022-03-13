@@ -8,12 +8,9 @@ import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.DashboardService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.WeeklyScoreService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.DashboardDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.WeeklyScoreDto;
 
 import java.security.Principal;
-import java.util.List;
 
 @RestController
 public class DashboardController {
@@ -21,9 +18,6 @@ public class DashboardController {
 
     @Autowired
     private DashboardService dashboardService;
-
-    @Autowired
-    private WeeklyScoreService weeklyScoreService;
 
     DashboardController(DashboardService dashboardService) {
         this.dashboardService = dashboardService;
@@ -37,15 +31,4 @@ public class DashboardController {
         return dashboardService.getDashboard(courseExecutionId, studentId);
     }
 
-    @GetMapping("/students/dashboards/{dashboardId}/weeklyScores")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
-    public List<WeeklyScoreDto> getWeeklyScores(@PathVariable Integer dashboardId) {
-        return weeklyScoreService.getWeeklyScores(dashboardId);
-    }
-
-    @PostMapping("/students/dashboards/{dashboardId}/weeklyScores")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
-    public void updateWeeklyScores(@PathVariable Integer dashboardId) {
-        weeklyScoreService.updateWeeklyScore(dashboardId);
-    }
 }

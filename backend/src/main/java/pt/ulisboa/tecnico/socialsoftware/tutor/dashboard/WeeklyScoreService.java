@@ -20,6 +20,7 @@ import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -80,7 +81,7 @@ public class WeeklyScoreService {
         createMissingWeeklyScores(dashboard, now);
 
         dashboard.getWeeklyScores().stream()
-                .filter(weeklyScore -> !weeklyScore.isClosed())
+                .filter(Predicate.not(WeeklyScore::isClosed))
                 .forEach(weeklyScore -> weeklyScore.computeStatistics());
 
         dashboard.setLastCheckWeeklyScores(now);
