@@ -72,7 +72,7 @@ public class DifficultQuestionService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<DifficultQuestionDto> updateDifficultQuestions(int dashboardId) {
+    public void updateDifficultQuestions(int dashboardId) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
         List<DifficultQuestionDto> lastDifficultQuestionsDtos = new ArrayList<>();
         List<Question> usedQuestions = new ArrayList<>();
@@ -108,6 +108,6 @@ public class DifficultQuestionService {
             }
         }
 
-        return lastDifficultQuestionsDtos;
+        ///return lastDifficultQuestionsDtos;
     }
 }

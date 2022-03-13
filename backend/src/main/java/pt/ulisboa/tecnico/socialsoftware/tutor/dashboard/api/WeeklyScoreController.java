@@ -5,10 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.DashboardService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.FailedAnswerService;
@@ -30,16 +27,22 @@ public class WeeklyScoreController {
         this.weeklyScoreService = weeklyScoreService;
     }
 
-    @GetMapping("/students/dashboards/{dashboardId}/weeklyScores")
+    @GetMapping("/students/dashboards/{dashboardId}/weeklyscores")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
     public List<WeeklyScoreDto> getWeeklyScores(@PathVariable Integer dashboardId) {
         return weeklyScoreService.getWeeklyScores(dashboardId);
     }
 
-    @PostMapping("/students/dashboards/{dashboardId}/weeklyScores")
+    @PutMapping("/students/dashboards/{dashboardId}/weeklyscores")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
     public void updateWeeklyScores(@PathVariable Integer dashboardId) {
         weeklyScoreService.updateWeeklyScore(dashboardId);
+    }
+
+    @DeleteMapping("/students/weeklyscores/{weeklysScoreId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#weeklysScoreId, 'WEEKLYSCORE.ACCESS')")
+    public void deleteWeeklyScore(@PathVariable Integer weeklysScoreId) {
+        weeklyScoreService.removeWeeklyScore(weeklysScoreId);
     }
 
 }

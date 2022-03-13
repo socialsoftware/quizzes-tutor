@@ -6,10 +6,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.DifficultQuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.DifficultQuestionDto;
@@ -31,9 +28,15 @@ public class DifficultQuestionController {
         return this.difficultQuestionService.getDifficultQuestions(dashboardId);
     }
 
-    @PutMapping("/students/dashboards/{dashboardId}/difficultquestions/update")
+    @PutMapping("/students/dashboards/{dashboardId}/difficultquestions")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
-    public List<DifficultQuestionDto> updateDifficultQuestions(@PathVariable int dashboardId) {
-        return this.difficultQuestionService.updateDifficultQuestions(dashboardId);
+    public void updateDifficultQuestions(@PathVariable int dashboardId) {
+        this.difficultQuestionService.updateDifficultQuestions(dashboardId);
+    }
+
+    @DeleteMapping("/students/difficultquestions/{difficultQuestionId}")
+    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#difficultQuestionId, 'DIFFICULTQUESTION.ACCESS')")
+    public void deleteDifficultQuestions(@PathVariable int difficultQuestionId) {
+        this.difficultQuestionService.removeDifficultQuestion(difficultQuestionId);
     }
 }

@@ -28,18 +28,18 @@ class UpdateWeeklyScoreWebServiceIT extends SpockTest {
     }
 
     def "demo student gets its weekly scores"() {
-        given: 'a demon student'
+        given:
         demoStudentLogin()
 
-        when: 'the web service is invoked'
-        response = restClient.post(
-                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyScores',
+        when:
+        response = restClient.put(
+                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyscores',
                 requestContentType: 'application/json'
         )
 
-        then: "the request returns 200"
+        then:
         response.status == 200
-        and: 'it is in the database'
+        and:
         weeklyScoreRepository.findAll().size() == 1
 
         cleanup:
@@ -48,19 +48,40 @@ class UpdateWeeklyScoreWebServiceIT extends SpockTest {
     }
 
     def "demo teacher does not have access"() {
-        given: 'demo teacher'
+        given:
         demoTeacherLogin()
 
-        when: 'the web service is invoked'
-        response = restClient.post(
-                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyScores',
+        when:
+        response = restClient.put(
+                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyscores',
                 requestContentType: 'application/json'
         )
 
-        then: "the server understands the request but refuses to authorize it"
+        then:
         def error = thrown(HttpResponseException)
         error.response.status == HttpStatus.SC_FORBIDDEN
-        and: 'the database is clean'
+        and:
+        weeklyScoreRepository.findAll().size() == 0
+
+        cleanup:
+        weeklyScoreRepository.deleteAll()
+        dashboardRepository.deleteAll()
+    }
+
+    def "student cant update another students failed answers"() {
+        given:
+        demoStudentLogin(true)
+
+        when:
+        response = restClient.put(
+                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyscores',
+                requestContentType: 'application/json'
+        )
+
+        then:
+        def error = thrown(HttpResponseException)
+        error.response.status == HttpStatus.SC_FORBIDDEN
+        and:
         weeklyScoreRepository.findAll().size() == 0
 
         cleanup:

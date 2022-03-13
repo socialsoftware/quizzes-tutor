@@ -27,7 +27,7 @@ public class FailedAnswerController {
         return this.failedAnswerService.getFailedAnswers(dashboardId);
     }
 
-    @GetMapping("/students/dashboards/{dashboardId}/failedanswers/update")
+    @PutMapping("/students/dashboards/{dashboardId}/failedanswers")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
     public void updateFailedAnswers(@PathVariable int dashboardId, @RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
         this.failedAnswerService.updateFailedAnswers(dashboardId, startDate, endDate);

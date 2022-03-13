@@ -29,18 +29,18 @@ class GetWeeklyScoreWebServiceIT extends SpockTest {
     }
 
     def "demo student gets its weekly scores"() {
-        given: 'a demon student'
+        given:
         demoStudentLogin()
 
-        when: 'the web service is invoked'
+        when:
         response = restClient.get(
-                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyScores',
+                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyscores',
                 requestContentType: 'application/json'
         )
 
-        then: "the request returns 200"
+        then:
         response.status == 200
-        and: "has value"
+        and:
         response.data.id != null
         response.data.size() == 1
         response.data.get(0).id != null
@@ -53,16 +53,35 @@ class GetWeeklyScoreWebServiceIT extends SpockTest {
     }
 
     def "demo teacher does not have access"() {
-        given: 'demo teacher'
+        given:
         demoTeacherLogin()
 
-        when: 'the web service is invoked'
+        when:
         response = restClient.get(
-                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyScores',
+                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyscores',
                 requestContentType: 'application/json'
         )
 
-        then: "the server understands the request but refuses to authorize it"
+        then:
+        def error = thrown(HttpResponseException)
+        error.response.status == HttpStatus.SC_FORBIDDEN
+
+        cleanup:
+        weeklyScoreRepository.deleteAll()
+        dashboardRepository.deleteAll()
+    }
+
+    def "new demo student does not have access"() {
+        given:
+        demoStudentLogin(true)
+
+        when:
+        response = restClient.get(
+                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyscores',
+                requestContentType: 'application/json'
+        )
+
+        then:
         def error = thrown(HttpResponseException)
         error.response.status == HttpStatus.SC_FORBIDDEN
 

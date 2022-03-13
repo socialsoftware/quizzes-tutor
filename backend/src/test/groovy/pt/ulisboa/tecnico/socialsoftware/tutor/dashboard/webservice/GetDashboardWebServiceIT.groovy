@@ -21,27 +21,27 @@ class GetDashboardWebServiceIT extends SpockTest {
     def courseExecutionDto
 
     def setup() {
-        given: 'a rest client'
+        given:
         restClient = new RESTClient("http://localhost:" + port)
-        and: 'the demo course execution'
+        and:
         courseExecutionDto = courseService.getDemoCourse()
     }
 
     def "demo student gets a new dashboard"() {
-        given: 'a demon student'
+        given:
         demoStudentLogin()
 
-        when: 'the web service is invoked'
+        when:
         response = restClient.get(
                 path: '/students/dashboards/executions/' + courseExecutionDto.getCourseExecutionId(),
                 requestContentType: 'application/json'
         )
 
-        then: "the request returns 200"
+        then:
         response.status == 200
-        and: "has value"
+        and:
         response.data.id != null
-        and: 'it is in the database'
+        and:
         dashboardRepository.findAll().size() == 1
 
         cleanup:
@@ -49,23 +49,23 @@ class GetDashboardWebServiceIT extends SpockTest {
     }
 
     def "demo student gets existing dashboard"() {
-        given: 'a demon student'
+        given:
         demoStudentLogin()
-        and: 'its dashboard'
+        and:
         def student = authUserService.demoStudentAuth(false).getUser()
         def dashboardDto = dashboardService.createDashboard(courseExecutionDto.getCourseExecutionId(), student.getId())
 
-        when: 'the web service is invoked'
+        when:
         response = restClient.get(
                 path: '/students/dashboards/executions/' + courseExecutionDto.getCourseExecutionId(),
                 requestContentType: 'application/json'
         )
 
-        then: "the request returns 200"
+        then:
         response.status == 200
-        and: "it is the same dashboard"
+        and:
         response.data.id == dashboardDto.id
-        and: 'it is in the database'
+        and:
         dashboardRepository.findAll().size() == 1
 
         cleanup:
@@ -73,19 +73,19 @@ class GetDashboardWebServiceIT extends SpockTest {
     }
 
     def "demo teacher does not have access"() {
-        given: 'demo teacher'
+        given:
         demoTeacherLogin()
 
-        when: 'the web service is invoked'
+        when:
         response = restClient.get(
                 path: '/students/dashboards/executions/' + courseExecutionDto.getCourseExecutionId(),
                 requestContentType: 'application/json'
         )
 
-        then: "the server understands the request but refuses to authorize it"
+        then:
         def error = thrown(HttpResponseException)
         error.response.status == HttpStatus.SC_FORBIDDEN
-        and: 'database is clean'
+        and:
         dashboardRepository.findAll().size() == 0
 
         cleanup:

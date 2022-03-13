@@ -24,23 +24,19 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
     def failedAnswer
 
     def setup() {
-        given: 'a rest client'
+        given:
         restClient = new RESTClient("http://localhost:" + port)
-
-        and: 'a demo course execution'
+        and:
         createExternalCourseAndExecution()
-
-        and: 'a student'
+        and:
         student = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
         student.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(externalCourseExecution)
         userRepository.save(student)
-
-        and: 'a dashboard'
+        and:
         dashboard = new Dashboard(externalCourseExecution, student)
         dashboardRepository.save(dashboard)
-
-        and: 'a failed answer to a quiz'
+        and:
         quiz = createQuiz(1)
         quizQuestion = createQuestion(1, quiz)
         def questionAnswer = answerQuizIT(true, false, quiz)
@@ -48,52 +44,52 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
     }
 
     def "student gets failed answers from dashboard then removes it"() {
-        given: 'a student login'
+        given:
         createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
 
-        when: 'the web service is invoked'
+        when:
         response = restClient.delete(
                 path: '/students/failedanswers/' + failedAnswer.getId(),
                 requestContentType: 'application/json'
         )
 
-        then: "the request returns 200"
+        then:
         response != null
         response.status == 200
 
-        and: 'it is not in the database'
+        and:
         failedAnswerRepository.findAll().size() == 0
     }
 
     def "teacher can't get remove student's failed answers from dashboard"() {
-        given: 'a teacher login'
+        given:
         demoTeacherLogin()
 
-        when: 'the web service is invoked'
+        when:
         response = restClient.delete(
                 path: '/students/failedanswers/' + failedAnswer.getId(),
                 requestContentType: 'application/json'
         )
 
-        then: "the server understands the request but refuses to authorize it"
+        then:
         def error = thrown(HttpResponseException)
         error.response.status == HttpStatus.SC_FORBIDDEN
     }
 
     def "student can't get another student's failed answers from dashboard"() {
-        given: 'another student'
+        given:
         def newStudent = new Student(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, false, AuthUser.Type.EXTERNAL)
         newStudent.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
         userRepository.save(newStudent)
         createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
 
-        when: 'the web service is invoked'
+        when:
         response = restClient.delete(
                 path: '/students/failedanswers/' + failedAnswer.getId(),
                 requestContentType: 'application/json'
         )
 
-        then: "the server understands the request but refuses to authorize it"
+        then:
         def error = thrown(HttpResponseException)
         error.response.status == HttpStatus.SC_FORBIDDEN
     }
