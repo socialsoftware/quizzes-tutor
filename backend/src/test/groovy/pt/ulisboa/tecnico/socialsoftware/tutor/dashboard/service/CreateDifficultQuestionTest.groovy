@@ -51,7 +51,7 @@ class CreateDifficultQuestionTest extends SpockTest {
     @Unroll
     def "create difficult question with percentage #percentage"() {
         when:
-        difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), percentage)
+        difficultQuestionService.createDifficultQuestion(dashboard.getId(), question.getId(), percentage)
 
         then:
         difficultQuestionRepository.count() == 1L
@@ -87,10 +87,10 @@ class CreateDifficultQuestionTest extends SpockTest {
         questionDetailsRepository.save(questionDetails)
         questionRepository.save(otherQuestion)
         and:
-        def otherDifficultQuestionDto = difficultQuestionService.createDifficultQuestions(dashboard.getId(), otherQuestion.getId(), 20)
+        def otherDifficultQuestionDto = difficultQuestionService.createDifficultQuestion(dashboard.getId(), otherQuestion.getId(), 20)
 
         when:
-        def difficultQuestionDto = difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), 20)
+        def difficultQuestionDto = difficultQuestionService.createDifficultQuestion(dashboard.getId(), question.getId(), 20)
 
         then:
         difficultQuestionRepository.count() == 2L
@@ -133,7 +133,7 @@ class CreateDifficultQuestionTest extends SpockTest {
         difficultQuestionRepository.save(otherDifficultQuestion)
 
         when:
-        def difficultQuestionDto = difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), 20)
+        def difficultQuestionDto = difficultQuestionService.createDifficultQuestion(dashboard.getId(), question.getId(), 20)
 
         then:
         difficultQuestionRepository.count() == 2L
@@ -170,10 +170,10 @@ class CreateDifficultQuestionTest extends SpockTest {
         questionDetailsRepository.save(questionDetails)
         questionRepository.save(otherQuestion)
         and:
-        def otherDifficultQuestionDto = difficultQuestionService.createDifficultQuestions(dashboard.getId(), otherQuestion.getId(), 20)
+        def otherDifficultQuestionDto = difficultQuestionService.createDifficultQuestion(dashboard.getId(), otherQuestion.getId(), 20)
 
         when:
-        def difficultQuestionDto = difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), 15)
+        def difficultQuestionDto = difficultQuestionService.createDifficultQuestion(dashboard.getId(), question.getId(), 15)
 
         then:
         difficultQuestionRepository.count() == 2L
@@ -197,10 +197,10 @@ class CreateDifficultQuestionTest extends SpockTest {
 
     def "cannot create two difficult questions for the same question"() {
         given:
-        difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), 13)
+        difficultQuestionService.createDifficultQuestion(dashboard.getId(), question.getId(), 13)
 
         when:
-        difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), 24)
+        difficultQuestionService.createDifficultQuestion(dashboard.getId(), question.getId(), 24)
 
         then:
         def exception = thrown(TutorException)
@@ -227,7 +227,7 @@ class CreateDifficultQuestionTest extends SpockTest {
         questionRepository.save(alienQuestion)
 
         when:
-        difficultQuestionService.createDifficultQuestions(dashboard.getId(), alienQuestion.getId(), 22)
+        difficultQuestionService.createDifficultQuestion(dashboard.getId(), alienQuestion.getId(), 22)
 
         then:
         def exception = thrown(TutorException)
@@ -239,7 +239,7 @@ class CreateDifficultQuestionTest extends SpockTest {
     @Unroll
     def "cannot create difficult question with invalid percentage=#percentage"() {
         when:
-        difficultQuestionService.createDifficultQuestions(dashboard.getId(), question.getId(), percentage)
+        difficultQuestionService.createDifficultQuestion(dashboard.getId(), question.getId(), percentage)
 
         then:
         def exception = thrown(TutorException)
@@ -254,7 +254,7 @@ class CreateDifficultQuestionTest extends SpockTest {
     @Unroll
     def "cannot create difficult question with invalid dashboardId=#dashboardId"() {
         when:
-        difficultQuestionService.createDifficultQuestions(dashboardId, question.getId(), 20)
+        difficultQuestionService.createDifficultQuestion(dashboardId, question.getId(), 20)
 
         then:
         def exception = thrown(TutorException)
@@ -268,7 +268,7 @@ class CreateDifficultQuestionTest extends SpockTest {
     @Unroll
     def "cannot create difficult question with invalid questionId=#questionId"() {
         when:
-        difficultQuestionService.createDifficultQuestions(dashboard.getId(), questionId, 20)
+        difficultQuestionService.createDifficultQuestion(dashboard.getId(), questionId, 20)
 
         then:
         def exception = thrown(TutorException)

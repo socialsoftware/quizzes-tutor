@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
@@ -13,7 +15,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+
+import java.sql.SQLException;
+import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
@@ -29,7 +40,7 @@ public class DifficultQuestionService {
     private DifficultQuestionRepository difficultQuestionRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public DifficultQuestionDto createDifficultQuestions(int dashboardId, int questionId, int percentage) {
+    public DifficultQuestionDto createDifficultQuestion(int dashboardId, int questionId, int percentage) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
@@ -45,5 +56,58 @@ public class DifficultQuestionService {
 
         difficultQuestion.remove();
         difficultQuestionRepository.delete(difficultQuestion);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<DifficultQuestionDto> getDifficultQuestions(int dashboardId) {
+        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
+
+        return dashboard.getDifficultQuestions().stream()
+                .filter(Predicate.not(DifficultQuestion::isRemoved))
+                .map(DifficultQuestionDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<DifficultQuestionDto> updateDifficultQuestions(int dashboardId) {
+        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
+        List<DifficultQuestionDto> lastDifficultQuestionsDtos = new ArrayList<>();
+        List<Question> usedQuestions = new ArrayList<>();
+
+        for (DifficultQuestion dq : dashboard.getDifficultQuestions()) { //TODO: Change when Dashboard changed
+            if ((dq.getRemovedDate().isAfter(LocalDateTime.now().minusDays(7))) &&
+                    !dq.isRemoved()) {
+                dq.update();
+                if (dq.getPercentage() < 0.25) //TODO: Depends of changes in difficulty
+                {
+                    lastDifficultQuestionsDtos.add(new DifficultQuestionDto(dq));
+                    usedQuestions.add(dq.getQuestion());
+                }
+            } else if (dq.getRemovedDate().isBefore(LocalDateTime.now().minusDays(7))) {
+                dq.remove();
+                difficultQuestionRepository.delete(dq);
+            }
+        }
+
+        List<Quiz> lastWeekQuizzes = dashboard.getCourseExecution().getQuizzes().stream()
+                .filter(q -> q.getConclusionDate().isAfter(LocalDateTime.now().minusDays(7)))
+                .collect(Collectors.toList());
+
+        for (Quiz quiz : lastWeekQuizzes) {
+            for (QuizQuestion quizQuestion : quiz.getQuizQuestions()) {
+                if (!usedQuestions.contains(quizQuestion.getQuestion())) { //TODO: Might not work due to lack of equals
+                    Question question = quizQuestion.getQuestion();
+
+                    DifficultQuestionDto difficultQuestionDto = createDifficultQuestion(dashboardId, question.getId(), question.getDifficulty());
+
+                    lastDifficultQuestionsDtos.add(difficultQuestionDto);
+                }
+            }
+        }
+
+        return lastDifficultQuestionsDtos;
     }
 }
