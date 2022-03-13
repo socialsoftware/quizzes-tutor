@@ -70,69 +70,36 @@ class GetDifficultQuestionsTest extends SpockTest {
     }
 
     def "get difficult question"() {
-        given: "a difficult question"
+        given:
         def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
-        difficultQuestion.setRemovedDate(DateHandler.now().minusDays(daysSince))
+        difficultQuestionRepository.save(difficultQuestion)
+
+        when:
+        def difficultQuestions = difficultQuestionService.getDifficultQuestions(dashboard.getId())
+
+        then:
+        difficultQuestions.size() == 1
+        and:
+        def resultDifficultQuestion = difficultQuestions.get(0)
+        resultDifficultQuestion.getId() == difficultQuestion.getId()
+        resultDifficultQuestion.getPercentage() == 24
+        resultDifficultQuestion.getRemovedDate() == null
+        !resultDifficultQuestion.isRemoved()
+        resultDifficultQuestion.getQuestionDto().getId() == question.getId()
+    }
+
+    def "does not get removed difficult questions"() {
+        given:
+        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
+        difficultQuestion.setRemovedDate(DateHandler.now().minusDays(3))
         difficultQuestion.setRemoved(true)
         difficultQuestionRepository.save(difficultQuestion)
 
         when:
-        List<DifficultQuestionDto> difficultQuestions = difficultQuestionService.getDifficultQuestions(dashboard.getId())
+        def difficultQuestions = difficultQuestionService.getDifficultQuestions(dashboard.getId())
 
-        then: "a single difficult question is returned"
-        difficultQuestions.size() == 1
-
-        and: "matches the created difficult question"
-        DifficultQuestionDto resultDifficultQuestion = difficultQuestions.get(0)
-        resultDifficultQuestion.getId() == difficultQuestion.getId()
-        resultDifficultQuestion.getPercentage() == difficultQuestion.getPercentage()
-    }
-
-    def "get multiple difficult questions"() {
-        given: "a second question"
-        questionB = new Question()
-        questionB.setKey(2)
-        questionB.setTitle(QUESTION_1_TITLE)
-        questionB.setContent(QUESTION_1_CONTENT)
-        questionB.setStatus(Question.Status.AVAILABLE)
-        questionB.setNumberOfAnswers(2)
-        questionB.setNumberOfCorrect(1)
-        questionB.setCourse(externalCourse)
-        def questionDetails = new MultipleChoiceQuestion()
-        question.setQuestionDetails(questionDetails)
-        questionDetailsRepository.save(questionDetails)
-        questionRepository.save(questionB)
-
-        def optionC = new Option()
-        optionC.setContent(OPTION_1_CONTENT)
-        optionC.setCorrect(true)
-        optionC.setSequence(0)
-        optionC.setQuestionDetails(questionDetails)
-        optionRepository.save(optionC)
-
-        def optionD = new Option()
-        optionD.setContent(OPTION_1_CONTENT)
-        optionD.setCorrect(false)
-        optionD.setSequence(1)
-        optionD.setQuestionDetails(questionDetails)
-        optionRepository.save(optionD)
-
-        and: "two different difficult questions"
-        def difficultQuestionA = new DifficultQuestion(dashboard, question, 24)
-        difficultQuestionA.setRemovedDate(DateHandler.now().minusDays(daysSince))
-        difficultQuestionA.setRemoved(true)
-        difficultQuestionRepository.save(difficultQuestionA)
-
-        def difficultQuestionB = new DifficultQuestion(dashboard, questionB, 24)
-        difficultQuestionB.setRemovedDate(DateHandler.now().minusDays(daysSince))
-        difficultQuestionB.setRemoved(true)
-        difficultQuestionRepository.save(difficultQuestionB)
-
-        when:
-        List<DifficultQuestionDto> difficultQuestions = difficultQuestionService.getDifficultQuestions(dashboard.getId())
-
-        then: "two difficult questions are returned"
-        difficultQuestions.size() == 2
+        then:
+        difficultQuestions.size() == 0
     }
 
     @Unroll

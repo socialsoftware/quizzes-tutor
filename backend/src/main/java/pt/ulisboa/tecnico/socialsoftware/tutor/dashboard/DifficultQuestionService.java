@@ -21,7 +21,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
+import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -61,8 +63,8 @@ public class DifficultQuestionService {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
         return dashboard.getDifficultQuestions().stream()
+                .filter(Predicate.not(DifficultQuestion::isRemoved))
                 .map(DifficultQuestionDto::new)
-                //.sorted(Comparator.comparing(DifficultQuestionDto::removedDate, Comparator.nullsLast(Comparator.reverseOrder())))
                 .collect(Collectors.toList());
     }
 
