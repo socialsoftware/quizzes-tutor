@@ -29,7 +29,7 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         and:
         createExternalCourseAndExecution()
         and:
-        student = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
+        student = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_PASSWORD, false, AuthUser.Type.EXTERNAL)
         student.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(externalCourseExecution)
         userRepository.save(student)
@@ -78,7 +78,7 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
 
     def "student can't get another student's failed answers from dashboard"() {
         given:
-        def newStudent = new Student(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL, false, AuthUser.Type.EXTERNAL)
+        def newStudent = new Student(USER_2_NAME, USER_2_EMAIL, USER_2_PASSWORD, false, AuthUser.Type.EXTERNAL)
         newStudent.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
         userRepository.save(newStudent)
         createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)

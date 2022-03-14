@@ -24,7 +24,7 @@ public class DifficultQuestionController {
 
     @GetMapping("/students/dashboards/{dashboardId}/difficultquestions")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
-    public List<DifficultQuestionDto> getFailedAnswers(@PathVariable int dashboardId) {
+    public List<DifficultQuestionDto> getDifficultQuestions(@PathVariable int dashboardId) {
         return this.difficultQuestionService.getDifficultQuestions(dashboardId);
     }
 

@@ -77,36 +77,42 @@ public class DifficultQuestionService {
         List<DifficultQuestionDto> lastDifficultQuestionsDtos = new ArrayList<>();
         List<Question> usedQuestions = new ArrayList<>();
 
-        for (DifficultQuestion dq : dashboard.getDifficultQuestions()) { //TODO: Change when Dashboard changed
-            if ((dq.getRemovedDate().isAfter(LocalDateTime.now().minusDays(7))) &&
-                    !dq.isRemoved()) {
-                dq.update();
-                if (dq.getPercentage() < 0.25) //TODO: Depends of changes in difficulty
-                {
-                    lastDifficultQuestionsDtos.add(new DifficultQuestionDto(dq));
-                    usedQuestions.add(dq.getQuestion());
-                }
-            } else if (dq.getRemovedDate().isBefore(LocalDateTime.now().minusDays(7))) {
-                dq.remove();
-                difficultQuestionRepository.delete(dq);
-            }
-        }
+        dashboard.getCourseExecution().getQuizzes().stream()
+                .flatMap(quiz -> quiz.getQuizQuestions().stream())
+                .map(QuizQuestion::getQuestion)
+                .findFirst()
+                .map(question -> new DifficultQuestion(dashboard, question, 24));
 
-        List<Quiz> lastWeekQuizzes = dashboard.getCourseExecution().getQuizzes().stream()
-                .filter(q -> q.getConclusionDate().isAfter(LocalDateTime.now().minusDays(7)))
-                .collect(Collectors.toList());
-
-        for (Quiz quiz : lastWeekQuizzes) {
-            for (QuizQuestion quizQuestion : quiz.getQuizQuestions()) {
-                if (!usedQuestions.contains(quizQuestion.getQuestion())) { //TODO: Might not work due to lack of equals
-                    Question question = quizQuestion.getQuestion();
-
-                    DifficultQuestionDto difficultQuestionDto = createDifficultQuestion(dashboardId, question.getId(), question.getDifficulty());
-
-                    lastDifficultQuestionsDtos.add(difficultQuestionDto);
-                }
-            }
-        }
+//        for (DifficultQuestion dq : dashboard.getDifficultQuestions()) { //TODO: Change when Dashboard changed
+//            if ((dq.getRemovedDate().isAfter(LocalDateTime.now().minusDays(7))) &&
+//                    !dq.isRemoved()) {
+//                dq.update();
+//                if (dq.getPercentage() < 0.25) //TODO: Depends of changes in difficulty
+//                {
+//                    lastDifficultQuestionsDtos.add(new DifficultQuestionDto(dq));
+//                    usedQuestions.add(dq.getQuestion());
+//                }
+//            } else if (dq.getRemovedDate().isBefore(LocalDateTime.now().minusDays(7))) {
+//                dq.remove();
+//                difficultQuestionRepository.delete(dq);
+//            }
+//        }
+//
+//        List<Quiz> lastWeekQuizzes = dashboard.getCourseExecution().getQuizzes().stream()
+//                .filter(q -> q.getConclusionDate().isAfter(LocalDateTime.now().minusDays(7)))
+//                .collect(Collectors.toList());
+//
+//        for (Quiz quiz : lastWeekQuizzes) {
+//            for (QuizQuestion quizQuestion : quiz.getQuizQuestions()) {
+//                if (!usedQuestions.contains(quizQuestion.getQuestion())) { //TODO: Might not work due to lack of equals
+//                    Question question = quizQuestion.getQuestion();
+//
+//                    DifficultQuestionDto difficultQuestionDto = createDifficultQuestion(dashboardId, question.getId(), question.getDifficulty());
+//
+//                    lastDifficultQuestionsDtos.add(difficultQuestionDto);
+//                }
+//            }
+//        }
 
         ///return lastDifficultQuestionsDtos;
     }

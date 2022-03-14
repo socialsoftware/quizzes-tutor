@@ -70,8 +70,8 @@ class SpockTest extends Specification {
     public static final String USER_1_EMAIL = "user1@mail.com"
     public static final String USER_2_EMAIL = "user2@mail.com"
     public static final String USER_3_EMAIL = "user3@mail.com"
-    public final static String USER_1_PASSWORD = "1234"
-    public final static String USER_2_PASSWORD = "4321"
+    public final static String USER_1_PASSWORD = "1234@WS4544"
+    public final static String USER_2_PASSWORD = "4321@7877578"
     public static final String USER_1_TOKEN = "1a2b3c"
     public static final String USER_2_TOKEN = "c3b2a1"
 

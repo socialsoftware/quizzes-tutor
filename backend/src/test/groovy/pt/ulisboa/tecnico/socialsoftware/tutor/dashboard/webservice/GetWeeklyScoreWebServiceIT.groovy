@@ -28,7 +28,7 @@ class GetWeeklyScoreWebServiceIT extends SpockTest {
         weeklyScoreService.updateWeeklyScore(dashboardDto.getId())
     }
 
-    def "demo student gets its weekly scores"() {
+    def "demo student gets weekly scores"() {
         given:
         demoStudentLogin()
 
