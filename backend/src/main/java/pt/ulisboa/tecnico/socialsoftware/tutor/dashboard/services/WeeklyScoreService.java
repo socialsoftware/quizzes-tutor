@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard;
+package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -20,6 +20,7 @@ import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -80,9 +81,9 @@ public class WeeklyScoreService {
 
         createMissingWeeklyScores(dashboard, now);
 
-        dashboard.getWeeklyScores().stream()
-                .filter(Predicate.not(WeeklyScore::isClosed))
-                .forEach(weeklyScore -> weeklyScore.computeStatistics());
+        computeStatistics(dashboard);
+
+        removeEmptyClosedWeeklyScores(dashboard);
 
         dashboard.setLastCheckWeeklyScores(now);
     }
@@ -143,5 +144,22 @@ public class WeeklyScoreService {
         }
 
         return startCheckDate;
+    }
+
+    private void computeStatistics(Dashboard dashboard) {
+        dashboard.getWeeklyScores().stream()
+                .filter(Predicate.not(WeeklyScore::isClosed))
+                .forEach(weeklyScore -> weeklyScore.computeStatistics());
+    }
+
+    private void removeEmptyClosedWeeklyScores(Dashboard dashboard) {
+        Set<WeeklyScore> weeklyScoresToDelete = dashboard.getWeeklyScores().stream()
+                .filter(weeklyScore -> weeklyScore.isClosed() && weeklyScore.getNumberAnswered() == 0)
+                .collect(Collectors.toSet());
+
+        weeklyScoresToDelete.forEach(weeklyScore -> {
+            weeklyScore.remove();
+            weeklyScoreRepository.delete(weeklyScore);
+        });
     }
 }

@@ -138,6 +138,29 @@ class UpdateWeeklyScoreTest extends SpockTest {
         result.getDashboard().getLastCheckWeeklyScores().isAfter(now)
     }
 
+    def "during update delete weekly score in a past week without answers and closed"() {
+        given:
+        TemporalAdjuster weekSunday = TemporalAdjusters.previousOrSame(DayOfWeek.SUNDAY);
+        LocalDate week = now.minusDays(30).with(weekSunday).toLocalDate();
+        def closedWeeklyScore = new WeeklyScore(dashboard, week)
+        closedWeeklyScore.setClosed(true)
+
+        when:
+        weeklyScoreService.updateWeeklyScore(dashboard.getId())
+
+        then:
+        weeklyScoreRepository.count() == 1L
+        def result = weeklyScoreRepository.findAll().get(0)
+        result.getId() != null
+        result.getId() != closedWeeklyScore.getId()
+        result.getDashboard().getId() == dashboard.getId()
+        result.getNumberAnswered() == 0
+        result.getUniquelyAnswered() == 0
+        result.getPercentageCorrect() == 0
+        !result.isClosed()
+        result.getDashboard().getLastCheckWeeklyScores().isAfter(now)
+    }
+
     def "update weekly score with wrong answers in the current week"() {
         given:
         def quizAnswer = new QuizAnswer()

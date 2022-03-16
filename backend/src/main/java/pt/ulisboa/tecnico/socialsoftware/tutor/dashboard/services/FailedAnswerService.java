@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard;
+package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 

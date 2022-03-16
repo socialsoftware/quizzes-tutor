@@ -7,7 +7,7 @@ import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.DashboardService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DashboardService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.DashboardDto;
 
 import java.security.Principal;

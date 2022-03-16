@@ -4,7 +4,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.utils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.DashboardService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DashboardService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
