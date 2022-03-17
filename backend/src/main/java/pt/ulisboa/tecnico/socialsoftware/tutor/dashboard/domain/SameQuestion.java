@@ -2,7 +2,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer;
 
 import javax.persistence.*;
 import java.util.HashSet;
@@ -17,8 +16,7 @@ public class SameQuestion implements DomainEntity {
     @OneToOne
     private FailedAnswer failedAnswer;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "same_question_id")
+    @ManyToMany
     private Set<FailedAnswer> failedAnswers = new HashSet<>();
 
     public SameQuestion() {}
