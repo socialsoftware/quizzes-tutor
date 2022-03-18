@@ -84,56 +84,23 @@ class FailedAnswersSpockTest extends SpockTest {
         questionAnswer.setTimeTaken(1)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswer.setQuizQuestion(question)
+        questionAnswerRepository.save(questionAnswer)
 
         def answerDetails
-        if (answered && correct) answerDetails = new MultipleChoiceAnswer(questionAnswer, optionRepository.findAll().get(0))
-        else if (answered && !correct ) answerDetails = new MultipleChoiceAnswer(questionAnswer, optionRepository.findAll().get(1))
+        if (answered && correct) answerDetails = new MultipleChoiceAnswer(questionAnswer, option)
+        else if (answered && !correct ) answerDetails = new MultipleChoiceAnswer(questionAnswer, optionKO)
         else {
             questionAnswerRepository.save(questionAnswer)
             return questionAnswer
         }
         questionAnswer.setAnswerDetails(answerDetails)
         answerDetailsRepository.save(answerDetails)
-        questionAnswerRepository.save(questionAnswer)
         return questionAnswer
     }
 
     def createFailedAnswer(questionAnswer, collected) {
-        def failedAnswer = new FailedAnswer()
-        failedAnswer.setQuestionAnswer(questionAnswer)
-        failedAnswer.setAnswered(questionAnswer.isAnswered())
-        failedAnswer.setCollected(collected)
-        failedAnswer.setDashboard(dashboard)
-        SameQuestion sameQuestion = new SameQuestion(failedAnswer);
-        failedAnswer.setSameQuestion(sameQuestion);
+        def failedAnswer = new FailedAnswer(dashboard, questionAnswer, collected)
         failedAnswerRepository.save(failedAnswer)
-
         return failedAnswer
-    }
-
-    def answerQuizIT(answered, correct, quiz, student=student) {
-        def quizAnswer = new QuizAnswer(student, quiz)
-        quizAnswer.setCreationDate(quiz.getCreationDate())
-        quizAnswerRepository.save(quizAnswer)
-
-        def statementQuizDto = new StatementQuizDto()
-        statementQuizDto.id = quiz.getId()
-        statementQuizDto.quizAnswerId = quizAnswer.getId()
-
-        def statementAnswerDto = new StatementAnswerDto()
-        def multipleChoiceAnswerDto = new MultipleChoiceStatementAnswerDetailsDto()
-
-        if (answered && correct) multipleChoiceAnswerDto.setOptionId(option.getId())
-        else if (answered && !correct ) multipleChoiceAnswerDto.setOptionId(optionKO.getId())
-
-        statementAnswerDto.setAnswerDetails(multipleChoiceAnswerDto)
-        statementAnswerDto.setSequence(0)
-        statementAnswerDto.setTimeTaken(100)
-        statementAnswerDto.setQuestionAnswerId(quizAnswer.getQuestionAnswers().get(0).getId())
-        statementQuizDto.getAnswers().add(statementAnswerDto)
-
-        answerService.concludeQuiz(statementQuizDto)
-
-        return quizAnswer.getQuestionAnswers().get(0)
     }
 }

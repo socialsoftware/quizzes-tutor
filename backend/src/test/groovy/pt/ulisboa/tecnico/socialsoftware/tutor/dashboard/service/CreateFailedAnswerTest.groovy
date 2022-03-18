@@ -94,8 +94,68 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         sameQuestionRepository.findAll().size() == 2
         def sameQuestion1 = sameQuestionRepository.findAll().get(0)
         sameQuestion1.getFailedAnswers().size() == 1
-        def sameQuestion2 = sameQuestionRepository.findAll().get(0)
+        sameQuestion1.getFailedAnswers().contains(result2)
+        def sameQuestion2 = sameQuestionRepository.findAll().get(1)
         sameQuestion2.getFailedAnswers().size() == 1
+        sameQuestion2.getFailedAnswers().contains(result)
+    }
+
+    def "create three failed answers with the same question"() {
+        given:
+        def questionAnswer = answerQuiz(false, false, true, quizQuestion, quiz)
+        createFailedAnswer(questionAnswer, DateHandler.now())
+        and:
+        def quiz2 = createQuiz(2)
+        def quizQuestion2 = addExistingQuestionToQuiz(quiz2)
+        def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
+        createFailedAnswer(questionAnswer2, DateHandler.now())
+        and:
+        def quiz3 = createQuiz(3)
+        def quizQuestion3 = addExistingQuestionToQuiz(quiz3)
+        def questionAnswer3 = answerQuiz(true, false, true, quizQuestion3, quiz3)
+
+        when:
+        failedAnswerService.createFailedAnswer(dashboard.getId(), questionAnswer3.getId())
+
+        then:
+        failedAnswerRepository.count() == 3L
+        def result = failedAnswerRepository.findAll().get(0)
+        result.getId() != null
+        result.getDashboard().getId() == dashboard.getId()
+        result.getQuestionAnswer().getId() == questionAnswer.getId()
+        result.getCollected().isAfter(DateHandler.now().minusMinutes(1))
+        !result.getAnswered()
+        result.getSameQuestion().getFailedAnswers().size() == 2
+        def result2 = failedAnswerRepository.findAll().get(1)
+        result2.getId() != null
+        result2.getDashboard().getId() == dashboard.getId()
+        result2.getQuestionAnswer().getId() == questionAnswer2.getId()
+        result2.getCollected().isAfter(DateHandler.now().minusMinutes(1))
+        result2.getAnswered()
+        result2.getSameQuestion().getFailedAnswers().size() == 2
+        and:
+        def result3 = failedAnswerRepository.findAll().get(2)
+        result3.getId() != null
+        result3.getDashboard().getId() == dashboard.getId()
+        result3.getQuestionAnswer().getId() == questionAnswer3.getId()
+        result3.getCollected().isAfter(DateHandler.now().minusMinutes(1))
+        result3.getAnswered()
+        result3.getSameQuestion().getFailedAnswers().size() == 2
+        and:
+        def dashboard = dashboardRepository.getById(dashboard.getId())
+        dashboard.getFailedAnswers().contains(result)
+        dashboard.getFailedAnswers().contains(result2)
+        dashboard.getFailedAnswers().contains(result3)
+        and:
+        sameQuestionRepository.findAll().size() == 3
+        def sameQuestion1 = sameQuestionRepository.findAll().get(0)
+        sameQuestion1.getFailedAnswers().size() == 2
+        sameQuestion1.getFailedAnswers().contains(result2)
+        sameQuestion1.getFailedAnswers().contains(result3)
+        def sameQuestion2 = sameQuestionRepository.findAll().get(1)
+        sameQuestion2.getFailedAnswers().size() == 2
+        def sameQuestion3 = sameQuestionRepository.findAll().get(2)
+        sameQuestion3.getFailedAnswers().size() == 2
     }
 
     def "create two failed answers with with different questions"() {
