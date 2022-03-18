@@ -17,8 +17,7 @@ public class SamePercentage implements DomainEntity
     @OneToOne
     private WeeklyScore weeklyScore;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "same_percentage_id")
+    @ManyToMany
     private Set<WeeklyScore> weeklyScores = new HashSet<>();
 
     public SamePercentage() {}

@@ -45,7 +45,7 @@ class GetFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         given:
         createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
         and:
-        def questionAnswer = answerQuizIT(true, false, quiz)
+        def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
         def answer = createFailedAnswer(questionAnswer, LocalDateTime.now())
 
         when:
@@ -87,7 +87,7 @@ class GetFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         userRepository.save(newStudent)
         createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
         and:
-        def questionAnswer = answerQuizIT(true, false, quiz, student)
+        def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
         createFailedAnswer(questionAnswer, LocalDateTime.now())
 
         when:

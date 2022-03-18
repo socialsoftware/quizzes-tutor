@@ -35,7 +35,8 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         and:
         quiz = createQuiz(1)
         quizQuestion = createQuestion(1, quiz)
-        answerQuizIT(true, false, quiz)
+        answerQuiz(true, false, true, quizQuestion, quiz)
+
     }
 
     def "student updates failed answers"() {
@@ -61,7 +62,7 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         and:
         def quiz2 = createQuiz(2)
         quizQuestion = createQuestion(2, quiz2)
-        answerQuizIT(true, false, quiz2)
+        answerQuiz(true, false, true, quizQuestion, quiz2)
 
         when:
         response = restClient.put(

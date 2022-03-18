@@ -39,7 +39,7 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         and:
         quiz = createQuiz(1)
         quizQuestion = createQuestion(1, quiz)
-        def questionAnswer = answerQuizIT(true, false, quiz)
+        def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
         failedAnswer = createFailedAnswer(questionAnswer, LocalDateTime.now().minusDays(8))
     }
 
@@ -95,6 +95,7 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
     }
 
     def cleanup(){
+        failedAnswerRepository.deleteAll()
         dashboardRepository.deleteAll()
         userRepository.deleteAll()
         courseRepository.deleteAll()
