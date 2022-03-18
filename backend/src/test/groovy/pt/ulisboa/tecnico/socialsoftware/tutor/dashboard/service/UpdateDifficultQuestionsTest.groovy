@@ -15,12 +15,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
 
 @DataJpaTest
 class UpdateDifficultQuestionsTest extends SpockTest {
     def student
     def dashboard
+    def question
+    def now
 
     def setup() {
         given:
@@ -31,7 +34,9 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         student.addCourse(externalCourseExecution)
         userRepository.save(student)
         and:
-        def question = new Question()
+        now = DateHandler.now()
+        and:
+        question = new Question()
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
@@ -60,6 +65,8 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         and:
         def quiz = new Quiz()
         quiz.setCourseExecution(externalCourseExecution)
+        quiz.setAvailableDate(now.minusHours(1))
+        quiz.setConclusionDate(now)
         quizRepository.save(quiz)
         and:
         def quizQuestion = new QuizQuestion()
@@ -68,6 +75,7 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         quizQuestionRepository.save(quizQuestion)
         and:
         def quizAnswer = new QuizAnswer()
+        quizAnswer.setAnswerDate(now.minusMinutes(1))
         quizAnswer.setQuiz(quiz)
         quizAnswer.setStudent(student)
         quizAnswerRepository.save(quizAnswer)
@@ -81,13 +89,19 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         dashboardRepository.save(dashboard)
     }
 
-    def "update a difficult question"() {
-
+    def "update difficult questions and add one"() {
         when:
         difficultQuestionService.updateDifficultQuestions(dashboard.getId())
 
         then:
         difficultQuestionRepository.count() == 1L
+        and:
+        def difficultQuestion = difficultQuestionRepository.findAll().get(0)
+        difficultQuestion.getDashboard() == dashboard
+        difficultQuestion.getQuestion() == question
+        difficultQuestion.isRemoved() == false
+        difficultQuestion.getRemovedDate() == null
+        difficultQuestion.getPercentage() == 0
     }
 
     @TestConfiguration

@@ -6,6 +6,7 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.DifficultQuestionDto;
@@ -23,6 +24,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
@@ -74,46 +76,52 @@ public class DifficultQuestionService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void updateDifficultQuestions(int dashboardId) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
-        List<DifficultQuestionDto> lastDifficultQuestionsDtos = new ArrayList<>();
-        List<Question> usedQuestions = new ArrayList<>();
+
+        LocalDateTime now = LocalDateTime.now();
+
+        dashboard.getDifficultQuestions().stream()
+                .filter(difficultQuestion -> !difficultQuestion.isRemoved() ||
+                        (difficultQuestion.isRemoved() && difficultQuestion.getRemovedDate().plusDays(7).isBefore((now))))
+                .forEach(difficultQuestion -> {
+                    difficultQuestion.remove();
+                    difficultQuestionRepository.delete(difficultQuestion);
+                });
+
+        Set<Question> questionsToPersist = dashboard.getDifficultQuestions().stream()
+                .map(DifficultQuestion::getQuestion)
+                .collect(Collectors.toSet());
 
         dashboard.getCourseExecution().getQuizzes().stream()
-                .flatMap(quiz -> quiz.getQuizQuestions().stream())
-                .map(QuizQuestion::getQuestion)
-                .findFirst()
-                .map(question -> new DifficultQuestion(dashboard, question, 24));
+                .filter(q -> q.getResultsDate().isAfter(now.minusDays(7)))
+                .flatMap(quiz -> quiz.getQuizQuestions().stream()
+                        .map(QuizQuestion::getQuestion))
+                .distinct()
+                .filter(question -> !questionsToPersist.contains(question))
+                .forEach(question -> {
+                    int percentageCorrect = percentageCorrect(question, now.minusDays(7));
+                    if (percentageCorrect < 25) {
+                        DifficultQuestion difficultQuestion = new DifficultQuestion(dashboard, question, percentageCorrect);
+                        difficultQuestionRepository.save(difficultQuestion);
+                    }
+                });
+    }
 
-//        for (DifficultQuestion dq : dashboard.getDifficultQuestions()) { //TODO: Change when Dashboard changed
-//            if ((dq.getRemovedDate().isAfter(LocalDateTime.now().minusDays(7))) &&
-//                    !dq.isRemoved()) {
-//                dq.update();
-//                if (dq.getPercentage() < 0.25) //TODO: Depends of changes in difficulty
-//                {
-//                    lastDifficultQuestionsDtos.add(new DifficultQuestionDto(dq));
-//                    usedQuestions.add(dq.getQuestion());
-//                }
-//            } else if (dq.getRemovedDate().isBefore(LocalDateTime.now().minusDays(7))) {
-//                dq.remove();
-//                difficultQuestionRepository.delete(dq);
-//            }
-//        }
-//
-//        List<Quiz> lastWeekQuizzes = dashboard.getCourseExecution().getQuizzes().stream()
-//                .filter(q -> q.getConclusionDate().isAfter(LocalDateTime.now().minusDays(7)))
-//                .collect(Collectors.toList());
-//
-//        for (Quiz quiz : lastWeekQuizzes) {
-//            for (QuizQuestion quizQuestion : quiz.getQuizQuestions()) {
-//                if (!usedQuestions.contains(quizQuestion.getQuestion())) { //TODO: Might not work due to lack of equals
-//                    Question question = quizQuestion.getQuestion();
-//
-//                    DifficultQuestionDto difficultQuestionDto = createDifficultQuestion(dashboardId, question.getId(), question.getDifficulty());
-//
-//                    lastDifficultQuestionsDtos.add(difficultQuestionDto);
-//                }
-//            }
-//        }
+    private int percentageCorrect(Question question, LocalDateTime weekAgo) {
+        Set<QuestionAnswer> answersInWeek = question.getQuizQuestions().stream()
+                .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
+                .filter(questionAnswer -> questionAnswer.getQuizAnswer().getAnswerDate().isAfter(weekAgo))
+                .collect(Collectors.toSet());
 
-        ///return lastDifficultQuestionsDtos;
+        int totalAnswers = answersInWeek.size();
+
+        if (totalAnswers == 0) {
+            return 100;
+        }
+
+        int correctAnswers = (int) answersInWeek.stream()
+                .filter(QuestionAnswer::isCorrect)
+                .count();
+
+        return (correctAnswers * 100) / totalAnswers;
     }
 }
