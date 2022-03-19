@@ -113,6 +113,7 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         difficultQuestion.isRemoved() == false
         difficultQuestion.getRemovedDate() == null
         difficultQuestion.getPercentage() == 0
+        difficultQuestion.getDashboard().getLastCheckDifficultQuestions().isAfter(now)
     }
 
     def "delete and create a difficult question that continues to be difficult"() {

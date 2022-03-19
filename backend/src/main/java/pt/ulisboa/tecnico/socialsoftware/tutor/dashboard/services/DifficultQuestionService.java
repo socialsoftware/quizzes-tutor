@@ -106,6 +106,7 @@ public class DifficultQuestionService {
                     }
                 });
 
+        dashboard.setLastCheckDifficultQuestions(now);
     }
 
     private int percentageCorrect(Question question, LocalDateTime weekAgo) {
