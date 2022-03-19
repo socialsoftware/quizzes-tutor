@@ -49,9 +49,9 @@ class CreateDifficultQuestionTest extends SpockTest {
     }
 
     @Unroll
-    def "create difficult question with percentage #percentage"() {
+    def "create difficult question with difficulty #difficulty"() {
         when:
-        difficultQuestionService.createDifficultQuestion(dashboard.getId(), question.getId(), percentage)
+        difficultQuestionService.createDifficultQuestion(dashboard.getId(), question.getId(), difficulty)
 
         then:
         difficultQuestionRepository.count() == 1L
@@ -61,7 +61,7 @@ class CreateDifficultQuestionTest extends SpockTest {
         result.getQuestion().getId() == question.getId()
         result.isRemoved() == false
         result.getRemovedDate() == null
-        result.getPercentage() == percentage
+        result.getPercentage() == difficulty
         result.getSameDifficulty().getDifficultQuestions().size() == 0
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
@@ -70,7 +70,7 @@ class CreateDifficultQuestionTest extends SpockTest {
         sameDifficultyRepository.findAll().size() == 1
 
         where:
-        percentage << [0, 12, 24]
+        difficulty << [0, 12, 24]
     }
 
     def "create two difficulty questions with same difficulty"() {

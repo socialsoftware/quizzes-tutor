@@ -10,7 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -20,13 +20,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
+class RemoveDifficultQuestionsWebServiceIT extends SpockTest {
     @LocalServerPort
     private int port
 
     def response
     def student
     def dashboard
+    def difficultQuestion
 
     def setup() {
         given:
@@ -68,39 +69,20 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         optionKO.setQuestionDetails(questionDetails)
         optionRepository.save(optionKO)
         and:
-        def quiz = new Quiz()
-        quiz.setAvailableDate(now.minusMinutes(5))
-        quiz.setResultsDate(now)
-        quiz.setCourseExecution(externalCourseExecution)
-        quizRepository.save(quiz)
-        and:
-        def quizQuestion = new QuizQuestion()
-        quizQuestion.setQuiz(quiz)
-        quizQuestion.setQuestion(question)
-        quizQuestionRepository.save(quizQuestion)
-        and:
-        def quizAnswer = new QuizAnswer()
-        quizAnswer.setAnswerDate(now.minusMinutes(1))
-        quizAnswer.setQuiz(quiz)
-        quizAnswer.setStudent(student)
-        quizAnswerRepository.save(quizAnswer)
-        and:
-        def questionAnswer = new QuestionAnswer()
-        questionAnswer.setQuizQuestion(quizQuestion)
-        questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswerRepository.save(questionAnswer)
-        and:
         dashboard = new Dashboard(externalCourseExecution, student)
         dashboardRepository.save(dashboard)
+        and:
+        difficultQuestion = new DifficultQuestion(dashboard, question, 24)
+        difficultQuestionRepository.save(difficultQuestion)
     }
 
-    def "student updates difficult questions"() {
+    def "student removes difficult questions"() {
         given:
         createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
 
         when:
-        response = restClient.put(
-                path: '/students/dashboards/' + dashboard.getId() + '/difficultquestions',
+        response = restClient.delete(
+                path: '/students/difficultquestions/' + difficultQuestion.getId(),
                 requestContentType: 'application/json'
         )
 
@@ -108,7 +90,12 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         response != null
         response.status == 200
         and:
-        difficultQuestionRepository.findAll().size() == 1
+        difficultQuestionRepository.count() == 1
+        and:
+        def result = difficultQuestionRepository.findAll().get(0)
+        result.getId() == difficultQuestion.getId()
+        result.isRemoved() == true
+        result.getRemovedDate().isAfter(DateHandler.now().minusSeconds(30))
     }
 
 
@@ -117,8 +104,8 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         demoTeacherLogin()
 
         when:
-        response = restClient.put(
-                path: '/students/dashboards/' + dashboard.getId() + '/difficultquestions',
+        response = restClient.delete(
+                path: '/students/difficultquestions/' + difficultQuestion.getId(),
                 requestContentType: 'application/json'
         )
 
@@ -135,8 +122,8 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
 
         when:
-        response = restClient.put(
-                path: '/students/dashboards/' + dashboard.getId() + '/difficultquestions',
+        response = restClient.delete(
+                path: '/students/difficultquestions/' + difficultQuestion.getId(),
                 requestContentType: 'application/json'
         )
 

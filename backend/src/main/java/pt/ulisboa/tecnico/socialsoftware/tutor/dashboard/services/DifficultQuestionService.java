@@ -18,6 +18,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -56,8 +57,8 @@ public class DifficultQuestionService {
     public void removeDifficultQuestion(int difficultQuestionId) {
         DifficultQuestion difficultQuestion = difficultQuestionRepository.findById(difficultQuestionId).orElseThrow(() -> new TutorException(DIFFICULT_QUESTION_NOT_FOUND, difficultQuestionId));
 
-        difficultQuestion.remove();
-        difficultQuestionRepository.delete(difficultQuestion);
+        difficultQuestion.setRemoved(true);
+        difficultQuestion.setRemovedDate(DateHandler.now());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -92,7 +93,7 @@ public class DifficultQuestionService {
                 .collect(Collectors.toSet());
 
         dashboard.getCourseExecution().getQuizzes().stream()
-                .filter(q -> q.getResultsDate().isAfter(now.minusDays(7)))
+                .filter(quiz -> quiz.getResultsDate().isAfter(now.minusDays(7)))
                 .flatMap(quiz -> quiz.getQuizQuestions().stream()
                         .map(QuizQuestion::getQuestion))
                 .distinct()
@@ -104,6 +105,7 @@ public class DifficultQuestionService {
                         difficultQuestionRepository.save(difficultQuestion);
                     }
                 });
+
     }
 
     private int percentageCorrect(Question question, LocalDateTime weekAgo) {

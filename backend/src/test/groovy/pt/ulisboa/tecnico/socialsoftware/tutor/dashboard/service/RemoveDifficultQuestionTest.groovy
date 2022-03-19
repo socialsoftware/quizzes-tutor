@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
@@ -15,11 +14,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import spock.lang.Unroll
-
-import java.time.DayOfWeek
-import java.time.LocalDate
-import java.time.temporal.TemporalAdjuster
-import java.time.temporal.TemporalAdjusters
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CANNOT_REMOVE_DIFFICULT_QUESTION
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DIFFICULT_QUESTION_NOT_FOUND
@@ -70,77 +64,30 @@ class RemoveDifficultQuestionTest extends SpockTest {
         dashboardRepository.save(dashboard)
     }
 
-    def "student removes a difficult question from the dashboard with daysSince=#daysSince"() {
+    def "student removes a difficult question"() {
         given:
         def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
-        difficultQuestion.setRemovedDate(DateHandler.now().minusDays(daysSince))
-        difficultQuestion.setRemoved(true)
         difficultQuestionRepository.save(difficultQuestion)
 
         when:
         difficultQuestionService.removeDifficultQuestion(difficultQuestion.getId())
 
         then:
-        difficultQuestionRepository.count() == 0
+        difficultQuestionRepository.count() == 1
         and:
-        def dashboard = dashboardRepository.getById(dashboard.getId())
-        dashboard.getDifficultQuestions().size() == 0
-        and:
-        sameDifficultyRepository.findAll().size() == 0
-
-        where:
-        daysSince << [0, 1, 6]
+        def result = difficultQuestionRepository.findAll().get(0)
+        result.getId() == difficultQuestion.getId()
+        result.isRemoved() == true
+        result.getRemovedDate().isAfter(DateHandler.now().minusSeconds(30))
     }
 
-    def "remove difficult question when there is another with the same difficulty"() {
+    def "cannot remove a removed difficult question"() {
         given:
+        def now = DateHandler.now()
+        and:
         def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
-        difficultQuestionRepository.save(difficultQuestion)
-        and:
-        def otherQuestion = new Question()
-        otherQuestion.setTitle(QUESTION_1_TITLE)
-        otherQuestion.setContent(QUESTION_1_CONTENT)
-        otherQuestion.setStatus(Question.Status.AVAILABLE)
-        otherQuestion.setNumberOfAnswers(2)
-        otherQuestion.setNumberOfCorrect(1)
-        otherQuestion.setCourse(externalCourse)
-        def questionDetails = new MultipleChoiceQuestion()
-        otherQuestion.setQuestionDetails(questionDetails)
-        questionDetailsRepository.save(questionDetails)
-        questionRepository.save(otherQuestion)
-        and:
-        def otherDifficultQuestion = new DifficultQuestion(dashboard, otherQuestion, 24)
-        difficultQuestionRepository.save(otherDifficultQuestion)
-        and:
-        difficultQuestion.setRemovedDate(DateHandler.now().minusDays(1))
         difficultQuestion.setRemoved(true)
-
-        when:
-        difficultQuestionService.removeDifficultQuestion(difficultQuestion.getId())
-
-        then:
-        difficultQuestionRepository.count() == 1L
-        and:
-        def dashboard = dashboardRepository.getById(dashboard.getId())
-        dashboard.getDifficultQuestions().size() == 1
-        dashboard.getDifficultQuestions().contains(otherDifficultQuestion)
-        difficultQuestionRepository.findAll().size() == 1
-        and:
-        otherDifficultQuestion.getSameDifficulty().getDifficultQuestions().size() == 0
-        and:
-        sameDifficultyRepository.findAll().size() == 1
-        otherDifficultQuestion.getSameDifficulty() == sameDifficultyRepository.findAll().get(0)
-    }
-
-    @Unroll
-    def "the difficult question cannot be deleted days before #daysSince or not removed #removed"() {
-        given: "a difficult question"
-        def difficultQuestion = new DifficultQuestion()
-        difficultQuestion.setDashboard(dashboard)
-        difficultQuestion.setQuestion(question)
-        difficultQuestion.setPercentage(24)
-        difficultQuestion.setRemovedDate(DateHandler.now().minusDays(daysSince))
-        difficultQuestion.setRemoved(removed)
+        difficultQuestion.setRemovedDate(now)
         difficultQuestionRepository.save(difficultQuestion)
 
         when:
@@ -148,15 +95,13 @@ class RemoveDifficultQuestionTest extends SpockTest {
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == errorMessage
+        exception.getErrorMessage() == CANNOT_REMOVE_DIFFICULT_QUESTION
         and:
         difficultQuestionRepository.count() == 1
-
-        where:
-        removed | daysSince || errorMessage
-        false   | 0         || CANNOT_REMOVE_DIFFICULT_QUESTION
-        true    | 7         || CANNOT_REMOVE_DIFFICULT_QUESTION
-        true    | 8         || CANNOT_REMOVE_DIFFICULT_QUESTION
+        and:
+        def result = difficultQuestionRepository.findAll().get(0)
+        result.isRemoved() == true
+        result.getRemovedDate().equals(now)
     }
 
     @Unroll
@@ -166,12 +111,10 @@ class RemoveDifficultQuestionTest extends SpockTest {
 
         then: "an exception is thrown"
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == errorMessage
+        exception.getErrorMessage() == DIFFICULT_QUESTION_NOT_FOUND
 
         where:
-        id  || errorMessage
-        0   || DIFFICULT_QUESTION_NOT_FOUND
-        100 || DIFFICULT_QUESTION_NOT_FOUND
+        id  << [0, 100]
     }
 
     @TestConfiguration
