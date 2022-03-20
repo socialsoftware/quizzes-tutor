@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services;
+package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard;
 
 import java.util.Optional;
 
