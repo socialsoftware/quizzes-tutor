@@ -120,8 +120,6 @@ public class FailedAnswerService {
             startCheckDate = dashboard.getLastCheckFailedAnswers();
         }
 
-        System.out.println(startCheckDate);
-
         return startCheckDate;
     }
 }

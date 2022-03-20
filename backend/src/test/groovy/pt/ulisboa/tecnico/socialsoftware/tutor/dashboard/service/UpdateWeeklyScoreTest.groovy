@@ -373,12 +373,10 @@ class UpdateWeeklyScoreTest extends SpockTest {
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == errorMessage
+        exception.getErrorMessage() == DASHBOARD_NOT_FOUND
 
         where:
-        dashboardId || errorMessage
-        null        || DASHBOARD_NOT_FOUND
-        100         || DASHBOARD_NOT_FOUND
+        dashboardId << [null, 100]
     }
 
     @TestConfiguration

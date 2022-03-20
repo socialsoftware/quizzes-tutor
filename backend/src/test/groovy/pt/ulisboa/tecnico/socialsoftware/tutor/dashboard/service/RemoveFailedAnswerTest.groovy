@@ -120,7 +120,6 @@ class RemoveFailedAnswerTest extends FailedAnswersSpockTest {
         failedAnswer3.getSameQuestion() == sameQuestionRepository.findAll().get(1)
     }
 
-
     @Unroll
     def 'cannot remove a failed answer minusDays #minusDays' () {
         given:
@@ -149,12 +148,10 @@ class RemoveFailedAnswerTest extends FailedAnswersSpockTest {
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == errorMessage
+        exception.getErrorMessage() == ErrorMessage.FAILED_ANSWER_NOT_FOUND
 
         where:
-        failedAnswerId  || errorMessage
-        100             || ErrorMessage.FAILED_ANSWER_NOT_FOUND
-        -1              || ErrorMessage.FAILED_ANSWER_NOT_FOUND
+        failedAnswerId << [-1, 100]
     }
 
     @TestConfiguration

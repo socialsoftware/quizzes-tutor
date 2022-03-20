@@ -107,12 +107,10 @@ class RemoveWeeklyScoreTest extends SpockTest {
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == errorMessage
+        exception.getErrorMessage() == WEEKLY_SCORE_NOT_FOUND
 
         where:
-        weeklyScoreId || errorMessage
-        null          || WEEKLY_SCORE_NOT_FOUND
-        100           || WEEKLY_SCORE_NOT_FOUND
+        weeklyScoreId << [null, 100]
     }
 
     @TestConfiguration

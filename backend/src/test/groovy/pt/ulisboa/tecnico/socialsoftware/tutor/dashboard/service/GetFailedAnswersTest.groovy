@@ -76,7 +76,6 @@ class GetFailedAnswersTest extends FailedAnswersSpockTest {
         def failedAnswer2 = failedAnswerDtos.get(1)
         failedAnswer2.getQuestionAnswerDto().getQuestion().getId() === questionAnswer.getQuestion().getId()
         failedAnswer2.getQuestionAnswerDto().getAnswerDetails().getOption().getId() == questionAnswer.getAnswerDetails().getOption().getId()
-
     }
 
     @Unroll

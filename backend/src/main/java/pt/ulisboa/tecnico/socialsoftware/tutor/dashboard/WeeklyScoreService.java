@@ -88,7 +88,6 @@ public class WeeklyScoreService {
         dashboard.setLastCheckWeeklyScores(now);
     }
 
-
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeWeeklyScore(Integer weeklyScoreId) {
         if (weeklyScoreId == null) {
