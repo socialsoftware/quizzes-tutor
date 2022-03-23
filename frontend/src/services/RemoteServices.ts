@@ -847,10 +847,15 @@ export default class RemoteServices {
       });
   }
 
-  static submitAnswer(quizId: number, answer: StatementAnswer) {
-    httpClient.post(`/answers/${quizId}/submit`, answer).catch((error) => {
-      console.debug(error);
-    });
+  static async submitAnswer(quizId: number, answer: StatementAnswer) {
+    return httpClient
+      .post(`/answers/${quizId}/submit`, answer)
+      .then((response) => {
+        return;
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
   }
 
   static async concludeQuiz(

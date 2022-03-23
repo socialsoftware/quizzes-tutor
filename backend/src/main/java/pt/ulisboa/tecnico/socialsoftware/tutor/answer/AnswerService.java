@@ -24,7 +24,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
@@ -38,7 +37,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -184,18 +182,17 @@ public class AnswerService {
         }
         finalItems.add(questionAnswerItems.get(questionAnswerItems.size() - 1));
 
-        if (finalItems.size() > quizAnswer.getQuestionAnswers().size()) {
+        quizAnswer.getQuestionAnswers().stream()
+                .sorted(Comparator.comparing(QuestionAnswer::getSequence))
+                .map(QuestionAnswer::getQuizQuestion)
+                .forEach(quizQuestion -> {
+                    if (!finalItems.isEmpty() && quizQuestion.getId().equals(finalItems.get(0).getQuizQuestionId())) {
+                        finalItems.remove(0);
+                    }
+                });
+
+        if (!finalItems.isEmpty()) {
             quizAnswer.setFraud(true);
-        } else {
-            List<QuizQuestion> quizQuestions = quizAnswer.getQuestionAnswers().stream()
-                    .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-                    .map(QuestionAnswer::getQuizQuestion)
-                    .collect(Collectors.toList());
-            for (int i = 0; i < finalItems.size(); i++) {
-                if (!finalItems.get(i).getQuizQuestionId().equals(quizQuestions.get(i).getId())) {
-                    quizAnswer.setFraud(true);
-                }
-            }
         }
 
         if (quizAnswer.isFraud()) {
@@ -456,8 +453,11 @@ public class AnswerService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public StatementQuestionDto getQuestionForQuizAnswer(String username, Integer quizId, Integer questionId, StatementAnswerDto answer) {
-        submitAnswer(username,quizId, answer);
+    public StatementQuestionDto getQuestionForQuizAnswer(Integer questionId, StatementAnswerDto answer) {
+        QuizAnswer quizAnswer = quizAnswerRepository.findById(answer.getQuizAnswerId())
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND));
+
+        quizAnswer.checkCanGetQuestion(questionId);
 
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
@@ -468,8 +468,13 @@ public class AnswerService {
     @Retryable(
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_UNCOMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED)
     public void submitAnswer(String username, int quizId, StatementAnswerDto answer) {
+        QuizAnswer quizAnswer = quizAnswerRepository.findById(answer.getQuizAnswerId())
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND));
+
+        quizAnswer.checkIsCurrentQuestion(answer.getQuestionId());
+
         if (answer.getTimeToSubmission() == null) {
             answer.setTimeToSubmission(0);
         }

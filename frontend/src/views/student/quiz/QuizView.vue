@@ -186,16 +186,21 @@ export default class QuizView extends Vue {
       let newAnswer = this.statementQuiz.answers[order];
       newAnswer.timeTaken = 0;
       newAnswer.timeToSubmission = this.statementQuiz.timeToSubmission;
-      const question = await RemoteServices.getQuestion(
-        this.statementQuiz.id,
-        this.statementQuiz.questions[order].questionId,
-        newAnswer
-      );
+      try {
+        const question = await RemoteServices.getQuestion(
+          this.statementQuiz.id,
+          this.statementQuiz.questions[order].questionId,
+          newAnswer
+        );
 
-      this.statementQuiz.questions[order].content = question.content;
-      this.statementQuiz.questions[order].image = question.image;
-      this.statementQuiz.questions[order].questionDetails =
-        question.questionDetails;
+        this.statementQuiz.questions[order].content = question.content;
+        this.statementQuiz.questions[order].image = question.image;
+        this.statementQuiz.questions[order].questionDetails =
+          question.questionDetails;
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+        await this.$router.push({ name: 'available-quizzes' });
+      }
     }
 
     this.slideItemPosition = order + 1;
@@ -232,16 +237,18 @@ export default class QuizView extends Vue {
 
   async changeAnswer() {
     if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
-      try {
-        this.calculateTime();
+      this.calculateTime();
 
+      try {
         if (!!this.statementQuiz && this.statementQuiz.timed) {
           let newAnswer = this.statementQuiz.answers[this.questionOrder];
           newAnswer.timeToSubmission = this.statementQuiz.timeToSubmission;
-          RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
+
+          await RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
         }
       } catch (error) {
         await this.$store.dispatch('error', error);
+        await this.$router.push({ name: 'available-quizzes' });
       }
     }
   }

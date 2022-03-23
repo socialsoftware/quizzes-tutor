@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -12,6 +13,9 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_QUIZ_ANSWER_SEQUENCE;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_ALREADY_COMPLETED;
 
 @Entity
 @Table(name = "quiz_answers",
@@ -42,6 +46,11 @@ public class QuizAnswer implements DomainEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean usedInStatistics;
 
+    private Integer currentSequenceQuestion = 0;
+
+    @ElementCollection
+    private List<Integer> questionIds = new ArrayList<>();
+
     @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "user_id")
     private Student student;
@@ -70,6 +79,10 @@ public class QuizAnswer implements DomainEntity {
 
         for (int i = 0; i < quizQuestions.size(); i++) {
             new QuestionAnswer(this, quizQuestions.get(i), i);
+
+            if (quiz.isOneWay() && quiz.getType().equals(Quiz.QuizType.IN_CLASS)) {
+                this.questionIds.add(quizQuestions.get(i).getQuestion().getId());
+            }
         }
     }
 
@@ -120,6 +133,10 @@ public class QuizAnswer implements DomainEntity {
 
     public void setUsedInStatistics(boolean usedInStatistics) {
         this.usedInStatistics = usedInStatistics;
+    }
+
+    public Integer getCurrentSequenceQuestion() {
+        return currentSequenceQuestion;
     }
 
     public Student getStudent() {
@@ -214,5 +231,28 @@ public class QuizAnswer implements DomainEntity {
 
     public long getNumberOfCorrectAnswers() {
         return getQuestionAnswers().stream().filter(QuestionAnswer::isCorrect).count();
+    }
+
+    public void checkCanGetQuestion(Integer questionId) {
+        System.out.println("checkCanGetQuestion " + getQuiz().getType());
+
+        if (!questionIds.isEmpty()) {
+            if (currentSequenceQuestion < questionIds.size() - 1
+                    && questionIds.get(currentSequenceQuestion + 1).equals(questionId)) {
+                currentSequenceQuestion = currentSequenceQuestion + 1;
+            } else if (!questionIds.get(currentSequenceQuestion).equals(questionId)) {
+                throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE);
+            }
+        }
+    }
+
+    public void checkIsCurrentQuestion(Integer questionId) {
+        System.out.println("checkCanGetQuestion " + getQuiz().getType());
+
+        if (!questionIds.isEmpty() && !questionIds.get(currentSequenceQuestion).equals(questionId)) {
+            throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE);
+        } else if (completed) {
+            throw new TutorException(QUIZ_ALREADY_COMPLETED);
+        }
     }
 }
