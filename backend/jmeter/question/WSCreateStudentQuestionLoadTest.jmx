@@ -43,7 +43,7 @@
           </elementProp>
           <elementProp name="demoCourseId" elementType="Argument">
             <stringProp name="Argument.name">demoCourseId</stringProp>
-            <stringProp name="Argument.value">1</stringProp>
+            <stringProp name="Argument.value">2</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="PSQL_HOST" elementType="Argument">

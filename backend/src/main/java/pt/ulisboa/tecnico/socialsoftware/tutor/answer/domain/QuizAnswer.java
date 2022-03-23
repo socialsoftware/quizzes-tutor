@@ -234,8 +234,6 @@ public class QuizAnswer implements DomainEntity {
     }
 
     public void checkCanGetQuestion(Integer questionId) {
-        System.out.println("checkCanGetQuestion " + getQuiz().getType());
-
         if (!questionIds.isEmpty()) {
             if (currentSequenceQuestion < questionIds.size() - 1
                     && questionIds.get(currentSequenceQuestion + 1).equals(questionId)) {
@@ -247,8 +245,6 @@ public class QuizAnswer implements DomainEntity {
     }
 
     public void checkIsCurrentQuestion(Integer questionId) {
-        System.out.println("checkCanGetQuestion " + getQuiz().getType());
-
         if (!questionIds.isEmpty() && !questionIds.get(currentSequenceQuestion).equals(questionId)) {
             throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE);
         } else if (completed) {
