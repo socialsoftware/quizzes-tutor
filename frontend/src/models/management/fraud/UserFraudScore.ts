@@ -1,4 +1,4 @@
-import { UserFraudInfo } from "@/models/management/fraud/UserFraudInfo";
+import { UserFraudInfo } from './UserFraudInfo';
 
 export class UserFraudScore {
   userInfo!: UserFraudInfo;
