@@ -25,7 +25,7 @@ import router from '@/router';
 import QuestionQuery from '@/models/management/QuestionQuery';
 import { FraudScores } from '@/models/management/fraud/FraudScores';
 import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
-import Dashboard from "@/models/dashboard/Dashboard";
+import Dashboard from '@/models/dashboard/Dashboard';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;

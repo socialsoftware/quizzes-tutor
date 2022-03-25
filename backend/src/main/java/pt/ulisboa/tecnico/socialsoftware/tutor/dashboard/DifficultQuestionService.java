@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRep
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DifficultQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -99,7 +100,7 @@ public class DifficultQuestionService {
                 .distinct()
                 .filter(question -> !questionsToPersist.contains(question))
                 .forEach(question -> {
-                    int percentageCorrect = percentageCorrect(question, now.minusDays(7));
+                    int percentageCorrect = percentageCorrect(dashboard.getCourseExecution(), question, now.minusDays(7));
                     if (percentageCorrect < 25) {
                         DifficultQuestion difficultQuestion = new DifficultQuestion(dashboard, question, percentageCorrect);
                         difficultQuestionRepository.save(difficultQuestion);
@@ -109,10 +110,11 @@ public class DifficultQuestionService {
         dashboard.setLastCheckDifficultQuestions(now);
     }
 
-    private int percentageCorrect(Question question, LocalDateTime weekAgo) {
+    private int percentageCorrect(CourseExecution courseExecution, Question question, LocalDateTime weekAgo) {
         Set<QuestionAnswer> answersInWeek = question.getQuizQuestions().stream()
                 .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
-                .filter(questionAnswer -> questionAnswer.getQuizAnswer().getAnswerDate().isAfter(weekAgo))
+                .filter(questionAnswer -> questionAnswer.getQuizAnswer().canResultsBePublic(courseExecution.getId())
+                        && questionAnswer.getQuizAnswer().getAnswerDate().isAfter(weekAgo))
                 .collect(Collectors.toSet());
 
         int totalAnswers = answersInWeek.size();
