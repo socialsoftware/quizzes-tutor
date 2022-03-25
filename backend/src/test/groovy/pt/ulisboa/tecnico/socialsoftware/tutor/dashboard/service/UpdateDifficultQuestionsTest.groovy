@@ -75,6 +75,7 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         and:
         quiz = new Quiz()
         quiz.setCourseExecution(externalCourseExecution)
+        quiz.setType("PROPOSED")
         quiz.setAvailableDate(now.minusHours(1))
         quiz.setConclusionDate(now)
         quizRepository.save(quiz)
@@ -94,6 +95,7 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         quizAnswer.setAnswerDate(now.minusMinutes(1))
         quizAnswer.setQuiz(quiz)
         quizAnswer.setStudent(student)
+        quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
         and:
         def questionAnswer = new QuestionAnswer()
@@ -125,6 +127,7 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         quizAnswer.setAnswerDate(now.minusMinutes(1))
         quizAnswer.setQuiz(quiz)
         quizAnswer.setStudent(student)
+        quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
         and:
         def questionAnswer = new QuestionAnswer()
@@ -216,6 +219,7 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         quizAnswer.setAnswerDate(now.minusMinutes(1))
         quizAnswer.setQuiz(quiz)
         quizAnswer.setStudent(student)
+        quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
         and:
         def questionAnswer = new QuestionAnswer()
@@ -267,6 +271,7 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         quizAnswer.setAnswerDate(now.minusMinutes(1))
         quizAnswer.setQuiz(quiz)
         quizAnswer.setStudent(student)
+        quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
         and:
         def questionAnswer = new QuestionAnswer()
@@ -341,6 +346,7 @@ class UpdateDifficultQuestionsTest extends SpockTest {
     def answerQuiz(correct, date = LocalDateTime.now()) {
         def quiz = new Quiz()
         quiz.setCourseExecution(externalCourseExecution)
+        quiz.setType("PROPOSED")
         quiz.setAvailableDate(now.minusHours(1))
         quiz.setConclusionDate(now)
         quizRepository.save(quiz)
@@ -354,6 +360,7 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         quizAnswer.setCompleted(true)
         quizAnswer.setCreationDate(date)
         quizAnswer.setAnswerDate(date)
+        quizAnswer.setCompleted(true)
         quizAnswer.setStudent(student)
         quizAnswer.setQuiz(quiz)
         quizAnswerRepository.save(quizAnswer)
