@@ -81,20 +81,22 @@ public class DifficultQuestionService {
 
         LocalDateTime now = LocalDateTime.now();
 
-        dashboard.getDifficultQuestions().stream()
+        Set<DifficultQuestion> questionsToRemove = dashboard.getDifficultQuestions().stream()
                 .filter(difficultQuestion -> !difficultQuestion.isRemoved() ||
                         (difficultQuestion.isRemoved() && difficultQuestion.getRemovedDate().plusDays(7).isBefore((now))))
-                .forEach(difficultQuestion -> {
-                    difficultQuestion.remove();
-                    difficultQuestionRepository.delete(difficultQuestion);
-                });
+                .collect(Collectors.toSet());
+
+        questionsToRemove.forEach(difficultQuestion -> {
+            difficultQuestion.remove();
+            difficultQuestionRepository.delete(difficultQuestion);
+        });
 
         Set<Question> questionsToPersist = dashboard.getDifficultQuestions().stream()
                 .map(DifficultQuestion::getQuestion)
                 .collect(Collectors.toSet());
 
         dashboard.getCourseExecution().getQuizzes().stream()
-                .filter(quiz -> quiz.getResultsDate().isAfter(now.minusDays(7)))
+                .filter(quiz -> quiz.getResultsDate() == null || quiz.getResultsDate().isAfter(now.minusDays(7)))
                 .flatMap(quiz -> quiz.getQuizQuestions().stream()
                         .map(QuizQuestion::getQuestion))
                 .distinct()

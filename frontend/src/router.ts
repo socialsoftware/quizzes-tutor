@@ -19,7 +19,7 @@ import AvailableQuizzesView from '@/views/student/AvailableQuizzesView.vue';
 import SolvedQuizzesView from '@/views/student/SolvedQuizzesView.vue';
 import QuizView from '@/views/student/quiz/QuizView.vue';
 import ResultsView from '@/views/student/quiz/ResultsView.vue';
-import DashboardView from '@/views/student/DashboardView.vue';
+import DashboardView from '@/views/student/dashboard/DashboardView.vue';
 import ScanView from '@/views/student/ScanView.vue';
 import CodeView from '@/views/student/CodeView.vue';
 
