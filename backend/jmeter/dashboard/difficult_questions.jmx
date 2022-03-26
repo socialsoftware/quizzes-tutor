@@ -66,7 +66,7 @@
           </elementProp>
           <elementProp name="number_of_students" elementType="Argument">
             <stringProp name="Argument.name">number_of_students</stringProp>
-            <stringProp name="Argument.value">300</stringProp>
+            <stringProp name="Argument.value">10</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -117,7 +117,7 @@
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get token" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">token</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.token</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
           </JSONPostProcessor>
           <hashTree/>
           <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="Store tokens" enabled="true">
@@ -239,19 +239,19 @@
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get token" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">token</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.token</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
           </JSONPostProcessor>
           <hashTree/>
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get course id" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">course_id</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.user.courses..[0].courseId</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
           </JSONPostProcessor>
           <hashTree/>
           <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get course execution id" enabled="true">
             <stringProp name="JSONPostProcessor.referenceNames">course_execution_id</stringProp>
             <stringProp name="JSONPostProcessor.jsonPathExprs">$.user.courses..[0].courseExecutionId</stringProp>
-            <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+            <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
           </JSONPostProcessor>
           <hashTree/>
           <BeanShellAssertion guiclass="BeanShellAssertionGui" testclass="BeanShellAssertion" testname="BeanShell Assertion" enabled="true">
@@ -301,11 +301,11 @@
             <stringProp name="LoopController.loops">${number_of_questions}</stringProp>
           </LoopController>
           <hashTree>
-            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Counter" enabled="true">
+            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Questions counter" enabled="true">
               <stringProp name="CounterConfig.start">1</stringProp>
               <stringProp name="CounterConfig.end">${number_of_questions}</stringProp>
               <stringProp name="CounterConfig.incr">1</stringProp>
-              <stringProp name="CounterConfig.name">counter_value</stringProp>
+              <stringProp name="CounterConfig.name">questions_counter</stringProp>
               <stringProp name="CounterConfig.format"></stringProp>
               <boolProp name="CounterConfig.per_user">false</boolProp>
             </CounterConfig>
@@ -318,9 +318,9 @@
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">{&#xd;
 	&quot;id&quot;:null,&#xd;
-	&quot;title&quot;:&quot;Question Title ${counter_value}&quot;,&#xd;
+	&quot;title&quot;:&quot;Question Title ${questions_counter}&quot;,&#xd;
 	&quot;status&quot;:&quot;AVAILABLE&quot;,&#xd;
-	&quot;content&quot;:&quot;Question Content ${counter_value}&quot;,&#xd;
+	&quot;content&quot;:&quot;Question Content ${questions_counter}&quot;,&#xd;
 	&quot;image&quot;:null,&#xd;
 	&quot;sequence&quot;:null,&#xd;
 	&quot;questionDetailsDto&quot;:&#xd;
@@ -356,9 +356,9 @@
             </HTTPSamplerProxy>
             <hashTree>
               <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get question ids" enabled="true">
-                <stringProp name="JSONPostProcessor.referenceNames">question_id_${counter_value}</stringProp>
+                <stringProp name="JSONPostProcessor.referenceNames">question_id_${questions_counter}</stringProp>
                 <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
-                <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+                <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
               </JSONPostProcessor>
               <hashTree/>
             </hashTree>
@@ -408,7 +408,7 @@ int numberOfQuestions = Integer.parseInt(vars.get(&quot;number_of_questions&quot
 for (int i = 1; i &lt;= numberOfQuestions; i++) {
 	result.append(&quot;{&quot;);
 	result.append(&quot;\&quot;id\&quot;: &quot;);
-	result.append(vars.get(&quot;question_id_&quot;+i+&quot;_1&quot;));
+	result.append(vars.get(&quot;question_id_&quot;+i));
 	result.append(&quot;,  \&quot;sequence\&quot;: &quot;);
 	result.append(i);
 	result.append(&quot;}&quot;);	
@@ -424,8 +424,8 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get quiz id" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">quiz_id</stringProp>
-              <stringProp name="JSONPostProcessor.jsonPathExprs">$..id</stringProp>
-              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.id</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
             </JSONPostProcessor>
             <hashTree/>
             <BeanShellAssertion guiclass="BeanShellAssertionGui" testclass="BeanShellAssertion" testname="BeanShell Assertion" enabled="true">
@@ -436,6 +436,12 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             </BeanShellAssertion>
             <hashTree/>
           </hashTree>
+          <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="true">
+            <boolProp name="displayJMeterProperties">false</boolProp>
+            <boolProp name="displayJMeterVariables">true</boolProp>
+            <boolProp name="displaySystemProperties">false</boolProp>
+          </DebugSampler>
+          <hashTree/>
         </hashTree>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
@@ -588,10 +594,19 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             <stringProp name="HTTPSampler.response_timeout"></stringProp>
           </HTTPSamplerProxy>
           <hashTree>
+            <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Answer Option" enabled="true">
+              <stringProp name="maximumValue">3</stringProp>
+              <stringProp name="minimumValue">0</stringProp>
+              <stringProp name="outputFormat"></stringProp>
+              <boolProp name="perThread">false</boolProp>
+              <stringProp name="randomSeed">100</stringProp>
+              <stringProp name="variableName">answer_option</stringProp>
+            </RandomVariableConfig>
+            <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get quiz answer id" enabled="true">
               <stringProp name="JSONPostProcessor.referenceNames">quiz_answer_id</stringProp>
               <stringProp name="JSONPostProcessor.jsonPathExprs">$.quizAnswerId</stringProp>
-              <stringProp name="JSONPostProcessor.match_numbers">1</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers"></stringProp>
             </JSONPostProcessor>
             <hashTree/>
             <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get question answer ids" enabled="true">
@@ -612,82 +627,12 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
               <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
             </JSONPostProcessor>
             <hashTree/>
-          </hashTree>
-          <LoopController guiclass="LoopControlPanel" testclass="LoopController" testname="Answer questions" enabled="true">
-            <boolProp name="LoopController.continue_forever">true</boolProp>
-            <stringProp name="LoopController.loops">${number_of_questions}</stringProp>
-          </LoopController>
-          <hashTree>
-            <RandomVariableConfig guiclass="TestBeanGUI" testclass="RandomVariableConfig" testname="Random Answer Option" enabled="true">
-              <stringProp name="maximumValue">3</stringProp>
-              <stringProp name="minimumValue">0</stringProp>
-              <stringProp name="outputFormat"></stringProp>
-              <boolProp name="perThread">false</boolProp>
-              <stringProp name="randomSeed">100</stringProp>
-              <stringProp name="variableName">answer_option</stringProp>
-            </RandomVariableConfig>
+            <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option ids" enabled="true">
+              <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
+              <stringProp name="JSONPostProcessor.jsonPathExprs">$.questions[*].questionDetails.options[${answer_option}].optionId</stringProp>
+              <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
+            </JSONPostProcessor>
             <hashTree/>
-            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Questions counter" enabled="true">
-              <stringProp name="CounterConfig.start">1</stringProp>
-              <stringProp name="CounterConfig.end">${number_of_questions}</stringProp>
-              <stringProp name="CounterConfig.incr">1</stringProp>
-              <stringProp name="CounterConfig.name">question_number</stringProp>
-              <stringProp name="CounterConfig.format"></stringProp>
-              <boolProp name="CounterConfig.per_user">true</boolProp>
-              <boolProp name="CounterConfig.reset_on_tg_iteration">true</boolProp>
-            </CounterConfig>
-            <hashTree/>
-            <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Get question" enabled="true">
-              <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
-              <elementProp name="HTTPsampler.Arguments" elementType="Arguments">
-                <collectionProp name="Arguments.arguments">
-                  <elementProp name="" elementType="HTTPArgument">
-                    <boolProp name="HTTPArgument.always_encode">false</boolProp>
-                    <stringProp name="Argument.value">{&#xd;
-	&quot;answerDetails&quot;: {&#xd;
-		&quot;optionId&quot;: null,&#xd;
-		&quot;type&quot;: &quot;multiple_choice&quot;&#xd;
-	},&#xd;
-	&quot;timeTaken&quot;:1278,&#xd;
-	&quot;questionAnswerId&quot;:${__V(question_answer_id_${question_number})},&#xd;
-	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${question_number})},&#xd;
-	&quot;sequence&quot;:${question_number},&#xd;
-	&quot;timeToSubmission&quot;: 12345,&#xd;
-	&quot;finalSubmission&quot;: true&#xd;
-}</stringProp>
-                    <stringProp name="Argument.metadata">=</stringProp>
-                  </elementProp>
-                </collectionProp>
-              </elementProp>
-              <stringProp name="HTTPSampler.domain">${server}</stringProp>
-              <stringProp name="HTTPSampler.port">${port}</stringProp>
-              <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
-              <stringProp name="HTTPSampler.contentEncoding">utf-8</stringProp>
-              <stringProp name="HTTPSampler.path">${prefix}/answers/${__property(quiz_id)}/question/${__V(question_id_${question_number})}</stringProp>
-              <stringProp name="HTTPSampler.method">POST</stringProp>
-              <boolProp name="HTTPSampler.follow_redirects">true</boolProp>
-              <boolProp name="HTTPSampler.auto_redirects">false</boolProp>
-              <boolProp name="HTTPSampler.use_keepalive">true</boolProp>
-              <boolProp name="HTTPSampler.DO_MULTIPART_POST">false</boolProp>
-              <stringProp name="HTTPSampler.embedded_url_re"></stringProp>
-              <stringProp name="HTTPSampler.connect_timeout"></stringProp>
-              <stringProp name="HTTPSampler.response_timeout"></stringProp>
-            </HTTPSamplerProxy>
-            <hashTree>
-              <JSONPostProcessor guiclass="JSONPostProcessorGui" testclass="JSONPostProcessor" testname="Get option id" enabled="true">
-                <stringProp name="JSONPostProcessor.referenceNames">option_id</stringProp>
-                <stringProp name="JSONPostProcessor.jsonPathExprs">$.questionDetails.options[${answer_option}].optionId</stringProp>
-                <stringProp name="JSONPostProcessor.match_numbers">-1</stringProp>
-              </JSONPostProcessor>
-              <hashTree/>
-              <BeanShellPostProcessor guiclass="TestBeanGUI" testclass="BeanShellPostProcessor" testname="Store answer option id" enabled="true">
-                <stringProp name="filename"></stringProp>
-                <stringProp name="parameters"></stringProp>
-                <boolProp name="resetInterpreter">false</boolProp>
-                <stringProp name="script">vars.putObject(&quot;optionId_&quot; + ${question_number}, ${option_id_1});</stringProp>
-              </BeanShellPostProcessor>
-              <hashTree/>
-            </hashTree>
           </hashTree>
           <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Conclude quiz" enabled="true">
             <boolProp name="HTTPSampler.postBodyRaw">true</boolProp>
@@ -737,12 +682,11 @@ int numberOfQuestions = Integer.parseInt(vars.get(&quot;number_of_questions&quot
 
 for (int i = 1; i &lt;= numberOfQuestions; i++) {
 	result.append(&quot;{&quot;);
-
 	result.append(&quot;\&quot;answerDetails\&quot;: &quot;);
 	result.append(&quot;{&quot;);
 	result.append(&quot;\&quot;type\&quot;: \&quot;multiple_choice\&quot;,&quot;);
 	result.append(&quot;\&quot;optionId\&quot;: &quot;);
-	result.append(vars.get(&quot;optionId_&quot;+i));
+	result.append(vars.get(&quot;option_id_&quot; + i));
 	result.append(&quot;}&quot;);
 	
 	result.append(&quot;,  \&quot;timeTaken\&quot;: &quot;);
@@ -750,7 +694,7 @@ for (int i = 1; i &lt;= numberOfQuestions; i++) {
 	result.append(&quot;,  \&quot;sequence\&quot;: &quot;);
 	result.append(i);
 	result.append(&quot;,  \&quot;questionAnswerId\&quot;: &quot;);
-	result.append(vars.get(&quot;question_answer_id_&quot;+i));
+	result.append(vars.get(&quot;question_answer_id_&quot; + i));
 	result.append(&quot;}&quot;);	
 	if (i != numberOfQuestions) {
 		result.append(&quot;,&quot;);
@@ -763,6 +707,12 @@ vars.put(&quot;answers&quot;, result.toString());</stringProp>
             <hashTree/>
           </hashTree>
         </hashTree>
+        <DebugSampler guiclass="TestBeanGUI" testclass="DebugSampler" testname="Debug Sampler" enabled="true">
+          <boolProp name="displayJMeterProperties">false</boolProp>
+          <boolProp name="displayJMeterVariables">true</boolProp>
+          <boolProp name="displaySystemProperties">false</boolProp>
+        </DebugSampler>
+        <hashTree/>
         <ResultCollector guiclass="ViewResultsFullVisualizer" testclass="ResultCollector" testname="View Results Tree" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
