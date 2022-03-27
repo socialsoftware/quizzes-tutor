@@ -5,7 +5,12 @@
     <v-card class="table">
       <v-row>
         <v-col>
-          <v-btn color="primary" dark v-on:click="show = 'Global'">
+          <v-btn
+            color="primary"
+            dark
+            data-cy="globalStatisticsMenuButton"
+            v-on:click="show = 'Global'"
+          >
             Global Statistics
           </v-btn>
         </v-col>
@@ -22,7 +27,11 @@
           </v-btn>
         </v-col>
         <v-col>
-          <v-btn color="primary" dark v-on:click="show = 'Difficult'"
+          <v-btn
+            color="primary"
+            dark
+            data-cy="difficultQuestionsMenuButton"
+            v-on:click="show = 'Difficult'"
             >Difficult Questions <br />
             {{
               dashboard != null ? dashboard.lastCheckDifficultQuestions : '-'

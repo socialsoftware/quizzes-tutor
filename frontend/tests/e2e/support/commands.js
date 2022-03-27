@@ -435,8 +435,11 @@ Cypress.Commands.add(
     cy.get('#availableDateInput-input').click();
     cy.get(
       '.datetimepicker > .datepicker > .datepicker-buttons-container > .datepicker-button > .datepicker-button-content'
-    ).first().click();
+    )
+      .first()
+      .click();
 
+    cy.get('[data-cy="searchField"]').type(questionTitle);
     cy.contains(questionTitle)
       .parent()
       .should('have.length', 1)
@@ -446,6 +449,8 @@ Cypress.Commands.add(
       .find('[data-cy="addToQuizButton"]')
       .click();
 
+    cy.get('[data-cy="searchField"]').clear();
+    cy.get('[data-cy="searchField"]').type(questionTitle2);
     cy.contains(questionTitle2)
       .parent()
       .should('have.length', 1)
@@ -459,22 +464,33 @@ Cypress.Commands.add(
   }
 );
 
-Cypress.Commands.add('solveQuizz', (quizTitle, numberOfQuizQuestions) => {
-  cy.get('[data-cy="quizzesStudentMenuButton"]').click();
-  cy.contains('Available').click();
+Cypress.Commands.add(
+  'solveQuizz',
+  (quizTitle, numberOfQuizQuestions, option) => {
+    cy.get('[data-cy="quizzesStudentMenuButton"]').click();
+    cy.contains('Available').click();
 
-  cy.contains(quizTitle).click();
+    cy.contains(quizTitle).click();
 
-  for (let i = 1; i < numberOfQuizQuestions; i++) {
-    cy.get('[data-cy="optionList"]').children().eq(1).click();
-    cy.get('[data-cy="nextQuestionButton"]').click();
+    for (let i = 1; i < numberOfQuizQuestions; i++) {
+      if (option) {
+        cy.get('[data-cy="optionList"]').children().contains(option).click();
+      } else {
+        cy.get('[data-cy="optionList"]').children().eq(1).click();
+      }
+      cy.get('[data-cy="nextQuestionButton"]').click();
+    }
+
+    if (option) {
+      cy.get('[data-cy="optionList"]').children().contains(option).click();
+    } else {
+      cy.get('[data-cy="optionList"]').children().eq(0).click();
+    }
+
+    cy.get('[data-cy="endQuizButton"]').click();
+    cy.get('[data-cy="confirmationButton"]').click();
   }
-
-  cy.get('[data-cy="optionList"]').children().eq(0).click();
-
-  cy.get('[data-cy="endQuizButton"]').click();
-  cy.get('[data-cy="confirmationButton"]').click();
-});
+);
 
 Cypress.Commands.add('createDiscussion', (discussionContent) => {
   cy.get('[data-cy="quizzesStudentMenuButton"]').click();

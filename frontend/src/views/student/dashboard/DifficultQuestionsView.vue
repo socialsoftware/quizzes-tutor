@@ -5,7 +5,13 @@
         <v-row>
           <v-col><h2>Difficult Questions</h2></v-col>
           <v-col class="text-right">
-            <v-btn color="primary" dark @click="refresh">Refresh</v-btn>
+            <v-btn
+              color="primary"
+              dark
+              data-cy="refreshDifficultQuestionsMenuButton"
+              @click="refresh"
+              >Refresh
+            </v-btn>
           </v-col>
         </v-row>
       </v-container>
@@ -15,6 +21,7 @@
         :sort-by="['percentage']"
         :sort-desc="[false]"
         class="elevation-1"
+        data-cy="difficultQuestionsTable"
         multi-sort
       >
         <template v-slot:[`item.action`]="{ item }">
@@ -22,6 +29,7 @@
             <template v-slot:activator="{ on }">
               <v-icon
                 class="mr-2 action-button"
+                data-cy="showStudentViewDialog"
                 @click="showStudentViewDialog(item)"
                 v-on="on"
                 >school
@@ -34,7 +42,7 @@
               <v-icon
                 class="mr-2 action-button"
                 color="red"
-                data-cy="deleteQuestionButton"
+                data-cy="deleteDifficultQuestionButton"
                 @click="deleteDifficultQuestion(item)"
                 v-on="on"
                 >delete
@@ -137,21 +145,16 @@ export default class GlobalStatsView extends Vue {
   }
 
   async deleteDifficultQuestion(toDeleteDifficultQuestion: DifficultQuestion) {
-    if (
-      toDeleteDifficultQuestion.id &&
-      confirm('Are you sure you want to delete this question?')
-    ) {
-      try {
-        await RemoteServices.deleteDifficultQuestion(
-          toDeleteDifficultQuestion.id
-        );
-        this.difficultQuestions = this.difficultQuestions.filter(
-          (difficultQuestion) =>
-            difficultQuestion.id != toDeleteDifficultQuestion.id
-        );
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
+    try {
+      await RemoteServices.deleteDifficultQuestion(
+        toDeleteDifficultQuestion.id
+      );
+      this.difficultQuestions = this.difficultQuestions.filter(
+        (difficultQuestion) =>
+          difficultQuestion.id != toDeleteDifficultQuestion.id
+      );
+    } catch (error) {
+      await this.$store.dispatch('error', error);
     }
   }
 }
