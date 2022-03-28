@@ -36,7 +36,7 @@ class GetDifficultQuestionWebServiceIT extends SpockTest {
         and:
         createExternalCourseAndExecution()
         and:
-        student = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_PASSWORD, false, AuthUser.Type.EXTERNAL)
+        student = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
         student.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(externalCourseExecution)
         userRepository.save(student)
@@ -113,7 +113,7 @@ class GetDifficultQuestionWebServiceIT extends SpockTest {
 
     def "student can't get another student's difficult questions"() {
         given:
-        def newStudent = new Student(USER_2_NAME, USER_2_EMAIL, USER_2_PASSWORD, false, AuthUser.Type.EXTERNAL)
+        def newStudent = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, false, AuthUser.Type.EXTERNAL)
         newStudent.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
         newStudent.addCourse(externalCourseExecution)
         userRepository.save(newStudent)

@@ -25,7 +25,7 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         and:
         createExternalCourseAndExecution()
         and:
-        student = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_PASSWORD, false, AuthUser.Type.EXTERNAL)
+        student = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
         student.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(externalCourseExecution)
         userRepository.save(student)
