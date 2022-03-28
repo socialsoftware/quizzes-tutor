@@ -77,7 +77,7 @@ public class FailedAnswerService {
     public void updateFailedAnswers(int dashboardId, String startDate, String endDate) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
-        LocalDateTime now = DateHandler.now();
+        LocalDateTime now = LocalDateTime.now();
 
         LocalDateTime start, end;
         if (startDate == null) start = getLastCheckDate(dashboard, now);
@@ -89,7 +89,7 @@ public class FailedAnswerService {
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution()
                         && (quizAnswer.getAnswerDate().isAfter(start) && quizAnswer.getAnswerDate().isBefore(end)))
                 .collect(Collectors.toList());
-
+        
         studentAnswers.stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(dashboard.getCourseExecution().getId()))
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())

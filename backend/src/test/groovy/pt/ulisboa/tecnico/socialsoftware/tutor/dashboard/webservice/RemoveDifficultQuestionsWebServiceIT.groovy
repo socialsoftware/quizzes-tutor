@@ -37,7 +37,7 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTest {
         and:
         def now = DateHandler.now()
         and:
-        student = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_PASSWORD, false, AuthUser.Type.EXTERNAL)
+        student = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
         student.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(externalCourseExecution)
         userRepository.save(student)
@@ -116,7 +116,7 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTest {
 
     def "student cant update another students difficult questionss"() {
         given:
-        def newStudent = new Student(USER_2_NAME, USER_2_EMAIL, USER_2_PASSWORD, false, AuthUser.Type.EXTERNAL)
+        def newStudent = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, false, AuthUser.Type.EXTERNAL)
         newStudent.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
         userRepository.save(newStudent)
         createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
