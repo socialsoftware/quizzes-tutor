@@ -69,6 +69,7 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         optionRepository.save(optionKO)
         and:
         def quiz = new Quiz()
+        quiz.setType("PROPOSED")
         quiz.setAvailableDate(now.minusMinutes(5))
         quiz.setResultsDate(now)
         quiz.setCourseExecution(externalCourseExecution)
@@ -83,6 +84,7 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         quizAnswer.setAnswerDate(now.minusMinutes(1))
         quizAnswer.setQuiz(quiz)
         quizAnswer.setStudent(student)
+        quizAnswer.setCompleted(true)
         quizAnswerRepository.save(quizAnswer)
         and:
         def questionAnswer = new QuestionAnswer()
