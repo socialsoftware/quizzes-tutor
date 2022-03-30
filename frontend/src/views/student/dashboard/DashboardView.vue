@@ -15,7 +15,11 @@
           </v-btn>
         </v-col>
         <v-col>
-          <v-btn color="primary" dark v-on:click="show = 'Weekly'"
+          <v-btn
+            color="primary"
+            dark
+            data-cy="weeklyScoresMenuButton"
+            v-on:click="show = 'Weekly'"
             >Weekly Scores <br />
             {{ dashboard != null ? dashboard.lastCheckWeeklyScores : '-' }}
           </v-btn>
@@ -45,6 +49,13 @@
       <global-stats-view></global-stats-view>
     </div>
 
+    <div v-if="show === 'Weekly'">
+      <weekly-scores-view
+        :dashboard="dashboard"
+        v-on:refresh="onWeeklyScoresRefresh"
+      ></weekly-scores-view>
+    </div>
+
     <div v-if="show === 'Difficult'">
       <difficult-questions-view
         :dashboard="dashboard"
@@ -60,9 +71,10 @@ import RemoteServices from '@/services/RemoteServices';
 import GlobalStatsView from '@/views/student/dashboard/GlobalStatsView.vue';
 import DifficultQuestionsView from '@/views/student/dashboard/DifficultQuestionsView.vue';
 import Dashboard from '@/models/dashboard/Dashboard';
+import WeeklyScoresView from '@/views/student/dashboard/WeeklyScoresView.vue';
 
 @Component({
-  components: { GlobalStatsView, DifficultQuestionsView },
+  components: { GlobalStatsView, DifficultQuestionsView, WeeklyScoresView },
 })
 export default class DashboardView extends Vue {
   dashboard: Dashboard | null = null;
@@ -81,6 +93,10 @@ export default class DashboardView extends Vue {
   onDifficultQuestionsRefresh(date: string) {
     if (this.dashboard != null)
       this.dashboard.lastCheckDifficultQuestions = date;
+  }
+
+  onWeeklyScoresRefresh(date: string) {
+    if (this.dashboard != null) this.dashboard.lastCheckWeeklyScores = date;
   }
 }
 </script>

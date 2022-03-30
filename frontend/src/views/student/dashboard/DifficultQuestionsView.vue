@@ -81,7 +81,7 @@ import StudentViewDialog from '@/views/teacher/questions/StudentViewDialog.vue';
     'student-view-dialog': StudentViewDialog,
   },
 })
-export default class GlobalStatsView extends Vue {
+export default class DifficultQuestionsView extends Vue {
   @Prop(Dashboard) readonly dashboard!: Dashboard;
 
   difficultQuestions: DifficultQuestion[] = [];

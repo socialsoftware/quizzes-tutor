@@ -157,7 +157,7 @@ public enum ErrorMessage {
     WEEKLY_SCORE_NOT_FOUND("Weekly Score not found: %d"),
     UPDATE_WEEKLY_SCORE_IS_CLOSED("Impossible to update old Weekly Score: %s"),
     CANNOT_CLOSE_CURRENT_WEEK("Cannot close current week: %s"),
-    CANNOT_REMOVE_WEEKLY_SCORE("Impossible to remove current Weekly Score"),
+    CANNOT_REMOVE_WEEKLY_SCORE("Cannot remove current Weekly Score"),
 
     DIFFICULT_QUESTION_NOT_FOUND("Difficult question not found"),
     DIFFICULT_QUESTION_ALREADY_CREATED("Difficult question already created"),
