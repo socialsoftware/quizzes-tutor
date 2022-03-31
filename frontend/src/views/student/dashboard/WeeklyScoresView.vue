@@ -19,7 +19,7 @@
         :headers="headers"
         :items="weeklyScores"
         :sort-by="['week']"
-        :sort-desc="[false]"
+        :sort-desc="[true]"
         class="elevation-1"
         data-cy="weeklyScoresTable"
         multi-sort

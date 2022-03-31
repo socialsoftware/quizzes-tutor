@@ -1,12 +1,13 @@
-describe('Difficult Questions', () => {
+describe('Weekly Scores', () => {
   let date;
 
   beforeEach(() => {
     date = new Date();
     //create quiz
     cy.demoTeacherLogin();
+
     cy.createQuestion(
-      'Question Difficult Question 1 ' + date,
+      'Weekly Score Question 1 ' + date,
       'Question',
       'Option',
       'Option',
@@ -14,7 +15,7 @@ describe('Difficult Questions', () => {
       'Correct'
     );
     cy.createQuestion(
-      'Question Difficult Question 2 ' + date,
+      'Weekly Score Question 2 ' + date,
       'Question',
       'Option',
       'Option',
@@ -22,14 +23,14 @@ describe('Difficult Questions', () => {
       'Correct'
     );
     cy.createQuizzWith2Questions(
-      'Difficult Question Title ' + date,
-      'Question Difficult Question 1 ' + date,
-      'Question Difficult Question 2 ' + date
+      'Weekly Score Title ' + date,
+      'Weekly Score Question 1 ' + date,
+      'Weekly Score Question 2 ' + date
     );
     cy.contains('Logout').click();
   });
 
-  it('student accesses difficult questions', () => {
+  it('student accesses weekly scores', () => {
     cy.intercept('GET', '**/students/dashboards/executions/*').as(
       'getDashboard'
     );
@@ -44,10 +45,13 @@ describe('Difficult Questions', () => {
     );
 
     cy.demoStudentLogin();
-    cy.solveQuizz('Difficult Question Title ' + date, 2, 'ChooseThisWrong');
+
+    cy.solveQuizz('Weekly Score Title ' + date, 2, 'ChooseThisWrong');
 
     cy.get('[data-cy="dashboardMenuButton"]').click();
     cy.wait('@getDashboard');
+
+    cy.createWeeklyScore();
 
     cy.get('[data-cy="weeklyScoresMenuButton"]').click();
     cy.wait('@getWeeklyScores');
@@ -56,17 +60,22 @@ describe('Difficult Questions', () => {
     cy.wait('@updateWeeklyScores');
 
     cy.get('[data-cy="deleteWeeklyScoreButton"]')
+      .should('have.length', 2)
+      .eq(1)
+      .click();
+    cy.wait('@deleteWeeklyScore');
+
+    cy.get('[data-cy="deleteWeeklyScoreButton"]')
       .should('have.length', 1)
       .eq(0)
       .click();
 
     cy.closeErrorMessage();
 
-    cy.get('[data-cy="deleteWeeklyScoreButton"]').should('have.length', 1);
-
-    //cy.wait('@deleteWeeklyScore');
-
     cy.contains('Logout').click();
+
+    cy.deleteWeeklyScore();
+
     Cypress.on('uncaught:exception', (err, runnable) => {
       // returning false here prevents Cypress from
       // failing the test
