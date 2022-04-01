@@ -69,10 +69,26 @@ export default class WeeklyScoresView extends Vue {
       text: 'Week',
       value: 'week',
       align: 'start',
+      width: '5px',
     },
-    { text: 'Number Answered', value: 'numberAnswered', width: '5px' },
-    { text: 'Uniquely Answered', value: 'uniquelyAnswered', width: '5px' },
-    { text: 'Percentage Answered', value: 'percentageCorrect', width: '5px' },
+    {
+      text: 'Number Answered',
+      value: 'numberAnswered',
+      align: 'center',
+      width: '5px',
+    },
+    {
+      text: 'Uniquely Answered',
+      value: 'uniquelyAnswered',
+      align: 'center',
+      width: '5px',
+    },
+    {
+      text: 'Percentage Answered',
+      value: 'percentageCorrect',
+      align: 'center',
+      width: '5px',
+    },
   ];
 
   async created() {

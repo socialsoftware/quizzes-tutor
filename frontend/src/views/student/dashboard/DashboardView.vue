@@ -25,7 +25,11 @@
           </v-btn>
         </v-col>
         <v-col>
-          <v-btn color="primary" dark v-on:click="show = 'Failed'"
+          <v-btn
+            color="primary"
+            dark
+            data-cy="failedAnswersMenuButton"
+            v-on:click="show = 'Failed'"
             >Failed Answers <br />
             {{ dashboard != null ? dashboard.lastCheckFailedAnswers : '-' }}
           </v-btn>
@@ -56,6 +60,13 @@
       ></weekly-scores-view>
     </div>
 
+    <div v-if="show === 'Failed'">
+      <failed-answers-view
+        :dashboard="dashboard"
+        v-on:refresh="onFailedAnswersRefresh"
+      ></failed-answers-view>
+    </div>
+
     <div v-if="show === 'Difficult'">
       <difficult-questions-view
         :dashboard="dashboard"
@@ -72,12 +83,18 @@ import GlobalStatsView from '@/views/student/dashboard/GlobalStatsView.vue';
 import DifficultQuestionsView from '@/views/student/dashboard/DifficultQuestionsView.vue';
 import Dashboard from '@/models/dashboard/Dashboard';
 import WeeklyScoresView from '@/views/student/dashboard/WeeklyScoresView.vue';
+import FailedAnswersView from '@/views/student/dashboard/FailedAnswersView.vue';
 
 @Component({
-  components: { GlobalStatsView, DifficultQuestionsView, WeeklyScoresView },
+  components: {
+    GlobalStatsView,
+    WeeklyScoresView,
+    FailedAnswersView,
+    DifficultQuestionsView,
+  },
 })
 export default class DashboardView extends Vue {
-  dashboard: Dashboard | null = null;
+  dashboard!: Dashboard;
   show: string = 'Global';
 
   async created() {
@@ -90,13 +107,16 @@ export default class DashboardView extends Vue {
     await this.$store.dispatch('clearLoading');
   }
 
-  onDifficultQuestionsRefresh(date: string) {
-    if (this.dashboard != null)
-      this.dashboard.lastCheckDifficultQuestions = date;
+  onWeeklyScoresRefresh(date: string) {
+    this.dashboard.lastCheckWeeklyScores = date;
   }
 
-  onWeeklyScoresRefresh(date: string) {
-    if (this.dashboard != null) this.dashboard.lastCheckWeeklyScores = date;
+  onFailedAnswersRefresh(date: string) {
+    this.dashboard.lastCheckFailedAnswers = date;
+  }
+
+  onDifficultQuestionsRefresh(date: string) {
+    this.dashboard.lastCheckDifficultQuestions = date;
   }
 }
 </script>

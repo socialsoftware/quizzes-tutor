@@ -1,14 +1,14 @@
 <template>
-  <v-container v-if="difficultQuestions != null" fluid>
+  <v-container v-if="failedAnswers != null" fluid>
     <v-card class="table">
       <v-container>
         <v-row>
-          <v-col><h2>Difficult Questions</h2></v-col>
+          <v-col><h2>Failed Answers</h2></v-col>
           <v-col class="text-right">
             <v-btn
               color="primary"
               dark
-              data-cy="refreshDifficultQuestionsMenuButton"
+              data-cy="refreshFailedAnswersMenuButton"
               @click="refresh"
               >Refresh
             </v-btn>
@@ -17,11 +17,11 @@
       </v-container>
       <v-data-table
         :headers="headers"
-        :items="difficultQuestions"
-        :sort-by="['percentage']"
+        :items="failedAnswers"
+        :sort-by="['collected']"
         :sort-desc="[false]"
         class="elevation-1"
-        data-cy="difficultQuestionsTable"
+        data-cy="failedAnswersTable"
         multi-sort
       >
         <template v-slot:[`item.action`]="{ item }">
@@ -42,13 +42,13 @@
               <v-icon
                 class="mr-2 action-button"
                 color="red"
-                data-cy="deleteDifficultQuestionButton"
-                @click="deleteDifficultQuestion(item)"
+                data-cy="deleteFailedAnswerButton"
+                @click="deleteFailedAnswer(item)"
                 v-on="on"
                 >delete
               </v-icon>
             </template>
-            <span>Delete Difficult Question</span>
+            <span>Delete Failed Answer</span>
           </v-tooltip>
         </template>
       </v-data-table>
@@ -69,22 +69,22 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import DifficultQuestion from '@/models/dashboard/DifficultQuestion';
 import Dashboard from '@/models/dashboard/Dashboard';
 import { ISOtoString } from '@/services/ConvertDateService';
 import Question from '@/models/management/Question';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import StudentViewDialog from '@/views/teacher/questions/StudentViewDialog.vue';
+import FailedAnswer from '@/models/dashboard/FailedAnswer';
 
 @Component({
   components: {
     'student-view-dialog': StudentViewDialog,
   },
 })
-export default class DifficultQuestionsView extends Vue {
-  @Prop(Dashboard) readonly dashboard!: Dashboard;
+export default class FailedAnswersView extends Vue {
+  @Prop(Dashboard) dashboard!: Dashboard;
 
-  difficultQuestions: DifficultQuestion[] = [];
+  failedAnswers: FailedAnswer[] = [];
   statementQuestion: StatementQuestion | null = null;
   studentViewDialog: boolean = false;
 
@@ -98,18 +98,19 @@ export default class DifficultQuestionsView extends Vue {
     },
     {
       text: 'Question',
-      value: 'questionDto.content',
+      value: 'questionAnswerDto.question.content',
       align: 'start',
-      width: '500px',
       sortable: false,
+      width: '500px',
     },
-    { text: 'Percentage', value: 'percentage', align: 'center', width: '5px' },
+    { text: 'Answered', value: 'answered', align: 'center', width: '5px' },
+    { text: 'Collected', value: 'collected', align: 'center', width: '10px' },
   ];
 
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.difficultQuestions = await RemoteServices.getDifficultQuestions(
+      this.failedAnswers = await RemoteServices.getFailedAnswers(
         this.dashboard.id
       );
     } catch (error) {
@@ -120,23 +121,28 @@ export default class DifficultQuestionsView extends Vue {
 
   async refresh() {
     await this.$store.dispatch('loading');
+    let date = ISOtoString(new Date().toString());
     try {
-      await RemoteServices.updateDifficultQuestions(this.dashboard.id);
-      this.difficultQuestions = await RemoteServices.getDifficultQuestions(
+      await RemoteServices.updateFailedAnswers(
+        this.dashboard.id,
+        this.dashboard.lastCheckFailedAnswers,
+        date
+      );
+      this.failedAnswers = await RemoteServices.getFailedAnswers(
         this.dashboard.id
       );
-      this.$emit('refresh', ISOtoString(new Date().toString()));
+      this.$emit('refresh', date);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
   }
 
-  async showStudentViewDialog(difficultQuestion: DifficultQuestion) {
-    if (difficultQuestion.questionDto.id) {
+  async showStudentViewDialog(failedAnswer: FailedAnswer) {
+    if (failedAnswer.questionAnswerDto.question.id) {
       try {
         this.statementQuestion = await RemoteServices.getStatementQuestion(
-          difficultQuestion.questionDto.id
+          failedAnswer.questionAnswerDto.question.id
         );
         this.studentViewDialog = true;
       } catch (error) {
@@ -145,14 +151,11 @@ export default class DifficultQuestionsView extends Vue {
     }
   }
 
-  async deleteDifficultQuestion(toDeleteDifficultQuestion: DifficultQuestion) {
+  async deleteFailedAnswer(toDeleteFailedAnswer: FailedAnswer) {
     try {
-      await RemoteServices.deleteDifficultQuestion(
-        toDeleteDifficultQuestion.id
-      );
-      this.difficultQuestions = this.difficultQuestions.filter(
-        (difficultQuestion) =>
-          difficultQuestion.id != toDeleteDifficultQuestion.id
+      await RemoteServices.deleteFailedAnswer(toDeleteFailedAnswer.id);
+      this.failedAnswers = this.failedAnswers.filter(
+        (failedAnswer) => failedAnswer.id != toDeleteFailedAnswer.id
       );
     } catch (error) {
       await this.$store.dispatch('error', error);

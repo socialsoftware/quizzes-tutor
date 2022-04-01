@@ -67,7 +67,7 @@ public class MultipleChoiceAnswer extends AnswerDetails {
 
     @Override
     public boolean isCorrect() {
-        return getOption() != null && getOption().isCorrect();
+        return isAnswered() && getOption().isCorrect();
     }
 
 
@@ -85,7 +85,7 @@ public class MultipleChoiceAnswer extends AnswerDetails {
 
     @Override
     public boolean isAnswered() {
-        return this.getOption() != null;
+        return getOption() != null;
     }
 
     @Override
