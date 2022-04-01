@@ -16,7 +16,8 @@ public class SameQuestion implements DomainEntity {
     @OneToOne
     private FailedAnswer failedAnswer;
 
-    @ManyToMany
+    @OneToMany(cascade = CascadeType.ALL)
+    @JoinColumn(name = "same_question_id")
     private Set<FailedAnswer> failedAnswers = new HashSet<>();
 
     public SameQuestion() {}
