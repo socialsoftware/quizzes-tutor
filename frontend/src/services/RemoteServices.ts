@@ -249,15 +249,9 @@ export default class RemoteServices {
       });
   }
 
-  static async updateFailedAnswers(
-    dashboardId: number,
-    startDate: string,
-    endDate: string
-  ) {
+  static async updateFailedAnswers(dashboardId: number) {
     return httpClient
-      .put(
-        `/students/dashboards/${dashboardId}/failedanswers?start=${startDate}&end=${endDate}`
-      )
+      .put(`/students/dashboards/${dashboardId}/failedanswers`)
       .then((response) => {
         return;
       })

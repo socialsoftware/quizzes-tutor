@@ -148,7 +148,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         dashboard.getFailedAnswers().size() == 1
         def failedAnswer = failedAnswerRepository.findAll().get(0)
         dashboard.getFailedAnswers().contains(failedAnswer)
-        dashboard.getLastCheckFailedAnswers().isAfter(DateHandler.now().minusSeconds(1))
+        dashboard.getLastCheckFailedAnswers() == null
 
         where:
         inSeconds << [1, 60*60*24.intdiv(2), 60*60*24]

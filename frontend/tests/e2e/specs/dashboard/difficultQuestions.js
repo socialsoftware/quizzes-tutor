@@ -68,6 +68,12 @@ describe('Difficult Questions', () => {
       .click();
     cy.wait('@deleteDifficultQuestion');
 
+    cy.get('[data-cy="deleteDifficultQuestionButton"]')
+      .should('have.length.at.least', 1)
+      .eq(0)
+      .click();
+    cy.wait('@deleteDifficultQuestion');
+
     cy.contains('Logout').click();
     Cypress.on('uncaught:exception', (err, runnable) => {
       // returning false here prevents Cypress from

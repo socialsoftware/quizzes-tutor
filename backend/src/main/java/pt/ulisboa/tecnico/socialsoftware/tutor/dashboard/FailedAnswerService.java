@@ -85,25 +85,27 @@ public class FailedAnswerService {
         if (endDate == null) end = now;
         else end = LocalDateTime.parse(endDate, DateTimeFormatter.ISO_DATE_TIME);
 
-        List<QuizAnswer> studentAnswers = dashboard.getStudent().getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution()
-                        && (quizAnswer.getAnswerDate().isAfter(start) && quizAnswer.getAnswerDate().isBefore(end)))
-                .collect(Collectors.toList());
-        
-        studentAnswers.stream()
+        dashboard.getStudent().getQuizAnswers().stream()
+                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic(dashboard.getCourseExecution().getId()))
+                .filter(quizAnswer -> quizAnswer.getAnswerDate().isAfter(start) && quizAnswer.getAnswerDate().isBefore(end))
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                 .filter(Predicate.not(QuestionAnswer::isCorrect))
                 .filter(qa -> dashboard.getFailedAnswers().stream().noneMatch(fa -> Objects.equals(fa.getQuestionAnswer().getId(), qa.getId())))
                 .forEach(questionAnswer -> createFailedAnswer(dashboardId, questionAnswer.getId()));
 
-        dashboard.setLastCheckFailedAnswers(studentAnswers.stream()
-                .filter(quizAnswer -> !quizAnswer.canResultsBePublic(dashboard.getCourseExecution().getId()))
-                .map(QuizAnswer::getCreationDate)
-                .sorted()
-                .findFirst()
-                .map(localDateTime -> localDateTime.minusSeconds(1))
-                .orElse(now));
+        if (startDate == null && endDate == null) {
+            dashboard.setLastCheckFailedAnswers(dashboard.getStudent().getQuizAnswers().stream()
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
+                    .filter(quizAnswer -> !quizAnswer.canResultsBePublic(dashboard.getCourseExecution().getId()))
+                    .filter(quizAnswer -> dashboard.getLastCheckFailedAnswers() == null
+                            || quizAnswer.getCreationDate().isAfter(dashboard.getLastCheckFailedAnswers()))
+                    .map(QuizAnswer::getCreationDate)
+                    .sorted()
+                    .findFirst()
+                    .map(localDateTime -> localDateTime.minusSeconds(1))
+                    .orElse(now));
+        }
     }
 
     private LocalDateTime getLastCheckDate(Dashboard dashboard, LocalDateTime now) {

@@ -123,11 +123,7 @@ export default class FailedAnswersView extends Vue {
     await this.$store.dispatch('loading');
     let date = ISOtoString(new Date().toString());
     try {
-      await RemoteServices.updateFailedAnswers(
-        this.dashboardId,
-        this.lastCheckFailedAnswers,
-        date
-      );
+      await RemoteServices.updateFailedAnswers(this.dashboardId);
       this.failedAnswers = await RemoteServices.getFailedAnswers(
         this.dashboardId
       );
