@@ -69,7 +69,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import Dashboard from '@/models/dashboard/Dashboard';
 import { ISOtoString } from '@/services/ConvertDateService';
 import Question from '@/models/management/Question';
 import StatementQuestion from '@/models/statement/StatementQuestion';
@@ -82,7 +81,8 @@ import FailedAnswer from '@/models/dashboard/FailedAnswer';
   },
 })
 export default class FailedAnswersView extends Vue {
-  @Prop(Dashboard) dashboard!: Dashboard;
+  @Prop() dashboardId!: number;
+  @Prop() lastCheckFailedAnswers!: string;
 
   failedAnswers: FailedAnswer[] = [];
   statementQuestion: StatementQuestion | null = null;
@@ -111,7 +111,7 @@ export default class FailedAnswersView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.failedAnswers = await RemoteServices.getFailedAnswers(
-        this.dashboard.id
+        this.dashboardId
       );
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -124,12 +124,12 @@ export default class FailedAnswersView extends Vue {
     let date = ISOtoString(new Date().toString());
     try {
       await RemoteServices.updateFailedAnswers(
-        this.dashboard.id,
-        this.dashboard.lastCheckFailedAnswers,
+        this.dashboardId,
+        this.lastCheckFailedAnswers,
         date
       );
       this.failedAnswers = await RemoteServices.getFailedAnswers(
-        this.dashboard.id
+        this.dashboardId
       );
       this.$emit('refresh', date);
     } catch (error) {

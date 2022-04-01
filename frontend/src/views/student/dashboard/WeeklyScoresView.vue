@@ -47,13 +47,12 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import Dashboard from '@/models/dashboard/Dashboard';
 import { ISOtoString } from '@/services/ConvertDateService';
 import WeeklyScore from '@/models/dashboard/WeeklyScore';
 
 @Component
 export default class WeeklyScoresView extends Vue {
-  @Prop(Dashboard) readonly dashboard!: Dashboard;
+  @Prop() readonly dashboardId!: number;
 
   weeklyScores: WeeklyScore[] = [];
 
@@ -95,7 +94,7 @@ export default class WeeklyScoresView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.weeklyScores = await RemoteServices.getWeeklyScores(
-        this.dashboard.id
+        this.dashboardId
       );
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -106,9 +105,9 @@ export default class WeeklyScoresView extends Vue {
   async refresh() {
     await this.$store.dispatch('loading');
     try {
-      await RemoteServices.updateWeeklyScores(this.dashboard.id);
+      await RemoteServices.updateWeeklyScores(this.dashboardId);
       this.weeklyScores = await RemoteServices.getWeeklyScores(
-        this.dashboard.id
+        this.dashboardId
       );
       this.$emit('refresh', ISOtoString(new Date().toString()));
     } catch (error) {

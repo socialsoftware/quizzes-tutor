@@ -17,8 +17,7 @@ public class SameDifficulty implements DomainEntity
     @OneToOne
     private DifficultQuestion difficultQuestion;
 
-    @OneToMany(cascade = CascadeType.ALL)
-    @JoinColumn(name = "same_difficulty_id")
+    @ManyToMany
     private Set<DifficultQuestion> difficultQuestions = new HashSet<>();
 
     public SameDifficulty() {}
@@ -29,6 +28,7 @@ public class SameDifficulty implements DomainEntity
 
     public void remove() {
         difficultQuestions.clear();
+        difficultQuestion = null;
     }
 
     public Integer getId() {

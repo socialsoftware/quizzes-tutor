@@ -71,7 +71,7 @@ class FailedAnswersSpockTest extends SpockTest {
         return quizQuestion
     }
 
-    def answerQuiz(answered, correct, completed, question, quiz, date = LocalDateTime.now()) {
+    def answerQuiz(answered, correct, completed, question, quiz, date = DateHandler.now()) {
         def quizAnswer = new QuizAnswer()
         quizAnswer.setCompleted(completed)
         quizAnswer.setCreationDate(date)

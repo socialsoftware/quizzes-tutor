@@ -70,7 +70,6 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import DifficultQuestion from '@/models/dashboard/DifficultQuestion';
-import Dashboard from '@/models/dashboard/Dashboard';
 import { ISOtoString } from '@/services/ConvertDateService';
 import Question from '@/models/management/Question';
 import StatementQuestion from '@/models/statement/StatementQuestion';
@@ -82,7 +81,7 @@ import StudentViewDialog from '@/views/teacher/questions/StudentViewDialog.vue';
   },
 })
 export default class DifficultQuestionsView extends Vue {
-  @Prop(Dashboard) readonly dashboard!: Dashboard;
+  @Prop() readonly dashboardId!: number;
 
   difficultQuestions: DifficultQuestion[] = [];
   statementQuestion: StatementQuestion | null = null;
@@ -110,7 +109,7 @@ export default class DifficultQuestionsView extends Vue {
     await this.$store.dispatch('loading');
     try {
       this.difficultQuestions = await RemoteServices.getDifficultQuestions(
-        this.dashboard.id
+        this.dashboardId
       );
     } catch (error) {
       await this.$store.dispatch('error', error);
@@ -121,9 +120,9 @@ export default class DifficultQuestionsView extends Vue {
   async refresh() {
     await this.$store.dispatch('loading');
     try {
-      await RemoteServices.updateDifficultQuestions(this.dashboard.id);
+      await RemoteServices.updateDifficultQuestions(this.dashboardId);
       this.difficultQuestions = await RemoteServices.getDifficultQuestions(
-        this.dashboard.id
+        this.dashboardId
       );
       this.$emit('refresh', ISOtoString(new Date().toString()));
     } catch (error) {

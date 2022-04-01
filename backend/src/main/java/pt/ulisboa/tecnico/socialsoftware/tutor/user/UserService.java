@@ -30,6 +30,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.UserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -134,7 +135,7 @@ public class UserService {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public AuthUser createDemoStudent() {
-        String birthDate = LocalDateTime.now().toString() + new Random().nextDouble();
+        String birthDate = DateHandler.now().toString() + new Random().nextDouble();
         AuthUser authUser = createStudentWithAuth("Demo-Student-" + birthDate, "Demo-Student-" + birthDate, "demo_student@mail.com", AuthUser.Type.DEMO);
         CourseExecution courseExecution = courseExecutionService.getDemoCourseExecution();
         if (courseExecution != null) {

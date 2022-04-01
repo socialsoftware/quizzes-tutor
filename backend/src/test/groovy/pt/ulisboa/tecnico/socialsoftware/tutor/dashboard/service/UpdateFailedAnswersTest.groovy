@@ -109,8 +109,8 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
 
     def "updates failed answers after last check"() {
         given:
-        dashboard.setLastCheckFailedAnswers(LocalDateTime.now().minusDays(1))
-        answerQuiz(true, false, true, quizQuestion, quiz, LocalDateTime.now().minusDays(2))
+        dashboard.setLastCheckFailedAnswers(DateHandler.now().minusDays(1))
+        answerQuiz(true, false, true, quizQuestion, quiz, DateHandler.now().minusDays(2))
         and:
         def quiz2 = createQuiz(2)
         def quizQuestion2 = createQuestion(2, quiz2)
@@ -175,7 +175,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
     def "does not create the same failed answer twice"() {
         given:
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz, LOCAL_DATE_BEFORE.plusSeconds(20))
-        def failedAnswer = createFailedAnswer(questionAnswer, LocalDateTime.now())
+        def failedAnswer = createFailedAnswer(questionAnswer, DateHandler.now())
 
         when:
         failedAnswerService.updateFailedAnswers(dashboard.getId(),  DateHandler.toISOString(LOCAL_DATE_BEFORE),  DateHandler.toISOString(LOCAL_DATE_YESTERDAY))

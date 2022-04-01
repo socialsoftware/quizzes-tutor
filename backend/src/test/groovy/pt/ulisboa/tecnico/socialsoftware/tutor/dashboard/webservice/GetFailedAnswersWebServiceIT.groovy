@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
 import java.time.LocalDateTime
 
@@ -46,7 +47,7 @@ class GetFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
         and:
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
-        def answer = createFailedAnswer(questionAnswer, LocalDateTime.now())
+        def answer = createFailedAnswer(questionAnswer, DateHandler.now())
 
         when:
         response = restClient.get(
@@ -88,7 +89,7 @@ class GetFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
         and:
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
-        createFailedAnswer(questionAnswer, LocalDateTime.now())
+        createFailedAnswer(questionAnswer, DateHandler.now())
 
         when:
         response = restClient.get(

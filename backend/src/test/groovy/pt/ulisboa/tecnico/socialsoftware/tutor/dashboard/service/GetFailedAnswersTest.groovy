@@ -37,7 +37,7 @@ class GetFailedAnswersTest extends FailedAnswersSpockTest {
     def "get failed answer answered=#answered"() {
         given:
         def questionAnswer = answerQuiz(answered, false, true, quizQuestion, quiz)
-        createFailedAnswer(questionAnswer, LocalDateTime.now())
+        createFailedAnswer(questionAnswer, DateHandler.now())
 
         when:
         def failedAnswerDtos = failedAnswerService.getFailedAnswers(dashboard.getId())
@@ -58,12 +58,12 @@ class GetFailedAnswersTest extends FailedAnswersSpockTest {
     def "get ordered failed answers"() {
         given:
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
-        createFailedAnswer(questionAnswer, LocalDateTime.now())
+        createFailedAnswer(questionAnswer, DateHandler.now())
 
         def quiz2 = createQuiz(2)
         def quizQuestion2 = createQuestion(2, quiz2)
         def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
-        createFailedAnswer(questionAnswer2, LocalDateTime.now().plusDays(1))
+        createFailedAnswer(questionAnswer2, DateHandler.now().plusDays(1))
 
         when:
         def failedAnswerDtos = failedAnswerService.getFailedAnswers(dashboard.getId())

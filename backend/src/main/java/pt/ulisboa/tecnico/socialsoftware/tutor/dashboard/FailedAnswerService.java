@@ -77,7 +77,7 @@ public class FailedAnswerService {
     public void updateFailedAnswers(int dashboardId, String startDate, String endDate) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = DateHandler.now();
 
         LocalDateTime start, end;
         if (startDate == null) start = getLastCheckDate(dashboard, now);

@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
 import java.time.LocalDateTime
 
@@ -40,7 +41,7 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         quiz = createQuiz(1)
         quizQuestion = createQuestion(1, quiz)
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
-        failedAnswer = createFailedAnswer(questionAnswer, LocalDateTime.now().minusDays(8))
+        failedAnswer = createFailedAnswer(questionAnswer, DateHandler.now().minusDays(8))
     }
 
     def "student gets failed answers from dashboard then removes it"() {

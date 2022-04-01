@@ -79,7 +79,7 @@ public class DifficultQuestionService {
     public void updateDifficultQuestions(int dashboardId) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
-        LocalDateTime now = LocalDateTime.now();
+        LocalDateTime now = DateHandler.now();
 
         Set<DifficultQuestion> questionsToRemove = dashboard.getDifficultQuestions().stream()
                 .filter(difficultQuestion -> !difficultQuestion.isRemoved() ||
