@@ -29,9 +29,6 @@ public class FailedAnswer implements DomainEntity {
     @ManyToOne
     private Dashboard dashboard;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private SameQuestion sameQuestion;
-
     public FailedAnswer(){
     }
 
@@ -52,27 +49,12 @@ public class FailedAnswer implements DomainEntity {
         setAnswered(questionAnswer.isAnswered());
         setQuestionAnswer(questionAnswer);
         setDashboard(dashboard);
-
-        setSameQuestion(new SameQuestion(this));
-
-        dashboard.getFailedAnswers().stream().forEach(failedAnswer -> {
-            if (failedAnswer.getQuestionAnswer().getQuestion().getId() == this.getQuestionAnswer().getQuestion().getId()
-                    && failedAnswer != this) {
-                sameQuestion.getFailedAnswers().add(failedAnswer);
-                failedAnswer.getSameQuestion().getFailedAnswers().add(this);
-            }
-        });
     }
 
     public void remove() {
         if (collected.isAfter(DateHandler.now().minusDays(5))) {
             throw new TutorException(ErrorMessage.CANNOT_REMOVE_FAILED_ANSWER);
         }
-
-        dashboard.getFailedAnswers().stream().filter(failedAnswer -> failedAnswer.getQuestionAnswer().getQuestion().getId()
-                        == getQuestionAnswer().getQuestion().getId() && failedAnswer != this).map(FailedAnswer::getSameQuestion)
-                .forEach(sameQuestion1 -> sameQuestion1.getFailedAnswers().remove(this));
-        sameQuestion.remove();
 
         dashboard.getFailedAnswers().remove(this);
         dashboard = null;
@@ -113,14 +95,6 @@ public class FailedAnswer implements DomainEntity {
     public void setDashboard(Dashboard dashboard) {
         this.dashboard = dashboard;
         this.dashboard.addFailedAnswer(this);
-    }
-
-    public SameQuestion getSameQuestion() {
-        return sameQuestion;
-    }
-
-    public void setSameQuestion(SameQuestion sameQuestion) {
-        this.sameQuestion = sameQuestion;
     }
 
     @Override

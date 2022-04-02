@@ -43,8 +43,6 @@ class RemoveFailedAnswerTest extends FailedAnswersSpockTest {
         dashboard.getStudent().getId() === student.getId()
         dashboard.getCourseExecution().getId() === externalCourseExecution.getId()
         dashboard.getFailedAnswers().findAll().size() == 0L
-        and:
-        sameQuestionRepository.findAll().size() == 0
 
         where:
         minusDays << [8, 5]
@@ -73,11 +71,6 @@ class RemoveFailedAnswerTest extends FailedAnswersSpockTest {
         dashboard.getCourseExecution().getId() === externalCourseExecution.getId()
         dashboard.getFailedAnswers().size() == 1
         dashboard.getFailedAnswers().contains(failedAnswer)
-        and:
-        failedAnswer.getSameQuestion().getFailedAnswers().size() == 0
-        and:
-        sameQuestionRepository.findAll().size() == 1
-        failedAnswer.getSameQuestion() == sameQuestionRepository.findAll().get(0)
     }
 
     def 'remove a failed answer when there is two others with the same question' () {
@@ -109,15 +102,6 @@ class RemoveFailedAnswerTest extends FailedAnswersSpockTest {
         dashboard.getFailedAnswers().size() == 2
         dashboard.getFailedAnswers().contains(failedAnswer)
         dashboard.getFailedAnswers().contains(failedAnswer3)
-        and:
-        failedAnswer.getSameQuestion().getFailedAnswers().size() == 1
-        failedAnswer.getSameQuestion().getFailedAnswers().contains(failedAnswer3)
-        failedAnswer3.getSameQuestion().getFailedAnswers().size() == 1
-        failedAnswer3.getSameQuestion().getFailedAnswers().contains(failedAnswer)
-        and:
-        sameQuestionRepository.findAll().size() == 2
-        failedAnswer.getSameQuestion() == sameQuestionRepository.findAll().get(0)
-        failedAnswer3.getSameQuestion() == sameQuestionRepository.findAll().get(1)
     }
 
     @Unroll

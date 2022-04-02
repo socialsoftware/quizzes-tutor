@@ -143,20 +143,12 @@ Cypress.Commands.add('createWeeklyScore', () => {
   dbCommand(`WITH courseExecutionId as (SELECT ce.id as course_execution_id FROM course_executions ce WHERE acronym = 'DemoCourse')
         , demoStudentId as (SELECT u.id as users_id FROM users u WHERE name = 'Demo Student')
         , dashboardId as (SELECT d.id as dashboard_id FROM dashboard d WHERE student_id = (select users_id from demoStudentId) AND course_execution_id = (select course_execution_id from courseExecutionId))
-        , weeklyScore as (INSERT INTO weekly_score(closed, number_answered, percentage_correct, uniquely_answered, week, dashboard_id) VALUES (true, 10, 50, 9, '2022-02-02', (select dashboard_id from dashboardId)) RETURNING id)
-        INSERT INTO same_percentage(weekly_score_id) VALUES ((SELECT id from weeklyScore));
-      `);
-  dbCommand(`WITH samePercentage as (SELECT sp.id as id FROM same_percentage sp)
-        UPDATE weekly_score SET same_percentage_id = (SELECT id from samePercentage);
+       INSERT INTO weekly_score(closed, number_answered, percentage_correct, uniquely_answered, week, dashboard_id) VALUES (true, 10, 50, 9, '2022-02-02', (select dashboard_id from dashboardId))
       `);
 });
 
 Cypress.Commands.add('deleteWeeklyScore', () => {
   dbCommand(`
-         UPDATE dashboard SET last_check_weekly_scores = NULL;
-         UPDATE weekly_score SET same_percentage_id = NULL;
-         UPDATE same_percentage SET weekly_score_id = NULL;
-         DELETE FROM same_percentage; 
          DELETE FROM weekly_score;
     `);
 });
