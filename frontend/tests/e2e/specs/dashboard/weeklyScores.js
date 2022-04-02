@@ -81,8 +81,6 @@ describe('Weekly Scores', () => {
 
     cy.contains('Logout').click();
 
-    cy.deleteWeeklyScores();
-
     Cypress.on('uncaught:exception', (err, runnable) => {
       // returning false here prevents Cypress from
       // failing the test
