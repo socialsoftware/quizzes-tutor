@@ -2,6 +2,8 @@ describe('Failed Answers', () => {
   let date;
 
   beforeEach(() => {
+    cy.deleteQuestionsAndAnswers();
+
     date = new Date();
     //create quiz
     cy.demoTeacherLogin();
@@ -27,6 +29,11 @@ describe('Failed Answers', () => {
       'Question Failed Answer 2 ' + date
     );
     cy.contains('Logout').click();
+  });
+
+  afterEach(() => {
+    cy.deleteFailedAnswers();
+    cy.deleteQuestionsAndAnswers();
   });
 
   it('student accesses failed Answerf', () => {

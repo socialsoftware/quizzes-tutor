@@ -2,6 +2,8 @@ describe('Difficult Questions', () => {
   let date;
 
   beforeEach(() => {
+    cy.deleteQuestionsAndAnswers();
+
     date = new Date();
     //create quiz
     cy.demoTeacherLogin();
@@ -27,6 +29,11 @@ describe('Difficult Questions', () => {
       'Question Difficult Question 2 ' + date
     );
     cy.contains('Logout').click();
+  });
+
+  afterEach(() => {
+    cy.deleteDifficultQuestions();
+    cy.deleteQuestionsAndAnswers();
   });
 
   it('student accesses difficult questions', () => {

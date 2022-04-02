@@ -2,6 +2,8 @@ describe('Weekly Scores', () => {
   let date;
 
   beforeEach(() => {
+    cy.deleteQuestionsAndAnswers();
+
     date = new Date();
     //create quiz
     cy.demoTeacherLogin();
@@ -28,6 +30,11 @@ describe('Weekly Scores', () => {
       'Weekly Score Question 2 ' + date
     );
     cy.contains('Logout').click();
+  });
+
+  afterEach(() => {
+    cy.deleteWeeklyScores();
+    cy.deleteQuestionsAndAnswers();
   });
 
   it('student accesses weekly scores', () => {
@@ -74,7 +81,7 @@ describe('Weekly Scores', () => {
 
     cy.contains('Logout').click();
 
-    cy.deleteWeeklyScore();
+    cy.deleteWeeklyScores();
 
     Cypress.on('uncaught:exception', (err, runnable) => {
       // returning false here prevents Cypress from

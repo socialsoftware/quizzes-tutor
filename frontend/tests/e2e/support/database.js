@@ -147,8 +147,9 @@ Cypress.Commands.add('createWeeklyScore', () => {
       `);
 });
 
-Cypress.Commands.add('deleteWeeklyScore', () => {
+Cypress.Commands.add('deleteWeeklyScores', () => {
   dbCommand(`
+         UPDATE dashboard SET last_check_weekly_scores = NULL;
          DELETE FROM weekly_score;
     `);
 });
@@ -158,5 +159,34 @@ Cypress.Commands.add('setFailedAnswersAsOld', () => {
         , demoStudentId as (SELECT u.id as users_id FROM users u WHERE name = 'Demo Student')
         , dashboardId as (SELECT d.id as dashboard_id FROM dashboard d WHERE student_id = (select users_id from demoStudentId) AND course_execution_id = (select course_execution_id from courseExecutionId))
         UPDATE failed_answer SET collected='2022-02-02' 
+    `);
+});
+
+Cypress.Commands.add('deleteFailedAnswers', () => {
+  dbCommand(`
+         UPDATE dashboard SET last_check_failed_answers = NULL;
+         DELETE FROM failed_answer;
+    `);
+});
+
+Cypress.Commands.add('deleteDifficultQuestions', () => {
+  dbCommand(`
+         UPDATE dashboard SET last_check_difficult_questions = NULL;
+         DELETE FROM difficult_question;
+    `);
+});
+
+Cypress.Commands.add('deleteQuestionsAndAnswers', () => {
+  dbCommand(`
+         DELETE FROM replies;
+         DELETE FROM discussions;
+         DELETE FROM answer_details;
+         DELETE FROM question_answers;
+         DELETE FROM quiz_answers;
+         DELETE FROM quiz_questions;
+         DELETE FROM quizzes;
+         DELETE FROM options;
+         DELETE FROM question_details;
+         DELETE FROM questions;
     `);
 });
