@@ -62,12 +62,9 @@ class CreateDifficultQuestionTest extends SpockTest {
         result.isRemoved() == false
         result.getRemovedDate() == null
         result.getPercentage() == difficulty
-        result.getSameDifficulty().getDifficultQuestions().size() == 0
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getDifficultQuestions().contains(result)
-        and:
-        sameDifficultyRepository.findAll().size() == 1
 
         where:
         difficulty << [0, 12, 24]
@@ -96,21 +93,11 @@ class CreateDifficultQuestionTest extends SpockTest {
         difficultQuestionRepository.count() == 2L
         def result = difficultQuestionRepository.findById(otherDifficultQuestionDto.getId()).get()
         result.getId() == otherDifficultQuestionDto.getId()
-        result.getSameDifficulty().getDifficultQuestions().size() == 1
         def result2 = difficultQuestionRepository.findById(difficultQuestionDto.getId()).get()
         result2.getId() == difficultQuestionDto.getId()
-        result2.getSameDifficulty().getDifficultQuestions().size() == 1
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getDifficultQuestions().contains(result)
-        and:
-        sameDifficultyRepository.findAll().size() == 2
-        def sameDifficulty1 = sameDifficultyRepository.findAll().get(0)
-        sameDifficulty1.getDifficultQuestions().size() == 1
-        !sameDifficulty1.getDifficultQuestions().contains(sameDifficulty1.getDifficultQuestion())
-        def sameDifficulty2 = sameDifficultyRepository.findAll().get(1)
-        sameDifficulty2.getDifficultQuestions().size() == 1
-        !sameDifficulty2.getDifficultQuestions().contains(sameDifficulty2.getDifficultQuestion())
     }
 
     def "create two difficulty questions with same difficulty but one is removed"() {
@@ -139,21 +126,11 @@ class CreateDifficultQuestionTest extends SpockTest {
         difficultQuestionRepository.count() == 2L
         def result = difficultQuestionRepository.findById(otherDifficultQuestion.getId()).get()
         result.getId() == otherDifficultQuestion.getId()
-        result.getSameDifficulty().getDifficultQuestions().size() == 0
         def result2 = difficultQuestionRepository.findById(difficultQuestionDto.getId()).get()
         result2.getId() == difficultQuestionDto.getId()
-        result2.getSameDifficulty().getDifficultQuestions().size() == 0
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getDifficultQuestions().contains(result)
-        and:
-        sameDifficultyRepository.findAll().size() == 2
-        def sameDifficulty1 = sameDifficultyRepository.findAll().get(0)
-        sameDifficulty1.getDifficultQuestions().size() == 0
-        !sameDifficulty1.getDifficultQuestions().contains(sameDifficulty1.getDifficultQuestion())
-        def sameDifficulty2 = sameDifficultyRepository.findAll().get(1)
-        sameDifficulty2.getDifficultQuestions().size() == 0
-        !sameDifficulty2.getDifficultQuestions().contains(sameDifficulty2.getDifficultQuestion())
     }
 
     def "create two difficulty questions with different difficulty"() {
@@ -179,20 +156,11 @@ class CreateDifficultQuestionTest extends SpockTest {
         difficultQuestionRepository.count() == 2L
         def result = difficultQuestionRepository.findById(otherDifficultQuestionDto.getId()).get()
         result.getId() == otherDifficultQuestionDto.getId()
-        result.getSameDifficulty().getDifficultQuestions().size() == 0
         def result2 = difficultQuestionRepository.findById(difficultQuestionDto.getId()).get()
         result2.getId() == difficultQuestionDto.getId()
-        result2.getSameDifficulty().getDifficultQuestions().size() == 0
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getDifficultQuestions().contains(result)
-        and:
-        sameDifficultyRepository.findAll().size() == 2
-        def sameDifficulty1 = sameDifficultyRepository.findAll().get(0)
-        sameDifficulty1.getDifficultQuestions().size() == 0
-        !sameDifficulty1.getDifficultQuestions().contains(sameDifficulty1.getDifficultQuestion())
-        def sameDifficulty2 = sameDifficultyRepository.findAll().get(1)
-        sameDifficulty2.getDifficultQuestions().size() == 0
     }
 
     def "cannot create two difficult questions for the same question"() {

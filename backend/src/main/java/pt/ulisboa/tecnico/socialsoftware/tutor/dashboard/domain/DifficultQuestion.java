@@ -30,9 +30,6 @@ public class DifficultQuestion implements DomainEntity {
     @ManyToOne
     private Dashboard dashboard;
 
-    @OneToOne(cascade = CascadeType.ALL)
-    private SameDifficulty sameDifficulty;
-
     public DifficultQuestion(){
     }
 
@@ -48,25 +45,13 @@ public class DifficultQuestion implements DomainEntity {
         setRemovedDate(null);
         setRemoved(false);
         setQuestion(question);
-        setSameDifficulty(new SameDifficulty(this));
         setDashboard(dashboard);
-
-        dashboard.getDifficultQuestions().stream().forEach(difficultQuestion -> {
-            if (difficultQuestion.getPercentage() == this.getPercentage() && !difficultQuestion.isRemoved() && difficultQuestion != this) {
-                sameDifficulty.getDifficultQuestions().add(difficultQuestion);
-                difficultQuestion.getSameDifficulty().getDifficultQuestions().add(this);
-            }
-        });
     }
 
     public void remove() {
         if (removed && removedDate.isAfter(DateHandler.now().minusDays(7))) {
             throw new TutorException(ErrorMessage.CANNOT_REMOVE_DIFFICULT_QUESTION);
         }
-
-        dashboard.getDifficultQuestions().stream().filter(difficultQuestion -> difficultQuestion.getPercentage() == percentage && difficultQuestion != this).map(DifficultQuestion::getSameDifficulty)
-                .forEach(sameDifficulty1 -> sameDifficulty1.getDifficultQuestions().remove(this));
-        sameDifficulty.remove();
 
         dashboard.getDifficultQuestions().remove(this);
         dashboard = null;
@@ -119,14 +104,6 @@ public class DifficultQuestion implements DomainEntity {
 
     public void setQuestion(Question question) {
         this.question = question;
-    }
-
-    public SameDifficulty getSameDifficulty() {
-        return sameDifficulty;
-    }
-
-    public void setSameDifficulty(SameDifficulty sameDifficulty) {
-        this.sameDifficulty = sameDifficulty;
     }
 
     public void update() {
