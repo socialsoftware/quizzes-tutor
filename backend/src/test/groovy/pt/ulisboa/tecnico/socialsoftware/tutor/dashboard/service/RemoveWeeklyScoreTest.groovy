@@ -51,8 +51,6 @@ class RemoveWeeklyScoreTest extends SpockTest {
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getWeeklyScores().size() == 0
-        and:
-        samePercentageRepository.findAll().size() == 0
     }
 
     def "remove past weekly score when there is another with the same percentage"() {
@@ -76,11 +74,6 @@ class RemoveWeeklyScoreTest extends SpockTest {
         dashboard.getWeeklyScores().size() == 1
         dashboard.getWeeklyScores().contains(weeklyScore)
         weeklyScoreRepository.findAll().size() == 1
-        and:
-        weeklyScore.getSamePercentage().getWeeklyScores().size() == 0
-        and:
-        samePercentageRepository.findAll().size() == 1
-        weeklyScore.getSamePercentage() == samePercentageRepository.findAll().get(0)
     }
 
     def "cannot remove current weekly score"() {
