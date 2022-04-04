@@ -118,7 +118,6 @@ export default class DashboardView extends Vue {
   }
 
   onWeeklyScoresRefresh(date: string) {
-    console.log('onWeeklyScoresRefresh');
     this.lastCheckWeeklyScores = date;
   }
 
