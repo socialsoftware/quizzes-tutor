@@ -144,6 +144,7 @@ class UpdateWeeklyScoreTest extends SpockTest {
         LocalDate week = now.minusDays(30).with(weekSunday).toLocalDate();
         def closedWeeklyScore = new WeeklyScore(dashboard, week)
         closedWeeklyScore.setClosed(true)
+        weeklyScoreRepository.save(closedWeeklyScore)
 
         when:
         weeklyScoreService.updateWeeklyScore(dashboard.getId())
