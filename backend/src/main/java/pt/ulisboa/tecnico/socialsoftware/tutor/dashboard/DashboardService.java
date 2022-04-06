@@ -52,11 +52,7 @@ public class DashboardService {
                 .filter(dashboard -> dashboard.getCourseExecution().getId() == courseExecutionId)
                 .findAny();
 
-        if (dashboardOptional.isPresent()) {
-            return new DashboardDto(dashboardOptional.get());
-        } else {
-            return createAndReturnDashboardDto(courseExecution, student);
-        }
+        return dashboardOptional.map(DashboardDto::new).orElseGet(() -> createAndReturnDashboardDto(courseExecution, student));
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

@@ -160,7 +160,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     if (questionSubmission != null) {
                         boolean hasCourseExecutionAccess = userHasThisExecution(authUser, questionSubmission.getCourseExecution().getId());
                         if (authUser.getUser().getRole() == User.Role.STUDENT) {
-                            return hasCourseExecutionAccess && questionSubmission.getSubmitter().getId() == userId;
+                            return hasCourseExecutionAccess && questionSubmission.getSubmitter().getId().equals(userId);
                         } else {
                             return hasCourseExecutionAccess;
                         }

@@ -16,6 +16,6 @@ public class QuizFraudTimeScoreDto implements Serializable {
 
     @Override
     public String toString() {
-        return "QuizFraudTimeScoreDto{scores:" + this.scores.toString() + +'}';
+        return "QuizFraudTimeScoreDto{scores:" + this.scores.toString() + '}';
     }
 }

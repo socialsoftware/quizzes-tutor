@@ -504,7 +504,7 @@ public class AnswerService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoAnswers() {
         Set<QuestionAnswerItem> questionAnswerItems = questionAnswerItemRepository.findDemoStudentQuestionAnswerItems();
-        questionAnswerItems.forEach(questionAnswerItem -> questionAnswerItemRepository.delete(questionAnswerItem));
+        questionAnswerItemRepository.deleteAll(questionAnswerItems);
 
         Set<QuizAnswer> quizAnswers = quizAnswerRepository.findByExecutionCourseId(courseExecutionService.getDemoCourse().getCourseExecutionId());
 

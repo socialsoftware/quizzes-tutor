@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
 import java.util.Arrays;
+import java.util.List;
 
 @Entity
 @DiscriminatorValue(Question.QuestionTypes.MULTIPLE_CHOICE_QUESTION)
@@ -25,7 +26,7 @@ public class MultipleChoiceAnswerItem extends QuestionAnswerItem {
 
     @Override
     public String getAnswerRepresentation(QuestionDetails questionDetails) {
-        return this.getOptionId() != null ? questionDetails.getAnswerRepresentation(Arrays.asList(optionId)) : "-";
+        return this.getOptionId() != null ? questionDetails.getAnswerRepresentation(List.of(optionId)) : "-";
     }
 
     public Integer getOptionId() {

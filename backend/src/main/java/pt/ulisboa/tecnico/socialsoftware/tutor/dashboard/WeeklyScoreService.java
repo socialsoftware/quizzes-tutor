@@ -148,7 +148,7 @@ public class WeeklyScoreService {
     private void computeStatistics(Dashboard dashboard) {
         dashboard.getWeeklyScores().stream()
                 .filter(Predicate.not(WeeklyScore::isClosed))
-                .forEach(weeklyScore -> weeklyScore.computeStatistics());
+                .forEach(WeeklyScore::computeStatistics);
     }
 
     private void removeEmptyClosedWeeklyScores(Dashboard dashboard) {
