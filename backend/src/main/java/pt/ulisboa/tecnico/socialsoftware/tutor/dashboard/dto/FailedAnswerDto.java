@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 public class FailedAnswerDto implements Serializable {
-
     private Integer id;
 
     private boolean answered;

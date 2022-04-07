@@ -104,15 +104,23 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         questionAnswerRepository.save(questionAnswer)
 
         when:
-        difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDifficultQuestions(dashboard.getId())
 
         then:
+        DateHandler.toLocalDateTime(result.lastCheckDifficultQuestions).isAfter(now)
+        result.difficultQuestions.size() == 1
+        def resultDifficultQuestion = result.difficultQuestions.get(0)
+        !resultDifficultQuestion.isRemoved()
+        resultDifficultQuestion.getRemovedDate() == null
+        resultDifficultQuestion.getPercentage() == 0
+        resultDifficultQuestion.getQuestionDto().getId() == question.getId()
+        and:
         difficultQuestionRepository.count() == 1L
         and:
         def difficultQuestion = difficultQuestionRepository.findAll().get(0)
         difficultQuestion.getDashboard() == dashboard
         difficultQuestion.getQuestion() == question
-        difficultQuestion.isRemoved() == false
+        !difficultQuestion.isRemoved()
         difficultQuestion.getRemovedDate() == null
         difficultQuestion.getPercentage() == 0
         difficultQuestion.getDashboard().getLastCheckDifficultQuestions().isAfter(now)

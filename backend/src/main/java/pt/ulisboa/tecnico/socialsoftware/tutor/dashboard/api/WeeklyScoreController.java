@@ -5,6 +5,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.UpdatedWeeklyScoresDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.WeeklyScoreService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.WeeklyScoreDto;
 
@@ -29,8 +30,8 @@ public class WeeklyScoreController {
 
     @PutMapping("/students/dashboards/{dashboardId}/weeklyscores")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
-    public void updateWeeklyScores(@PathVariable Integer dashboardId) {
-        weeklyScoreService.updateWeeklyScore(dashboardId);
+    public UpdatedWeeklyScoresDto updateWeeklyScores(@PathVariable Integer dashboardId) {
+        return weeklyScoreService.updateWeeklyScore(dashboardId);
     }
 
     @DeleteMapping("/students/weeklyscores/{weeklysScoreId}")

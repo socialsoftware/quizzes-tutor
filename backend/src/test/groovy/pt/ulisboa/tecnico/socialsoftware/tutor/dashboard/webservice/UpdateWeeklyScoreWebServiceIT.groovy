@@ -6,6 +6,7 @@ import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UpdateWeeklyScoreWebServiceIT extends SpockTest {
@@ -39,6 +40,13 @@ class UpdateWeeklyScoreWebServiceIT extends SpockTest {
 
         then:
         response.status == 200
+        and:
+        DateHandler.toLocalDateTime(response.data.lastCheckWeeklyScores).isAfter(DateHandler.now().minusSeconds(1))
+        response.data.weeklyScores.size() == 1
+        def resultWeeklyScore = response.data.weeklyScores.get(0)
+        resultWeeklyScore.numberAnswered == 0
+        resultWeeklyScore.uniquelyAnswered == 0
+        resultWeeklyScore.percentageCorrect == 0
         and:
         weeklyScoreRepository.findAll().size() == 1
 

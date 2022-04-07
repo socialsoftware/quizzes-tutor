@@ -8,6 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.UpdatedDifficultQuestionsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DifficultQuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.DifficultQuestionDto;
 
@@ -30,8 +31,8 @@ public class DifficultQuestionController {
 
     @PutMapping("/students/dashboards/{dashboardId}/difficultquestions")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
-    public void updateDifficultQuestions(@PathVariable int dashboardId) {
-        this.difficultQuestionService.updateDifficultQuestions(dashboardId);
+    public UpdatedDifficultQuestionsDto updateDifficultQuestions(@PathVariable int dashboardId) {
+        return this.difficultQuestionService.updateDifficultQuestions(dashboardId);
     }
 
     @DeleteMapping("/students/difficultquestions/{difficultQuestionId}")

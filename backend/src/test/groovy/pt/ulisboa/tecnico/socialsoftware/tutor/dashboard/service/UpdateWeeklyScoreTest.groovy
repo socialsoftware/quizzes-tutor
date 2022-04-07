@@ -108,34 +108,41 @@ class UpdateWeeklyScoreTest extends SpockTest {
         answerDetailsRepository.save(answerDetails)
 
         when:
-        weeklyScoreService.updateWeeklyScore(dashboard.getId())
+        def result = weeklyScoreService.updateWeeklyScore(dashboard.getId())
 
         then:
+        DateHandler.toLocalDateTime(result.getLastCheckWeeklyScores()).isAfter(now)
+        result.getWeeklyScores().size() == 1
+        def resultWeeklyScore = result.getWeeklyScores().get(0)
+        resultWeeklyScore.getNumberAnswered() == 1
+        resultWeeklyScore.getUniquelyAnswered() == 1
+        resultWeeklyScore.getPercentageCorrect() == 100
+        and:
         weeklyScoreRepository.count() == 1L
-        def result = weeklyScoreRepository.findAll().get(0)
-        result.getId() != null
-        result.getDashboard().getId() == dashboard.getId()
-        result.getNumberAnswered() == 1
-        result.getUniquelyAnswered() == 1
-        result.getPercentageCorrect() == 100
-        !result.isClosed()
-        result.getDashboard().getLastCheckWeeklyScores().isAfter(now)
+        def weeklyScore = weeklyScoreRepository.findAll().get(0)
+        weeklyScore.getId() != null
+        weeklyScore.getDashboard().getId() == dashboard.getId()
+        weeklyScore.getNumberAnswered() == 1
+        weeklyScore.getUniquelyAnswered() == 1
+        weeklyScore.getPercentageCorrect() == 100
+        !weeklyScore.isClosed()
+        weeklyScore.getDashboard().getLastCheckWeeklyScores().isAfter(now)
     }
 
     def "update weekly score without answers in the current week"() {
         when:
-        weeklyScoreService.updateWeeklyScore(dashboard.getId())
+        def result = weeklyScoreService.updateWeeklyScore(dashboard.getId())
 
         then:
         weeklyScoreRepository.count() == 1L
-        def result = weeklyScoreRepository.findAll().get(0)
-        result.getId() != null
-        result.getDashboard().getId() == dashboard.getId()
-        result.getNumberAnswered() == 0
-        result.getUniquelyAnswered() == 0
-        result.getPercentageCorrect() == 0
-        !result.isClosed()
-        result.getDashboard().getLastCheckWeeklyScores().isAfter(now)
+        def weeklyScore = weeklyScoreRepository.findAll().get(0)
+        weeklyScore.getId() != null
+        weeklyScore.getDashboard().getId() == dashboard.getId()
+        weeklyScore.getNumberAnswered() == 0
+        weeklyScore.getUniquelyAnswered() == 0
+        weeklyScore.getPercentageCorrect() == 0
+        !weeklyScore.isClosed()
+        weeklyScore.getDashboard().getLastCheckWeeklyScores().isAfter(now)
     }
 
     def "during update delete weekly score in a past week without answers and closed"() {

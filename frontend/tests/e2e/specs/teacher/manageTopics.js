@@ -16,6 +16,7 @@ describe('Manage Topics Walk-through', () => {
   }
 
   beforeEach(() => {
+    cy.deleteQuestionsAndAnswers();
     cy.cleanTestTopics();
     cy.demoTeacherLogin();
     cy.server();

@@ -19,6 +19,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
+import java.util.logging.Handler
+
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
     @LocalServerPort
@@ -27,6 +29,7 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
     def response
     def student
     def dashboard
+    def question
 
     def setup() {
         given:
@@ -41,7 +44,7 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         student.addCourse(externalCourseExecution)
         userRepository.save(student)
         and:
-        def question = new Question()
+        question = new Question()
         question.setKey(1)
         question.setTitle(QUESTION_1_TITLE)
         question.setContent(QUESTION_1_CONTENT)
@@ -109,6 +112,14 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         then:
         response != null
         response.status == 200
+        and:
+        DateHandler.toLocalDateTime(response.data.lastCheckDifficultQuestions).isAfter(DateHandler.now().minusSeconds(1))
+        response.data.difficultQuestions.size() == 1
+        def resultDifficultQuestion = response.data.difficultQuestions.get(0)
+        !resultDifficultQuestion.removed
+        resultDifficultQuestion.removedDate == null
+        resultDifficultQuestion.percentage == 0
+        resultDifficultQuestion.questionDto.id == question.getId()
         and:
         difficultQuestionRepository.findAll().size() == 1
     }

@@ -1,5 +1,6 @@
 describe('Teacher Walkthrough', () => {
   beforeEach(() => {
+    cy.deleteQuestionsAndAnswers();
     //create quiz
     cy.demoTeacherLogin();
     cy.createQuestion(

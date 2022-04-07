@@ -1,5 +1,6 @@
 describe('Student walkthrough', () => {
   beforeEach(() => {
+    cy.deleteQuestionsAndAnswers();
     cy.demoStudentLogin();
 
     cy.get('[data-cy="submissionStudentMenuButton"]').click();

@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.DifficultQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
@@ -12,6 +13,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
+import java.util.function.Predicate;
+import java.util.stream.Collectors;
 
 
 import javax.persistence.*;
@@ -142,8 +145,6 @@ public class Dashboard implements DomainEntity {
 
     public void accept(Visitor visitor) {
     }
-
-    
 
     @Override
     public String toString() {

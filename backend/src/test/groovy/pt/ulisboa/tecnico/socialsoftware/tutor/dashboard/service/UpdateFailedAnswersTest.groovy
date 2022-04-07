@@ -122,28 +122,27 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
 
     def "updates failed answers after last check"() {
         given:
-        dashboard.setLastCheckFailedAnswers(DateHandler.now().minusDays(1))
-        answerQuiz(true, false, true, quizQuestion, quiz, DateHandler.now().minusDays(2))
+        dashboard.setLastCheckDifficultQuestions(DateHandler.now().minusDays(1))
+        def questionAnswer1 = answerQuiz(true, false, true, quizQuestion, quiz, DateHandler.now().minusDays(2))
         and:
         def quiz2 = createQuiz(2)
         def quizQuestion2 = createQuestion(2, quiz2)
         def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
 
         when:
-        def result =failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
 
         then:
         DateHandler.toLocalDateTime(result.getLastCheckFailedAnswers()).isAfter(DateHandler.now().minusSeconds(1))
-        result.getFailedAnswers().size() == 1
+        result.getFailedAnswers().size() == 2
         and:
-        failedAnswerRepository.count() == 1L
+        failedAnswerRepository.count() == 2L
         def questionAnswers = failedAnswerRepository.findAll()*.questionAnswer
+        questionAnswers.contains(questionAnswer1)
         questionAnswers.contains(questionAnswer2)
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
-        dashboard.getFailedAnswers().size() == 1
-        def failedAnswer = failedAnswerRepository.findAll().get(0)
-        dashboard.getFailedAnswers().contains(failedAnswer)
+        dashboard.getFailedAnswers().size() == 2
         dashboard.getLastCheckFailedAnswers().isAfter(DateHandler.now().minusSeconds(1))
     }
 

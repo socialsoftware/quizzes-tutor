@@ -1,5 +1,6 @@
 describe('Teacher walkthrough', () => {
   beforeEach(() => {
+    cy.deleteQuestionsAndAnswers();
     cy.demoStudentLogin();
     cy.contains('Logout').click();
     cy.demoTeacherLogin();

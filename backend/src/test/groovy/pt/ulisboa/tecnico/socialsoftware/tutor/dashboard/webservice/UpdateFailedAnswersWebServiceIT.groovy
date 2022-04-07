@@ -83,7 +83,7 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         response != null
         response.status == 200
         and:
-        response.data.lastCheckFailedAnswers == null
+        response.data.setLastCheckDifficultQuestions == null
         response.data.failedAnswers.size() == 2
         and:
         failedAnswerRepository.findAll().size() == 2

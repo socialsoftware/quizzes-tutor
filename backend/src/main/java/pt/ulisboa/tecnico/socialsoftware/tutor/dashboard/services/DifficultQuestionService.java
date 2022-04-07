@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.DifficultQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.UpdatedDifficultQuestionsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DifficultQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
@@ -76,7 +77,7 @@ public class DifficultQuestionService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void updateDifficultQuestions(int dashboardId) {
+    public UpdatedDifficultQuestionsDto updateDifficultQuestions(int dashboardId) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
         LocalDateTime now = DateHandler.now();
@@ -110,6 +111,8 @@ public class DifficultQuestionService {
                 });
 
         dashboard.setLastCheckDifficultQuestions(now);
+
+        return new UpdatedDifficultQuestionsDto(dashboard);
     }
 
     private int percentageCorrect(CourseExecution courseExecution, Question question, LocalDateTime weekAgo) {

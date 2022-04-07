@@ -47,7 +47,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { ISOtoString } from '@/services/ConvertDateService';
 import WeeklyScore from '@/models/dashboard/WeeklyScore';
 
 @Component
@@ -105,11 +104,9 @@ export default class WeeklyScoresView extends Vue {
   async refresh() {
     await this.$store.dispatch('loading');
     try {
-      await RemoteServices.updateWeeklyScores(this.dashboardId);
-      this.weeklyScores = await RemoteServices.getWeeklyScores(
-        this.dashboardId
-      );
-      this.$emit('refresh', ISOtoString(new Date().toString()));
+      let result = await RemoteServices.updateWeeklyScores(this.dashboardId);
+      this.weeklyScores = result.weeklyScores;
+      this.$emit('refresh', result.lastCheckWeeklyScores);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

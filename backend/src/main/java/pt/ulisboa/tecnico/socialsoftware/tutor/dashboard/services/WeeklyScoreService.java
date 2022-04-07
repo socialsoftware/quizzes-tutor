@@ -7,6 +7,7 @@ import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.UpdatedWeeklyScoresDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.WeeklyScoreDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.WeeklyScoreRepository;
@@ -69,7 +70,7 @@ public class WeeklyScoreService {
       }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void updateWeeklyScore(Integer dashboardId) {
+    public UpdatedWeeklyScoresDto updateWeeklyScore(Integer dashboardId) {
         if (dashboardId == null) {
             throw new TutorException(DASHBOARD_NOT_FOUND);
         }
@@ -86,6 +87,8 @@ public class WeeklyScoreService {
         removeEmptyClosedWeeklyScores(dashboard);
 
         dashboard.setLastCheckWeeklyScores(now);
+
+        return new UpdatedWeeklyScoresDto(dashboard);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
