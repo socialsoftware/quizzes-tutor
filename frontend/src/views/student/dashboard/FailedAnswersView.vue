@@ -69,7 +69,6 @@
 <script lang="ts">
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
-import { ISOtoString } from '@/services/ConvertDateService';
 import Question from '@/models/management/Question';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import StudentViewDialog from '@/views/teacher/questions/StudentViewDialog.vue';
@@ -121,13 +120,10 @@ export default class FailedAnswersView extends Vue {
 
   async refresh() {
     await this.$store.dispatch('loading');
-    let date = ISOtoString(new Date().toString());
     try {
-      await RemoteServices.updateFailedAnswers(this.dashboardId);
-      this.failedAnswers = await RemoteServices.getFailedAnswers(
-        this.dashboardId
-      );
-      this.$emit('refresh', date);
+      let result = await RemoteServices.updateFailedAnswers(this.dashboardId);
+      this.failedAnswers = result.failedAnswers;
+      this.$emit('refresh', result.lastCheckFailedAnswers);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

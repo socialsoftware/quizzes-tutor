@@ -29,6 +29,7 @@ import Dashboard from '@/models/dashboard/Dashboard';
 import DifficultQuestion from '@/models/dashboard/DifficultQuestion';
 import WeeklyScore from '@/models/dashboard/WeeklyScore';
 import FailedAnswer from '@/models/dashboard/FailedAnswer';
+import UpdatedFailedAnswers from '@/models/dashboard/UpdatedFailedAnswers';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -249,11 +250,13 @@ export default class RemoteServices {
       });
   }
 
-  static async updateFailedAnswers(dashboardId: number) {
+  static async updateFailedAnswers(
+    dashboardId: number
+  ): Promise<UpdatedFailedAnswers> {
     return httpClient
       .put(`/students/dashboards/${dashboardId}/failedanswers`)
       .then((response) => {
-        return;
+        return new UpdatedFailedAnswers(response.data);
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));

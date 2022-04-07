@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
@@ -53,6 +54,13 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         response != null
         response.status == 200
         and:
+        DateHandler.toLocalDateTime(response.data.lastCheckFailedAnswers).isAfter(DateHandler.now().minusSeconds(1))
+        response.data.failedAnswers.size() == 1
+        def resultFailedAnswer = response.data.failedAnswers.get(0)
+        resultFailedAnswer.id != 0
+        DateHandler.toLocalDateTime(resultFailedAnswer.collected).isAfter(DateHandler.now().minusMinutes(1))
+        resultFailedAnswer.answered
+        and:
         failedAnswerRepository.findAll().size() == 1
     }
 
@@ -74,6 +82,9 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         then:
         response != null
         response.status == 200
+        and:
+        response.data.lastCheckFailedAnswers == null
+        response.data.failedAnswers.size() == 2
         and:
         failedAnswerRepository.findAll().size() == 2
     }

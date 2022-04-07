@@ -5,7 +5,8 @@ import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.FailedAnswerService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.UpdatedFailedAnswersDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.FailedAnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.FailedAnswerDto;
 
 import java.util.List;
@@ -29,8 +30,8 @@ public class FailedAnswerController {
 
     @PutMapping("/students/dashboards/{dashboardId}/failedanswers")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
-    public void updateFailedAnswers(@PathVariable int dashboardId, @RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
-        this.failedAnswerService.updateFailedAnswers(dashboardId, startDate, endDate);
+    public UpdatedFailedAnswersDto updateFailedAnswers(@PathVariable int dashboardId, @RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
+        return this.failedAnswerService.updateFailedAnswers(dashboardId, startDate, endDate);
     }
 
     @DeleteMapping("/students/failedanswers/{failedAnswerId}")

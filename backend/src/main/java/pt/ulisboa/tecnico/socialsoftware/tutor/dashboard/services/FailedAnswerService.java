@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard;
+package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.FailedAnswerDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.UpdatedFailedAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.FailedAnswerRepository;
 
@@ -74,7 +75,7 @@ public class FailedAnswerService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void updateFailedAnswers(int dashboardId, String startDate, String endDate) {
+    public UpdatedFailedAnswersDto updateFailedAnswers(int dashboardId, String startDate, String endDate) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
         LocalDateTime now = DateHandler.now();
@@ -106,6 +107,8 @@ public class FailedAnswerService {
                     .map(localDateTime -> localDateTime.minusSeconds(1))
                     .orElse(now));
         }
+
+        return new UpdatedFailedAnswersDto(dashboard);
     }
 
     private LocalDateTime getLastCheckDate(Dashboard dashboard, LocalDateTime now) {

@@ -41,9 +41,16 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         def questionAnswer = answerQuiz(answered, false, true, quizQuestion, quiz)
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
 
         then:
+        DateHandler.toLocalDateTime(result.getLastCheckFailedAnswers()).isAfter(DateHandler.now().minusSeconds(1))
+        result.getFailedAnswers().size() == 1
+        def resultFailedAnswer = result.getFailedAnswers().get(0)
+        resultFailedAnswer.getId() != 0
+        DateHandler.toLocalDateTime(resultFailedAnswer.getCollected()).isAfter(DateHandler.now().minusMinutes(1))
+        resultFailedAnswer.getAnswered() == answered
+        and:
         failedAnswerRepository.count() == 1L
         def failedAnswer = failedAnswerRepository.findAll().get(0)
         failedAnswer.getId() != 0
@@ -85,9 +92,12 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, inClassQuiz)
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
 
         then:
+        DateHandler.toLocalDateTime(result.getLastCheckFailedAnswers()).isEqual(questionAnswer.getQuizAnswer().getCreationDate().minusSeconds(1))
+        result.getFailedAnswers().size() == 0
+        and:
         failedAnswerRepository.findAll().size() == 0L
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
@@ -101,9 +111,12 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         answerQuiz(true, false, true, quizQuestion, inClassQuiz)
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
 
         then:
+        DateHandler.toLocalDateTime(result.getLastCheckFailedAnswers()).isAfter(DateHandler.now().minusSeconds(1))
+        result.getFailedAnswers().size() == 1
+        and:
         failedAnswerRepository.findAll().size() == 1L
     }
 
@@ -117,9 +130,12 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        def result =failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
 
         then:
+        DateHandler.toLocalDateTime(result.getLastCheckFailedAnswers()).isAfter(DateHandler.now().minusSeconds(1))
+        result.getFailedAnswers().size() == 1
+        and:
         failedAnswerRepository.count() == 1L
         def questionAnswers = failedAnswerRepository.findAll()*.questionAnswer
         questionAnswers.contains(questionAnswer2)
@@ -137,9 +153,12 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz, LOCAL_DATE_BEFORE.plusSeconds(inSeconds))
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId(),  DateHandler.toISOString(LOCAL_DATE_BEFORE),  DateHandler.toISOString(LOCAL_DATE_YESTERDAY))
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(),  DateHandler.toISOString(LOCAL_DATE_BEFORE),  DateHandler.toISOString(LOCAL_DATE_YESTERDAY))
 
         then:
+        result.getLastCheckFailedAnswers() == null
+        result.getFailedAnswers().size() == 1
+        and:
         failedAnswerRepository.count() == 1L
         def questionAnswers = failedAnswerRepository.findAll()*.questionAnswer
         questionAnswers.contains(questionAnswer)
@@ -160,9 +179,12 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
        answerQuiz(true, false, true, quizQuestion, quiz, LOCAL_DATE_BEFORE.plusSeconds(inSeconds))
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId(),  DateHandler.toISOString(LOCAL_DATE_BEFORE),  DateHandler.toISOString(LOCAL_DATE_YESTERDAY))
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(),  DateHandler.toISOString(LOCAL_DATE_BEFORE),  DateHandler.toISOString(LOCAL_DATE_YESTERDAY))
 
         then:
+        result.getLastCheckFailedAnswers() == null
+        result.getFailedAnswers().size() == 0
+        and:
         failedAnswerRepository.count() == 0L
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
@@ -178,9 +200,12 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         def failedAnswer = createFailedAnswer(questionAnswer, DateHandler.now())
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId(),  DateHandler.toISOString(LOCAL_DATE_BEFORE),  DateHandler.toISOString(LOCAL_DATE_YESTERDAY))
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(),  DateHandler.toISOString(LOCAL_DATE_BEFORE),  DateHandler.toISOString(LOCAL_DATE_YESTERDAY))
 
         then:
+        result.getLastCheckFailedAnswers() == null
+        result.getFailedAnswers().size() == 1
+        and:
         failedAnswerRepository.count() == 1L
         and:
         def dashboard = dashboardRepository.getById(dashboard.getId())
@@ -199,9 +224,12 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         answerQuiz(true, false, true, quizQuestion, quiz)
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
 
-        then: "no failed answer is updated in the database"
+        then:
+        DateHandler.toLocalDateTime(result.getLastCheckFailedAnswers()).isAfter(DateHandler.now().minusSeconds(1))
+        result.getFailedAnswers().size() == 0
+        and:
         failedAnswerRepository.findAll().size() == 0L
         and: "the student dashboard's failed answers is empty"
         def dashboard = dashboardRepository.findById(dashboard.getId()).get()
