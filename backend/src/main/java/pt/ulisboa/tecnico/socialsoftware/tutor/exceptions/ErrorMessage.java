@@ -110,7 +110,7 @@ public enum ErrorMessage {
     QUIZ_HAS_ANSWERS("Quiz already has answers"),
     QUIZ_HAS_NO_ANSWERS("Quiz has no answers"),
     QUIZ_ALREADY_COMPLETED("Quiz already completed"),
-    QUIZ_NOT_YET_CONCLUDED("Quiz not yet concluded"),
+    QUIZ_CANNOT_HAVE_REPEATED_QUESTIONS("Quiz cannot have repeated questions"),
     QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
     FENIX_ERROR("Fenix Error"),
     AUTHENTICATION_ERROR("Authentication Error"),

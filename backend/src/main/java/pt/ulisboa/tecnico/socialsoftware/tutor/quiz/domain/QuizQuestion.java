@@ -10,6 +10,7 @@ import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_CANNOT_HAVE_REPEATED_QUESTIONS;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_QUESTION_HAS_ANSWERS;
 
 @Entity
@@ -36,6 +37,12 @@ public class QuizQuestion implements DomainEntity {
     }
 
     public QuizQuestion(Quiz quiz, Question question, Integer sequence) {
+        if (quiz.getQuizQuestions().stream()
+                .map(quizQuestion -> quizQuestion.getQuestion().getId())
+                .anyMatch(id -> id.equals(question.getId()))) {
+            throw new TutorException(QUIZ_CANNOT_HAVE_REPEATED_QUESTIONS);
+        }
+
         setQuiz(quiz);
         setQuestion(question);
         setSequence(sequence);
