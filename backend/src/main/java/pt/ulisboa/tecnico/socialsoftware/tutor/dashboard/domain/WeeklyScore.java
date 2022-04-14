@@ -56,7 +56,8 @@ public class WeeklyScore implements DomainEntity {
         Set<QuizAnswer> weeklyQuizAnswers = getWeeklyQuizAnswers();
 
         Set<QuestionAnswer> publicWeeklyQuestionAnswers = weeklyQuizAnswers.stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(dashboard.getCourseExecution().getId()))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                 .collect(Collectors.toSet());
 
@@ -73,7 +74,8 @@ public class WeeklyScore implements DomainEntity {
 
         if (DateHandler.now().isAfter(week.plusDays(7).atStartOfDay())) {
             closed = weeklyQuizAnswers.stream()
-                    .noneMatch(quizAnswer -> !quizAnswer.canResultsBePublic(dashboard.getCourseExecution().getId()));
+                    .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
+                    .noneMatch(quizAnswer -> !quizAnswer.canResultsBePublic());
         }
     }
 

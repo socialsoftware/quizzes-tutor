@@ -103,7 +103,7 @@ public class DifficultQuestionService {
                 .distinct()
                 .filter(question -> !questionsToPersist.contains(question))
                 .forEach(question -> {
-                    int percentageCorrect = percentageCorrect(dashboard.getCourseExecution(), question, now.minusDays(7));
+                    int percentageCorrect = percentageCorrect(question, now.minusDays(7));
                     if (percentageCorrect < 25) {
                         DifficultQuestion difficultQuestion = new DifficultQuestion(dashboard, question, percentageCorrect);
                         difficultQuestionRepository.save(difficultQuestion);
@@ -115,10 +115,10 @@ public class DifficultQuestionService {
         return new UpdatedDifficultQuestionsDto(dashboard);
     }
 
-    private int percentageCorrect(CourseExecution courseExecution, Question question, LocalDateTime weekAgo) {
+    private int percentageCorrect(Question question, LocalDateTime weekAgo) {
         Set<QuestionAnswer> answersInWeek = question.getQuizQuestions().stream()
                 .flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream())
-                .filter(questionAnswer -> questionAnswer.getQuizAnswer().canResultsBePublic(courseExecution.getId())
+                .filter(questionAnswer -> questionAnswer.getQuizAnswer().canResultsBePublic()
                         && questionAnswer.getQuizAnswer().getAnswerDate().isAfter(weekAgo))
                 .collect(Collectors.toSet());
 

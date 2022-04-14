@@ -191,11 +191,11 @@ export default class RemoteServices {
       });
   }
 
-  static async getUserStats(): Promise<StudentStats> {
+  static async getUserCourseExecutionStats(
+    dashboardId: number
+  ): Promise<StudentStats> {
     return httpClient
-      .get(
-        `/stats/executions/${Store.getters.getCurrentCourse.courseExecutionId}`
-      )
+      .get(`/students/dashboards/${dashboardId}/stats`)
       .then((response) => {
         return new StudentStats(response.data);
       })

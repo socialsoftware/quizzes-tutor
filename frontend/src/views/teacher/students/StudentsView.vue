@@ -1,20 +1,21 @@
 <template>
   <v-card class="table">
+    <v-card-title>{{ students.length }} Students</v-card-title>
     <v-data-table
       :headers="headers"
+      :hide-default-footer="true"
       :items="students"
+      :mobile-breakpoint="0"
       :search="search"
       disable-pagination
-      :hide-default-footer="true"
-      :mobile-breakpoint="0"
     >
       <template v-slot:top>
         <v-card-title>
           <v-text-field
             v-model="search"
             append-icon="search"
-            label="Search"
             class="mx-2"
+            label="Search"
           />
 
           <v-spacer />
@@ -25,16 +26,32 @@
         <v-chip
           :color="getPercentageColor(item.percentageOfCorrectAnswers)"
           dark
-          >{{ item.percentageOfCorrectAnswers + '%' }}</v-chip
-        >
+          >{{ item.percentageOfCorrectAnswers + '%' }}
+        </v-chip>
       </template>
 
       <template v-slot:[`item.percentageOfCorrectTeacherAnswers`]="{ item }">
         <v-chip
           :color="getPercentageColor(item.percentageOfCorrectTeacherAnswers)"
           dark
-          >{{ item.percentageOfCorrectTeacherAnswers + '%' }}</v-chip
-        >
+          >{{ item.percentageOfCorrectTeacherAnswers + '%' }}
+        </v-chip>
+      </template>
+
+      <template v-slot:[`item.percentageOfCorrectStudentAnswers`]="{ item }">
+        <v-chip
+          :color="getPercentageColor(item.percentageOfCorrectStudentAnswers)"
+          dark
+          >{{ item.percentageOfCorrectStudentAnswers + '%' }}
+        </v-chip>
+      </template>
+
+      <template v-slot:[`item.percentageOfCorrectInClassAnswers`]="{ item }">
+        <v-chip
+          :color="getPercentageColor(item.percentageOfCorrectInClassAnswers)"
+          dark
+          >{{ item.percentageOfCorrectInClassAnswers + '%' }}
+        </v-chip>
       </template>
     </v-data-table>
   </v-card>
@@ -52,16 +69,59 @@ export default class StudentsView extends Vue {
   students: Student[] = [];
   search: string = '';
   headers: object = [
+    { text: 'Username', value: 'username', align: 'left', width: '10%' },
     { text: 'Name', value: 'name', align: 'left', width: '40%' },
     {
-      text: 'Teacher Quizzes',
+      text: 'Proposed Quizzes',
       value: 'numberOfTeacherQuizzes',
+      align: 'center',
+      width: '10%',
+    },
+    {
+      text: 'Answers Proposed Quizzes',
+      value: 'numberOfTeacherAnswers',
+      align: 'center',
+      width: '10%',
+    },
+    {
+      text: 'Correct Answers Proposed Quizzes',
+      value: 'percentageOfCorrectTeacherAnswers',
       align: 'center',
       width: '10%',
     },
     {
       text: 'Generated Quizzes',
       value: 'numberOfStudentQuizzes',
+      align: 'center',
+      width: '10%',
+    },
+    {
+      text: 'Answers Generated Quizzes',
+      value: 'numberOfStudentAnswers',
+      align: 'center',
+      width: '10%',
+    },
+    {
+      text: 'Correct Answers Generated Quizzes',
+      value: 'percentageOfCorrectStudentAnswers',
+      align: 'center',
+      width: '10%',
+    },
+    {
+      text: 'InClass Quizzes',
+      value: 'numberOfInClassQuizzes',
+      align: 'center',
+      width: '10%',
+    },
+    {
+      text: 'Answers InClass Quizzes',
+      value: 'numberOfInClassAnswers',
+      align: 'center',
+      width: '10%',
+    },
+    {
+      text: 'Correct Answers InClass Quizzes',
+      value: 'percentageOfCorrectInClassAnswers',
       align: 'center',
       width: '10%',
     },
@@ -74,18 +134,6 @@ export default class StudentsView extends Vue {
     {
       text: 'Correct Answers',
       value: 'percentageOfCorrectAnswers',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'Answers Teacher Quiz',
-      value: 'numberOfTeacherAnswers',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'Correct Answers Teacher Quiz',
-      value: 'percentageOfCorrectTeacherAnswers',
       align: 'center',
       width: '10%',
     },

@@ -13,6 +13,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRe
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
@@ -38,7 +40,6 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
-import java.util.function.Function;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -78,6 +79,9 @@ public class AnswerService {
 
     @Autowired
     private AssessmentRepository assessmentRepository;
+
+    @Autowired
+    private DashboardRepository dashboardRepository;
 
     @Autowired
     private AnswersXmlImport xmlImporter;
@@ -128,6 +132,9 @@ public class AnswerService {
                 for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
                     writeQuestionAnswer(questionAnswer, statementQuizDto.getAnswers());
                 }
+
+                calculateStatistics(quizAnswer);
+
                 return quizAnswer.getQuestionAnswers().stream()
                         .sorted(Comparator.comparing(QuestionAnswer::getSequence))
                         .map(CorrectAnswerDto::new)
@@ -162,7 +169,7 @@ public class AnswerService {
                             .sorted(Comparator.comparing(QuestionAnswerItem::getAnswerDate))
                             .collect(Collectors.toList()));
                 }
-           }
+            }
 
             if (quizAnswer.getAnswerDate() == null) {
                 quizAnswer.setAnswerDate(quizAnswerItem.getAnswerDate());
@@ -170,9 +177,32 @@ public class AnswerService {
                 for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
                     writeQuestionAnswer(questionAnswer, quizAnswerItem.getAnswersList());
                 }
+
+                calculateStatistics(quizAnswer);
             }
             quizAnswerItemRepository.deleteById(quizAnswerItem.getId());
         });
+    }
+
+    private void calculateStatistics(QuizAnswer quizAnswer) {
+        calculateDashboardStatistics(quizAnswer);
+
+        calculateQuestionStatistics(quizAnswer);
+    }
+
+    private void calculateQuestionStatistics(QuizAnswer quizAnswer) {
+        quizAnswer.getQuestionAnswers().forEach(questionAnswer ->
+            questionAnswer.getQuizQuestion().getQuestion().addAnswerStatistics(questionAnswer)
+        );
+    }
+
+    private void calculateDashboardStatistics(QuizAnswer quizAnswer) {
+        Dashboard dashboard = quizAnswer.getStudent().getCourseExecutionDashboard(quizAnswer.getQuiz().getCourseExecution());
+        if (dashboard == null) {
+            dashboard = new Dashboard(quizAnswer.getQuiz().getCourseExecution(), quizAnswer.getStudent());
+            dashboardRepository.save(dashboard);
+        }
+        dashboard.statistics(quizAnswer);
     }
 
     private void fraudDetection(QuizAnswer quizAnswer, List<QuestionAnswerItem> questionAnswerItems) {
@@ -448,7 +478,8 @@ public class AnswerService {
         Student student = studentRepository.findStudentWithQuizAnswersAndQuestionAnswersById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         return student.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId().equals(executionId))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
                 .filter(quizAnswer -> quizAnswer.getAnswerDate() != null)
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
@@ -481,7 +512,7 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void writeQuizAnswersAndCalculateStatistics() {
+    public void writeQuizAnswers() {
         Set<Integer> quizzesToWrite = quizAnswerItemRepository.findQuizzesToWrite();
         quizzesToWrite.forEach(quizToWrite -> {
             if (quizRepository.findById(quizToWrite).isPresent()) {
@@ -489,9 +520,12 @@ public class AnswerService {
             }
         });
 
-        Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToCalculateStatistics(DateHandler.now());
-
-        quizAnswersToClose.forEach(QuizAnswer::calculateStatistics);
+        // TOBE REMOVED: RUN ONLY ONCE
+//        System.out.println(DateHandler.now());
+//        quizAnswerRepository.findAll().forEach(quizAnswer -> {
+//            calculateDashboardStatistics(quizAnswer);
+//        });
+//        System.out.println(DateHandler.now());
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {

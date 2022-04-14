@@ -3,7 +3,7 @@
     <h3>Statistics</h3>
     <div v-if="stats != null" class="stats-container">
       <div class="items">
-        <div class="icon-wrapper" ref="totalQuizzes">
+        <div ref="totalQuizzes" class="icon-wrapper">
           <animated-number :number="stats.totalQuizzes" />
         </div>
         <div class="project-name">
@@ -11,7 +11,7 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="totalAnswers">
+        <div ref="totalAnswers" class="icon-wrapper">
           <animated-number :number="stats.totalAnswers" />
         </div>
         <div class="project-name">
@@ -19,7 +19,7 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="totalUniqueQuestions">
+        <div ref="totalUniqueQuestions" class="icon-wrapper">
           <animated-number :number="stats.totalUniqueQuestions" />
         </div>
         <div class="project-name">
@@ -27,7 +27,7 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="correctAnswers">
+        <div ref="correctAnswers" class="icon-wrapper">
           <animated-number :number="stats.correctAnswers">%</animated-number>
         </div>
         <div class="project-name">
@@ -35,30 +35,30 @@
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="improvedCorrectAnswers">
+        <div ref="improvedCorrectAnswers" class="icon-wrapper">
           <animated-number :number="stats.improvedCorrectAnswers"
-            >%</animated-number
-          >
+            >%
+          </animated-number>
         </div>
         <div class="project-name">
           <p>Improved Correct Questions</p>
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="percentageOfSeenQuestions">
+        <div ref="percentageOfSeenQuestions" class="icon-wrapper">
           <animated-number
             :number="
               (stats.totalUniqueQuestions * 100) / stats.totalAvailableQuestions
             "
-            >%</animated-number
-          >
+            >%
+          </animated-number>
         </div>
         <div class="project-name">
           <p>Percentage of questions seen</p>
         </div>
       </div>
       <div class="items">
-        <div class="icon-wrapper" ref="improvedCorrectAnswers">
+        <div ref="improvedCorrectAnswers" class="icon-wrapper">
           <animated-number :number="stats.createdDiscussions" />
         </div>
         <div class="project-name">
@@ -70,7 +70,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import StudentStats from '@/models/dashboard/StudentStats';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
@@ -79,12 +79,15 @@ import AnimatedNumber from '@/components/AnimatedNumber.vue';
   components: { AnimatedNumber },
 })
 export default class GlobalStatsView extends Vue {
+  @Prop() readonly dashboardId!: number;
   stats: StudentStats | null = null;
 
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.stats = await RemoteServices.getUserStats();
+      this.stats = await RemoteServices.getUserCourseExecutionStats(
+        this.dashboardId
+      );
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
@@ -134,6 +137,7 @@ export default class GlobalStatsView extends Vue {
 .project-name {
   align-self: start;
 }
+
 .project-name p {
   font-size: 24px;
   font-weight: bold;
@@ -148,6 +152,7 @@ export default class GlobalStatsView extends Vue {
   & .project-name p {
     transform: translateY(-10px);
   }
+
   & .icon-wrapper i {
     transform: translateY(5px);
   }

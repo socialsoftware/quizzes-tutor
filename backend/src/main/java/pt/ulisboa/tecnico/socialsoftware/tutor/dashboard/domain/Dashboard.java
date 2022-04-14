@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.DifficultQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -21,15 +22,22 @@ import javax.persistence.*;
 
 @Entity
 public class Dashboard implements DomainEntity {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
+    private int numberOfTeacherQuizzes = 0;
+    private int numberOfStudentQuizzes = 0;
+    private int numberOfInClassQuizzes = 0;
+    private int numberOfTeacherAnswers = 0;
+    private int numberOfInClassAnswers = 0;
+    private int numberOfStudentAnswers = 0;
+    private int numberOfCorrectTeacherAnswers = 0;
+    private int numberOfCorrectInClassAnswers = 0;
+    private int numberOfCorrectStudentAnswers = 0;
+
     private LocalDateTime lastCheckFailedAnswers;
-
     private LocalDateTime lastCheckDifficultQuestions;
-
     private LocalDateTime lastCheckWeeklyScores;
 
     @ManyToOne
@@ -62,6 +70,78 @@ public class Dashboard implements DomainEntity {
 
     public Integer getId() {
         return id;
+    }
+
+    public int getNumberOfTeacherQuizzes() {
+        return numberOfTeacherQuizzes;
+    }
+
+    public void setNumberOfTeacherQuizzes(int numberOfTeacherQuizzes) {
+        this.numberOfTeacherQuizzes = numberOfTeacherQuizzes;
+    }
+
+    public int getNumberOfStudentQuizzes() {
+        return numberOfStudentQuizzes;
+    }
+
+    public void setNumberOfStudentQuizzes(int numberOfStudentQuizzes) {
+        this.numberOfStudentQuizzes = numberOfStudentQuizzes;
+    }
+
+    public int getNumberOfInClassQuizzes() {
+        return numberOfInClassQuizzes;
+    }
+
+    public void setNumberOfInClassQuizzes(int numberOfInClassQuizzes) {
+        this.numberOfInClassQuizzes = numberOfInClassQuizzes;
+    }
+
+    public int getNumberOfTeacherAnswers() {
+        return numberOfTeacherAnswers;
+    }
+
+    public void setNumberOfTeacherAnswers(int numberOfTeacherAnswers) {
+        this.numberOfTeacherAnswers = numberOfTeacherAnswers;
+    }
+
+    public int getNumberOfInClassAnswers() {
+        return numberOfInClassAnswers;
+    }
+
+    public void setNumberOfInClassAnswers(int numberOfInClassAnswers) {
+        this.numberOfInClassAnswers = numberOfInClassAnswers;
+    }
+
+    public int getNumberOfStudentAnswers() {
+        return numberOfStudentAnswers;
+    }
+
+    public void setNumberOfStudentAnswers(int numberOfStudentAnswers) {
+        this.numberOfStudentAnswers = numberOfStudentAnswers;
+    }
+
+    public int getNumberOfCorrectTeacherAnswers() {
+        return numberOfCorrectTeacherAnswers;
+    }
+
+    public void setNumberOfCorrectTeacherAnswers(int numberOfCorrectTeacherAnswers) {
+        this.numberOfCorrectTeacherAnswers = numberOfCorrectTeacherAnswers;
+    }
+
+    public int getNumberOfCorrectInClassAnswers() {
+        return numberOfCorrectInClassAnswers;
+    }
+
+    public void setNumberOfCorrectInClassAnswers(int numberOfCorrectInClassAnswers) {
+        this.numberOfCorrectInClassAnswers = numberOfCorrectInClassAnswers;
+    }
+
+    public int getNumberOfCorrectStudentAnswers() {
+        return numberOfCorrectStudentAnswers;
+    }
+
+    public void setNumberOfCorrectStudentAnswers(int numberOfCorrectStudentAnswers) {
+        this.numberOfCorrectStudentAnswers = numberOfCorrectStudentAnswers;
     }
 
     public LocalDateTime getLastCheckFailedAnswers() {
@@ -141,6 +221,37 @@ public class Dashboard implements DomainEntity {
             throw new TutorException(ErrorMessage.FAILED_ANSWER_ALREADY_CREATED);
         }
         failedAnswers.add(failedAnswer);
+    }
+
+    public void statistics(QuizAnswer quizAnswer) {
+        switch (quizAnswer.getQuiz().getType()) {
+            case IN_CLASS:
+                numberOfInClassQuizzes++;
+                break;
+            case GENERATED:
+                numberOfStudentQuizzes++;
+                break;
+            case PROPOSED:
+                numberOfTeacherQuizzes++;
+                break;
+        }
+
+        quizAnswer.getQuestionAnswers().forEach(questionAnswer -> {
+            switch (quizAnswer.getQuiz().getType()) {
+                case IN_CLASS:
+                    numberOfInClassAnswers++;
+                    numberOfCorrectInClassAnswers = questionAnswer.isCorrect() ? numberOfCorrectInClassAnswers + 1 : numberOfCorrectInClassAnswers;
+                    break;
+                case GENERATED:
+                    numberOfStudentAnswers++;
+                    numberOfCorrectStudentAnswers = questionAnswer.isCorrect() ? numberOfCorrectStudentAnswers + 1 : numberOfCorrectStudentAnswers;
+                    break;
+                case PROPOSED:
+                    numberOfTeacherAnswers++;
+                    numberOfCorrectTeacherAnswers = questionAnswer.isCorrect() ? numberOfCorrectTeacherAnswers + 1 : numberOfCorrectTeacherAnswers;
+                    break;
+            }
+        });
     }
 
     public void accept(Visitor visitor) {

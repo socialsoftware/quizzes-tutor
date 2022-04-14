@@ -38,8 +38,8 @@ public class QuizQuestion implements DomainEntity {
 
     public QuizQuestion(Quiz quiz, Question question, Integer sequence) {
         if (quiz.getQuizQuestions().stream()
-                .map(quizQuestion -> quizQuestion.getQuestion().getId())
-                .anyMatch(id -> id.equals(question.getId()))) {
+                .map(quizQuestion -> quizQuestion.getQuestion())
+                .anyMatch(question1 -> question1 == question)) {
             throw new TutorException(QUIZ_CANNOT_HAVE_REPEATED_QUESTIONS);
         }
 

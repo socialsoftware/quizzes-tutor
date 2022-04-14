@@ -52,7 +52,7 @@
     </v-card>
 
     <div v-if="show === 'Global'" class="stats-container">
-      <global-stats-view></global-stats-view>
+      <global-stats-view :dashboardId="dashboardId"></global-stats-view>
     </div>
 
     <div v-if="show === 'Weekly'">
@@ -100,7 +100,7 @@ export default class DashboardView extends Vue {
   lastCheckWeeklyScores: string | null = null;
   lastCheckFailedAnswers: string | null = null;
   lastCheckDifficultQuestions: string | null = null;
-  show: string = 'Global';
+  show: string | null = null;
 
   async created() {
     await this.$store.dispatch('loading');
@@ -111,6 +111,7 @@ export default class DashboardView extends Vue {
       this.lastCheckWeeklyScores = dashboard.lastCheckWeeklyScores;
       this.lastCheckFailedAnswers = dashboard.lastCheckFailedAnswers;
       this.lastCheckDifficultQuestions = dashboard.lastCheckDifficultQuestions;
+      this.show = 'Global';
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

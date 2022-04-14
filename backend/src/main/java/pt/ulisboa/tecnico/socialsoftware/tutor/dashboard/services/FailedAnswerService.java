@@ -88,7 +88,7 @@ public class FailedAnswerService {
 
         dashboard.getStudent().getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(dashboard.getCourseExecution().getId()))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
                 .filter(quizAnswer -> quizAnswer.getAnswerDate().isAfter(start) && quizAnswer.getAnswerDate().isBefore(end))
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                 .filter(Predicate.not(QuestionAnswer::isCorrect))
@@ -98,7 +98,7 @@ public class FailedAnswerService {
         if (startDate == null && endDate == null) {
             dashboard.setLastCheckFailedAnswers(dashboard.getStudent().getQuizAnswers().stream()
                     .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
-                    .filter(quizAnswer -> !quizAnswer.canResultsBePublic(dashboard.getCourseExecution().getId()))
+                    .filter(quizAnswer -> !quizAnswer.canResultsBePublic())
                     .filter(quizAnswer -> dashboard.getLastCheckFailedAnswers() == null
                             || quizAnswer.getCreationDate().isAfter(dashboard.getLastCheckFailedAnswers()))
                     .map(QuizAnswer::getCreationDate)

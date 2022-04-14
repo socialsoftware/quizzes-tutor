@@ -158,40 +158,10 @@ public class QuizAnswer implements DomainEntity {
         questionAnswers.add(questionAnswer);
     }
 
-    @Override
-    public String toString() {
-        return "QuizAnswer{" +
-                "id=" + id +
-                ", creationDate=" + creationDate +
-                ", answerDate=" + answerDate +
-                ", completed=" + completed +
-                ", usedInStatistics=" + usedInStatistics +
-                '}';
-    }
-
-    public boolean canResultsBePublic(Integer courseExecutionId) {
+    public boolean canResultsBePublic() {
         return isCompleted() &&
-                getQuiz().getCourseExecution().getId().equals(courseExecutionId) &&
                 ((!getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && !getQuiz().getType().equals(Quiz.QuizType.TOURNAMENT))
-                        || getQuiz().getResultsDate().isBefore(DateHandler.now()));
-    }
-
-    public void calculateStatistics() {
-        if (!this.usedInStatistics) {
-            student.increaseNumberOfQuizzes(getQuiz().getType());
-
-            getQuestionAnswers().forEach(questionAnswer -> {
-                student.increaseNumberOfAnswers(getQuiz().getType());
-                if (questionAnswer.isCorrect()) {
-                    student.increaseNumberOfCorrectAnswers(getQuiz().getType());
-                }
-            });
-
-            getQuestionAnswers().forEach(questionAnswer ->
-                    questionAnswer.getQuizQuestion().getQuestion().addAnswerStatistics(questionAnswer));
-
-            this.usedInStatistics = true;
-        }
+                    || getQuiz().getResultsDate().isBefore(DateHandler.now()));
     }
 
     public void remove() {
@@ -214,5 +184,20 @@ public class QuizAnswer implements DomainEntity {
 
     public long getNumberOfCorrectAnswers() {
         return getQuestionAnswers().stream().filter(QuestionAnswer::isCorrect).count();
+    }
+
+    @Override
+    public String toString() {
+        return "QuizAnswer{" +
+                "id=" + id +
+                ", creationDate=" + creationDate +
+                ", answerDate=" + answerDate +
+                ", completed=" + completed +
+                ", fraud=" + fraud +
+                ", usedInStatistics=" + usedInStatistics +
+                ", student=" + student +
+                ", quiz=" + quiz +
+                ", questionAnswers=" + questionAnswers +
+                '}';
     }
 }
