@@ -1,20 +1,7 @@
 <template>
   <v-container v-if="weeklyScores != null" fluid>
+    <h3>Weekly Scores</h3>
     <v-card class="table">
-      <v-container>
-        <v-row>
-          <v-col><h2>Weekly Scores</h2></v-col>
-          <v-col class="text-right">
-            <v-btn
-              color="primary"
-              dark
-              data-cy="refreshWeeklyScoresMenuButton"
-              @click="refresh"
-              >Refresh
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
       <v-data-table
         :headers="headers"
         :items="weeklyScores"
@@ -24,20 +11,11 @@
         data-cy="weeklyScoresTable"
         multi-sort
       >
-        <template v-slot:[`item.action`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
-              <v-icon
-                class="mr-2 action-button"
-                color="red"
-                data-cy="deleteWeeklyScoreButton"
-                @click="deleteWeeklyScore(item)"
-                v-on="on"
-                >delete
-              </v-icon>
-            </template>
-            <span>Delete Weekly Score</span>
-          </v-tooltip>
+        <template v-slot:[`item.percentageCorrect`]="{ item }">
+          {{ item.percentageCorrect + '%' }}
+        </template>
+        <template v-slot:[`item.improvedCorrectAnswers`]="{ item }">
+          {{ item.improvedCorrectAnswers + '%' }}
         </template>
       </v-data-table>
     </v-card>
@@ -57,33 +35,38 @@ export default class WeeklyScoresView extends Vue {
 
   headers: object = [
     {
-      text: 'Actions',
-      value: 'action',
-      align: 'left',
-      width: '5px',
-      sortable: false,
-    },
-    {
       text: 'Week',
       value: 'week',
       align: 'start',
       width: '5px',
     },
     {
-      text: 'Number Answered',
-      value: 'numberAnswered',
+      text: 'Quizzes Answered',
+      value: 'quizzesAnswered',
       align: 'center',
       width: '5px',
     },
     {
-      text: 'Uniquely Answered',
-      value: 'uniquelyAnswered',
+      text: 'Questions Answered',
+      value: 'questionsAnswered',
       align: 'center',
       width: '5px',
     },
     {
-      text: 'Percentage Answered',
+      text: 'Questions Uniquely Answered',
+      value: 'questionsUniquelyAnswered',
+      align: 'center',
+      width: '5px',
+    },
+    {
+      text: 'Percentage Correct',
       value: 'percentageCorrect',
+      align: 'center',
+      width: '5px',
+    },
+    {
+      text: 'Improved Correct Questions',
+      value: 'improvedCorrectAnswers',
       align: 'center',
       width: '5px',
     },
@@ -92,36 +75,13 @@ export default class WeeklyScoresView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.weeklyScores = await RemoteServices.getWeeklyScores(
+      this.weeklyScores = await RemoteServices.updateWeeklyScores(
         this.dashboardId
       );
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
-  }
-
-  async refresh() {
-    await this.$store.dispatch('loading');
-    try {
-      let result = await RemoteServices.updateWeeklyScores(this.dashboardId);
-      this.weeklyScores = result.weeklyScores;
-      this.$emit('refresh', result.lastCheckWeeklyScores);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-  }
-
-  async deleteWeeklyScore(toDeleteWeeklyScore: WeeklyScore) {
-    try {
-      await RemoteServices.deleteWeeklyScore(toDeleteWeeklyScore.id);
-      this.weeklyScores = this.weeklyScores.filter(
-        (weeklyScore) => weeklyScore.id != toDeleteWeeklyScore.id
-      );
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
   }
 }
 </script>

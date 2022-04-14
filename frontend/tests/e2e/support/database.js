@@ -143,7 +143,7 @@ Cypress.Commands.add('createWeeklyScore', () => {
   dbCommand(`WITH courseExecutionId as (SELECT ce.id as course_execution_id FROM course_executions ce WHERE acronym = 'DemoCourse')
         , demoStudentId as (SELECT u.id as users_id FROM users u WHERE name = 'Demo Student')
         , dashboardId as (SELECT d.id as dashboard_id FROM dashboard d WHERE student_id = (select users_id from demoStudentId) AND course_execution_id = (select course_execution_id from courseExecutionId))
-       INSERT INTO weekly_score(closed, number_answered, percentage_correct, uniquely_answered, week, dashboard_id) VALUES (true, 10, 50, 9, '2022-02-02', (select dashboard_id from dashboardId))
+       INSERT INTO weekly_score(closed, quizzes_answered, questions_answered, questions_uniquely_answered, percentage_correct, improved_correct_answers, week, dashboard_id) VALUES (true, 3, 10, 50, 9, 8, '2022-02-02', (select dashboard_id from dashboardId))
       `);
 });
 

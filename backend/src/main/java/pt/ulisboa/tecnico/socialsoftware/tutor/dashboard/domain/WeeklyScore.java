@@ -14,9 +14,12 @@ import java.time.DayOfWeek;
 import java.time.LocalDate;
 import java.time.temporal.TemporalAdjuster;
 import java.time.temporal.TemporalAdjusters;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
+import static java.util.Comparator.comparingInt;
+import static java.util.stream.Collectors.collectingAndThen;
+import static java.util.stream.Collectors.toCollection;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CANNOT_CLOSE_CURRENT_WEEK;
 
 @Entity
@@ -26,11 +29,11 @@ public class WeeklyScore implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    private int numberAnswered;
-
-    private int uniquelyAnswered;
-
+    private int quizzesAnswered;
+    private int questionsAnswered;
+    private int questionsUniquelyAnswered;
     private int percentageCorrect;
+    private int improvedCorrectAnswers;
 
     private LocalDate week;
 
@@ -55,26 +58,39 @@ public class WeeklyScore implements DomainEntity {
     public void computeStatistics() {
         Set<QuizAnswer> weeklyQuizAnswers = getWeeklyQuizAnswers();
 
-        Set<QuestionAnswer> publicWeeklyQuestionAnswers = weeklyQuizAnswers.stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
+        List<QuestionAnswer> publicWeeklyQuestionAnswers = weeklyQuizAnswers.stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic())
+                .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
 
-        Set<Question> weeklyQuestionsAnswered = publicWeeklyQuestionAnswers.stream()
+        setQuizzesAnswered((int) weeklyQuizAnswers.stream()
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
+                .count());
+
+        List<Question> weeklyQuestionsAnswered = publicWeeklyQuestionAnswers.stream()
                 .map(QuestionAnswer::getQuizQuestion)
-                .map(QuizQuestion::getQuestion).collect(Collectors.toSet());
+                .map(QuizQuestion::getQuestion).collect(Collectors.toList());
 
-        setNumberAnswered((int) weeklyQuestionsAnswered.stream()
+        setQuestionsAnswered((int) weeklyQuestionsAnswered.stream()
                 .map(Question::getId).count());
-        setUniquelyAnswered((int) weeklyQuestionsAnswered.stream()
+
+        setQuestionsUniquelyAnswered((int) weeklyQuestionsAnswered.stream()
                 .map(Question::getId).distinct().count());
+
+        int uniquelyCorrect = (int) publicWeeklyQuestionAnswers.stream()
+                .collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparingInt(questionAnswer -> questionAnswer.getQuizQuestion().getQuestion().getId()))),
+                ArrayList::new)).stream()
+                .filter(QuestionAnswer::isCorrect)
+                .count();
+
         setPercentageCorrect(publicWeeklyQuestionAnswers.size() > 0 ? (int) Math.round((publicWeeklyQuestionAnswers.stream().filter(QuestionAnswer::isCorrect).count() /
                 (double) publicWeeklyQuestionAnswers.size()) * 100.0) : 0);
 
+        setImprovedCorrectAnswers(getQuestionsUniquelyAnswered() > 0 ? (int) Math.round(uniquelyCorrect*100/(double) getQuestionsUniquelyAnswered()) : 0);
+
         if (DateHandler.now().isAfter(week.plusDays(7).atStartOfDay())) {
             closed = weeklyQuizAnswers.stream()
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
                     .noneMatch(quizAnswer -> !quizAnswer.canResultsBePublic());
         }
     }
@@ -96,22 +112,38 @@ public class WeeklyScore implements DomainEntity {
 
     public Integer getId() { return id; }
 
-    public int getNumberAnswered() { return numberAnswered; }
-
-    public void setNumberAnswered(int numberAnswered) {
-        this.numberAnswered = numberAnswered;
+    public int getQuizzesAnswered() {
+        return quizzesAnswered;
     }
 
-    public int getUniquelyAnswered() { return uniquelyAnswered; }
+    public void setQuizzesAnswered(int quizzesAnswered) {
+        this.quizzesAnswered = quizzesAnswered;
+    }
 
-    public void setUniquelyAnswered(int uniquelyAnswered) {
-        this.uniquelyAnswered = uniquelyAnswered;
+    public int getQuestionsAnswered() { return questionsAnswered; }
+
+    public void setQuestionsAnswered(int numberAnswered) {
+        this.questionsAnswered = numberAnswered;
+    }
+
+    public int getQuestionsUniquelyAnswered() { return questionsUniquelyAnswered; }
+
+    public void setQuestionsUniquelyAnswered(int uniquelyAnswered) {
+        this.questionsUniquelyAnswered = uniquelyAnswered;
     }
 
     public int getPercentageCorrect() { return percentageCorrect; }
 
     public void setPercentageCorrect(int percentageCorrect) {
         this.percentageCorrect = percentageCorrect;
+    }
+
+    public int getImprovedCorrectAnswers() {
+        return improvedCorrectAnswers;
+    }
+
+    public void setImprovedCorrectAnswers(int improvedCorrectAnswers) {
+        this.improvedCorrectAnswers = improvedCorrectAnswers;
     }
 
     public LocalDate getWeek() { return week; }
@@ -147,11 +179,14 @@ public class WeeklyScore implements DomainEntity {
     @Override
     public String toString() {
         return "WeeklyScore{" +
-                "id=" + getId() +
-                ", numberAnswered=" + numberAnswered +
-                ", uniquelyAnswered=" + uniquelyAnswered +
+                "id=" + id +
+                ", quizzesAnswered=" + quizzesAnswered +
+                ", questionsAnswered=" + questionsAnswered +
+                ", questionsUniquelyAnswered=" + questionsUniquelyAnswered +
                 ", percentageCorrect=" + percentageCorrect +
-                ", week=" + getWeek() +
-                "}";
+                ", week=" + week +
+                ", closed=" + closed +
+                ", dashboard=" + dashboard +
+                '}';
     }
 }

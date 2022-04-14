@@ -1,5 +1,6 @@
 <template>
   <v-container v-if="difficultQuestions != null" fluid>
+    <h3>Difficult Questions</h3>
     <v-card class="table">
       <v-container>
         <v-row>

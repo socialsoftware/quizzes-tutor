@@ -61,12 +61,12 @@
           </elementProp>
           <elementProp name="number_of_questions" elementType="Argument">
             <stringProp name="Argument.name">number_of_questions</stringProp>
-            <stringProp name="Argument.value">5</stringProp>
+            <stringProp name="Argument.value">2</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="number_of_students" elementType="Argument">
             <stringProp name="Argument.name">number_of_students</stringProp>
-            <stringProp name="Argument.value">300</stringProp>
+            <stringProp name="Argument.value">30</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -599,7 +599,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
               <stringProp name="minimumValue">0</stringProp>
               <stringProp name="outputFormat"></stringProp>
               <boolProp name="perThread">false</boolProp>
-              <stringProp name="randomSeed">100</stringProp>
+              <stringProp name="randomSeed">101</stringProp>
               <stringProp name="variableName">answer_option</stringProp>
             </RandomVariableConfig>
             <hashTree/>

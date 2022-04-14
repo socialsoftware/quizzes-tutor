@@ -41,12 +41,12 @@ class UpdateWeeklyScoreWebServiceIT extends SpockTest {
         then:
         response.status == 200
         and:
-        DateHandler.toLocalDateTime(response.data.lastCheckWeeklyScores).isAfter(DateHandler.now().minusSeconds(1))
-        response.data.weeklyScores.size() == 1
-        def resultWeeklyScore = response.data.weeklyScores.get(0)
-        resultWeeklyScore.numberAnswered == 0
-        resultWeeklyScore.uniquelyAnswered == 0
+        response.data.size() == 1
+        def resultWeeklyScore = response.data.get(0)
+        resultWeeklyScore.questionsAnswered == 0
+        resultWeeklyScore.questionsUniquelyAnswered == 0
         resultWeeklyScore.percentageCorrect == 0
+        resultWeeklyScore.improvedCorrectAnswers == 0
         and:
         weeklyScoreRepository.findAll().size() == 1
 

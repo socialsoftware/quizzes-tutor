@@ -10,7 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore
-import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
@@ -111,19 +110,19 @@ class UpdateWeeklyScoreTest extends SpockTest {
         def result = weeklyScoreService.updateWeeklyScore(dashboard.getId())
 
         then:
-        DateHandler.toLocalDateTime(result.getLastCheckWeeklyScores()).isAfter(now)
-        result.getWeeklyScores().size() == 1
-        def resultWeeklyScore = result.getWeeklyScores().get(0)
-        resultWeeklyScore.getNumberAnswered() == 1
-        resultWeeklyScore.getUniquelyAnswered() == 1
+        result.size() == 1
+        def resultWeeklyScore = result.get(0)
+        resultWeeklyScore.getQuestionsAnswered() == 1
+        resultWeeklyScore.getQuestionsUniquelyAnswered() == 1
         resultWeeklyScore.getPercentageCorrect() == 100
+        resultWeeklyScore.getImprovedCorrectAnswers() == 100
         and:
         weeklyScoreRepository.count() == 1L
         def weeklyScore = weeklyScoreRepository.findAll().get(0)
         weeklyScore.getId() != null
         weeklyScore.getDashboard().getId() == dashboard.getId()
-        weeklyScore.getNumberAnswered() == 1
-        weeklyScore.getUniquelyAnswered() == 1
+        weeklyScore.getQuestionsAnswered() == 1
+        weeklyScore.getQuestionsUniquelyAnswered() == 1
         weeklyScore.getPercentageCorrect() == 100
         !weeklyScore.isClosed()
         weeklyScore.getDashboard().getLastCheckWeeklyScores().isAfter(now)
@@ -138,8 +137,8 @@ class UpdateWeeklyScoreTest extends SpockTest {
         def weeklyScore = weeklyScoreRepository.findAll().get(0)
         weeklyScore.getId() != null
         weeklyScore.getDashboard().getId() == dashboard.getId()
-        weeklyScore.getNumberAnswered() == 0
-        weeklyScore.getUniquelyAnswered() == 0
+        weeklyScore.getQuestionsAnswered() == 0
+        weeklyScore.getQuestionsUniquelyAnswered() == 0
         weeklyScore.getPercentageCorrect() == 0
         !weeklyScore.isClosed()
         weeklyScore.getDashboard().getLastCheckWeeklyScores().isAfter(now)
@@ -162,8 +161,8 @@ class UpdateWeeklyScoreTest extends SpockTest {
         result.getId() != null
         result.getId() != closedWeeklyScore.getId()
         result.getDashboard().getId() == dashboard.getId()
-        result.getNumberAnswered() == 0
-        result.getUniquelyAnswered() == 0
+        result.getQuestionsAnswered() == 0
+        result.getQuestionsUniquelyAnswered() == 0
         result.getPercentageCorrect() == 0
         !result.isClosed()
         result.getDashboard().getLastCheckWeeklyScores().isAfter(now)
@@ -195,8 +194,8 @@ class UpdateWeeklyScoreTest extends SpockTest {
         def result = weeklyScoreRepository.findAll().get(0)
         result.getId() != null
         result.getDashboard().getId() == dashboard.getId()
-        result.getNumberAnswered() == 1
-        result.getUniquelyAnswered() == 1
+        result.getQuestionsAnswered() == 1
+        result.getQuestionsUniquelyAnswered() == 1
         result.getPercentageCorrect() == 0
         !result.isClosed()
         result.getDashboard().getLastCheckWeeklyScores().isAfter(now)
@@ -235,8 +234,8 @@ class UpdateWeeklyScoreTest extends SpockTest {
         def result = weeklyScoreRepository.findAll().get(0)
         result.getId() != null
         result.getDashboard().getId() == dashboard.getId()
-        result.getNumberAnswered() == 1
-        result.getUniquelyAnswered() == 1
+        result.getQuestionsAnswered() == 1
+        result.getQuestionsUniquelyAnswered() == 1
         result.getPercentageCorrect() == 0
         !result.isClosed()
         result.getDashboard().getLastCheckWeeklyScores().isAfter(now)
@@ -275,8 +274,8 @@ class UpdateWeeklyScoreTest extends SpockTest {
         def result = weeklyScoreRepository.findAll().get(0)
         result.getId() != null
         result.getDashboard().getId() == dashboard.getId()
-        result.getNumberAnswered() == 0
-        result.getUniquelyAnswered() == 0
+        result.getQuestionsAnswered() == 0
+        result.getQuestionsUniquelyAnswered() == 0
         result.getPercentageCorrect() == 0
         !result.isClosed()
         result.getDashboard().getLastCheckWeeklyScores().isAfter(DateHandler.now().minusMinutes(1))
@@ -322,8 +321,8 @@ class UpdateWeeklyScoreTest extends SpockTest {
         result2.getDashboard().getId() == dashboard.getId()
         result2.getDashboard().getLastCheckWeeklyScores().isAfter(now)
         and:
-        result1.getNumberAnswered() + result2.getNumberAnswered() == 1
-        result1.getUniquelyAnswered() + result2.getUniquelyAnswered() == 1
+        result1.getQuestionsAnswered() + result2.getQuestionsAnswered() == 1
+        result1.getQuestionsUniquelyAnswered() + result2.getQuestionsUniquelyAnswered() == 1
         result1.getPercentageCorrect() + result2.getPercentageCorrect() == 0
         result1.isClosed() || result2.isClosed()
     }
@@ -368,8 +367,8 @@ class UpdateWeeklyScoreTest extends SpockTest {
         result2.getDashboard().getId() == dashboard.getId()
         result2.getDashboard().getLastCheckWeeklyScores().isAfter(now)
         and:
-        result1.getNumberAnswered() + result2.getNumberAnswered() == 0
-        result1.getUniquelyAnswered() + result2.getUniquelyAnswered() == 0
+        result1.getQuestionsAnswered() + result2.getQuestionsAnswered() == 0
+        result1.getQuestionsUniquelyAnswered() + result2.getQuestionsUniquelyAnswered() == 0
         result1.getPercentageCorrect() + result2.getPercentageCorrect() == 0
         !result1.isClosed() && !result2.isClosed()
     }

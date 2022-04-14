@@ -8,19 +8,14 @@ import java.io.Serializable;
 
 public class WeeklyScoreDto implements Serializable {
 
-  @JsonProperty("id")
   private Integer id;
 
-  @JsonProperty("numberAnswered")
-  private int numberAnswered;
-
-  @JsonProperty("uniquelyAnswered")
-  private int uniquelyAnswered;
-
-  @JsonProperty("percentageCorrect")
+  private int quizzesAnswered;
+  private int questionsAnswered;
+  private int questionsUniquelyAnswered;
   private int percentageCorrect;
+  private int improvedCorrectAnswers;
 
-  @JsonProperty("week")
   private String week;
 
   public WeeklyScoreDto() {
@@ -28,9 +23,11 @@ public class WeeklyScoreDto implements Serializable {
 
   public WeeklyScoreDto(WeeklyScore weeklyScore) {
     setId(weeklyScore.getId());
-    setNumberAnswered(weeklyScore.getNumberAnswered());
-    setUniquelyAnswered(weeklyScore.getUniquelyAnswered());
+    setQuizzesAnswered(weeklyScore.getQuizzesAnswered());
+    setQuestionsAnswered(weeklyScore.getQuestionsAnswered());
+    setQuestionsUniquelyAnswered(weeklyScore.getQuestionsUniquelyAnswered());
     setPercentageCorrect(weeklyScore.getPercentageCorrect());
+    setImprovedCorrectAnswers(weeklyScore.getImprovedCorrectAnswers());
     setWeek(DateHandler.toISOString(weeklyScore.getWeek().atStartOfDay()));
   }
 
@@ -42,20 +39,28 @@ public class WeeklyScoreDto implements Serializable {
     this.id = id;
   }
 
-  public int getNumberAnswered() {
-    return numberAnswered;
+  public int getQuizzesAnswered() {
+    return quizzesAnswered;
   }
 
-  public void setNumberAnswered(int numberAnswered) {
-    this.numberAnswered = numberAnswered;
+  public void setQuizzesAnswered(int quizzesAnswered) {
+    this.quizzesAnswered = quizzesAnswered;
   }
 
-  public int getUniquelyAnswered() {
-    return uniquelyAnswered;
+  public int getQuestionsAnswered() {
+    return questionsAnswered;
   }
 
-  public void setUniquelyAnswered(int uniquelyAnswered) {
-    this.uniquelyAnswered = uniquelyAnswered;
+  public void setQuestionsAnswered(int questionsAnswered) {
+    this.questionsAnswered = questionsAnswered;
+  }
+
+  public int getQuestionsUniquelyAnswered() {
+    return questionsUniquelyAnswered;
+  }
+
+  public void setQuestionsUniquelyAnswered(int questionsUniquelyAnswered) {
+    this.questionsUniquelyAnswered = questionsUniquelyAnswered;
   }
 
   public int getPercentageCorrect() {
@@ -66,22 +71,19 @@ public class WeeklyScoreDto implements Serializable {
     this.percentageCorrect = percentageCorrect;
   }
 
+  public int getImprovedCorrectAnswers() {
+    return improvedCorrectAnswers;
+  }
+
+  public void setImprovedCorrectAnswers(int improvedCorrectAnswers) {
+    this.improvedCorrectAnswers = improvedCorrectAnswers;
+  }
+
   public String getWeek() {
     return week;
   }
 
   public void setWeek(String week) {
     this.week = week;
-  }
-
-  @Override
-  public String toString() {
-    return "WeeklyScoreDto{" +
-            "id=" + id +
-            ", numberAnswered=" + numberAnswered +
-            ", uniquelyAnswered=" + uniquelyAnswered +
-            ", percentageCorrect=" + percentageCorrect +
-            ", week=" + week +
-            '}';
   }
 }

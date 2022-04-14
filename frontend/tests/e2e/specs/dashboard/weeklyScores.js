@@ -41,14 +41,8 @@ describe('Weekly Scores', () => {
     cy.intercept('GET', '**/students/dashboards/executions/*').as(
       'getDashboard'
     );
-    cy.intercept('GET', '**/students/dashboards/*/weeklyscores').as(
-      'getWeeklyScores'
-    );
     cy.intercept('PUT', '**/students/dashboards/*/weeklyscores').as(
       'updateWeeklyScores'
-    );
-    cy.intercept('DELETE', '**/students/weeklyscores/*').as(
-      'deleteWeeklyScore'
     );
 
     cy.demoStudentLogin();
@@ -61,23 +55,7 @@ describe('Weekly Scores', () => {
     cy.createWeeklyScore();
 
     cy.get('[data-cy="weeklyScoresMenuButton"]').click();
-    cy.wait('@getWeeklyScores');
-
-    cy.get('[data-cy="refreshWeeklyScoresMenuButton"]').click();
     cy.wait('@updateWeeklyScores');
-
-    cy.get('[data-cy="deleteWeeklyScoreButton"]')
-      .should('have.length', 2)
-      .eq(1)
-      .click();
-    cy.wait('@deleteWeeklyScore');
-
-    cy.get('[data-cy="deleteWeeklyScoreButton"]')
-      .should('have.length', 1)
-      .eq(0)
-      .click();
-
-    cy.closeErrorMessage();
 
     cy.contains('Logout').click();
 

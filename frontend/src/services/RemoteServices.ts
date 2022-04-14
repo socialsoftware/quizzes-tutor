@@ -31,7 +31,6 @@ import WeeklyScore from '@/models/dashboard/WeeklyScore';
 import FailedAnswer from '@/models/dashboard/FailedAnswer';
 import UpdatedFailedAnswers from '@/models/dashboard/UpdatedFailedAnswers';
 import UpdatedDifficultQuestions from '@/models/dashboard/UpdatedDifficultQuestions';
-import UpdatedWeeklyScores from '@/models/dashboard/UpdatedWeeklyScores';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -204,37 +203,13 @@ export default class RemoteServices {
       });
   }
 
-  static async getWeeklyScores(dashboardId: number): Promise<WeeklyScore[]> {
+  static async updateWeeklyScores(dashboardId: number): Promise<WeeklyScore[]> {
     return httpClient
-      .get(`/students/dashboards/${dashboardId}/weeklyscores`)
+      .put(`/students/dashboards/${dashboardId}/weeklyscores`)
       .then((response) => {
         return response.data.map((weeklyScore: any) => {
           return new WeeklyScore(weeklyScore);
         });
-      })
-      .catch(async (error) => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async updateWeeklyScores(
-    dashboardId: number
-  ): Promise<UpdatedWeeklyScores> {
-    return httpClient
-      .put(`/students/dashboards/${dashboardId}/weeklyscores`)
-      .then((response) => {
-        return new UpdatedWeeklyScores(response.data);
-      })
-      .catch(async (error) => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async deleteWeeklyScore(weeklyScoreId: number) {
-    return httpClient
-      .delete(`/students/weeklyscores/${weeklyScoreId}`)
-      .then((response) => {
-        return;
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));

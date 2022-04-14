@@ -1,5 +1,6 @@
 <template>
   <v-container v-if="failedAnswers != null" fluid>
+    <h3>Failed Answers</h3>
     <v-card class="table">
       <v-container>
         <v-row>

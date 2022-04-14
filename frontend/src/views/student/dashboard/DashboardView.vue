@@ -20,8 +20,7 @@
             dark
             data-cy="weeklyScoresMenuButton"
             v-on:click="show = 'Weekly'"
-            >Weekly Scores <br />
-            {{ lastCheckWeeklyScores != null ? lastCheckWeeklyScores : '-' }}
+            >Weekly Scores
           </v-btn>
         </v-col>
         <v-col>
@@ -56,10 +55,7 @@
     </div>
 
     <div v-if="show === 'Weekly'">
-      <weekly-scores-view
-        :dashboardId="dashboardId"
-        v-on:refresh="onWeeklyScoresRefresh"
-      ></weekly-scores-view>
+      <weekly-scores-view :dashboardId="dashboardId"></weekly-scores-view>
     </div>
 
     <div v-if="show === 'Failed'">
@@ -108,7 +104,6 @@ export default class DashboardView extends Vue {
       let dashboard = await RemoteServices.getUserDashboard();
 
       this.dashboardId = dashboard.id;
-      this.lastCheckWeeklyScores = dashboard.lastCheckWeeklyScores;
       this.lastCheckFailedAnswers = dashboard.lastCheckFailedAnswers;
       this.lastCheckDifficultQuestions = dashboard.lastCheckDifficultQuestions;
       this.show = 'Global';
@@ -116,10 +111,6 @@ export default class DashboardView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
-  }
-
-  onWeeklyScoresRefresh(date: string) {
-    this.lastCheckWeeklyScores = date;
   }
 
   onFailedAnswersRefresh(date: string) {
