@@ -22,16 +22,10 @@ public class FailedAnswerController {
         this.failedAnswerService = failedAnswerService;
     }
 
-    @GetMapping("/students/dashboards/{dashboardId}/failedanswers")
-    @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
-    public List<FailedAnswerDto> getFailedAnswers(@PathVariable int dashboardId) {
-        return this.failedAnswerService.getFailedAnswers(dashboardId);
-    }
-
     @PutMapping("/students/dashboards/{dashboardId}/failedanswers")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#dashboardId, 'DASHBOARD.ACCESS')")
-    public UpdatedFailedAnswersDto updateFailedAnswers(@PathVariable int dashboardId, @RequestParam(required = false) String startDate, @RequestParam(required = false) String endDate) {
-        return this.failedAnswerService.updateFailedAnswers(dashboardId, startDate, endDate);
+    public List<FailedAnswerDto> updateFailedAnswers(@PathVariable int dashboardId) {
+        return this.failedAnswerService.updateFailedAnswers(dashboardId);
     }
 
     @DeleteMapping("/students/failedanswers/{failedAnswerId}")

@@ -41,12 +41,11 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         def questionAnswer = answerQuiz(answered, false, true, quizQuestion, quiz)
 
         when:
-        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId())
 
         then:
-        DateHandler.toLocalDateTime(result.getLastCheckFailedAnswers()).isAfter(DateHandler.now().minusSeconds(1))
-        result.getFailedAnswers().size() == 1
-        def resultFailedAnswer = result.getFailedAnswers().get(0)
+        result.size() == 1
+        def resultFailedAnswer = result.get(0)
         resultFailedAnswer.getId() != 0
         DateHandler.toLocalDateTime(resultFailedAnswer.getCollected()).isAfter(DateHandler.now().minusMinutes(1))
         resultFailedAnswer.getAnswered() == answered
@@ -73,7 +72,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         answerQuiz(true, correct, completed, quizQuestion, quiz)
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        failedAnswerService.updateFailedAnswers(dashboard.getId())
 
         then:
         failedAnswerRepository.findAll().size() == 0L
@@ -92,11 +91,10 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, inClassQuiz)
 
         when:
-        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId())
 
         then:
-        DateHandler.toLocalDateTime(result.getLastCheckFailedAnswers()).isEqual(questionAnswer.getQuizAnswer().getCreationDate().minusSeconds(1))
-        result.getFailedAnswers().size() == 0
+        result.size() == 0
         and:
         failedAnswerRepository.findAll().size() == 0L
         and:
@@ -111,11 +109,10 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         answerQuiz(true, false, true, quizQuestion, inClassQuiz)
 
         when:
-        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId())
 
         then:
-        DateHandler.toLocalDateTime(result.getLastCheckFailedAnswers()).isAfter(DateHandler.now().minusSeconds(1))
-        result.getFailedAnswers().size() == 1
+        result.size() == 1
         and:
         failedAnswerRepository.findAll().size() == 1L
     }
@@ -130,11 +127,10 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
 
         when:
-        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId())
 
         then:
-        DateHandler.toLocalDateTime(result.getLastCheckFailedAnswers()).isAfter(DateHandler.now().minusSeconds(1))
-        result.getFailedAnswers().size() == 2
+        result.size() == 2
         and:
         failedAnswerRepository.count() == 2L
         def questionAnswers = failedAnswerRepository.findAll()*.questionAnswer
@@ -146,64 +142,16 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         dashboard.getLastCheckFailedAnswers().isAfter(DateHandler.now().minusSeconds(1))
     }
 
-    @Unroll
-    def "updates failed answers in specific time period adding seconds=#inSeconds do start date"() {
-        given:
-        def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz, LOCAL_DATE_BEFORE.plusSeconds(inSeconds))
-
-        when:
-        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(),  DateHandler.toISOString(LOCAL_DATE_BEFORE),  DateHandler.toISOString(LOCAL_DATE_YESTERDAY))
-
-        then:
-        result.getLastCheckFailedAnswers() == null
-        result.getFailedAnswers().size() == 1
-        and:
-        failedAnswerRepository.count() == 1L
-        def questionAnswers = failedAnswerRepository.findAll()*.questionAnswer
-        questionAnswers.contains(questionAnswer)
-        and:
-        def dashboard = dashboardRepository.getById(dashboard.getId())
-        dashboard.getFailedAnswers().size() == 1
-        def failedAnswer = failedAnswerRepository.findAll().get(0)
-        dashboard.getFailedAnswers().contains(failedAnswer)
-        dashboard.getLastCheckFailedAnswers() == null
-
-        where:
-        inSeconds << [1, 60*60*24.intdiv(2), 60*60*24]
-    }
-
-    @Unroll
-    def "does not create failed answers in specific time period adding seconds=#inSeconds do start date"() {
-        given:
-       answerQuiz(true, false, true, quizQuestion, quiz, LOCAL_DATE_BEFORE.plusSeconds(inSeconds))
-
-        when:
-        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(),  DateHandler.toISOString(LOCAL_DATE_BEFORE),  DateHandler.toISOString(LOCAL_DATE_YESTERDAY))
-
-        then:
-        result.getLastCheckFailedAnswers() == null
-        result.getFailedAnswers().size() == 0
-        and:
-        failedAnswerRepository.count() == 0L
-        and:
-        def dashboard = dashboardRepository.getById(dashboard.getId())
-        dashboard.getFailedAnswers().size() == 0
-
-        where:
-        inSeconds << [-20, 0, 60*60*24+1, 60*60*24*2]
-    }
-
     def "does not create the same failed answer twice"() {
         given:
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz, LOCAL_DATE_BEFORE.plusSeconds(20))
         def failedAnswer = createFailedAnswer(questionAnswer, DateHandler.now())
 
         when:
-        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(),  DateHandler.toISOString(LOCAL_DATE_BEFORE),  DateHandler.toISOString(LOCAL_DATE_YESTERDAY))
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId())
 
         then:
-        result.getLastCheckFailedAnswers() == null
-        result.getFailedAnswers().size() == 1
+        result.size() == 1
         and:
         failedAnswerRepository.count() == 1L
         and:
@@ -223,11 +171,10 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         answerQuiz(true, false, true, quizQuestion, quiz)
 
         when:
-        def result = failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId())
 
         then:
-        DateHandler.toLocalDateTime(result.getLastCheckFailedAnswers()).isAfter(DateHandler.now().minusSeconds(1))
-        result.getFailedAnswers().size() == 0
+        result.size() == 0
         and:
         failedAnswerRepository.findAll().size() == 0L
         and: "the student dashboard's failed answers is empty"
@@ -248,7 +195,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         answerQuiz(true, false, true, quizQuestion, quiz)
 
         when:
-        failedAnswerService.updateFailedAnswers(dashboard.getId(), null, null)
+        failedAnswerService.updateFailedAnswers(dashboard.getId())
 
         then: "no failed answer is updated in the database"
         failedAnswerRepository.findAll().size() == 0L
@@ -263,7 +210,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
     @Unroll
     def "cannot update failed answers with dashboardId=#dashboardId"() {
         when:
-        failedAnswerService.updateFailedAnswers(dashboardId, null, null)
+        failedAnswerService.updateFailedAnswers(dashboardId)
 
         then:
         def exception = thrown(TutorException)

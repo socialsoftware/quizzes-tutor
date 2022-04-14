@@ -2,20 +2,6 @@
   <v-container v-if="failedAnswers != null" fluid>
     <h3>Failed Answers</h3>
     <v-card class="table">
-      <v-container>
-        <v-row>
-          <v-col><h2>Failed Answers</h2></v-col>
-          <v-col class="text-right">
-            <v-btn
-              color="primary"
-              dark
-              data-cy="refreshFailedAnswersMenuButton"
-              @click="refresh"
-              >Refresh
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
       <v-data-table
         :headers="headers"
         :items="failedAnswers"
@@ -82,7 +68,6 @@ import FailedAnswer from '@/models/dashboard/FailedAnswer';
 })
 export default class FailedAnswersView extends Vue {
   @Prop() dashboardId!: number;
-  @Prop() lastCheckFailedAnswers!: string;
 
   failedAnswers: FailedAnswer[] = [];
   statementQuestion: StatementQuestion | null = null;
@@ -110,21 +95,9 @@ export default class FailedAnswersView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.failedAnswers = await RemoteServices.getFailedAnswers(
+      this.failedAnswers = await RemoteServices.updateFailedAnswers(
         this.dashboardId
       );
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-  }
-
-  async refresh() {
-    await this.$store.dispatch('loading');
-    try {
-      let result = await RemoteServices.updateFailedAnswers(this.dashboardId);
-      this.failedAnswers = result.failedAnswers;
-      this.$emit('refresh', result.lastCheckFailedAnswers);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

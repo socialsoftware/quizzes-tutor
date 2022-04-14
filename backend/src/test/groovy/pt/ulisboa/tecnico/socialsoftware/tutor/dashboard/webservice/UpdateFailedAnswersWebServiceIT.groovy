@@ -54,39 +54,13 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         response != null
         response.status == 200
         and:
-        DateHandler.toLocalDateTime(response.data.lastCheckFailedAnswers).isAfter(DateHandler.now().minusSeconds(1))
-        response.data.failedAnswers.size() == 1
-        def resultFailedAnswer = response.data.failedAnswers.get(0)
+        response.data.size() == 1
+        def resultFailedAnswer = response.data.get(0)
         resultFailedAnswer.id != 0
         DateHandler.toLocalDateTime(resultFailedAnswer.collected).isAfter(DateHandler.now().minusMinutes(1))
         resultFailedAnswer.answered
         and:
         failedAnswerRepository.findAll().size() == 1
-    }
-
-    def "student updates failed answers in specific time period"() {
-        given:
-        createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
-        and:
-        def quiz2 = createQuiz(2)
-        quizQuestion = createQuestion(2, quiz2)
-        answerQuiz(true, false, true, quizQuestion, quiz2)
-
-        when:
-        response = restClient.put(
-                path: '/students/dashboards/' + dashboard.getId() + '/failedanswers',
-                query: ['startDate': STRING_DATE_BEFORE, 'endDate': STRING_DATE_LATER],
-                requestContentType: 'application/json'
-        )
-
-        then:
-        response != null
-        response.status == 200
-        and:
-        response.data.setLastCheckDifficultQuestions == null
-        response.data.failedAnswers.size() == 2
-        and:
-        failedAnswerRepository.findAll().size() == 2
     }
 
     def "teacher cant update student's failed answers"() {

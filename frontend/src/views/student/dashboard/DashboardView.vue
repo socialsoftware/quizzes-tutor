@@ -29,8 +29,7 @@
             dark
             data-cy="failedAnswersMenuButton"
             v-on:click="show = 'Failed'"
-            >Failed Answers <br />
-            {{ lastCheckFailedAnswers != null ? lastCheckFailedAnswers : '-' }}
+            >Failed Answers
           </v-btn>
         </v-col>
         <v-col>
@@ -59,11 +58,7 @@
     </div>
 
     <div v-if="show === 'Failed'">
-      <failed-answers-view
-        :dashboardId="dashboardId"
-        :lastCheckFailedAnswers="lastCheckFailedAnswers"
-        v-on:refresh="onFailedAnswersRefresh"
-      ></failed-answers-view>
+      <failed-answers-view :dashboardId="dashboardId"></failed-answers-view>
     </div>
 
     <div v-if="show === 'Difficult'">
@@ -93,8 +88,6 @@ import FailedAnswersView from '@/views/student/dashboard/FailedAnswersView.vue';
 })
 export default class DashboardView extends Vue {
   dashboardId: number | null = null;
-  lastCheckWeeklyScores: string | null = null;
-  lastCheckFailedAnswers: string | null = null;
   lastCheckDifficultQuestions: string | null = null;
   show: string | null = null;
 
@@ -104,17 +97,12 @@ export default class DashboardView extends Vue {
       let dashboard = await RemoteServices.getUserDashboard();
 
       this.dashboardId = dashboard.id;
-      this.lastCheckFailedAnswers = dashboard.lastCheckFailedAnswers;
       this.lastCheckDifficultQuestions = dashboard.lastCheckDifficultQuestions;
       this.show = 'Global';
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
-  }
-
-  onFailedAnswersRefresh(date: string) {
-    this.lastCheckFailedAnswers = date;
   }
 
   onDifficultQuestionsRefresh(date: string) {

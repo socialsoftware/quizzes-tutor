@@ -1,4 +1,4 @@
-describe('Weekly Scores', () => {
+describe('Dashboard', () => {
   let date;
 
   beforeEach(() => {
@@ -9,7 +9,7 @@ describe('Weekly Scores', () => {
     cy.demoTeacherLogin();
 
     cy.createQuestion(
-      'Weekly Score Question 1 ' + date,
+      'Dashboard Question 1 ' + date,
       'Question',
       'Option',
       'Option',
@@ -17,7 +17,7 @@ describe('Weekly Scores', () => {
       'Correct'
     );
     cy.createQuestion(
-      'Weekly Score Question 2 ' + date,
+      'Dashboard Question 2 ' + date,
       'Question',
       'Option',
       'Option',
@@ -25,9 +25,9 @@ describe('Weekly Scores', () => {
       'Correct'
     );
     cy.createQuizzWith2Questions(
-      'Weekly Score Title ' + date,
-      'Weekly Score Question 1 ' + date,
-      'Weekly Score Question 2 ' + date
+      'Dashboard Title ' + date,
+      'Dashboard Question 1 ' + date,
+      'Dashboard Question 2 ' + date
     );
     cy.contains('Logout').click();
   });
@@ -44,10 +44,15 @@ describe('Weekly Scores', () => {
     cy.intercept('PUT', '**/students/dashboards/*/weeklyscores').as(
       'updateWeeklyScores'
     );
+    cy.intercept('PUT', '**/students/dashboards/*/failedanswers').as(
+      'updateFailedAnswers'
+    );
+    cy.intercept('DELETE', '**/students/failedanswers/*').as(
+      'deleteFailedAnswer'
+    );
 
     cy.demoStudentLogin();
-
-    cy.solveQuizz('Weekly Score Title ' + date, 2, 'ChooseThisWrong');
+    cy.solveQuizz('Dashboard Title ' + date, 2, 'ChooseThisWrong');
 
     cy.get('[data-cy="dashboardMenuButton"]').click();
     cy.wait('@getDashboard');
@@ -56,6 +61,28 @@ describe('Weekly Scores', () => {
 
     cy.get('[data-cy="weeklyScoresMenuButton"]').click();
     cy.wait('@updateWeeklyScores');
+
+    cy.get('[data-cy="failedAnswersMenuButton"]').click();
+    cy.wait('@updateFailedAnswers');
+
+    cy.get('[data-cy="showStudentViewDialog"]')
+      .should('have.length.at.least', 1)
+      .eq(0)
+      .click();
+
+    cy.get('[data-cy="closeButton"]').click();
+
+    cy.get('[data-cy="deleteFailedAnswerButton"]')
+      .should('have.length.at.least', 1)
+      .eq(0)
+      .click();
+    cy.wait('@deleteFailedAnswer');
+
+    cy.get('[data-cy="deleteFailedAnswerButton"]')
+      .should('have.length.at.least', 1)
+      .eq(0)
+      .click();
+    cy.wait('@deleteFailedAnswer');
 
     cy.contains('Logout').click();
 

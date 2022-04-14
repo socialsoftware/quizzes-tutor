@@ -105,27 +105,6 @@ class RemoveFailedAnswerTest extends FailedAnswersSpockTest {
     }
 
     @Unroll
-    def 'cannot remove a failed answer minusDays #minusDays' () {
-        given:
-        def quiz = createQuiz(1)
-        def quizQuestion = createQuestion(1, quiz)
-        def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
-        def failedAnswer = createFailedAnswer(questionAnswer, DateHandler.now().minusDays(minusDays))
-
-        when:
-        failedAnswerService.removeFailedAnswer(failedAnswer.getId())
-
-        then:
-        def exception = thrown(TutorException)
-        exception.getErrorMessage() == ErrorMessage.CANNOT_REMOVE_FAILED_ANSWER
-        and:
-        failedAnswerRepository.findAll().size() == 1L
-
-        where:
-        minusDays << [0, 4]
-    }
-
-    @Unroll
     def "cannot remove failed answers with invalid failedAnswerId=#failedAnswerId" () {
         when:
         failedAnswerService.removeFailedAnswer(failedAnswerId)

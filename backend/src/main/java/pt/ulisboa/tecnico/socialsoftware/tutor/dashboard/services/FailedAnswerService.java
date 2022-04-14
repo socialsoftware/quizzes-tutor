@@ -63,28 +63,13 @@ public class FailedAnswerService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<FailedAnswerDto> getFailedAnswers(int dashboardId) {
-        Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
-
-        Set<FailedAnswer> failedAnswers = dashboard.getFailedAnswers();
-
-        return failedAnswers.stream()
-                .map(FailedAnswerDto::new)
-                .sorted(Comparator.comparing(FailedAnswerDto::getCollected, Comparator.nullsLast(Comparator.reverseOrder())))
-                .collect(Collectors.toList());
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public UpdatedFailedAnswersDto updateFailedAnswers(int dashboardId, String startDate, String endDate) {
+    public List<FailedAnswerDto> updateFailedAnswers(int dashboardId) {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(ErrorMessage.DASHBOARD_NOT_FOUND, dashboardId));
 
         LocalDateTime now = DateHandler.now();
 
-        LocalDateTime start, end;
-        if (startDate == null) start = getLastCheckDate(dashboard, now);
-        else start = LocalDateTime.parse(startDate, DateTimeFormatter.ISO_DATE_TIME);
-        if (endDate == null) end = now;
-        else end = LocalDateTime.parse(endDate, DateTimeFormatter.ISO_DATE_TIME);
+        LocalDateTime start = getLastCheckDate(dashboard, now);
+        LocalDateTime end = now;
 
         dashboard.getStudent().getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
@@ -95,7 +80,6 @@ public class FailedAnswerService {
                 .filter(qa -> dashboard.getFailedAnswers().stream().noneMatch(fa -> Objects.equals(fa.getQuestionAnswer().getId(), qa.getId())))
                 .forEach(questionAnswer -> createFailedAnswer(dashboardId, questionAnswer.getId()));
 
-        if (startDate == null && endDate == null) {
             dashboard.setLastCheckFailedAnswers(dashboard.getStudent().getQuizAnswers().stream()
                     .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
                     .filter(quizAnswer -> !quizAnswer.canResultsBePublic())
@@ -106,9 +90,11 @@ public class FailedAnswerService {
                     .findFirst()
                     .map(localDateTime -> localDateTime.minusSeconds(1))
                     .orElse(now));
-        }
 
-        return new UpdatedFailedAnswersDto(dashboard);
+        return dashboard.getFailedAnswers().stream()
+                .map(FailedAnswerDto::new)
+                .sorted(Comparator.comparing(FailedAnswerDto::getCollected, Comparator.nullsLast(Comparator.reverseOrder())))
+                .collect(Collectors.toList());
     }
 
     private LocalDateTime getLastCheckDate(Dashboard dashboard, LocalDateTime now) {
