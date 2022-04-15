@@ -39,6 +39,9 @@ public class QuizAnswer implements DomainEntity {
 
     private Boolean fraud = false;
 
+    @Column(columnDefinition = "boolean default false")
+    private boolean usedInStatistics;
+
     @ManyToOne(fetch = FetchType.LAZY, optional=false)
     @JoinColumn(name = "user_id")
     private Student student;
@@ -56,6 +59,7 @@ public class QuizAnswer implements DomainEntity {
     public QuizAnswer(Student student, Quiz quiz) {
         setCompleted(false);
         setFraud(false);
+        setUsedInStatistics(false);
         setStudent(student);
         setQuiz(quiz);
 
@@ -108,6 +112,14 @@ public class QuizAnswer implements DomainEntity {
 
     public void setFraud(boolean fraud) {
         this.fraud = fraud;
+    }
+
+    public boolean isUsedInStatistics() {
+        return usedInStatistics;
+    }
+
+    public void setUsedInStatistics(boolean usedInStatistics) {
+        this.usedInStatistics = usedInStatistics;
     }
 
     public Student getStudent() {
@@ -172,6 +184,16 @@ public class QuizAnswer implements DomainEntity {
 
     public long getNumberOfCorrectAnswers() {
         return getQuestionAnswers().stream().filter(QuestionAnswer::isCorrect).count();
+    }
+
+    public void calculateQuestionStatistics() {
+        if (!usedInStatistics) {
+            getQuestionAnswers().forEach(questionAnswer ->
+                    questionAnswer.getQuizQuestion().getQuestion().addAnswerStatistics(questionAnswer)
+            );
+
+            usedInStatistics = true;
+        }
     }
 
     @Override

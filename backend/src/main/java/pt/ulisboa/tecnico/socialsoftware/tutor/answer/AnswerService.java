@@ -133,7 +133,7 @@ public class AnswerService {
                     writeQuestionAnswer(questionAnswer, statementQuizDto.getAnswers());
                 }
 
-                calculateStatistics(quizAnswer);
+                calculateDashboardStatistics(quizAnswer);
 
                 return quizAnswer.getQuestionAnswers().stream()
                         .sorted(Comparator.comparing(QuestionAnswer::getSequence))
@@ -178,22 +178,10 @@ public class AnswerService {
                     writeQuestionAnswer(questionAnswer, quizAnswerItem.getAnswersList());
                 }
 
-                calculateStatistics(quizAnswer);
+                calculateDashboardStatistics(quizAnswer);
             }
             quizAnswerItemRepository.deleteById(quizAnswerItem.getId());
         });
-    }
-
-    private void calculateStatistics(QuizAnswer quizAnswer) {
-        calculateDashboardStatistics(quizAnswer);
-
-        calculateQuestionStatistics(quizAnswer);
-    }
-
-    private void calculateQuestionStatistics(QuizAnswer quizAnswer) {
-        quizAnswer.getQuestionAnswers().forEach(questionAnswer ->
-            questionAnswer.getQuizQuestion().getQuestion().addAnswerStatistics(questionAnswer)
-        );
     }
 
     private void calculateDashboardStatistics(QuizAnswer quizAnswer) {
@@ -512,13 +500,16 @@ public class AnswerService {
             value = { SQLException.class },
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void writeQuizAnswers() {
+    public void writeQuizAnswersAndQuestionStatistics() {
         Set<Integer> quizzesToWrite = quizAnswerItemRepository.findQuizzesToWrite();
         quizzesToWrite.forEach(quizToWrite -> {
             if (quizRepository.findById(quizToWrite).isPresent()) {
                 writeQuizAnswers(quizToWrite);
             }
         });
+
+        Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToCalculateStatistics();
+        quizAnswersToClose.forEach(quizAnswer -> quizAnswer.calculateQuestionStatistics());
 
         // TOBE REMOVED: RUN ONLY ONCE
 //        System.out.println(DateHandler.now());
