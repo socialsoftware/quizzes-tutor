@@ -283,7 +283,7 @@ public class CourseExecution implements DomainEntity {
         List<Question> result = new ArrayList<>();
         for (Question question : questions) {
             for (Assessment assessment : availableAssessments) {
-                if (question.belongsToAssessment(assessment)) {
+                if (assessment.hasQuestion(question)) {
                     result.add(question);
                     break;
                 }
@@ -291,5 +291,10 @@ public class CourseExecution implements DomainEntity {
         }
 
         return result;
+    }
+
+    public boolean isQuestionInAvailableAssessment(Question question) {
+        return getAvailableAssessments().stream()
+                .anyMatch(assessment -> assessment.hasQuestion(question));
     }
 }

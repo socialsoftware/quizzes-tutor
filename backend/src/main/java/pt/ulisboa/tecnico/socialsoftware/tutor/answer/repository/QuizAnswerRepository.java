@@ -34,5 +34,8 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Integer>
 
     @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.courseExecution.id = :courseExecutionId AND qa.student.id = :userId AND qa.answerDate >= :start AND qa.answerDate < :end")
     Set<QuizAnswer> findByStudentAndCourseExecutionInPeriod(int userId, int courseExecutionId, LocalDateTime start, LocalDateTime end);
+
+    @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.courseExecution.id = :courseExecutionId AND qa.answerDate >= :start AND qa.answerDate < :end")
+    Set<QuizAnswer> findByCourseExecutionInPeriod(int courseExecutionId, LocalDateTime start, LocalDateTime end);
 }
 

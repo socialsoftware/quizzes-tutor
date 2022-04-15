@@ -73,7 +73,7 @@ public class FailedAnswerService {
                 dashboard.getCourseExecution().getId(), start, end);
 
         answers.stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
+                .filter(QuizAnswer::canResultsBePublic)
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                 .filter(Predicate.not(QuestionAnswer::isCorrect))
                 .filter(qa -> dashboard.getFailedAnswers().stream().noneMatch(fa -> Objects.equals(fa.getQuestionAnswer().getId(), qa.getId())))

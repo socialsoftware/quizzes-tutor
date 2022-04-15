@@ -11,9 +11,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
@@ -31,6 +35,7 @@ class UpdateDifficultQuestionsTest extends SpockTest {
     def question
     def optionOK
     def optionKO
+    def topic
     def quiz
     def quizQuestion
     def now
@@ -67,11 +72,29 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         optionRepository.save(optionOK)
         and:
         optionKO = new Option()
-        optionKO.setContent(OPTION_1_CONTENT)
+        optionKO.setContent(OPTION_2_CONTENT)
         optionKO.setCorrect(false)
         optionKO.setSequence(1)
         optionKO.setQuestionDetails(questionDetails)
         optionRepository.save(optionKO)
+        and:
+        topic = new Topic()
+        topic.setName(TOPIC_1_NAME)
+        topic.setCourse(externalCourse)
+        question.addTopic(topic)
+        topicRepository.save(topic)
+        and:
+        def assessment = new Assessment()
+        assessment.setTitle(ASSESSMENT_1_TITLE)
+        assessment.setStatus(Assessment.Status.AVAILABLE)
+        assessment.setSequence(1)
+        assessment.setCourseExecution(externalCourseExecution)
+        assessmentRepository.save(assessment)
+        and:
+        def topicConjunction = new TopicConjunction()
+        topicConjunction.addTopic(topic)
+        topicConjunction.setAssessment(assessment)
+        topicConjunctionRepository.save(topicConjunction)
         and:
         quiz = new Quiz()
         quiz.setCourseExecution(externalCourseExecution)
@@ -107,9 +130,8 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         def result = difficultQuestionService.updateDifficultQuestions(dashboard.getId())
 
         then:
-        DateHandler.toLocalDateTime(result.lastCheckDifficultQuestions).isAfter(now)
-        result.difficultQuestions.size() == 1
-        def resultDifficultQuestion = result.difficultQuestions.get(0)
+        result.size() == 1
+        def resultDifficultQuestion = result.get(0)
         !resultDifficultQuestion.isRemoved()
         resultDifficultQuestion.getRemovedDate() == null
         resultDifficultQuestion.getPercentage() == 0
@@ -124,6 +146,30 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         difficultQuestion.getRemovedDate() == null
         difficultQuestion.getPercentage() == 0
         difficultQuestion.getDashboard().getLastCheckDifficultQuestions().isAfter(now)
+    }
+
+    def "does not create difficult question for a question without answers"() {
+        when:
+        def result = difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+
+        then:
+        result.size() == 0
+        and:
+        difficultQuestionRepository.count() == 0L
+    }
+
+    def "does not create difficult question if question is not in available assessment"() {
+        given:
+        question.getTopics().remove(topic)
+        topic.getQuestions().remove(question)
+
+        when:
+        def result = difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+
+        then:
+        result.size() == 0
+        and:
+        difficultQuestionRepository.count() == 0L
     }
 
     def "delete and create a difficult question that continues to be difficult"() {

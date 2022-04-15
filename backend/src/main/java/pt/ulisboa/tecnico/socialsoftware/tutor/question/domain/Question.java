@@ -251,10 +251,6 @@ public class Question implements DomainEntity {
         return numberOfCorrect * 100 / numberOfAnswers;
     }
 
-    public boolean belongsToAssessment(Assessment chosenAssessment) {
-        return chosenAssessment.getTopicConjunctions().stream().map(TopicConjunction::getTopics).collect(Collectors.toList()).contains(this.topics);
-    }
-
     public boolean hasTopics(Set<Integer> chosenTopicsIds) {
         return !getTopics().isEmpty()
                 && getTopics().stream().map(Topic::getId).collect(Collectors.toSet()).containsAll(chosenTopicsIds);

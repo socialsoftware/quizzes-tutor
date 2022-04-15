@@ -11,9 +11,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
@@ -71,6 +77,22 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         optionKO.setQuestionDetails(questionDetails)
         optionRepository.save(optionKO)
         and:
+        def topic = new Topic()
+        topic.setName(TOPIC_1_NAME)
+        topic.setCourse(externalCourse)
+        question.addTopic(topic)
+        topicRepository.save(topic)
+        and:
+        def assessmentDto = new AssessmentDto()
+        assessmentDto.title = ASSESSMENT_1_TITLE
+        assessmentDto.status = 'AVAILABLE'
+        assessmentDto.sequence = 1
+        def topicDto = new TopicDto(topic)
+        def topicConjunctionDto = new TopicConjunctionDto()
+        topicConjunctionDto.addTopic(topicDto)
+        assessmentDto.addTopicConjunction(topicConjunctionDto)
+        assessmentService.createAssessment(externalCourseExecution.id, assessmentDto)
+        and:
         def quiz = new Quiz()
         quiz.setType("PROPOSED")
         quiz.setAvailableDate(now.minusMinutes(5))
@@ -113,9 +135,8 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         response != null
         response.status == 200
         and:
-        DateHandler.toLocalDateTime(response.data.lastCheckDifficultQuestions).isAfter(DateHandler.now().minusSeconds(1))
-        response.data.difficultQuestions.size() == 1
-        def resultDifficultQuestion = response.data.difficultQuestions.get(0)
+        response.data.size() == 1
+        def resultDifficultQuestion = response.data.get(0)
         !resultDifficultQuestion.removed
         resultDifficultQuestion.removedDate == null
         resultDifficultQuestion.percentage == 0

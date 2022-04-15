@@ -2,20 +2,6 @@
   <v-container v-if="difficultQuestions != null" fluid>
     <h3>Difficult Questions</h3>
     <v-card class="table">
-      <v-container>
-        <v-row>
-          <v-col><h2>Difficult Questions</h2></v-col>
-          <v-col class="text-right">
-            <v-btn
-              color="primary"
-              dark
-              data-cy="refreshDifficultQuestionsMenuButton"
-              @click="refresh"
-              >Refresh
-            </v-btn>
-          </v-col>
-        </v-row>
-      </v-container>
       <v-data-table
         :headers="headers"
         :items="difficultQuestions"
@@ -108,23 +94,9 @@ export default class DifficultQuestionsView extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      this.difficultQuestions = await RemoteServices.getDifficultQuestions(
+      this.difficultQuestions = await RemoteServices.updateDifficultQuestions(
         this.dashboardId
       );
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-  }
-
-  async refresh() {
-    await this.$store.dispatch('loading');
-    try {
-      let result = await RemoteServices.updateDifficultQuestions(
-        this.dashboardId
-      );
-      this.difficultQuestions = result.difficultQuestions;
-      this.$emit('refresh', result.lastCheckDifficultQuestions);
     } catch (error) {
       await this.$store.dispatch('error', error);
     }

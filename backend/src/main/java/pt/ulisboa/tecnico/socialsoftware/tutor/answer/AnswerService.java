@@ -532,7 +532,9 @@ public class AnswerService {
         Assessment assessment = assessmentRepository.findById(quizDetails.getAssessment())
                 .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, quizDetails.getAssessment()));
 
-        return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
+        return availableQuestions.stream()
+                .filter(question -> assessment.hasQuestion(question))
+                .collect(Collectors.toList());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)

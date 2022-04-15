@@ -118,6 +118,13 @@ public class Assessment implements DomainEntity {
         this.topicConjunctions.add(topicConjunction);
     }
 
+    public boolean hasQuestion(Question question) {
+        return getTopicConjunctions().stream()
+                .map(TopicConjunction::getTopics)
+                .collect(Collectors.toList())
+                .contains(question.getTopics());
+    }
+
     @Override
     public String toString() {
         return "Assessment{" +

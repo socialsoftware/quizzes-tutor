@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -12,7 +13,7 @@ public class AssessmentDto implements Serializable {
     private Integer numberOfQuestions;
     private String title;
     private String status;
-    private List<TopicConjunctionDto> topicConjunctions;
+    private List<TopicConjunctionDto> topicConjunctions = new ArrayList<>();
 
     public AssessmentDto() {
     }

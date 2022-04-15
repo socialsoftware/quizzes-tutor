@@ -38,12 +38,7 @@
             dark
             data-cy="difficultQuestionsMenuButton"
             v-on:click="show = 'Difficult'"
-            >Difficult Questions <br />
-            {{
-              lastCheckDifficultQuestions != null
-                ? lastCheckDifficultQuestions
-                : '-'
-            }}
+            >Difficult Questions
           </v-btn>
         </v-col>
       </v-row>
@@ -64,7 +59,6 @@
     <div v-if="show === 'Difficult'">
       <difficult-questions-view
         :dashboardId="dashboardId"
-        v-on:refresh="onDifficultQuestionsRefresh"
       ></difficult-questions-view>
     </div>
   </div>
@@ -103,10 +97,6 @@ export default class DashboardView extends Vue {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
-  }
-
-  onDifficultQuestionsRefresh(date: string) {
-    this.lastCheckDifficultQuestions = date;
   }
 }
 </script>

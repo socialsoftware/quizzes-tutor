@@ -29,7 +29,6 @@ import Dashboard from '@/models/dashboard/Dashboard';
 import DifficultQuestion from '@/models/dashboard/DifficultQuestion';
 import WeeklyScore from '@/models/dashboard/WeeklyScore';
 import FailedAnswer from '@/models/dashboard/FailedAnswer';
-import UpdatedDifficultQuestions from '@/models/dashboard/UpdatedDifficultQuestions';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -241,28 +240,15 @@ export default class RemoteServices {
       });
   }
 
-  static async getDifficultQuestions(
+  static async updateDifficultQuestions(
     dashboardId: number
   ): Promise<DifficultQuestion[]> {
     return httpClient
-      .get(`/students/dashboards/${dashboardId}/difficultquestions`)
+      .put(`/students/dashboards/${dashboardId}/difficultquestions`)
       .then((response) => {
         return response.data.map((difficultQuestion: any) => {
           return new DifficultQuestion(difficultQuestion);
         });
-      })
-      .catch(async (error) => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  static async updateDifficultQuestions(
-    dashboardId: number
-  ): Promise<UpdatedDifficultQuestions> {
-    return httpClient
-      .put(`/students/dashboards/${dashboardId}/difficultquestions`)
-      .then((response) => {
-        return new UpdatedDifficultQuestions(response.data);
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
