@@ -55,9 +55,7 @@ public class WeeklyScore implements DomainEntity {
         this.dashboard = null;
     }
 
-    public void computeStatistics() {
-        Set<QuizAnswer> weeklyQuizAnswers = getWeeklyQuizAnswers();
-
+    public void computeStatistics(Set<QuizAnswer> weeklyQuizAnswers) {
         List<QuestionAnswer> publicWeeklyQuestionAnswers = weeklyQuizAnswers.stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic())
                 .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
@@ -93,21 +91,6 @@ public class WeeklyScore implements DomainEntity {
             closed = weeklyQuizAnswers.stream()
                     .noneMatch(quizAnswer -> !quizAnswer.canResultsBePublic());
         }
-    }
-
-    private Set<QuizAnswer> getWeeklyQuizAnswers() {
-        return dashboard.getStudent().getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
-                .filter(this::isAnswerWithinWeek)
-                .collect(Collectors.toSet());
-    }
-
-    private boolean isAnswerWithinWeek(QuizAnswer quizAnswer) {
-        TemporalAdjuster weekSaturday = TemporalAdjusters.nextOrSame(DayOfWeek.SATURDAY);
-
-        LocalDate answerDate = quizAnswer.getAnswerDate().toLocalDate();
-        return (answerDate.isEqual(this.week) || answerDate.isEqual(this.week.with(weekSaturday)) ||
-                        (answerDate.isAfter(this.week) && answerDate.isBefore(this.week.with(weekSaturday))));
     }
 
     public Integer getId() { return id; }

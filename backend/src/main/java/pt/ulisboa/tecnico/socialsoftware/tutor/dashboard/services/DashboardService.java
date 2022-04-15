@@ -131,7 +131,7 @@ public class DashboardService {
         Student student = dashboard.getStudent();
         CourseExecution courseExecution = dashboard.getCourseExecution();
 
-        Set<QuizAnswer> answers = quizAnswerRepository.findByStudentAndExecutionCourseId(student.getId(), courseExecution.getId());
+        Set<QuizAnswer> answers = quizAnswerRepository.findByStudentAndCourseExecution(student.getId(), courseExecution.getId());
 
         StatsDto statsDto = new StatsDto();
 

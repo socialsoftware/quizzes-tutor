@@ -13,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepos
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.FailedAnswerDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.UpdatedFailedAnswersDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.FailedAnswerRepository;
 
@@ -22,7 +21,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
@@ -71,17 +69,17 @@ public class FailedAnswerService {
         LocalDateTime start = getLastCheckDate(dashboard, now);
         LocalDateTime end = now;
 
-        dashboard.getStudent().getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
+        Set<QuizAnswer> answers = quizAnswerRepository.findByStudentAndCourseExecutionInPeriod(dashboard.getStudent().getId(),
+                dashboard.getCourseExecution().getId(), start, end);
+
+        answers.stream()
                 .filter(quizAnswer -> quizAnswer.canResultsBePublic())
-                .filter(quizAnswer -> quizAnswer.getAnswerDate().isAfter(start) && quizAnswer.getAnswerDate().isBefore(end))
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                 .filter(Predicate.not(QuestionAnswer::isCorrect))
                 .filter(qa -> dashboard.getFailedAnswers().stream().noneMatch(fa -> Objects.equals(fa.getQuestionAnswer().getId(), qa.getId())))
                 .forEach(questionAnswer -> createFailedAnswer(dashboardId, questionAnswer.getId()));
 
-            dashboard.setLastCheckFailedAnswers(dashboard.getStudent().getQuizAnswers().stream()
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
+            dashboard.setLastCheckFailedAnswers(answers.stream()
                     .filter(quizAnswer -> !quizAnswer.canResultsBePublic())
                     .filter(quizAnswer -> dashboard.getLastCheckFailedAnswers() == null
                             || quizAnswer.getCreationDate().isAfter(dashboard.getLastCheckFailedAnswers()))
@@ -100,8 +98,9 @@ public class FailedAnswerService {
     private LocalDateTime getLastCheckDate(Dashboard dashboard, LocalDateTime now) {
         LocalDateTime startCheckDate;
         if (dashboard.getLastCheckFailedAnswers() == null) {
-            startCheckDate = dashboard.getStudent().getQuizAnswers().stream()
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
+            Set<QuizAnswer> answers = quizAnswerRepository.findByStudentAndCourseExecution(dashboard.getStudent().getId(), dashboard.getCourseExecution().getId());
+
+            startCheckDate = answers.stream()
                     .map(QuizAnswer::getCreationDate)
                     .sorted()
                     .findFirst()

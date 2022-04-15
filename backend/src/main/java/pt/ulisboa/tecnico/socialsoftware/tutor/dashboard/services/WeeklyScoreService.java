@@ -5,6 +5,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.WeeklyScoreDto;
@@ -34,6 +35,9 @@ public class WeeklyScoreService {
 
     @Autowired
     private DashboardRepository dashboardRepository;
+
+    @Autowired
+    private QuizAnswerRepository quizAnswerRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<WeeklyScoreDto> updateWeeklyScore(Integer dashboardId) {
@@ -100,7 +104,15 @@ public class WeeklyScoreService {
     private void computeStatistics(Dashboard dashboard) {
         dashboard.getWeeklyScores().stream()
                 .filter(Predicate.not(WeeklyScore::isClosed))
-                .forEach(WeeklyScore::computeStatistics);
+                .forEach(weeklyScore -> {
+                    LocalDateTime start = weeklyScore.getWeek().atStartOfDay();
+                    LocalDateTime end = weeklyScore.getWeek().plusDays(7).atStartOfDay();
+
+                    Set<QuizAnswer> answers = quizAnswerRepository.findByStudentAndCourseExecutionInPeriod(dashboard.getStudent().getId(),
+                            dashboard.getCourseExecution().getId(),  start,  end);
+
+                    weeklyScore.computeStatistics(answers);
+                        });
     }
 
     private void removeEmptyClosedWeeklyScores(Dashboard dashboard) {
