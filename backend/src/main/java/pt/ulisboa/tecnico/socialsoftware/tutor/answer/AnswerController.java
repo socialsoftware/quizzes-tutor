@@ -1,6 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -12,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
 import javax.validation.Valid;
+import java.net.http.HttpResponse;
 import java.security.Principal;
 import java.util.List;
 
@@ -77,10 +79,8 @@ public class AnswerController {
 
     @PostMapping("/answers/{quizId}/question/{questionId}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#quizId, 'QUIZ.ACCESS')")
-    public StatementQuestionDto getQuestionForQuizAnswer(Principal principal, @PathVariable int quizId, @PathVariable int questionId, @Valid @RequestBody StatementAnswerDto answer) {
-        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
-
-        return answerService.getQuestionForQuizAnswer(authUser.getUser().getUsername(), quizId, questionId, answer);
+    public StatementQuestionDto getQuestionForQuizAnswer(@PathVariable int quizId, @PathVariable int questionId, @Valid @RequestBody StatementAnswerDto answer) {
+        return answerService.getQuestionForQuizAnswer(questionId, answer);
     }
 
     @PostMapping("/answers/{quizId}/submit")

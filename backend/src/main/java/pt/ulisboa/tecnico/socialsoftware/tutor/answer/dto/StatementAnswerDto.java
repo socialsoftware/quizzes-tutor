@@ -11,7 +11,9 @@ public class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
     private Integer timeToSubmission;
     private Integer sequence;
+    private Integer quizAnswerId;
     private Integer questionAnswerId;
+    private Integer questionId;
     private Integer quizQuestionId;
     private DiscussionDto userDiscussion;
 
@@ -23,7 +25,9 @@ public class StatementAnswerDto implements Serializable {
     public StatementAnswerDto(QuestionAnswer questionAnswer) {
         this.timeTaken = questionAnswer.getTimeTaken();
         this.sequence = questionAnswer.getSequence();
+        this.quizAnswerId = questionAnswer.getQuizAnswer().getId();
         this.questionAnswerId = questionAnswer.getId();
+        this.questionId = questionAnswer.getQuizQuestion().getQuestion().getId();
         this.quizQuestionId = questionAnswer.getQuizQuestion().getId();
 
         this.answerDetails = questionAnswer.getStatementAnswerDetailsDto();
@@ -49,12 +53,28 @@ public class StatementAnswerDto implements Serializable {
         this.sequence = sequence;
     }
 
+    public Integer getQuizAnswerId() {
+        return quizAnswerId;
+    }
+
+    public void setQuizAnswerId(Integer quizAnswerId) {
+        this.quizAnswerId = quizAnswerId;
+    }
+
     public Integer getQuestionAnswerId() {
         return questionAnswerId;
     }
 
     public void setQuestionAnswerId(Integer questionAnswerId) {
         this.questionAnswerId = questionAnswerId;
+    }
+
+    public Integer getQuestionId() {
+        return questionId;
+    }
+
+    public void setQuestionId(Integer questionId) {
+        this.questionId = questionId;
     }
 
     public Integer getQuizQuestionId() {

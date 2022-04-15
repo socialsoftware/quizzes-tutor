@@ -562,7 +562,9 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
 		&quot;type&quot;: &quot;code_fill_in&quot;&#xd;
 	},&#xd;
 	&quot;timeTaken&quot;:1278,&#xd;
+	&quot;quizAnswerId&quot;:${quiz_answer_id},&#xd;
 	&quot;questionAnswerId&quot;:${__V(question_answer_id_${question_number})},&#xd;
+	&quot;questionId&quot;:${__V(question_id_${question_number})},&#xd;
 	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${question_number})},&#xd;
 	&quot;sequence&quot;:${question_number},&#xd;
 	&quot;timeToSubmission&quot;: 12345,&#xd;
@@ -601,8 +603,6 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
                   <elementProp name="" elementType="HTTPArgument">
                     <boolProp name="HTTPArgument.always_encode">false</boolProp>
                     <stringProp name="Argument.value">{&#xd;
-  &quot;timeTaken&quot;: 1278,&#xd;
-  &quot;timeToSubmission&quot;: 12345,&#xd;
   &quot;answerDetails&quot;: {&#xd;
     &quot;type&quot;: &quot;code_fill_in&quot;,&#xd;
     &quot;selectedOptions&quot;: [&#xd;
@@ -612,7 +612,11 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
       }&#xd;
     ]&#xd;
   },&#xd;
+    	&quot;timeTaken&quot;: 1278,&#xd;
+  	&quot;timeToSubmission&quot;: 12345,&#xd;
+	&quot;quizAnswerId&quot;:${quiz_answer_id},&#xd;
 	&quot;questionAnswerId&quot;:${__V(question_answer_id_${question_number})},&#xd;
+	&quot;questionId&quot;:${__V(question_id_${question_number})},&#xd;
 	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${question_number})},&#xd;
 	&quot;sequence&quot;:${question_number},&#xd;
   &quot;userDiscussion&quot;: null&#xd;

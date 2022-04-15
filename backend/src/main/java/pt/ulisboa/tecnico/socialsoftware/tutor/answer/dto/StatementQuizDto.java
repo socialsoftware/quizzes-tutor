@@ -41,6 +41,7 @@ public class StatementQuizDto implements Serializable {
         this.timed = quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS);
         this.availableDate = DateHandler.toISOString(quizAnswer.getQuiz().getAvailableDate());
         this.conclusionDate = DateHandler.toISOString(quizAnswer.getQuiz().getConclusionDate());
+        this.questionOrder = quizAnswer.getCurrentSequenceQuestion();
 
         if (quizAnswer.getQuiz().getConclusionDate() != null && (quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) || quizAnswer.getQuiz().getType().equals(Quiz.QuizType.TOURNAMENT))) {
             this.timeToSubmission = ChronoUnit.MILLIS.between(DateHandler.now(), quizAnswer.getQuiz().getConclusionDate());
@@ -82,7 +83,7 @@ public class StatementQuizDto implements Serializable {
             answerDto.getAnswerDetails().setAnswer(finalItem, mapQuestionDetails.get(finalItem.getQuizQuestionId()));
         }
 
-        this.questionOrder = finalItems.size() - 1;
+        this.questionOrder = quizAnswer.getCurrentSequenceQuestion();
     }
 
     public Integer getId() {

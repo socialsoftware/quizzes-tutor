@@ -1,4 +1,4 @@
-import { UserFraudInfo } from "./UserFraudInfo";
+import { UserFraudInfo } from './UserFraudInfo';
 
 export class FraudScore {
   userInfo!: UserFraudInfo;

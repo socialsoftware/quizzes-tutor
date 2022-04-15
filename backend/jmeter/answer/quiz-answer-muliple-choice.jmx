@@ -652,7 +652,9 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
 		&quot;type&quot;: &quot;multiple_choice&quot;&#xd;
 	},&#xd;
 	&quot;timeTaken&quot;:1278,&#xd;
+	&quot;quizAnswerId&quot;:${quiz_answer_id},&#xd;
 	&quot;questionAnswerId&quot;:${__V(question_answer_id_${question_number})},&#xd;
+	&quot;questionId&quot;:${__V(question_id_${question_number})},&#xd;
 	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${question_number})},&#xd;
 	&quot;sequence&quot;:${question_number},&#xd;
 	&quot;timeToSubmission&quot;: 12345,&#xd;
@@ -703,7 +705,9 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
 		&quot;type&quot;: &quot;multiple_choice&quot;&#xd;
 	},&#xd;
 	&quot;timeTaken&quot;:1278,&#xd;
+	&quot;quizAnswerId&quot;:${quiz_answer_id},&#xd;
 	&quot;questionAnswerId&quot;:${__V(question_answer_id_${question_number})},&#xd;
+	&quot;questionId&quot;:${__V(question_id_${question_number})},&#xd;
 	&quot;quizQuestionId&quot;:${__V(quiz_question_id_${question_number})},&#xd;
 	&quot;sequence&quot;:${question_number},&#xd;
 	&quot;timeToSubmission&quot;: 12345&#xd;
