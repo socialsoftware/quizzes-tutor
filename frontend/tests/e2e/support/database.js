@@ -88,13 +88,13 @@ Cypress.Commands.add('afterEachTournament', () => {
 
 Cypress.Commands.add('addQuestionSubmission', (title, submissionStatus) => {
   dbCommand(`
-    WITH course as (select id from courses where name = 'Demo Course' limit 1),    
-    quest AS (
+    WITH course as (SELECT ce.course_id as course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course')     
+    , quest AS (
       INSERT INTO questions (title, content, status, course_id, creation_date) 
-      VALUES ('${title}', 'Question?', 'SUBMITTED', (select id from course), current_timestamp) RETURNING id
+      VALUES ('${title}', 'Question?', 'SUBMITTED', (select course_id from course), current_timestamp) RETURNING id
       )
     INSERT INTO question_submissions (status, question_id, submitter_id, course_execution_id) 
-    VALUES ('${submissionStatus}', (SELECT id from quest), (select id from users where name = 'Demo Student'), (select id from course));`);
+    VALUES ('${submissionStatus}', (SELECT id from quest), (select id from users where name = 'Demo Student'), (select course_execution_id from course));`);
 
   //add options
   for (let content in [0, 1, 2, 3]) {
