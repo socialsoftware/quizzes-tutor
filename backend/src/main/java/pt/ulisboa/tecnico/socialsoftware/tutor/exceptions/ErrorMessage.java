@@ -14,7 +14,7 @@ public enum ErrorMessage {
     INVALID_NAME_FOR_TOPIC("Invalid name for topic"),
     INVALID_SEQUENCE_FOR_OPTION("Invalid sequence for option"),
     INVALID_SEQUENCE_FOR_QUESTION_ANSWER("Invalid sequence for question answer"),
-    INVALID_QUIZ_ANSWER_SEQUENCE("Invalid quiz answer sequence"),
+    INVALID_QUIZ_ANSWER_SEQUENCE("Invalid quiz answer sequence: %s"),
     INVALID_TITLE_FOR_ASSESSMENT("Invalid title for assessment"),
     INVALID_TITLE_FOR_QUESTION("Invalid title for question"),
     INVALID_URL_FOR_IMAGE("Invalid url for image"),

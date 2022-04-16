@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_QUIZ_ANSWER_SEQUENCE;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_ALREADY_COMPLETED;
@@ -219,14 +220,19 @@ public class QuizAnswer implements DomainEntity {
                     && questionIds.get(currentSequenceQuestion + 1).equals(questionId)) {
                 currentSequenceQuestion = currentSequenceQuestion + 1;
             } else if (!questionIds.get(currentSequenceQuestion).equals(questionId)) {
-                throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE);
+                throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE,
+                        getStudent().getUsername() + " tried to get question with id "
+                                + questionId + " when they sequence is "  + currentSequenceQuestion + 1
+                                + " and the question ids sequence ids is " + questionIds.stream().map(i -> String.valueOf(i)).collect(Collectors.joining(", ")));
             }
         }
     }
 
     public void checkIsCurrentQuestion(Integer questionId) {
         if (!questionIds.isEmpty() && !questionIds.get(currentSequenceQuestion).equals(questionId)) {
-            throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE);
+            throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE, getStudent().getUsername() + " tried to submit question with id "
+                    + questionId + " when they sequence is "  + currentSequenceQuestion + 1
+                    + " and the question ids sequence ids is " + questionIds.stream().map(i -> String.valueOf(i)).collect(Collectors.joining(", ")));
         } else if (completed) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         }
