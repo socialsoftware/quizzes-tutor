@@ -457,8 +457,16 @@ public class AnswerService {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answer.getQuizAnswerId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND));
 
-        quizAnswer.checkCanGetQuestion(questionId);
+        try {
+            quizAnswer.checkCanGetQuestion(questionId);
+        } catch (TutorException te) {
+            for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
+                mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
+                        Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion", te.getMessage());
+            }
 
+            throw te;
+        }
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
@@ -473,8 +481,16 @@ public class AnswerService {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answer.getQuizAnswerId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND));
 
-        quizAnswer.checkIsCurrentQuestion(answer.getQuestionId());
+        try {
+            quizAnswer.checkIsCurrentQuestion(answer.getQuestionId());
+        } catch (TutorException te) {
+            for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
+                mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
+                        Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion", te.getMessage());
+            }
 
+            throw te;
+        }
         if (answer.getTimeToSubmission() == null) {
             answer.setTimeToSubmission(0);
         }
