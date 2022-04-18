@@ -480,10 +480,9 @@ public class AnswerService {
         try {
             quizAnswer.checkCanGetQuestion(questionId);
         } catch (TutorException te) {
-            Student student = quizAnswer.getStudent();
             for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
                 mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
-                        Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion", te.getMessage());
+                        Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "The following behavior was detected but the student *was not able* to answer questions out of the predefined order: " + te.getMessage());
             }
 
             throw te;
@@ -506,10 +505,9 @@ public class AnswerService {
         try {
             quizAnswer.checkIsCurrentQuestion(answer.getQuestionId());
         } catch (TutorException te) {
-            Student student = quizAnswer.getStudent();
             for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
                 mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
-                        Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion", te.getMessage());
+                        Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "The following behavior was detected but the student *was not able* to answer questions out of the predefined order: " + te.getMessage());
             }
 
             throw te;
