@@ -7,6 +7,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.RemovedDifficultQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
@@ -15,8 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import spock.lang.Unroll
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.CANNOT_REMOVE_DIFFICULT_QUESTION
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DIFFICULT_QUESTION_NOT_FOUND
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class RemoveDifficultQuestionTest extends SpockTest {
@@ -66,55 +66,74 @@ class RemoveDifficultQuestionTest extends SpockTest {
 
     def "student removes a difficult question"() {
         given:
-        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
+        def difficultQuestion = new DifficultQuestion(externalCourseExecution, question, 24)
         difficultQuestionRepository.save(difficultQuestion)
 
         when:
-        difficultQuestionService.removeDifficultQuestion(difficultQuestion.getId())
+        difficultQuestionService.removeDifficultQuestion(student.id, difficultQuestion.getId())
 
         then:
         difficultQuestionRepository.count() == 1
         and:
-        def result = difficultQuestionRepository.findAll().get(0)
-        result.getId() == difficultQuestion.getId()
-        result.isRemoved() == true
-        result.getRemovedDate().isAfter(DateHandler.now().minusSeconds(30))
+        def resultDashboard = dashboardRepository.getById(dashboard.id)
+        resultDashboard.getRemovedDifficultQuestions().size() == 1
+        def list = new ArrayList<>(resultDashboard.getRemovedDifficultQuestions())
+        def removedDifficultQuestion = list.get(0)
+        removedDifficultQuestion.getQuestionId() == question.getId()
+        removedDifficultQuestion.getRemovedDate().isAfter(DateHandler.now().minusSeconds(30))
     }
 
     def "cannot remove a removed difficult question"() {
         given:
         def now = DateHandler.now()
         and:
-        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
-        difficultQuestion.setRemoved(true)
-        difficultQuestion.setRemovedDate(now)
+        def difficultQuestion = new DifficultQuestion(externalCourseExecution, question, 24)
         difficultQuestionRepository.save(difficultQuestion)
+        and:
+        def removedDifficultQuestion = new RemovedDifficultQuestion(question.id, now)
+        dashboard.addRemovedDifficultQuestion(removedDifficultQuestion)
 
         when:
-        difficultQuestionService.removeDifficultQuestion(difficultQuestion.getId())
+        difficultQuestionService.removeDifficultQuestion(student.id, difficultQuestion.getId())
 
         then:
         def exception = thrown(TutorException)
-        exception.getErrorMessage() == CANNOT_REMOVE_DIFFICULT_QUESTION
+        exception.getErrorMessage() == DIFFICULT_QUESTION_ALREADY_REMOVED
         and:
         difficultQuestionRepository.count() == 1
         and:
-        def result = difficultQuestionRepository.findAll().get(0)
-        result.isRemoved() == true
-        result.getRemovedDate().equals(now)
+        def resultDashboard = dashboardRepository.getById(dashboard.id)
+        resultDashboard.getRemovedDifficultQuestions().size() == 1
     }
 
     @Unroll
     def "the difficult question cannot be deleted because invalid difficultQuestionId #id"() {
         when:
-        difficultQuestionService.removeDifficultQuestion(id)
+        difficultQuestionService.removeDifficultQuestion(student.id, id)
 
         then: "an exception is thrown"
         def exception = thrown(TutorException)
         exception.getErrorMessage() == DIFFICULT_QUESTION_NOT_FOUND
 
         where:
-        id  << [0, 100]
+        id << [0, 100]
+    }
+
+    @Unroll
+    def "the difficult question cannot be deleted because invalid studentId #id"() {
+        given:
+        def difficultQuestion = new DifficultQuestion(externalCourseExecution, question, 24)
+        difficultQuestionRepository.save(difficultQuestion)
+
+        when:
+        difficultQuestionService.removeDifficultQuestion(id, difficultQuestion.id)
+
+        then: "an exception is thrown"
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == USER_NOT_FOUND
+
+        where:
+        id << [0, 100]
     }
 
     @TestConfiguration

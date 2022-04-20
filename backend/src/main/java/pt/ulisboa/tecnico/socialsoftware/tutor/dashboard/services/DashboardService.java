@@ -1,24 +1,23 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services;
 
-import java.sql.SQLException;
-import java.util.*;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 import org.springframework.transaction.annotation.Isolation;
-
+import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.DashboardDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.StatsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DifficultQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
@@ -29,14 +28,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.StudentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
+import java.sql.SQLException;
+import java.util.*;
+import java.util.stream.Collectors;
+
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.collectingAndThen;
 import static java.util.stream.Collectors.toCollection;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.COURSE_EXECUTION_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.USER_NOT_FOUND;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.STUDENT_ALREADY_HAS_DASHBOARD;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.STUDENT_NO_COURSE_EXECUTION;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DASHBOARD_NOT_FOUND;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class DashboardService {
@@ -45,7 +44,13 @@ public class DashboardService {
     private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
+    private CourseExecutionService courseExecutionService;
+
+    @Autowired
     private StudentRepository studentRepository;
+
+    @Autowired
+    private DifficultQuestionRepository difficultQuestionRepository;
 
     @Autowired
     private QuestionRepository questionRepository;
@@ -120,10 +125,19 @@ public class DashboardService {
                     dashboard.remove();
                     this.dashboardRepository.delete(dashboard);
                 });
+
+        Set<DifficultQuestion> difficultQuestionsToRemove = courseExecutionRepository.findById(courseExecutionService.getDemoCourse().getCourseExecutionId()).stream()
+                .flatMap(courseExecution -> courseExecution.getDifficultQuestions().stream())
+                .collect(Collectors.toSet());
+        
+        difficultQuestionsToRemove.forEach(difficultQuestion -> {
+            difficultQuestion.remove();
+            difficultQuestionRepository.delete(difficultQuestion);
+        });
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public StatsDto getStats(int dashboardId) {
@@ -180,8 +194,8 @@ public class DashboardService {
         statsDto.setTotalUniqueQuestions(uniqueQuestions);
         statsDto.setTotalAvailableQuestions(totalAvailableQuestions);
         if (totalAnswers != 0) {
-            statsDto.setCorrectAnswers(((float)correctAnswers)*100/totalAnswers);
-            statsDto.setImprovedCorrectAnswers(((float)uniqueCorrectAnswers)*100/uniqueQuestions);
+            statsDto.setCorrectAnswers(((float) correctAnswers) * 100 / totalAnswers);
+            statsDto.setImprovedCorrectAnswers(((float) uniqueCorrectAnswers) * 100 / uniqueQuestions);
         }
 
         statsDto.setCreatedDiscussions(student.getDiscussions().size());

@@ -10,10 +10,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.RemovedDifficultQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -23,8 +23,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import spock.lang.Unroll
-
-import java.time.LocalDateTime
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DASHBOARD_NOT_FOUND
 
@@ -125,56 +123,67 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
+        and:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
 
         when:
-        def result = difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDashboardDifficultQuestions(dashboard.getId())
 
         then:
         result.size() == 1
         def resultDifficultQuestion = result.get(0)
-        !resultDifficultQuestion.isRemoved()
-        resultDifficultQuestion.getRemovedDate() == null
         resultDifficultQuestion.getPercentage() == 0
         resultDifficultQuestion.getQuestionDto().getId() == question.getId()
         and:
         difficultQuestionRepository.count() == 1L
         and:
         def difficultQuestion = difficultQuestionRepository.findAll().get(0)
-        difficultQuestion.getDashboard() == dashboard
+        difficultQuestion.getCourseExecution() == externalCourseExecution
         difficultQuestion.getQuestion() == question
-        !difficultQuestion.isRemoved()
-        difficultQuestion.getRemovedDate() == null
         difficultQuestion.getPercentage() == 0
-        difficultQuestion.getDashboard().getLastCheckDifficultQuestions().isAfter(now)
+        and:
+        def resultDashboard = dashboardRepository.getById(dashboard.id)
+        resultDashboard.getRemovedDifficultQuestions().size() == 0
     }
 
     def "does not create difficult question for a question without answers"() {
+        given:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
+
         when:
-        def result = difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDashboardDifficultQuestions(dashboard.getId())
 
         then:
         result.size() == 0
         and:
         difficultQuestionRepository.count() == 0L
+        and:
+        def resultDashboard = dashboardRepository.getById(dashboard.id)
+        resultDashboard.getRemovedDifficultQuestions().size() == 0
     }
 
     def "does not create difficult question if question is not in available assessment"() {
         given:
         question.getTopics().remove(topic)
         topic.getQuestions().remove(question)
+        and:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
 
         when:
-        def result = difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDashboardDifficultQuestions(dashboard.getId())
 
         then:
         result.size() == 0
         and:
         difficultQuestionRepository.count() == 0L
+        and:
+        def resultDashboard = dashboardRepository.getById(dashboard.id)
+        resultDashboard.getRemovedDifficultQuestions().size() == 0
     }
 
     def "delete and create a difficult question that continues to be difficult"() {
         given:
-        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
+        def difficultQuestion = new DifficultQuestion(externalCourseExecution, question, 24)
         difficultQuestionRepository.save(difficultQuestion)
         and:
         def quizAnswer = new QuizAnswer()
@@ -188,44 +197,62 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
+        and:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
 
         when:
-        difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDashboardDifficultQuestions(dashboard.getId())
 
         then:
-        difficultQuestionRepository.count() == 1L
+        result.size() == 1
         and:
-        def result = difficultQuestionRepository.findAll().get(0)
-        result.getId() != difficultQuestion.getId()
-        result.getQuestion() == question
-        result.getPercentage() == 0
+        difficultQuestionRepository.count() == 1L
+        def resultDifficultQuestion = difficultQuestionRepository.findAll().get(0)
+        resultDifficultQuestion.getId() != difficultQuestion.getId()
+        resultDifficultQuestion.getQuestion() == question
+        resultDifficultQuestion.getPercentage() == 0
+        and:
+        def resultDashboard = dashboardRepository.getById(dashboard.id)
+        resultDashboard.getRemovedDifficultQuestions().size() == 0
     }
 
     def "delete difficult question that is not difficult anymore"() {
         given:
-        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
+        def difficultQuestion = new DifficultQuestion(externalCourseExecution, question, 24)
         difficultQuestionRepository.save(difficultQuestion)
+        and:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
 
         when:
-        difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDashboardDifficultQuestions(dashboard.getId())
 
         then:
+        result.size() == 0
+        and:
         difficultQuestionRepository.count() == 0L
+        and:
+        def resultDashboard = dashboardRepository.getById(dashboard.id)
+        resultDashboard.getRemovedDifficultQuestions().size() == 0
     }
 
     @Unroll
     def "does not delete removed difficult question that was removed in less than #daysAgo days ago"() {
         given:
-        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
-        difficultQuestion.setRemovedDate(now.minusDays(daysAgo))
-        difficultQuestion.setRemoved(true)
-        difficultQuestionRepository.save(difficultQuestion)
+        def difficultQuestion = new RemovedDifficultQuestion(question.id, now.minusDays(daysAgo))
+        dashboard.addRemovedDifficultQuestion(difficultQuestion)
+        and:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
 
         when:
-        difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDashboardDifficultQuestions(dashboard.getId())
 
         then:
-        difficultQuestionRepository.count() == 1
+        result.size() == 0
+        and:
+        difficultQuestionRepository.count() == 0
+        and:
+        def dashboardResult = dashboardRepository.getById(dashboard.id)
+        dashboardResult.getRemovedDifficultQuestions().size() == 1
 
         where:
         daysAgo << [0, 5, 6]
@@ -233,41 +260,8 @@ class UpdateDifficultQuestionsTest extends SpockTest {
 
     def "does not delete removed difficult question that was removed in less than 4 days ago even if it continues to be difficulty"() {
         given:
-        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
-        difficultQuestion.setRemovedDate(now.minusDays(4))
-        difficultQuestion.setRemoved(true)
-        difficultQuestionRepository.save(difficultQuestion)
-        and:
-        def quizAnswer = new QuizAnswer()
-        quizAnswer.setAnswerDate(now.minusMinutes(1))
-        quizAnswer.setQuiz(quiz)
-        quizAnswer.setStudent(student)
-        quizAnswerRepository.save(quizAnswer)
-        and:
-        def questionAnswer = new QuestionAnswer()
-        questionAnswer.setQuizQuestion(quizQuestion)
-        questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswerRepository.save(questionAnswer)
-
-        when:
-        difficultQuestionService.updateDifficultQuestions(dashboard.getId())
-
-        then:
-        difficultQuestionRepository.count() == 1
-        and:
-        def result = difficultQuestionRepository.findAll().get(0)
-        result.getId() == difficultQuestion.getId()
-        result.getQuestion() == question
-        result.getPercentage() == 24
-    }
-
-    @Unroll
-    def "does not create difficult question of removed difficult question in less than 4 days ago"() {
-        given:
-        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
-        difficultQuestion.setRemovedDate(now.minusDays(4))
-        difficultQuestion.setRemoved(true)
-        difficultQuestionRepository.save(difficultQuestion)
+        def difficultQuestion = new RemovedDifficultQuestion(question.id, now.minusDays(4))
+        dashboard.addRemovedDifficultQuestion(difficultQuestion)
         and:
         def quizAnswer = new QuizAnswer()
         quizAnswer.setAnswerDate(now.minusMinutes(1))
@@ -280,46 +274,52 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
+        and:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
 
         when:
-        difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDashboardDifficultQuestions(dashboard.getId())
 
         then:
+        result.size() == 0
+        and:
         difficultQuestionRepository.count() == 1
         and:
-        def result = difficultQuestionRepository.findAll().get(0)
-        result.getId() == difficultQuestion.getId()
-        result.getQuestion() == question
-        result.isRemoved() == true
-        result.getRemovedDate() == now.minusDays(4)
-        result.getPercentage() == 24
+        def dashboardResult = dashboardRepository.getById(dashboard.getId())
+        dashboardResult.getRemovedDifficultQuestions().size() == 1
+        def list = new ArrayList<>(dashboardResult.getRemovedDifficultQuestions())
+        list.get(0).getQuestionId() == question.getId()
+        list.get(0).getRemovedDate() == now.minusDays(4)
     }
 
     @Unroll
     def "delete removed difficult question that was removed in more than #daysAgo days ago"() {
         given:
-        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
-        difficultQuestion.setRemovedDate(now.minusDays(daysAgo))
-        difficultQuestion.setRemoved(true)
-        difficultQuestionRepository.save(difficultQuestion)
+        def removedDifficultQuestion = new RemovedDifficultQuestion(question.id, now.minusDays(daysAgo))
+        dashboard.addRemovedDifficultQuestion(removedDifficultQuestion)
+        and:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
 
         when:
-        difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDashboardDifficultQuestions(dashboard.getId())
 
         then:
+        result.size() == 0
+        and:
         difficultQuestionRepository.count() == 0L
+        and:
+        def resultDashboard = dashboardRepository.getById(dashboard.id)
+        resultDashboard.getRemovedDifficultQuestions().size() == 0
 
         where:
         daysAgo << [7, 15]
     }
 
     @Unroll
-    def "create difficult question that continues to be difficult of a removed difficult question that was removed in more than #daysAgo days ago"() {
+    def "create difficult question that continues to be difficult of a removed difficult question that was removed in more than 15 days ago"() {
         given:
-        def difficultQuestion = new DifficultQuestion(dashboard, question, 24)
-        difficultQuestion.setRemovedDate(now.minusDays(15))
-        difficultQuestion.setRemoved(true)
-        difficultQuestionRepository.save(difficultQuestion)
+        def removedDifficultQuestion = new RemovedDifficultQuestion(question.id, now.minusDays(15))
+        dashboard.addRemovedDifficultQuestion(removedDifficultQuestion)
         and:
         def quizAnswer = new QuizAnswer()
         quizAnswer.setAnswerDate(now.minusMinutes(1))
@@ -332,17 +332,22 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswer.setQuizAnswer(quizAnswer)
         questionAnswerRepository.save(questionAnswer)
+        and:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
 
         when:
-        difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDashboardDifficultQuestions(dashboard.getId())
 
         then:
-        difficultQuestionRepository.count() == 1L
+        result.size() == 1
         and:
-        def result = difficultQuestionRepository.findAll().get(0)
-        result.getId() != difficultQuestion.getId()
-        result.getQuestion() == question
-        result.getPercentage() == 0
+        difficultQuestionRepository.count() == 1L
+        def resultDifficultQuestion = difficultQuestionRepository.findAll().get(0)
+        resultDifficultQuestion.getQuestion() == question
+        resultDifficultQuestion.getPercentage() == 0
+        and:
+        def resultDashboard = dashboardRepository.getById(dashboard.id)
+        resultDashboard.getRemovedDifficultQuestions().size() == 0
     }
 
     @Unroll
@@ -352,12 +357,19 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         (1..numberOfIncorrect).each {
             answerQuiz(false)
         }
+        and:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
 
         when:
-        difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDashboardDifficultQuestions(dashboard.getId())
 
         then:
+        result.size() == 0
+        and:
         difficultQuestionRepository.count() == 0L
+        and:
+        def resultDashboard = dashboardRepository.getById(dashboard.id)
+        resultDashboard.getRemovedDifficultQuestions().size() == 0
 
         where:
         numberOfIncorrect << [0, 1, 3]
@@ -371,22 +383,31 @@ class UpdateDifficultQuestionsTest extends SpockTest {
         answerQuiz(false)
         answerQuiz(false)
         answerQuiz(true)
+        and:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
 
         when:
-        difficultQuestionService.updateDifficultQuestions(dashboard.getId())
+        def result = difficultQuestionService.updateDashboardDifficultQuestions(dashboard.getId())
 
         then:
-        difficultQuestionRepository.count() == 1L
+        result.size() == 1
         and:
-        def result = difficultQuestionRepository.findAll().get(0)
-        result.getQuestion() == question
-        result.getPercentage() == 20
+        difficultQuestionRepository.count() == 1L
+        def resultDifficultQuestion = difficultQuestionRepository.findAll().get(0)
+        resultDifficultQuestion.getQuestion() == question
+        resultDifficultQuestion.getPercentage() == 20
+        and:
+        def resultDashboard = dashboardRepository.getById(dashboard.id)
+        resultDashboard.getRemovedDifficultQuestions().size() == 0
     }
 
     @Unroll
     def "cannot update difficult questions with invalid dashboardId=#dashboardId"() {
+        given:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
+
         when:
-        difficultQuestionService.updateDifficultQuestions(dashboardId)
+        difficultQuestionService.updateDashboardDifficultQuestions(dashboardId)
 
         then:
         def exception = thrown(TutorException)

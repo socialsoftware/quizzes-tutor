@@ -119,7 +119,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
 
     def "updates failed answers after last check"() {
         given:
-        dashboard.setLastCheckDifficultQuestions(DateHandler.now().minusDays(1))
+        dashboard.setLastCheckFailedAnswers(DateHandler.now().minusDays(2))
         def questionAnswer1 = answerQuiz(true, false, true, quizQuestion, quiz, DateHandler.now().minusDays(2))
         and:
         def quiz2 = createQuiz(2)

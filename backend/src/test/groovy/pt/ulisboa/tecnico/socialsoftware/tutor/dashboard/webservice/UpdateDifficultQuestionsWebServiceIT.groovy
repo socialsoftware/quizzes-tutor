@@ -10,9 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
@@ -24,8 +21,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
-
-import java.util.logging.Handler
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
@@ -119,6 +114,8 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         and:
         dashboard = new Dashboard(externalCourseExecution, student)
         dashboardRepository.save(dashboard)
+        and:
+        difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(externalCourseExecution.id)
     }
 
     def "student updates difficult questions"() {
@@ -179,7 +176,7 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTest {
         error.response.status == HttpStatus.SC_FORBIDDEN
     }
 
-    def cleanup(){
+    def cleanup() {
         difficultQuestionRepository.deleteAll()
         dashboardRepository.deleteAll()
         userRepository.deleteAll()

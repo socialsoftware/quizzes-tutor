@@ -82,7 +82,6 @@ import FailedAnswersView from '@/views/student/dashboard/FailedAnswersView.vue';
 })
 export default class DashboardView extends Vue {
   dashboardId: number | null = null;
-  lastCheckDifficultQuestions: string | null = null;
   show: string | null = null;
 
   async created() {
@@ -91,7 +90,6 @@ export default class DashboardView extends Vue {
       let dashboard = await RemoteServices.getUserDashboard();
 
       this.dashboardId = dashboard.id;
-      this.lastCheckDifficultQuestions = dashboard.lastCheckDifficultQuestions;
       this.show = 'Global';
     } catch (error) {
       await this.$store.dispatch('error', error);

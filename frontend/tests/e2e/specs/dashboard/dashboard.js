@@ -4,6 +4,17 @@ describe('Dashboard', () => {
   beforeEach(() => {
     cy.deleteQuestionsAndAnswers();
 
+    cy.getDemoCourseExecutionId().its('stdout').should('contain', '1');
+
+    cy.log(cy.getDemoCourseExecutionId().its('stdout'));
+
+    cy.request('http://localhost:8080/auth/demo/teacher')
+      .as('loginResponse')
+      .then((response) => {
+        Cypress.env('token', response.body.token);
+        return response;
+      });
+
     date = new Date();
     //create quiz
     cy.demoTeacherLogin();
@@ -106,6 +117,24 @@ describe('Dashboard', () => {
     cy.get('[data-cy="deleteFailedAnswerButton"]').should('have.length', 0);
 
     // difficult  questions
+
+    // cy.getDemoCourseExecutionId().then((response) => {
+    //   cy.log(JSON.parse(response));
+    //   cy.request(
+    //     'PUT',
+    //     'http://localhost:8080/executions/' +
+    //       response[2] +
+    //       '/difficultquestions'
+    //   );
+    // });
+
+    cy.request({
+      method: 'PUT',
+      url: 'http://localhost:8080/executions/1/difficultquestions',
+      headers: {
+        Authorization: 'Bearer ' + Cypress.env('token'),
+      },
+    });
 
     cy.get('[data-cy="difficultQuestionsMenuButton"]').click();
     cy.wait('@updateDifficultQuestions');

@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -27,7 +29,23 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "course_executions")
 public class CourseExecution implements DomainEntity {
-    public enum Status {ACTIVE, INACTIVE, HISTORIC}
+    @ManyToMany(mappedBy = "courseExecutions", fetch = FetchType.LAZY)
+    private final Set<User> users = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<Quiz> quizzes = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<Assessment> assessments = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<QuestionSubmission> questionSubmissions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<Discussion> discussions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", orphanRemoval = true)
+    private final Set<DifficultQuestion> difficultQuestions = new HashSet<>();
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,6 +55,7 @@ public class CourseExecution implements DomainEntity {
     private Course.Type type;
 
     private String acronym;
+
     private String academicTerm;
 
     @Enumerated(EnumType.STRING)
@@ -45,27 +64,13 @@ public class CourseExecution implements DomainEntity {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "course_id")
     private Course course;
 
-    @ManyToMany(mappedBy = "courseExecutions", fetch=FetchType.LAZY)
-    private final Set<User> users = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
-    private final Set<Quiz> quizzes = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
-    private final Set<Assessment> assessments = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch=FetchType.LAZY, orphanRemoval=true)
-    private final Set<QuestionSubmission> questionSubmissions = new HashSet<>();
-
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
-    private Set<Discussion> discussions = new HashSet<>();
-
     public CourseExecution() {
     }
+
 
     public CourseExecution(Course course, String acronym, String academicTerm, Course.Type type, LocalDateTime endDate) {
         if (course.existsCourseExecution(acronym, academicTerm, type)) {
@@ -106,8 +111,8 @@ public class CourseExecution implements DomainEntity {
 
     public void setAcronym(String acronym) {
         if (acronym == null || acronym.trim().isEmpty()) {
-        throw new TutorException(INVALID_ACRONYM_FOR_COURSE_EXECUTION);
-    }
+            throw new TutorException(INVALID_ACRONYM_FOR_COURSE_EXECUTION);
+        }
         this.acronym = acronym;
     }
 
@@ -181,7 +186,9 @@ public class CourseExecution implements DomainEntity {
         questionSubmissions.add(questionSubmission);
     }
 
-    public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
+    public Set<QuestionSubmission> getQuestionSubmissions() {
+        return questionSubmissions;
+    }
 
     public Set<Discussion> getDiscussions() {
         return discussions;
@@ -189,6 +196,18 @@ public class CourseExecution implements DomainEntity {
 
     public void addDiscussion(Discussion discussion) {
         discussions.add(discussion);
+    }
+
+    public Set<DifficultQuestion> getDifficultQuestions() {
+        return difficultQuestions;
+    }
+
+    public void addDifficultQuestion(DifficultQuestion difficultQuestion) {
+        if (difficultQuestions.stream()
+                .anyMatch(difficultQuestion1 -> difficultQuestion1.getQuestion() == difficultQuestion.getQuestion())) {
+            throw new TutorException(ErrorMessage.DIFFICULT_QUESTION_ALREADY_CREATED);
+        }
+        difficultQuestions.add(difficultQuestion);
     }
 
     @Override
@@ -214,6 +233,7 @@ public class CourseExecution implements DomainEntity {
         course.getCourseExecutions().remove(this);
         users.forEach(user -> user.getCourseExecutions().remove(this));
         questionSubmissions.forEach(QuestionSubmission::remove);
+        difficultQuestions.forEach(DifficultQuestion::remove);
     }
 
     public int getNumberOfActiveTeachers() {
@@ -297,4 +317,6 @@ public class CourseExecution implements DomainEntity {
         return getAvailableAssessments().stream()
                 .anyMatch(assessment -> assessment.hasQuestion(question));
     }
+
+    public enum Status {ACTIVE, INACTIVE, HISTORIC}
 }

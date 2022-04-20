@@ -173,9 +173,12 @@ Cypress.Commands.add('addTopicAndAssessment', () => {
 
 Cypress.Commands.add('deleteDifficultQuestions', () => {
   dbCommand(`
-         UPDATE dashboard SET last_check_difficult_questions = NULL;
          DELETE FROM difficult_question;
     `);
+});
+
+Cypress.Commands.add('getDemoCourseExecutionId', () => {
+  dbCommand(`SELECT id FROM course_executions WHERE acronym = 'DemoCourse'`);
 });
 
 Cypress.Commands.add('deleteQuestionsAndAnswers', () => {

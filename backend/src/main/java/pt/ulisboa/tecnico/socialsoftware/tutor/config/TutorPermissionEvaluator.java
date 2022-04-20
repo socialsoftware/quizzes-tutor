@@ -10,9 +10,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthTecnicoUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DifficultQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.FailedAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.WeeklyScoreRepository;
@@ -98,7 +98,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
             String permissionValue = (String) permission;
             switch (permissionValue) {
                 case "EXECUTION.CREATE":
-                    return ((AuthTecnicoUser)authUser).getEnrolledCoursesAcronyms().contains(courseExecutionDto.getAcronym() + courseExecutionDto.getAcademicTerm());
+                    return ((AuthTecnicoUser) authUser).getEnrolledCoursesAcronyms().contains(courseExecutionDto.getAcronym() + courseExecutionDto.getAcademicTerm());
                 case "DEMO.ACCESS":
                     return courseExecutionDto.getName().equals("Demo Course");
                 default:
@@ -148,7 +148,7 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     }
                     return false;
                 case "TOURNAMENT.PARTICIPANT":
-                        return userParticipatesInTournament(userId, id);
+                    return userParticipatesInTournament(userId, id);
                 case "TOURNAMENT.OWNER":
                     Tournament tournament = tournamentRepository.findById(id).orElse(null);
                     if (tournament != null) {
@@ -189,8 +189,9 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                     return failedAnswer != null && failedAnswer.getDashboard().getStudent().getId().equals(userId);
                 case "DIFFICULTQUESTION.ACCESS":
                     DifficultQuestion difficultQuestion = difficultQuestionRepository.findById(id).orElse(null);
-                    return difficultQuestion != null && difficultQuestion.getDashboard().getStudent().getId().equals(userId);
-                default: return false;
+                    return difficultQuestion != null && userHasThisExecution(authUser, difficultQuestion.getCourseExecution().getId());
+                default:
+                    return false;
             }
         }
 
@@ -213,6 +214,6 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
     public boolean userHasAnExecutionOfCourse(AuthUser authUser, int courseId) {
         return courseExecutionRepository.getCourseExecutionsIdByCourseId(courseId)
                 .stream()
-                .anyMatch(courseExecutionId ->  userHasThisExecution(authUser, courseExecutionId));
+                .anyMatch(courseExecutionId -> userHasThisExecution(authUser, courseExecutionId));
     }
 }

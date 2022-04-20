@@ -5,9 +5,9 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.RemovedDifficultQuestion;
 
 @Repository
 @Transactional
 public interface DashboardRepository extends JpaRepository<Dashboard, Integer> {
-    
 }

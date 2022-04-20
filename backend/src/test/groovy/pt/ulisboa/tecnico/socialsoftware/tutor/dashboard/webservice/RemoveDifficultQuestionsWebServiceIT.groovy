@@ -6,16 +6,12 @@ import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
-import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
@@ -72,7 +68,7 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTest {
         dashboard = new Dashboard(externalCourseExecution, student)
         dashboardRepository.save(dashboard)
         and:
-        difficultQuestion = new DifficultQuestion(dashboard, question, 24)
+        difficultQuestion = new DifficultQuestion(externalCourseExecution, question, 24)
         difficultQuestionRepository.save(difficultQuestion)
     }
 
@@ -94,8 +90,6 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTest {
         and:
         def result = difficultQuestionRepository.findAll().get(0)
         result.getId() == difficultQuestion.getId()
-        result.isRemoved() == true
-        result.getRemovedDate().isAfter(DateHandler.now().minusSeconds(30))
     }
 
 
@@ -132,7 +126,7 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTest {
         error.response.status == HttpStatus.SC_FORBIDDEN
     }
 
-    def cleanup(){
+    def cleanup() {
         difficultQuestionRepository.deleteAll()
         dashboardRepository.deleteAll()
         userRepository.deleteAll()

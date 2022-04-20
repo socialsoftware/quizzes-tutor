@@ -32,7 +32,6 @@ import spock.lang.Unroll
         def result = dashboardRepository.findAll().get(0)
         result.getId() != 0
         result.getLastCheckFailedAnswers() == null
-        result.getLastCheckDifficultQuestions() == null
         result.getLastCheckWeeklyScores() == null
         result.getCourseExecution().getId() == externalCourseExecution.getId()
         result.getStudent().getId() == student.getId()

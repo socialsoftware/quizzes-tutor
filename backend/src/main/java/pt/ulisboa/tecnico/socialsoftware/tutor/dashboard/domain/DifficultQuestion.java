@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -20,50 +21,40 @@ public class DifficultQuestion implements DomainEntity {
 
     private int percentage;
 
-    private boolean removed = false;
-
-    private LocalDateTime removedDate;
-
     @ManyToOne
     private Question question;
 
     @ManyToOne
-    private Dashboard dashboard;
+    private CourseExecution courseExecution;
 
     public DifficultQuestion(){
     }
 
-    public DifficultQuestion(Dashboard dashboard, Question question, int percentage){
+    public DifficultQuestion(CourseExecution courseExecution, Question question, int percentage){
         if (percentage < 0 || percentage > 24)
             throw new TutorException(ErrorMessage.CANNOT_CREATE_DIFFICULT_QUESTION);
 
-        if (question.getCourse() != dashboard.getCourseExecution().getCourse()) {
+        if (question.getCourse() != courseExecution.getCourse()) {
             throw new TutorException(ErrorMessage.CANNOT_CREATE_DIFFICULT_QUESTION);
         }
 
         setPercentage(percentage);
-        setRemovedDate(null);
-        setRemoved(false);
         setQuestion(question);
-        setDashboard(dashboard);
+        setCourseExecution(courseExecution);
     }
 
     public void remove() {
-        if (removed && removedDate.isAfter(DateHandler.now().minusDays(7))) {
-            throw new TutorException(ErrorMessage.CANNOT_REMOVE_DIFFICULT_QUESTION);
-        }
-
-        dashboard.getDifficultQuestions().remove(this);
-        dashboard = null;
+        courseExecution.getDifficultQuestions().remove(this);
+        courseExecution = null;
     }
 
-    public Dashboard getDashboard() {
-        return dashboard;
+    public CourseExecution getCourseExecution() {
+        return courseExecution;
     }
 
-    public void setDashboard(Dashboard dashboard) {
-        this.dashboard = dashboard;
-        this.dashboard.addDifficultQuestion(this);
+    public void setCourseExecution(CourseExecution courseExecution) {
+        this.courseExecution = courseExecution;
+        this.courseExecution.addDifficultQuestion(this);
     }
 
     public Integer getId() {
@@ -76,26 +67,6 @@ public class DifficultQuestion implements DomainEntity {
 
     public void setPercentage(int percentage) {
         this.percentage = percentage;
-    }
-
-    public boolean isRemoved() {
-        return removed;
-    }
-
-    public void setRemoved(boolean removed) {
-        if (this.removed) {
-            throw new TutorException(ErrorMessage.CANNOT_REMOVE_DIFFICULT_QUESTION);
-        }
-
-        this.removed = removed;
-    }
-
-    public LocalDateTime getRemovedDate() {
-        return removedDate;
-    }
-
-    public void setRemovedDate(LocalDateTime collected) {
-        this.removedDate = collected;
     }
 
     public Question getQuestion() {
@@ -120,7 +91,6 @@ public class DifficultQuestion implements DomainEntity {
         return "DifficultQuestion{" +
                 "id=" + id +
                 ", percentage=" + percentage +
-                ", removed=" + removed +
                 ", question=" + question +
                 "}";
     }
