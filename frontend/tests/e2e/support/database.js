@@ -177,10 +177,6 @@ Cypress.Commands.add('deleteDifficultQuestions', () => {
     `);
 });
 
-Cypress.Commands.add('getDemoCourseExecutionId', () => {
-  dbCommand(`SELECT id FROM course_executions WHERE acronym = 'DemoCourse'`);
-});
-
 Cypress.Commands.add('deleteQuestionsAndAnswers', () => {
   dbCommand(`
          DELETE FROM replies;
@@ -199,4 +195,19 @@ Cypress.Commands.add('deleteQuestionsAndAnswers', () => {
          DELETE FROM questions;
          DELETE FROM topics;
     `);
+});
+
+const credentials = {
+  user: Cypress.env('psql_db_username'),
+  host: Cypress.env('psql_db_host'),
+  database: Cypress.env('psql_db_name'),
+  password: Cypress.env('password'),
+  port: Cypress.env('psql_db_port'),
+};
+
+Cypress.Commands.add('getDemoCourseExecutionId', () => {
+  cy.task('queryDatabase', {
+    query: "SELECT id FROM course_executions WHERE acronym = 'DemoCourse'",
+    credentials: credentials,
+  });
 });

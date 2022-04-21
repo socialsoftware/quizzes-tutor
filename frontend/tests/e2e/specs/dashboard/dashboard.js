@@ -4,10 +4,6 @@ describe('Dashboard', () => {
   beforeEach(() => {
     cy.deleteQuestionsAndAnswers();
 
-    cy.getDemoCourseExecutionId().its('stdout').should('contain', '1');
-
-    cy.log(cy.getDemoCourseExecutionId().its('stdout'));
-
     cy.request('http://localhost:8080/auth/demo/teacher')
       .as('loginResponse')
       .then((response) => {
@@ -118,22 +114,17 @@ describe('Dashboard', () => {
 
     // difficult  questions
 
-    // cy.getDemoCourseExecutionId().then((response) => {
-    //   cy.log(JSON.parse(response));
-    //   cy.request(
-    //     'PUT',
-    //     'http://localhost:8080/executions/' +
-    //       response[2] +
-    //       '/difficultquestions'
-    //   );
-    // });
-
-    cy.request({
-      method: 'PUT',
-      url: 'http://localhost:8080/executions/1/difficultquestions',
-      headers: {
-        Authorization: 'Bearer ' + Cypress.env('token'),
-      },
+    cy.getDemoCourseExecutionId().then((result) => {
+      cy.request({
+        method: 'PUT',
+        url:
+          'http://localhost:8080/executions/' +
+          result[0].id +
+          '/difficultquestions',
+        headers: {
+          Authorization: 'Bearer ' + Cypress.env('token'),
+        },
+      });
     });
 
     cy.get('[data-cy="difficultQuestionsMenuButton"]').click();
