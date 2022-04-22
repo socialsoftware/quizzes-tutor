@@ -201,7 +201,7 @@ const credentials = {
   user: Cypress.env('psql_db_username'),
   host: Cypress.env('psql_db_host'),
   database: Cypress.env('psql_db_name'),
-  password: Cypress.env('password'),
+  password: Cypress.env('psql_db_password'),
   port: Cypress.env('psql_db_port'),
 };
 
