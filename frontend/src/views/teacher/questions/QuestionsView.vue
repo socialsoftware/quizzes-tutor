@@ -6,69 +6,69 @@
           <v-btn
             color="primary"
             dark
-            v-on:click="showQueryForm = !showQueryForm"
             data-cy="queryQuestions"
+            v-on:click="showQueryForm = !showQueryForm"
           >
-            {{ !showQueryForm ? 'Open Query Form' : 'Close Query Form' }}</v-btn
-          >
+            {{ !showQueryForm ? 'Open Query Form' : 'Close Query Form' }}
+          </v-btn>
         </v-col>
         <v-col>
           <v-btn
             color="primary"
             dark
-            @click="newQuestion"
             data-cy="newQuestionButton"
-            >New Question</v-btn
-          ></v-col
-        >
+            @click="newQuestion"
+            >New Question
+          </v-btn>
+        </v-col>
         <v-col>
           <v-btn color="primary" dark @click="exportCourseQuestions"
-            >Export All Course Questions</v-btn
-          ></v-col
-        >
+            >Export All Course Questions
+          </v-btn>
+        </v-col>
         <v-col>
           <v-btn color="primary" dark @click="importCourseQuestions"
-            >Import Questions to Course</v-btn
-          >
+            >Import Questions to Course
+          </v-btn>
         </v-col>
       </v-row>
     </v-card>
     <query-question-form
-      class="table"
       v-show="showQueryForm"
       :availableOnly="false"
+      class="table"
       v-on:query-questions="onQueryQuestions"
     />
 
     <v-card class="table">
       <v-data-table
-        :headers="headers"
         :custom-filter="customFilter"
+        :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+        :headers="headers"
         :items="questions"
+        :items-per-page="15"
+        :mobile-breakpoint="0"
         :search="search"
         :sort-by="['creationDate']"
         sort-desc
-        :mobile-breakpoint="0"
-        :items-per-page="15"
-        :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
       >
         <template v-slot:top>
           <v-card-title>
             <v-text-field
               v-model="search"
               append-icon="search"
-              label="Search"
               class="mx-2"
+              label="Search"
             />
           </v-card-title>
         </template>
 
         <template v-slot:[`item.title`]="{ item }">
           <div
-            @click="showQuestionDialog(item)"
-            @contextmenu="editQuestion(item, $event)"
             class="clickableTitle"
             data-cy="questionTitleGrid"
+            @click="showQuestionDialog(item)"
+            @contextmenu="editQuestion(item, $event)"
           >
             {{ item.title }}
           </div>
@@ -78,6 +78,7 @@
           <edit-question-topics
             :question="item"
             :topics="topics"
+            data-cy="Topics"
             v-on:question-changed-topics="onQuestionChangedTopics"
           />
         </template>
@@ -87,8 +88,8 @@
             v-if="item.difficulty"
             :color="getDifficultyColor(item.difficulty)"
             dark
-            >{{ item.difficulty + '%' }}</v-chip
-          >
+            >{{ item.difficulty + '%' }}
+          </v-chip>
         </template>
 
         <template v-slot:[`item.status`]="{ item }">
@@ -108,11 +109,11 @@
 
         <template v-slot:[`item.image`]="{ item }">
           <v-file-input
-            show-size
+            accept="image/*"
             dense
+            show-size
             small-chips
             @change="handleFileUpload($event, item)"
-            accept="image/*"
           />
         </template>
 
@@ -121,10 +122,10 @@
             <template v-slot:activator="{ on }">
               <v-icon
                 class="mr-2 action-button"
-                v-on="on"
                 @click="showQuestionDialog(item)"
-                >visibility</v-icon
-              >
+                v-on="on"
+                >visibility
+              </v-icon>
             </template>
             <span>Show Question</span>
           </v-tooltip>
@@ -132,10 +133,10 @@
             <template v-slot:activator="{ on }">
               <v-icon
                 class="mr-2 action-button"
-                v-on="on"
                 @click="showStudentViewDialog(item)"
-                >school</v-icon
-              >
+                v-on="on"
+                >school
+              </v-icon>
             </template>
             <span>Student View</span>
           </v-tooltip>
@@ -143,21 +144,21 @@
             <template v-slot:activator="{ on }">
               <v-icon
                 class="mr-2 action-button"
-                v-on="on"
                 @click="duplicateQuestion(item)"
-                >cached</v-icon
-              >
+                v-on="on"
+                >cached
+              </v-icon>
             </template>
             <span>Duplicate Question</span>
           </v-tooltip>
-          <v-tooltip bottom v-if="item.numberOfAnswers === 0">
+          <v-tooltip v-if="item.numberOfAnswers === 0" bottom>
             <template v-slot:activator="{ on }">
               <v-icon
                 class="mr-2 action-button"
-                v-on="on"
                 @click="editQuestion(item)"
-                >edit</v-icon
-              >
+                v-on="on"
+                >edit
+              </v-icon>
             </template>
             <span>Edit Question</span>
           </v-tooltip>
@@ -165,33 +166,33 @@
             <template v-slot:activator="{ on }">
               <v-icon
                 class="mr-2 action-button"
-                v-on="on"
                 @click="showClarificationDialog(item)"
-                >fas fa-comments</v-icon
-              >
+                v-on="on"
+                >fas fa-comments
+              </v-icon>
             </template>
             <span>Show Clarifications</span>
           </v-tooltip>
-          <v-tooltip bottom v-if="item.numberOfAnswers === 0">
+          <v-tooltip v-if="item.numberOfAnswers === 0" bottom>
             <template v-slot:activator="{ on }">
               <v-icon
                 class="mr-2 action-button"
-                v-on="on"
+                color="red"
                 data-cy="deleteQuestionButton"
                 @click="deleteQuestion(item)"
-                color="red"
-                >delete</v-icon
-              >
+                v-on="on"
+                >delete
+              </v-icon>
             </template>
             <span>Delete Question</span>
           </v-tooltip>
         </template>
       </v-data-table>
       <footer>
-        <v-icon class="mr-2 action-button">mouse</v-icon>Left-click on
-        question's title to view it.
-        <v-icon class="mr-2 action-button">mouse</v-icon>Right-click on
-        question's title to edit it.
+        <v-icon class="mr-2 action-button">mouse</v-icon>
+        Left-click on question's title to view it.
+        <v-icon class="mr-2 action-button">mouse</v-icon>
+        Right-click on question's title to edit it.
       </footer>
       <upload-questions-dialog
         v-if="uploadQuestionsDialog"
@@ -534,6 +535,7 @@ export default class QuestionsView extends Vue {
     min-height: 200px !important;
   }
 }
+
 .option-textarea {
   text-align: left;
 

@@ -176,40 +176,10 @@ public class QuizAnswer implements DomainEntity {
         questionAnswers.add(questionAnswer);
     }
 
-    @Override
-    public String toString() {
-        return "QuizAnswer{" +
-                "id=" + id +
-                ", creationDate=" + creationDate +
-                ", answerDate=" + answerDate +
-                ", completed=" + completed +
-                ", usedInStatistics=" + usedInStatistics +
-                '}';
-    }
-
-    public boolean canResultsBePublic(Integer courseExecutionId) {
+    public boolean canResultsBePublic() {
         return isCompleted() &&
-                getQuiz().getCourseExecution().getId().equals(courseExecutionId) &&
                 ((!getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && !getQuiz().getType().equals(Quiz.QuizType.TOURNAMENT))
-                        || getQuiz().getResultsDate().isBefore(DateHandler.now()));
-    }
-
-    public void calculateStatistics() {
-        if (!this.usedInStatistics) {
-            student.increaseNumberOfQuizzes(getQuiz().getType());
-
-            getQuestionAnswers().forEach(questionAnswer -> {
-                student.increaseNumberOfAnswers(getQuiz().getType());
-                if (questionAnswer.isCorrect()) {
-                    student.increaseNumberOfCorrectAnswers(getQuiz().getType());
-                }
-            });
-
-            getQuestionAnswers().forEach(questionAnswer ->
-                    questionAnswer.getQuizQuestion().getQuestion().addAnswerStatistics(questionAnswer));
-
-            this.usedInStatistics = true;
-        }
+                    || getQuiz().getResultsDate().isBefore(DateHandler.now()));
     }
 
     public void remove() {
@@ -234,6 +204,16 @@ public class QuizAnswer implements DomainEntity {
         return getQuestionAnswers().stream().filter(QuestionAnswer::isCorrect).count();
     }
 
+    public void calculateQuestionStatistics() {
+        if (!usedInStatistics) {
+            getQuestionAnswers().forEach(questionAnswer ->
+                    questionAnswer.getQuizQuestion().getQuestion().addAnswerStatistics(questionAnswer)
+            );
+
+            usedInStatistics = true;
+        }
+    }
+
     public void checkCanGetQuestion(Integer questionId) {
         if (!questionIds.isEmpty()) {
             if (currentSequenceQuestion < questionIds.size() - 1
@@ -256,5 +236,19 @@ public class QuizAnswer implements DomainEntity {
         } else if (completed) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         }
+    }
+
+    @Override
+    public String toString() {
+        return "QuizAnswer{" +
+                "id=" + id +
+                ", creationDate=" + creationDate +
+                ", answerDate=" + answerDate +
+                ", completed=" + completed +
+                ", fraud=" + fraud +
+                ", student=" + student +
+                ", quiz=" + quiz +
+                ", questionAnswers=" + questionAnswers +
+                '}';
     }
 }

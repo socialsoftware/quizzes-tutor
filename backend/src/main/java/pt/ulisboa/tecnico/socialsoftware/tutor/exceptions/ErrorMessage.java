@@ -14,7 +14,7 @@ public enum ErrorMessage {
     INVALID_NAME_FOR_TOPIC("Invalid name for topic"),
     INVALID_SEQUENCE_FOR_OPTION("Invalid sequence for option"),
     INVALID_SEQUENCE_FOR_QUESTION_ANSWER("Invalid sequence for question answer"),
-    INVALID_QUIZ_ANSWER_SEQUENCE("Invalid quiz answer sequence"),
+    INVALID_QUIZ_ANSWER_SEQUENCE("Invalid quiz answer sequence: %s"),
     INVALID_TITLE_FOR_ASSESSMENT("Invalid title for assessment"),
     INVALID_TITLE_FOR_QUESTION("Invalid title for question"),
     INVALID_URL_FOR_IMAGE("Invalid url for image"),
@@ -111,7 +111,7 @@ public enum ErrorMessage {
     QUIZ_HAS_ANSWERS("Quiz already has answers"),
     QUIZ_HAS_NO_ANSWERS("Quiz has no answers"),
     QUIZ_ALREADY_COMPLETED("Quiz already completed"),
-    QUIZ_NOT_YET_CONCLUDED("Quiz not yet concluded"),
+    QUIZ_CANNOT_HAVE_REPEATED_QUESTIONS("Quiz cannot have repeated questions"),
     QUIZ_QUESTION_HAS_ANSWERS("Quiz question has answers"),
     FENIX_ERROR("Fenix Error"),
     AUTHENTICATION_ERROR("Authentication Error"),
@@ -142,14 +142,30 @@ public enum ErrorMessage {
 
     CANNOT_CONCLUDE_QUIZ("Cannot conclude quiz."),
 
+    DASHBOARD_NOT_FOUND("Dashboard not found: %d"),
+    STUDENT_ALREADY_HAS_DASHBOARD("The student already has a dashboard for this course execution"),
+
     ACCESS_DENIED("You do not have permission to view this resource"),
     CANNOT_OPEN_FILE("Cannot open file"),
 
     INVALID_CSV_FILE_FORMAT("The csv file uploaded has a wrong format"),
     WRONG_FORMAT_ON_CSV_LINE("Csv File has a wrong format on line: %d"),
 
-    FRAUD_SERVICE_NOT_AVAILABLE("Fraud service not available"),
-    FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED("Fraud service only supports timed, one way, in class quizzes");
+    FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED("Fraud service only supports timed, one way, in class quizzes"),
+
+    WEEKLY_SCORE_ALREADY_CREATED("Weekly Score already created for this week"),
+    CANNOT_CLOSE_CURRENT_WEEK("Cannot close current week: %s"),
+
+    DIFFICULT_QUESTION_NOT_FOUND("Difficult question not found"),
+    DIFFICULT_QUESTION_ALREADY_CREATED("Difficult question already created"),
+    DIFFICULT_QUESTION_ALREADY_REMOVED("Difficult question already removed"),
+    CANNOT_CREATE_DIFFICULT_QUESTION("Cannot create difficult question"),
+    CANNOT_REMOVE_DIFFICULT_QUESTION("Cannot remove difficult question"),
+
+    FAILED_ANSWER_NOT_FOUND("Failed answer not found"),
+    FAILED_ANSWER_ALREADY_CREATED("Failed answer already created"),
+    CANNOT_CREATE_FAILED_ANSWER("Cannot create failed answer"),
+    CANNOT_REMOVE_FAILED_ANSWER("Cannot remove failed answer");
 
     public final String label;
 

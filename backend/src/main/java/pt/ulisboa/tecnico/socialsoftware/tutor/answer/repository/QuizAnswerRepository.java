@@ -17,8 +17,8 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Integer>
     @Query(value = "SELECT * FROM quiz_answers qa WHERE qa.user_id = :userId AND qa.quiz_id = :quizId", nativeQuery = true)
     Optional<QuizAnswer> findQuizAnswer(Integer quizId, Integer userId);
 
-    @Query(value = "SELECT * FROM quiz_answers qa JOIN quizzes q ON qa.quiz_id = q.id WHERE qa.completed AND NOT qa.used_in_statistics", nativeQuery = true)
-    Set<QuizAnswer> findQuizAnswersToCalculateStatistics(LocalDateTime now);
+    @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.completed = true AND qa.usedInStatistics = false")
+    Set<QuizAnswer> findQuizAnswersToCalculateStatistics();
 
     @Query(value = "SELECT qa.quiz.id FROM QuizAnswer qa JOIN qa.quiz q WHERE qa.student.id = :userId AND q.courseExecution.id = :executionId AND q.availableDate < :now AND (q.conclusionDate IS NULL OR q.conclusionDate > :now) AND qa.completed = true")
     Set<Integer> findClosedQuizAnswersQuizIds(int userId, int executionId, LocalDateTime now);
@@ -31,5 +31,14 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Integer>
 
     @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.courseExecution.id = :courseExecutionId")
     Set<QuizAnswer>  findByExecutionCourseId(int courseExecutionId);
+
+    @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.courseExecution.id = :courseExecutionId AND qa.student.id = :userId")
+    Set<QuizAnswer> findByStudentAndCourseExecution(int userId, int courseExecutionId);
+
+    @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.courseExecution.id = :courseExecutionId AND qa.student.id = :userId AND qa.answerDate >= :start AND qa.answerDate < :end")
+    Set<QuizAnswer> findByStudentAndCourseExecutionInPeriod(int userId, int courseExecutionId, LocalDateTime start, LocalDateTime end);
+
+    @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.courseExecution.id = :courseExecutionId AND qa.answerDate >= :start AND qa.answerDate < :end")
+    Set<QuizAnswer> findByCourseExecutionInPeriod(int courseExecutionId, LocalDateTime start, LocalDateTime end);
 }
 

@@ -4,7 +4,7 @@ import Question from '@/models/management/Question';
 import { Quiz } from '@/models/management/Quiz';
 import Course from '@/models/user/Course';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
-import StudentStats from '@/models/statement/StudentStats';
+import StudentStats from '@/models/dashboard/StudentStats';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import SolvedQuiz from '@/models/statement/SolvedQuiz';
 import Topic from '@/models/management/Topic';
@@ -25,6 +25,10 @@ import router from '@/router';
 import QuestionQuery from '@/models/management/QuestionQuery';
 import { FraudScores } from '@/models/management/fraud/FraudScores';
 import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
+import Dashboard from '@/models/dashboard/Dashboard';
+import DifficultQuestion from '@/models/dashboard/DifficultQuestion';
+import WeeklyScore from '@/models/dashboard/WeeklyScore';
+import FailedAnswer from '@/models/dashboard/FailedAnswer';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -169,15 +173,93 @@ export default class RemoteServices {
       });
   }
 
-  // Statistics Controller
+  // Dashboard and Statistics Controller
 
-  static async getUserStats(): Promise<StudentStats> {
+  static async getUserDashboard(): Promise<Dashboard> {
     return httpClient
       .get(
-        `/stats/executions/${Store.getters.getCurrentCourse.courseExecutionId}`
+        `/students/dashboards/executions/${Store.getters.getCurrentCourse.courseExecutionId}`
       )
       .then((response) => {
+        return new Dashboard(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getUserCourseExecutionStats(
+    dashboardId: number
+  ): Promise<StudentStats> {
+    return httpClient
+      .get(`/students/dashboards/${dashboardId}/stats`)
+      .then((response) => {
         return new StudentStats(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateWeeklyScores(dashboardId: number): Promise<WeeklyScore[]> {
+    return httpClient
+      .put(`/students/dashboards/${dashboardId}/weeklyscores`)
+      .then((response) => {
+        return response.data.map((weeklyScore: any) => {
+          return new WeeklyScore(weeklyScore);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateFailedAnswers(
+    dashboardId: number
+  ): Promise<FailedAnswer[]> {
+    return httpClient
+      .put(`/students/dashboards/${dashboardId}/failedanswers`)
+      .then((response) => {
+        return response.data.map((failedAnswer: any) => {
+          return new FailedAnswer(failedAnswer);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteFailedAnswer(failedAnswerId: number) {
+    return httpClient
+      .delete(`/students/failedanswers/${failedAnswerId}`)
+      .then((response) => {
+        return;
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateDifficultQuestions(
+    dashboardId: number
+  ): Promise<DifficultQuestion[]> {
+    return httpClient
+      .put(`/students/dashboards/${dashboardId}/difficultquestions`)
+      .then((response) => {
+        return response.data.map((difficultQuestion: any) => {
+          return new DifficultQuestion(difficultQuestion);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async deleteDifficultQuestion(difficultQuestionId: number) {
+    return httpClient
+      .delete(`/students/difficultquestions/${difficultQuestionId}`)
+      .then((response) => {
+        return;
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
@@ -719,6 +801,7 @@ export default class RemoteServices {
         throw Error(await this.errorMessage(error));
       });
   }
+
   static async getQuizCommunicationFraudScores(
     quizId: number
   ): Promise<FraudScores[]> {

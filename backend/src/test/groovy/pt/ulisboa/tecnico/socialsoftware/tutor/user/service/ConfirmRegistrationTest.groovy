@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
 import spock.lang.Unroll
 import spock.mock.DetachedMockFactory
@@ -84,7 +85,7 @@ class ConfirmRegistrationTest extends SpockTest {
         externalUserDto.setPassword(USER_1_PASSWORD)
         and: "and an expired token generation date"
         AuthUser authUser = authUserRepository.findAuthUserByUsername(USER_1_EMAIL).get()
-        authUser.setTokenGenerationDate(LocalDateTime.now().minusDays(1).minusMinutes(1))
+        authUser.setTokenGenerationDate(DateHandler.now().minusDays(1).minusMinutes(1))
 
         when:
         def result = userServiceApplicational.confirmRegistration(externalUserDto)

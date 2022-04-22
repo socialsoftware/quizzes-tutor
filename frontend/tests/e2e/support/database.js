@@ -88,13 +88,13 @@ Cypress.Commands.add('afterEachTournament', () => {
 
 Cypress.Commands.add('addQuestionSubmission', (title, submissionStatus) => {
   dbCommand(`
-    WITH course as (select id from courses where name = 'Demo Course' limit 1),    
-    quest AS (
+    WITH course as (SELECT ce.course_id as course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course')     
+    , quest AS (
       INSERT INTO questions (title, content, status, course_id, creation_date) 
-      VALUES ('${title}', 'Question?', 'SUBMITTED', (select id from course), current_timestamp) RETURNING id
+      VALUES ('${title}', 'Question?', 'SUBMITTED', (select course_id from course), current_timestamp) RETURNING id
       )
     INSERT INTO question_submissions (status, question_id, submitter_id, course_execution_id) 
-    VALUES ('${submissionStatus}', (SELECT id from quest), (select id from users where name = 'Demo Student'), (select id from course));`);
+    VALUES ('${submissionStatus}', (SELECT id from quest), (select id from users where name = 'Demo Student'), (select course_execution_id from course));`);
 
   //add options
   for (let content in [0, 1, 2, 3]) {
@@ -137,4 +137,77 @@ Cypress.Commands.add('cleanCodeFillInQuestionsByName', (questionName) => {
                 , fill AS (DELETE FROM  code_fill_in_spot WHERE id IN (SELECT id FROM fillToDelete)) 
                 , det AS (DELETE FROM question_details WHERE question_id in (SELECT question_id FROM toDelete))
               DELETE FROM questions WHERE id IN (SELECT question_id FROM toDelete);`);
+});
+
+Cypress.Commands.add('createWeeklyScore', () => {
+  dbCommand(`WITH courseExecutionId as (SELECT ce.id as course_execution_id FROM course_executions ce WHERE acronym = 'DemoCourse')
+        , demoStudentId as (SELECT u.id as users_id FROM users u WHERE name = 'Demo Student')
+        , dashboardId as (SELECT d.id as dashboard_id FROM dashboard d WHERE student_id = (select users_id from demoStudentId) AND course_execution_id = (select course_execution_id from courseExecutionId))
+       INSERT INTO weekly_score(closed, quizzes_answered, questions_answered, questions_uniquely_answered, percentage_correct, improved_correct_answers, week, dashboard_id) VALUES (true, 3, 10, 50, 9, 8, '2022-02-02', (select dashboard_id from dashboardId))
+      `);
+});
+
+Cypress.Commands.add('deleteWeeklyScores', () => {
+  dbCommand(`
+         UPDATE dashboard SET last_check_weekly_scores = NULL;
+         DELETE FROM weekly_score;
+    `);
+});
+
+Cypress.Commands.add('deleteFailedAnswers', () => {
+  dbCommand(`
+         UPDATE dashboard SET last_check_failed_answers = NULL;
+         DELETE FROM failed_answer;
+    `);
+});
+
+Cypress.Commands.add('addTopicAndAssessment', () => {
+  dbCommand(`
+      WITH tmpCourse as (SELECT ce.course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course')      
+        ,insert1 as (INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (1, 0, 'AVAILABLE', 'assessment one', (select course_execution_id from tmpCourse)))
+        ,insert2 as (INSERT INTO topic_conjunctions (id, assessment_id) VALUES (100, 1))
+        ,insert3 as (INSERT INTO topics (id, name, course_id) VALUES (82, 'Software Architecture', (select course_id from tmpCourse)))
+        INSERT INTO topics_topic_conjunctions (topics_id, topic_conjunctions_id) VALUES (82, 100);
+    `);
+});
+
+Cypress.Commands.add('deleteDifficultQuestions', () => {
+  dbCommand(`
+         DELETE FROM difficult_question;
+    `);
+});
+
+Cypress.Commands.add('deleteQuestionsAndAnswers', () => {
+  dbCommand(`
+         DELETE FROM replies;
+         DELETE FROM discussions;
+         DELETE FROM answer_details;
+         DELETE FROM question_answers;
+         DELETE FROM quiz_answers;
+         DELETE FROM quiz_questions;
+         DELETE FROM quizzes;
+         DELETE FROM topics_topic_conjunctions;
+         DELETE FROM topic_conjunctions;
+         DELETE FROM topics_questions;
+         DELETE FROM assessments;
+         DELETE FROM options;
+         DELETE FROM question_details;
+         DELETE FROM questions;
+         DELETE FROM topics;
+    `);
+});
+
+const credentials = {
+  user: Cypress.env('psql_db_username'),
+  host: Cypress.env('psql_db_host'),
+  database: Cypress.env('psql_db_name'),
+  password: Cypress.env('password'),
+  port: Cypress.env('psql_db_port'),
+};
+
+Cypress.Commands.add('getDemoCourseExecutionId', () => {
+  cy.task('queryDatabase', {
+    query: "SELECT id FROM course_executions WHERE acronym = 'DemoCourse'",
+    credentials: credentials,
+  });
 });

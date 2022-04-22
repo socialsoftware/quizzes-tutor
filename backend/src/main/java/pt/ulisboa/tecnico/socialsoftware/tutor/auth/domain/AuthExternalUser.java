@@ -4,6 +4,7 @@ import org.springframework.security.crypto.keygen.KeyGenerators;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import javax.persistence.Column;
 import javax.persistence.DiscriminatorValue;
@@ -69,7 +70,7 @@ public class AuthExternalUser extends AuthUser {
         }
         if (!token.equals(getConfirmationToken()))
             throw new TutorException(INVALID_CONFIRMATION_TOKEN);
-        if (getTokenGenerationDate().isBefore(LocalDateTime.now().minusDays(1)))
+        if (getTokenGenerationDate().isBefore(DateHandler.now().minusDays(1)))
             throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
     }
 
@@ -78,7 +79,7 @@ public class AuthExternalUser extends AuthUser {
 
     public String generateConfirmationToken() {
         String token = KeyGenerators.string().generateKey();
-        setTokenGenerationDate(LocalDateTime.now());
+        setTokenGenerationDate(DateHandler.now());
         setConfirmationToken(token);
         return token;
     }

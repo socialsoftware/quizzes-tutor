@@ -1,10 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -19,16 +20,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @DiscriminatorValue(User.UserTypes.STUDENT)
 public class Student extends User {
-    private Integer numberOfTeacherQuizzes = 0;
-    private Integer numberOfStudentQuizzes = 0;
-    private Integer numberOfInClassQuizzes = 0;
-    private Integer numberOfTeacherAnswers = 0;
-    private Integer numberOfInClassAnswers = 0;
-    private Integer numberOfStudentAnswers = 0;
-    private Integer numberOfCorrectTeacherAnswers = 0;
-    private Integer numberOfCorrectInClassAnswers = 0;
-    private Integer numberOfCorrectStudentAnswers = 0;
-
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", fetch = FetchType.LAZY)
     private Set<QuizAnswer> quizAnswers = new HashSet<>();
 
@@ -40,6 +31,9 @@ public class Student extends User {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "submitter", fetch = FetchType.LAZY)
     private Set<QuestionSubmission> questionSubmissions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", orphanRemoval = true)
+    private Set<Dashboard> dashboards = new HashSet<>();
 
     public Student() {}
 
@@ -124,191 +118,10 @@ public class Student extends User {
             throw new TutorException(USER_HAS_DISCUSSIONS, getUsername());
         }
 
+        dashboards.forEach(Dashboard::remove);
+        dashboards.clear();
+
         super.remove();
-    }
-
-    public Integer getNumberOfTeacherQuizzes() {
-        if (this.numberOfTeacherQuizzes == null)
-            this.numberOfTeacherQuizzes = (int) getQuizAnswers().stream()
-                    .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
-                    .count();
-
-        return numberOfTeacherQuizzes;
-    }
-
-    public void setNumberOfTeacherQuizzes(Integer numberOfTeacherQuizzes) {
-        this.numberOfTeacherQuizzes = numberOfTeacherQuizzes;
-    }
-
-    public Integer getNumberOfStudentQuizzes() {
-        if (this.numberOfStudentQuizzes == null)
-            this.numberOfStudentQuizzes = (int) getQuizAnswers().stream()
-                    .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
-                    .count();
-
-        return numberOfStudentQuizzes;
-    }
-
-    public void setNumberOfStudentQuizzes(Integer numberOfStudentQuizzes) {
-        this.numberOfStudentQuizzes = numberOfStudentQuizzes;
-    }
-
-    public Integer getNumberOfInClassQuizzes() {
-        if (this.numberOfInClassQuizzes == null)
-            this.numberOfInClassQuizzes = (int) getQuizAnswers().stream()
-                    .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
-                    .count();
-
-        return numberOfInClassQuizzes;
-    }
-
-    public void setNumberOfInClassQuizzes(Integer numberOfInClassQuizzes) {
-        this.numberOfInClassQuizzes = numberOfInClassQuizzes;
-    }
-
-    public Integer getNumberOfTeacherAnswers() {
-        if (this.numberOfTeacherAnswers == null)
-            this.numberOfTeacherAnswers = getQuizAnswers().stream()
-                    .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
-                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestionsNumber())
-                    .sum();
-
-        return numberOfTeacherAnswers;
-    }
-
-    public void setNumberOfTeacherAnswers(Integer numberOfTeacherAnswers) {
-        this.numberOfTeacherAnswers = numberOfTeacherAnswers;
-    }
-
-    public Integer getNumberOfInClassAnswers() {
-        if (this.numberOfInClassAnswers == null)
-            this.numberOfInClassAnswers = getQuizAnswers().stream()
-                    .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
-                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestionsNumber())
-                    .sum();
-        return numberOfInClassAnswers;
-    }
-
-    public void setNumberOfInClassAnswers(Integer numberOfInClassAnswers) {
-        this.numberOfInClassAnswers = numberOfInClassAnswers;
-    }
-
-    public Integer getNumberOfStudentAnswers() {
-        if (this.numberOfStudentAnswers == null) {
-            this.numberOfStudentAnswers = getQuizAnswers().stream()
-                    .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
-                    .mapToInt(quizAnswer -> quizAnswer.getQuiz().getQuizQuestionsNumber())
-                    .sum();
-        }
-
-        return numberOfStudentAnswers;
-    }
-
-    public void setNumberOfStudentAnswers(Integer numberOfStudentAnswers) {
-        this.numberOfStudentAnswers = numberOfStudentAnswers;
-    }
-
-    public Integer getNumberOfCorrectTeacherAnswers() {
-        if (this.numberOfCorrectTeacherAnswers == null)
-            this.numberOfCorrectTeacherAnswers = (int) this.getQuizAnswers().stream()
-                    .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.PROPOSED))
-                    .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                    .filter(QuestionAnswer::isCorrect)
-                    .count();
-
-        return numberOfCorrectTeacherAnswers;
-    }
-
-    public void setNumberOfCorrectTeacherAnswers(Integer numberOfCorrectTeacherAnswers) {
-        this.numberOfCorrectTeacherAnswers = numberOfCorrectTeacherAnswers;
-    }
-
-    public Integer getNumberOfCorrectInClassAnswers() {
-        if (this.numberOfCorrectInClassAnswers == null)
-            this.numberOfCorrectInClassAnswers = (int) this.getQuizAnswers().stream()
-                    .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.IN_CLASS))
-                    .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                    .filter(QuestionAnswer::isCorrect)
-                    .count();
-
-        return numberOfCorrectInClassAnswers;
-    }
-
-    public void setNumberOfCorrectInClassAnswers(Integer numberOfCorrectInClassAnswers) {
-        this.numberOfCorrectInClassAnswers = numberOfCorrectInClassAnswers;
-    }
-
-
-    public Integer getNumberOfCorrectStudentAnswers() {
-        if (this.numberOfCorrectStudentAnswers == null)
-            this.numberOfCorrectStudentAnswers = (int) this.getQuizAnswers().stream()
-                    .filter(QuizAnswer::isCompleted)
-                    .filter(quizAnswer -> quizAnswer.getQuiz().getType().equals(Quiz.QuizType.GENERATED))
-                    .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                    .filter(QuestionAnswer::isCorrect)
-                    .count();
-
-        return numberOfCorrectStudentAnswers;
-    }
-
-    public void setNumberOfCorrectStudentAnswers(Integer numberOfCorrectStudentAnswers) {
-        this.numberOfCorrectStudentAnswers = numberOfCorrectStudentAnswers;
-    }
-
-    public void increaseNumberOfQuizzes(Quiz.QuizType type) {
-        switch (type) {
-            case PROPOSED:
-                this.numberOfTeacherQuizzes = getNumberOfTeacherQuizzes() + 1;
-                break;
-            case IN_CLASS:
-                this.numberOfInClassQuizzes = getNumberOfInClassQuizzes() + 1;
-                break;
-            case GENERATED:
-                this.numberOfStudentQuizzes = getNumberOfStudentQuizzes() + 1;
-                break;
-            default:
-                break;
-        }
-    }
-
-    public void increaseNumberOfAnswers(Quiz.QuizType type) {
-        switch (type) {
-            case PROPOSED:
-                this.numberOfTeacherAnswers = getNumberOfTeacherAnswers() + 1;
-                break;
-            case IN_CLASS:
-                this.numberOfInClassAnswers = getNumberOfInClassAnswers() + 1;
-                break;
-            case GENERATED:
-                this.numberOfStudentAnswers = getNumberOfStudentAnswers() + 1;
-                break;
-            default:
-                break;
-        }
-    }
-
-    public void increaseNumberOfCorrectAnswers(Quiz.QuizType type) {
-        switch (type) {
-            case PROPOSED:
-                this.numberOfCorrectTeacherAnswers = getNumberOfCorrectTeacherAnswers() + 1;
-                break;
-            case IN_CLASS:
-                this.numberOfCorrectInClassAnswers = getNumberOfCorrectInClassAnswers() + 1;
-                break;
-            case GENERATED:
-                this.numberOfCorrectStudentAnswers = getNumberOfCorrectStudentAnswers() + 1;
-                break;
-            default:
-                break;
-        }
     }
 
     public Set<Tournament> getTournaments() { return tournaments; }
@@ -346,6 +159,21 @@ public class Student extends User {
 
     public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
 
+    public Set<Dashboard> getDashboards() {
+        return dashboards;
+    }
+    
+    public void addDashboard(Dashboard dashboard) {
+        dashboards.add(dashboard);
+    }
+
+    public Dashboard getCourseExecutionDashboard(CourseExecution courseExecution) {
+        return dashboards.stream()
+                .filter(dashboard -> dashboard.getCourseExecution() == courseExecution)
+                .findAny()
+                .orElse(null);
+    }
+
     @Override
     public String toString() {
         return "Student{" +
@@ -354,15 +182,6 @@ public class Student extends User {
                 ", role=" + getRole() +
                 ", username='" + getUsername() + '\'' +
                 ", name='" + getName() + '\'' +
-                ", numberOfTeacherQuizzes=" + numberOfTeacherQuizzes +
-                ", numberOfStudentQuizzes=" + numberOfStudentQuizzes +
-                ", numberOfInClassQuizzes=" + numberOfInClassQuizzes +
-                ", numberOfTeacherAnswers=" + numberOfTeacherAnswers +
-                ", numberOfInClassAnswers=" + numberOfInClassAnswers +
-                ", numberOfStudentAnswers=" + numberOfStudentAnswers +
-                ", numberOfCorrectTeacherAnswers=" + numberOfCorrectTeacherAnswers +
-                ", numberOfCorrectInClassAnswers=" + numberOfCorrectInClassAnswers +
-                ", numberOfCorrectStudentAnswers=" + numberOfCorrectStudentAnswers +
                 ", creationDate=" + getCreationDate() +
                 ", lastAccess=" + authUser.getLastAccess() +
                 '}';

@@ -13,6 +13,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.AnswerDetailsRe
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DifficultQuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
@@ -78,10 +81,16 @@ public class AnswerService {
     private AssessmentRepository assessmentRepository;
 
     @Autowired
+    private DashboardRepository dashboardRepository;
+
+    @Autowired
     private AnswersXmlImport xmlImporter;
 
     @Autowired
     private CourseExecutionService courseExecutionService;
+
+    @Autowired
+    private DifficultQuestionService difficultQuestionService;
 
     @Retryable(
             value = {SQLException.class},
@@ -126,6 +135,9 @@ public class AnswerService {
                 for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
                     writeQuestionAnswer(questionAnswer, statementQuizDto.getAnswers());
                 }
+
+                calculateDashboardStatistics(quizAnswer);
+
                 return quizAnswer.getQuestionAnswers().stream()
                         .sorted(Comparator.comparing(QuestionAnswer::getSequence))
                         .map(CorrectAnswerDto::new)
@@ -144,7 +156,7 @@ public class AnswerService {
 
         List<QuizAnswerItem> quizAnswerItems = quizAnswerItemRepository.findQuizAnswerItemsByQuizId(quizId);
 
-        Map<String,List<QuestionAnswerItem>> questionAnswerMap =  questionAnswerItemRepository.findQuestionAnswerItemsByQuizId(quiz.getId()).stream()
+        Map<String, List<QuestionAnswerItem>> questionAnswerMap = questionAnswerItemRepository.findQuestionAnswerItemsByQuizId(quiz.getId()).stream()
                 .collect(Collectors.groupingBy(
                         QuestionAnswerItem::getUsername,
                         Collectors.mapping(qai -> qai, Collectors.toList())
@@ -160,7 +172,7 @@ public class AnswerService {
                             .sorted(Comparator.comparing(QuestionAnswerItem::getAnswerDate))
                             .collect(Collectors.toList()));
                 }
-           }
+            }
 
             if (quizAnswer.getAnswerDate() == null) {
                 quizAnswer.setAnswerDate(quizAnswerItem.getAnswerDate());
@@ -168,15 +180,26 @@ public class AnswerService {
                 for (QuestionAnswer questionAnswer : quizAnswer.getQuestionAnswers()) {
                     writeQuestionAnswer(questionAnswer, quizAnswerItem.getAnswersList());
                 }
+
+                calculateDashboardStatistics(quizAnswer);
             }
             quizAnswerItemRepository.deleteById(quizAnswerItem.getId());
         });
     }
 
+    private void calculateDashboardStatistics(QuizAnswer quizAnswer) {
+        Dashboard dashboard = quizAnswer.getStudent().getCourseExecutionDashboard(quizAnswer.getQuiz().getCourseExecution());
+        if (dashboard == null) {
+            dashboard = new Dashboard(quizAnswer.getQuiz().getCourseExecution(), quizAnswer.getStudent());
+            dashboardRepository.save(dashboard);
+        }
+        dashboard.statistics(quizAnswer);
+    }
+
     private void fraudDetection(QuizAnswer quizAnswer, List<QuestionAnswerItem> questionAnswerItems) {
         List<QuestionAnswerItem> finalItems = new ArrayList<>();
         for (int i = 0; i < questionAnswerItems.size() - 1; i++) {
-            if (!questionAnswerItems.get(i).getQuizQuestionId().equals(questionAnswerItems.get(i+1).getQuizQuestionId())) {
+            if (!questionAnswerItems.get(i).getQuizQuestionId().equals(questionAnswerItems.get(i + 1).getQuizQuestionId())) {
                 finalItems.add(questionAnswerItems.get(i));
             }
         }
@@ -247,7 +270,7 @@ public class AnswerService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public StatementQuizDto generateStudentQuiz(int userId, int executionId, StatementCreationDto quizDetails) {
@@ -285,7 +308,7 @@ public class AnswerService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public StatementQuizDto generateTournamentQuiz(int userId, int executionId, StatementTournamentCreationDto quizDetails, Tournament tournament) {
@@ -331,7 +354,7 @@ public class AnswerService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public StatementQuizDto getQuizByQRCode(int userId, int quizId) {
@@ -356,7 +379,7 @@ public class AnswerService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public StatementQuizDto startQuiz(int userId, int quizId) {
@@ -419,7 +442,7 @@ public class AnswerService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true)
     public List<QuizDto> getAvailableQuizzes(int userId, int executionId) {
@@ -429,7 +452,7 @@ public class AnswerService {
         Set<Quiz> openQuizzes = quizAnswerRepository.findOpenNonQRCodeQuizAnswers(userId, executionId, now);
 
         return Stream.concat(quizRepository.findAvailableNonQRCodeNonGeneratedNonTournamentQuizzes(executionId, DateHandler.now()).stream(),
-                openQuizzes.stream())
+                        openQuizzes.stream())
                 .filter(quiz -> !answeredQuizIds.contains(quiz.getId()))
                 .distinct()
                 .map(quiz -> new QuizDto(quiz, false))
@@ -438,14 +461,15 @@ public class AnswerService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED, readOnly = true)
     public List<SolvedQuizDto> getSolvedQuizzes(int userId, int executionId) {
         Student student = studentRepository.findStudentWithQuizAnswersAndQuestionAnswersById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
         return student.getQuizAnswers().stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic(executionId))
+                .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId().equals(executionId))
+                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
                 .filter(quizAnswer -> quizAnswer.getAnswerDate() != null)
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
@@ -462,7 +486,7 @@ public class AnswerService {
         } catch (TutorException te) {
             for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
                 mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
-                        Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion", te.getMessage());
+                        Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "The following behavior was detected but the student *was not able* to answer questions out of the predefined order: " + te.getMessage());
             }
 
             throw te;
@@ -474,7 +498,7 @@ public class AnswerService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void submitAnswer(String username, int quizId, StatementAnswerDto answer) {
@@ -486,7 +510,7 @@ public class AnswerService {
         } catch (TutorException te) {
             for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
                 mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
-                        Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion", te.getMessage());
+                        Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "The following behavior was detected but the student *was not able* to answer questions out of the predefined order: " + te.getMessage());
             }
 
             throw te;
@@ -499,10 +523,10 @@ public class AnswerService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void writeQuizAnswersAndCalculateStatistics() {
+    public void writeQuizAnswersAndQuestionStatistics() {
         Set<Integer> quizzesToWrite = quizAnswerItemRepository.findQuizzesToWrite();
         quizzesToWrite.forEach(quizToWrite -> {
             if (quizRepository.findById(quizToWrite).isPresent()) {
@@ -510,28 +534,41 @@ public class AnswerService {
             }
         });
 
-        Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToCalculateStatistics(DateHandler.now());
+        Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToCalculateStatistics();
+        quizAnswersToClose.forEach(quizAnswer -> quizAnswer.calculateQuestionStatistics());
 
-        quizAnswersToClose.forEach(QuizAnswer::calculateStatistics);
+        // TOBE REMOVED: RUN ONLY ONCE
+        System.out.println(DateHandler.now());
+        quizAnswerRepository.findAll().forEach(quizAnswer -> {
+            calculateDashboardStatistics(quizAnswer);
+        });
+        System.out.println(DateHandler.now());
+
+        List<CourseExecution> courseExecutions = courseExecutionRepository.findAll();
+        courseExecutions.forEach(courseExecution -> difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(courseExecution.getId()));
+
+        System.out.println(DateHandler.now());
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {
         Assessment assessment = assessmentRepository.findById(quizDetails.getAssessment())
                 .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, quizDetails.getAssessment()));
 
-        return availableQuestions.stream().filter(question -> question.belongsToAssessment(assessment)).collect(Collectors.toList());
+        return availableQuestions.stream()
+                .filter(question -> assessment.hasQuestion(question))
+                .collect(Collectors.toList());
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoAnswers() {
         Set<QuestionAnswerItem> questionAnswerItems = questionAnswerItemRepository.findDemoStudentQuestionAnswerItems();
-        questionAnswerItems.forEach(questionAnswerItem -> questionAnswerItemRepository.delete(questionAnswerItem));
+        questionAnswerItemRepository.deleteAll(questionAnswerItems);
 
         Set<QuizAnswer> quizAnswers = quizAnswerRepository.findByExecutionCourseId(courseExecutionService.getDemoCourse().getCourseExecutionId());
 
         quizAnswers.forEach(quizAnswer -> {
-                quizAnswer.remove();
-                quizAnswerRepository.delete(quizAnswer);
+            quizAnswer.remove();
+            quizAnswerRepository.delete(quizAnswer);
         });
     }
 

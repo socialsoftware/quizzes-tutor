@@ -31,7 +31,7 @@ public class CodeOrderAnswer extends AnswerDetails {
 
     @Override
     public boolean isCorrect() {
-        return this.getOrderedSlots().stream().allMatch(CodeOrderAnswerSlot::isCorrect);
+        return isAnswered() && this.getOrderedSlots().stream().allMatch(CodeOrderAnswerSlot::isCorrect);
     }
 
     @Override

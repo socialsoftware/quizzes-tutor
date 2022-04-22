@@ -1,9 +1,9 @@
 <template>
   <v-dialog
     :value="dialog"
+    max-width="75%"
     @input="$emit('dialog', false)"
     @keydown.esc="$emit('dialog', false)"
-    max-width="75%"
   >
     <v-card>
       <v-card-title>
@@ -11,8 +11,8 @@
       </v-card-title>
       <v-card-text class="text-left">
         <div
-          class="question-container"
           v-if="statementQuestion && statementQuestion.questionDetails"
+          class="question-container"
         >
           <div class="question">
             <span class="square"> 1 </span>
@@ -29,15 +29,21 @@
           </div>
           <component
             :is="statementQuestion.questionDetails.type"
-            :questionDetails="statementQuestion.questionDetails"
             :answerDetails="statementAnswerDetails"
+            :questionDetails="statementQuestion.questionDetails"
           >
           </component>
         </div>
       </v-card-text>
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="$emit('dialog')">close</v-btn>
+        <v-btn
+          color="blue darken-1"
+          dark
+          data-cy="closeButton"
+          @click="$emit('dialog')"
+          >close</v-btn
+        >
       </v-card-actions>
     </v-card>
   </v-dialog>

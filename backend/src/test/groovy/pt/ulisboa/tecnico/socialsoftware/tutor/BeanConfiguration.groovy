@@ -10,6 +10,10 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DashboardService
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DifficultQuestionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.WeeklyScoreService
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.FailedAnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
@@ -120,6 +124,26 @@ class BeanConfiguration {
     @Bean
     QuestionSubmissionService questionSubmissionService() {
         return new QuestionSubmissionService()
+    }
+
+    @Bean
+    DashboardService dashboardService() {
+        return new DashboardService()
+    }
+
+    @Bean
+    WeeklyScoreService weeklyScoreService() {
+        return new WeeklyScoreService()
+    }
+
+    @Bean
+    DifficultQuestionService difficultQuestionService() {
+        return new DifficultQuestionService()
+    }
+
+    @Bean
+    FailedAnswerService failedAnswerService() {
+        return new FailedAnswerService()
     }
 
     @Bean

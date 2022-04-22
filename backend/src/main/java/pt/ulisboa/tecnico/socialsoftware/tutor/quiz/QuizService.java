@@ -218,7 +218,7 @@ public class QuizService {
         Set<QuizQuestion> quizQuestions = new HashSet<>(quiz.getQuizQuestions());
 
         quizQuestions.forEach(QuizQuestion::remove);
-        quizQuestions.forEach(quizQuestion -> quizQuestionRepository.delete(quizQuestion));
+        quizQuestionRepository.deleteAll(quizQuestions);
 
         quizRepository.delete(quiz);
     }

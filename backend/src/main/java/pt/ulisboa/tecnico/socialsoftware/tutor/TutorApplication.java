@@ -35,7 +35,7 @@ public class TutorApplication extends SpringBootServletInitializer implements In
     public void afterPropertiesSet() {
         // Run on startup
         JwtTokenProvider.generateKeys();
-        answerService.writeQuizAnswersAndCalculateStatistics();
+        answerService.writeQuizAnswersAndQuestionStatistics();
 
         demoUtils.resetDemoInfo();
     }

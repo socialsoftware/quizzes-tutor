@@ -18,6 +18,22 @@ export function ISOtoString(dateString: string | null): string {
   }
 }
 
+export function ISOtoStringDayOnly(dateString: string | null): string {
+  if (dateString) {
+    const date = new Date(dateString);
+    const year = date.getFullYear();
+    const month = date.getMonth() + 1;
+    const day = date.getDate();
+
+    const monthString = month < 10 ? '0' + month : '' + month;
+    const dayString = day < 10 ? '0' + day : '' + day;
+
+    return `${year}-${monthString}-${dayString}`;
+  } else {
+    return '-';
+  }
+}
+
 export function milisecondsToHHMMSS(
   miliseconds: number | undefined | null
 ): string {

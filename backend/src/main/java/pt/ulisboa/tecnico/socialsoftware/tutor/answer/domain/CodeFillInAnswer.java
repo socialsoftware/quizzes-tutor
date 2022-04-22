@@ -42,7 +42,7 @@ public class CodeFillInAnswer extends AnswerDetails {
 
     @Override
     public boolean isCorrect() {
-        return this.getFillInOptions().stream().allMatch(CodeFillInOption::isCorrect);
+        return isAnswered() && this.getFillInOptions().stream().allMatch(CodeFillInOption::isCorrect);
     }
 
     @Override

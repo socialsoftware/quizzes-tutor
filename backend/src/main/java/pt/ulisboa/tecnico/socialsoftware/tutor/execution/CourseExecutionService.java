@@ -6,9 +6,13 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
@@ -21,6 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.StudentDto;
@@ -34,6 +39,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -51,6 +57,9 @@ public class CourseExecutionService {
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private QuizAnswerRepository quizAnswerRepository;
 
     @Autowired
     private UserRepository userRepository;
@@ -171,11 +180,36 @@ public class CourseExecutionService {
         if (courseExecution == null) {
             return new ArrayList<>();
         }
+
         return courseExecution.getUsers().stream()
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
                 .sorted(Comparator.comparing(User::getName))
                 .map(Student.class::cast)
-                .map(StudentDto::new)
+                .map(student -> {
+                    Dashboard dashboard = student.getCourseExecutionDashboard(courseExecution);
+
+                    StudentDto studentDto = new StudentDto(student);
+
+                    if (dashboard != null) {
+                        studentDto.setNumberOfInClassQuizzes(dashboard.getNumberOfInClassQuizzes());
+                        studentDto.setNumberOfStudentQuizzes(dashboard.getNumberOfStudentQuizzes());
+                        studentDto.setNumberOfTeacherQuizzes(dashboard.getNumberOfTeacherQuizzes());
+                        studentDto.setNumberOfInClassAnswers(dashboard.getNumberOfInClassAnswers());
+                        studentDto.setNumberOfStudentAnswers(dashboard.getNumberOfStudentAnswers());
+                        studentDto.setNumberOfTeacherAnswers(dashboard.getNumberOfTeacherAnswers());
+                        studentDto.setNumberOfAnswers(studentDto.getNumberOfTeacherAnswers() + studentDto.getNumberOfInClassAnswers() + studentDto.getNumberOfStudentAnswers());
+                        if (studentDto.getNumberOfInClassAnswers() != 0)
+                            studentDto.setPercentageOfCorrectInClassAnswers(dashboard.getNumberOfCorrectInClassAnswers() * 100 / studentDto.getNumberOfInClassAnswers());
+                        if (studentDto.getNumberOfStudentAnswers() != 0)
+                            studentDto.setPercentageOfCorrectStudentAnswers(dashboard.getNumberOfCorrectStudentAnswers() * 100 / studentDto.getNumberOfStudentAnswers());
+                        if (studentDto.getNumberOfTeacherAnswers() != 0)
+                            studentDto.setPercentageOfCorrectTeacherAnswers(dashboard.getNumberOfCorrectTeacherAnswers() * 100 / studentDto.getNumberOfTeacherAnswers());
+                        if (studentDto.getNumberOfAnswers() != 0)
+                            studentDto.setPercentageOfCorrectAnswers((dashboard.getNumberOfCorrectInClassAnswers() + dashboard.getNumberOfCorrectStudentAnswers() + dashboard.getNumberOfCorrectTeacherAnswers()) * 100 / studentDto.getNumberOfAnswers());
+                    }
+
+                    return studentDto;
+                })
                 .collect(Collectors.toList());
     }
 
