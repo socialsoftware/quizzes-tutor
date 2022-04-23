@@ -555,9 +555,9 @@ public class AnswerService {
 
         Set<QuizAnswer> quizAnswers = quizAnswerRepository.findByExecutionCourseId(courseExecutionService.getDemoCourse().getCourseExecutionId());
 
-        Integer quizAnsers2Keep = 40438;
-        for (QuizAnswer quizAnswer: quizAnswers) {
-            if (!quizAnswer.getQuiz().getId().equals(quizAnsers2Keep) || !quizAnswer.getStudent().getUsername().equals(DemoUtils.STUDENT_USERNAME)) {
+        Integer quizAnswers2Keep = 40438;
+        for (QuizAnswer quizAnswer : quizAnswers) {
+            if (!quizAnswer.getQuiz().getId().equals(quizAnswers2Keep) || !quizAnswer.getStudent().getUsername().equals(DemoUtils.STUDENT_USERNAME)) {
                 quizAnswer.remove();
                 quizAnswerRepository.delete(quizAnswer);
             }

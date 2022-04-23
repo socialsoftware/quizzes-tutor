@@ -7,9 +7,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlExport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.TopicsXmlImport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
@@ -29,9 +27,6 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Service
 public class TopicService {
     @Autowired
-    private AssessmentService assessmentService;
-
-    @Autowired
     private QuestionService questionService;
 
     @Autowired
@@ -39,9 +34,6 @@ public class TopicService {
 
     @Autowired
     private CourseRepository courseRepository;
-
-    @Autowired
-    private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
     private TopicRepository topicRepository;
@@ -138,16 +130,6 @@ public class TopicService {
                     topic.remove();
                     this.topicRepository.delete(topic);
                 });
-
-        Topic topic = new Topic();
-        topic.setName("Software Architecture");
-        topic.setCourse(courseRepository.findById(courseId).get());
-        topicRepository.save(topic);
-
-        topic = new Topic();
-        topic.setName("Software Engineering");
-        topic.setCourse(courseRepository.findById(courseId).get());
-        topicRepository.save(topic);
     }
 
 }

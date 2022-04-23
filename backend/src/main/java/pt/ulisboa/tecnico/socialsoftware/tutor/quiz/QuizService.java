@@ -234,7 +234,7 @@ public class QuizService {
         quizAnswersDto.setCorrectSequence(
                 quiz.getQuizQuestions().stream()
                         .map(quizQuestion -> quizQuestion.getQuestion().getCorrectAnswerRepresentation()
-                ).collect(Collectors.toList()));
+                        ).collect(Collectors.toList()));
 
         quizAnswersDto.setQuizAnswers(quiz.getQuizAnswers().stream().map(QuizAnswerDto::new).collect(Collectors.toList()));
         if (quiz.getConclusionDate() != null && quiz.getConclusionDate().isAfter(DateHandler.now())) {
@@ -301,7 +301,7 @@ public class QuizService {
             myWriter.close();
         }
         // export images
-        for (Question question: quiz.getQuizQuestions().stream().map(QuizQuestion::getQuestion).collect(Collectors.toList())) {
+        for (Question question : quiz.getQuizQuestions().stream().map(QuizQuestion::getQuestion).collect(Collectors.toList())) {
             if (question.getImage() != null) {
                 try {
                     File figureFile = new File(figuresDir + question.getImage().getUrl());
@@ -317,7 +317,7 @@ public class QuizService {
         String latexStyDirectoryPath = latexDirectoryPath + "/sty/";
         File latexStyDirectory = new File(latexStyDirectoryPath);
         latexStyDirectory.mkdir();
-        String[] latexFileNames = {"docist.cls", "macros.tex", "exameIST.sty",  "exame.tex", "LogoIST-novo.pdf"};
+        String[] latexFileNames = {"docist.cls", "macros.tex", "exameIST.sty", "exame.tex", "LogoIST-novo.pdf"};
         for (String latexFileName : latexFileNames) {
             Resource resource = resourceLoader.getResource("classpath:/latex/" + latexFileName);
             InputStream latexFile = resource.getInputStream();
@@ -341,8 +341,8 @@ public class QuizService {
         if (myObj.createNewFile()) {
             FileWriter myWriter = new FileWriter(myObj);
             myWriter.write(questionsXmlExport.export(quiz.getQuizQuestions().stream()
-                            .map(QuizQuestion::getQuestion)
-                            .collect(Collectors.toList())));
+                    .map(QuizQuestion::getQuestion)
+                    .collect(Collectors.toList())));
             myWriter.close();
         }
 
@@ -358,23 +358,23 @@ public class QuizService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoQuizzes() {
         // remove quizzes except to keep
-        List<Integer> quizzes2Keep = Arrays.asList(40438,40446);
+        Integer quiz2Keep = 40438;
         quizRepository.findQuizzesOfExecution(courseExecutionService.getDemoCourse().getCourseExecutionId())
                 .stream()
                 .forEach(quiz -> {
-                    if (!quizzes2Keep.contains(quiz.getId())) {
+                    if (!quiz.getId().equals(quiz2Keep)) {
                         quiz.remove();
                         this.quizRepository.delete(quiz);
                     }
                 });
 
         // remove questions except to keep and that are not submitted
-        List<Integer> questions2Keep = Arrays.asList(1320,1940,1544,11081,11082);
+        List<Integer> questions2Keep = Arrays.asList(1320, 1940, 1544, 11081, 11082);
         for (Question question : questionRepository.findQuestions(courseExecutionService.getDemoCourse().getCourseId())
                 .stream()
                 .filter(question -> !questions2Keep.contains(question.getId()) && questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId()) == null)

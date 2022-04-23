@@ -173,15 +173,6 @@ public class AssessmentService {
                     assessment.remove();
                     assessmentRepository.delete(assessment);
                 });
-
-        Assessment assessment = new Assessment();
-        assessment.setTitle("Questions Without Topic");
-        assessment.setStatus(Assessment.Status.AVAILABLE);
-        assessment.setSequence(1);
-        assessment.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).get());
-        TopicConjunction topicConjunction = new TopicConjunction();
-        topicConjunction.setAssessment(assessment);
-        assessmentRepository.save(assessment);
     }
 
     @Retryable(
