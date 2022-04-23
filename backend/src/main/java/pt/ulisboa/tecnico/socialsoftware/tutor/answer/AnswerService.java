@@ -536,18 +536,6 @@ public class AnswerService {
 
         Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToCalculateStatistics();
         quizAnswersToClose.forEach(quizAnswer -> quizAnswer.calculateQuestionStatistics());
-
-        // TOBE REMOVED: RUN ONLY ONCE
-        System.out.println(DateHandler.now());
-        quizAnswerRepository.findAll().forEach(quizAnswer -> {
-            calculateDashboardStatistics(quizAnswer);
-        });
-        System.out.println(DateHandler.now());
-
-        List<CourseExecution> courseExecutions = courseExecutionRepository.findAll();
-        courseExecutions.forEach(courseExecution -> difficultQuestionService.updateCourseExecutionWeekDifficultQuestions(courseExecution.getId()));
-
-        System.out.println(DateHandler.now());
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {
