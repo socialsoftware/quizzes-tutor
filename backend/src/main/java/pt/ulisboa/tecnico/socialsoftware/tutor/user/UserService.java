@@ -163,9 +163,12 @@ public class UserService {
         userRepository.findAll()
                 .stream()
                 .filter(user -> user.getAuthUser().isDemoStudent())
-                .forEach(user -> {
-                    user.remove();
-                    this.userRepository.delete(user);
+                .map(Student.class::cast)
+                .forEach(student -> {
+                   if (student.getQuizAnswers().isEmpty()) {
+                       student.remove();
+                       this.userRepository.delete(student);
+                   }
                 });
     }
 

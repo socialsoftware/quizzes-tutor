@@ -47,8 +47,8 @@ public class TopicService {
     private TopicRepository topicRepository;
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<TopicDto> findTopics(int courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
@@ -56,8 +56,8 @@ public class TopicService {
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public TopicDto createTopic(int courseId, TopicDto topicDto) {
 
@@ -73,7 +73,7 @@ public class TopicService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> getTopicQuestions(Integer topicId) {
@@ -83,8 +83,8 @@ public class TopicService {
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public TopicDto updateTopic(Integer topicId, TopicDto topicDto) {
         Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
@@ -94,8 +94,8 @@ public class TopicService {
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeTopic(Integer topicId) {
         Topic topic = topicRepository.findById(topicId)
@@ -106,8 +106,8 @@ public class TopicService {
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public String exportTopics() {
         TopicsXmlExport xmlExport = new TopicsXmlExport();
@@ -116,8 +116,8 @@ public class TopicService {
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void importTopics(String topicsXML) {
         TopicsXmlImport xmlImporter = new TopicsXmlImport();
@@ -126,17 +126,28 @@ public class TopicService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoTopics() {
-        this.topicRepository.findTopics(courseExecutionService.getDemoCourse().getCourseId())
+        Integer courseId = courseExecutionService.getDemoCourse().getCourseId();
+
+        this.topicRepository.findTopics(courseId)
                 .stream()
-                .skip(5)
                 .forEach(topic -> {
                     topic.remove();
                     this.topicRepository.delete(topic);
                 });
+
+        Topic topic = new Topic();
+        topic.setName("Software Architecture");
+        topic.setCourse(courseRepository.findById(courseId).get());
+        topicRepository.save(topic);
+
+        topic = new Topic();
+        topic.setName("Software Engineering");
+        topic.setCourse(courseRepository.findById(courseId).get());
+        topicRepository.save(topic);
     }
 
 }

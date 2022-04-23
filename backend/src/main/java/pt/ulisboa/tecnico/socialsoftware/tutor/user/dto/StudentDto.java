@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.dto;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 
 import java.io.Serializable;
@@ -21,6 +23,30 @@ public class StudentDto extends UserDto implements Serializable {
 
     public StudentDto(Student student) {
         super(student);
+    }
+
+    public StudentDto(Student student, CourseExecution courseExecution) {
+        this(student);
+
+        Dashboard dashboard = student.getCourseExecutionDashboard(courseExecution);
+
+        if (dashboard != null) {
+            setNumberOfInClassQuizzes(dashboard.getNumberOfInClassQuizzes());
+            setNumberOfStudentQuizzes(dashboard.getNumberOfStudentQuizzes());
+            setNumberOfTeacherQuizzes(dashboard.getNumberOfTeacherQuizzes());
+            setNumberOfInClassAnswers(dashboard.getNumberOfInClassAnswers());
+            setNumberOfStudentAnswers(dashboard.getNumberOfStudentAnswers());
+            setNumberOfTeacherAnswers(dashboard.getNumberOfTeacherAnswers());
+            setNumberOfAnswers(getNumberOfTeacherAnswers() + getNumberOfInClassAnswers() + getNumberOfStudentAnswers());
+            if (getNumberOfInClassAnswers() != 0)
+                setPercentageOfCorrectInClassAnswers(dashboard.getNumberOfCorrectInClassAnswers() * 100 / getNumberOfInClassAnswers());
+            if (getNumberOfStudentAnswers() != 0)
+                setPercentageOfCorrectStudentAnswers(dashboard.getNumberOfCorrectStudentAnswers() * 100 / getNumberOfStudentAnswers());
+            if (getNumberOfTeacherAnswers() != 0)
+                setPercentageOfCorrectTeacherAnswers(dashboard.getNumberOfCorrectTeacherAnswers() * 100 / getNumberOfTeacherAnswers());
+            if (getNumberOfAnswers() != 0)
+                setPercentageOfCorrectAnswers((dashboard.getNumberOfCorrectInClassAnswers() + dashboard.getNumberOfCorrectStudentAnswers() + dashboard.getNumberOfCorrectTeacherAnswers()) * 100 / getNumberOfAnswers());
+        }
     }
 
     public int getNumberOfTeacherQuizzes() {

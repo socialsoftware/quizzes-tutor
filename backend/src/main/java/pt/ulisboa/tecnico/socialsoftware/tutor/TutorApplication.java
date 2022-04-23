@@ -6,6 +6,8 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.PropertySource;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -14,13 +16,16 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 
-@PropertySource({ "classpath:application.properties" })
+@PropertySource({"classpath:application.properties"})
 @EnableJpaRepositories
 @EnableTransactionManagement
 @EnableJpaAuditing
 @EnableScheduling
 @SpringBootApplication
 public class TutorApplication extends SpringBootServletInitializer implements InitializingBean {
+    @Autowired
+    private Environment environment;
+
     public static void main(String[] args) {
         SpringApplication.run(TutorApplication.class, args);
     }
@@ -37,7 +42,9 @@ public class TutorApplication extends SpringBootServletInitializer implements In
         JwtTokenProvider.generateKeys();
         answerService.writeQuizAnswersAndQuestionStatistics();
 
-        demoUtils.resetDemoInfo();
+        if (environment.acceptsProfiles(Profiles.of("dev")) || environment.acceptsProfiles(Profiles.of("prod"))) {
+            demoUtils.resetDemoInfo();
+        }
     }
 
 }

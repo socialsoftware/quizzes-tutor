@@ -362,19 +362,22 @@ public class QuizService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoQuizzes() {
+        // remove quizzes except to keep
+        List<Integer> quizzes2Keep = Arrays.asList(40438,40446);
         quizRepository.findQuizzesOfExecution(courseExecutionService.getDemoCourse().getCourseExecutionId())
                 .stream()
-                .sorted(Comparator.comparing(Quiz::getId))
-                .skip(2)
                 .forEach(quiz -> {
-                    quiz.remove();
-                    this.quizRepository.delete(quiz);
+                    if (!quizzes2Keep.contains(quiz.getId())) {
+                        quiz.remove();
+                        this.quizRepository.delete(quiz);
+                    }
                 });
 
-        // remove questions that weren't in any quiz and are not submitted
+        // remove questions except to keep and that are not submitted
+        List<Integer> questions2Keep = Arrays.asList(1320,1940,1544,11081,11082);
         for (Question question : questionRepository.findQuestions(courseExecutionService.getDemoCourse().getCourseId())
                 .stream()
-                .filter(question -> question.getQuizQuestions().isEmpty() && questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId()) == null)
+                .filter(question -> !questions2Keep.contains(question.getId()) && questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId()) == null)
                 .collect(Collectors.toList())) {
             questionService.removeQuestion(question.getId());
         }

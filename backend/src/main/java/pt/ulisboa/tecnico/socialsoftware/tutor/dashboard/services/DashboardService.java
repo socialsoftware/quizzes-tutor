@@ -129,7 +129,7 @@ public class DashboardService {
         Set<DifficultQuestion> difficultQuestionsToRemove = courseExecutionRepository.findById(courseExecutionService.getDemoCourse().getCourseExecutionId()).stream()
                 .flatMap(courseExecution -> courseExecution.getDifficultQuestions().stream())
                 .collect(Collectors.toSet());
-        
+
         difficultQuestionsToRemove.forEach(difficultQuestion -> {
             difficultQuestion.remove();
             difficultQuestionRepository.delete(difficultQuestion);

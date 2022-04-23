@@ -185,31 +185,7 @@ public class CourseExecutionService {
                 .filter(user -> user.getRole().equals(User.Role.STUDENT))
                 .sorted(Comparator.comparing(User::getName))
                 .map(Student.class::cast)
-                .map(student -> {
-                    Dashboard dashboard = student.getCourseExecutionDashboard(courseExecution);
-
-                    StudentDto studentDto = new StudentDto(student);
-
-                    if (dashboard != null) {
-                        studentDto.setNumberOfInClassQuizzes(dashboard.getNumberOfInClassQuizzes());
-                        studentDto.setNumberOfStudentQuizzes(dashboard.getNumberOfStudentQuizzes());
-                        studentDto.setNumberOfTeacherQuizzes(dashboard.getNumberOfTeacherQuizzes());
-                        studentDto.setNumberOfInClassAnswers(dashboard.getNumberOfInClassAnswers());
-                        studentDto.setNumberOfStudentAnswers(dashboard.getNumberOfStudentAnswers());
-                        studentDto.setNumberOfTeacherAnswers(dashboard.getNumberOfTeacherAnswers());
-                        studentDto.setNumberOfAnswers(studentDto.getNumberOfTeacherAnswers() + studentDto.getNumberOfInClassAnswers() + studentDto.getNumberOfStudentAnswers());
-                        if (studentDto.getNumberOfInClassAnswers() != 0)
-                            studentDto.setPercentageOfCorrectInClassAnswers(dashboard.getNumberOfCorrectInClassAnswers() * 100 / studentDto.getNumberOfInClassAnswers());
-                        if (studentDto.getNumberOfStudentAnswers() != 0)
-                            studentDto.setPercentageOfCorrectStudentAnswers(dashboard.getNumberOfCorrectStudentAnswers() * 100 / studentDto.getNumberOfStudentAnswers());
-                        if (studentDto.getNumberOfTeacherAnswers() != 0)
-                            studentDto.setPercentageOfCorrectTeacherAnswers(dashboard.getNumberOfCorrectTeacherAnswers() * 100 / studentDto.getNumberOfTeacherAnswers());
-                        if (studentDto.getNumberOfAnswers() != 0)
-                            studentDto.setPercentageOfCorrectAnswers((dashboard.getNumberOfCorrectInClassAnswers() + dashboard.getNumberOfCorrectStudentAnswers() + dashboard.getNumberOfCorrectTeacherAnswers()) * 100 / studentDto.getNumberOfAnswers());
-                    }
-
-                    return studentDto;
-                })
+                .map(student -> new StudentDto(student, courseExecution))
                 .collect(Collectors.toList());
     }
 

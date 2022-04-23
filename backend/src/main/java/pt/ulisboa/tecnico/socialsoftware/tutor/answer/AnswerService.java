@@ -34,6 +34,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.StudentRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer;
 
 import java.sql.SQLException;
@@ -554,10 +555,13 @@ public class AnswerService {
 
         Set<QuizAnswer> quizAnswers = quizAnswerRepository.findByExecutionCourseId(courseExecutionService.getDemoCourse().getCourseExecutionId());
 
-        quizAnswers.forEach(quizAnswer -> {
-            quizAnswer.remove();
-            quizAnswerRepository.delete(quizAnswer);
-        });
+        Integer quizAnsers2Keep = 40438;
+        for (QuizAnswer quizAnswer: quizAnswers) {
+            if (!quizAnswer.getQuiz().getId().equals(quizAnsers2Keep) || !quizAnswer.getStudent().getUsername().equals(DemoUtils.STUDENT_USERNAME)) {
+                quizAnswer.remove();
+                quizAnswerRepository.delete(quizAnswer);
+            }
+        }
     }
 
 }
