@@ -112,7 +112,7 @@ public class QuestionSubmissionService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void updateQuestionSubmissionTopics(Integer questionSubmissionId, TopicDto[] topics) {
@@ -127,7 +127,7 @@ public class QuestionSubmissionService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeSubmittedQuestion(Integer questionSubmissionId) {
@@ -140,7 +140,7 @@ public class QuestionSubmissionService {
         deleteQuestionSubmission(questionSubmission);
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void deleteQuestionSubmission(QuestionSubmission questionSubmission) {
         questionSubmission.remove();
@@ -148,28 +148,28 @@ public class QuestionSubmissionService {
         questionSubmissionRepository.delete(questionSubmission);
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSubmissionDto> getStudentQuestionSubmissions(Integer studentId, Integer courseExecutionId) {
         return questionSubmissionRepository.findQuestionSubmissionsByUserAndCourseExecution(studentId, courseExecutionId).stream().map(QuestionSubmissionDto::new)
                 .collect(Collectors.toList());
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSubmissionDto> getCourseExecutionQuestionSubmissions(Integer courseExecutionId) {
         return questionSubmissionRepository.findQuestionSubmissionsByCourseExecution(courseExecutionId).stream().map(QuestionSubmissionDto::new)
                 .collect(Collectors.toList());
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<ReviewDto> getQuestionSubmissionReviews(Integer questionSubmissionId) {
         return reviewRepository.findReviewsBySubmissionId(questionSubmissionId).stream().map(ReviewDto::new)
                 .collect(Collectors.toList());
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<UserQuestionSubmissionInfoDto> getAllStudentsQuestionSubmissionsInfo(Integer courseExecutionId) {
         CourseExecution courseExecution = getCourseExecution(courseExecutionId);
@@ -177,7 +177,7 @@ public class QuestionSubmissionService {
 
         List<UserQuestionSubmissionInfoDto> userQuestionSubmissionInfoDtos = new ArrayList<>();
 
-        for (Student student: students) {
+        for (Student student : students) {
             userQuestionSubmissionInfoDtos.add(new UserQuestionSubmissionInfoDto(student));
         }
 
@@ -186,7 +186,7 @@ public class QuestionSubmissionService {
         return userQuestionSubmissionInfoDtos;
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void toggleStudentNotificationRead(Integer questionSubmissionId, boolean hasRead) {
         QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
@@ -194,24 +194,12 @@ public class QuestionSubmissionService {
         questionSubmission.setStudentRead(hasRead);
     }
 
-    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void toggleTeacherNotificationRead(Integer questionSubmissionId, boolean hasRead) {
         QuestionSubmission questionSubmission = getQuestionSubmission(questionSubmissionId);
 
         questionSubmission.setTeacherRead(hasRead);
-    }
-
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void resetDemoQuestionSubmissions() {
-        questionSubmissionRepository.findQuestionSubmissionsByCourseExecution(courseExecutionService.getDemoCourse().getCourseExecutionId())
-                .forEach(questionSubmission -> {
-                    questionSubmission.remove();
-                    questionSubmissionRepository.delete(questionSubmission);
-                });
     }
 
     private void checkIfConsistentQuestionSubmission(QuestionSubmissionDto questionSubmissionDto) {

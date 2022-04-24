@@ -5,14 +5,10 @@ import groovyx.net.http.RESTClient
 import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetDashboardWebServiceIT extends SpockTest {
+class GetDashboardWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
@@ -22,6 +18,8 @@ class GetDashboardWebServiceIT extends SpockTest {
 
     def setup() {
         given:
+        deleteAll()
+        abd:
         restClient = new RESTClient("http://localhost:" + port)
         and:
         courseExecutionDto = courseService.getDemoCourse()

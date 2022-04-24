@@ -14,7 +14,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.transaction.annotation.EnableTransactionManagement;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.JwtTokenProvider;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
+import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoUtils;
 
 @PropertySource({"classpath:application.properties"})
 @EnableJpaRepositories

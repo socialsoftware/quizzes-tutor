@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.execution.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class DeleteExternalInactiveUsersWebServiceIT extends SpockTest {
+class DeleteExternalInactiveUsersWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
@@ -24,6 +24,8 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTest {
     def usersIdsList
 
     def setup() {
+        deleteAll()
+
         restClient = new RESTClient("http://localhost:" + port)
         usersIdsList = new ArrayList<>()
         course1 = new Course("Demo Course", Course.Type.EXTERNAL)
@@ -45,13 +47,13 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTest {
         courseExecution1.addUser(user2)
         userRepository.save(user2)
 
-        and:"a user ids list"
+        and: "a user ids list"
         usersIdsList.add(user1.getId())
         usersIdsList.add(user2.getId())
 
         when:
         response = restClient.post(
-                path: '/executions/'+courseExecution1.getId()+'/users/delete/',
+                path: '/executions/' + courseExecution1.getId() + '/users/delete/',
                 body:
                         usersIdsList,
                 requestContentType: 'application/json'

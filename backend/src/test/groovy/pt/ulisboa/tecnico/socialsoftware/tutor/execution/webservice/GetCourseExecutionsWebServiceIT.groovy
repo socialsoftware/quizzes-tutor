@@ -5,20 +5,22 @@ import groovyx.net.http.RESTClient
 import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetCourseExecutionsWebServiceIT extends SpockTest {
+class GetCourseExecutionsWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
     def response
 
     def setup() {
-        given: 'a rest client'
+        given:
+        deleteAll()
+        and:
         restClient = new RESTClient("http://localhost:" + port)
         and: 'an external course execution'
         externalCourse = new Course("Software Engineering", Course.Type.EXTERNAL)

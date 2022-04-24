@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
@@ -15,7 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSu
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetStudentQuestionSubmissionsWebServiceIT extends SpockTest {
+class GetStudentQuestionSubmissionsWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
@@ -26,6 +26,8 @@ class GetStudentQuestionSubmissionsWebServiceIT extends SpockTest {
     def response
 
     def setup() {
+        deleteAll()
+
         restClient = new RESTClient("http://localhost:" + port)
 
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -66,7 +68,7 @@ class GetStudentQuestionSubmissionsWebServiceIT extends SpockTest {
     def "get student's question submission"() {
         when:
         response = restClient.get(
-                path: '/submissions/'+courseExecution.getId()+'/student',
+                path: '/submissions/' + courseExecution.getId() + '/student',
                 requestContentType: 'application/json'
         )
 

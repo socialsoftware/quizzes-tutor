@@ -5,7 +5,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
@@ -15,7 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class TournamentIT extends SpockTest {
+class TournamentIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
@@ -31,6 +31,8 @@ class TournamentIT extends SpockTest {
     def tournamentDto
 
     def setup() {
+        deleteAll()
+
         restClient = new RESTClient("http://localhost:" + port)
 
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -47,12 +49,12 @@ class TournamentIT extends SpockTest {
         def loggedUser = restClient.get(
                 path: '/auth/external',
                 query: [
-                        email: USER_1_EMAIL,
+                        email   : USER_1_EMAIL,
                         password: USER_1_PASSWORD,
                 ],
                 requestContentType: 'application/json'
         )
-        restClient.headers['Authorization']  = "Bearer " + loggedUser.data.token
+        restClient.headers['Authorization'] = "Bearer " + loggedUser.data.token
 
         topicDto1 = new TopicDto()
         topicDto1.setName(TOPIC_1_NAME)

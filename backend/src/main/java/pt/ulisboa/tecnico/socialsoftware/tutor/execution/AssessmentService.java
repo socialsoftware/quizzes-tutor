@@ -164,21 +164,6 @@ public class AssessmentService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void resetDemoAssessments() {
-        Integer courseExecutionId = courseExecutionService.getDemoCourse().getCourseExecutionId();
-
-        this.assessmentRepository.findByExecutionCourseId(courseExecutionId)
-                .stream()
-                .forEach(assessment -> {
-                    assessment.remove();
-                    assessmentRepository.delete(assessment);
-                });
-    }
-
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> getAssessmentQuestions(Integer assessmentId) {
         Assessment assessment = assessmentRepository.findById(assessmentId).orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, assessmentId));
 

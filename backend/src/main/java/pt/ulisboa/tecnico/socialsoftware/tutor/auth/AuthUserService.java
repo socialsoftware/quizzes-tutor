@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthUserDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
@@ -22,7 +23,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils;
 
 import java.sql.SQLException;
 import java.util.List;
@@ -53,7 +53,7 @@ public class AuthUserService {
     private PasswordEncoder passwordEncoder;
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto fenixAuth(FenixEduInterface fenix) {
@@ -146,7 +146,7 @@ public class AuthUserService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AuthDto externalUserAuth(String email, String password) {
@@ -167,7 +167,7 @@ public class AuthUserService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -176,15 +176,14 @@ public class AuthUserService {
 
         if (createNew == null || !createNew) {
             authUser = getDemoStudent();
-        }
-        else {
+        } else {
             authUser = userService.createDemoStudent();
         }
         return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser));
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -195,7 +194,7 @@ public class AuthUserService {
     }
 
     @Retryable(
-            value = { SQLException.class },
+            value = {SQLException.class},
             maxAttempts = 2,
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -207,8 +206,8 @@ public class AuthUserService {
 
     private List<CourseExecution> getActiveTecnicoCourses(List<CourseExecutionDto> courses) {
         return courses.stream()
-                .map(courseDto -> courseExecutionRepository.findByFields(courseDto.getAcronym(),courseDto.getAcademicTerm(), Course.Type.TECNICO.name())
-                            .orElse(null)
+                .map(courseDto -> courseExecutionRepository.findByFields(courseDto.getAcronym(), courseDto.getAcademicTerm(), Course.Type.TECNICO.name())
+                        .orElse(null)
                 )
                 .filter(Objects::nonNull)
                 .collect(Collectors.toList());

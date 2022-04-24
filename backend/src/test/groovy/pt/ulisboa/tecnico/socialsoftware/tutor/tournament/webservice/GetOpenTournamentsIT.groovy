@@ -4,7 +4,7 @@ class GetOpenTournamentsIT extends TournamentIT {
     def setup() {
         tournamentDto = createTournamentDto(STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
     }
-    
+
     def "user gets open tournaments"() {
         when:
         response = restClient.get(

@@ -3,7 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
@@ -15,7 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSu
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class RemoveQuestionSubmissionWebServiceIT extends SpockTest {
+class RemoveQuestionSubmissionWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
@@ -27,6 +27,8 @@ class RemoveQuestionSubmissionWebServiceIT extends SpockTest {
     def response
 
     def setup() {
+        deleteAll()
+
         restClient = new RESTClient("http://localhost:" + port)
 
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
@@ -35,7 +37,7 @@ class RemoveQuestionSubmissionWebServiceIT extends SpockTest {
         courseExecutionRepository.save(courseExecution)
 
         student = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
-                 false, AuthUser.Type.TECNICO)
+                false, AuthUser.Type.TECNICO)
         student.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
@@ -68,7 +70,7 @@ class RemoveQuestionSubmissionWebServiceIT extends SpockTest {
     def "remove question submission"() {
         when:
         response = restClient.delete(
-                path: '/submissions/'+questionSubmission.getId(),
+                path: '/submissions/' + questionSubmission.getId(),
                 requestContentType: 'application/json'
         )
 

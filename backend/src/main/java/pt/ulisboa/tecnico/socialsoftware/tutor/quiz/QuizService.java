@@ -356,33 +356,7 @@ public class QuizService {
             myWriter.close();
         }
     }
-
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void resetDemoQuizzes() {
-        // remove quizzes except to keep
-        Integer quiz2Keep = 40438;
-        quizRepository.findQuizzesOfExecution(courseExecutionService.getDemoCourse().getCourseExecutionId())
-                .stream()
-                .forEach(quiz -> {
-                    if (!quiz.getId().equals(quiz2Keep)) {
-                        quiz.remove();
-                        this.quizRepository.delete(quiz);
-                    }
-                });
-
-        // remove questions except to keep and that are not submitted
-        List<Integer> questions2Keep = Arrays.asList(1320, 1940, 1544, 11081, 11082);
-        for (Question question : questionRepository.findQuestions(courseExecutionService.getDemoCourse().getCourseId())
-                .stream()
-                .filter(question -> !questions2Keep.contains(question.getId()) && questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId()) == null)
-                .collect(Collectors.toList())) {
-            questionService.removeQuestion(question.getId());
-        }
-    }
-
+    
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))

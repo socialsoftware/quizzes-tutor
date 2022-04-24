@@ -3,12 +3,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class RegisterExternalUserWebServiceIT extends SpockTest {
+class RegisterExternalUserWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
@@ -16,8 +16,10 @@ class RegisterExternalUserWebServiceIT extends SpockTest {
 
     def course1
     def courseExecution1
-    
-    def setup(){
+
+    def setup() {
+        deleteAll()
+
         restClient = new RESTClient("http://localhost:" + port)
         course1 = new Course("Demo Course", Course.Type.EXTERNAL)
         courseRepository.save(course1)
@@ -26,14 +28,14 @@ class RegisterExternalUserWebServiceIT extends SpockTest {
         demoAdminLogin()
     }
 
-    def "login as demo admin, and create an external user" () {
+    def "login as demo admin, and create an external user"() {
         when:
         response = restClient.post(
                 path: '/users/register/' + courseExecution1.getId(),
                 body: [
                         admin: false,
                         email: USER_1_EMAIL,
-                        role: 'STUDENT'
+                        role : 'STUDENT'
                 ],
                 requestContentType: 'application/json'
         )

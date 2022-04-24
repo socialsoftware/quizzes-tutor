@@ -1,8 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.retry.annotation.Backoff;
-import org.springframework.retry.annotation.Retryable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
@@ -37,8 +35,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.nio.charset.StandardCharsets;
-import java.sql.SQLException;
-import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -68,7 +64,9 @@ public class UserService {
     private PasswordEncoder passwordEncoder;
 
     public static final String MAIL_FORMAT = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+
     public static final String PASSWORD_CONFIRMATION_MAIL_SUBJECT = "Password Confirmation";
+
     public static final String PASSWORD_CONFIRMATION_MAIL_BODY = "Link to password confirmation page";
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -155,29 +153,12 @@ public class UserService {
         xmlImporter.importUsers(usersXML, this);
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void resetDemoStudents() {
-        userRepository.findAll()
-                .stream()
-                .filter(user -> user.getAuthUser().isDemoStudent())
-                .map(Student.class::cast)
-                .forEach(student -> {
-                   if (student.getQuizAnswers().isEmpty()) {
-                       student.remove();
-                       this.userRepository.delete(student);
-                   }
-                });
-    }
-
     @Transactional(isolation = Isolation.READ_COMMITTED,
             propagation = Propagation.REQUIRED)
     public NotificationResponse<CourseExecutionDto> registerListOfUsersTransactional(InputStream stream, int courseExecutionId) {
         Notification notification = new Notification();
         extractUserDtos(stream, notification).forEach(userDto ->
-            registerExternalUserTransactional(courseExecutionId, userDto)
+                registerExternalUserTransactional(courseExecutionId, userDto)
         );
 
         CourseExecutionDto courseExecutionDto = courseExecutionRepository.findById(courseExecutionId)
@@ -200,18 +181,18 @@ public class UserService {
                 if (userInfo.length == 3) {
                     auxRole = User.Role.STUDENT;
                 } else if (userInfo.length == 4 && (userInfo[3].equalsIgnoreCase("student")
-                            || userInfo[3].equalsIgnoreCase("teacher"))) {
+                        || userInfo[3].equalsIgnoreCase("teacher"))) {
                     auxRole = User.Role.valueOf(userInfo[3].toUpperCase());
                 } else {
-                    notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber), 
-                        new TutorException(INVALID_CSV_FILE_FORMAT));
+                    notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber),
+                            new TutorException(INVALID_CSV_FILE_FORMAT));
                     lineNumber++;
                     continue;
                 }
 
                 if (userInfo[0].length() == 0 || !userInfo[0].matches(MAIL_FORMAT) || userInfo[1].length() == 0) {
                     notification.addError(String.format(WRONG_FORMAT_ON_CSV_LINE.label, lineNumber),
-                        new TutorException(INVALID_CSV_FILE_FORMAT));
+                            new TutorException(INVALID_CSV_FILE_FORMAT));
                     lineNumber++;
                     continue;
                 }
@@ -265,12 +246,10 @@ public class UserService {
         try {
             authUser.confirmRegistration(passwordEncoder, externalUserDto.getConfirmationToken(),
                     externalUserDto.getPassword());
-        }
-        catch (TutorException e) {
+        } catch (TutorException e) {
             if (e.getErrorMessage().equals(ErrorMessage.EXPIRED_CONFIRMATION_TOKEN)) {
                 authUser.generateConfirmationToken();
-            }
-            else throw new TutorException(e.getErrorMessage());
+            } else throw new TutorException(e.getErrorMessage());
         }
 
         return new ExternalUserDto(authUser);
@@ -278,15 +257,15 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserDto findUserByUsername(String username) {
-        return  authUserRepository.findAuthUserByUsername(username)
-                    .filter(authUser -> authUser.getUser() != null)
-                    .map(authUser -> new UserDto(authUser.getUser()))
-                    .orElse(null);
+        return authUserRepository.findAuthUserByUsername(username)
+                .filter(authUser -> authUser.getUser() != null)
+                .map(authUser -> new UserDto(authUser.getUser()))
+                .orElse(null);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserDto findUserById(Integer id) {
-        return  userRepository.findById(id)
+        return userRepository.findById(id)
                 .filter(Objects::nonNull)
                 .map(UserDto::new)
                 .orElse(null);
@@ -303,11 +282,11 @@ public class UserService {
                 .orElseGet(() -> {
                     User user;
                     if (externalUserDto.getRole() == User.Role.STUDENT) {
-                         user = new Student(externalUserDto.getName(),
-                                username, externalUserDto.getEmail(),false, AuthUser.Type.EXTERNAL);
+                        user = new Student(externalUserDto.getName(),
+                                username, externalUserDto.getEmail(), false, AuthUser.Type.EXTERNAL);
                     } else if (externalUserDto.getRole() == User.Role.TEACHER) {
                         user = new Teacher(externalUserDto.getName(),
-                                username, externalUserDto.getEmail(),false, AuthUser.Type.EXTERNAL);
+                                username, externalUserDto.getEmail(), false, AuthUser.Type.EXTERNAL);
                     } else {
                         throw new TutorException(INVALID_ROLE, externalUserDto.getRole() == null ? "null" : externalUserDto.getRole().name());
                     }

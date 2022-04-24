@@ -22,6 +22,8 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
 
     def setup() {
         given:
+        deleteAll()
+        and:
         restClient = new RESTClient("http://localhost:" + port)
         and:
         createExternalCourseAndExecution()
@@ -96,7 +98,7 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         error.response.status == HttpStatus.SC_FORBIDDEN
     }
 
-    def cleanup(){
+    def cleanup() {
         dashboardRepository.deleteAll()
         userRepository.deleteAll()
         courseRepository.deleteAll()

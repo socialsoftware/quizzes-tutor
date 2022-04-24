@@ -1,11 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.MultipleChoiceAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
-class FailedAnswersSpockTest extends SpockTest {
+class FailedAnswersSpockTest extends SpockTestIT {
 
     def dashboard
     def student
@@ -60,7 +60,7 @@ class FailedAnswersSpockTest extends SpockTest {
         return quizQuestion
     }
 
-    def addExistingQuestionToQuiz(quiz, question=question) {
+    def addExistingQuestionToQuiz(quiz, question = question) {
         def quizQuestion = new QuizQuestion(quiz, question, 0)
         quizQuestionRepository.save(quizQuestion)
         return quizQuestion
@@ -83,7 +83,7 @@ class FailedAnswersSpockTest extends SpockTest {
 
         def answerDetails
         if (answered && correct) answerDetails = new MultipleChoiceAnswer(questionAnswer, option)
-        else if (answered && !correct ) answerDetails = new MultipleChoiceAnswer(questionAnswer, optionKO)
+        else if (answered && !correct) answerDetails = new MultipleChoiceAnswer(questionAnswer, optionKO)
         else {
             questionAnswerRepository.save(questionAnswer)
             return questionAnswer

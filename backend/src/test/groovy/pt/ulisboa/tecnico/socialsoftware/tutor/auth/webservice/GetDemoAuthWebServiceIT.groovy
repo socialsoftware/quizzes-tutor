@@ -3,16 +3,18 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.auth.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class GetDemoAuthWebServiceIT extends SpockTest {
+class GetDemoAuthWebServiceIT extends SpockTestIT {
 
     @LocalServerPort
     private int port
 
     def setup() {
+        deleteAll()
+
         restClient = new RESTClient("http://localhost:" + port)
     }
 

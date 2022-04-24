@@ -12,8 +12,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DashboardService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DifficultQuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.WeeklyScoreService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.FailedAnswerService
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.WeeklyScoreService
+import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoService
+import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
@@ -25,7 +27,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
 
 @TestConfiguration
@@ -144,6 +145,11 @@ class BeanConfiguration {
     @Bean
     FailedAnswerService failedAnswerService() {
         return new FailedAnswerService()
+    }
+
+    @Bean
+    DemoService demoService() {
+        return new DemoService();
     }
 
     @Bean

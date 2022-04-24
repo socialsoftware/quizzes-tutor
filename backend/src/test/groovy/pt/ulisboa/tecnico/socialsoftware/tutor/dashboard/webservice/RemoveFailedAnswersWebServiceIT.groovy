@@ -11,8 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSp
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
-import java.time.LocalDateTime
-
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
     @LocalServerPort
@@ -26,6 +24,8 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
 
     def setup() {
         given:
+        deleteAll()
+        and:
         restClient = new RESTClient("http://localhost:" + port)
         and:
         createExternalCourseAndExecution()
@@ -95,7 +95,7 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         error.response.status == HttpStatus.SC_FORBIDDEN
     }
 
-    def cleanup(){
+    def cleanup() {
         failedAnswerRepository.deleteAll()
         dashboardRepository.deleteAll()
         userRepository.deleteAll()

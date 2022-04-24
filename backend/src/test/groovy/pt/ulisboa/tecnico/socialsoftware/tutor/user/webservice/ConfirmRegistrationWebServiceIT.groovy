@@ -3,14 +3,14 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ConfirmRegistrationWebServiceIT extends SpockTest {
+class ConfirmRegistrationWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
@@ -21,7 +21,9 @@ class ConfirmRegistrationWebServiceIT extends SpockTest {
     def course
     def courseExecution
 
-    def setup(){
+    def setup() {
+        deleteAll()
+
         restClient = new RESTClient("http://localhost:" + port)
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
@@ -42,10 +44,10 @@ class ConfirmRegistrationWebServiceIT extends SpockTest {
         response = restClient.post(
                 path: '/users/register/confirm',
                 body: [
-                        username: USER_1_EMAIL,
-                        password: USER_1_PASSWORD,
+                        username         : USER_1_EMAIL,
+                        password         : USER_1_PASSWORD,
                         confirmationToken: USER_1_TOKEN
-                ], 
+                ],
                 requestContentType: 'application/json'
         )
 
@@ -57,7 +59,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTest {
         response.data.username == USER_1_EMAIL
         response.data.active == true
         response.data.role == "STUDENT"
-        
+
         cleanup:
         courseExecution.getUsers().remove(userRepository.findByKey(response.data.key).get())
         authUserRepository.delete(userRepository.findByKey(response.data.key).get().getAuthUser())
@@ -77,8 +79,8 @@ class ConfirmRegistrationWebServiceIT extends SpockTest {
         response = restClient.post(
                 path: '/users/register/confirm',
                 body: [
-                        username: USER_1_EMAIL,
-                        password: USER_1_PASSWORD,
+                        username         : USER_1_EMAIL,
+                        password         : USER_1_PASSWORD,
                         confirmationToken: USER_1_TOKEN
                 ],
                 requestContentType: 'application/json'

@@ -8,16 +8,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DifficultQuestionRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.FailedAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.WeeklyScoreRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DashboardService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DifficultQuestionService
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.WeeklyScoreService
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DifficultQuestionRepository
-
-
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.WeeklyScoreRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.FailedAnswerService
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.FailedAnswerRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.WeeklyScoreService
+import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.ReplyRepository
@@ -44,7 +43,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.Mailer
 import spock.lang.Shared
 import spock.lang.Specification
@@ -297,7 +295,7 @@ class SpockTest extends Specification {
         def loginResponse = restClient.get(
                 path: '/auth/demo/admin'
         )
-        restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
+        restClient.headers['Authorization'] = "Bearer " + loginResponse.data.token
     }
 
     def demoStudentLogin(create = false) {
@@ -305,25 +303,25 @@ class SpockTest extends Specification {
                 path: '/auth/demo/student',
                 query: ['createNew': create]
         )
-        restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
+        restClient.headers['Authorization'] = "Bearer " + loginResponse.data.token
     }
 
     def demoTeacherLogin() {
         def loginResponse = restClient.get(
                 path: '/auth/demo/teacher'
         )
-        restClient.headers['Authorization']  = "Bearer " + loginResponse.data.token
+        restClient.headers['Authorization'] = "Bearer " + loginResponse.data.token
     }
 
     def createdUserLogin(email, password) {
         def loggedUser = restClient.get(
                 path: '/auth/external',
                 query: [
-                        email: email,
+                        email   : email,
                         password: password,
                 ],
                 requestContentType: 'application/json'
         )
-        restClient.headers['Authorization']  = "Bearer " + loggedUser.data.token
+        restClient.headers['Authorization'] = "Bearer " + loggedUser.data.token
     }
 }

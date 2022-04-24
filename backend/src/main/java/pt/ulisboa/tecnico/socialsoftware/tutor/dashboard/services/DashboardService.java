@@ -10,7 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.DashboardDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.StatsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
@@ -30,7 +29,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.sql.SQLException;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import static java.util.Comparator.comparingInt;
 import static java.util.stream.Collectors.collectingAndThen;
@@ -112,28 +110,6 @@ public class DashboardService {
         Dashboard dashboard = dashboardRepository.findById(dashboardId).orElseThrow(() -> new TutorException(DASHBOARD_NOT_FOUND, dashboardId));
         dashboard.remove();
         dashboardRepository.delete(dashboard);
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void resetDemoDashboards() {
-        userRepository.findAll()
-                .stream()
-                .filter(user -> user.getAuthUser().isDemoStudent())
-                .map(Student.class::cast)
-                .flatMap(student -> student.getDashboards().stream())
-                .forEach(dashboard -> {
-                    dashboard.remove();
-                    this.dashboardRepository.delete(dashboard);
-                });
-
-        Set<DifficultQuestion> difficultQuestionsToRemove = courseExecutionRepository.findById(courseExecutionService.getDemoCourse().getCourseExecutionId()).stream()
-                .flatMap(courseExecution -> courseExecution.getDifficultQuestions().stream())
-                .collect(Collectors.toSet());
-
-        difficultQuestionsToRemove.forEach(difficultQuestion -> {
-            difficultQuestion.remove();
-            difficultQuestionRepository.delete(difficultQuestion);
-        });
     }
 
     @Retryable(

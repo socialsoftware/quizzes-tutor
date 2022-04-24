@@ -117,20 +117,5 @@ public class TopicService {
         xmlImporter.importTopics(topicsXML, this, questionService, courseRepository);
     }
 
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public void resetDemoTopics() {
-        Integer courseId = courseExecutionService.getDemoCourse().getCourseId();
-
-        this.topicRepository.findTopics(courseId)
-                .stream()
-                .forEach(topic -> {
-                    topic.remove();
-                    this.topicRepository.delete(topic);
-                });
-    }
-
 }
 

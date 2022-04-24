@@ -3,18 +3,19 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.execution.webservice
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.web.server.LocalServerPort
-import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
-
+import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ExportCourseExecutionInfoWebServiceIT extends SpockTest {
+class ExportCourseExecutionInfoWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
     def courseExecutionDto
 
     def setup() {
-        given: 'a rest client'
+        given:
+        deleteAll()
+        and:
         restClient = new RESTClient("http://localhost:" + port)
         and: 'the demo course execution'
         courseExecutionDto = courseService.getDemoCourse()
@@ -25,10 +26,10 @@ class ExportCourseExecutionInfoWebServiceIT extends SpockTest {
         demoTeacherLogin()
         and: 'prepare request response'
         restClient.handler.failure = { resp, reader ->
-            [response:resp, reader:reader]
+            [response: resp, reader: reader]
         }
         restClient.handler.success = { resp, reader ->
-            [response:resp, reader:reader]
+            [response: resp, reader: reader]
         }
 
         when: "the web service is invoked"
