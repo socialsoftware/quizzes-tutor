@@ -6,8 +6,6 @@ import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
 import org.springframework.context.annotation.PropertySource;
-import org.springframework.core.env.Environment;
-import org.springframework.core.env.Profiles;
 import org.springframework.data.jpa.repository.config.EnableJpaAuditing;
 import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
@@ -24,17 +22,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoUtils;
 @SpringBootApplication
 public class TutorApplication extends SpringBootServletInitializer implements InitializingBean {
     @Autowired
-    private Environment environment;
+    private AnswerService answerService;
+
+    @Autowired
+    private DemoUtils demoUtils;
 
     public static void main(String[] args) {
         SpringApplication.run(TutorApplication.class, args);
     }
 
-    @Autowired
-    private AnswerService answerService;
-
-    @Autowired
-    private DemoUtils demoUtils;
 
     @Override
     public void afterPropertiesSet() {
@@ -42,9 +38,7 @@ public class TutorApplication extends SpringBootServletInitializer implements In
         JwtTokenProvider.generateKeys();
         answerService.writeQuizAnswersAndQuestionStatistics();
 
-        if (environment.acceptsProfiles(Profiles.of("dev")) || environment.acceptsProfiles(Profiles.of("prod"))) {
-            demoUtils.resetDemoInfo();
-        }
+        demoUtils.resetDemoInfo();
     }
 
 }

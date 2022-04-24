@@ -1,7 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.demo;
 
-
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.env.Environment;
+import org.springframework.core.env.Profiles;
 import org.springframework.stereotype.Component;
 
 @Component
@@ -19,6 +20,9 @@ public class DemoUtils {
     public static final String ADMIN_USERNAME = "demo-admin";
 
     @Autowired
+    private Environment environment;
+
+    @Autowired
     private DemoService demoService;
 
     public void resetDemoInfo() {
@@ -32,6 +36,8 @@ public class DemoUtils {
         demoService.resetDemoQuestionSubmissions();
         demoService.resetDemoStudents();
 
-        demoService.populateDemo();
+        if (environment.acceptsProfiles(Profiles.of("dev")) || environment.acceptsProfiles(Profiles.of("prod"))) {
+            demoService.populateDemo();
+        }
     }
 }
