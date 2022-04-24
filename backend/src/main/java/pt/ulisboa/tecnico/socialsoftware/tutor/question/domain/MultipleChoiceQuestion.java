@@ -40,7 +40,7 @@ public class MultipleChoiceQuestion extends QuestionDetails {
             throw new TutorException(ONE_CORRECT_OPTION_NEEDED);
         }
 
-        for (Option option: this.options) {
+        for (Option option : this.options) {
             option.remove();
         }
         this.options.clear();
@@ -56,8 +56,15 @@ public class MultipleChoiceQuestion extends QuestionDetails {
         options.add(option);
     }
 
+    public Option getCorrectOption() {
+        return getOptions().stream()
+                .filter(Option::isCorrect)
+                .findAny()
+                .orElse(null);
+    }
+
     public Integer getCorrectOptionId() {
-        return this.getOptions().stream()
+        return getOptions().stream()
                 .filter(Option::isCorrect)
                 .findAny()
                 .map(Option::getId)

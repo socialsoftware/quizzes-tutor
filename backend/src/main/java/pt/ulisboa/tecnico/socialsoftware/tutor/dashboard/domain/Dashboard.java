@@ -174,6 +174,9 @@ public class Dashboard implements DomainEntity {
     }
 
     public void addFailedAnswer(FailedAnswer failedAnswer) {
+        if (failedAnswers.stream().anyMatch(failedAnswer1 -> failedAnswer1.getQuestionAnswer().getQuestion() == failedAnswer.getQuestionAnswer().getQuestion())) {
+            throw new TutorException(ErrorMessage.FAILED_ANSWER_ALREADY_CREATED);
+        }
         if (failedAnswers.stream().anyMatch(failedAnswer1 -> failedAnswer1.getQuestionAnswer() == failedAnswer.getQuestionAnswer())) {
             throw new TutorException(ErrorMessage.FAILED_ANSWER_ALREADY_CREATED);
         }

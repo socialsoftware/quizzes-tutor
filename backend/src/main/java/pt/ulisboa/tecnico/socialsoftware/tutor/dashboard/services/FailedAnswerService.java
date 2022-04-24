@@ -1,11 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services;
 
 import org.springframework.beans.factory.annotation.Autowired;
-
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuizAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerRepository;
@@ -15,17 +13,18 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.FailedAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.FailedAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.FailedAnswerRepository;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.Comparator;
+import java.util.List;
+import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_ANSWER_NOT_FOUND;
 
 @Service
 public class FailedAnswerService {
@@ -76,18 +75,21 @@ public class FailedAnswerService {
                 .filter(QuizAnswer::canResultsBePublic)
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                 .filter(Predicate.not(QuestionAnswer::isCorrect))
-                .filter(qa -> dashboard.getFailedAnswers().stream().noneMatch(fa -> Objects.equals(fa.getQuestionAnswer().getId(), qa.getId())))
+                .filter(qa -> dashboard.getFailedAnswers().stream()
+                        .noneMatch(fa -> fa.getQuestionAnswer().getQuestion() == qa.getQuestion()))
+                .filter(qa -> dashboard.getFailedAnswers().stream()
+                        .noneMatch(fa -> fa.getQuestionAnswer() == qa))
                 .forEach(questionAnswer -> createFailedAnswer(dashboardId, questionAnswer.getId()));
 
-            dashboard.setLastCheckFailedAnswers(answers.stream()
-                    .filter(quizAnswer -> !quizAnswer.canResultsBePublic())
-                    .filter(quizAnswer -> dashboard.getLastCheckFailedAnswers() == null
-                            || quizAnswer.getCreationDate().isAfter(dashboard.getLastCheckFailedAnswers()))
-                    .map(QuizAnswer::getCreationDate)
-                    .sorted()
-                    .findFirst()
-                    .map(localDateTime -> localDateTime.minusSeconds(1))
-                    .orElse(now));
+        dashboard.setLastCheckFailedAnswers(answers.stream()
+                .filter(quizAnswer -> !quizAnswer.canResultsBePublic())
+                .filter(quizAnswer -> dashboard.getLastCheckFailedAnswers() == null
+                        || quizAnswer.getCreationDate().isAfter(dashboard.getLastCheckFailedAnswers()))
+                .map(QuizAnswer::getCreationDate)
+                .sorted()
+                .findFirst()
+                .map(localDateTime -> localDateTime.minusSeconds(1))
+                .orElse(now));
 
         return dashboard.getFailedAnswers().stream()
                 .map(FailedAnswerDto::new)

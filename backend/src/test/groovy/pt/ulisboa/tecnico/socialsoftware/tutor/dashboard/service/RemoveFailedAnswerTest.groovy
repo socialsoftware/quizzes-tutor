@@ -1,8 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service
 
+import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage
@@ -26,10 +26,11 @@ class RemoveFailedAnswerTest extends FailedAnswersSpockTest {
     }
 
     @Unroll
-    def 'remove a failed answer minusDays #minusDays' () {
+    def 'remove a failed answer minusDays #minusDays'() {
         given:
-        def quiz = createQuiz(1)
-        def quizQuestion = createQuestion(1, quiz)
+        def question = createQuestion()
+        def quiz = createQuiz()
+        def quizQuestion = createQuizQuestion(quiz, question)
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
         def failedAnswer = createFailedAnswer(questionAnswer, DateHandler.now().minusDays(minusDays))
 
@@ -48,64 +49,8 @@ class RemoveFailedAnswerTest extends FailedAnswersSpockTest {
         minusDays << [8, 5]
     }
 
-    def 'remove a failed answer when there is another with the same question' () {
-        given:
-        def quiz = createQuiz(1)
-        def quizQuestion = createQuestion(1, quiz)
-        def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
-        def failedAnswer = createFailedAnswer(questionAnswer, DateHandler.now().minusDays(5))
-        and:
-        def quiz2 = createQuiz(2)
-        def quizQuestion2 = addExistingQuestionToQuiz(quiz2)
-        def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
-        def failedAnswer2 = createFailedAnswer(questionAnswer2, DateHandler.now().minusDays(5))
-
-        when:
-        failedAnswerService.removeFailedAnswer(failedAnswer2.getId())
-
-        then:
-        failedAnswerRepository.findAll().size() == 1L
-        and:
-        def dashboard = dashboardRepository.findById(dashboard.getId()).get()
-        dashboard.getStudent().getId() === student.getId()
-        dashboard.getCourseExecution().getId() === externalCourseExecution.getId()
-        dashboard.getFailedAnswers().size() == 1
-        dashboard.getFailedAnswers().contains(failedAnswer)
-    }
-
-    def 'remove a failed answer when there is two others with the same question' () {
-        given:
-        def quiz = createQuiz(1)
-        def quizQuestion = createQuestion(1, quiz)
-        def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
-        def failedAnswer = createFailedAnswer(questionAnswer, DateHandler.now().minusDays(5))
-        and:
-        def quiz2 = createQuiz(2)
-        def quizQuestion2 = addExistingQuestionToQuiz(quiz2)
-        def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
-        def failedAnswer2 = createFailedAnswer(questionAnswer2, DateHandler.now().minusDays(5))
-        and:
-        def quiz3 = createQuiz(3)
-        def quizQuestion3 = addExistingQuestionToQuiz(quiz3)
-        def questionAnswer3 = answerQuiz(true, false, true, quizQuestion3, quiz3)
-        def failedAnswer3 = createFailedAnswer(questionAnswer3, DateHandler.now().minusDays(5))
-
-        when:
-        failedAnswerService.removeFailedAnswer(failedAnswer2.getId())
-
-        then:
-        failedAnswerRepository.findAll().size() == 2L
-        and:
-        def dashboard = dashboardRepository.findById(dashboard.getId()).get()
-        dashboard.getStudent().getId() === student.getId()
-        dashboard.getCourseExecution().getId() === externalCourseExecution.getId()
-        dashboard.getFailedAnswers().size() == 2
-        dashboard.getFailedAnswers().contains(failedAnswer)
-        dashboard.getFailedAnswers().contains(failedAnswer3)
-    }
-
     @Unroll
-    def "cannot remove failed answers with invalid failedAnswerId=#failedAnswerId" () {
+    def "cannot remove failed answers with invalid failedAnswerId=#failedAnswerId"() {
         when:
         failedAnswerService.removeFailedAnswer(failedAnswerId)
 

@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DashboardServi
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DifficultQuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.FailedAnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.WeeklyScoreService
+import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoService
 import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository
@@ -276,6 +277,9 @@ class SpockTest extends Specification {
 
     @Autowired
     DemoUtils demoUtils
+
+    @Autowired
+    DemoService demoService
 
     Course externalCourse
     @Shared

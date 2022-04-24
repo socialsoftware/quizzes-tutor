@@ -10,15 +10,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
-import java.time.LocalDateTime
-
 @DataJpaTest
 class ResetDemoStudentTest extends SpockTest {
 
     def course
     def courseExecution
 
-    def setup(){
+    def setup() {
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
@@ -29,15 +27,15 @@ class ResetDemoStudentTest extends SpockTest {
         given:
         def birthDate = DateHandler.now().toString() + new Random().nextDouble();
         def user1 = new Student("Demo-Student-" + birthDate, "Demo-Student-" + birthDate,
-                USER_1_EMAIL,  false, AuthUser.Type.DEMO)
+                USER_1_EMAIL, false, AuthUser.Type.DEMO)
         userRepository.save(user1)
         def user1Username = user1.username
         def user2 = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
-                 false, AuthUser.Type.DEMO)
+                false, AuthUser.Type.DEMO)
         userRepository.save(user2)
 
         when:
-        userService.resetDemoStudents()
+        demoService.resetDemoStudents()
 
         then:
         AuthUser authUser1 = authUserRepository.findAuthUserByUsername(user1Username).orElse(null)

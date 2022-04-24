@@ -15,6 +15,7 @@ import spock.lang.Unroll
 
 @DataJpaTest
 class CreateFailedAnswerTest extends FailedAnswersSpockTest {
+    def question
     def quiz
     def quizQuestion
 
@@ -28,8 +29,9 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         dashboard = new Dashboard(externalCourseExecution, student)
         dashboardRepository.save(dashboard)
 
-        quiz = createQuiz(1)
-        quizQuestion = createQuestion(1, quiz)
+        question = createQuestion()
+        quiz = createQuiz()
+        quizQuestion = createQuizQuestion(quiz, question)
     }
 
     @Unroll
@@ -56,80 +58,23 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         answered << [true, false]
     }
 
-    def "create two failed answers with the same question"() {
+    def "cannot create two failed answers with the same question"() {
         given:
         def questionAnswer = answerQuiz(false, false, true, quizQuestion, quiz)
         createFailedAnswer(questionAnswer, DateHandler.now())
         and:
-        def quiz2 = createQuiz(2)
-        def quizQuestion2 = addExistingQuestionToQuiz(quiz2)
+        def quiz2 = createQuiz()
+        def quizQuestion2 = createQuizQuestion(quiz2, question)
         def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
 
         when:
         failedAnswerService.createFailedAnswer(dashboard.getId(), questionAnswer2.getId())
 
         then:
-        failedAnswerRepository.count() == 2L
-        def result = failedAnswerRepository.findAll().get(0)
-        result.getId() != null
-        result.getDashboard().getId() == dashboard.getId()
-        result.getQuestionAnswer().getId() == questionAnswer.getId()
-        result.getCollected().isAfter(DateHandler.now().minusMinutes(1))
-        !result.getAnswered()
-        def result2 = failedAnswerRepository.findAll().get(1)
-        result2.getId() != null
-        result2.getDashboard().getId() == dashboard.getId()
-        result2.getQuestionAnswer().getId() == questionAnswer2.getId()
-        result2.getCollected().isAfter(DateHandler.now().minusMinutes(1))
-        result2.getAnswered()
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == ErrorMessage.FAILED_ANSWER_ALREADY_CREATED
         and:
-        def dashboard = dashboardRepository.getById(dashboard.getId())
-        dashboard.getFailedAnswers().contains(result)
-    }
-
-    def "create three failed answers with the same question"() {
-        given:
-        def questionAnswer = answerQuiz(false, false, true, quizQuestion, quiz)
-        createFailedAnswer(questionAnswer, DateHandler.now())
-        and:
-        def quiz2 = createQuiz(2)
-        def quizQuestion2 = addExistingQuestionToQuiz(quiz2)
-        def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
-        createFailedAnswer(questionAnswer2, DateHandler.now())
-        and:
-        def quiz3 = createQuiz(3)
-        def quizQuestion3 = addExistingQuestionToQuiz(quiz3)
-        def questionAnswer3 = answerQuiz(true, false, true, quizQuestion3, quiz3)
-
-        when:
-        failedAnswerService.createFailedAnswer(dashboard.getId(), questionAnswer3.getId())
-
-        then:
-        failedAnswerRepository.count() == 3L
-        def result = failedAnswerRepository.findAll().get(0)
-        result.getId() != null
-        result.getDashboard().getId() == dashboard.getId()
-        result.getQuestionAnswer().getId() == questionAnswer.getId()
-        result.getCollected().isAfter(DateHandler.now().minusMinutes(1))
-        !result.getAnswered()
-        def result2 = failedAnswerRepository.findAll().get(1)
-        result2.getId() != null
-        result2.getDashboard().getId() == dashboard.getId()
-        result2.getQuestionAnswer().getId() == questionAnswer2.getId()
-        result2.getCollected().isAfter(DateHandler.now().minusMinutes(1))
-        result2.getAnswered()
-        and:
-        def result3 = failedAnswerRepository.findAll().get(2)
-        result3.getId() != null
-        result3.getDashboard().getId() == dashboard.getId()
-        result3.getQuestionAnswer().getId() == questionAnswer3.getId()
-        result3.getCollected().isAfter(DateHandler.now().minusMinutes(1))
-        result3.getAnswered()
-        and:
-        def dashboard = dashboardRepository.getById(dashboard.getId())
-        dashboard.getFailedAnswers().contains(result)
-        dashboard.getFailedAnswers().contains(result2)
-        dashboard.getFailedAnswers().contains(result3)
+        failedAnswerRepository.count() == 1
     }
 
     def "create two failed answers with with different questions"() {
@@ -137,8 +82,9 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         def questionAnswer = answerQuiz(false, false, true, quizQuestion, quiz)
         createFailedAnswer(questionAnswer, DateHandler.now())
         and:
-        def quiz2 = createQuiz(2)
-        def quizQuestion2 = createQuestion(2, quiz2)
+        def question2 = createQuestion()
+        def quiz2 = createQuiz()
+        def quizQuestion2 = createQuizQuestion(quiz2, question2)
         def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
 
         when:
@@ -273,7 +219,7 @@ class CreateFailedAnswerTest extends FailedAnswersSpockTest {
         where:
         questionAnswerId << [0, 100]
     }
-    
+
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}
 }

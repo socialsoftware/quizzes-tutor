@@ -14,16 +14,35 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
 class FailedAnswersSpockTest extends SpockTestIT {
-
     def dashboard
     def student
-    def question
-    def option
-    def optionKO
 
-    def createQuiz(count, type = Quiz.QuizType.PROPOSED.toString()) {
+    def createQuestion() {
+        def newQuestion = new Question()
+        newQuestion.setTitle("Question Title")
+        newQuestion.setCourse(externalCourse)
+        def questionDetails = new MultipleChoiceQuestion()
+        newQuestion.setQuestionDetails(questionDetails)
+        questionRepository.save(newQuestion)
+
+        def option = new Option()
+        option.setContent("Option Content")
+        option.setCorrect(true)
+        option.setSequence(0)
+        option.setQuestionDetails(questionDetails)
+        optionRepository.save(option)
+        def optionKO = new Option()
+        optionKO.setContent("Option Content")
+        optionKO.setCorrect(false)
+        optionKO.setSequence(1)
+        optionKO.setQuestionDetails(questionDetails)
+        optionRepository.save(optionKO)
+
+        return newQuestion;
+    }
+
+    def createQuiz(type = Quiz.QuizType.PROPOSED.toString()) {
         def quiz = new Quiz()
-        quiz.setKey(count)
         quiz.setTitle("Quiz Title")
         quiz.setType(type)
         quiz.setCourseExecution(externalCourseExecution)
@@ -33,40 +52,13 @@ class FailedAnswersSpockTest extends SpockTestIT {
         return quiz
     }
 
-    def createQuestion(count, quiz) {
-        question = new Question()
-        question.setKey(count)
-        question.setTitle("Question Title")
-        question.setCourse(externalCourse)
-        def questionDetails = new MultipleChoiceQuestion()
-        question.setQuestionDetails(questionDetails)
-        questionRepository.save(question)
-
-        option = new Option()
-        option.setContent("Option Content")
-        option.setCorrect(true)
-        option.setSequence(0)
-        option.setQuestionDetails(questionDetails)
-        optionRepository.save(option)
-        optionKO = new Option()
-        optionKO.setContent("Option Content")
-        optionKO.setCorrect(false)
-        optionKO.setSequence(1)
-        optionKO.setQuestionDetails(questionDetails)
-        optionRepository.save(optionKO)
-
+    def createQuizQuestion(quiz, question) {
         def quizQuestion = new QuizQuestion(quiz, question, 0)
         quizQuestionRepository.save(quizQuestion)
         return quizQuestion
     }
 
-    def addExistingQuestionToQuiz(quiz, question = question) {
-        def quizQuestion = new QuizQuestion(quiz, question, 0)
-        quizQuestionRepository.save(quizQuestion)
-        return quizQuestion
-    }
-
-    def answerQuiz(answered, correct, completed, question, quiz, date = DateHandler.now()) {
+    def answerQuiz(answered, correct, completed, quizQuestion, quiz, date = DateHandler.now()) {
         def quizAnswer = new QuizAnswer()
         quizAnswer.setCompleted(completed)
         quizAnswer.setCreationDate(date)
@@ -78,12 +70,14 @@ class FailedAnswersSpockTest extends SpockTestIT {
         def questionAnswer = new QuestionAnswer()
         questionAnswer.setTimeTaken(1)
         questionAnswer.setQuizAnswer(quizAnswer)
-        questionAnswer.setQuizQuestion(question)
+        questionAnswer.setQuizQuestion(quizQuestion)
         questionAnswerRepository.save(questionAnswer)
 
         def answerDetails
-        if (answered && correct) answerDetails = new MultipleChoiceAnswer(questionAnswer, option)
-        else if (answered && !correct) answerDetails = new MultipleChoiceAnswer(questionAnswer, optionKO)
+        def correctOption = quizQuestion.getQuestion().getQuestionDetails().getCorrectOption()
+        def incorrectOption = quizQuestion.getQuestion().getQuestionDetails().getOptions().stream().filter(option -> option != correctOption).findAny().orElse(null)
+        if (answered && correct) answerDetails = new MultipleChoiceAnswer(questionAnswer, correctOption)
+        else if (answered && !correct) answerDetails = new MultipleChoiceAnswer(questionAnswer, incorrectOption)
         else {
             questionAnswerRepository.save(questionAnswer)
             return questionAnswer

@@ -14,10 +14,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import spock.lang.Unroll
 
-import java.time.LocalDateTime
-
 @DataJpaTest
 class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
+    def question
     def quiz
     def quizQuestion
 
@@ -31,8 +30,9 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         dashboard = new Dashboard(externalCourseExecution, student)
         dashboardRepository.save(dashboard)
 
-        quiz = createQuiz(1)
-        quizQuestion = createQuestion(1, quiz)
+        question = createQuestion()
+        quiz = createQuiz()
+        quizQuestion = createQuizQuestion(quiz, question)
     }
 
     @Unroll
@@ -67,7 +67,7 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
     }
 
     @Unroll
-    def "does not create failed answer with correct=#correct and completed=#completed" () {
+    def "does not create failed answer with correct=#correct and completed=#completed"() {
         given:
         answerQuiz(true, correct, completed, quizQuestion, quiz)
 
@@ -84,9 +84,9 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         true      | true
     }
 
-    def "does not create failed answer for answer of IN_CLASS quiz where results date is later" () {
+    def "does not create failed answer for answer of IN_CLASS quiz where results date is later"() {
         given:
-        def inClassQuiz= createQuiz(2, Quiz.QuizType.IN_CLASS.toString())
+        def inClassQuiz = createQuiz(Quiz.QuizType.IN_CLASS.toString())
         inClassQuiz.setResultsDate(DateHandler.now().plusDays(1))
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, inClassQuiz)
 
@@ -102,9 +102,9 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         dashboard.getLastCheckFailedAnswers().isEqual(questionAnswer.getQuizAnswer().getCreationDate().minusSeconds(1))
     }
 
-    def "create failed answer for answer of IN_CLASS quiz where results date is now" () {
+    def "create failed answer for answer of IN_CLASS quiz where results date is now"() {
         given:
-        def inClassQuiz= createQuiz(2, Quiz.QuizType.IN_CLASS.toString())
+        def inClassQuiz = createQuiz(Quiz.QuizType.IN_CLASS.toString())
         inClassQuiz.setResultsDate(DateHandler.now())
         answerQuiz(true, false, true, quizQuestion, inClassQuiz)
 
@@ -122,8 +122,9 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         dashboard.setLastCheckFailedAnswers(DateHandler.now().minusDays(2))
         def questionAnswer1 = answerQuiz(true, false, true, quizQuestion, quiz, DateHandler.now().minusDays(2))
         and:
-        def quiz2 = createQuiz(2)
-        def quizQuestion2 = createQuestion(2, quiz2)
+        def question2 = createQuestion()
+        def quiz2 = createQuiz()
+        def quizQuestion2 = createQuizQuestion(quiz2, question2)
         def questionAnswer2 = answerQuiz(true, false, true, quizQuestion2, quiz2)
 
         when:
@@ -140,6 +141,25 @@ class UpdateFailedAnswersTest extends FailedAnswersSpockTest {
         def dashboard = dashboardRepository.getById(dashboard.getId())
         dashboard.getFailedAnswers().size() == 2
         dashboard.getLastCheckFailedAnswers().isAfter(DateHandler.now().minusSeconds(1))
+    }
+
+    def "does not create failed answers for the same question"() {
+        given:
+        def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz, LOCAL_DATE_BEFORE.plusSeconds(20))
+        and:
+        def newQuiz = createQuiz()
+        def newQuizQuestion = createQuizQuestion(newQuiz, question)
+
+        when:
+        def result = failedAnswerService.updateFailedAnswers(dashboard.getId())
+
+        then:
+        result.size() == 1
+        and:
+        failedAnswerRepository.count() == 1L
+        and:
+        def dashboard = dashboardRepository.getById(dashboard.getId())
+        dashboard.getFailedAnswers().size() == 1
     }
 
     def "does not create the same failed answer twice"() {

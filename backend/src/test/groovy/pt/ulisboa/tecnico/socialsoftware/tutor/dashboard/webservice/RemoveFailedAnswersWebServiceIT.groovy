@@ -38,8 +38,9 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         dashboard = new Dashboard(externalCourseExecution, student)
         dashboardRepository.save(dashboard)
         and:
-        quiz = createQuiz(1)
-        quizQuestion = createQuestion(1, quiz)
+        def question = createQuestion()
+        quiz = createQuiz()
+        quizQuestion = createQuizQuestion(quiz, question)
         def questionAnswer = answerQuiz(true, false, true, quizQuestion, quiz)
         failedAnswer = createFailedAnswer(questionAnswer, DateHandler.now().minusDays(8))
     }
