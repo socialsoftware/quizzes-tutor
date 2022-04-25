@@ -25,12 +25,6 @@
     <img src="https://snyk.io/test/github/socialsoftware/quizzes-tutor/badge.svg?targetFile=frontend/package.json" alt="Frontend vulnerabilities">
   </a-->
 
-  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend">
-    <img src="https://badgen.net/david/dep/socialsoftware/quizzes-tutor/frontend" alt="Dependencies">
-  </a>
-  <a href="https://david-dm.org/socialsoftware/quizzes-tutor?path=frontend&type=dev">
-    <img src="https://badgen.net/david/dev/socialsoftware/quizzes-tutor/frontend" alt="Dev Dependencies">
-  </a>
   <a href="https://github.com/prettier/prettier">
     <img src="https://img.shields.io/badge/code_style-prettier-ff69b4.svg?" alt="code style: prettier">
   </a>
@@ -80,7 +74,7 @@ Students can then answer those questions in sugested quizzes or generated quizze
   * [Postgres >= 10](https://www.postgresql.org/)
   * [Java 11](https://www.oracle.com/technetwork/java/javase/downloads/jdk11-downloads-5066655.html)
   * [Maven](https://maven.apache.org/download.cgi)
-  * [Node 12.14](https://nodejs.org/en/) ([Node Version Manager](https://github.com/nvm-sh/nvm) recommended)
+  * [Node 16.14](https://nodejs.org/en/) ([Node Version Manager](https://github.com/nvm-sh/nvm) recommended)
   * [Docker](https://www.docker.com/)
 * No download required
   * [Spring-boot](https://spring.io/)
