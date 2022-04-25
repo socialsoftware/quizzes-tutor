@@ -25,7 +25,7 @@ import java.util.Set;
 import java.util.function.Predicate;
 import java.util.stream.Collectors;
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DASHBOARD_NOT_FOUND;
 
 @Service
 public class WeeklyScoreService {
@@ -90,6 +90,7 @@ public class WeeklyScoreService {
         if (dashboard.getLastCheckWeeklyScores() == null) {
             startCheckDate = dashboard.getStudent().getQuizAnswers().stream()
                     .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution() == dashboard.getCourseExecution())
+                    .filter(quizAnswer -> quizAnswer.getCreationDate() != null)
                     .map(QuizAnswer::getCreationDate)
                     .sorted()
                     .findFirst()
@@ -109,10 +110,10 @@ public class WeeklyScoreService {
                     LocalDateTime end = weeklyScore.getWeek().plusDays(7).atStartOfDay();
 
                     Set<QuizAnswer> answers = quizAnswerRepository.findByStudentAndCourseExecutionInPeriod(dashboard.getStudent().getId(),
-                            dashboard.getCourseExecution().getId(),  start,  end);
+                            dashboard.getCourseExecution().getId(), start, end);
 
                     weeklyScore.computeStatistics(answers);
-                        });
+                });
     }
 
     private void removeEmptyClosedWeeklyScores(Dashboard dashboard) {

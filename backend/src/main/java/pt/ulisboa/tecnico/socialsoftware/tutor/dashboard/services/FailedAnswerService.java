@@ -103,6 +103,7 @@ public class FailedAnswerService {
             Set<QuizAnswer> answers = quizAnswerRepository.findByStudentAndCourseExecution(dashboard.getStudent().getId(), dashboard.getCourseExecution().getId());
 
             startCheckDate = answers.stream()
+                    .filter(quizAnswer -> quizAnswer.getCreationDate() != null)
                     .map(QuizAnswer::getCreationDate)
                     .sorted()
                     .findFirst()
