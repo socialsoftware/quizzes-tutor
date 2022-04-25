@@ -1,120 +1,100 @@
 <template>
-  <div>
-    <v-dialog
-      :value="dialog"
-      @input="$emit('dialog', false)"
-      @keydown.esc="$emit('dialog', false)"
-      max-width="75%"
-      max-height="80%"
-    >
-      <v-card class="px-5">
-        <v-card-title>
-          <span class="headline">
-            {{
-              editMode(editQuestionSubmission)
-                ? 'Edit Submission'
-                : 'New Submission'
-            }}
-          </span>
-        </v-card-title>
+  <v-dialog
+    :value="dialog"
+    @input="$emit('dialog', false)"
+    @keydown.esc="$emit('dialog', false)"
+    max-width="75%"
+    max-height="80%"
+  >
+    <v-card class="px-5">
+      <v-card-title>
+        <span class="headline">
+          {{
+            editMode(editQuestionSubmission)
+              ? 'Edit Submission'
+              : 'New Submission'
+          }}
+        </span>
+      </v-card-title>
 
-        <v-card-text class="pa-4 text-left" v-if="editQuestionSubmission">
-          <v-form ref="form" lazy-validation>
-            <v-row>
-              <v-select
-                v-model="questionType"
-                :rules="[(v) => !!v || 'Question type is required']"
-                label="Question Type"
-                required
-                :items="questionTypesOptions"
-                @change="updateQuestionType"
-                :readonly="editMode(editQuestionSubmission)"
-              />
-            </v-row>
-            <v-row>
-              <v-text-field
-                v-model="editQuestionSubmission.question.title"
-                :rules="[(v) => !!v || 'Question title is required']"
-                data-cy="QuestionTitle"
-                label="Title"
-                required
-              />
-            </v-row>
-
-            <v-row>
-              <v-textarea
-                v-model="editQuestionSubmission.question.content"
-                :rules="[(v) => !!v || 'Question content is required']"
-                auto-grow
-                data-cy="QuestionContent"
-                label="Question"
-                required
-                rows="4"
-              ></v-textarea>
-            </v-row>
-
-            <component
-              :is="editQuestionSubmission.question.questionDetailsDto.type"
-              :questionDetails="
-                editQuestionSubmission.question.questionDetailsDto
-              "
-              :readonlyEdit="editMode(editQuestionSubmission)"
+      <v-card-text class="pa-4 text-left" v-if="editQuestionSubmission">
+        <v-form ref="form" lazy-validation>
+          <v-row>
+            <v-select
+              v-model="questionType"
+              :rules="[(v) => !!v || 'Question type is required']"
+              label="Question Type"
+              required
+              :items="questionTypesOptions"
+              @change="updateQuestionType"
+              :readonly="editMode(editQuestionSubmission)"
             />
+          </v-row>
+          <v-row>
+            <v-text-field
+              v-model="editQuestionSubmission.question.title"
+              :rules="[(v) => !!v || 'Question title is required']"
+              data-cy="QuestionTitle"
+              label="Title"
+              required
+            />
+          </v-row>
 
-            <v-row>
-              <v-textarea
-                outline
-                rows="1"
-                v-model="comment"
-                label="Comment"
-                data-cy="Comment"
-              ></v-textarea>
-            </v-row>
-          </v-form>
-        </v-card-text>
+          <v-row>
+            <v-textarea
+              v-model="editQuestionSubmission.question.content"
+              :rules="[(v) => !!v || 'Question content is required']"
+              auto-grow
+              data-cy="QuestionContent"
+              label="Question"
+              required
+              rows="4"
+            ></v-textarea>
+          </v-row>
 
-        <v-card-actions>
-          <v-spacer />
-          <v-btn
-            color="red darken-1"
-            @click="$emit('dialog', false)"
-            data-cy="CancelButton"
-            >Cancel</v-btn
-          >
-          <v-btn
-            color="green darken-1"
-            @click="createQuestionSubmission(false)"
-            data-cy="SaveButton"
-            >Save</v-btn
-          >
-          <v-btn
-            color="blue darken-1"
-            @click="createQuestionSubmission(true)"
-            data-cy="RequestReviewButton"
-            >Request Review</v-btn
-          >
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-    <v-dialog v-model="dialog2" max-width="500px">
-      <v-card>
-        <v-card-title> Dialog 2 </v-card-title>
-        <v-card-text>
-          <v-btn color="primary" dark @click="dialog3 = !dialog3">
-            Open Dialog 3
-          </v-btn>
-          <v-select
-            :items="select"
-            label="A Select List"
-            item-value="text"
-          ></v-select>
-        </v-card-text>
-        <v-card-actions>
-          <v-btn color="primary" text @click="dialog2 = false"> Close </v-btn>
-        </v-card-actions>
-      </v-card>
-    </v-dialog>
-  </div>
+          <component
+            :is="editQuestionSubmission.question.questionDetailsDto.type"
+            :questionDetails="
+              editQuestionSubmission.question.questionDetailsDto
+            "
+            :readonlyEdit="editMode(editQuestionSubmission)"
+          />
+
+          <v-row>
+            <v-textarea
+              outline
+              rows="1"
+              v-model="comment"
+              label="Comment"
+              data-cy="Comment"
+            ></v-textarea>
+          </v-row>
+        </v-form>
+      </v-card-text>
+
+      <v-card-actions>
+        <v-spacer />
+        <v-btn
+          color="red darken-1"
+          @click="$emit('dialog', false)"
+          data-cy="CancelButton"
+          >Cancel</v-btn
+        >
+        <v-btn
+          color="green darken-1"
+          @click="createQuestionSubmission(false)"
+          data-cy="SaveButton"
+          >Save</v-btn
+        >
+        <v-btn
+          color="blue darken-1"
+          @click="createQuestionSubmission(true)"
+          data-cy="RequestReviewButton"
+          >Request Review</v-btn
+        >
+      </v-card-actions>
+    </v-card>
+  </v-dialog>
 </template>
 
 <script lang="ts">
@@ -142,8 +122,12 @@ export default class EditQuestionSubmissionDialog extends Vue {
     this.questionSubmission
   );
   comment: string = '';
-  questionType: string =
-    this.questionSubmission.question.questionDetailsDto.type;
+  questionType: string = '';
+
+  created() {
+    this.questionType =
+      this.questionSubmission.question.questionDetailsDto.type;
+  }
 
   get questionTypesOptions() {
     return Object.values(QuestionTypes).map((qt) => ({

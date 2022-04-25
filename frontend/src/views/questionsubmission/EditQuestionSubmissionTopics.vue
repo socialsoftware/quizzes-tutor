@@ -58,9 +58,13 @@ export default class EditQuestionSubmissionTopics extends Vue {
   @Prop({ type: Array, required: true }) readonly topics!: Topic[];
   @Prop({ type: Boolean }) readOnly: boolean | undefined;
 
-  questionTopics: Topic[] = JSON.parse(
-    JSON.stringify(this.questionSubmission.question.topics)
-  );
+  questionTopics: Topic[] = [];
+
+  created() {
+    this.questionTopics = JSON.parse(
+      JSON.stringify(this.questionSubmission.question.topics)
+    );
+  }
 
   async saveTopics() {
     if (this.questionSubmission.question.id) {

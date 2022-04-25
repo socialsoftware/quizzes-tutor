@@ -25,8 +25,10 @@ import Tournament from '@/models/user/Tournament';
 export default class ViewTournamentTopics extends Vue {
   @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
 
-  tournamentTopics: Topic[] = JSON.parse(
-    JSON.stringify(this.tournament.topics)
-  );
+  tournamentTopics: Topic[] = [];
+
+  created() {
+    this.tournamentTopics = JSON.parse(JSON.stringify(this.tournament.topics));
+  }
 }
 </script>

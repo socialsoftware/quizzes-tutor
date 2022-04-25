@@ -69,10 +69,7 @@
           <span>Delete Topic</span>
         </v-tooltip>
       </template>
-      <template
-        v-slot:[`item.name`]="{ item }"
-        style="background: rebeccapurple"
-      >
+      <template v-slot:[`item.name`]="{ item }">
         <div
           @click="showQuestionsDialog(item.id)"
           @contextmenu="editTopic(item, $event)"

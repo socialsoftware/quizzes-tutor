@@ -1,7 +1,6 @@
 import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
 import { QuestionTypes } from '@/services/QuestionHelpers';
-import CodeFillInStatementCorrectAnswerDetails
-  from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
+import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
 import CodeFillInSpotAnswerStatement from './CodeFillInSpotAnswerStatement';
 
 export default class CodeFillInStatementAnswerDetails extends StatementAnswerDetails {

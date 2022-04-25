@@ -43,7 +43,7 @@ module.exports = {
         minSize: 50000,
         maxSize: 245000,
         automaticNameDelimiter: '~',
-        name: true,
+        // name: true,
         cacheGroups: {
           default: false,
           common: {
@@ -129,17 +129,28 @@ module.exports = {
 
   // configure webpack-dev-server behavior
   devServer: {
-    allowedHosts: ['.localhost', 'localhost', '127.0.0.1'],
-    open: process.platform === 'darwin',
+    allowedHosts: 'all',
+    // open: process.platform === 'darwin',
     host: '0.0.0.0',
     port: custompaths.port,
-    public: custompaths.publicdomain,
-    publicPath: custompaths.host,
+    // public: custompaths.publicdomain,
+    // publicPath: custompaths.host,
     https: false,
-    hotOnly: false,
-    disableHostCheck: true,
+    // hot: 'only',
+    // disableHostCheck: true,
     proxy: null, // string | Object
-    before: (app) => {},
+    // before: (app) => {},
+    client: {
+      // Can be `string`:
+      //
+      // To get protocol/hostname/port from browser
+      // webSocketURL: 'auto://0.0.0.0:0/ws'
+      webSocketURL: {
+        hostname: '0.0.0.0',
+        pathname: '/',
+        port: 8081,
+      },
+    },
   },
 
   // options for 3rd party plugins

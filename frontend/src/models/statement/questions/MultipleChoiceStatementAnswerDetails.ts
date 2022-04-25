@@ -1,7 +1,6 @@
 import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
 import { QuestionTypes } from '@/services/QuestionHelpers';
-import MultipleChoiceStatementCorrectAnswerDetails
-  from '@/models/statement/questions/MultipleChoiceStatementCorrectAnswerDetails';
+import MultipleChoiceStatementCorrectAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementCorrectAnswerDetails';
 
 export default class MultipleChoiceStatementAnswerDetails extends StatementAnswerDetails {
   public optionId: number | null = null;
