@@ -5,12 +5,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-
-
-import java.time.LocalDateTime;
 
 import javax.persistence.*;
+import java.time.LocalDateTime;
 
 @Entity
 public class FailedAnswer implements DomainEntity {
@@ -29,10 +26,10 @@ public class FailedAnswer implements DomainEntity {
     @ManyToOne
     private Dashboard dashboard;
 
-    public FailedAnswer(){
+    public FailedAnswer() {
     }
 
-    public FailedAnswer(Dashboard dashboard, QuestionAnswer questionAnswer, LocalDateTime collected){
+    public FailedAnswer(Dashboard dashboard, QuestionAnswer questionAnswer, LocalDateTime collected) {
         if (dashboard.getCourseExecution() != questionAnswer.getQuizAnswer().getQuiz().getCourseExecution()) {
             throw new TutorException(ErrorMessage.CANNOT_CREATE_FAILED_ANSWER);
         }
@@ -95,15 +92,15 @@ public class FailedAnswer implements DomainEntity {
 
     @Override
     public void accept(Visitor visitor) {
-        // TODO Auto-generated method stub
+        // only used to generate XML
     }
 
     @Override
     public String toString() {
         return "FailedAnswer{" +
-            "id=" + id +
-            ", answered=" + answered +
-            ", questionAnswer=" + questionAnswer +
-            "}";
+                "id=" + id +
+                ", answered=" + answered +
+                ", questionAnswer=" + questionAnswer +
+                "}";
     }
 }

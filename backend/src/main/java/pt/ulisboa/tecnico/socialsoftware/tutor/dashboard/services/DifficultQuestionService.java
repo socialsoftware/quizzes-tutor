@@ -68,7 +68,7 @@ public class DifficultQuestionService {
         Map<Question, List<QuestionAnswer>> questionsWithAnswers = answers.stream()
                 .filter(QuizAnswer::canResultsBePublic)
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
-                .collect(Collectors.groupingBy(questionAnswer -> questionAnswer.getQuestion()));
+                .collect(Collectors.groupingBy(QuestionAnswer::getQuestion));
 
         for (Map.Entry<Question, List<QuestionAnswer>> questionWithAnswers : questionsWithAnswers.entrySet()) {
             if (courseExecution.isQuestionInAvailableAssessment(questionWithAnswers.getKey())) {
@@ -94,9 +94,7 @@ public class DifficultQuestionService {
                 .filter(difficultQuestion -> difficultQuestion.getRemovedDate().plusDays(7).isBefore((now)))
                 .collect(Collectors.toSet());
 
-        questionsToRemove.forEach(removedDifficultQuestion -> {
-            dashboard.removeRemovedDifficultQuestion(removedDifficultQuestion);
-        });
+        questionsToRemove.forEach(dashboard::removeRemovedDifficultQuestion);
 
         Set<Integer> removedQuestionsIds = dashboard.getRemovedDifficultQuestions().stream()
                 .map(RemovedDifficultQuestion::getQuestionId)

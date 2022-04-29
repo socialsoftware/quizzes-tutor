@@ -29,6 +29,7 @@ public enum ErrorMessage {
     INVALID_TYPE_FOR_AUTH_USER("Invalid type for auth user"),
     INVALID_AUTH_USERNAME("Username: %s, belongs to a different authentication method"),
     INVALID_DATE_INTERVAL("Invalid date interval"),
+    INVALID_QUESTION_TYPE("Invalid question type: %s"),
 
     ASSESSMENT_NOT_FOUND("Assessment not found with id %d"),
     COURSE_EXECUTION_NOT_FOUND("Course execution not found with id %d"),
@@ -37,6 +38,7 @@ public enum ErrorMessage {
     INVALID_PASSWORD("The password %s is invalid."),
     INVALID_ROLE("The Role %s is invalid."),
     FILL_IN_SPOT_NOT_FOUND("Fill in spot not found with id %d"),
+    FILL_IN_SPOT_HAS_NO_CORRECT_OPTION("Fill in spot has no correct option"),
     ORDER_SLOT_NOT_FOUND("Order slot not found with id %d"),
     QUESTION_ANSWER_HAS_DISCUSSION("Question answers has discussion"),
     QUESTION_ANSWER_NOT_FOUND("Question answer not found with id %d"),

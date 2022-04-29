@@ -7,7 +7,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
 import javax.persistence.DiscriminatorValue;
 import javax.persistence.Entity;
-import java.util.Arrays;
 import java.util.List;
 
 @Entity

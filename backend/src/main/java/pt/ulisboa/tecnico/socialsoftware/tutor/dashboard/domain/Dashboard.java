@@ -13,6 +13,8 @@ import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_QUESTION_TYPE;
+
 @Entity
 public class Dashboard implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "dashboard", orphanRemoval = true)
@@ -194,6 +196,8 @@ public class Dashboard implements DomainEntity {
             case PROPOSED:
                 numberOfTeacherQuizzes++;
                 break;
+            default:
+                throw new TutorException(INVALID_QUESTION_TYPE, quizAnswer.getQuiz().getType().name());
         }
 
         quizAnswer.getQuestionAnswers().forEach(questionAnswer -> {
@@ -210,11 +214,14 @@ public class Dashboard implements DomainEntity {
                     numberOfTeacherAnswers++;
                     numberOfCorrectTeacherAnswers = questionAnswer.isCorrect() ? numberOfCorrectTeacherAnswers + 1 : numberOfCorrectTeacherAnswers;
                     break;
+                default:
+                    throw new TutorException(INVALID_QUESTION_TYPE, quizAnswer.getQuiz().getType().name());
             }
         });
     }
 
     public void accept(Visitor visitor) {
+        // Only used for XML generation
     }
 
     @Override

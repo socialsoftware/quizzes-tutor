@@ -35,8 +35,12 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Component
 public class AnswersXmlImport {
+    public static final String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+
     public static final String SEQUENCE = "sequence";
+
     public static final String OPTION = "option";
+
     public static final String QUESTION_KEY = "questionKey";
 
     @Autowired
@@ -71,6 +75,7 @@ public class AnswersXmlImport {
 
     public void importAnswers(InputStream inputStream) {
         SAXBuilder builder = new SAXBuilder();
+        builder.setFeature(FEATURE, true);
         builder.setIgnoringElementContentWhitespace(true);
 
         Document doc;
@@ -160,7 +165,7 @@ public class AnswersXmlImport {
                         "quiz id does not exist " + quizKey));
 
         Integer key = Integer.valueOf(answerElement.getChild("user").getAttributeValue("key"));
-        User user = userRepository.findByKey(key).orElse(null);
+        User user = userRepository.findByKey(key).orElseThrow(() -> new TutorException(ANSWERS_IMPORT_ERROR, "No user for key " + key));
 
         QuizAnswerDto quizAnswerDto = answerService.createQuizAnswer(user.getId(), quiz.getId());
         QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerDto.getId())
@@ -208,12 +213,12 @@ public class AnswersXmlImport {
 
     private void importCodeOrderXmlImport(Element questionAnswerElement, QuestionAnswer questionAnswer) {
         var slotsElement = questionAnswerElement.getChild("slots");
-        if (slotsElement != null){
+        if (slotsElement != null) {
             Integer questionKey = Integer.valueOf(slotsElement.getAttributeValue(QUESTION_KEY));
             CodeOrderQuestion codeOrderQuestion = codeOrderQuestionMap.get(questionKey);
 
             CodeOrderStatementAnswerDetailsDto codeOrderStatementAnswerDetailsDto = new CodeOrderStatementAnswerDetailsDto();
-            for (var slot: slotsElement.getChildren("slot")) {
+            for (var slot : slotsElement.getChildren("slot")) {
                 var sequence = Integer.valueOf(slot.getAttributeValue(SEQUENCE));
                 var order = Integer.valueOf(slot.getAttributeValue("order"));
 
@@ -221,15 +226,14 @@ public class AnswersXmlImport {
                         .stream()
                         .filter(x -> x.getSequence().equals(sequence))
                         .findAny()
-                        .get().getId();
+                        .orElseThrow(() -> new TutorException(ANSWERS_IMPORT_ERROR, "CodeOrderSlot")).getId();
                 codeOrderStatementAnswerDetailsDto.getOrderedSlots().add(new CodeOrderSlotStatementAnswerDetailsDto(slotId, order));
             }
             CodeOrderAnswer answer = new CodeOrderAnswer(questionAnswer);
             answer.setOrderedSlots(codeOrderQuestion, codeOrderStatementAnswerDetailsDto);
             questionAnswer.setAnswerDetails(answer);
             answerDetailsRepository.save(answer);
-        }
-        else{
+        } else {
             questionAnswer.setAnswerDetails((AnswerDetails) null);
         }
     }
@@ -237,12 +241,12 @@ public class AnswersXmlImport {
 
     private void importCodeFillInXmlImport(Element questionAnswerElement, QuestionAnswer questionAnswer) {
         var slotsElement = questionAnswerElement.getChild("fillInSpots");
-        if (slotsElement != null){
+        if (slotsElement != null) {
             Integer questionKey = Integer.valueOf(slotsElement.getAttributeValue(QUESTION_KEY));
             var codeFillInQuestion = codeFillInQuestionMap.get(questionKey);
 
             CodeFillInStatementAnswerDetailsDto codeFillInStatementAnswerDetailsDto = new CodeFillInStatementAnswerDetailsDto();
-            for (var slot: slotsElement.getChildren("fillInSpot")) {
+            for (var slot : slotsElement.getChildren("fillInSpot")) {
                 var slotSequence = Integer.valueOf(slot.getAttributeValue("spotSequence"));
                 var optionSequence = Integer.valueOf(slot.getAttributeValue("optionSequence"));
 
@@ -252,7 +256,7 @@ public class AnswersXmlImport {
                         .flatMap(s -> s.getOptions().stream()
                                 .filter(op -> op.getSequence().equals(optionSequence))
                                 .map(CodeFillInOption::getId)
-                        ).findAny().get();
+                        ).findAny().orElseThrow(() -> new TutorException(ANSWERS_IMPORT_ERROR, "FillInSpots"));
 
                 var selectOption = new CodeFillInOptionStatementAnswerDto();
                 selectOption.setSequence(slotSequence);
@@ -264,8 +268,7 @@ public class AnswersXmlImport {
             answer.setFillInOptions(codeFillInQuestion, codeFillInStatementAnswerDetailsDto);
             questionAnswer.setAnswerDetails(answer);
             answerDetailsRepository.save(answer);
-        }
-        else{
+        } else {
             questionAnswer.setAnswerDetails((AnswerDetails) null);
         }
     }

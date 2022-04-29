@@ -4,8 +4,9 @@ import java.io.Serializable;
 
 
 public class FraudScoreDto implements Serializable {
-    public UserFraudInfoDto userInfo;
-    public Float score;
+    private UserFraudInfoDto userInfo;
+
+    private Float score;
 
     public FraudScoreDto() {
     }
@@ -15,8 +16,27 @@ public class FraudScoreDto implements Serializable {
         this.score = score;
     }
 
+    public UserFraudInfoDto getUserInfo() {
+        return userInfo;
+    }
+
+    public void setUserInfo(UserFraudInfoDto userInfo) {
+        this.userInfo = userInfo;
+    }
+
+    public Float getScore() {
+        return score;
+    }
+
+    public void setScore(Float score) {
+        this.score = score;
+    }
+
     @Override
     public String toString() {
-        return "FraudScoreDto{" + "userInfo=" + this.userInfo.toString() + ", score=" + score + '}';
+        return "FraudScoreDto{" +
+                "userInfo=" + userInfo +
+                ", score=" + score +
+                '}';
     }
 }

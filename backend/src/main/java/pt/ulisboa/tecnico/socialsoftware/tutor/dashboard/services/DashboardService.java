@@ -126,17 +126,17 @@ public class DashboardService {
         StatsDto statsDto = new StatsDto();
 
         int totalQuizzes = (int) answers.stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
+                .filter(QuizAnswer::canResultsBePublic)
                 .count();
 
         int totalAnswers = (int) answers.stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
+                .filter(QuizAnswer::canResultsBePublic)
                 .map(QuizAnswer::getQuestionAnswers)
                 .mapToLong(Collection::size)
                 .sum();
 
         int uniqueQuestions = (int) answers.stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
+                .filter(QuizAnswer::canResultsBePublic)
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .map(QuestionAnswer::getQuizQuestion)
@@ -145,7 +145,7 @@ public class DashboardService {
                 .distinct().count();
 
         int correctAnswers = (int) answers.stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
+                .filter(QuizAnswer::canResultsBePublic)
                 .map(QuizAnswer::getQuestionAnswers)
                 .flatMap(Collection::stream)
                 .filter(QuestionAnswer::isCorrect)

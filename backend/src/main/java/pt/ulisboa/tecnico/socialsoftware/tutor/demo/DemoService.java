@@ -13,6 +13,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRep
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DifficultQuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction;
@@ -228,12 +230,12 @@ public class DemoService {
 
         Topic softwareArchitectureTopic = new Topic();
         softwareArchitectureTopic.setName("Software Architecture");
-        softwareArchitectureTopic.setCourse(courseRepository.findById(courseId).get());
+        softwareArchitectureTopic.setCourse(courseRepository.findById(courseId).orElseThrow(() -> new TutorException(ErrorMessage.COURSE_NOT_FOUND)));
         topicRepository.save(softwareArchitectureTopic);
 
         Topic softwareEngineeringTopic = new Topic();
         softwareEngineeringTopic.setName("Software Engineering");
-        softwareEngineeringTopic.setCourse(courseRepository.findById(courseId).get());
+        softwareEngineeringTopic.setCourse(courseRepository.findById(courseId).orElseThrow(() -> new TutorException(ErrorMessage.COURSE_NOT_FOUND)));
         topicRepository.save(softwareEngineeringTopic);
 
         List<Question> questions = questionRepository.findQuestions(courseId);
@@ -246,7 +248,7 @@ public class DemoService {
         assessment.setTitle("Software Engineering Questions");
         assessment.setStatus(Assessment.Status.AVAILABLE);
         assessment.setSequence(1);
-        assessment.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).get());
+        assessment.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(ErrorMessage.COURSE_EXECUTION_NOT_FOUND)));
         TopicConjunction topicConjunction = new TopicConjunction();
         topicConjunction.addTopic(softwareEngineeringTopic);
         topicConjunction.setAssessment(assessment);
@@ -258,7 +260,7 @@ public class DemoService {
         inClassOneWayQuiz.setCreationDate(DateHandler.now());
         inClassOneWayQuiz.setAvailableDate(DateHandler.now());
         inClassOneWayQuiz.setConclusionDate(DateHandler.now().plusHours(22));
-        inClassOneWayQuiz.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).get());
+        inClassOneWayQuiz.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(ErrorMessage.COURSE_EXECUTION_NOT_FOUND)));
         inClassOneWayQuiz.setOneWay(true);
         inClassOneWayQuiz.setScramble(true);
 
@@ -268,7 +270,7 @@ public class DemoService {
         inClassQuiz.setCreationDate(DateHandler.now());
         inClassQuiz.setAvailableDate(DateHandler.now());
         inClassQuiz.setConclusionDate(DateHandler.now().plusHours(22));
-        inClassQuiz.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).get());
+        inClassQuiz.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(ErrorMessage.COURSE_EXECUTION_NOT_FOUND)));
         inClassQuiz.setScramble(true);
 
         Quiz proposedQuiz = new Quiz();
@@ -276,7 +278,7 @@ public class DemoService {
         proposedQuiz.setType(Quiz.QuizType.PROPOSED.name());
         proposedQuiz.setCreationDate(DateHandler.now());
         proposedQuiz.setAvailableDate(DateHandler.now());
-        proposedQuiz.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).get());
+        proposedQuiz.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(ErrorMessage.COURSE_EXECUTION_NOT_FOUND)));
         proposedQuiz.setScramble(true);
 
         Quiz scrambledQuiz = new Quiz();
@@ -284,7 +286,7 @@ public class DemoService {
         scrambledQuiz.setType(Quiz.QuizType.PROPOSED.name());
         scrambledQuiz.setCreationDate(DateHandler.now());
         scrambledQuiz.setAvailableDate(DateHandler.now());
-        scrambledQuiz.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).get());
+        scrambledQuiz.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(ErrorMessage.COURSE_EXECUTION_NOT_FOUND)));
 
         questions.forEach(question -> {
             new QuizQuestion(inClassOneWayQuiz, question, inClassOneWayQuiz.getQuizQuestionsNumber());

@@ -10,19 +10,25 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 public abstract class LatexVisitor implements Visitor {
+
+    public static final String ANSWER = "% Answer: ";
+
+    public static final String END_CLOSED_QUESTION = "\\end{ClosedQuestion}\n}\n\n";
+
     protected String result = "";
+
     protected String questionContent;
 
     @Override
     public void visitQuiz(Quiz quiz) {
         this.result =
                 "% Title: " + quiz.getTitle() + "\n" +
-                "% Available date: " + quiz.getAvailableDate() + "\n" +
-                "% Conclusion date: " + quiz.getConclusionDate() + "\n" +
-                "% Type: " + quiz.getType() + "\n" +
-                "% Scramble: " + quiz.getScramble() + "\n" +
-                "% OneWay: " + quiz.isOneWay() + "\n" +
-                "% QrCodeOnly: " + quiz.isQrCodeOnly() + "\n\n";
+                        "% Available date: " + quiz.getAvailableDate() + "\n" +
+                        "% Conclusion date: " + quiz.getConclusionDate() + "\n" +
+                        "% Type: " + quiz.getType() + "\n" +
+                        "% Scramble: " + quiz.getScramble() + "\n" +
+                        "% OneWay: " + quiz.isOneWay() + "\n" +
+                        "% QrCodeOnly: " + quiz.isQrCodeOnly() + "\n\n";
 
         this.result = this.result +
                 "\\documentclass{sty/docist}\n" +
@@ -63,10 +69,10 @@ public abstract class LatexVisitor implements Visitor {
     public void visitQuestion(Question question) {
         this.result =
                 "\\newcommand{\\q"
-                + question.getTitle().replaceAll("\\s+", "")
-                + convertToAlphabet(question.getKey())
-                + "}{\n"
-                + "\\begin{ClosedQuestion}\n";
+                        + question.getTitle().replaceAll("\\s+", "")
+                        + convertToAlphabet(question.getKey())
+                        + "}{\n"
+                        + "\\begin{ClosedQuestion}\n";
 
         this.questionContent = question.getContent();
 
@@ -85,9 +91,9 @@ public abstract class LatexVisitor implements Visitor {
         question.visitOptions(this);
         this.result = this.result + "\t\\end{options}\n";
 
-        this.result = this.result + "% Answer: " + question.getCorrectAnswerRepresentation() + "\n";
+        this.result = this.result + ANSWER + question.getCorrectAnswerRepresentation() + "\n";
 
-        this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
+        this.result = this.result + END_CLOSED_QUESTION;
     }
 
     @Override
@@ -96,7 +102,7 @@ public abstract class LatexVisitor implements Visitor {
 
         question.visitFillInSpots(this);
 
-        this.result = this.result + "% Answer: " +
+        this.result = this.result + ANSWER +
                 question.getFillInSpots()
                         .stream()
                         .sorted(Comparator.comparing(CodeFillInSpot::getSequence))
@@ -108,7 +114,7 @@ public abstract class LatexVisitor implements Visitor {
                                 .orElse("")
                         ).collect(Collectors.joining("; ")) + "\n";
 
-        this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
+        this.result = this.result + END_CLOSED_QUESTION;
     }
 
     @Override
@@ -118,7 +124,7 @@ public abstract class LatexVisitor implements Visitor {
         question.visitCodeOrderSlots(this);
         this.result += "\\end{enumerate}\n";
 
-        this.result = this.result + "% Answer: " +
+        this.result = this.result + ANSWER +
                 question.getCodeOrderSlots()
                         .stream()
                         .filter(x -> x.getOrder() != null)
@@ -126,7 +132,7 @@ public abstract class LatexVisitor implements Visitor {
                         .map(CodeOrderSlot::getContent
                         ).collect(Collectors.joining(" ")) + "\n";
 
-        this.result = this.result + "\\end{ClosedQuestion}\n}\n\n";
+        this.result = this.result + END_CLOSED_QUESTION;
     }
 
     @Override

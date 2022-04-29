@@ -35,13 +35,14 @@ public class Student extends User {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "student", orphanRemoval = true)
     private Set<Dashboard> dashboards = new HashSet<>();
 
-    public Student() {}
-
-    public Student(String name, String username, String email, boolean isAdmin, AuthUser.Type type) {
-        super(name, username, email, Role.STUDENT, isAdmin,type);
+    public Student() {
     }
 
-    public Student(String name, boolean isAdmin){
+    public Student(String name, String username, String email, boolean isAdmin, AuthUser.Type type) {
+        super(name, username, email, Role.STUDENT, isAdmin, type);
+    }
+
+    public Student(String name, boolean isAdmin) {
         super(name, Role.STUDENT, isAdmin);
     }
 
@@ -105,6 +106,7 @@ public class Student extends User {
                 .orElse(null);
     }
 
+    @Override
     public void remove() {
         if (!quizAnswers.isEmpty()) {
             throw new TutorException(USER_HAS_QUIZ_ANSWERS, getUsername());
@@ -124,7 +126,9 @@ public class Student extends User {
         super.remove();
     }
 
-    public Set<Tournament> getTournaments() { return tournaments; }
+    public Set<Tournament> getTournaments() {
+        return tournaments;
+    }
 
     public void addTournament(Tournament tournament) {
         this.tournaments.add(tournament);
@@ -138,7 +142,9 @@ public class Student extends User {
         return discussions;
     }
 
-    public void addDiscussion(Discussion discussion) {this.discussions.add(discussion);}
+    public void addDiscussion(Discussion discussion) {
+        this.discussions.add(discussion);
+    }
 
     public void setDiscussions(Set<Discussion> discussions) {
         this.discussions = discussions;
@@ -157,12 +163,14 @@ public class Student extends User {
         questionSubmissions.add(questionSubmission);
     }
 
-    public Set<QuestionSubmission> getQuestionSubmissions() { return questionSubmissions; }
+    public Set<QuestionSubmission> getQuestionSubmissions() {
+        return questionSubmissions;
+    }
 
     public Set<Dashboard> getDashboards() {
         return dashboards;
     }
-    
+
     public void addDashboard(Dashboard dashboard) {
         dashboards.add(dashboard);
     }

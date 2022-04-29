@@ -5,7 +5,7 @@ import java.util.List;
 
 public class QuizFraudTimeScoreDto implements Serializable {
 
-    public List<FraudScoreDto> scores;
+    private List<FraudScoreDto> scores;
 
     public QuizFraudTimeScoreDto() {
     }
@@ -14,8 +14,18 @@ public class QuizFraudTimeScoreDto implements Serializable {
         this.scores = scores;
     }
 
+    public List<FraudScoreDto> getScores() {
+        return scores;
+    }
+
+    public void setScores(List<FraudScoreDto> scores) {
+        this.scores = scores;
+    }
+
     @Override
     public String toString() {
-        return "QuizFraudTimeScoreDto{scores:" + this.scores.toString() + '}';
+        return "QuizFraudTimeScoreDto{" +
+                "scores=" + scores +
+                '}';
     }
 }

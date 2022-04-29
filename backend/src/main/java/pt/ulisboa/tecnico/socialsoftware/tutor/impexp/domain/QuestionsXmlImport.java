@@ -25,12 +25,20 @@ import java.util.List;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 public class QuestionsXmlImport {
+    public static final String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
+
     public static final String CONTENT = "content";
+
     public static final String SEQUENCE = "sequence";
+
     private QuestionService questionService;
+
     private TopicService topicService;
+
     private CourseRepository courseRepository;
+
     private CourseExecution loadCourseExecution;
+
     private List<QuestionDto> questions;
 
     public List<QuestionDto> importQuestions(InputStream inputStream, QuestionService questionService, TopicService topicService, CourseRepository courseRepository, CourseExecution loadCourseExecution) {
@@ -41,6 +49,7 @@ public class QuestionsXmlImport {
         this.questions = new ArrayList<>();
 
         SAXBuilder builder = new SAXBuilder();
+        builder.setFeature(FEATURE, true);
         builder.setIgnoringElementContentWhitespace(true);
 
         Document doc;
@@ -162,7 +171,7 @@ public class QuestionsXmlImport {
 
         List<TopicDto> courseTopics = topicService.findTopics(course.getId());
         List<TopicDto> questionTopicDtos = new ArrayList<>();
-        for (var topicElement: questionElement.getChild("topics").getChildren("topic")) {
+        for (var topicElement : questionElement.getChild("topics").getChildren("topic")) {
             TopicDto topicDto = courseTopics.stream().
                     filter(topicDto1 -> topicDto1.getName().equals(topicElement.getAttributeValue("name")))
                     .findAny()

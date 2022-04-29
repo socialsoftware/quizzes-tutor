@@ -9,7 +9,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.QuizFraudCommunicationScoreDto;
@@ -18,9 +17,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 
-// import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_NOT_YET_CONCLUDED;
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_HAS_NO_ANSWERS;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED;
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_HAS_NO_ANSWERS;
 
 @RestController
 public class FraudController {
@@ -79,12 +77,6 @@ public class FraudController {
         QuizDto quiz = quizService.findById(quizId);
         if (!quiz.isOneWay() || !quiz.getType().equals(Quiz.QuizType.IN_CLASS.toString())) {
             throw new TutorException(FRAUD_SERVICE_QUIZ_TYPE_NOT_SUPPORTED);
-
-            // } else if
-            // (ZonedDateTime.parse(quiz.getConclusionDate()).isAfter(ZonedDateTime.now()))
-            // {
-            // throw new TutorException(QUIZ_NOT_YET_CONCLUDED);
-
         } else if (quiz.getNumberOfAnswers() == 0) {
             throw new TutorException(QUIZ_HAS_NO_ANSWERS);
         }

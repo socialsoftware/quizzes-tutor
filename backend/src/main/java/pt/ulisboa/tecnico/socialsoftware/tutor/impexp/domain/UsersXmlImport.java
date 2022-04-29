@@ -23,161 +23,168 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.US
 
 @Component
 public class UsersXmlImport {
-	private UserService userService;
+    public static final String FEATURE = "http://apache.org/xml/features/disallow-doctype-decl";
 
-	public void importUsers(InputStream inputStream, UserService userService) {
-		this.userService = userService;
+    private UserService userService;
 
-		SAXBuilder builder = new SAXBuilder();
-		builder.setIgnoringElementContentWhitespace(true);
+    public void importUsers(InputStream inputStream, UserService userService) {
+        this.userService = userService;
 
-		Document doc;
-		try {
-			Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
-			doc = builder.build(reader);
-		} catch (FileNotFoundException e) {
-			throw new TutorException(USERS_IMPORT_ERROR, "File not found");
-		} catch (JDOMException e) {
-			throw new TutorException(USERS_IMPORT_ERROR, "Coding problem");
-		} catch (IOException e) {
-			throw new TutorException(USERS_IMPORT_ERROR, "File type or format");
-		}
+        SAXBuilder builder = new SAXBuilder();
+        builder.setFeature(FEATURE, true);
+        builder.setIgnoringElementContentWhitespace(true);
 
-		if (doc == null) {
-			throw new TutorException(USERS_IMPORT_ERROR, "File not found ot format error");
-		}
+        Document doc;
+        try {
+            Reader reader = new InputStreamReader(inputStream, Charset.defaultCharset());
+            doc = builder.build(reader);
+        } catch (FileNotFoundException e) {
+            throw new TutorException(USERS_IMPORT_ERROR, "File not found");
+        } catch (JDOMException e) {
+            throw new TutorException(USERS_IMPORT_ERROR, "Coding problem");
+        } catch (IOException e) {
+            throw new TutorException(USERS_IMPORT_ERROR, "File type or format");
+        }
 
-		importUsers(doc);
-	}
+        if (doc == null) {
+            throw new TutorException(USERS_IMPORT_ERROR, "File not found ot format error");
+        }
 
-	public void importUsers(String usersXml, UserService userService) {
-		SAXBuilder builder = new SAXBuilder();
-		builder.setIgnoringElementContentWhitespace(true);
+        importUsers(doc);
+    }
 
-		InputStream stream = new ByteArrayInputStream(usersXml.getBytes());
+    public void importUsers(String usersXml, UserService userService) {
+        SAXBuilder builder = new SAXBuilder();
+        builder.setIgnoringElementContentWhitespace(true);
 
-		importUsers(stream, userService);
-	}
+        InputStream stream = new ByteArrayInputStream(usersXml.getBytes());
 
-	private void importUsers(Document doc) {
-		XPathFactory xpfac = XPathFactory.instance();
-		XPathExpression<Element> xp = xpfac.compile("//users/user", Filters.element());
-		for (Element element : xp.evaluate(doc)) {
-			Integer key = Integer.valueOf(element.getAttributeValue("key"));
+        importUsers(stream, userService);
+    }
 
-			if (!userService.existsUserWithKey(key)) {
-				User user;
-				if (element.getChild("authUsers") != null) {
-					user = importUserWithAuth(element);
-				} else {
-					user = importUser(element);
-				}
-				importCourseExecutions(element.getChild("courseExecutions"), user);
-			}
-		}
-	}
+    private void importUsers(Document doc) {
+        XPathFactory xpfac = XPathFactory.instance();
+        XPathExpression<Element> xp = xpfac.compile("//users/user", Filters.element());
+        for (Element element : xp.evaluate(doc)) {
+            Integer key = Integer.valueOf(element.getAttributeValue("key"));
 
-	private User importUser(Element userElement) {
-		Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
-		String name = userElement.getAttributeValue("name");
-		LocalDateTime creationDate = DateHandler.toLocalDateTime(userElement.getAttributeValue("creationDate"));
-		boolean admin =  Boolean.parseBoolean(userElement.getAttributeValue("admin"));
-		User.Role role = getUserRole(userElement);
+            if (!userService.existsUserWithKey(key)) {
+                User user;
+                if (element.getChild("authUsers") != null) {
+                    user = importUserWithAuth(element);
+                } else {
+                    user = importUser(element);
+                }
+                importCourseExecutions(element.getChild("courseExecutions"), user);
+            }
+        }
+    }
 
-		User user = userService.createUser(name, role);
-		user.setKey(key);
-		user.setAdmin(admin);
-		user.setCreationDate(creationDate);
-		return user;
-	}
+    private User importUser(Element userElement) {
+        Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
+        String name = userElement.getAttributeValue("name");
+        LocalDateTime creationDate = DateHandler.toLocalDateTime(userElement.getAttributeValue("creationDate"));
+        boolean admin = Boolean.parseBoolean(userElement.getAttributeValue("admin"));
+        User.Role role = getUserRole(userElement);
 
-	private User importUserWithAuth(Element userElement) {
-		Element authUserElement = userElement.getChild("authUsers").getChild("authUser");
-		Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
-		String name = userElement.getAttributeValue("name");
-		User.Role role = getUserRole(userElement);
+        User user = userService.createUser(name, role);
+        user.setKey(key);
+        user.setAdmin(admin);
+        user.setCreationDate(creationDate);
+        return user;
+    }
 
-		String username = authUserElement.getAttributeValue("username");
-		if (username.trim().isEmpty()) {
-			username = null;
-		}
-		String email = authUserElement.getAttributeValue("email");
-		if (email.trim().isEmpty()) {
-			email = null;
-		}
-		AuthUser.Type type = AuthUser.Type.EXTERNAL;
-		String password = null;
-		Boolean isActive = null;
-		LocalDateTime lastAccess = null;
-		String confirmationDate = null;
-		LocalDateTime tokenGenerationDate = null;
+    private User importUserWithAuth(Element userElement) {
+        Element authUserElement = userElement.getChild("authUsers").getChild("authUser");
+        Integer key = Integer.valueOf(userElement.getAttributeValue("key"));
+        String name = userElement.getAttributeValue("name");
+        User.Role role = getUserRole(userElement);
 
-		if (authUserElement.getAttributeValue("type") != null) {
-			type = AuthUser.Type.valueOf(authUserElement.getAttributeValue("type"));
-		}
-		if (authUserElement.getAttributeValue("password") != null) {
-			 password = authUserElement.getAttributeValue("password");
-		}
-		if (authUserElement.getAttributeValue("lastAccess") != null) {
-			lastAccess = DateHandler.toLocalDateTime(
-					authUserElement.getAttributeValue("lastAccess"));
-		}
+        String username = authUserElement.getAttributeValue("username");
+        if (username.trim().isEmpty()) {
+            username = null;
+        }
+        String email = authUserElement.getAttributeValue("email");
+        if (email.trim().isEmpty()) {
+            email = null;
+        }
+        AuthUser.Type type = AuthUser.Type.EXTERNAL;
+        String password = null;
+        Boolean isActive = null;
+        LocalDateTime lastAccess = null;
+        String confirmationDate = null;
+        LocalDateTime tokenGenerationDate = null;
 
-		if (authUserElement.getAttributeValue("confirmationToken") != null) {
-			confirmationDate = authUserElement.getAttributeValue("confirmationToken");
-		}
+        if (authUserElement.getAttributeValue("type") != null) {
+            type = AuthUser.Type.valueOf(authUserElement.getAttributeValue("type"));
+        }
+        if (authUserElement.getAttributeValue("password") != null) {
+            password = authUserElement.getAttributeValue("password");
+        }
+        if (authUserElement.getAttributeValue("lastAccess") != null) {
+            lastAccess = DateHandler.toLocalDateTime(
+                    authUserElement.getAttributeValue("lastAccess"));
+        }
 
-		if (authUserElement.getAttributeValue("tokenGenerationDate") != null) {
-			tokenGenerationDate = DateHandler.toLocalDateTime(
-					authUserElement.getAttributeValue("tokenGenerationDate"));
+        if (authUserElement.getAttributeValue("confirmationToken") != null) {
+            confirmationDate = authUserElement.getAttributeValue("confirmationToken");
+        }
 
-		}
-		if (authUserElement.getAttributeValue("isActive") != null) {
-			isActive = Boolean.parseBoolean(authUserElement.getAttributeValue("isActive"));
-		}
+        if (authUserElement.getAttributeValue("tokenGenerationDate") != null) {
+            tokenGenerationDate = DateHandler.toLocalDateTime(
+                    authUserElement.getAttributeValue("tokenGenerationDate"));
 
-		AuthUser authUser;
+        }
+        if (authUserElement.getAttributeValue("isActive") != null) {
+            isActive = Boolean.parseBoolean(authUserElement.getAttributeValue("isActive"));
+        }
 
-		switch (role) {
-			case STUDENT:
-				authUser = userService.createStudentWithAuth(name, username, email, type);
-				break;
-			case TEACHER:
-				authUser = userService.createTeacherWithAuth(name, username, email, type);
-				break;
-			case DEMO_ADMIN:
-				authUser = userService.createDemoAdminWithAuth(name, username, email, type);
-				break;
-			case ADMIN:
-			default:
-				throw new TutorException(USERS_IMPORT_ERROR, "Not allowed role " + role);
-		}
+        AuthUser authUser;
 
-		authUser.getUser().setKey(key);
-		authUser.setPassword(password);
-		if (type == AuthUser.Type.EXTERNAL) {
-			((AuthExternalUser)authUser).setActive(isActive);
-			((AuthExternalUser)authUser).setConfirmationToken(confirmationDate);
-			((AuthExternalUser)authUser).setTokenGenerationDate(tokenGenerationDate);
-		}
-		authUser.setLastAccess(lastAccess);
+        if (role == null) {
+            throw new TutorException(USERS_IMPORT_ERROR, "Not allowed role " + role);
+        }
 
-		return authUser.getUser();
-	}
+        switch (role) {
+            case STUDENT:
+                authUser = userService.createStudentWithAuth(name, username, email, type);
+                break;
+            case TEACHER:
+                authUser = userService.createTeacherWithAuth(name, username, email, type);
+                break;
+            case DEMO_ADMIN:
+                authUser = userService.createDemoAdminWithAuth(name, username, email, type);
+                break;
+            case ADMIN:
+            default:
+                throw new TutorException(USERS_IMPORT_ERROR, "Not allowed role " + role);
+        }
 
-	private void importCourseExecutions(Element courseExecutions, User user) {
-		for (Element courseExecutionElement: courseExecutions.getChildren("courseExecution")) {
-			Integer executionId = Integer.valueOf(courseExecutionElement.getAttributeValue("executionId"));
+        authUser.getUser().setKey(key);
+        authUser.setPassword(password);
+        if (type == AuthUser.Type.EXTERNAL) {
+            ((AuthExternalUser) authUser).setActive(isActive);
+            ((AuthExternalUser) authUser).setConfirmationToken(confirmationDate);
+            ((AuthExternalUser) authUser).setTokenGenerationDate(tokenGenerationDate);
+        }
+        authUser.setLastAccess(lastAccess);
 
-			userService.addCourseExecution(user.getId(), executionId);
-		}
-	}
+        return authUser.getUser();
+    }
 
-	private User.Role getUserRole(Element userElement) {
-		User.Role role = null;
-		if (userElement.getAttributeValue("role") != null) {
-			role = User.Role.valueOf(userElement.getAttributeValue("role"));
-		}
-		return role;
-	}
+    private void importCourseExecutions(Element courseExecutions, User user) {
+        for (Element courseExecutionElement : courseExecutions.getChildren("courseExecution")) {
+            Integer executionId = Integer.valueOf(courseExecutionElement.getAttributeValue("executionId"));
+
+            userService.addCourseExecution(user.getId(), executionId);
+        }
+    }
+
+    private User.Role getUserRole(Element userElement) {
+        User.Role role = null;
+        if (userElement.getAttributeValue("role") != null) {
+            role = User.Role.valueOf(userElement.getAttributeValue("role"));
+        }
+        return role;
+    }
 }

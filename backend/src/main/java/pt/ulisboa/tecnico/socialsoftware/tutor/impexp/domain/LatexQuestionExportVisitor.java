@@ -10,13 +10,13 @@ public class LatexQuestionExportVisitor extends LatexVisitor {
     }
 
     private String exportQuestions(List<Question> questions) {
-        String result = "";
+        StringBuilder bld = new StringBuilder();
 
         for (Question question : questions) {
             question.accept(this);
-            result = result + this.result;
+            bld.append(this.result);
         }
 
-        return result;
+        return bld.toString();
     }
 }

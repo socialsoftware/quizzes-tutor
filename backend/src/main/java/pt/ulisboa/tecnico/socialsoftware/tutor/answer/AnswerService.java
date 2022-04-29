@@ -469,7 +469,7 @@ public class AnswerService {
 
         return student.getQuizAnswers().stream()
                 .filter(quizAnswer -> quizAnswer.getQuiz().getCourseExecution().getId().equals(executionId))
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
+                .filter(QuizAnswer::canResultsBePublic)
                 .filter(quizAnswer -> quizAnswer.getAnswerDate() != null)
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
@@ -535,7 +535,7 @@ public class AnswerService {
         });
 
         Set<QuizAnswer> quizAnswersToClose = quizAnswerRepository.findQuizAnswersToCalculateStatistics();
-        quizAnswersToClose.forEach(quizAnswer -> quizAnswer.calculateQuestionStatistics());
+        quizAnswersToClose.forEach(QuizAnswer::calculateQuestionStatistics);
     }
 
     public List<Question> filterByAssessment(List<Question> availableQuestions, StatementCreationDto quizDetails) {
@@ -543,7 +543,7 @@ public class AnswerService {
                 .orElseThrow(() -> new TutorException(ASSESSMENT_NOT_FOUND, quizDetails.getAssessment()));
 
         return availableQuestions.stream()
-                .filter(question -> assessment.hasQuestion(question))
+                .filter(assessment::hasQuestion)
                 .collect(Collectors.toList());
     }
 

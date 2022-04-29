@@ -23,17 +23,24 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
         discriminatorType = DiscriminatorType.STRING)
 public abstract class User implements DomainEntity {
     public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
+
     public static class UserTypes {
         public static final String STUDENT = "student";
+
         public static final String TEACHER = "teacher";
+
         public static final String DEMO_ADMIN = "demo_admin";
+
+        private UserTypes() {
+            
+        }
     }
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(unique=true)
+    @Column(unique = true)
     private Integer key;
 
     @Enumerated(EnumType.STRING)
@@ -47,7 +54,7 @@ public abstract class User implements DomainEntity {
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
 
-    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToOne(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY, orphanRemoval = true)
     public AuthUser authUser;
 
     @ManyToMany
@@ -59,10 +66,10 @@ public abstract class User implements DomainEntity {
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "user", fetch = FetchType.LAZY)
     private Set<Review> reviews = new HashSet<>();
 
-    public User() {
+    protected User() {
     }
 
-    public User(String name, String username, String email, Role role, boolean isAdmin, AuthUser.Type type){
+    protected User(String name, String username, String email, Role role, boolean isAdmin, AuthUser.Type type) {
         setName(name);
         setRole(role);
         setAdmin(isAdmin);
@@ -70,7 +77,7 @@ public abstract class User implements DomainEntity {
         setCreationDate(DateHandler.now());
     }
 
-    public User(String name, User.Role role, boolean isAdmin){
+    protected User(String name, User.Role role, boolean isAdmin) {
         setName(name);
         setRole(role);
         setAdmin(isAdmin);
@@ -148,7 +155,9 @@ public abstract class User implements DomainEntity {
         this.replies.add(reply);
     }
 
-    public void removeReply(Reply reply) {this.replies.remove(reply);}
+    public void removeReply(Reply reply) {
+        this.replies.remove(reply);
+    }
 
     public void setRole(Role role) {
         if (role == null)
@@ -172,7 +181,7 @@ public abstract class User implements DomainEntity {
     public void setCourseExecutions(Set<CourseExecution> courseExecutions) {
         this.courseExecutions = courseExecutions;
     }
-    
+
     public String getEmail() {
         return authUser.getEmail();
     }
@@ -207,15 +216,21 @@ public abstract class User implements DomainEntity {
         course.addUser(this);
     }
 
-    public Set<Review> getReviews() { return reviews; }
+    public Set<Review> getReviews() {
+        return reviews;
+    }
 
-    public boolean isStudent() { return this.role == User.Role.STUDENT; }
+    public boolean isStudent() {
+        return this.role == User.Role.STUDENT;
+    }
 
-    public boolean isTeacher() { return this.role == User.Role.TEACHER; }
+    public boolean isTeacher() {
+        return this.role == User.Role.TEACHER;
+    }
 
     public void remove() {
         if (getAuthUser() != null && !getAuthUser().isDemoStudent() && getAuthUser().isActive()) {
-                throw new TutorException(USER_IS_ACTIVE, getUsername());
+            throw new TutorException(USER_IS_ACTIVE, getUsername());
         }
 
         if (!replies.isEmpty()) {

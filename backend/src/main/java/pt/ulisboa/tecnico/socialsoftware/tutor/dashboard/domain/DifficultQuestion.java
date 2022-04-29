@@ -3,12 +3,9 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
-import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
-
-import java.time.LocalDateTime;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
 import javax.persistence.*;
 
@@ -27,10 +24,10 @@ public class DifficultQuestion implements DomainEntity {
     @ManyToOne
     private CourseExecution courseExecution;
 
-    public DifficultQuestion(){
+    public DifficultQuestion() {
     }
 
-    public DifficultQuestion(CourseExecution courseExecution, Question question, int percentage){
+    public DifficultQuestion(CourseExecution courseExecution, Question question, int percentage) {
         if (percentage < 0 || percentage > 24)
             throw new TutorException(ErrorMessage.CANNOT_CREATE_DIFFICULT_QUESTION);
 
@@ -83,7 +80,7 @@ public class DifficultQuestion implements DomainEntity {
 
     @Override
     public void accept(Visitor visitor) {
-        // TODO Auto-generated method stub
+        // Only used for XML generation
     }
 
     @Override

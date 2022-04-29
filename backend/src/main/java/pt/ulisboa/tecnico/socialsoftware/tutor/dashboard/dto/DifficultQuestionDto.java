@@ -1,10 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto;
 
-import java.io.Serializable;
-import java.time.LocalDateTime;
-
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+
+import java.io.Serializable;
 
 public class DifficultQuestionDto implements Serializable {
     private Integer id;
@@ -13,10 +12,10 @@ public class DifficultQuestionDto implements Serializable {
 
     private QuestionDto questionDto;
 
-    public DifficultQuestionDto(){
+    public DifficultQuestionDto() {
     }
 
-    public DifficultQuestionDto(DifficultQuestion difficultQuestion){
+    public DifficultQuestionDto(DifficultQuestion difficultQuestion) {
         setId(difficultQuestion.getId());
         setPercentage(difficultQuestion.getPercentage());
         setQuestionDto(new QuestionDto(difficultQuestion.getQuestion()));

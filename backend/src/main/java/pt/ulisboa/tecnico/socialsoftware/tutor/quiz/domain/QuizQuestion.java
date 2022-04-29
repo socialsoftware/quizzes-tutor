@@ -14,21 +14,21 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_QUESTION_HAS_ANSWERS;
 
 @Entity
-@Table(name="quiz_questions")
+@Table(name = "quiz_questions")
 public class QuizQuestion implements DomainEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "question_id")
     private Question question;
 
-    @OneToMany(mappedBy = "quizQuestion", fetch=FetchType.LAZY)
+    @OneToMany(mappedBy = "quizQuestion", fetch = FetchType.LAZY)
     private Set<QuestionAnswer> questionAnswers = new HashSet<>();
 
     private Integer sequence;
@@ -38,7 +38,7 @@ public class QuizQuestion implements DomainEntity {
 
     public QuizQuestion(Quiz quiz, Question question, Integer sequence) {
         if (quiz.getQuizQuestions().stream()
-                .map(quizQuestion -> quizQuestion.getQuestion())
+                .map(QuizQuestion::getQuestion)
                 .anyMatch(question1 -> question1 == question)) {
             throw new TutorException(QUIZ_CANNOT_HAVE_REPEATED_QUESTIONS);
         }

@@ -7,7 +7,6 @@ import org.jdom2.output.XMLOutputter;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
-import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +14,11 @@ import java.util.stream.Collectors;
 
 public class XMLQuestionExportVisitor implements Visitor {
     public static final String CONTENT = "content";
+
     public static final String SEQUENCE = "sequence";
+
     private Element rootElement;
+
     private Element currentElement;
 
     public String export(List<Question> questions) {
@@ -76,7 +78,7 @@ public class XMLQuestionExportVisitor implements Visitor {
             question.getImage().accept(this);
 
         Element questionTopics = new Element("topics");
-        for (var topic: question.getTopics()) {
+        for (var topic : question.getTopics()) {
             Element questionTopic = new Element("topic");
             questionTopic.setAttribute("name", topic.getName());
             questionTopics.addContent(questionTopic);

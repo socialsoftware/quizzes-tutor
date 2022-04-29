@@ -4,8 +4,9 @@ import java.io.Serializable;
 import java.util.List;
 
 public class QuizFraudCommunicationScoreDto implements Serializable {
-    public List<FraudScoreDto> scoresIn;
-    public List<FraudScoreDto> scoresOut;
+    private List<FraudScoreDto> scoresIn;
+
+    private List<FraudScoreDto> scoresOut;
 
     public QuizFraudCommunicationScoreDto() {
     }
@@ -15,9 +16,27 @@ public class QuizFraudCommunicationScoreDto implements Serializable {
         this.scoresOut = scoresOut;
     }
 
+    public List<FraudScoreDto> getScoresIn() {
+        return scoresIn;
+    }
+
+    public void setScoresIn(List<FraudScoreDto> scoresIn) {
+        this.scoresIn = scoresIn;
+    }
+
+    public List<FraudScoreDto> getScoresOut() {
+        return scoresOut;
+    }
+
+    public void setScoresOut(List<FraudScoreDto> scoresOut) {
+        this.scoresOut = scoresOut;
+    }
+
     @Override
     public String toString() {
-        return "QuizFraudCommunicationScoreDto{scoresIn:" + scoresIn.toString() + ", scoresOut:"
-                + scoresOut.toString() + "}";
+        return "QuizFraudCommunicationScoreDto{" +
+                "scoresIn=" + scoresIn +
+                ", scoresOut=" + scoresOut +
+                '}';
     }
 }

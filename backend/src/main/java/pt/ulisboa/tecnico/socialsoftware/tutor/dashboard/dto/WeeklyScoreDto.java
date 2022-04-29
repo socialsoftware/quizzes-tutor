@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto;
 
-import com.fasterxml.jackson.annotation.JsonProperty;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.WeeklyScore;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
@@ -8,82 +7,86 @@ import java.io.Serializable;
 
 public class WeeklyScoreDto implements Serializable {
 
-  private Integer id;
+    private Integer id;
 
-  private int quizzesAnswered;
-  private int questionsAnswered;
-  private int questionsUniquelyAnswered;
-  private int percentageCorrect;
-  private int improvedCorrectAnswers;
+    private int quizzesAnswered;
 
-  private String week;
+    private int questionsAnswered;
 
-  public WeeklyScoreDto() {
-  }
+    private int questionsUniquelyAnswered;
 
-  public WeeklyScoreDto(WeeklyScore weeklyScore) {
-    setId(weeklyScore.getId());
-    setQuizzesAnswered(weeklyScore.getQuizzesAnswered());
-    setQuestionsAnswered(weeklyScore.getQuestionsAnswered());
-    setQuestionsUniquelyAnswered(weeklyScore.getQuestionsUniquelyAnswered());
-    setPercentageCorrect(weeklyScore.getPercentageCorrect());
-    setImprovedCorrectAnswers(weeklyScore.getImprovedCorrectAnswers());
-    setWeek(DateHandler.toISOString(weeklyScore.getWeek().atStartOfDay()));
-  }
+    private int percentageCorrect;
 
-  public Integer getId() {
-    return id;
-  }
+    private int improvedCorrectAnswers;
 
-  public void setId(Integer id) {
-    this.id = id;
-  }
+    private String week;
 
-  public int getQuizzesAnswered() {
-    return quizzesAnswered;
-  }
+    public WeeklyScoreDto() {
+    }
 
-  public void setQuizzesAnswered(int quizzesAnswered) {
-    this.quizzesAnswered = quizzesAnswered;
-  }
+    public WeeklyScoreDto(WeeklyScore weeklyScore) {
+        setId(weeklyScore.getId());
+        setQuizzesAnswered(weeklyScore.getQuizzesAnswered());
+        setQuestionsAnswered(weeklyScore.getQuestionsAnswered());
+        setQuestionsUniquelyAnswered(weeklyScore.getQuestionsUniquelyAnswered());
+        setPercentageCorrect(weeklyScore.getPercentageCorrect());
+        setImprovedCorrectAnswers(weeklyScore.getImprovedCorrectAnswers());
+        setWeek(DateHandler.toISOString(weeklyScore.getWeek().atStartOfDay()));
+    }
 
-  public int getQuestionsAnswered() {
-    return questionsAnswered;
-  }
+    public Integer getId() {
+        return id;
+    }
 
-  public void setQuestionsAnswered(int questionsAnswered) {
-    this.questionsAnswered = questionsAnswered;
-  }
+    public void setId(Integer id) {
+        this.id = id;
+    }
 
-  public int getQuestionsUniquelyAnswered() {
-    return questionsUniquelyAnswered;
-  }
+    public int getQuizzesAnswered() {
+        return quizzesAnswered;
+    }
 
-  public void setQuestionsUniquelyAnswered(int questionsUniquelyAnswered) {
-    this.questionsUniquelyAnswered = questionsUniquelyAnswered;
-  }
+    public void setQuizzesAnswered(int quizzesAnswered) {
+        this.quizzesAnswered = quizzesAnswered;
+    }
 
-  public int getPercentageCorrect() {
-    return percentageCorrect;
-  }
+    public int getQuestionsAnswered() {
+        return questionsAnswered;
+    }
 
-  public void setPercentageCorrect(int percentageCorrect) {
-    this.percentageCorrect = percentageCorrect;
-  }
+    public void setQuestionsAnswered(int questionsAnswered) {
+        this.questionsAnswered = questionsAnswered;
+    }
 
-  public int getImprovedCorrectAnswers() {
-    return improvedCorrectAnswers;
-  }
+    public int getQuestionsUniquelyAnswered() {
+        return questionsUniquelyAnswered;
+    }
 
-  public void setImprovedCorrectAnswers(int improvedCorrectAnswers) {
-    this.improvedCorrectAnswers = improvedCorrectAnswers;
-  }
+    public void setQuestionsUniquelyAnswered(int questionsUniquelyAnswered) {
+        this.questionsUniquelyAnswered = questionsUniquelyAnswered;
+    }
 
-  public String getWeek() {
-    return week;
-  }
+    public int getPercentageCorrect() {
+        return percentageCorrect;
+    }
 
-  public void setWeek(String week) {
-    this.week = week;
-  }
+    public void setPercentageCorrect(int percentageCorrect) {
+        this.percentageCorrect = percentageCorrect;
+    }
+
+    public int getImprovedCorrectAnswers() {
+        return improvedCorrectAnswers;
+    }
+
+    public void setImprovedCorrectAnswers(int improvedCorrectAnswers) {
+        this.improvedCorrectAnswers = improvedCorrectAnswers;
+    }
+
+    public String getWeek() {
+        return week;
+    }
+
+    public void setWeek(String week) {
+        this.week = week;
+    }
 }

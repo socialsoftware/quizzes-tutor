@@ -30,9 +30,13 @@ public class WeeklyScore implements DomainEntity {
     private Integer id;
 
     private int quizzesAnswered;
+
     private int questionsAnswered;
+
     private int questionsUniquelyAnswered;
+
     private int percentageCorrect;
+
     private int improvedCorrectAnswers;
 
     private LocalDate week;
@@ -42,7 +46,8 @@ public class WeeklyScore implements DomainEntity {
     @ManyToOne
     private Dashboard dashboard;
 
-    public WeeklyScore() {}
+    public WeeklyScore() {
+    }
 
     public WeeklyScore(Dashboard dashboard, LocalDate week) {
         setWeek(week);
@@ -57,13 +62,13 @@ public class WeeklyScore implements DomainEntity {
 
     public void computeStatistics(Set<QuizAnswer> weeklyQuizAnswers) {
         List<QuestionAnswer> publicWeeklyQuestionAnswers = weeklyQuizAnswers.stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
+                .filter(QuizAnswer::canResultsBePublic)
                 .sorted(Comparator.comparing(QuizAnswer::getAnswerDate).reversed())
                 .flatMap(quizAnswer -> quizAnswer.getQuestionAnswers().stream())
                 .collect(Collectors.toList());
 
         setQuizzesAnswered((int) weeklyQuizAnswers.stream()
-                .filter(quizAnswer -> quizAnswer.canResultsBePublic())
+                .filter(QuizAnswer::canResultsBePublic)
                 .count());
 
         List<Question> weeklyQuestionsAnswered = publicWeeklyQuestionAnswers.stream()
@@ -78,14 +83,14 @@ public class WeeklyScore implements DomainEntity {
 
         int uniquelyCorrect = (int) publicWeeklyQuestionAnswers.stream()
                 .collect(collectingAndThen(toCollection(() -> new TreeSet<>(comparingInt(questionAnswer -> questionAnswer.getQuizQuestion().getQuestion().getId()))),
-                ArrayList::new)).stream()
+                        ArrayList::new)).stream()
                 .filter(QuestionAnswer::isCorrect)
                 .count();
 
-        setPercentageCorrect(publicWeeklyQuestionAnswers.size() > 0 ? (int) Math.round((publicWeeklyQuestionAnswers.stream().filter(QuestionAnswer::isCorrect).count() /
+        setPercentageCorrect(!publicWeeklyQuestionAnswers.isEmpty() ? (int) Math.round((publicWeeklyQuestionAnswers.stream().filter(QuestionAnswer::isCorrect).count() /
                 (double) publicWeeklyQuestionAnswers.size()) * 100.0) : 0);
 
-        setImprovedCorrectAnswers(getQuestionsUniquelyAnswered() > 0 ? (int) Math.round(uniquelyCorrect*100/(double) getQuestionsUniquelyAnswered()) : 0);
+        setImprovedCorrectAnswers(getQuestionsUniquelyAnswered() > 0 ? (int) Math.round(uniquelyCorrect * 100 / (double) getQuestionsUniquelyAnswered()) : 0);
 
         if (DateHandler.now().isAfter(week.plusDays(7).atStartOfDay())) {
             closed = weeklyQuizAnswers.stream()
@@ -93,7 +98,9 @@ public class WeeklyScore implements DomainEntity {
         }
     }
 
-    public Integer getId() { return id; }
+    public Integer getId() {
+        return id;
+    }
 
     public int getQuizzesAnswered() {
         return quizzesAnswered;
@@ -103,19 +110,25 @@ public class WeeklyScore implements DomainEntity {
         this.quizzesAnswered = quizzesAnswered;
     }
 
-    public int getQuestionsAnswered() { return questionsAnswered; }
+    public int getQuestionsAnswered() {
+        return questionsAnswered;
+    }
 
     public void setQuestionsAnswered(int numberAnswered) {
         this.questionsAnswered = numberAnswered;
     }
 
-    public int getQuestionsUniquelyAnswered() { return questionsUniquelyAnswered; }
+    public int getQuestionsUniquelyAnswered() {
+        return questionsUniquelyAnswered;
+    }
 
     public void setQuestionsUniquelyAnswered(int uniquelyAnswered) {
         this.questionsUniquelyAnswered = uniquelyAnswered;
     }
 
-    public int getPercentageCorrect() { return percentageCorrect; }
+    public int getPercentageCorrect() {
+        return percentageCorrect;
+    }
 
     public void setPercentageCorrect(int percentageCorrect) {
         this.percentageCorrect = percentageCorrect;
@@ -129,7 +142,9 @@ public class WeeklyScore implements DomainEntity {
         this.improvedCorrectAnswers = improvedCorrectAnswers;
     }
 
-    public LocalDate getWeek() { return week; }
+    public LocalDate getWeek() {
+        return week;
+    }
 
     public void setWeek(LocalDate week) {
         this.week = week;
@@ -149,7 +164,9 @@ public class WeeklyScore implements DomainEntity {
         this.closed = close;
     }
 
-    public Dashboard getDashboard() { return dashboard; }
+    public Dashboard getDashboard() {
+        return dashboard;
+    }
 
     public void setDashboard(Dashboard dashboard) {
         this.dashboard = dashboard;
@@ -157,6 +174,7 @@ public class WeeklyScore implements DomainEntity {
     }
 
     public void accept(Visitor visitor) {
+        // Only to generate XML
     }
 
     @Override

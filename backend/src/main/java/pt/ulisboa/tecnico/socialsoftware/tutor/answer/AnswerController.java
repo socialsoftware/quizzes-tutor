@@ -1,7 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
 import javax.validation.Valid;
-import java.net.http.HttpResponse;
 import java.security.Principal;
 import java.util.List;
 

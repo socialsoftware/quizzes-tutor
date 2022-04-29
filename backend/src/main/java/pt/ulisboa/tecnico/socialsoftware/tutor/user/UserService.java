@@ -163,7 +163,7 @@ public class UserService {
 
         CourseExecutionDto courseExecutionDto = courseExecutionRepository.findById(courseExecutionId)
                 .map(CourseExecutionDto::new)
-                .get();
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
 
         return new NotificationResponse<>(notification, courseExecutionDto);
     }

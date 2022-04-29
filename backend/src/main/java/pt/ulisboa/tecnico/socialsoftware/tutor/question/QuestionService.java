@@ -97,8 +97,8 @@ public class QuestionService {
     }
 
     @Retryable(
-      value = { SQLException.class },
-      backoff = @Backoff(delay = 5000))
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuestionDto findQuestionByKey(Integer key) {
         return questionRepository.findByKey(key).map(QuestionDto::new)
@@ -124,7 +124,7 @@ public class QuestionService {
         }
 
         Collection<Question> questions;
-        if  (query.getContent().trim().length() == 0) {
+        if (query.getContent().trim().length() == 0) {
             questions = questionRepository.findQuestions(courseId);
         } else {
             questions = questionRepository.findQuestionsByContent(courseId, query.getContent().trim());
@@ -135,17 +135,17 @@ public class QuestionService {
         }
 
         List<QuestionDto> result = new ArrayList<>();
-        for (Question question: questions) {
+        for (Question question : questions) {
             if (!question.isInSubmission()
                     && (query.getBeginCreationDate() == null
-                        || (question.getCreationDate() != null && DateHandler.toLocalDateTime(query.getBeginCreationDate()).isBefore(question.getCreationDate())))
+                    || (question.getCreationDate() != null && DateHandler.toLocalDateTime(query.getBeginCreationDate()).isBefore(question.getCreationDate())))
                     && (query.getEndCreationDate() == null
-                        || (question.getCreationDate() != null && DateHandler.toLocalDateTime(query.getEndCreationDate()).isAfter(question.getCreationDate())))
+                    || (question.getCreationDate() != null && DateHandler.toLocalDateTime(query.getEndCreationDate()).isAfter(question.getCreationDate())))
                     && (!query.isClarificationsOnly() || question.getDiscussions().stream().flatMap(discussion -> discussion.getReplies().stream()).anyMatch(Reply::isPublic))
                     && (!query.isNoAnswersOnly() || question.getNumberOfAnswers() == 0)
                     && ((question.getDifficulty() == null && query.getDifficulty()[0] == 0 && query.getDifficulty()[1] == 100)
-                        || (question.getDifficulty() != null && question.getDifficulty() >= query.getDifficulty()[0]  && question.getDifficulty() <= query.getDifficulty()[1]))
-                    && (query.getStatus().size() == 0 || query.getStatus().size() == 3 || query.getStatus().contains(question.getStatus().name()))
+                    || (question.getDifficulty() != null && question.getDifficulty() >= query.getDifficulty()[0] && question.getDifficulty() <= query.getDifficulty()[1]))
+                    && (query.getStatus().isEmpty() || query.getStatus().size() == 3 || query.getStatus().contains(question.getStatus().name()))
                     && (query.getTopics().isEmpty() || question.hasTopics(query.getTopics()))) {
                 result.add(new QuestionDto(question));
             }
@@ -334,7 +334,7 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void deleteQuestion(Question question) {
-        if(question.getQuestionDetails() != null) {
+        if (question.getQuestionDetails() != null) {
             question.getQuestionDetails().delete();
         }
 

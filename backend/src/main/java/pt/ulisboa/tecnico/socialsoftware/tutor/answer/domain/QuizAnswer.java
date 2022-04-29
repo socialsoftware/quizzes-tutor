@@ -20,8 +20,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
 
 @Entity
 @Table(name = "quiz_answers",
-        uniqueConstraints={
-        @UniqueConstraint(columnNames = {"quiz_id", "user_id"})
+        uniqueConstraints = {
+                @UniqueConstraint(columnNames = {"quiz_id", "user_id"})
         },
         indexes = {
                 @Index(name = "quiz_answers_indx_0", columnList = "user_id"),
@@ -52,11 +52,11 @@ public class QuizAnswer implements DomainEntity {
     @ElementCollection
     private List<Integer> questionIds = new ArrayList<>();
 
-    @ManyToOne(fetch = FetchType.LAZY, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private Student student;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
@@ -121,7 +121,7 @@ public class QuizAnswer implements DomainEntity {
     }
 
     public boolean isFraud() {
-        return this.fraud != null ? this.fraud : false;
+        return this.fraud != null && this.fraud;
     }
 
     public void setFraud(boolean fraud) {
@@ -179,7 +179,7 @@ public class QuizAnswer implements DomainEntity {
     public boolean canResultsBePublic() {
         return isCompleted() &&
                 ((!getQuiz().getType().equals(Quiz.QuizType.IN_CLASS) && !getQuiz().getType().equals(Quiz.QuizType.TOURNAMENT))
-                    || getQuiz().getResultsDate().isBefore(DateHandler.now()));
+                        || getQuiz().getResultsDate().isBefore(DateHandler.now()));
     }
 
     public void remove() {
@@ -222,8 +222,8 @@ public class QuizAnswer implements DomainEntity {
             } else if (!questionIds.get(currentSequenceQuestion).equals(questionId)) {
                 throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE,
                         getStudent().getUsername() + " tried to get question with ID "
-                                + questionId + " when they sequence is "  + (currentSequenceQuestion + 1)
-                                + " and the question IDs sequence is " + questionIds.stream().map(i -> String.valueOf(i)).collect(Collectors.joining(", ")));
+                                + questionId + " when they sequence is " + (currentSequenceQuestion + 1)
+                                + " and the question IDs sequence is " + questionIds.stream().map(String::valueOf).collect(Collectors.joining(", ")));
             }
         }
     }
@@ -231,8 +231,8 @@ public class QuizAnswer implements DomainEntity {
     public void checkIsCurrentQuestion(Integer questionId) {
         if (!questionIds.isEmpty() && !questionIds.get(currentSequenceQuestion).equals(questionId)) {
             throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE, getStudent().getUsername() + " tried to submit question with ID "
-                    + questionId + " when they sequence is "  + (currentSequenceQuestion + 1)
-                    + " and the question IDs sequence is " + questionIds.stream().map(i -> String.valueOf(i)).collect(Collectors.joining(", ")));
+                    + questionId + " when they sequence is " + (currentSequenceQuestion + 1)
+                    + " and the question IDs sequence is " + questionIds.stream().map(String::valueOf).collect(Collectors.joining(", ")));
         } else if (completed) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         }
