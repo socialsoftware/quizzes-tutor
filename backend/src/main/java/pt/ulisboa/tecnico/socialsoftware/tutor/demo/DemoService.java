@@ -44,6 +44,8 @@ import java.util.stream.Collectors;
 public class DemoService {
     List<Integer> questions2Keep = Arrays.asList(1320, 1940, 1544, 11081, 11082);
 
+    List<Integer> questionsInQuizzes = Arrays.asList(1940, 11081, 11082);
+
     Integer quiz2Keep = 40438;
 
     @Autowired
@@ -289,10 +291,12 @@ public class DemoService {
         scrambledQuiz.setCourseExecution(courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(ErrorMessage.COURSE_EXECUTION_NOT_FOUND)));
 
         questions.forEach(question -> {
-            new QuizQuestion(inClassOneWayQuiz, question, inClassOneWayQuiz.getQuizQuestionsNumber());
-            new QuizQuestion(inClassQuiz, question, inClassQuiz.getQuizQuestionsNumber());
-            new QuizQuestion(proposedQuiz, question, proposedQuiz.getQuizQuestionsNumber());
-            new QuizQuestion(scrambledQuiz, question, scrambledQuiz.getQuizQuestionsNumber());
+            if (questionsInQuizzes.contains(question.getId())) {
+                new QuizQuestion(inClassOneWayQuiz, question, inClassOneWayQuiz.getQuizQuestionsNumber());
+                new QuizQuestion(inClassQuiz, question, inClassQuiz.getQuizQuestionsNumber());
+                new QuizQuestion(proposedQuiz, question, proposedQuiz.getQuizQuestionsNumber());
+                new QuizQuestion(scrambledQuiz, question, scrambledQuiz.getQuizQuestionsNumber());
+            }
         });
 
         quizRepository.save(inClassOneWayQuiz);
