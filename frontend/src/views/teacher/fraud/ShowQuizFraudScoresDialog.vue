@@ -8,8 +8,37 @@
   >
     <v-card v-if="quizFraudInformation">
       <v-card-title> Fraud Scores of {{ quiz.title }} </v-card-title>
-      <v-alert dense type="warning" elevation="2">
-        THIS IS A WIP FEATURE, DO NOT CONSIDER THE VALUES BELOW
+      <v-alert border="left" colored-border type="warning" elevation="2">
+        <v-row>
+          <v-col class="col-sm-21 col-md-7 grow text-left font-weight-medium">
+            Time Scores should be interpreted according to Pedro Caldeira MSc
+            Thesis
+          </v-col>
+          <v-col class="shrink col-sm-6 col-md-2">
+            <v-btn
+              icon
+              href="https://fenix.tecnico.ulisboa.pt/cursos/meic-a/dissertacao/1409728525633167"
+              target="_blank"
+              >ACCESS THESIS</v-btn
+            >
+          </v-col>
+        </v-row>
+      </v-alert>
+      <v-alert border="left" colored-border type="warning" elevation="2">
+        <v-row>
+          <v-col class="col-sm-21 col-md-7 grow text-left font-weight-medium">
+            Producer and Consumer scores should be interpreted according to
+            Mariana Carrasco MSc Thesis
+          </v-col>
+          <v-col class="shrink col-sm-6 col-md-2">
+            <v-btn
+              icon
+              href="https://fenix.tecnico.ulisboa.pt/cursos/mecd/dissertacao/1128253548922811"
+              target="_blank"
+              >ACCESS THESIS</v-btn
+            >
+          </v-col>
+        </v-row>
       </v-alert>
       <v-container>
         <v-row

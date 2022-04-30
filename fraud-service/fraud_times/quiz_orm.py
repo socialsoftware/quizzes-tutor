@@ -358,11 +358,7 @@ class User(Base):
 
     id = Column(Integer, primary_key=True)
     role = Column(String)
-    name= Column(String)
-    number_of_student_quizzes = Column(Integer)
-    number_of_in_class_answers = Column(Integer)
-    number_of_correct_in_class_answers = Column(Integer)
-    number_of_in_class_quizzes = Column(Integer)
+    name = Column(String)
     quiz_answers = relationship("Quiz_Answer", back_populates="user")
     auth_user = relationship("Auth_User", back_populates="user")
     course_executions = relationship(
@@ -388,10 +384,6 @@ class User(Base):
             "id": self.id,
             "role": self.role,
             "name": self.name,
-            "number_of_student_quizzes": self.number_of_student_quizzes,
-            "number_of_in_class_answers": self.number_of_in_class_answers,
-            "number_of_correct_in_class_answers": self.number_of_correct_in_class_answers,
-            "number_of_in_class_quizzes": self.number_of_in_class_quizzes,
             "auth_user": self.auth_user.to_dict() if self.auth_user else None
             }
         if deep:
