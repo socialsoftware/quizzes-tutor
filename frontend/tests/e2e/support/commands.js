@@ -65,9 +65,12 @@ Cypress.Commands.add(
 );
 
 Cypress.Commands.add('seeTournamentsLists', (type) => {
+  cy.intercept('GET', '**/tournaments/*/*Tournaments').as(
+    'getTournaments'
+  );
   cy.get('[data-cy="Tournament"]').click();
   cy.get(`[data-cy="${type}"]`).click();
-  cy.wait(100);
+  cy.wait('@getTournaments');
 });
 
 Cypress.Commands.add('createTournament', (numberOfQuestions) => {
