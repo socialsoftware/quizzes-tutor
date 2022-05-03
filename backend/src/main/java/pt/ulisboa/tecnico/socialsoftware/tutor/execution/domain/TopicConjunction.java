@@ -20,12 +20,15 @@ public class TopicConjunction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions", fetch=FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions", fetch = FetchType.EAGER)
     private Set<Topic> topics = new HashSet<>();
 
-    @ManyToOne(fetch=FetchType.LAZY, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "assessment_id")
     private Assessment assessment;
+
+    public TopicConjunction() {
+    }
 
     public Integer getId() {
         return id;

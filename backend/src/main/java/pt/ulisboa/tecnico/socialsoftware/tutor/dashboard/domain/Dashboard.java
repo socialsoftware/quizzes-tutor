@@ -191,6 +191,7 @@ public class Dashboard implements DomainEntity {
                 numberOfInClassQuizzes++;
                 break;
             case GENERATED:
+            case TOURNAMENT:
                 numberOfStudentQuizzes++;
                 break;
             case PROPOSED:
@@ -207,6 +208,7 @@ public class Dashboard implements DomainEntity {
                     numberOfCorrectInClassAnswers = questionAnswer.isCorrect() ? numberOfCorrectInClassAnswers + 1 : numberOfCorrectInClassAnswers;
                     break;
                 case GENERATED:
+                case TOURNAMENT:
                     numberOfStudentAnswers++;
                     numberOfCorrectStudentAnswers = questionAnswer.isCorrect() ? numberOfCorrectStudentAnswers + 1 : numberOfCorrectStudentAnswers;
                     break;
