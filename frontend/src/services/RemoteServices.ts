@@ -29,6 +29,7 @@ import Dashboard from '@/models/dashboard/Dashboard';
 import DifficultQuestion from '@/models/dashboard/DifficultQuestion';
 import WeeklyScore from '@/models/dashboard/WeeklyScore';
 import FailedAnswer from '@/models/dashboard/FailedAnswer';
+import TopicConjunction from '@/models/management/TopicConjunction';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -605,6 +606,24 @@ export default class RemoteServices {
       });
   }
 
+  static async getTopicConjunctions(
+    assessmentId: number | null
+  ): Promise<TopicConjunction[]> {
+    return httpClient
+      .get(
+        `/assessments/executions/${Store.getters.getCurrentCourse.courseExecutionId}/topicconjunctions`,
+        { params: { assessmentId: assessmentId } }
+      )
+      .then((response) => {
+        return response.data.map((topicConjunction: any) => {
+          return new TopicConjunction(topicConjunction);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getAvailableAssessments() {
     return httpClient
       .get(
@@ -674,6 +693,22 @@ export default class RemoteServices {
   static async getAssessmentQuestions(assessmentId: number) {
     return httpClient
       .get(`/assessments/${assessmentId}/questions`)
+      .then((response) => {
+        return response.data.map((question: any) => {
+          return new Question(question);
+        });
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getTopicConjuctionQuestions(topicConjunction: TopicConjunction) {
+    return httpClient
+      .post(
+        `/assessments/executions/${Store.getters.getCurrentCourse.courseExecutionId}/topicconjunctions/questions`,
+        topicConjunction
+      )
       .then((response) => {
         return response.data.map((question: any) => {
           return new Question(question);

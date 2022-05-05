@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
 import javax.persistence.*;
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -34,11 +35,11 @@ public class Assessment implements DomainEntity {
     @Enumerated(EnumType.STRING)
     private Status status = Status.DISABLED;
 
-    @ManyToOne(fetch=FetchType.LAZY, optional=false)
+    @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assessment", fetch=FetchType.EAGER, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "assessment", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<TopicConjunction> topicConjunctions = new ArrayList<>();
 
     public Assessment() {
@@ -106,6 +107,7 @@ public class Assessment implements DomainEntity {
 
     public void setTopicConjunctions(List<TopicConjunction> topicConjunctions) {
         topicConjunctions.forEach(topicConjunction -> topicConjunction.setAssessment(this));
+        this.topicConjunctions = topicConjunctions;
     }
 
     public List<Topic> getTopics() {
@@ -143,8 +145,10 @@ public class Assessment implements DomainEntity {
     }
 
     public void remove() {
-        getCourseExecution().getAssessments().remove(this);
+        courseExecution.getAssessments().remove(this);
         setCourseExecution(null);
-        getTopicConjunctions().forEach(TopicConjunction::remove);
+        Set<TopicConjunction> topicConjunctionsToRemove = new HashSet<>(topicConjunctions);
+        topicConjunctionsToRemove.forEach(TopicConjunction::remove);
+        topicConjunctions.clear();
     }
 }

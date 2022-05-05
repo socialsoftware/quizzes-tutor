@@ -176,6 +176,7 @@ export default class AssessmentList extends Vue {
   }
 
   async showQuestionsDialog(assessmentId: number) {
+    await this.$store.dispatch('loading');
     try {
       this.questionsToShow = await RemoteServices.getAssessmentQuestions(
         assessmentId
@@ -183,6 +184,7 @@ export default class AssessmentList extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
     this.questionsDialog = true;
   }
 

@@ -15,16 +15,24 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 class UpdateAssessmentTest extends SpockTest {
     def assessmentId
     def topicConjunction
+    def topic1
+    def topic2
+    def assessment
 
     def setup() {
         createExternalCourseAndExecution()
 
-        def topic = new Topic()
-        topic.setName(TOPIC_1_NAME)
-        topic.setCourse(externalCourse)
-        topicRepository.save(topic)
+        topic1 = new Topic()
+        topic1.setName(TOPIC_1_NAME)
+        topic1.setCourse(externalCourse)
+        topicRepository.save(topic1)
 
-        def assessment = new Assessment()
+        topic2 = new Topic()
+        topic2.setName(TOPIC_2_NAME)
+        topic2.setCourse(externalCourse)
+        topicRepository.save(topic2)
+
+        assessment = new Assessment()
         assessment.setTitle(ASSESSMENT_1_TITLE)
         assessment.setStatus(Assessment.Status.AVAILABLE)
         assessment.setSequence(1)
@@ -33,19 +41,14 @@ class UpdateAssessmentTest extends SpockTest {
         assessmentId = assessment.id
 
         topicConjunction = new TopicConjunction()
-        topicConjunction.addTopic(topic)
+        topicConjunction.addTopic(topic1)
         topicConjunction.setAssessment(assessment)
         topicConjunctionRepository.save(topicConjunction)
     }
 
     def "update an assessment title, remove its topicConjunction and adding a new one"() {
-        def topic = new Topic()
-        topic.setName(TOPIC_2_NAME)
-        topic.setCourse(externalCourse)
-        topicRepository.save(topic)
-
         def topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.addTopic(new TopicDto(topic))
+        topicConjunctionDto.addTopic(new TopicDto(topic2))
 
         def topicConjunctionList = new ArrayList()
         topicConjunctionList.add(topicConjunctionDto)
@@ -86,13 +89,8 @@ class UpdateAssessmentTest extends SpockTest {
     }
 
     def "update an assessment adding a topic, a conjunction with topic and an empty conjunction"() {
-        def topic = new Topic()
-        topic.setName(TOPIC_2_NAME)
-        topic.setCourse(externalCourse)
-        topicRepository.save(topic)
-
         def topicConjunctionDto = new TopicConjunctionDto()
-        topicConjunctionDto.addTopic(new TopicDto(topic))
+        topicConjunctionDto.addTopic(new TopicDto(topic2))
 
         def topicConjunctionList = new ArrayList()
         topicConjunctionList.add(new TopicConjunctionDto())
@@ -125,6 +123,29 @@ class UpdateAssessmentTest extends SpockTest {
         resTopicConjunction2.topics.size() <= 1
         resTopicConjunction3.topics.size() <= 1
     }
+
+    def "remove assessment that has two topics"() {
+        def topicConjunctionList = new ArrayList()
+        def topicConjunctionDto = new TopicConjunctionDto()
+        topicConjunctionDto.addTopic(new TopicDto(topic1))
+        topicConjunctionDto.addTopic(new TopicDto(topic2))
+        topicConjunctionList.add(topicConjunctionDto)
+        def assessmentDto = new AssessmentDto(assessment)
+        assessmentDto.setTopicConjunctions(topicConjunctionList)
+
+        assessmentService.updateAssessment(assessmentId, assessmentDto)
+
+        topicConjunctionList = new ArrayList()
+        assessmentDto.setTopicConjunctions(topicConjunctionList)
+
+        when:
+        assessmentService.updateAssessment(assessmentId, assessmentDto)
+
+        then:
+        assessmentRepository.count() == 1L
+        topicConjunctionRepository.findAll().size() == 0
+    }
+
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
 import javax.validation.Valid;
@@ -13,7 +14,7 @@ import java.util.List;
 @RestController
 public class AssessmentController {
     private AssessmentService assessmentService;
-    
+
     AssessmentController(AssessmentService assessmentService) {
         this.assessmentService = assessmentService;
     }
@@ -22,6 +23,12 @@ public class AssessmentController {
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<AssessmentDto> getExecutionCourseAssessments(@PathVariable int executionId) {
         return this.assessmentService.findAssessments(executionId);
+    }
+
+    @GetMapping("/assessments/executions/{executionId}/topicconjunctions")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<TopicConjunctionDto> getExecutionCourseTopicConjunctions(@PathVariable int executionId, @RequestParam(name = "assessmentId", required = false, defaultValue = "0") int assessmentId) {
+        return this.assessmentService.findTopicConjunctions(executionId, assessmentId);
     }
 
     @GetMapping("/assessments/executions/{executionId}/available")
@@ -60,4 +67,11 @@ public class AssessmentController {
     public List<QuestionDto> getAssessmentQuestions(@PathVariable Integer assessmentId) {
         return this.assessmentService.getAssessmentQuestions(assessmentId);
     }
+
+    @PostMapping("/assessments/executions/{executionId}/topicconjunctions/questions")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<QuestionDto> getTopicConjunctionQuestions(@PathVariable(value = "executionId") Integer executionId, @RequestBody TopicConjunctionDto topicConjunctionDto) {
+        return this.assessmentService.getTopicConjunctionQuestions(executionId, topicConjunctionDto);
+    }
+
 }

@@ -171,18 +171,11 @@
           </v-col>
         </v-row>
       </v-container>
-      <v-btn
-        color="primary"
-        dark
-        v-if="editMode"
-        @click="showQuestionsDialog(null)"
-        >Show {{ selectedQuestions.length }} selected questions</v-btn
-      >
     </v-card-text>
 
     <show-question-list-dialog
       :dialog="questionsDialog"
-      :questions="selectedQuestions"
+      :questions="questionsToShow"
       v-on:close="onCloseQuestionsDialog"
     ></show-question-list-dialog>
   </v-card>
@@ -215,8 +208,6 @@ export default class AssessmentForm extends Vue {
   allTopics: Topic[] = [];
   topicConjunctions: TopicConjunction[] = [];
   questionsToShow: Question[] = [];
-  allQuestions: Question[] = [];
-  selectedQuestions: Question[] = [];
 
   topicHeaders: object = [
     {
@@ -237,45 +228,25 @@ export default class AssessmentForm extends Vue {
   async created() {
     await this.$store.dispatch('loading');
     try {
-      [this.allQuestions, this.allTopics] = await Promise.all([
-        RemoteServices.getQuestions(),
+      [this.topicConjunctions, this.allTopics] = await Promise.all([
+        RemoteServices.getTopicConjunctions(
+          this.assessment.id ? this.assessment.id : 0
+        ),
         RemoteServices.getTopics(),
       ]);
-      this.calculateTopicCombinations();
+      let assessmentTopicConjunctionIds = this.assessment.topicConjunctions.map(
+        (topicConjunction: TopicConjunction) => {
+          return topicConjunction.id;
+        }
+      );
+      this.topicConjunctions = this.topicConjunctions.filter(
+        (topicConjunction) =>
+          !assessmentTopicConjunctionIds.includes(topicConjunction.id)
+      );
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
     await this.$store.dispatch('clearLoading');
-  }
-
-  // Calculates the ((set of (topics of all the questions)) not present in the current assessment)
-  @Watch('assessment')
-  calculateTopicCombinations() {
-    if (this.editMode) {
-      this.topicConjunctions = [];
-      this.allQuestions.map((question: Question) => {
-        if (
-          !this.contains(this.topicConjunctions, question.topics) &&
-          !this.contains(this.assessment.topicConjunctions, question.topics)
-        ) {
-          let topicConjunction = new TopicConjunction();
-          topicConjunction.topics = question.topics;
-          this.topicConjunctions.push(topicConjunction);
-        }
-      });
-    }
-  }
-
-  // Checks if the topics of one topicConjunction has an exact match to the topicArray
-  contains(topicConjunctions: TopicConjunction[], topicArray: Topic[]) {
-    return (
-      topicConjunctions.filter((topicConjunction) =>
-        _.isEqual(
-          topicConjunction.topics.sort((a, b) => (a.name > b.name ? 1 : -1)),
-          topicArray.sort((a, b) => (a.name > b.name ? 1 : -1))
-        )
-      ).length !== 0
-    );
   }
 
   topicFilter(
@@ -308,6 +279,7 @@ export default class AssessmentForm extends Vue {
       return;
     }
 
+    await this.$store.dispatch('loading');
     try {
       let updatedAssessment: Assessment = await RemoteServices.saveAssessment(
         this.assessment
@@ -316,22 +288,20 @@ export default class AssessmentForm extends Vue {
     } catch (error) {
       await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
   }
 
-  showQuestionsDialog(topicConjunction: TopicConjunction) {
-    if (topicConjunction !== null) {
-      this.questionsToShow = this.allQuestions.filter((question) => {
-        return _.isEqual(topicConjunction.topics, question.topics);
-      });
-    } else {
-      this.questionsToShow = this.allQuestions.filter((question) => {
-        return (
-          this.assessment.topicConjunctions.filter((topicConjunction) => {
-            return _.isEqual(topicConjunction.topics, question.topics);
-          }).length !== 0
-        );
-      });
+  async showQuestionsDialog(topicConjunction: TopicConjunction) {
+    await this.$store.dispatch('loading');
+    try {
+      this.questionsToShow = await RemoteServices.getTopicConjuctionQuestions(
+        topicConjunction
+      );
+    } catch (error) {
+      await this.$store.dispatch('error', error);
     }
+    await this.$store.dispatch('clearLoading');
+
     this.questionsDialog = true;
   }
 
@@ -353,20 +323,6 @@ export default class AssessmentForm extends Vue {
     this.topicConjunctions = this.topicConjunctions.filter(
       (tc) => tc.sequence !== topicConjuntion.sequence
     );
-  }
-
-  @Watch('assessment.topicConjunctions', { deep: true })
-  recalculateQuestionList() {
-    if (this.assessment) {
-      this.selectedQuestions = this.allQuestions.filter((question) => {
-        return this.assessment.topicConjunctions.find((topicConjunction) => {
-          return (
-            String(question.topics.map((topic) => topic.id).sort()) ===
-            String(topicConjunction.topics.map((topic) => topic.id).sort())
-          );
-        });
-      });
-    }
   }
 
   convertMarkDown(text: string, image: Image | null = null): string {

@@ -20,7 +20,7 @@ public class TopicConjunction {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions", fetch = FetchType.EAGER)
+    @ManyToMany(cascade = CascadeType.ALL, mappedBy = "topicConjunctions")
     private Set<Topic> topics = new HashSet<>();
 
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
@@ -55,8 +55,11 @@ public class TopicConjunction {
     }
 
     public void remove() {
-        getTopics().forEach(topic -> topic.getTopicConjunctions().remove(this));
-        getTopics().clear();
+        topics.forEach(topic -> topic.getTopicConjunctions().remove(this));
+        topics.clear();
+
+        assessment.getTopicConjunctions().remove(this);
+        assessment = null;
     }
 
     @Override
@@ -96,6 +99,7 @@ public class TopicConjunction {
         return this.topics.stream()
                 .flatMap(topic -> topic.getQuestions().stream())
                 .filter(question -> this.topics.equals(question.getTopics()))
+                .distinct()
                 .collect(Collectors.toList());
     }
 }
