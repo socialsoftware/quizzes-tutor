@@ -18,7 +18,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
 @Table(name = "tournaments")
-public class Tournament  {
+public class Tournament {
+    public static int MAX_NUMBER_OF_QUESTIONS = 30;
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -74,22 +76,27 @@ public class Tournament  {
         setPrivateTournament(tournamentDto.isPrivateTournament());
     }
 
-    public Integer getId() { return id; }
+    public Integer getId() {
+        return id;
+    }
 
-    public LocalDateTime getStartTime() { return startTime; }
+    public LocalDateTime getStartTime() {
+        return startTime;
+    }
 
     public void setStartTime(LocalDateTime startTime) {
         // Added 2 minute as a buffer to take latency into consideration
         if (startTime == null || (this.endTime != null && this.endTime.isBefore(startTime) ||
-                !DateHandler.now().isBefore(startTime.plusMinutes(2))))
-        {
+                !DateHandler.now().isBefore(startTime.plusMinutes(2)))) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "startTime");
         }
 
         this.startTime = startTime;
     }
 
-    public LocalDateTime getEndTime() { return endTime; }
+    public LocalDateTime getEndTime() {
+        return endTime;
+    }
 
     public void setEndTime(LocalDateTime endTime) {
         if (endTime == null || (this.startTime != null && endTime.isBefore(this.startTime))) {
@@ -103,20 +110,35 @@ public class Tournament  {
         if (numberOfQuestions <= 0) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "number of questions");
         }
+        if (numberOfQuestions > MAX_NUMBER_OF_QUESTIONS) {
+            throw new TutorException(TOURNAMENT_MAX_NUMBER_OF_QUESTIONS_EXCEEDED, MAX_NUMBER_OF_QUESTIONS);
+        }
         this.numberOfQuestions = numberOfQuestions;
     }
 
-    public Integer getNumberOfQuestions() { return numberOfQuestions; }
+    public Integer getNumberOfQuestions() {
+        return numberOfQuestions;
+    }
 
-    public Student getCreator() { return creator; }
+    public Student getCreator() {
+        return creator;
+    }
 
-    public void setCreator(Student student) { this.creator = student; }
+    public void setCreator(Student student) {
+        this.creator = student;
+    }
 
-    public boolean isCreator(User user) { return creator.getId().equals(user.getId()); }
+    public boolean isCreator(User user) {
+        return creator.getId().equals(user.getId());
+    }
 
-    public void setCanceled(boolean isCanceled) { this.isCanceled = isCanceled; }
+    public void setCanceled(boolean isCanceled) {
+        this.isCanceled = isCanceled;
+    }
 
-    public boolean isCanceled() { return isCanceled; }
+    public boolean isCanceled() {
+        return isCanceled;
+    }
 
     public void cancel() {
         checkCanChange();
@@ -131,16 +153,24 @@ public class Tournament  {
         this.quiz = quiz;
     }
 
-    public Set<Student> getParticipants() { return participants; }
+    public Set<Student> getParticipants() {
+        return participants;
+    }
 
-    public void setCourseExecution(CourseExecution courseExecution) { this.courseExecution = courseExecution; }
+    public void setCourseExecution(CourseExecution courseExecution) {
+        this.courseExecution = courseExecution;
+    }
 
-    public CourseExecution getCourseExecution() { return courseExecution; }
+    public CourseExecution getCourseExecution() {
+        return courseExecution;
+    }
 
-    public Set<Topic> getTopics() { return topics; }
+    public Set<Topic> getTopics() {
+        return topics;
+    }
 
     public void setTopics(Set<Topic> topics) {
-        for (Topic topic: topics) {
+        for (Topic topic : topics) {
             checkTopicCourse(topic);
         }
 
@@ -204,7 +234,9 @@ public class Tournament  {
         student.removeTournament(this);
     }
 
-    public boolean hasQuiz() { return getQuiz() != null; }
+    public boolean hasQuiz() {
+        return getQuiz() != null;
+    }
 
     public void remove() {
         checkCanChange();
@@ -258,12 +290,20 @@ public class Tournament  {
         updateTopics(topics);
     }
 
-    public boolean isPrivateTournament() { return privateTournament; }
+    public boolean isPrivateTournament() {
+        return privateTournament;
+    }
 
-    public void setPrivateTournament(boolean privateTournament) { this.privateTournament = privateTournament; }
+    public void setPrivateTournament(boolean privateTournament) {
+        this.privateTournament = privateTournament;
+    }
 
-    public String getPassword() { return password; }
+    public String getPassword() {
+        return password;
+    }
 
-    public void setPassword(String password) { this.password = password; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
 }

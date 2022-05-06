@@ -39,6 +39,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizQuestionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.repository.TournamentRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserApplicationalService
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService
@@ -134,6 +135,7 @@ class SpockTest extends Specification {
     public static final int NUMBER_OF_USERS_IN_FILE = 5
 
     public static final int NUMBER_OF_QUESTIONS = 1
+    public static final int MAX_NUMBER_OF_QUESTIONS = Tournament.MAX_NUMBER_OF_QUESTIONS
 
     public static final String REVIEW_1_COMMENT = "Review Comment 1"
 

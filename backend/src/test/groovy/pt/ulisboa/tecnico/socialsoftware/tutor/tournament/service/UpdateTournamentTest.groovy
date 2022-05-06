@@ -12,8 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_IS_OPEN
-import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.TOURNAMENT_TOPIC_COURSE
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 
 @DataJpaTest
 class UpdateTournamentTest extends TournamentTest {
@@ -102,7 +101,7 @@ class UpdateTournamentTest extends TournamentTest {
         then:
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
-        result.getTopics() == [topic2, topic3, topic1]  as Set
+        result.getTopics() == [topic2, topic3, topic1] as Set
     }
 
     def "user that created tournament adds topic of different course"() {
@@ -123,7 +122,7 @@ class UpdateTournamentTest extends TournamentTest {
         exception.getErrorMessage() == TOURNAMENT_TOPIC_COURSE
         tournamentRepository.count() == 1L
         def result = tournamentRepository.findAll().get(0)
-        result.getTopics() == [topic2, topic1]  as Set
+        result.getTopics() == [topic2, topic1] as Set
     }
 
     def "user that created tournament removes existing topic from tournament that contains that topic"() {
@@ -152,6 +151,21 @@ class UpdateTournamentTest extends TournamentTest {
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == TOURNAMENT_IS_OPEN
+        tournamentRepository.count() == 1L
+    }
+
+    def "max number of questions exceeded"() {
+        given:
+        tournamentDto = tournamentService.createTournament(user1.getId(), externalCourseExecution.getId(), topics, tournamentDto)
+        and:
+        tournamentDto.setNumberOfQuestions(MAX_NUMBER_OF_QUESTIONS + 1)
+
+        when:
+        tournamentService.updateTournament(topics, tournamentDto)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == TOURNAMENT_MAX_NUMBER_OF_QUESTIONS_EXCEEDED
         tournamentRepository.count() == 1L
     }
 

@@ -94,6 +94,7 @@ public enum ErrorMessage {
     TOURNAMENT_MISSING_END_TIME("Tournament requires the definition of the end date"),
     TOURNAMENT_MISSING_TOPICS("Tournament requires the definition of topics"),
     TOURNAMENT_MISSING_NUMBER_OF_QUESTIONS("Tournament requires the definition of the number of questions"),
+    TOURNAMENT_MAX_NUMBER_OF_QUESTIONS_EXCEEDED("Tournament %d max number of questions exceeded"),
     TOURNAMENT_NOT_CONSISTENT("Field %s of tournament is not consistent"),
     TOURNAMENT_NOT_FOUND("Tournament %s not found"),
     TOURNAMENT_TOPIC_COURSE("Tournament topics must be of the same course execution"),
