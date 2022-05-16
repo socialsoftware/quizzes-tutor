@@ -96,7 +96,13 @@ public class QuestionsXmlImport {
 
         Course course = courseRepository.findByNameType(courseName, courseType).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName));
         if (loadCourseExecution != null && course != loadCourseExecution.getCourse()) {
-            throw new TutorException(INVALID_COURSE, courseName + " " + courseType);
+            String message = "<course courseType=\""
+                    + loadCourseExecution.getCourse().getType().name()
+                    + "\" courseName=\""
+                    + loadCourseExecution.getCourse().getName()
+                    + "\">";
+
+            throw new TutorException(INVALID_COURSE, message);
         }
 
         for (Element element : courseElement.getChildren()) {

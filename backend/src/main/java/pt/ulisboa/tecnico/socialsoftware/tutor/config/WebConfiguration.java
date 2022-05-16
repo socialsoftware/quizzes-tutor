@@ -8,7 +8,7 @@ import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 
 @Configuration
-@ComponentScan(basePackageClasses = { WebConfiguration.class })
+@ComponentScan(basePackageClasses = {WebConfiguration.class})
 public class WebConfiguration extends WebMvcConfigurationSupport {
     private static final long MAX_AGE_SECS = 3600;
 
@@ -20,10 +20,10 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
         registry.addResourceHandler("/images/questions/**").addResourceLocations("file:" + figuresDir);
 
         registry.addResourceHandler("/swagger-ui/**")
-                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/4.5.2/");
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/4.10.3/");
 
         registry.addResourceHandler("/swagger/**")
-                    .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/4.5.2/");
+                .addResourceLocations("classpath:/META-INF/resources/webjars/swagger-ui/4.10.3/");
 
         registry.addResourceHandler("/webjars/**")
                 .addResourceLocations("classpath:/META-INF/resources/webjars/");

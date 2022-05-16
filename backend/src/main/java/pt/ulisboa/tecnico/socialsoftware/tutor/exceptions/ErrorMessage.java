@@ -54,7 +54,8 @@ public enum ErrorMessage {
     AUTHUSER_NOT_FOUND("AuthUser not found with id %d"),
     EXTERNAL_USER_NOT_FOUND("User not found with username %s"),
     COURSE_NOT_FOUND("Course not found with name %s"),
-    INVALID_COURSE("This is not an execution of course %s"),
+    INVALID_COURSE("The course you are exporting from does not match the course you are importing to."
+            + "If you want to import anyway, edit the .xml file and replace the second line to: %s"),
     USER_ALREADY_ACTIVE("User is already active with username %s"),
     USER_IS_ACTIVE("User state is active: username %s"),
     INVALID_CONFIRMATION_TOKEN("Invalid confirmation token"),
