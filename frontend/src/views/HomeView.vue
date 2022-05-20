@@ -75,6 +75,18 @@
           depressed
           small
           color="secondary"
+          href="https://quizzes-tecnico.slack.com/"
+          target="_blank"
+        >
+          <i class="fab fa-slack" /> Discussion Group
+        </v-btn>
+      </div>
+
+      <div>
+        <v-btn
+          depressed
+          small
+          color="secondary"
           href="https://github.com/socialsoftware/quizzes-tutor/issues"
           target="_blank"
         >
