@@ -33,9 +33,17 @@
   </a>
 </p>
 
-<div align="center">
-  <img align="center" src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" alt="Quizzes Tutor" width="200">
-</div>
+<p align="center">
+  <a href="https://quizzes-tecnico.slack.com">
+    <img src="https://upload.wikimedia.org/wikipedia/commons/d/d5/Slack_icon_2019.svg" width="40"> Slack Discussion Group
+  </a>
+</p>
+
+<p align="center">
+  <a href="https://quizzes-tutor.tecnico.ulisboa.pt/">
+    <img src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" width="40"> Quizzes Tutor Service
+  </a>
+</p>
 
 <p align="left"><i><b>Vue.js</b> web application and <b>Spring-boot</b> API</i></p>
 <p align="center"><i>with <b>multiple choice questions</b> for students</i></p>
