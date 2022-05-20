@@ -158,7 +158,7 @@
             </v-list-item>
             <v-list-item to="/student/code">
               <v-list-item-action>
-                <v-icon>fas fa-terminal</v-icon>
+                <v-icon>fas fa-hashtag</v-icon>
               </v-list-item-action>
               <v-list-item-content>
                 <v-list-item-title>Code</v-list-item-title>
@@ -254,6 +254,14 @@
             </v-btn>
           </template>
           <v-list dense>
+            <v-list-item to="/admin/users">
+              <v-list-item-action>
+                <v-icon>fas fa-users</v-icon>
+              </v-list-item-action>
+              <v-list-item-content>
+                <v-list-item-title>Manage Users</v-list-item-title>
+              </v-list-item-content>
+            </v-list-item>
             <v-list-item data-cy="manageCoursesMenuButton" to="/admin/courses">
               <v-list-item-action>
                 <v-icon>fas fa-school</v-icon>
@@ -440,7 +448,7 @@
 
           <v-list-item to="/student/code">
             <v-list-item-action>
-              <v-icon>fas fa-terminal</v-icon>
+              <v-icon>fas fa-hashtag</v-icon>
             </v-list-item-action>
             <v-list-item-content>Code</v-list-item-content>
           </v-list-item>
@@ -502,6 +510,14 @@
           <template v-slot:activator>
             <v-list-item-title>Administration</v-list-item-title>
           </template>
+          <v-list-item to="/admin/users">
+            <v-list-item-action>
+              <v-icon>fas fa-users</v-icon>
+            </v-list-item-action>
+            <v-list-item-content>
+              <v-list-item-title>Manage Users</v-list-item-title>
+            </v-list-item-content>
+          </v-list-item>
           <v-list-item to="/admin/courses">
             <v-list-item-action>
               <v-icon>fas fa-school</v-icon>

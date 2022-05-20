@@ -17,25 +17,36 @@ import java.io.Serializable;
 })
 public class UserDto implements Serializable {
     private Integer id;
+
     private String username;
+
     private String email;
+
     private String name;
+
     private String role;
+
     private boolean active;
+
     private String creationDate;
+
     private String lastAccess;
 
-    public UserDto() { }
+    public UserDto() {
+    }
 
     public UserDto(User user) {
         this.id = user.getId();
         this.username = user.getUsername();
-        this.email = user.getAuthUser().getEmail();
         this.name = user.getName();
         this.role = user.getRole().toString();
-        this.active = user.getAuthUser().isActive();
         this.creationDate = DateHandler.toISOString(user.getCreationDate());
-        this.lastAccess = DateHandler.toISOString(user.getAuthUser().getLastAccess());
+
+        if (user.getAuthUser() != null) {
+            this.active = user.getAuthUser().isActive();
+            this.email = user.getAuthUser().getEmail();
+            this.lastAccess = DateHandler.toISOString(user.getAuthUser().getLastAccess());
+        }
     }
 
     public Integer getId() {

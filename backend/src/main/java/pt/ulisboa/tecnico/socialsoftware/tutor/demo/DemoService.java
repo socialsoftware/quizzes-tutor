@@ -100,7 +100,7 @@ public class DemoService {
     public void resetDemoDashboards() {
         userRepository.findAll()
                 .stream()
-                .filter(user -> user.getAuthUser().isDemoStudent())
+                .filter(user -> user.getAuthUser() != null && user.getAuthUser().isDemoStudent())
                 .map(Student.class::cast)
                 .flatMap(student -> student.getDashboards().stream())
                 .forEach(dashboard -> {
@@ -215,7 +215,7 @@ public class DemoService {
     public void resetDemoStudents() {
         userRepository.findAll()
                 .stream()
-                .filter(user -> user.getAuthUser().isDemoStudent())
+                .filter(user -> user.getAuthUser() != null && user.getAuthUser().isDemoStudent())
                 .map(Student.class::cast)
                 .forEach(student -> {
                     if (student.getQuizAnswers().isEmpty()) {

@@ -8,6 +8,7 @@ import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.JavaMailSenderImpl
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder
 import org.springframework.security.crypto.password.PasswordEncoder
+import pt.ulisboa.tecnico.socialsoftware.tutor.admin.AdminService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DashboardService
@@ -95,6 +96,11 @@ class BeanConfiguration {
     @Bean
     CourseExecutionService courseService() {
         return new CourseExecutionService()
+    }
+
+    @Bean
+    AdminService adminService() {
+        return new AdminService()
     }
 
     @Bean

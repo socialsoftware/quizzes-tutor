@@ -21,8 +21,7 @@ public interface QuestionAnswerItemRepository extends JpaRepository<QuestionAnsw
     List<QuestionAnswerItem> findQuestionAnswerItemsByUsernameAndQuizId(String username, Integer quizId);
 
     @Modifying
-    @Query(value = "UPDATE question_answer_items SET username = :newUsername WHERE username = :oldUsername",
-            nativeQuery = true)
+    @Query(value = "UPDATE QuestionAnswerItem qai SET qai.username = :newUsername WHERE qai.username = :oldUsername")
     void updateQuestionAnswerItemUsername(String oldUsername, String newUsername);
 
     @Query(value = "SELECT qai FROM QuestionAnswerItem qai WHERE qai.username LIKE 'Demo-Stu%' OR qai.username LIKE 'demo-stu%'")

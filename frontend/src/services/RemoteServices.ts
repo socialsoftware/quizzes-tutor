@@ -521,9 +521,17 @@ export default class RemoteServices {
       });
   }
 
+  static async anonymizeUser(username: String) {
+    return httpClient
+      .get(`/admin/anonymize/users/${username}`)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async anonymizeCourse(courseExecutionId: number | undefined) {
     return httpClient
-      .get(`/executions/${courseExecutionId}/anonymize`)
+      .get(`/admin/anonymize/executions/${courseExecutionId}`)
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });

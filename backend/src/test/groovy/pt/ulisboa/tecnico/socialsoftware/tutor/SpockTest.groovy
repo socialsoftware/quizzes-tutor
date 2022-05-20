@@ -4,6 +4,7 @@ import groovyx.net.http.RESTClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.security.crypto.password.PasswordEncoder
+import pt.ulisboa.tecnico.socialsoftware.tutor.admin.AdminService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
@@ -141,6 +142,9 @@ class SpockTest extends Specification {
 
     public static final String DISCUSSION_MESSAGE = "Discussion Message"
     public static final String DISCUSSION_REPLY = "Discussion Reply"
+
+    @Autowired
+    AdminService adminService
 
     @Autowired
     AuthUserService authUserService

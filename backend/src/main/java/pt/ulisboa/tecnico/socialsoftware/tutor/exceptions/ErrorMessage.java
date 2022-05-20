@@ -52,6 +52,7 @@ public enum ErrorMessage {
     TOPIC_NOT_FOUND("Topic not found with id %d"),
     USER_NOT_FOUND("User not found with id %d"),
     AUTHUSER_NOT_FOUND("AuthUser not found with id %d"),
+    AUTHUSER_NOT_FOUND_BY_USERNAME("AuthUser not found with username %s"),
     EXTERNAL_USER_NOT_FOUND("User not found with username %s"),
     COURSE_NOT_FOUND("Course not found with name %s"),
     INVALID_COURSE("The course you are exporting from does not match the course you are importing to."

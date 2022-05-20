@@ -22,6 +22,8 @@ import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
@@ -29,6 +31,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "course_executions")
 public class CourseExecution implements DomainEntity {
+    public enum Status {ACTIVE, INACTIVE, HISTORIC}
+
     @ManyToMany(mappedBy = "courseExecutions", fetch = FetchType.LAZY)
     private final Set<User> users = new HashSet<>();
 
@@ -239,8 +243,7 @@ public class CourseExecution implements DomainEntity {
     public int getNumberOfActiveTeachers() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(User.Role.TEACHER) &&
-                                (user.getAuthUser() == null || user.getAuthUser().isActive()))
+                        user.getRole().equals(User.Role.TEACHER) && user.getAuthUser() != null && user.getAuthUser().isActive())
                 .count();
     }
 
@@ -255,8 +258,7 @@ public class CourseExecution implements DomainEntity {
     public int getNumberOfActiveStudents() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(User.Role.STUDENT) &&
-                                (user.getAuthUser() == null || user.getAuthUser().isActive()))
+                        user.getRole().equals(User.Role.STUDENT) && user.getAuthUser() != null && user.getAuthUser().isActive())
                 .count();
     }
 
@@ -318,5 +320,10 @@ public class CourseExecution implements DomainEntity {
                 .anyMatch(assessment -> assessment.hasQuestion(question));
     }
 
-    public enum Status {ACTIVE, INACTIVE, HISTORIC}
+    public int getYear() {
+        Matcher currentYearMatcher = Pattern.compile("([0-9]+/[0-9]+)").matcher(academicTerm);
+        currentYearMatcher.find();
+        return Integer.valueOf(currentYearMatcher.group(1).split("/")[0]);
+    }
+
 }

@@ -14,14 +14,11 @@ import java.io.IOException;
 @RestController
 public class UserController {
     @Autowired
-    private UserService userService;
-
-    @Autowired
     private UserApplicationalService userApplicationalService;
 
-    @PostMapping ("/users/register/{executionId}")
+    @PostMapping("/users/register/{executionId}")
     @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
-    public ExternalUserDto registerExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto){
+    public ExternalUserDto registerExternalUser(@PathVariable int executionId, @Valid @RequestBody ExternalUserDto externalUserDto) {
         return userApplicationalService.registerExternalUser(executionId, externalUserDto);
     }
 
@@ -32,8 +29,7 @@ public class UserController {
     }
 
     @PostMapping("/users/register/confirm")
-    public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto){
-        return  userApplicationalService.confirmRegistration(externalUserDto);
+    public ExternalUserDto confirmRegistration(@RequestBody ExternalUserDto externalUserDto) {
+        return userApplicationalService.confirmRegistration(externalUserDto);
     }
-
 }

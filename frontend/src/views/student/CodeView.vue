@@ -1,30 +1,15 @@
 <template>
-  <v-container fluid>
-    <h2>Quiz by Code</h2>
-    <v-container class="input-box">
-      <v-card v-if="!hasCode">
-        <v-card-text>
-          <v-form ref="form" v-if="!hasCode">
-            <v-row justify="center">
-              <v-col cols="8" sm="4" md="2">
-                <v-text-field
-                  label="Code"
-                  v-model="code"
-                  outlined
-                ></v-text-field>
-                <v-btn color="primary" @click="setCode">Send</v-btn>
-              </v-col>
-            </v-row>
-          </v-form>
-        </v-card-text>
-      </v-card>
-      <v-card v-else>
-        <v-card-title class="justify-center">
-          Hold on and wait {{ timer }} to start the quiz!
-        </v-card-title>
-      </v-card>
-    </v-container>
-  </v-container>
+  <v-card class="mx-auto my-12" max-width="374">
+    <v-card-title>Quiz by Code</v-card-title>
+    <v-card-text>
+      <v-row align="center" class="mx-0">
+        <v-text-field label="Code" v-model="code" required></v-text-field>
+      </v-row>
+      <v-btn :disabled="code == null" color="primary" @click="setCode"
+        >Send</v-btn
+      >
+    </v-card-text>
+  </v-card>
 </template>
 
 <script lang="ts">

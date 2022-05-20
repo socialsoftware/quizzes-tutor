@@ -363,6 +363,7 @@ export default class CoursesView extends Vue {
         'Are you sure you want to anonymize the users of this course execution?'
       )
     ) {
+      await this.$store.dispatch('loading');
       try {
         await RemoteServices.anonymizeCourse(
           courseToAnonymize.courseExecutionId
@@ -370,6 +371,7 @@ export default class CoursesView extends Vue {
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
+      await this.$store.dispatch('clearLoading');
     }
   }
 

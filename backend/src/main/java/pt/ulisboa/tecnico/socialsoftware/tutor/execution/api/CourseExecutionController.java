@@ -99,12 +99,6 @@ public class CourseExecutionController {
         return result;
     }
 
-    @GetMapping("/executions/{executionId}/anonymize")
-    @PreAuthorize("hasRole('ROLE_ADMIN') or (hasRole('ROLE_DEMO_ADMIN') and hasPermission(#executionId, 'DEMO.ACCESS'))")
-    public void anonymizeCourseExecutionUsers(@PathVariable int executionId) {
-        courseExecutionService.anonymizeCourseExecutionUsers(executionId);
-    }
-
     @GetMapping("/executions/{executionId}/students")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<StudentDto> getCourseStudents(@PathVariable int executionId) {

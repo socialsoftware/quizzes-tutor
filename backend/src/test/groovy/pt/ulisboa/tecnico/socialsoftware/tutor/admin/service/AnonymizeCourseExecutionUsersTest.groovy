@@ -1,4 +1,4 @@
-package pt.ulisboa.tecnico.socialsoftware.tutor.execution.service
+package pt.ulisboa.tecnico.socialsoftware.tutor.admin.service
 
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -29,7 +29,7 @@ class AnonymizeCourseExecutionUsersTest extends SpockTest {
         tecnicoCourseExecution = new CourseExecution(tecnicoCourse, COURSE_2_ACRONYM, COURSE_2_ACADEMIC_TERM, Course.Type.TECNICO, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(tecnicoCourseExecution)
 
-        user = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,false, AuthUser.Type.EXTERNAL)
+        user = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
         userRepository.save(user)
         tecnicoCourseExecution.addUser(user)
         user.addCourse(tecnicoCourseExecution)
@@ -42,7 +42,7 @@ class AnonymizeCourseExecutionUsersTest extends SpockTest {
 
     def "anonymize course execution users"() {
         when:
-        courseService.anonymizeCourseExecutionUsers(tecnicoCourseExecution.id)
+        adminService.anonymizeCourseExecutionUsers(tecnicoCourseExecution.id)
 
         then:
         user.authUser == null
@@ -51,9 +51,10 @@ class AnonymizeCourseExecutionUsersTest extends SpockTest {
         user.getUsername() == "student-" + user.id
         answerItemsIds.equals(
                 questionAnswerItemRepository.findQuestionAnswerItemsByUsername(user.getUsername())
-                .stream().map({ answerItem -> answerItem.getId() })
-                .collect(Collectors.toList())
-        )
+                        .stream().map({ answerItem -> answerItem.getId() })
+                        .collect(Collectors.toList()))
+        def courseExecution = courseExecutionRepository.findById(tecnicoCourseExecution.id).get()
+        courseExecution.status == CourseExecution.Status.HISTORIC
     }
 
     @TestConfiguration

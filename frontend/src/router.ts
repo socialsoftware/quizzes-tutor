@@ -38,6 +38,7 @@ import TeacherDiscussionsView from '@/views/teacher/discussions/TeacherDiscussio
 import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
 import ExportAllView from '@/views/admin/ExportAllView.vue';
 import CoursesView from '@/views/admin/courses/CoursesView.vue';
+import UsersView from '@/views/admin/UsersView.vue';
 
 Vue.use(Router);
 
@@ -328,6 +329,15 @@ const router = new Router({
       name: 'admin',
       component: AdminManagementView,
       children: [
+        {
+          path: 'users',
+          name: 'usersAdmin',
+          component: UsersView,
+          meta: {
+            title: APP_NAME + ' - Manage users',
+            requiredAuth: 'Admin',
+          },
+        },
         {
           path: 'courses',
           name: 'courseAdmin',

@@ -6,8 +6,6 @@ import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuestionAnswerItemRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoUtils;
@@ -54,16 +52,10 @@ public class CourseExecutionService {
     private CourseExecutionRepository courseExecutionRepository;
 
     @Autowired
-    private QuizAnswerRepository quizAnswerRepository;
-
-    @Autowired
     private UserRepository userRepository;
 
     @Autowired
     private AuthUserRepository authUserRepository;
-
-    @Autowired
-    private QuestionAnswerItemRepository questionAnswerItemRepository;
 
     @Retryable(
             value = {SQLException.class},
@@ -143,27 +135,6 @@ public class CourseExecutionService {
         courseExecution.remove();
 
         courseExecutionRepository.delete(courseExecution);
-    }
-
-    @Retryable(
-            value = {SQLException.class},
-            backoff = @Backoff(delay = 5000))
-    @Transactional(isolation = Isolation.REPEATABLE_READ)
-    public void anonymizeCourseExecutionUsers(int executionId) {
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
-        for (User user : courseExecution.getUsers()) {
-            if (user.getAuthUser() != null) {
-                String oldUsername = user.getUsername();
-                AuthUser authUser = user.getAuthUser();
-                authUser.remove();
-                authUserRepository.delete(authUser);
-                String newUsername = user.getUsername();
-                questionAnswerItemRepository.updateQuestionAnswerItemUsername(oldUsername, newUsername);
-                String role = user.getRole().toString();
-                String roleCapitalized = role.substring(0, 1).toUpperCase() + role.substring(1).toLowerCase();
-                user.setName(String.format("%s %s", roleCapitalized, user.getId()));
-            }
-        }
     }
 
     @Retryable(
