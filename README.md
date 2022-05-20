@@ -41,7 +41,7 @@
 
 <p align="center">
   <a href="https://quizzes-tutor.tecnico.ulisboa.pt/">
-    <img src="https://quizzes-tutor.tecnico.ulisboa.pt/logo_optimized.png" width="40"> Quizzes Tutor Service
+    <img src="https://github.com/socialsoftware/quizzes-tutor/blob/master/frontend/public/logo_optimized.png" width="40"> Quizzes Tutor Service
   </a>
 </p>
 
