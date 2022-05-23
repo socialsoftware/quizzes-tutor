@@ -79,11 +79,11 @@ export default class RemoteServices {
   }
 
   static async externalLogin(
-    email: string,
+    username: string,
     password: string
   ): Promise<AuthDto> {
     return httpClient
-      .get(`/auth/external?email=${email}&password=${password}`)
+      .get(`/auth/external?username=${username}&password=${password}`)
       .then((response) => {
         return new AuthDto(response.data);
       })

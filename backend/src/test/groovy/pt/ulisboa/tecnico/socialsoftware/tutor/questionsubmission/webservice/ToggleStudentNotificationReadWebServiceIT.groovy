@@ -38,14 +38,14 @@ class ToggleStudentNotificationReadWebServiceIT extends SpockTestIT {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        student = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
+        student = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 false, AuthUser.Type.EXTERNAL)
         student.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         userRepository.save(student)
 
-        teacher = new Teacher(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL,
+        teacher = new Teacher(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
                 false, AuthUser.Type.EXTERNAL)
         teacher.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
         teacher.addCourse(courseExecution)
@@ -72,7 +72,7 @@ class ToggleStudentNotificationReadWebServiceIT extends SpockTestIT {
         questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
         questionSubmission = questionSubmissionRepository.findAll().get(0)
 
-        createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
+        externalUserLogin(USER_2_USERNAME, USER_2_PASSWORD)
     }
 
     def "notify student on question submission"() {

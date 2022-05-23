@@ -33,9 +33,10 @@ class RegisterExternalUserWebServiceIT extends SpockTestIT {
         response = restClient.post(
                 path: '/users/register/' + courseExecution1.getId(),
                 body: [
-                        admin: false,
-                        email: USER_1_EMAIL,
-                        role : 'STUDENT'
+                        admin   : false,
+                        username: USER_1_USERNAME,
+                        email   : USER_1_EMAIL,
+                        role    : 'STUDENT'
                 ],
                 requestContentType: 'application/json'
         )
@@ -44,7 +45,7 @@ class RegisterExternalUserWebServiceIT extends SpockTestIT {
         response != null
         response.status == 200
         response.data != null
-        response.data.username == USER_1_EMAIL
+        response.data.username == USER_1_USERNAME
         response.data.email == USER_1_EMAIL
         response.data.admin == false
         response.data.role == "STUDENT"

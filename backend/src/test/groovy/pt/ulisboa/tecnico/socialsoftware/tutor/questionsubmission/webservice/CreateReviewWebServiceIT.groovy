@@ -40,14 +40,14 @@ class CreateReviewWebServiceIT extends SpockTestIT {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        teacher = new Teacher(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
+        teacher = new Teacher(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 false, AuthUser.Type.TECNICO)
         teacher.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         teacher.addCourse(courseExecution)
         courseExecution.addUser(teacher)
         userRepository.save(teacher)
 
-        student = new Student(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL,
+        student = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
                 false, AuthUser.Type.TECNICO)
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
@@ -73,7 +73,7 @@ class CreateReviewWebServiceIT extends SpockTestIT {
         questionSubmissionService.createQuestionSubmission(questionSubmissionDto)
         questionSubmission = questionSubmissionRepository.findAll().get(0)
 
-        createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
+        externalUserLogin(USER_1_USERNAME, USER_1_PASSWORD)
     }
 
     def "create review for question submission"() {

@@ -38,12 +38,12 @@ class GetCourseExecutionQuestionSubmissionsWebServiceIT extends SpockTestIT {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        student1 = new Student(USER_3_NAME, USER_3_EMAIL, USER_3_EMAIL,
+        student1 = new Student(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL,
                 false, AuthUser.Type.TECNICO)
         student1.addCourse(courseExecution)
         courseExecution.addUser(student1)
         userRepository.save(student1)
-        student2 = new Student(USER_2_NAME, USER_2_EMAIL, USER_2_EMAIL,
+        student2 = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
                 false, AuthUser.Type.TECNICO)
         student2.addCourse(courseExecution)
         courseExecution.addUser(student2)
@@ -61,14 +61,14 @@ class GetCourseExecutionQuestionSubmissionsWebServiceIT extends SpockTestIT {
         questionDto.setQuestionDetailsDto(new MultipleChoiceQuestionDto())
         questionDto.getQuestionDetailsDto().setOptions(options)
 
-        teacher = new Teacher(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
+        teacher = new Teacher(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 false, AuthUser.Type.TECNICO)
         teacher.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         teacher.addCourse(courseExecution)
         courseExecution.addUser(teacher)
         userRepository.save(teacher)
 
-        createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
+        externalUserLogin(USER_1_USERNAME, USER_1_PASSWORD)
     }
 
     def "get course execution question submissions"() {

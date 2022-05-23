@@ -37,14 +37,14 @@ class CreateQuestionSubmissionWebServiceIT extends SpockTestIT {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        student = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL,
+        student = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
                 false, AuthUser.Type.TECNICO)
         student.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         student.addCourse(courseExecution)
         courseExecution.addUser(student)
         userRepository.save(student)
 
-        createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
+        externalUserLogin(USER_1_USERNAME, USER_1_PASSWORD)
     }
 
     def "create question submission for course execution"() {

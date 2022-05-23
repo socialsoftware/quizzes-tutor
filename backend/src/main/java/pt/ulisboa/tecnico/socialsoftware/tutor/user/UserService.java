@@ -277,16 +277,18 @@ public class UserService {
     }
 
     private AuthExternalUser getOrCreateUser(ExternalUserDto externalUserDto) {
-        String username = externalUserDto.getUsername() != null ? externalUserDto.getUsername() : externalUserDto.getEmail();
-        return (AuthExternalUser) authUserRepository.findAuthUserByUsername(username)
+        if (externalUserDto.getUsername() == null || externalUserDto.getUsername().trim().length() == 0) {
+            throw new TutorException(INVALID_AUTH_USERNAME, externalUserDto.getUsername());
+        }
+        return (AuthExternalUser) authUserRepository.findAuthUserByUsername(externalUserDto.getUsername())
                 .orElseGet(() -> {
                     User user;
                     if (externalUserDto.getRole() == User.Role.STUDENT) {
                         user = new Student(externalUserDto.getName(),
-                                username, externalUserDto.getEmail(), false, AuthUser.Type.EXTERNAL);
+                                externalUserDto.getUsername(), externalUserDto.getEmail(), false, AuthUser.Type.EXTERNAL);
                     } else if (externalUserDto.getRole() == User.Role.TEACHER) {
                         user = new Teacher(externalUserDto.getName(),
-                                username, externalUserDto.getEmail(), false, AuthUser.Type.EXTERNAL);
+                                externalUserDto.getUsername(), externalUserDto.getEmail(), false, AuthUser.Type.EXTERNAL);
                     } else {
                         throw new TutorException(INVALID_ROLE, externalUserDto.getRole() == null ? "null" : externalUserDto.getRole().name());
                     }

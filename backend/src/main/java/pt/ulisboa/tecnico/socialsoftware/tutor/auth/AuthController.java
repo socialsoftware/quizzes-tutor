@@ -35,9 +35,9 @@ public class AuthController {
     }
 
     @GetMapping("/auth/external")
-    public AuthDto externalUserAuth(@RequestParam String email, @RequestParam String password) {
+    public AuthDto externalUserAuth(@RequestParam String username, @RequestParam String password) {
         try {
-            return authUserService.externalUserAuth(email, password);
+            return authUserService.externalUserAuth(username, password);
         } catch (TutorException e) {
             throw new TutorException(INVALID_LOGIN_CREDENTIALS);
         }

@@ -40,7 +40,7 @@ class TournamentIT extends SpockTestIT {
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
         courseExecutionRepository.save(courseExecution)
 
-        user = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
+        user = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
         user.authUser.setPassword(passwordEncoder.encode(USER_1_PASSWORD))
         user.addCourse(courseExecution)
         courseExecution.addUser(user)
@@ -49,7 +49,7 @@ class TournamentIT extends SpockTestIT {
         def loggedUser = restClient.get(
                 path: '/auth/external',
                 query: [
-                        email   : USER_1_EMAIL,
+                        username: USER_1_USERNAME,
                         password: USER_1_PASSWORD,
                 ],
                 requestContentType: 'application/json'

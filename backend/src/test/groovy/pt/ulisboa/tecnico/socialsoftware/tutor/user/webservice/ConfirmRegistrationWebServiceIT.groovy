@@ -33,7 +33,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
 
     def "user confirms registration"() {
         given: "one inactive user"
-        user = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
+        user = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
         user.addCourse(courseExecution)
         user.getAuthUser().setConfirmationToken(USER_1_TOKEN)
         user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_TODAY)
@@ -44,7 +44,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
         response = restClient.post(
                 path: '/users/register/confirm',
                 body: [
-                        username         : USER_1_EMAIL,
+                        username         : USER_1_USERNAME,
                         password         : USER_1_PASSWORD,
                         confirmationToken: USER_1_TOKEN
                 ],
@@ -56,7 +56,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
         response.status == 200
         response.data != null
         response.data.email == USER_1_EMAIL
-        response.data.username == USER_1_EMAIL
+        response.data.username == USER_1_USERNAME
         response.data.active == true
         response.data.role == "STUDENT"
 
@@ -68,7 +68,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
 
     def "user tries to confirm registration with an expired token"() {
         given: "one inactive user with an expired token"
-        user = new Student(USER_1_NAME, USER_1_EMAIL, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
+        user = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
         user.addCourse(courseExecution)
         user.getAuthUser().setConfirmationToken(USER_1_TOKEN)
         user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_BEFORE)
@@ -79,7 +79,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
         response = restClient.post(
                 path: '/users/register/confirm',
                 body: [
-                        username         : USER_1_EMAIL,
+                        username         : USER_1_USERNAME,
                         password         : USER_1_PASSWORD,
                         confirmationToken: USER_1_TOKEN
                 ],
@@ -91,7 +91,7 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
         response.status == 200
         response.data != null
         response.data.email == USER_1_EMAIL
-        response.data.username == USER_1_EMAIL
+        response.data.username == USER_1_USERNAME
         response.data.active == false
         response.data.role == "STUDENT"
 

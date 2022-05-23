@@ -149,10 +149,10 @@ public class AuthUserService {
             value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AuthDto externalUserAuth(String email, String password) {
-        Optional<AuthUser> optionalAuthUser = authUserRepository.findAuthUserByUsername(email);
+    public AuthDto externalUserAuth(String username, String password) {
+        Optional<AuthUser> optionalAuthUser = authUserRepository.findAuthUserByUsername(username);
         if (optionalAuthUser.isEmpty()) {
-            throw new TutorException(EXTERNAL_USER_NOT_FOUND, email);
+            throw new TutorException(EXTERNAL_USER_NOT_FOUND, username);
         }
 
         AuthUser authUser = optionalAuthUser.get();

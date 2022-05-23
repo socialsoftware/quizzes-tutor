@@ -76,7 +76,7 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTestIT {
 
     def "student removes difficult questions"() {
         given:
-        createdUserLogin(USER_1_EMAIL, USER_1_PASSWORD)
+        externalUserLogin(USER_1_USERNAME, USER_1_PASSWORD)
 
         when:
         response = restClient.delete(
@@ -115,7 +115,7 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTestIT {
         def newStudent = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, false, AuthUser.Type.EXTERNAL)
         newStudent.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
         userRepository.save(newStudent)
-        createdUserLogin(USER_2_EMAIL, USER_2_PASSWORD)
+        externalUserLogin(USER_2_USERNAME, USER_2_PASSWORD)
 
         when:
         response = restClient.delete(
