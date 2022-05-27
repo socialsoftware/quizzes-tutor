@@ -400,7 +400,8 @@ export default class QuizList extends Vue {
       quiz.timed &&
       quiz.oneWay &&
       new Date(quiz.conclusionDate) < new Date() &&
-      quiz.numberOfAnswers > 0
+      quiz.numberOfAnswers > 0 &&
+      quiz.numberOfQuestions == 5
     );
   }
 }
