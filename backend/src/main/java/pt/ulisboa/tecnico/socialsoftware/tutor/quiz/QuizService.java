@@ -223,6 +223,18 @@ public class QuizService {
         quizRepository.delete(quiz);
     }
 
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public QuizDto duplicateQuiz(Integer quizId) {
+        Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
+
+        Quiz newQuiz = new Quiz(quiz);
+        newQuiz.setTitle(quiz.getTitle() + " - DUPLICATED");
+
+        quizRepository.save(newQuiz);
+
+        return new QuizDto(newQuiz, true);
+    }
+
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
@@ -356,7 +368,7 @@ public class QuizService {
             myWriter.close();
         }
     }
-    
+
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))

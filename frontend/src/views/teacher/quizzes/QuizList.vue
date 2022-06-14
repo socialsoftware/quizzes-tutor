@@ -47,6 +47,17 @@
             <v-icon
               class="mr-2 action-button"
               v-on="on"
+              @click="duplicateQuiz(item.id)"
+              >cached</v-icon
+            >
+          </template>
+          <span>Duplicate Quiz</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
               @click="showQuizAnswers(item)"
               >mdi-table</v-icon
             >
@@ -305,6 +316,17 @@ export default class QuizList extends Vue {
     }
   }
 
+  async duplicateQuiz(quizId: number) {
+    await this.$store.dispatch('loading');
+    try {
+      let quiz = await RemoteServices.duplicateQuiz(quizId);
+      this.$emit('duplicateQuiz', quiz);
+    } catch (error) {
+      await this.$store.dispatch('error', error);
+    }
+    await this.$store.dispatch('clearLoading');
+  }
+
   async showQuizAnswers(quiz: Quiz) {
     await this.$store.dispatch('loading');
     try {
@@ -362,12 +384,14 @@ export default class QuizList extends Vue {
 
   async deleteQuiz(quizId: number) {
     if (confirm('Are you sure you want to delete this quiz?')) {
+      await this.$store.dispatch('loading');
       try {
         await RemoteServices.deleteQuiz(quizId);
         this.$emit('deleteQuiz', quizId);
       } catch (error) {
         await this.$store.dispatch('error', error);
       }
+      await this.$store.dispatch('clearLoading');
     }
   }
 

@@ -10,6 +10,7 @@
       v-if="!editMode"
       @editQuiz="editQuiz"
       @updateQuiz="updateQuiz"
+      @duplicateQuiz="duplicateQuiz"
       @deleteQuiz="deleteQuiz"
       @newQuiz="newQuiz"
       :quizzes="quizzes"
@@ -68,6 +69,10 @@ export default class QuizzesView extends Vue {
     this.quizzes.unshift(updatedQuiz);
     this.editMode = false;
     this.quiz = null;
+  }
+
+  duplicateQuiz(duplicatedQuiz: Quiz) {
+    this.quizzes.unshift(duplicatedQuiz);
   }
 
   deleteQuiz(quizId: number) {

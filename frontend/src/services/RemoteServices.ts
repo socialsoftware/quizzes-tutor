@@ -780,6 +780,17 @@ export default class RemoteServices {
     }
   }
 
+  static async duplicateQuiz(quizId: number): Promise<Quiz> {
+    return httpClient
+      .post(`/quizzes/${quizId}/duplicate`)
+      .then((response) => {
+        return new Quiz(response.data);
+      })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async deleteQuiz(quizId: number) {
     return httpClient.delete(`/quizzes/${quizId}`).catch(async (error) => {
       throw Error(await this.errorMessage(error));

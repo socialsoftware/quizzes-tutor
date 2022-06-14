@@ -9,27 +9,44 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-public class    QuizDto implements Serializable {
+public class QuizDto implements Serializable {
     private Integer id;
+
     private Integer key;
+
     private boolean scramble;
+
     private boolean qrCodeOnly;
+
     private boolean oneWay;
+
     private Integer code;
+
     private boolean timed;
+
     private String type;
+
     private String title;
+
     private String creationDate;
+
     private String availableDate;
+
     private String conclusionDate;
+
     private String resultsDate;
+
     private Integer series;
+
     private String version;
+
     private int numberOfQuestions;
+
     private int numberOfAnswers;
+
     private List<QuestionDto> questions = new ArrayList<>();
 
-    public QuizDto(){
+    public QuizDto() {
     }
 
     public QuizDto(Quiz quiz, boolean deepCopy) {
@@ -54,9 +71,9 @@ public class    QuizDto implements Serializable {
         if (deepCopy) {
             this.questions = quiz.getQuizQuestions().stream()
                     .map(quizQuestion -> {
-                       QuestionDto questionDto = new QuestionDto(quizQuestion.getQuestion());
-                       questionDto.setSequence(quizQuestion.getSequence());
-                       return questionDto;
+                        QuestionDto questionDto = new QuestionDto(quizQuestion.getQuestion());
+                        questionDto.setSequence(quizQuestion.getSequence());
+                        return questionDto;
                     })
                     .collect(Collectors.toList());
         }

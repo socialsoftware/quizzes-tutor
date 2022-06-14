@@ -31,7 +31,7 @@ public class Quiz implements DomainEntity {
     }
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
     private Integer key;
@@ -66,22 +66,24 @@ public class Quiz implements DomainEntity {
     private QuizType type;
 
     private Integer series;
+
     private String version;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY, orphanRemoval = true)
     private final List<QuizQuestion> quizQuestions = new ArrayList<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "quiz", fetch = FetchType.LAZY)
     private final Set<QuizAnswer> quizAnswers = new HashSet<>();
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
     @OneToOne
     private Tournament tournament;
 
-    public Quiz() {}
+    public Quiz() {
+    }
 
     public Quiz(QuizDto quizDto) {
         checkQuestionsSequence(quizDto.getQuestions());
@@ -107,13 +109,37 @@ public class Quiz implements DomainEntity {
         setVersion(quizDto.getVersion());
     }
 
+    public Quiz(Quiz quiz) {
+        creationDate = quiz.getCreationDate();
+        availableDate = quiz.getAvailableDate();
+        conclusionDate = quiz.getConclusionDate();
+        resultsDate = quiz.getResultsDate();
+        scramble = quiz.getScramble();
+        qrCodeOnly = quiz.isQrCodeOnly();
+        code = quiz.getCode();
+        oneWay = quiz.isOneWay();
+        title = quiz.getTitle();
+        type = quiz.getType();
+        series = quiz.getSeries();
+        version = quiz.getVersion();
+
+        setCourseExecution(quiz.getCourseExecution());
+
+        quiz.getQuizQuestions().stream()
+                .sorted(Comparator.comparing(QuizQuestion::getSequence))
+                .forEach(quizQuestion -> {
+                    QuizQuestion newQuizQuestion = new QuizQuestion(this, quizQuestion.getQuestion(), this.getQuizQuestionsNumber());
+
+                });
+    }
+
     @Override
     public void accept(Visitor visitor) {
         visitor.visitQuiz(this);
     }
 
     public Integer getId() {
-    return id;
+        return id;
     }
 
     public Integer getKey() {
@@ -132,11 +158,11 @@ public class Quiz implements DomainEntity {
     }
 
     public boolean getScramble() {
-    return scramble;
+        return scramble;
     }
 
     public void setScramble(boolean scramble) {
-    this.scramble = scramble;
+        this.scramble = scramble;
     }
 
     public boolean isQrCodeOnly() {
@@ -155,7 +181,9 @@ public class Quiz implements DomainEntity {
         this.code = code;
     }
 
-    public boolean isTournamentQuiz() { return type == QuizType.TOURNAMENT; }
+    public boolean isTournamentQuiz() {
+        return type == QuizType.TOURNAMENT;
+    }
 
     public boolean isOneWay() {
         return oneWay;
@@ -166,7 +194,7 @@ public class Quiz implements DomainEntity {
     }
 
     public String getTitle() {
-    return title;
+        return title;
     }
 
     public void setTitle(String title) {
@@ -177,15 +205,15 @@ public class Quiz implements DomainEntity {
     }
 
     public LocalDateTime getCreationDate() {
-    return creationDate;
+        return creationDate;
     }
 
     public void setCreationDate(LocalDateTime creationDate) {
-    this.creationDate = creationDate;
+        this.creationDate = creationDate;
     }
 
     public LocalDateTime getAvailableDate() {
-    return availableDate;
+        return availableDate;
     }
 
     public void setAvailableDate(LocalDateTime availableDate) {
@@ -195,7 +223,7 @@ public class Quiz implements DomainEntity {
     }
 
     public LocalDateTime getConclusionDate() {
-    return conclusionDate;
+        return conclusionDate;
     }
 
     public void setConclusionDate(LocalDateTime conclusionDate) {
@@ -358,7 +386,7 @@ public class Quiz implements DomainEntity {
         List<Quiz> nullKeyQuizzes = this.courseExecution.getQuizzes().stream()
                 .filter(quiz -> quiz.key == null).collect(Collectors.toList());
 
-        for (Quiz quiz: nullKeyQuizzes) {
+        for (Quiz quiz : nullKeyQuizzes) {
             max = max + 1;
             quiz.key = max;
         }
@@ -393,7 +421,7 @@ public class Quiz implements DomainEntity {
     }
 
     public void generateQuiz(List<Question> questions) {
-        IntStream.range(0,questions.size())
+        IntStream.range(0, questions.size())
                 .forEach(index -> new QuizQuestion(this, questions.get(index), index));
 
         setAvailableDate(DateHandler.now());
