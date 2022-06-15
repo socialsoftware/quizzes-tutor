@@ -1,6 +1,6 @@
 <template>
   <v-container fluid>
-    <v-card class="table">
+    <v-card class="table" outlined color="transparent">
       <v-row>
         <v-col>
           <v-btn

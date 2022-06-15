@@ -2,7 +2,7 @@
   <div class="container">
     <h2>Dashboard</h2>
 
-    <v-card class="table">
+    <v-card class="table" outlined color="transparent">
       <v-row>
         <v-col>
           <v-btn
