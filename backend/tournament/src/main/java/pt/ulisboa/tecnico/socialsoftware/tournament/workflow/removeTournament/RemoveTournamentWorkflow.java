@@ -8,5 +8,5 @@ public interface RemoveTournamentWorkflow {
      * @return tournamentId
      */
     @WorkflowMethod
-    Integer removeTournament(Integer tournamentId, Integer quizId);
+    void removeTournament(Integer tournamentId, Integer quizId);
 }
