@@ -8,6 +8,6 @@ public interface UpdateTournamentWorkflow {
      * @return tournamentId
      */
     @WorkflowMethod
-    Integer updateTournament();
+    Integer updateTournament(Integer tournamentId);
 
 }
