@@ -24,7 +24,6 @@ import com.uber.cadence.worker.WorkerFactory;
 import pt.ulisboa.tecnico.socialsoftware.auth.activity.confirmRegistration.ConfirmRegistrationActivitiesImpl;
 import pt.ulisboa.tecnico.socialsoftware.auth.activity.createUserWithAuth.CreateUserWithAuthActivitiesImpl;
 import pt.ulisboa.tecnico.socialsoftware.auth.activity.updateCourseExecutions.UpdateCourseExecutionsActivitiesImpl;
-import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceParticipantConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.auth.config.AuthServiceWebConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.auth.services.local.AuthUserProvidedService;
 import pt.ulisboa.tecnico.socialsoftware.auth.subscriptions.AuthUserServiceEventConfiguration;
@@ -37,7 +36,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.utils.Constants;
 @PropertySource({ "classpath:application.properties" })
 @EnableJpaAuditing
 @SpringBootApplication
-@Import({ CommonModuleConfiguration.class, AuthServiceWebConfiguration.class, AuthServiceParticipantConfiguration.class,
+@Import({ CommonModuleConfiguration.class, AuthServiceWebConfiguration.class,
         TramJdbcKafkaConfiguration.class, AuthUserServiceEventConfiguration.class })
 @EntityScan({ "pt.ulisboa.tecnico.socialsoftware.auth" })
 @EnableJpaRepositories({ "pt.ulisboa.tecnico.socialsoftware.auth" })
