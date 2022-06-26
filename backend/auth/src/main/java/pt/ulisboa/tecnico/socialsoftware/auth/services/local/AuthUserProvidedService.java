@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.auth.services.local;
 
-// import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,12 +15,6 @@ import com.uber.cadence.client.WorkflowClient;
 
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.auth.repository.AuthUserRepository;
-// import pt.ulisboa.tecnico.socialsoftware.auth.sagas.confirmRegistration.ConfirmRegistrationSaga;
-// import pt.ulisboa.tecnico.socialsoftware.auth.sagas.confirmRegistration.ConfirmRegistrationSagaData;
-// import pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth.CreateUserWithAuthSaga;
-// import pt.ulisboa.tecnico.socialsoftware.auth.sagas.createUserWithAuth.CreateUserWithAuthSagaData;
-// import pt.ulisboa.tecnico.socialsoftware.auth.sagas.updateCourseExecutions.UpdateCourseExecutionsSaga;
-// import pt.ulisboa.tecnico.socialsoftware.auth.sagas.updateCourseExecutions.UpdateCourseExecutionsSagaData;
 import pt.ulisboa.tecnico.socialsoftware.auth.services.remote.AuthUserRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.auth.workflow.confirmRegistration.ConfirmRegistrationWorkflow;
 import pt.ulisboa.tecnico.socialsoftware.auth.workflow.createUserWithAuth.CreateUserWithAuthWorkflow;
@@ -65,18 +58,6 @@ public class AuthUserProvidedService {
 
     @Autowired
     private PasswordEncoder passwordEncoder;
-
-    // @Autowired
-    // private SagaInstanceFactory sagaInstanceFactory;
-
-    // @Autowired
-    // private CreateUserWithAuthSaga createUserWithAuthSaga;
-
-    // @Autowired
-    // private UpdateCourseExecutionsSaga updateCourseExecutionsSaga;
-
-    // @Autowired
-    // private ConfirmRegistrationSaga confirmRegistrationSaga;
 
     @Autowired
     private WorkflowClient workflowClient;
