@@ -19,12 +19,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tournament.repository.TournamentRepository;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament.CreateTournamentSaga;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.createTournament.CreateTournamentSagaData;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.removeTournament.RemoveTournamentSaga;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.removeTournament.RemoveTournamentSagaData;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSaga;
-import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSagaData;
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService;
 import pt.ulisboa.tecnico.socialsoftware.tournament.workflow.createTournament.CreateTournamentWorkflow;
 import pt.ulisboa.tecnico.socialsoftware.tournament.workflow.removeTournament.RemoveTournamentWorkflow;
@@ -49,15 +43,6 @@ public class TournamentProvidedService {
 
     // @Autowired
     // private SagaInstanceFactory sagaInstanceFactory;
-
-    // @Autowired
-    // private UpdateTournamentSaga updateTournamentSaga;
-
-    // @Autowired
-    // private CreateTournamentSaga createTournamentSaga;
-
-    // @Autowired
-    // private RemoveTournamentSaga removeTournamentSaga;
 
     @Autowired
     private WorkflowClient workflowClient;

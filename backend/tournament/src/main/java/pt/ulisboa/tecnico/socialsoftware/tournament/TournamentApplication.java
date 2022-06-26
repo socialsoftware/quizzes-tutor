@@ -26,7 +26,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.config.CommonModuleConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tournament.activity.createTournamentActivities.CreateTournamentActivitiesImpl;
 import pt.ulisboa.tecnico.socialsoftware.tournament.activity.removeTournamentActivities.RemoveTournamentActivitiesImpl;
 import pt.ulisboa.tecnico.socialsoftware.tournament.activity.updateTournamentActivities.UpdateTournamentActivitiesImpl;
-import pt.ulisboa.tecnico.socialsoftware.tournament.config.TournamentServiceParticipantConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tournament.config.TournamentServiceWebConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tournament.demoutils.TournamentDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService;
@@ -41,7 +40,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.utils.Constants;
 @EnableScheduling
 @SpringBootApplication
 @Import({ CommonModuleConfiguration.class, TournamentServiceWebConfiguration.class,
-        TournamentServiceParticipantConfiguration.class,
         TramJdbcKafkaConfiguration.class, TournamentServiceEventConfiguration.class })
 @EntityScan({ "pt.ulisboa.tecnico.socialsoftware.tournament" })
 @EnableJpaRepositories({ "pt.ulisboa.tecnico.socialsoftware.tournament" })
