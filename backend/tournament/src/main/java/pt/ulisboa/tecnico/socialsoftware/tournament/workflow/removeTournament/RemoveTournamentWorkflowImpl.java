@@ -5,11 +5,12 @@ import com.uber.cadence.workflow.Saga;
 import com.uber.cadence.workflow.Workflow;
 
 import pt.ulisboa.tecnico.socialsoftware.common.activity.QuizActivities;
-import pt.ulisboa.tecnico.socialsoftware.tournament.activity.TournamentActivities;
+import pt.ulisboa.tecnico.socialsoftware.tournament.activity.removeTournamentActivities.RemoveTournamentActivities;
 
 public class RemoveTournamentWorkflowImpl implements RemoveTournamentWorkflow {
 
-    private final TournamentActivities tournamentActivities = Workflow.newActivityStub(TournamentActivities.class);
+    private final RemoveTournamentActivities removeTournamentActivities = Workflow
+            .newActivityStub(RemoveTournamentActivities.class);
 
     private final QuizActivities quizActivities = Workflow.newActivityStub(QuizActivities.class);
 
@@ -20,12 +21,12 @@ public class RemoveTournamentWorkflowImpl implements RemoveTournamentWorkflow {
                 .build();
         Saga saga = new Saga(sagaOptions);
         try {
-            tournamentActivities.beginRemove(tournamentId);
-            saga.addCompensation(tournamentActivities::undoRemove, tournamentId);
+            removeTournamentActivities.beginRemove(tournamentId);
+            saga.addCompensation(removeTournamentActivities::undoRemove, tournamentId);
 
             quizActivities.deleteQuiz(quizId);
 
-            tournamentActivities.confirmRemove(tournamentId);
+            removeTournamentActivities.confirmRemove(tournamentId);
 
         } catch (ActivityException e) {
             saga.compensate();
