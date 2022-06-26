@@ -27,7 +27,6 @@ import pt.ulisboa.tecnico.socialsoftware.common.utils.Constants;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.activity.AnswerActivitiesImpl;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.TutorEventPublisherConfiguration;
-import pt.ulisboa.tecnico.socialsoftware.tutor.config.TutorServiceParticipantConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.config.TutorServiceWebConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.demoutils.TutorDemoUtils;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
@@ -43,8 +42,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.activity.QuizActivitiesImpl;
 // @ServiceDescription(description = "Manages Orders", capabilities = "Order
 // Management")
 @SpringBootApplication
-@Import({ TutorServiceParticipantConfiguration.class,
-        TramJdbcKafkaConfiguration.class, CommonModuleConfiguration.class,
+@Import({ TramJdbcKafkaConfiguration.class, CommonModuleConfiguration.class,
         TutorServiceWebConfiguration.class, TutorEventPublisherConfiguration.class })
 @EntityScan({ "pt.ulisboa.tecnico.socialsoftware.tutor" })
 @EnableJpaRepositories({ "pt.ulisboa.tecnico.socialsoftware.tutor" })
