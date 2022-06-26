@@ -5,10 +5,11 @@ import java.util.List;
 import com.uber.cadence.workflow.WorkflowMethod;
 
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.Constants;
 
 public interface UpdateCourseExectionsWorkflow {
 
-    @WorkflowMethod
+    @WorkflowMethod(executionStartToCloseTimeoutSeconds = 600, taskList = Constants.AUTH_TASK_LIST)
     void updateCourseExecutions(Integer authUserId, Integer userId, String ids,
             List<CourseExecutionDto> courseExecutionDtoList, String email);
 
