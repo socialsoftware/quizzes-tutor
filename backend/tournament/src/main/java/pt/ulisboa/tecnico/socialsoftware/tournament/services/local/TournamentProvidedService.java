@@ -1,12 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.services.local;
 
-import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
+// import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
+
+import com.uber.cadence.client.WorkflowClient;
+
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.execution.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
@@ -23,6 +26,9 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.removeTournament.Remov
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSaga;
 import pt.ulisboa.tecnico.socialsoftware.tournament.sagas.updateTournament.UpdateTournamentSagaData;
 import pt.ulisboa.tecnico.socialsoftware.tournament.services.remote.TournamentRequiredService;
+import pt.ulisboa.tecnico.socialsoftware.tournament.workflow.createTournament.CreateTournamentWorkflow;
+import pt.ulisboa.tecnico.socialsoftware.tournament.workflow.removeTournament.RemoveTournamentWorkflow;
+import pt.ulisboa.tecnico.socialsoftware.tournament.workflow.updateTournament.UpdateTournamentWorkflow;
 
 import java.sql.SQLException;
 import java.time.LocalDateTime;
@@ -41,30 +47,41 @@ public class TournamentProvidedService {
     @Autowired
     private TournamentRequiredService tournamentRequiredService;
 
-    @Autowired
-    private SagaInstanceFactory sagaInstanceFactory;
+    // @Autowired
+    // private SagaInstanceFactory sagaInstanceFactory;
+
+    // @Autowired
+    // private UpdateTournamentSaga updateTournamentSaga;
+
+    // @Autowired
+    // private CreateTournamentSaga createTournamentSaga;
+
+    // @Autowired
+    // private RemoveTournamentSaga removeTournamentSaga;
 
     @Autowired
-    private UpdateTournamentSaga updateTournamentSaga;
-
-    @Autowired
-    private CreateTournamentSaga createTournamentSaga;
-
-    @Autowired
-    private RemoveTournamentSaga removeTournamentSaga;
+    private WorkflowClient workflowClient;
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto createTournament(Integer userId, Integer executionId, Set<Integer> topicsId,
-                                          TournamentDto tournamentDto, String username, String name) {
+            TournamentDto tournamentDto, String username, String name) {
         checkInput(userId, topicsId, tournamentDto);
 
         Tournament tournament = new Tournament(new TournamentCreator(userId, username, name), tournamentDto);
         tournamentRepository.save(tournament);
 
-        CreateTournamentSagaData data = new CreateTournamentSagaData(tournament.getId(), tournament.getCreator().getId(),
+        // CreateTournamentSagaData data = new
+        // CreateTournamentSagaData(tournament.getId(),
+        // tournament.getCreator().getId(),
+        // executionId, tournament.getExternalStatementCreationDto(), new
+        // TopicListDto(topicsId));
+        // sagaInstanceFactory.create(createTournamentSaga, data);
+
+        CreateTournamentWorkflow workflow = workflowClient.newWorkflowStub(CreateTournamentWorkflow.class);
+        workflow.createTournament(tournament.getId(),
+                tournament.getCreator().getId(),
                 executionId, tournament.getExternalStatementCreationDto(), new TopicListDto(topicsId));
-        sagaInstanceFactory.create(createTournamentSaga, data);
 
         return tournament.getDto();
     }
@@ -107,15 +124,14 @@ public class TournamentProvidedService {
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 
-    @Retryable(value = { SQLException.class, TutorException.class}, backoff = @Backoff(delay = 2000))
+    @Retryable(value = { SQLException.class, TutorException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void joinTournament(Integer userId, Integer tournamentId, String password, String username, String name) {
         Tournament tournament = checkTournament(tournamentId);
 
         if (tournament.getState().equals(TournamentState.APPROVED)) {
             tournament.addParticipant(new TournamentParticipant(userId, username, name), password);
-        }
-        else {
+        } else {
             throw new TutorException(UNSUPPORTED_STATE, tournament.getState().toString());
         }
 
@@ -130,8 +146,7 @@ public class TournamentProvidedService {
         if (tournament.getState().equals(TournamentState.APPROVED)) {
             statementQuizDto = tournamentRequiredService.startTournamentQuiz(userId, tournament.getQuizId());
             tournament.findParticipant(userId).setAnswered(true);
-        }
-        else {
+        } else {
             throw new TutorException(UNSUPPORTED_STATE, tournament.getState().toString());
         }
 
@@ -146,8 +161,7 @@ public class TournamentProvidedService {
         if (tournament.getState().equals(TournamentState.APPROVED)) {
             TournamentParticipant participant = tournament.findParticipant(userId);
             tournament.removeParticipant(participant);
-        }
-        else {
+        } else {
             throw new TutorException(UNSUPPORTED_STATE, tournament.getState().toString());
         }
     }
@@ -158,22 +172,29 @@ public class TournamentProvidedService {
         Tournament tournament = checkTournament(tournamentDto.getId());
         tournament.checkCanChange();
 
-        UpdateTournamentSagaData data = new UpdateTournamentSagaData(tournament.getId(), tournamentDto, tournament.getDto(),
+        // UpdateTournamentSagaData data = new
+        // UpdateTournamentSagaData(tournament.getId(), tournamentDto,
+        // tournament.getDto(),
+        // new TopicListDto(topicsId), tournament.getTopics(),
+        // tournament.getCourseExecution().getId());
+        // sagaInstanceFactory.create(updateTournamentSaga, data);
+
+        UpdateTournamentWorkflow workflow = workflowClient.newWorkflowStub(UpdateTournamentWorkflow.class);
+        workflow.updateTournament(tournament.getId(), tournamentDto,
+                tournament.getDto(),
                 new TopicListDto(topicsId), tournament.getTopics(), tournament.getCourseExecution().getId());
-        sagaInstanceFactory.create(updateTournamentSaga, data);
 
         return tournament.getDto();
     }
 
-    @Retryable(value = { SQLException.class,TutorException.class }, backoff = @Backoff(delay = 2000))
+    @Retryable(value = { SQLException.class, TutorException.class }, backoff = @Backoff(delay = 2000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public TournamentDto cancelTournament(Integer tournamentId) {
         Tournament tournament = checkTournament(tournamentId);
 
         if (tournament.getState().equals(TournamentState.APPROVED)) {
             tournament.cancel();
-        }
-        else {
+        } else {
             throw new TutorException(UNSUPPORTED_STATE, tournament.getState().toString());
         }
 
@@ -186,8 +207,12 @@ public class TournamentProvidedService {
         Tournament tournament = checkTournament(tournamentId);
         tournament.checkCanChange();
 
-        RemoveTournamentSagaData data = new RemoveTournamentSagaData(tournament.getId(), tournament.getQuizId());
-        sagaInstanceFactory.create(removeTournamentSaga, data);
+        // RemoveTournamentSagaData data = new
+        // RemoveTournamentSagaData(tournament.getId(), tournament.getQuizId());
+        // sagaInstanceFactory.create(removeTournamentSaga, data);
+
+        RemoveTournamentWorkflow workflow = workflowClient.newWorkflowStub(RemoveTournamentWorkflow.class);
+        workflow.removeTournament(tournament.getId(), tournament.getQuizId());
     }
 
     private void checkInput(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
@@ -213,30 +238,27 @@ public class TournamentProvidedService {
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoTournaments() {
         CourseExecutionDto demoCourseExecution;
-        while(true) {
+        while (true) {
             try {
                 demoCourseExecution = tournamentRequiredService.getDemoCourseExecutionId();
-                if (demoCourseExecution!= null) {
+                if (demoCourseExecution != null) {
                     break;
                 }
-            }
-            catch(RemoteAccessException e) {
+            } catch (RemoteAccessException e) {
                 continue;
             }
         }
 
         tournamentRepository.getTournamentsForCourseExecution(demoCourseExecution.getCourseExecutionId()).stream()
-            .filter(tournament -> tournament.getState().equals(TournamentState.APPROVED))
-            .forEach(tournament -> {
-                tournament.remove();
-                tournamentRepository.delete(tournament);
-            });
+                .filter(tournament -> tournament.getState().equals(TournamentState.APPROVED))
+                .forEach(tournament -> {
+                    tournament.remove();
+                    tournamentRepository.delete(tournament);
+                });
     }
 
     public void undoUpdate(Integer tournamentId) {
