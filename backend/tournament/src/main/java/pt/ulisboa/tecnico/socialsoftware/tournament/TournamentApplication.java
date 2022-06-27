@@ -15,10 +15,6 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 
 import com.uber.cadence.client.WorkflowClient;
-import com.uber.cadence.client.WorkflowClientOptions;
-import com.uber.cadence.serviceclient.ClientOptions;
-import com.uber.cadence.serviceclient.IWorkflowService;
-import com.uber.cadence.serviceclient.WorkflowServiceTChannel;
 import com.uber.cadence.worker.Worker;
 import com.uber.cadence.worker.WorkerFactory;
 
@@ -59,16 +55,6 @@ public class TournamentApplication implements InitializingBean {
     @Override
     public void afterPropertiesSet() {
         tournamentDemoUtils.resetDemoInfo();
-    }
-
-    @Bean
-    WorkflowClient workflowClient() {
-        IWorkflowService service = new WorkflowServiceTChannel(ClientOptions.defaultInstance());
-
-        WorkflowClientOptions workflowClientOptions = WorkflowClientOptions.newBuilder()
-                .setDomain(Constants.DOMAIN)
-                .build();
-        return WorkflowClient.newInstance(service, workflowClientOptions);
     }
 
     @Bean
