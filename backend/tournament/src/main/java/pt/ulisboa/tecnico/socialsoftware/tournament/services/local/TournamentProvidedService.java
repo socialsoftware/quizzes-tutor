@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.services.local;
 
-// import io.eventuate.tram.sagas.orchestration.SagaInstanceFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -40,9 +39,6 @@ public class TournamentProvidedService {
 
     @Autowired
     private TournamentRequiredService tournamentRequiredService;
-
-    // @Autowired
-    // private SagaInstanceFactory sagaInstanceFactory;
 
     @Autowired
     private WorkflowClient workflowClient;
