@@ -15,7 +15,6 @@ import org.springframework.scheduling.annotation.EnableScheduling;
 import pt.ulisboa.tecnico.socialsoftware.common.config.CommonModuleConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tournament.config.TournamentServiceWebConfiguration;
 import pt.ulisboa.tecnico.socialsoftware.tournament.demoutils.TournamentDemoUtils;
-import pt.ulisboa.tecnico.socialsoftware.tournament.services.local.TournamentProvidedService;
 import pt.ulisboa.tecnico.socialsoftware.tournament.subscriptions.TournamentServiceEventConfiguration;
 
 @PropertySource({ "classpath:application.properties" })
@@ -28,9 +27,6 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.subscriptions.TournamentServ
 @EnableJpaRepositories({ "pt.ulisboa.tecnico.socialsoftware.tournament" })
 // @ServiceDescription(description = "Tournament", capabilities = "Tournament")
 public class TournamentApplication implements InitializingBean {
-
-    @Autowired
-    TournamentProvidedService tournamentProvidedService;
 
     public static void main(String[] args) {
         SpringApplication.run(TournamentApplication.class, args);
