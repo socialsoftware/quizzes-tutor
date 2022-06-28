@@ -351,7 +351,7 @@ public class CourseExecutionService {
                 '}';
     }
 
-
+    @Transactional
     public void addCourseExecutions(Integer userId, List<CourseExecutionDto> courseExecutionDtoList) {
         checkCourseExecutionsExist(courseExecutionDtoList);
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
