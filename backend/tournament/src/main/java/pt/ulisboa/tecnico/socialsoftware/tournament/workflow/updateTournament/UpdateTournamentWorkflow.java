@@ -11,7 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 
 public interface UpdateTournamentWorkflow {
 
-    @WorkflowMethod(executionStartToCloseTimeoutSeconds = 600, taskList = Constants.TOURNAMENT_TASK_LIST)
+    @WorkflowMethod(executionStartToCloseTimeoutSeconds = 60, taskList = Constants.TOURNAMENT_TASK_LIST)
     void updateTournament(Integer tournamentId, TournamentDto newTournamentDto, TournamentDto oldTournamentDto,
             TopicListDto topicListDto, Set<TournamentTopic> oldTopics, Integer executionId);
 

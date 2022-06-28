@@ -6,7 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.utils.Constants;
 
 public interface ConfirmRegistrationWorkflow {
 
-    @WorkflowMethod(executionStartToCloseTimeoutSeconds = 600, taskList = Constants.AUTH_TASK_LIST)
+    @WorkflowMethod(executionStartToCloseTimeoutSeconds = 60, taskList = Constants.AUTH_TASK_LIST)
     void confirmRegistration(Integer authUserId, Integer userId, String password);
 
 }

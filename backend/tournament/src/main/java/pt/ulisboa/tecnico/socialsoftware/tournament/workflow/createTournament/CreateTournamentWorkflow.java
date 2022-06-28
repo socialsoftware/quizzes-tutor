@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.common.utils.Constants;
 
 public interface CreateTournamentWorkflow {
 
-    @WorkflowMethod(executionStartToCloseTimeoutSeconds = 600, taskList = Constants.TOURNAMENT_TASK_LIST)
+    @WorkflowMethod(executionStartToCloseTimeoutSeconds = 60, taskList = Constants.TOURNAMENT_TASK_LIST)
     Integer createTournament(Integer tournamentId, Integer creatorId, Integer courseExecutionId,
             ExternalStatementCreationDto externalStatementCreationDto, TopicListDto topicListDto);
 
