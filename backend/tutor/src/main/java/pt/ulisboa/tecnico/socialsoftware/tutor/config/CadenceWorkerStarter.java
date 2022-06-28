@@ -17,6 +17,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.activity.QuestionActivitiesImpl;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.activity.QuizActivitiesImpl;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.activity.UserActivitiesImpl;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -48,6 +50,9 @@ public class CadenceWorkerStarter {
 
     @Autowired
     private QuizService quizService;
+
+    @Autowired
+    private UserService userService;
 
     private final IWorkflowService workflowService;
     private final WorkerFactory workerFactory;
@@ -100,6 +105,7 @@ public class CadenceWorkerStarter {
         request.setName(DOMAIN);
         request.setWorkflowExecutionRetentionPeriodInDays(2);
 
+        logger.info("Start registering domain \"{}\"", DOMAIN);
         workflowService.RegisterDomain(request);
         logger.info("Successfully registered domain \"{}\"", DOMAIN);
     }
@@ -109,7 +115,8 @@ public class CadenceWorkerStarter {
 
         worker.registerActivitiesImplementations(new AnswerActivitiesImpl(answerService),
                 new CourseExecutionActivitiesImpl(courseExecutionService),
-                new QuestionActivitiesImpl(topicService), new QuizActivitiesImpl(quizService));
+                new QuestionActivitiesImpl(topicService), new QuizActivitiesImpl(quizService),
+                new UserActivitiesImpl(userService));
 
     }
 
