@@ -34,12 +34,12 @@ public class CadenceConfiguration {
     @Bean
     @ConditionalOnMissingBean(ClientOptions.class)
     public ClientOptions cadenceClientOptions() {
-        return ClientOptions.defaultInstance();
-        // return ClientOptions.newBuilder()
-        // .setClientAppName("testApp")
-        // .setHost("localhost")
-        // .setPort(7933)
-        // .build();
+        // return ClientOptions.defaultInstance();
+        return ClientOptions.newBuilder()
+                // .setClientAppName("testApp")
+                .setHost("172.21.0.9")
+                .setPort(7933)
+                .build();
     }
 
     @Bean
