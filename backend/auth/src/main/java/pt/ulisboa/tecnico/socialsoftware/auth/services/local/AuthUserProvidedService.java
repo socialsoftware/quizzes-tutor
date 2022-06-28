@@ -502,6 +502,7 @@ public class AuthUserProvidedService {
             throw new TutorException(EXPIRED_CONFIRMATION_TOKEN);
     }
 
+    @Transactional
     public void approveAuthUser(Integer authUserId, Integer userId, List<CourseExecutionDto> courseExecutionList) {
         AuthUser authUser = authUserRepository.findById(authUserId)
                 .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
@@ -519,18 +520,21 @@ public class AuthUserProvidedService {
         }
     }
 
+    @Transactional
     public void rejectAuthUser(Integer authUserId) {
         AuthUser authUser = authUserRepository.findById(authUserId)
                 .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
         authUser.authUserRejected();
     }
 
+    @Transactional
     public void undoUpdateCourseExecutions(Integer authUserId) {
         AuthTecnicoUser authUser = (AuthTecnicoUser) authUserRepository.findById(authUserId)
                 .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
         authUser.authUserUndoUpdateCourseExecutions();
     }
 
+    @Transactional
     public void confirmUpdateCourseExecutions(Integer authUserId, String ids,
             List<CourseExecutionDto> courseExecutionDtoList, String email) {
         AuthUser authUser = authUserRepository.findById(authUserId)
@@ -544,12 +548,14 @@ public class AuthUserProvidedService {
         }
     }
 
+    @Transactional
     public void undoConfirmAuthUserRegistration(Integer authUserId) {
         AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findById(authUserId)
                 .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
         authUser.authUserUndoConfirmRegistration();
     }
 
+    @Transactional
     public void confirmAuthUserRegistration(Integer authUserId, String password) {
         AuthExternalUser authUser = (AuthExternalUser) authUserRepository.findById(authUserId)
                 .orElseThrow(() -> new TutorException(ErrorMessage.AUTHUSER_NOT_FOUND, authUserId));
