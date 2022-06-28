@@ -27,6 +27,7 @@ import java.sql.SQLException;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*;
@@ -230,6 +231,11 @@ public class TournamentProvidedService {
                     break;
                 }
             } catch (RemoteAccessException e) {
+                try {
+                    TimeUnit.SECONDS.sleep(30);
+                } catch (InterruptedException e1) {
+                    e1.printStackTrace();
+                }
                 continue;
             }
         }
