@@ -13,9 +13,9 @@ import pt.ulisboa.tecnico.socialsoftware.auth.activity.confirmRegistration.Confi
 import pt.ulisboa.tecnico.socialsoftware.auth.activity.createUserWithAuth.CreateUserWithAuthActivitiesImpl;
 import pt.ulisboa.tecnico.socialsoftware.auth.activity.updateCourseExecutions.UpdateCourseExecutionsActivitiesImpl;
 import pt.ulisboa.tecnico.socialsoftware.auth.services.local.AuthUserProvidedService;
-import pt.ulisboa.tecnico.socialsoftware.auth.workflow.confirmRegistration.ConfirmRegistrationWorkflow;
-import pt.ulisboa.tecnico.socialsoftware.auth.workflow.createUserWithAuth.CreateUserWithAuthWorkflow;
-import pt.ulisboa.tecnico.socialsoftware.auth.workflow.updateCourseExecutions.UpdateCourseExectionsWorkflow;
+import pt.ulisboa.tecnico.socialsoftware.auth.workflow.confirmRegistration.ConfirmRegistrationWorkflowImpl;
+import pt.ulisboa.tecnico.socialsoftware.auth.workflow.createUserWithAuth.CreateUserWithAuthWorkflowImpl;
+import pt.ulisboa.tecnico.socialsoftware.auth.workflow.updateCourseExecutions.UpdateCourseExectionsWorkflowImpl;
 import pt.ulisboa.tecnico.socialsoftware.common.utils.Constants;
 
 import org.apache.thrift.TException;
@@ -102,8 +102,8 @@ public class CadenceWorkerStarter {
                 new ConfirmRegistrationActivitiesImpl(authUserProvidedService),
                 new UpdateCourseExecutionsActivitiesImpl(authUserProvidedService));
 
-        worker.registerWorkflowImplementationTypes(CreateUserWithAuthWorkflow.class,
-                ConfirmRegistrationWorkflow.class, UpdateCourseExectionsWorkflow.class);
+        worker.registerWorkflowImplementationTypes(CreateUserWithAuthWorkflowImpl.class,
+                ConfirmRegistrationWorkflowImpl.class, UpdateCourseExectionsWorkflowImpl.class);
     }
 
     private boolean domainExists() throws TException {
