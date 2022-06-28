@@ -27,6 +27,8 @@ import org.springframework.stereotype.Component;
 import javax.annotation.PostConstruct;
 import javax.annotation.PreDestroy;
 import java.util.List;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.config.CadenceConfiguration.DOMAIN;
 
@@ -60,6 +62,21 @@ public class CadenceWorkerStarter {
 
     @PostConstruct
     public void startWorkerFactory() throws TException {
+        while (true) {
+            try {
+                if (workflowService.isHealthy().get())
+                    break;
+                logger.info("Waiting 10 sec for cadence server to start up");
+                TimeUnit.SECONDS.sleep(10);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                continue;
+            } catch (ExecutionException e) {
+                e.printStackTrace();
+                continue;
+            }
+        }
+
         if (!domainExists()) {
             registerDomain();
         }
