@@ -91,6 +91,7 @@ public class UserService {
                 });
     }
 
+    @Transactional
     public void activateUser(int userId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         user.setActive(true);
@@ -102,12 +103,14 @@ public class UserService {
         return user.getUserCourseExecutionsDto();
     }
 
+    @Transactional
     public void deleteUser(Integer id) {
         User user = userRepository.findById(id).orElseThrow(() -> new TutorException(USER_NOT_FOUND, id));
         user.remove();
         userRepository.delete(user);
     }
 
+    @Transactional
     public void removeCourseExecutions(Integer userId, List<CourseExecutionDto> courseExecutionDtoList) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         checkExecutionsExist(courseExecutionDtoList);
