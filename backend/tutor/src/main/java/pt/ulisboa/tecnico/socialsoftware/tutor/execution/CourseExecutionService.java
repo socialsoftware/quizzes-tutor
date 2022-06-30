@@ -127,6 +127,7 @@ public class CourseExecutionService {
         }
     }
 
+    @Transactional
     public void removeUserFromTecnicoCourseExecution(Integer userId, int courseExecutionId) {
         CourseExecution courseExecution = this.courseExecutionRepository.findById(courseExecutionId).orElse(null);
         User user = this.userRepository.findById(userId).orElse(null);
