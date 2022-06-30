@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tournament.services.local;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.retry.annotation.Backoff;
 import org.springframework.retry.annotation.Retryable;
@@ -7,6 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.uber.cadence.WorkflowExecution;
 import com.uber.cadence.client.WorkflowClient;
 
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.answer.StatementQuizDto;
@@ -35,6 +38,8 @@ import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.*
 @Service
 public class TournamentProvidedService {
 
+    private static final Logger logger = LoggerFactory.getLogger(TournamentProvidedService.class);
+
     @Autowired
     private TournamentRepository tournamentRepository;
 
@@ -61,9 +66,12 @@ public class TournamentProvidedService {
         // sagaInstanceFactory.create(createTournamentSaga, data);
 
         CreateTournamentWorkflow workflow = workflowClient.newWorkflowStub(CreateTournamentWorkflow.class);
-        workflow.createTournament(tournament.getId(),
-                tournament.getCreator().getId(),
-                executionId, tournament.getExternalStatementCreationDto(), new TopicListDto(topicsId));
+        WorkflowExecution workflowExecution = WorkflowClient.start(workflow::createTournament, tournament.getId(),
+                tournament.getCreator().getId(), executionId, tournament.getExternalStatementCreationDto(),
+                new TopicListDto(topicsId));
+
+        logger.info("Started create tournament workflow with workflowId=\"" + workflowExecution.getWorkflowId()
+                + "\" and runId=\"" + workflowExecution.getRunId() + "\"");
 
         return tournament.getDto();
     }
@@ -162,9 +170,12 @@ public class TournamentProvidedService {
         // sagaInstanceFactory.create(updateTournamentSaga, data);
 
         UpdateTournamentWorkflow workflow = workflowClient.newWorkflowStub(UpdateTournamentWorkflow.class);
-        workflow.updateTournament(tournament.getId(), tournamentDto,
-                tournament.getDto(),
-                new TopicListDto(topicsId), tournament.getTopics(), tournament.getCourseExecution().getId());
+        WorkflowExecution workflowExecution = WorkflowClient.start(workflow::updateTournament, tournament.getId(),
+                tournamentDto, tournament.getDto(), new TopicListDto(topicsId), tournament.getTopics(),
+                tournament.getCourseExecution().getId());
+
+        logger.info("Started update tournament workflow with workflowId=\"" + workflowExecution.getWorkflowId()
+                + "\" and runId=\"" + workflowExecution.getRunId() + "\"");
 
         return tournament.getDto();
     }
@@ -194,7 +205,11 @@ public class TournamentProvidedService {
         // sagaInstanceFactory.create(removeTournamentSaga, data);
 
         RemoveTournamentWorkflow workflow = workflowClient.newWorkflowStub(RemoveTournamentWorkflow.class);
-        workflow.removeTournament(tournament.getId(), tournament.getQuizId());
+        WorkflowExecution workflowExecution = WorkflowClient.start(workflow::removeTournament, tournament.getId(),
+                tournament.getQuizId());
+
+        logger.info("Started remove tournament workflow with workflowId=\"" + workflowExecution.getWorkflowId()
+                + "\" and runId=\"" + workflowExecution.getRunId() + "\"");
     }
 
     private void checkInput(Integer userId, Set<Integer> topicsId, TournamentDto tournamentDto) {
