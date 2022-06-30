@@ -66,9 +66,7 @@ public class CourseExecutionService {
     @Autowired
     private DomainEventPublisher domainEventPublisher;
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto getCourseExecutionById(int courseExecutionId) {
         return courseExecutionRepository.findById(courseExecutionId)
@@ -76,9 +74,7 @@ public class CourseExecutionService {
                 .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<CourseExecutionDto> getCourseExecutions(Role role) {
         return courseExecutionRepository.findAll().stream()
@@ -91,9 +87,7 @@ public class CourseExecutionService {
                 .collect(Collectors.toList());
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto createTecnicoCourseExecution(CourseExecutionDto courseExecutionDto) {
         courseExecutionDto.setCourseExecutionType(CourseType.TECNICO);
@@ -101,7 +95,9 @@ public class CourseExecutionService {
 
         Course course = getCourse(courseExecutionDto.getName(), CourseType.TECNICO);
 
-        CourseExecution courseExecution = course.getCourseExecution(courseExecutionDto.getAcronym(), courseExecutionDto.getAcademicTerm(), courseExecutionDto.getCourseExecutionType())
+        CourseExecution courseExecution = course
+                .getCourseExecution(courseExecutionDto.getAcronym(), courseExecutionDto.getAcademicTerm(),
+                        courseExecutionDto.getCourseExecutionType())
                 .orElseGet(() -> createCourseExecution(course, courseExecutionDto));
         courseExecution.setStatus(CourseExecutionStatus.ACTIVE);
         return courseExecution.getDto();
@@ -114,7 +110,7 @@ public class CourseExecutionService {
 
         if (user != null && courseExecution != null) {
             user.addCourse(courseExecution);
-            //Auth subscribes to this event and adds course execution to authUser
+            // Auth subscribes to this event and adds course execution to authUser
             AddCourseExecutionEvent addCourseExecutionEvent = new AddCourseExecutionEvent(userId, courseExecutionId);
             domainEventPublisher.publish(COURSE_EXECUTION_AGGREGATE_TYPE, String.valueOf(courseExecutionId),
                     Collections.singletonList(addCourseExecutionEvent));
@@ -137,16 +133,14 @@ public class CourseExecutionService {
 
         if (user != null && courseExecution != null) {
             user.removeCourse(courseExecution);
-            RemoveUserFromTecnicoCourseExecutionEvent userFromTecnicoCourseExecutionEvent =
-                    new RemoveUserFromTecnicoCourseExecutionEvent(userId, courseExecutionId);
+            RemoveUserFromTecnicoCourseExecutionEvent userFromTecnicoCourseExecutionEvent = new RemoveUserFromTecnicoCourseExecutionEvent(
+                    userId, courseExecutionId);
             domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
                     Collections.singletonList(userFromTecnicoCourseExecutionEvent));
         }
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto createExternalCourseExecution(CourseExecutionDto courseExecutionDto) {
         courseExecutionDto.setCourseExecutionType(CourseType.EXTERNAL);
@@ -159,9 +153,7 @@ public class CourseExecutionService {
         return courseExecution.getDto();
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void removeCourseExecution(int courseExecutionId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
@@ -175,12 +167,11 @@ public class CourseExecutionService {
 
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public void anonymizeCourseExecutionUsers(int executionId) {
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
         for (User user : courseExecution.getUsers()) {
             String oldUsername = user.getUsername();
             String newUsername = user.getUsername();
@@ -190,15 +181,14 @@ public class CourseExecutionService {
             user.setName(String.format("%s %s", roleCapitalized, user.getId()));
             user.setUsername(null);
 
-            AnonymizeUserEvent anonymizeUserEvent = new AnonymizeUserEvent(user.getId(), user.getUsername(), user.getName());
+            AnonymizeUserEvent anonymizeUserEvent = new AnonymizeUserEvent(user.getId(), user.getUsername(),
+                    user.getName());
             domainEventPublisher.publish(USER_AGGREGATE_TYPE, String.valueOf(user.getId()),
                     Collections.singletonList(anonymizeUserEvent));
         }
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<StudentDto> getStudents(int executionId) {
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElse(null);
@@ -226,15 +216,17 @@ public class CourseExecutionService {
 
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionDto> importQuestions(InputStream inputStream, Integer executionId) {
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
 
         QuestionsXmlImport questionsXmlImport = new QuestionsXmlImport();
 
-        return questionsXmlImport.importQuestions(inputStream, this.questionService, this.courseRepository, courseExecution);
+        return questionsXmlImport.importQuestions(inputStream, this.questionService, this.courseRepository,
+                courseExecution);
     }
 
     private Course getCourse(String name, CourseType type) {
-      if (type == null)
+        if (type == null)
             throw new TutorException(INVALID_TYPE_FOR_COURSE);
 
         return courseRepository.findByNameType(name, type.toString())
@@ -242,30 +234,31 @@ public class CourseExecutionService {
     }
 
     private CourseExecution createCourseExecution(Course existingCourse, CourseExecutionDto courseExecutionDto) {
-        CourseExecution courseExecution = new CourseExecution(existingCourse, courseExecutionDto.getAcronym(), courseExecutionDto.getAcademicTerm(), courseExecutionDto.getCourseExecutionType(), DateHandler.toLocalDateTime(courseExecutionDto.getEndDate()));
+        CourseExecution courseExecution = new CourseExecution(existingCourse, courseExecutionDto.getAcronym(),
+                courseExecutionDto.getAcademicTerm(), courseExecutionDto.getCourseExecutionType(),
+                DateHandler.toLocalDateTime(courseExecutionDto.getEndDate()));
         courseExecutionRepository.save(courseExecution);
         return courseExecution;
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto getDemoCourse() {
-        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(COURSE_ACRONYM, COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElse(null);
+        CourseExecution courseExecution = this.courseExecutionRepository
+                .findByFields(COURSE_ACRONYM, COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElse(null);
 
         if (courseExecution == null) {
-            return createTecnicoCourseExecution(new CourseExecutionDto(COURSE_NAME, COURSE_ACRONYM, COURSE_ACADEMIC_TERM));
+            return createTecnicoCourseExecution(
+                    new CourseExecutionDto(COURSE_NAME, COURSE_ACRONYM, COURSE_ACADEMIC_TERM));
         }
         return courseExecution.getDto();
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public CourseExecutionDto getCourseExecutionByFields(String acronym, String academicTerm, String type) {
-        CourseExecution courseExecution =  this.courseExecutionRepository.findByFields(acronym, academicTerm, type).orElse(null);
+        CourseExecution courseExecution = this.courseExecutionRepository.findByFields(acronym, academicTerm, type)
+                .orElse(null);
         CourseExecutionDto courseExecutionDto = null;
         if (courseExecution != null) {
             courseExecutionDto = courseExecution.getDto();
@@ -274,11 +267,13 @@ public class CourseExecutionService {
     }
 
     public CourseExecution getDemoCourseExecution() {
-        return this.courseExecutionRepository.findByFields(COURSE_ACRONYM, COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElseGet(() -> {
-            Course course = getCourse(COURSE_NAME, CourseType.TECNICO);
-            CourseExecution courseExecution = new CourseExecution(course, COURSE_ACRONYM, COURSE_ACADEMIC_TERM, CourseType.TECNICO, DateHandler.now().plusDays(1));
-            return courseExecutionRepository.save(courseExecution);
-        });
+        return this.courseExecutionRepository
+                .findByFields(COURSE_ACRONYM, COURSE_ACADEMIC_TERM, CourseType.TECNICO.toString()).orElseGet(() -> {
+                    Course course = getCourse(COURSE_NAME, CourseType.TECNICO);
+                    CourseExecution courseExecution = new CourseExecution(course, COURSE_ACRONYM, COURSE_ACADEMIC_TERM,
+                            CourseType.TECNICO, DateHandler.now().plusDays(1));
+                    return courseExecutionRepository.save(courseExecution);
+                });
     }
 
     private CourseExecution getExternalCourseExecution(Integer courseExecutionId) {
@@ -290,20 +285,20 @@ public class CourseExecutionService {
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public CourseExecutionDto deleteExternalInactiveUsers(Integer courseExecutionId, List<Integer> usersId){
+    public CourseExecutionDto deleteExternalInactiveUsers(Integer courseExecutionId, List<Integer> usersId) {
         CourseExecution courseExecution = getExternalCourseExecution(courseExecutionId);
         deleteUsersOfUserIds(usersId, courseExecution);
         return courseExecution.getDto();
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<TopicDto> findAvailableTopicsByCourseExecution(int courseExecutionId) {
-        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
+        CourseExecution courseExecution = courseExecutionRepository.findById(courseExecutionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, courseExecutionId));
 
-        return courseExecution.findAvailableTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(Topic::getDto).collect(Collectors.toList());
+        return courseExecution.findAvailableTopics().stream().sorted(Comparator.comparing(Topic::getName))
+                .map(Topic::getDto).collect(Collectors.toList());
     }
 
     private void deleteUsersOfUserIds(List<Integer> usersId, CourseExecution courseExecution) {
@@ -362,16 +357,16 @@ public class CourseExecutionService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void addExecutionsToUser(User user, List<CourseExecutionDto> courseExecutionDtoList) {
 
-        for (CourseExecutionDto dto: courseExecutionDtoList) {
+        for (CourseExecutionDto dto : courseExecutionDtoList) {
             CourseExecution courseExecution = courseExecutionRepository.findById(dto.getCourseExecutionId()).get();
             user.addCourse(courseExecution);
         }
     }
 
     private void checkCourseExecutionsExist(List<CourseExecutionDto> courseExecutionDtoList) {
-        for (CourseExecutionDto dto: courseExecutionDtoList) {
-            courseExecutionRepository.findById(dto.getCourseExecutionId()).
-                    orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
+        for (CourseExecutionDto dto : courseExecutionDtoList) {
+            courseExecutionRepository.findById(dto.getCourseExecutionId())
+                    .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
         }
     }
 }
