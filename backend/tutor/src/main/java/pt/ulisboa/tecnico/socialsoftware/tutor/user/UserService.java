@@ -43,8 +43,7 @@ public class UserService {
         User user;
         if (username == null) {
             user = new User(name, role);
-        }
-        else {
+        } else {
             user = new User(name, username, role);
         }
         user.setActive(isActive);
@@ -56,14 +55,15 @@ public class UserService {
     public void addCourseExecution(int userId, int executionId) {
         User user = userRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
 
-        CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+        CourseExecution courseExecution = courseExecutionRepository.findById(executionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
 
         user.addCourse(courseExecution);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public UserDto findUserById(Integer id) {
-        return  userRepository.findById(id)
+        return userRepository.findById(id)
                 .filter(Objects::nonNull)
                 .map(User::getUserDto)
                 .orElse(null);
@@ -74,9 +74,7 @@ public class UserService {
         return userRepository.findByKey(key).isPresent();
     }
 
-    @Retryable(
-            value = { SQLException.class },
-            backoff = @Backoff(delay = 5000))
+    @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void resetDemoStudents() {
         userRepository.findAll()
@@ -104,7 +102,6 @@ public class UserService {
         return user.getUserCourseExecutionsDto();
     }
 
-
     public void deleteUser(Integer id) {
         User user = userRepository.findById(id).orElseThrow(() -> new TutorException(USER_NOT_FOUND, id));
         user.remove();
@@ -119,16 +116,16 @@ public class UserService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public void removeCourseExecutionsFromUser(List<CourseExecutionDto> courseExecutionDtoList, User user) {
-        for (CourseExecutionDto dto: courseExecutionDtoList) {
+        for (CourseExecutionDto dto : courseExecutionDtoList) {
             CourseExecution courseExecution = courseExecutionRepository.findById(dto.getCourseExecutionId()).get();
             user.removeCourse(courseExecution);
         }
     }
 
     private void checkExecutionsExist(List<CourseExecutionDto> courseExecutionDtoList) {
-        for (CourseExecutionDto dto: courseExecutionDtoList) {
-            courseExecutionRepository.findById(dto.getCourseExecutionId()).
-                    orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
+        for (CourseExecutionDto dto : courseExecutionDtoList) {
+            courseExecutionRepository.findById(dto.getCourseExecutionId())
+                    .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, dto.getCourseExecutionId()));
         }
     }
 }
