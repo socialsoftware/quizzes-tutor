@@ -248,72 +248,84 @@ public class TournamentProvidedService {
                 });
     }
 
+    @Transactional
     public void undoUpdate(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.undoUpdate();
     }
 
+    @Transactional
     public void confirmUpdate(Integer tournamentId, TournamentDto tournamentDto) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.confirmUpdateQuiz(tournamentDto);
     }
 
+    @Transactional
     public void confirmCreate(Integer tournamentId, Integer quizId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.confirmTournament(quizId);
     }
 
+    @Transactional
     public void rejectCreate(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.rejectTournament();
     }
 
+    @Transactional
     public void storeTopics(Integer tournamentId, Set<TournamentTopic> tournamentTopics) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.setTopics(tournamentTopics);
     }
 
+    @Transactional
     public void storeCourseExecution(Integer tournamentId, TournamentCourseExecution tournamentCourseExecution) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.setCourseExecution(tournamentCourseExecution);
     }
 
+    @Transactional
     public void updateTopics(Integer tournamentId, Set<TournamentTopic> topics) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.updateTopics(topics);
     }
 
+    @Transactional
     public void undoUpdateTopics(Integer tournamentId, Set<TournamentTopic> topics) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.setTopics(topics);
     }
 
+    @Transactional
     public void beginUpdateTournament(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.beginUpdateTournament();
     }
 
+    @Transactional
     public void beginRemoveTournament(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.beginRemoveTournament();
     }
 
+    @Transactional
     public void confirmRemoveTournament(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
         tournament.confirmRemoveTournament();
     }
 
+    @Transactional
     public void undoRemoveTournament(Integer tournamentId) {
         Tournament tournament = tournamentRepository.findById(tournamentId)
                 .orElseThrow(() -> new TutorException(TOURNAMENT_NOT_FOUND, tournamentId));
