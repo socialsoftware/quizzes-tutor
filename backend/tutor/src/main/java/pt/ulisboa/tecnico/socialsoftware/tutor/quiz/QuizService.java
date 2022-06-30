@@ -413,6 +413,7 @@ public class QuizService {
                 });
     }
 
+    @Transactional
     public void updateExternalQuiz(Integer userId, Integer executionId, Integer quizId,
             TournamentDto tournamentDto) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
@@ -462,6 +463,7 @@ public class QuizService {
                 .forEach(index -> new QuizQuestion(quiz, availableQuestions.get(index), index));
     }
 
+    @Transactional
     public void removeExternalQuiz(Integer quizId) {
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
 
