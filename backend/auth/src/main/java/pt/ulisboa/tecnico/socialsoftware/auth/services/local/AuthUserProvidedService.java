@@ -11,6 +11,7 @@ import org.springframework.transaction.annotation.Isolation;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
+import com.uber.cadence.WorkflowExecution;
 import com.uber.cadence.client.WorkflowClient;
 
 import pt.ulisboa.tecnico.socialsoftware.auth.domain.*;
@@ -160,8 +161,11 @@ public class AuthUserProvidedService {
         // sagaInstanceFactory.create(updateCourseExecutionsSaga, data);
 
         UpdateCourseExectionsWorkflow workflow = workflowClient.newWorkflowStub(UpdateCourseExectionsWorkflow.class);
-        workflow.updateCourseExecutions(authUser.getId(), userId, ids,
-                courseExecutionDtoList, email);
+        WorkflowExecution workflowExecution = WorkflowClient.start(workflow::updateCourseExecutions, authUser.getId(),
+                userId, ids, courseExecutionDtoList, email);
+
+        logger.info("Started remove tournament workflow with workflowId=\"" + workflowExecution.getWorkflowId()
+                + "\" and runId=\"" + workflowExecution.getRunId() + "\"");
     }
 
     private AuthTecnicoUser createAuthTecnicoUser(FenixEduInterface fenix, String username) {
@@ -293,7 +297,11 @@ public class AuthUserProvidedService {
         // sagaInstanceFactory.create(confirmRegistrationSaga, data);
 
         ConfirmRegistrationWorkflow workflow = workflowClient.newWorkflowStub(ConfirmRegistrationWorkflow.class);
-        workflow.confirmRegistration(authUserId, userId, password);
+        WorkflowExecution workflowExecution = WorkflowClient.start(workflow::confirmRegistration, authUserId, userId,
+                password);
+
+        logger.info("Started confirm registration workflow with workflowId=\"" + workflowExecution.getWorkflowId()
+                + "\" and runId=\"" + workflowExecution.getRunId() + "\"");
     }
 
     @Retryable(value = { SQLException.class }, backoff = @Backoff(delay = 2000))
@@ -452,11 +460,14 @@ public class AuthUserProvidedService {
         // sagaInstanceFactory.create(createUserWithAuthSaga, data);
 
         CreateUserWithAuthWorkflow workflow = workflowClient.newWorkflowStub(CreateUserWithAuthWorkflow.class);
-        workflow.createUserWithAuth(authUser.getId(),
+        WorkflowExecution workflowExecution = WorkflowClient.start(workflow::createUserWithAuth, authUser.getId(),
                 authUser.getUserSecurityInfo().getName(),
                 authUser.getUserSecurityInfo().getRole(), authUser.getUsername(),
                 authUser.getType() != AuthUserType.EXTERNAL,
                 courseExecutionDtos);
+
+        logger.info("Started create user with auth workflow with workflowId=\"" + workflowExecution.getWorkflowId()
+                + "\" and runId=\"" + workflowExecution.getRunId() + "\"");
         return authUser;
     }
 
