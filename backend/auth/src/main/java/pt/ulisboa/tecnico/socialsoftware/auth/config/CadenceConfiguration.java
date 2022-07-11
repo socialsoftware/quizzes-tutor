@@ -12,10 +12,10 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
+import static pt.ulisboa.tecnico.socialsoftware.common.utils.Constants.DOMAIN;
+
 @Configuration
 public class CadenceConfiguration {
-
-    static final String DOMAIN = "test-domain";
 
     @Bean
     public WorkflowClientOptions workflowClientOptions() {
@@ -34,9 +34,7 @@ public class CadenceConfiguration {
     @Bean
     @ConditionalOnMissingBean(ClientOptions.class)
     public ClientOptions cadenceClientOptions() {
-        // return ClientOptions.defaultInstance();
         return ClientOptions.newBuilder()
-                // .setClientAppName("testApp")
                 .setHost("172.21.0.9")
                 .setPort(7933)
                 .build();
