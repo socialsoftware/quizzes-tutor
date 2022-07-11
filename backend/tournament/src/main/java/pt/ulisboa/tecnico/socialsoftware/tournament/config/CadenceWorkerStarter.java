@@ -8,7 +8,7 @@ import com.uber.cadence.serviceclient.IWorkflowService;
 import com.uber.cadence.worker.Worker;
 import com.uber.cadence.worker.WorkerFactory;
 import com.uber.cadence.worker.WorkerOptions;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.Constants;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.CadenceConstants;
 import pt.ulisboa.tecnico.socialsoftware.tournament.activity.createTournamentActivities.CreateTournamentActivitiesImpl;
 import pt.ulisboa.tecnico.socialsoftware.tournament.activity.removeTournamentActivities.RemoveTournamentActivitiesImpl;
 import pt.ulisboa.tecnico.socialsoftware.tournament.activity.updateTournamentActivities.UpdateTournamentActivitiesImpl;
@@ -95,7 +95,7 @@ public class CadenceWorkerStarter {
     }
 
     private void createWorkers() {
-        Worker worker = workerFactory.newWorker(Constants.TOURNAMENT_TASK_LIST, workerOptions);
+        Worker worker = workerFactory.newWorker(CadenceConstants.TOURNAMENT_TASK_LIST, workerOptions);
 
         worker.registerWorkflowImplementationTypes(CreateTournamentWorkflowImpl.class,
                 RemoveTournamentWorkflowImpl.class, UpdateTournamentWorkflowImpl.class);

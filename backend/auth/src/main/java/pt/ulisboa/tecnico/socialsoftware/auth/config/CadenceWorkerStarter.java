@@ -16,7 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.auth.services.local.AuthUserProvidedSer
 import pt.ulisboa.tecnico.socialsoftware.auth.workflow.confirmRegistration.ConfirmRegistrationWorkflowImpl;
 import pt.ulisboa.tecnico.socialsoftware.auth.workflow.createUserWithAuth.CreateUserWithAuthWorkflowImpl;
 import pt.ulisboa.tecnico.socialsoftware.auth.workflow.updateCourseExecutions.UpdateCourseExectionsWorkflowImpl;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.Constants;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.CadenceConstants;
 
 import org.apache.thrift.TException;
 import org.slf4j.Logger;
@@ -96,7 +96,7 @@ public class CadenceWorkerStarter {
     }
 
     private void createWorkers() {
-        Worker worker = workerFactory.newWorker(Constants.AUTH_TASK_LIST, workerOptions);
+        Worker worker = workerFactory.newWorker(CadenceConstants.AUTH_TASK_LIST, workerOptions);
 
         worker.registerActivitiesImplementations(new CreateUserWithAuthActivitiesImpl(authUserProvidedService),
                 new ConfirmRegistrationActivitiesImpl(authUserProvidedService),

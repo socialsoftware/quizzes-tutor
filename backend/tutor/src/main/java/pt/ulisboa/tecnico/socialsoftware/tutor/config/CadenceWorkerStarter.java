@@ -8,7 +8,7 @@ import com.uber.cadence.serviceclient.IWorkflowService;
 import com.uber.cadence.worker.Worker;
 import com.uber.cadence.worker.WorkerFactory;
 import com.uber.cadence.worker.WorkerOptions;
-import pt.ulisboa.tecnico.socialsoftware.common.utils.Constants;
+import pt.ulisboa.tecnico.socialsoftware.common.utils.CadenceConstants;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.activity.AnswerActivitiesImpl;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
@@ -111,7 +111,7 @@ public class CadenceWorkerStarter {
     }
 
     private void createWorkers() {
-        Worker worker = workerFactory.newWorker(Constants.TUTOR_TASK_LIST, workerOptions);
+        Worker worker = workerFactory.newWorker(CadenceConstants.TUTOR_TASK_LIST, workerOptions);
 
         worker.registerActivitiesImplementations(new AnswerActivitiesImpl(answerService),
                 new CourseExecutionActivitiesImpl(courseExecutionService),

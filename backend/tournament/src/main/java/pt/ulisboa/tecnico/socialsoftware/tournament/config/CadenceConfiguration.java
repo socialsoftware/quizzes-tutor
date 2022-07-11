@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import static pt.ulisboa.tecnico.socialsoftware.common.utils.Constants.DOMAIN;
+import static pt.ulisboa.tecnico.socialsoftware.common.utils.CadenceConstants.DOMAIN;
 
 @Configuration
 public class CadenceConfiguration {
