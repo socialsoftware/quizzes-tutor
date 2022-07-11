@@ -20,7 +20,7 @@ class ImportExportUsersTest extends SpockTest {
         given: 'two users with a auth user'
         def existingUsers = userRepository.findAll().size()
         User user = new Teacher(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
-                 false, AuthUser.Type.TECNICO)
+                false, AuthUser.Type.TECNICO)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyOne = user.getId()
@@ -29,7 +29,7 @@ class ImportExportUsersTest extends SpockTest {
         authUser.setLastAccess(LOCAL_DATE_TODAY)
 
         user = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
-                 false, AuthUser.Type.EXTERNAL)
+                false, AuthUser.Type.EXTERNAL)
         user.addCourse(externalCourseExecution)
         userRepository.save(user)
         def keyTwo = user.getId()
@@ -73,8 +73,8 @@ class ImportExportUsersTest extends SpockTest {
         userTwo.getAuthUser().getUsername() == USER_2_USERNAME
         userTwo.getAuthUser().getPassword() == USER_2_PASSWORD
         userTwo.getAuthUser().getLastAccess() == LOCAL_DATE_TODAY
-        ((AuthExternalUser)userTwo.getAuthUser()).getConfirmationToken() == USER_2_TOKEN
-        ((AuthExternalUser)userTwo.getAuthUser()).getTokenGenerationDate() == LOCAL_DATE_TODAY
+        ((AuthExternalUser) userTwo.getAuthUser()).getConfirmationToken() == USER_2_TOKEN
+        ((AuthExternalUser) userTwo.getAuthUser()).getTokenGenerationDate() == LOCAL_DATE_TODAY
         !userTwo.getAuthUser().isActive()
     }
 

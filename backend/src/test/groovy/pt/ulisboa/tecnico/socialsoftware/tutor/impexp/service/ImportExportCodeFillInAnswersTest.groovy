@@ -61,7 +61,7 @@ class ImportExportCodeFillInAnswersTest extends SpockTest {
         quiz.setType(Quiz.QuizType.EXAM.toString())
         quizRepository.save(quiz)
 
-        QuizQuestion quizQuestion= new QuizQuestion()
+        QuizQuestion quizQuestion = new QuizQuestion()
         quizQuestion.setSequence(0)
         quizQuestion.setQuiz(quiz)
         quizQuestion.setQuestion(question)

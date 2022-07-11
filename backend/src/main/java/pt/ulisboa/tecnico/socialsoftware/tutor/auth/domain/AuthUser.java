@@ -23,10 +23,10 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
                 @Index(name = "auth_users_indx_0", columnList = "username")
         })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name="auth_type",
+@DiscriminatorColumn(name = "auth_type",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class AuthUser implements DomainEntity, UserDetails {
-    public enum Type { EXTERNAL, TECNICO, DEMO }
+    public enum Type {EXTERNAL, TECNICO, DEMO}
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -36,9 +36,10 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     private User user;
 
     private String email;
+
     private String password;
 
-    @Column(unique=true)
+    @Column(unique = true)
     private String username;
 
     @Column(name = "last_access")
@@ -47,7 +48,8 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     @Transient
     private List<Integer> courseExecutionsIds;
 
-    protected AuthUser() {}
+    protected AuthUser() {
+    }
 
     protected AuthUser(User user, String username, String email) {
         setUser(user);
@@ -145,7 +147,7 @@ public abstract class AuthUser implements DomainEntity, UserDetails {
     public void accept(Visitor visitor) {
         visitor.visitAuthUser(this);
     }
- 
+
     public boolean isDemoStudent() {
         return false;
     }

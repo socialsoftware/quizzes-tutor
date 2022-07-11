@@ -21,25 +21,26 @@ public class Reply implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private int id;
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private Discussion discussion;
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
     private User user;
 
     @NotNull
-    @Column(name="message", columnDefinition="text")
+    @Column(name = "message", columnDefinition = "text")
     private String message;
 
-    @Column(name="date")
+    @Column(name = "date")
     private LocalDateTime date;
 
     @Column(columnDefinition = "boolean default false")
     private boolean isPublic;
 
-    public Reply(){}
+    public Reply() {
+    }
 
-    public Reply(User user, ReplyDto replyDto, Discussion discussion){
+    public Reply(User user, ReplyDto replyDto, Discussion discussion) {
         checkReplyAuthorization(user, discussion);
         setUser(user);
         setDate(DateHandler.toLocalDateTime(replyDto.getDate()));

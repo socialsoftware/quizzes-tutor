@@ -27,7 +27,7 @@ class CreateQuizAnswerTest extends SpockTest {
 
     }
 
-    def 'create a quiz answer' () {
+    def 'create a quiz answer'() {
         given:
         def userId = userRepository.findAll().get(0).getId()
         def quizId = quizRepository.findAll().get(0).getId()

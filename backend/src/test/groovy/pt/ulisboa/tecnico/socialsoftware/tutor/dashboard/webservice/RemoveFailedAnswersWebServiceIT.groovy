@@ -4,7 +4,7 @@ import groovyx.net.http.HttpResponseException
 import groovyx.net.http.RESTClient
 import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest

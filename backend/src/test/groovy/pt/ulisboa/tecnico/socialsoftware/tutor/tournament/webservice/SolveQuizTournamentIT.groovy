@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.webservice
 
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.web.server.LocalServerPort
+import org.springframework.boot.test.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
@@ -16,7 +16,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class SolveQuizTournamentIT extends SpockTestIT {
-
     @LocalServerPort
     private int port
 

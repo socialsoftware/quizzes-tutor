@@ -9,7 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 @DataJpaTest
 class DemoAuthTest extends SpockTest {
 
-    def "demo admin login" (){
+    def "demo admin login"() {
         when:
         def result = authUserService.demoAdminAuth();
 
@@ -18,7 +18,7 @@ class DemoAuthTest extends SpockTest {
         result.user.role == User.Role.DEMO_ADMIN
     }
 
-    def "demo teacher login" (){
+    def "demo teacher login"() {
         when:
         def result = authUserService.demoTeacherAuth();
 
@@ -27,7 +27,7 @@ class DemoAuthTest extends SpockTest {
         result.user.role == User.Role.TEACHER
     }
 
-    def "demo student login" (){
+    def "demo student login"() {
         when:
         def result = authUserService.demoStudentAuth(false);
 
@@ -36,7 +36,7 @@ class DemoAuthTest extends SpockTest {
         result.user.role == User.Role.STUDENT
     }
 
-    def "demo new student login" (){
+    def "demo new student login"() {
         when:
         def result = authUserService.demoStudentAuth(true);
 
@@ -45,7 +45,7 @@ class DemoAuthTest extends SpockTest {
         result.user.role == User.Role.STUDENT
     }
 
-    def "demo student login: invalid param" (){
+    def "demo student login: invalid param"() {
         when:
         def result = authUserService.demoStudentAuth(null);
 

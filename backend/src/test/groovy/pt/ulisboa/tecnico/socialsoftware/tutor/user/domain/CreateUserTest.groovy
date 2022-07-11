@@ -13,7 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 class CreateUserTest extends SpockTest {
     def user
 
-    def "create User: name, username, email, role, state, admin" () {
+    def "create User: name, username, email, role, state, admin"() {
         when:
         def result = new Student(USER_1_NAME, false)
 
@@ -23,7 +23,7 @@ class CreateUserTest extends SpockTest {
         !result.isAdmin()
     }
 
-    def "create Tecnico User: name, username, email, role, state, admin" () {
+    def "create Tecnico User: name, username, email, role, state, admin"() {
         when:
         def result = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.TECNICO)
 
@@ -38,7 +38,7 @@ class CreateUserTest extends SpockTest {
         result.getAuthUser() instanceof AuthTecnicoUser
     }
 
-    def "create External User: name, username, email, role, state, admin" () {
+    def "create External User: name, username, email, role, state, admin"() {
         when:
         def result = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.EXTERNAL)
 
@@ -54,7 +54,7 @@ class CreateUserTest extends SpockTest {
         !result.getAuthUser().isActive()
     }
 
-    def "create Demo User: name, username, email, role, state, admin" () {
+    def "create Demo User: name, username, email, role, state, admin"() {
         when:
         def result = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL, false, AuthUser.Type.DEMO)
 

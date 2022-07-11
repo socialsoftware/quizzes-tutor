@@ -18,7 +18,9 @@ import java.util.stream.Collectors;
 
 public class CSVQuizExportVisitor implements Visitor {
     private String[] line;
+
     private int column;
+
     private final List<String[]> table = new ArrayList<>();
 
     public String export(Quiz quiz, List<QuestionAnswerItem> questionAnswerItems) {
@@ -67,7 +69,7 @@ public class CSVQuizExportVisitor implements Visitor {
             line = new String[lineSize];
             Arrays.fill(line, "");
             line[0] = questionAnswerItem.getUsername();
-            line[1] = String.valueOf(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getSequence()+1);
+            line[1] = String.valueOf(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getSequence() + 1);
             line[2] = questionAnswerItem.getAnswerRepresentation(quizQuestions.get(questionAnswerItem.getQuizQuestionId()).getQuestion().getQuestionDetails());
             line[3] = DateHandler.toHumanReadableString(questionAnswerItem.getAnswerDate());
             line[4] = questionAnswerItem.getTimeToSubmission() != null ? convertMiliseconds(questionAnswerItem.getTimeToSubmission()) : "";
@@ -126,7 +128,7 @@ public class CSVQuizExportVisitor implements Visitor {
 
         quizQuestionsList.stream()
                 .forEach(quizQuestion ->
-                    line[++column] = String.valueOf(quizQuestion.getSequence()+1)
+                        line[++column] = String.valueOf(quizQuestion.getSequence() + 1)
                 );
 
         table.add(line);
@@ -169,7 +171,7 @@ public class CSVQuizExportVisitor implements Visitor {
     }
 
     @Override
-    public void visitAnswerDetails(CodeOrderAnswer answer){
+    public void visitAnswerDetails(CodeOrderAnswer answer) {
         line[column++] = answer.getAnswerRepresentation();
     }
 
@@ -203,10 +205,10 @@ public class CSVQuizExportVisitor implements Visitor {
     }
 
     private String convertMiliseconds(int millis) {
-       return  String.format("%02d:%02d:%02d",
-               TimeUnit.MILLISECONDS.toHours(millis),
-               TimeUnit.MILLISECONDS.toMinutes(millis)  -
-                       TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
+        return String.format("%02d:%02d:%02d",
+                TimeUnit.MILLISECONDS.toHours(millis),
+                TimeUnit.MILLISECONDS.toMinutes(millis) -
+                        TimeUnit.HOURS.toMinutes(TimeUnit.MILLISECONDS.toHours(millis)),
                 TimeUnit.MILLISECONDS.toSeconds(millis) -
                         TimeUnit.MINUTES.toSeconds(TimeUnit.MILLISECONDS.toMinutes(millis))
         );

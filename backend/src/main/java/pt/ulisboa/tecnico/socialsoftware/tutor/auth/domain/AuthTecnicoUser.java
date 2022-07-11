@@ -13,7 +13,8 @@ public class AuthTecnicoUser extends AuthUser {
     @Column(columnDefinition = "TEXT")
     private String enrolledCoursesAcronyms;
 
-    public AuthTecnicoUser() {}
+    public AuthTecnicoUser() {
+    }
 
     public AuthTecnicoUser(User user, String username, String email) {
         super(user, username, email);
@@ -28,6 +29,8 @@ public class AuthTecnicoUser extends AuthUser {
     }
 
     @Override
-    public Type getType() {return Type.TECNICO;}
+    public Type getType() {
+        return Type.TECNICO;
+    }
 
 }

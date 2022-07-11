@@ -9,20 +9,31 @@ import java.util.List;
 
 public class ExternalUserDto implements Serializable {
     private Integer key;
+
     private Integer id;
+
     private String name;
+
     private String username;
+
     private String email;
+
     private String password;
+
     private User.Role role;
+
     private boolean active;
+
     private boolean isAdmin;
+
     private List<CourseExecutionDto> courseExecutions;
+
     private String confirmationToken;
 
-    public ExternalUserDto(){ }
+    public ExternalUserDto() {
+    }
 
-    public ExternalUserDto(User user){
+    public ExternalUserDto(User user) {
         this.key = user.getKey();
         this.id = user.getId();
         this.name = user.getName();
@@ -32,10 +43,10 @@ public class ExternalUserDto implements Serializable {
         this.role = user.getRole();
         this.active = user.getAuthUser().isActive();
         this.isAdmin = user.isAdmin();
-        this.confirmationToken = ((AuthExternalUser)user.getAuthUser()).getConfirmationToken();
+        this.confirmationToken = ((AuthExternalUser) user.getAuthUser()).getConfirmationToken();
     }
 
-    public ExternalUserDto(AuthExternalUser authUser){
+    public ExternalUserDto(AuthExternalUser authUser) {
         this.key = authUser.getUser().getKey();
         this.id = authUser.getId();
         this.name = authUser.getUser().getName();

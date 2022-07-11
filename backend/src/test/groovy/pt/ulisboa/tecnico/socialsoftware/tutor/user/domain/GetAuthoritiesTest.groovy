@@ -8,7 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import spock.lang.Unroll
 
 @DataJpaTest
-class GetAuthoritiesTest extends SpockTest{
+class GetAuthoritiesTest extends SpockTest {
     def user
 
     def setup() {
@@ -17,13 +17,13 @@ class GetAuthoritiesTest extends SpockTest{
     }
 
     @Unroll
-    def "get user authorities" (){
+    def "get user authorities"() {
         given:
         user.setAdmin(admin)
         user.setRole(role)
 
         when:
-        def result  = user.getAuthUser().getAuthorities()
+        def result = user.getAuthUser().getAuthorities()
 
         then:
         result.size() == size
@@ -33,17 +33,17 @@ class GetAuthoritiesTest extends SpockTest{
             iter.next().getAuthority() == secondAuthority
 
         where:
-        admin  | role                   || size | firstAuthority  | secondAuthority
-        false  | User.Role.STUDENT      || 1    | ROLE_STUDENT    | null
-        false  | User.Role.TEACHER      || 1    | ROLE_TEACHER    | null
-        false  | User.Role.ADMIN        || 1    | ROLE_ADMIN      | null
-        false  | User.Role.DEMO_ADMIN   || 1    | ROLE_DEMO_ADMIN | null
-        true   | User.Role.STUDENT      || 2    | ROLE_STUDENT    | ROLE_ADMIN
-        true   | User.Role.TEACHER      || 2    | ROLE_TEACHER    | ROLE_ADMIN
-        true   | User.Role.ADMIN        || 2    | ROLE_ADMIN      | ROLE_ADMIN
-        true   | User.Role.DEMO_ADMIN   || 2    | ROLE_DEMO_ADMIN | ROLE_ADMIN
+        admin | role                 || size | firstAuthority  | secondAuthority
+        false | User.Role.STUDENT    || 1    | ROLE_STUDENT    | null
+        false | User.Role.TEACHER    || 1    | ROLE_TEACHER    | null
+        false | User.Role.ADMIN      || 1    | ROLE_ADMIN      | null
+        false | User.Role.DEMO_ADMIN || 1    | ROLE_DEMO_ADMIN | null
+        true  | User.Role.STUDENT    || 2    | ROLE_STUDENT    | ROLE_ADMIN
+        true  | User.Role.TEACHER    || 2    | ROLE_TEACHER    | ROLE_ADMIN
+        true  | User.Role.ADMIN      || 2    | ROLE_ADMIN      | ROLE_ADMIN
+        true  | User.Role.DEMO_ADMIN || 2    | ROLE_DEMO_ADMIN | ROLE_ADMIN
     }
 
     @TestConfiguration
-    static class LocalBeanConfiguration extends BeanConfiguration { }
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

@@ -56,7 +56,7 @@ class ImportExportCodeOderAnswersTest extends SpockTest {
         quiz.setType(Quiz.QuizType.EXAM.toString())
         quizRepository.save(quiz)
 
-        QuizQuestion quizQuestion= new QuizQuestion()
+        QuizQuestion quizQuestion = new QuizQuestion()
         quizQuestion.setSequence(0)
         quizQuestion.setQuiz(quiz)
         quizQuestion.setQuestion(question)
@@ -71,7 +71,7 @@ class ImportExportCodeOderAnswersTest extends SpockTest {
 
         questionAnswer = new QuestionAnswer(quizAnswer, quizQuestion, 1, 0)
         def answer = new CodeOrderAnswer(questionAnswer)
-        def answerSlot = new CodeOrderAnswerSlot(slot,answer, 0)
+        def answerSlot = new CodeOrderAnswerSlot(slot, answer, 0)
         answer.getOrderedSlots().add(answerSlot)
         questionAnswer.setAnswerDetails(answer)
         questionAnswerRepository.save(questionAnswer)

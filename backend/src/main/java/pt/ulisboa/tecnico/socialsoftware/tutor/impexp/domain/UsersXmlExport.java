@@ -14,105 +14,105 @@ import java.util.List;
 import java.util.Set;
 
 public class UsersXmlExport {
-	public String export(List<User> users) {
-		Element element = createHeader();
+    public String export(List<User> users) {
+        Element element = createHeader();
 
-		exportUsers(element, users);
+        exportUsers(element, users);
 
-		XMLOutputter xml = new XMLOutputter();
-		xml.setFormat(Format.getPrettyFormat());
+        XMLOutputter xml = new XMLOutputter();
+        xml.setFormat(Format.getPrettyFormat());
 
-		return xml.outputString(element);
-	}
+        return xml.outputString(element);
+    }
 
-	public Element createHeader() {
-		Document jdomDoc = new Document();
-		Element rootElement = new Element("users");
+    public Element createHeader() {
+        Document jdomDoc = new Document();
+        Element rootElement = new Element("users");
 
-		jdomDoc.setRootElement(rootElement);
-		return rootElement;
-	}
+        jdomDoc.setRootElement(rootElement);
+        return rootElement;
+    }
 
-	private void exportUsers(Element element, List<User> users) {
-		for (User user : users) {
-			exportUser(element, user);
-		}
-	}
+    private void exportUsers(Element element, List<User> users) {
+        for (User user : users) {
+            exportUser(element, user);
+        }
+    }
 
-	private void exportUser(Element element, User user) {
-		Element userElement = new Element("user");
+    private void exportUser(Element element, User user) {
+        Element userElement = new Element("user");
 
-		userElement.setAttribute("key", String.valueOf(user.getKey()));
+        userElement.setAttribute("key", String.valueOf(user.getKey()));
 
-		userElement.setAttribute("name", user.getName());
+        userElement.setAttribute("name", user.getName());
 
-		if (user.getRole() != null) {
-			userElement.setAttribute("role", user.getRole().name());
-		}
+        if (user.getRole() != null) {
+            userElement.setAttribute("role", user.getRole().name());
+        }
 
-		userElement.setAttribute("admin", Boolean.toString(user.isAdmin()));
+        userElement.setAttribute("admin", Boolean.toString(user.isAdmin()));
 
-		if (user.getCreationDate() != null) {
-			userElement.setAttribute("creationDate", DateHandler.toISOString(user.getCreationDate()));
-		}
+        if (user.getCreationDate() != null) {
+            userElement.setAttribute("creationDate", DateHandler.toISOString(user.getCreationDate()));
+        }
 
-		if (user.getAuthUser() != null) {
-			exportAuthUsers(userElement, user.getAuthUser());
-		}
+        if (user.getAuthUser() != null) {
+            exportAuthUsers(userElement, user.getAuthUser());
+        }
 
-		exportUserCourseExecutions(userElement, user.getCourseExecutions());
+        exportUserCourseExecutions(userElement, user.getCourseExecutions());
 
-		element.addContent(userElement);
-	}
+        element.addContent(userElement);
+    }
 
-	private void exportUserCourseExecutions(Element userElement, Set<CourseExecution> courseExecutions) {
-		Element courseExecutionsElement = new Element("courseExecutions");
-		for (CourseExecution courseExecution : courseExecutions) {
-			Element courseExecutionElement = new Element("courseExecution");
+    private void exportUserCourseExecutions(Element userElement, Set<CourseExecution> courseExecutions) {
+        Element courseExecutionsElement = new Element("courseExecutions");
+        for (CourseExecution courseExecution : courseExecutions) {
+            Element courseExecutionElement = new Element("courseExecution");
 
-			courseExecutionElement.setAttribute("executionId", courseExecution.getId().toString());
+            courseExecutionElement.setAttribute("executionId", courseExecution.getId().toString());
 
-			courseExecutionsElement.addContent(courseExecutionElement);
-		}
-		userElement.addContent(courseExecutionsElement);
-	}
+            courseExecutionsElement.addContent(courseExecutionElement);
+        }
+        userElement.addContent(courseExecutionsElement);
+    }
 
-	private void exportAuthUsers(Element userElement, AuthUser authUser) {
-		Element authUsersElement = new Element("authUsers");
-		Element authUserElement = new Element("authUser");
+    private void exportAuthUsers(Element userElement, AuthUser authUser) {
+        Element authUsersElement = new Element("authUsers");
+        Element authUserElement = new Element("authUser");
 
-		authUserElement.setAttribute("username", authUser.getUsername() != null ? authUser.getUsername() : "");
+        authUserElement.setAttribute("username", authUser.getUsername() != null ? authUser.getUsername() : "");
 
-		authUserElement.setAttribute("email", authUser.getEmail() != null ? authUser.getEmail() : "");
+        authUserElement.setAttribute("email", authUser.getEmail() != null ? authUser.getEmail() : "");
 
-		authUserElement.setAttribute("type", authUser.getType().toString());
+        authUserElement.setAttribute("type", authUser.getType().toString());
 
-		if (authUser.getPassword() != null) {
-			authUserElement.setAttribute("password", authUser.getPassword());
-		}
+        if (authUser.getPassword() != null) {
+            authUserElement.setAttribute("password", authUser.getPassword());
+        }
 
-		if (authUser.getLastAccess() != null) {
-			authUserElement.setAttribute("lastAccess",
-					DateHandler.toISOString(authUser.getLastAccess()));
-		}
+        if (authUser.getLastAccess() != null) {
+            authUserElement.setAttribute("lastAccess",
+                    DateHandler.toISOString(authUser.getLastAccess()));
+        }
 
-		if (authUser.getType() == AuthUser.Type.EXTERNAL) {
-			if (((AuthExternalUser)authUser).getConfirmationToken() != null) {
-				authUserElement.setAttribute("confirmationToken",
-						((AuthExternalUser)authUser).getConfirmationToken());
-			}
+        if (authUser.getType() == AuthUser.Type.EXTERNAL) {
+            if (((AuthExternalUser) authUser).getConfirmationToken() != null) {
+                authUserElement.setAttribute("confirmationToken",
+                        ((AuthExternalUser) authUser).getConfirmationToken());
+            }
 
-			if (((AuthExternalUser)authUser).getTokenGenerationDate() != null) {
-				authUserElement.setAttribute("tokenGenerationDate",
-						DateHandler.toISOString(((AuthExternalUser)authUser).getTokenGenerationDate()));
-			}
-		}
+            if (((AuthExternalUser) authUser).getTokenGenerationDate() != null) {
+                authUserElement.setAttribute("tokenGenerationDate",
+                        DateHandler.toISOString(((AuthExternalUser) authUser).getTokenGenerationDate()));
+            }
+        }
 
-		authUserElement.setAttribute("isActive", Boolean.toString(authUser.isActive()));
+        authUserElement.setAttribute("isActive", Boolean.toString(authUser.isActive()));
 
 
-		authUsersElement.addContent(authUserElement);
-		userElement.addContent(authUsersElement);
-	}
+        authUsersElement.addContent(authUserElement);
+        userElement.addContent(authUsersElement);
+    }
 
 }

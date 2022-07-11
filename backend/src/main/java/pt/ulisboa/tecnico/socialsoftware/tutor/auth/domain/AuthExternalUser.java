@@ -25,7 +25,8 @@ public class AuthExternalUser extends AuthUser {
 
     private LocalDateTime tokenGenerationDate;
 
-    public AuthExternalUser() {}
+    public AuthExternalUser() {
+    }
 
     public AuthExternalUser(User user, String username, String email) {
         super(user, username, email);
@@ -75,7 +76,9 @@ public class AuthExternalUser extends AuthUser {
     }
 
     @Override
-    public Type getType() {return Type.EXTERNAL;}
+    public Type getType() {
+        return Type.EXTERNAL;
+    }
 
     public String generateConfirmationToken() {
         String token = KeyGenerators.string().generateKey();

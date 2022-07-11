@@ -32,7 +32,7 @@ public abstract class User implements DomainEntity {
         public static final String DEMO_ADMIN = "demo_admin";
 
         private UserTypes() {
-            
+
         }
     }
 

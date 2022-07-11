@@ -10,14 +10,17 @@ import java.util.Locale;
 @DiscriminatorValue("DEMO")
 public class AuthDemoUser extends AuthUser {
 
-    public AuthDemoUser() {}
+    public AuthDemoUser() {
+    }
 
     public AuthDemoUser(User user, String username, String email) {
         super(user, username, email);
     }
 
     @Override
-    public Type getType() {return Type.DEMO;}
+    public Type getType() {
+        return Type.DEMO;
+    }
 
     @Override
     public boolean isDemoStudent() {

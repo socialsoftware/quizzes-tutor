@@ -20,7 +20,7 @@ class ExternalUserAuthTest extends SpockTest {
     Course course
     CourseExecution courseExecution
 
-	def setup(){
+    def setup() {
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)
         courseExecution = new CourseExecution(course, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)
@@ -34,7 +34,7 @@ class ExternalUserAuthTest extends SpockTest {
         user.getAuthUser().setPassword(passwordEncoder.encode(USER_1_PASSWORD))
     }
 
-    def "user logins successfully" () {
+    def "user logins successfully"() {
         when:
         def result = authUserService.externalUserAuth(USER_1_EMAIL, USER_1_PASSWORD)
 
@@ -42,7 +42,7 @@ class ExternalUserAuthTest extends SpockTest {
         result.user.username == USER_1_EMAIL
     }
 
-    def "login fails, given values are invalid" () {
+    def "login fails, given values are invalid"() {
         when:
         authUserService.externalUserAuth(username, password)
 
@@ -57,7 +57,7 @@ class ExternalUserAuthTest extends SpockTest {
         USER_1_EMAIL | USER_2_PASSWORD || ErrorMessage.INVALID_PASSWORD
         USER_1_EMAIL | null            || ErrorMessage.INVALID_PASSWORD
     }
-    
+
 
     @TestConfiguration
     static class LocalBeanConfiguration extends BeanConfiguration {}

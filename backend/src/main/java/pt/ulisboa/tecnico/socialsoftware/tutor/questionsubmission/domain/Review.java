@@ -55,9 +55,13 @@ public class Review {
         return "Review{" + "id=" + id + "', user=" + user + ", comment='" + comment + ", type='" + type.name() + ", questionSubmission=" + questionSubmission.getQuestion() + "}";
     }
 
-    public Integer getId() { return id; }
+    public Integer getId() {
+        return id;
+    }
 
-    public String getComment() { return comment; }
+    public String getComment() {
+        return comment;
+    }
 
     public void setComment(String comment) {
         if (comment == null || comment.isBlank()) {
@@ -66,28 +70,41 @@ public class Review {
         this.comment = comment;
     }
 
-    public LocalDateTime getCreationDate() { return creationDate; }
+    public LocalDateTime getCreationDate() {
+        return creationDate;
+    }
 
     public void setCreationDate(LocalDateTime creationDate) {
         if (this.creationDate == null) {
             this.creationDate = DateHandler.now();
-        }
-        else {
+        } else {
             this.creationDate = creationDate;
         }
     }
 
-    public User getUser() { return user; }
+    public User getUser() {
+        return user;
+    }
 
-    public void setUser(User user) { this.user = user; }
+    public void setUser(User user) {
+        this.user = user;
+    }
 
-    public QuestionSubmission getQuestionSubmission() { return questionSubmission; }
+    public QuestionSubmission getQuestionSubmission() {
+        return questionSubmission;
+    }
 
-    public void setQuestionSubmission(QuestionSubmission questionSubmission) { this.questionSubmission = questionSubmission; }
+    public void setQuestionSubmission(QuestionSubmission questionSubmission) {
+        this.questionSubmission = questionSubmission;
+    }
 
-    public Type getType() { return type; }
+    public Type getType() {
+        return type;
+    }
 
-    public void setType(Type type) { this.type = type; }
+    public void setType(Type type) {
+        this.type = type;
+    }
 
     public void setType(String type) {
         if (type == null || type.isBlank()) {

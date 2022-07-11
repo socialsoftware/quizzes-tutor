@@ -14,12 +14,19 @@ import java.util.stream.Collectors;
 
 public class AuthUserDto implements Serializable {
     private Integer key;
+
     private Integer id;
+
     private String name;
+
     private String username;
+
     private String email;
+
     private User.Role role;
+
     private boolean admin;
+
     private Map<String, List<CourseExecutionDto>> courses;
 
     public AuthUserDto(AuthUser authUser) {
@@ -51,7 +58,7 @@ public class AuthUserDto implements Serializable {
     public void setKey(Integer key) {
         this.key = key;
     }
-    
+
     public Integer getId() {
         return id;
     }

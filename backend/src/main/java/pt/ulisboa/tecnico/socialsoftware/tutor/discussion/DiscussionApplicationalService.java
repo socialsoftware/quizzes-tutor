@@ -42,16 +42,17 @@ public class DiscussionApplicationalService {
         List<UserDto> teachers = courseExecutionService.getTeachers(discussion.getCourseExecutionId());
 
         DiscussionDto discussionDto = discussionService.createDiscussion(questionAnswerId, discussion);
-        
+
         teachers.forEach(teacher -> {
             try {
                 mailer.sendSimpleMail(mailUsername,
-                    teacher.getEmail(),
-                    Mailer.QUIZZES_TUTOR_SUBJECT + DISCUSSION_SUBJECT,
-                    "Discussion number " + discussionDto.getId() + " was created by " + discussionDto.getName() + " (" + discussionDto.getUsername() + "): " + discussion.getMessage());
+                        teacher.getEmail(),
+                        Mailer.QUIZZES_TUTOR_SUBJECT + DISCUSSION_SUBJECT,
+                        "Discussion number " + discussionDto.getId() + " was created by " + discussionDto.getName() + " (" + discussionDto.getUsername() + "): " + discussion.getMessage());
             } catch (MailException me) {
                 logger.debug("createDiscussion, fail to send email to {}", teacher.getEmail());
-            }});
+            }
+        });
 
         return discussionDto;
     }

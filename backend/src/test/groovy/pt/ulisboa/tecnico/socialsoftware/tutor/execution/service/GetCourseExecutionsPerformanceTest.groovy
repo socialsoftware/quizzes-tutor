@@ -20,7 +20,7 @@ class GetCourseExecutionsPerformanceTest extends SpockTest {
         })
 
         when:
-        1.upto(1, { courseService.getCourseExecutions(User.Role.ADMIN)})
+        1.upto(1, { courseService.getCourseExecutions(User.Role.ADMIN) })
 
         then:
         true
