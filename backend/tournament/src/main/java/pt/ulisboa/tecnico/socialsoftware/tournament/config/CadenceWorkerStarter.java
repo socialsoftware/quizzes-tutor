@@ -29,7 +29,7 @@ import java.util.List;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeUnit;
 
-import static pt.ulisboa.tecnico.socialsoftware.tournament.config.CadenceConfiguration.DOMAIN;
+import static pt.ulisboa.tecnico.socialsoftware.common.utils.CadenceConstants.DOMAIN;
 
 @Component
 public class CadenceWorkerStarter {
