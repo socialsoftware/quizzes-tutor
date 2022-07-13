@@ -1,0 +1,139 @@
+# Microservices with Cadence
+
+According to its creator Uber, 
+> Cadence is a distributed, scalable, durable, and highly available orchestration engine to execute asynchronous long-running business logic in a scalable and resilient way.
+
+Put in a simple way, it is a tool that aims to reduce complexity of distributed systems.
+
+It offers a lot of [usecases](https://cadenceworkflow.io/docs/use-cases/) (periodic execution, orchestration/saga, event-driven application). This project is only interested in the [Saga usecase](https://cadenceworkflow.io/docs/use-cases/orchestration/).
+
+
+### References
+- [Cadence's Github](https://github.com/uber/cadence)
+- [Cadence's official website](https://cadenceworkflow.io)
+
+### Credits
+- [cadence-spring-boot](https://github.com/frtelg/cadence-spring-boot)
+- [cadence-saga](https://github.com/anarsultanov/examples/tree/master/cadence-saga)
+
+# How does it work ? 
+
+As all the Cadence's concepts are explained in the [documentation](https://cadenceworkflow.io/docs/concepts/), we will focus on how to implement the Saga pattern.
+
+The workflow has a **single** @WorkflowMethod where the saga is described. The activities are the saga's steps.
+
+# How do we make it work ?
+
+Okay it is nicely said but how do we make it work? Let's see an example with the `CreateTournamentSaga`.
+
+We are interesting in these files:
+- [CreateTournamentWorkflow](tournament/src/main/java/pt/ulisboa/tecnico/socialsoftware/tournament/workflow/createTournament/CreateTournamentWorkflow.java)
+- [CreateTournamentWorkflowImpl](tournament/src/main/java/pt/ulisboa/tecnico/socialsoftware/tournament/workflow/createTournament/CreateTournamentWorkflowImpl.java)
+- [CreateTournamentActivities](tournament/src/main/java/pt/ulisboa/tecnico/socialsoftware/tournament/activity/createTournamentActivities/CreateTournamentActivities.java)
+- [CreateTournamentActivitiesImpl](tournament/src/main/java/pt/ulisboa/tecnico/socialsoftware/tournament/activity/createTournamentActivities/CreateTournamentActivitiesImpl.java)
+
+Cadence needs to have an interface and then the implementation of workflows and activities.
+
+## Workflow
+```java
+public interface CreateTournamentWorkflow {
+    
+    @WorkflowMethod(executionStartToCloseTimeoutSeconds = 60, taskList = Constants.TOURNAMENT_TASK_LIST)
+    Integer createTournament(Integer tournamentId, Integer creatorId, Integer courseExecutionId, ExternalStatementCreationDto externalStatementCreationDto, TopicListDto topicListDto);
+
+}
+```
+### @WorkflowMethod
+    
+We use the @WorkflowMethod annotation to set up the scheduleToCloseTimeoutSeconds and the taskList but it could also be done with a WorkflowOptions when creating a workflow in the configuration.
+
+## Activities
+```java
+public interface CreateTournamentActivities {
+
+    @ActivityMethod(scheduleToCloseTimeoutSeconds = 60, taskList = Constants.TOURNAMENT_TASK_LIST)
+    void undoCreate(Integer tournamentId);
+
+    @ActivityMethod(scheduleToCloseTimeoutSeconds = 60, taskList = Constants.TOURNAMENT_TASK_LIST)
+    void confirmCreate(Integer tournamentId, Integer quizId);
+
+    @ActivityMethod(scheduleToCloseTimeoutSeconds = 60, taskList = Constants.TOURNAMENT_TASK_LIST)
+    void storeCourseExecution(Integer tournamentId, TournamentCourseExecution tournamentCourseExecution);
+
+    @ActivityMethod(scheduleToCloseTimeoutSeconds = 60, taskList = Constants.TOURNAMENT_TASK_LIST)
+    void storeTopics(Integer tournamentId, Set<TournamentTopic> tournamentTopics);
+
+}
+```
+
+### Activity method
+We use the @ActivityMethod annotation to set up the scheduleToCloseTimeoutSeconds and the taskList but it could also be done with a ActivityOptions when creating an Activity in the workflow.
+## Architecture of the project or where to look
+
+```
+backend  
+│
+└───common
+│   │
+│   └───activity
+│
+└───tournament
+│   │
+│   └───activity
+│   │
+│   └───workflow
+│   │
+│   └───config
+│   
+└───auth
+│   │
+│   └───activity
+│   │
+│   └───workflow
+│   │
+│   └───config
+│
+└───tutor
+    │
+    └───config
+    │
+    └───answer|execution|question|quiz|user/activity
+```
+
+
+
+The Tutor activities are described in the [common package](common/src/main/java/pt/ulisboa/tecnico/socialsoftware/common/activity) so that the Tournament and Auth microservices can use them but they are implemented in the tutor package so that they can use the related services.
+
+In each microservice's config folder, there's a `CadenceConfiguration` file where the connection to the Cadence server is set up and a `CadenceWorkerStarter` file where the workflows and activities are set up.
+
+```java
+private void createWorkers() {
+        Worker worker = workerFactory.newWorker(CadenceConstants.TOURNAMENT_TASK_LIST, workerOptions);
+
+        worker.registerWorkflowImplementationTypes(CreateTournamentWorkflowImpl.class,
+                RemoveTournamentWorkflowImpl.class, UpdateTournamentWorkflowImpl.class);
+
+        worker.registerActivitiesImplementations(new CreateTournamentActivitiesImpl(tournamentProvidedService),
+                new RemoveTournamentActivitiesImpl(tournamentProvidedService),
+                new UpdateTournamentActivitiesImpl(tournamentProvidedService));
+}
+```
+
+# Temporal: Cadence's fork
+
+If you start working with Cadence, you might found out about [Temporal](https://temporal.io).
+
+In a [StackOverflow question](https://stackoverflow.com/questions/61157400/temporal-workflow-vs-cadence-workflow) on the difference between Cadence and Temporal, the co-founder of the Cadence project explains that Temporal is the fork of Cadence because "the Cadence project has potential which goes far beyond a single company". 
+
+It can be noted that the Java's SDK has been improved for working closer with Spring.
+
+> Temporal implemented the following improvements over Cadence Java client:
+> 
+>- Workflow and activity annotations to allow activity and workflow implementation objects to implement non-workflow and activity interfaces. This is important to play nice with AOP frameworks like Spring.
+
+Therefore, we could consider to move to Temporal with very little changes to have a better developer experience and a strong support.
+
+# What can be improved
+
+- Switch to Temporal
+- Find a way to handle events with Cadence
