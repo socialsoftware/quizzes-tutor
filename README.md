@@ -88,7 +88,7 @@ Students can then answer those questions in sugested quizzes or generated quizze
 
 # Installation
 
-This system can only run with Docker Compose due to Eventuate CDC Service. Our Docker build uses an image of this service to be able to process Eventuate transactional messaging, events and sagas:
+This system can only run with Docker Compose due to Eventuate CDC Service and Cadence. Our Docker build uses their images to be able to process Eventuate transactional messaging and events and Cadence sagas:
 
 * **Go to [API Service Agreement](https://fenix.tecnico.ulisboa.pt/personal/external-applications/api-service-agreement) and then to [Applications](https://fenix.tecnico.ulisboa.pt/personal/external-applications/#/applications)  and create an application that redirects to http://localhost:8081/login and accessess curricular and information**
 * **Fill the fields in `auth/src/main/resources/application-dev.properties`**
@@ -107,6 +107,7 @@ docker-compose up
 ```
 * **See documentation on http://localhost:[service port]/swagger-ui.html**
 * **Access http://localhost:8081**
+* **Monitor sagas http://localhost:8088**
 
 # Patreons
 
