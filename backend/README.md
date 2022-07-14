@@ -45,7 +45,7 @@ public interface CreateTournamentWorkflow {
 ```
 ### @WorkflowMethod
     
-We use the @WorkflowMethod annotation to set up the scheduleToCloseTimeoutSeconds and the taskList but it could also be done with a WorkflowOptions when creating a workflow in the configuration. You can find further information [here](https://cadenceworkflow.io/docs/java-client/workflow-interface/). In this project, the executionStartToCloseTimeoutSeconds is always set to 60 seconds just because it is a good looking value.
+We use the @WorkflowMethod annotation to set up the `executionStartToCloseTimeoutSeconds` and the taskList but it could also be done with a WorkflowOptions when creating a workflow in the configuration. You can find further information [here](https://cadenceworkflow.io/docs/java-client/workflow-interface/). In this project, the `executionStartToCloseTimeoutSeconds` is always set to 60 seconds just because it is a good looking value.
 
 
 ### Workflow implementation
@@ -126,7 +126,7 @@ public interface CreateTournamentActivities {
 ```
 
 ### Activity method
-We use the @ActivityMethod annotation to set up the scheduleToCloseTimeoutSeconds and the taskList but it could also be done with a ActivityOptions when creating an Activity in the workflow implementation. Or you can set up both `ScheduleToStart` and `StartToClose`. More information on the timeouts [here](https://cadenceworkflow.io/docs/concepts/activities/#timeouts). Same as for the workflow method, scheduleToCloseTimeoutSeconds is always set to 60 seconds just because it is a good looking value.
+We use the @ActivityMethod annotation to set up the `scheduleToCloseTimeoutSeconds` and the taskList but it could also be done with a ActivityOptions when creating an Activity in the workflow implementation. Or you can set up both `ScheduleToStart` and `StartToClose`. More information on the timeouts [here](https://cadenceworkflow.io/docs/concepts/activities/#timeouts). Same as for the workflow method, `scheduleToCloseTimeoutSeconds` is always set to 60 seconds just because it is a good looking value.
 
 ### Activity implementation
 
