@@ -47,6 +47,65 @@ public interface CreateTournamentWorkflow {
     
 We use the @WorkflowMethod annotation to set up the scheduleToCloseTimeoutSeconds and the taskList but it could also be done with a WorkflowOptions when creating a workflow in the configuration. You can find further information [here](https://cadenceworkflow.io/docs/java-client/workflow-interface/). In this project, the executionStartToCloseTimeoutSeconds is always set to 60 seconds just because it is a good looking value.
 
+
+### Workflow implementation
+
+In the workflow implementation, we create the Activities needed. Here we needed 5 but showed only 2 for simplication. Then we implement the @WorkflowMethod. We instantiate a Saga with 
+```java
+    Saga.Options sagaOptions = new Saga.Options.Builder()
+                .setParallelCompensation(false)
+                .build();
+    Saga saga = new Saga(sagaOptions);
+```
+
+and then call the activities methods like this `createTournamentActivities.storeCourseExecution(tournamentId, tournamentCourseExecution);` or create a compensation this way `saga.addCompensation(createTournamentActivities::undoCreate, tournamentId);` if an exception is catch and we need to compensate.
+
+```java
+public class CreateTournamentWorkflowImpl implements CreateTournamentWorkflow {
+
+    private final CreateTournamentActivities createTournamentActivities = Workflow
+            .newActivityStub(CreateTournamentActivities.class);
+
+    private final CourseExecutionActivities courseExecutionActivities = Workflow
+            .newActivityStub(CourseExecutionActivities.class);
+
+    //code omitted for simplication
+
+    @Override
+    public Integer createTournament(Integer tournamentId, Integer creatorId, Integer courseExecutionId,
+            ExternalStatementCreationDto externalStatementCreationDto, TopicListDto topicListDto) {
+        Saga.Options sagaOptions = new Saga.Options.Builder()
+                .setParallelCompensation(false)
+                .build();
+        Saga saga = new Saga(sagaOptions);
+        try {
+            // Step 1
+            saga.addCompensation(createTournamentActivities::undoCreate, tournamentId);
+
+            // Step 2
+            CourseExecutionDto courseExecutionDto = courseExecutionActivities
+                .getCourseExecution(courseExecutionId);
+
+            TournamentCourseExecution tournamentCourseExecution = new TournamentCourseExecution(
+                    courseExecutionDto.getCourseExecutionId(),
+                    courseExecutionDto.getCourseId(),
+                    CourseExecutionStatus.valueOf(courseExecutionDto.getStatus().toString()),
+                    courseExecutionDto.getAcronym());
+
+            // Step 3
+            createTournamentActivities.storeCourseExecution(tournamentId, tournamentCourseExecution);
+
+            //code omitted
+
+        } catch (ActivityException e) {
+            saga.compensate();
+            throw e;
+        }
+        return tournamentId;
+    }
+}
+```
+
 ## Activities
 ```java
 public interface CreateTournamentActivities {
