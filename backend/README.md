@@ -58,7 +58,7 @@ Saga.Options sagaOptions = new Saga.Options.Builder()
  Saga saga = new Saga(sagaOptions);
 ```
 
-and then call the activities methods like this `createTournamentActivities.storeCourseExecution(tournamentId, tournamentCourseExecution);` or create a compensation this way `saga.addCompensation(createTournamentActivities::undoCreate, tournamentId);` if an exception is catch and we need to compensate.
+and then call the activities methods like this `createTournamentActivities.storeCourseExecution(tournamentId, tournamentCourseExecution);` or create a compensation this way `saga.addCompensation(createTournamentActivities::undoCreate, tournamentId);` in case an exception is catch and we need to compensate.
 
 ```java
 public class CreateTournamentWorkflowImpl implements CreateTournamentWorkflow {
