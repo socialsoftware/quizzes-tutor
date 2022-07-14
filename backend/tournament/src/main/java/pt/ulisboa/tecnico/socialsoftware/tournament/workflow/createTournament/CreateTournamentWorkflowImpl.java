@@ -17,16 +17,15 @@ import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.ExternalStatemen
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.FindTopicsDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicListDto;
 import pt.ulisboa.tecnico.socialsoftware.common.dtos.tournament.TopicWithCourseDto;
-import pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.common.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.common.activity.CourseExecutionActivities;
 import pt.ulisboa.tecnico.socialsoftware.tournament.activity.createTournamentActivities.CreateTournamentActivities;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentCourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tournament.domain.TournamentTopic;
 
-public class CreateTournamentWorkflowImpl implements CreateTournamentWorkflow {
+import static pt.ulisboa.tecnico.socialsoftware.common.exceptions.ErrorMessage.TOURNAMENT_MISSING_TOPICS;
 
-    private static final ErrorMessage TOURNAMENT_MISSING_TOPICS = null;
+public class CreateTournamentWorkflowImpl implements CreateTournamentWorkflow {
 
     private final CreateTournamentActivities createTournamentActivities = Workflow
             .newActivityStub(CreateTournamentActivities.class);
