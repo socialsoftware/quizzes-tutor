@@ -5,7 +5,7 @@ According to its creator Uber,
 
 Put in a simple way, it is a tool that aims to reduce complexity of distributed systems.
 
-It offers a lot of [usecases](https://cadenceworkflow.io/docs/use-cases/) (periodic execution, orchestration/saga, event-driven application). This project is only interested in the [Saga usecase](https://cadenceworkflow.io/docs/use-cases/orchestration/).
+It offers a lot of [usecases](https://cadenceworkflow.io/docs/use-cases/) (periodic execution, orchestration/saga, event-driven application) but this project is only interested in the [Saga usecase](https://cadenceworkflow.io/docs/use-cases/orchestration/).
 
 
 ### References
@@ -20,7 +20,7 @@ It offers a lot of [usecases](https://cadenceworkflow.io/docs/use-cases/) (perio
 
 As all the Cadence's concepts are explained in the [documentation](https://cadenceworkflow.io/docs/concepts/), we will focus on how to implement the Saga pattern.
 
-The workflow has a **single** @WorkflowMethod where the saga is described. The activities are the saga's steps.
+Basically, the workflow has a **single** @WorkflowMethod where the saga is described and the activities are the saga's steps.
 
 # How do we make it work ?
 
@@ -32,7 +32,7 @@ We are interesting in these files:
 - [CreateTournamentActivities](tournament/src/main/java/pt/ulisboa/tecnico/socialsoftware/tournament/activity/createTournamentActivities/CreateTournamentActivities.java)
 - [CreateTournamentActivitiesImpl](tournament/src/main/java/pt/ulisboa/tecnico/socialsoftware/tournament/activity/createTournamentActivities/CreateTournamentActivitiesImpl.java)
 
-Cadence needs to have an interface and then the implementation of workflows and activities.
+We need to create an interface and then its implementation because it is a Cadence's requirement.
 
 ## Workflow
 ```java
@@ -45,7 +45,7 @@ public interface CreateTournamentWorkflow {
 ```
 ### @WorkflowMethod
     
-We use the @WorkflowMethod annotation to set up the scheduleToCloseTimeoutSeconds and the taskList but it could also be done with a WorkflowOptions when creating a workflow in the configuration.
+We use the @WorkflowMethod annotation to set up the scheduleToCloseTimeoutSeconds and the taskList but it could also be done with a WorkflowOptions when creating a workflow in the configuration. You can find further information [here](https://cadenceworkflow.io/docs/java-client/workflow-interface/). In this project, the executionStartToCloseTimeoutSeconds is always set to 60 seconds just because it is a good looking value.
 
 ## Activities
 ```java
@@ -67,7 +67,8 @@ public interface CreateTournamentActivities {
 ```
 
 ### Activity method
-We use the @ActivityMethod annotation to set up the scheduleToCloseTimeoutSeconds and the taskList but it could also be done with a ActivityOptions when creating an Activity in the workflow.
+We use the @ActivityMethod annotation to set up the scheduleToCloseTimeoutSeconds and the taskList but it could also be done with a ActivityOptions when creating an Activity in the workflow implementation. Or you can set up both `ScheduleToStart` and `StartToClose`. More information on the timeouts [here](https://cadenceworkflow.io/docs/concepts/activities/#timeouts). Same as for the workflow method, scheduleToCloseTimeoutSeconds is always set to 60 seconds just because it is a good looking value.
+
 ## Architecture of the project or where to look
 
 ```
