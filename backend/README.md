@@ -128,6 +128,29 @@ public interface CreateTournamentActivities {
 ### Activity method
 We use the @ActivityMethod annotation to set up the scheduleToCloseTimeoutSeconds and the taskList but it could also be done with a ActivityOptions when creating an Activity in the workflow implementation. Or you can set up both `ScheduleToStart` and `StartToClose`. More information on the timeouts [here](https://cadenceworkflow.io/docs/concepts/activities/#timeouts). Same as for the workflow method, scheduleToCloseTimeoutSeconds is always set to 60 seconds just because it is a good looking value.
 
+### Activity implementation
+
+In the implementation, we need to have the service and call its methods in the ActivityMethods.
+
+```java
+public class CreateTournamentActivitiesImpl implements CreateTournamentActivities {
+
+    private final TournamentProvidedService tournamentService;
+
+    public CreateTournamentActivitiesImpl(TournamentProvidedService tournamentService) {
+        this.tournamentService = tournamentService;
+    }
+
+    @Override
+    public void undoCreate(Integer tournamentId) {
+        tournamentService.rejectCreate(tournamentId);
+    }
+
+    // other functions omitted for simplication
+
+}
+```
+
 ## Architecture of the project or where to look
 
 ```
