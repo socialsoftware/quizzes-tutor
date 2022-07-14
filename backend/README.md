@@ -151,9 +151,20 @@ public class CreateTournamentActivitiesImpl implements CreateTournamentActivitie
 }
 ```
 
+## Start the saga
+
+Finally, we can start the workflow method in a `@Service`. Here in the [TournamentProvidedService](tournament/src/main/java/pt/ulisboa/tecnico/socialsoftware/tournament/services/local/TournamentProvidedService.java), in the `createTournament()` function we create the `CreateTournamentWorkflow` described above and start its method `createTournament()`.
+
+```java
+CreateTournamentWorkflow workflow = workflowClient.newWorkflowStub(CreateTournamentWorkflow.class);
+WorkflowExecution workflowExecution = WorkflowClient.start(workflow::createTournament, tournament.getId(),
+                tournament.getCreator().getId(), executionId, tournament.getExternalStatementCreationDto(),
+                new TopicListDto(topicsId));
+```
+
 ## Architecture of the project or where to look
 
-If you understood the `CreateTournamentSaga` example and want to understand the bigger picture, you can look up the folders showed in the below Folder Tree.
+If you understood the `CreateTournamentSaga` example and are not afraid to dive deeper, you can look up the folders showed in the below Folder Tree.
 
 ```
 backend  
