@@ -153,7 +153,7 @@ public class CreateTournamentActivitiesImpl implements CreateTournamentActivitie
 
 ## Start the saga
 
-Finally, we can start the workflow method in a `@Service`. Here in the [TournamentProvidedService](tournament/src/main/java/pt/ulisboa/tecnico/socialsoftware/tournament/services/local/TournamentProvidedService.java), in the `createTournament()` function we create the `CreateTournamentWorkflow` described above and start its method `createTournament()`.
+Finally, we can start the workflow method in a `@Service`. Here in the [TournamentProvidedService](tournament/src/main/java/pt/ulisboa/tecnico/socialsoftware/tournament/services/local/TournamentProvidedService.java), in the `createTournament()` function we create the `CreateTournamentWorkflow` described above and start its own method `createTournament()`.
 
 ```java
 CreateTournamentWorkflow workflow = workflowClient.newWorkflowStub(CreateTournamentWorkflow.class);
