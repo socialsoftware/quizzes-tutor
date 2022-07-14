@@ -52,10 +52,10 @@ We use the @WorkflowMethod annotation to set up the `executionStartToCloseTimeou
 
 In the workflow implementation, we create the Activities needed. Here we needed 5 but showed only 2 for simplication. Then we implement the @WorkflowMethod. We instantiate a Saga with 
 ```java
-    Saga.Options sagaOptions = new Saga.Options.Builder()
-                .setParallelCompensation(false)
-                .build();
-    Saga saga = new Saga(sagaOptions);
+Saga.Options sagaOptions = new Saga.Options.Builder()
+            .setParallelCompensation(false)
+            .build();
+ Saga saga = new Saga(sagaOptions);
 ```
 
 and then call the activities methods like this `createTournamentActivities.storeCourseExecution(tournamentId, tournamentCourseExecution);` or create a compensation this way `saga.addCompensation(createTournamentActivities::undoCreate, tournamentId);` if an exception is catch and we need to compensate.
