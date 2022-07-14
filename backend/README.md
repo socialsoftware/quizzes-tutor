@@ -153,6 +153,8 @@ public class CreateTournamentActivitiesImpl implements CreateTournamentActivitie
 
 ## Architecture of the project or where to look
 
+If you understood the `CreateTournamentSaga` example and want to understand the bigger picture, you can look up the folders showed in the below Folder Tree.
+
 ```
 backend  
 │
@@ -183,9 +185,7 @@ backend
     └───answer|execution|question|quiz|user/activity
 ```
 
-
-
-The Tutor activities are described in the [common package](common/src/main/java/pt/ulisboa/tecnico/socialsoftware/common/activity) so that the Tournament and Auth microservices can use them but they are implemented in the tutor package so that they can use the related services.
+ The Tutor activities are described in the [common package](common/src/main/java/pt/ulisboa/tecnico/socialsoftware/common/activity) so that the Tournament and Auth microservices can use them but they are implemented in the tutor package so that they can use the related services.
 
 In each microservice's config folder, there's a `CadenceConfiguration` file where the connection to the Cadence server is set up and a `CadenceWorkerStarter` file where the workflows and activities are set up.
 
