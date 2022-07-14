@@ -18,7 +18,7 @@ It offers a lot of [usecases](https://cadenceworkflow.io/docs/use-cases/) (perio
 
 # How does it work ? 
 
-As all the Cadence's concepts are explained in the [documentation](https://cadenceworkflow.io/docs/concepts/), we will focus on how to implement the Saga pattern.
+As all the Cadence's concepts are explained in the [documentation](https://cadenceworkflow.io/docs/concepts/), we will not explain the concepts deeply but focus on how to actually implement the Saga pattern which is not covered in the documenation.
 
 Basically, the workflow has a **single** @WorkflowMethod where the saga is described and the activities are the saga's steps.
 
