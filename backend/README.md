@@ -228,7 +228,7 @@ But in addition to sagas, Eventuate Tram supports events. To work with events wi
 
 Last but not least, Eventuate's documentation is more complete than Cadence's one with a lot of code examples and explanation which is an important thing to consider when learning how to use a piece of technology.
 
-Overall, both these solutions provide a good way to implement the Saga Pattern and could be both chosen for this project if a way to handle events with Cadence is found.
+Overall, both these solutions provide a good way to implement the Saga Pattern and only one could be chosen for this project if a way to handle events with Cadence is found.
 
 # Temporal: Cadence's fork
 
