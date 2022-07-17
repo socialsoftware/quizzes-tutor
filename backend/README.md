@@ -246,5 +246,7 @@ Therefore, we could consider to move to Temporal with very little changes to hav
 
 # What can be improved
 
+If someone wants to continue working on this branch, here are some suggestions:
+
 - Switch to Temporal
 - Find a way to handle events with Cadence
