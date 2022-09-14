@@ -73,7 +73,7 @@ public class DashboardService {
             throw new TutorException(STUDENT_NO_COURSE_EXECUTION);
 
         Optional<Dashboard> dashboardOptional = student.getDashboards().stream()
-                .filter(dashboard -> dashboard.getCourseExecution().getId() == courseExecutionId)
+                .filter(dashboard -> dashboard.getCourseExecution().getId().equals(courseExecutionId))
                 .findAny();
 
         return dashboardOptional.map(DashboardDto::new).orElseGet(() -> createAndReturnDashboardDto(courseExecution, student));
@@ -86,7 +86,7 @@ public class DashboardService {
         Student student = studentRepository.findById(studentId)
                 .orElseThrow(() -> new TutorException(USER_NOT_FOUND, studentId));
 
-        if (student.getDashboards().stream().anyMatch(dashboard -> dashboard.getCourseExecution() == courseExecution))
+        if (student.getDashboards().stream().anyMatch(dashboard -> dashboard.getCourseExecution().equals(courseExecution)))
             throw new TutorException(STUDENT_ALREADY_HAS_DASHBOARD);
 
         if (!student.getCourseExecutions().contains(courseExecution))
