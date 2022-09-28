@@ -34,7 +34,7 @@
     "vue-router": "~3.5.3",
     "vue-underscore": "~0.1.4",
     "vuedraggable": "~2.24.3",
-    "vuetify": "~2.6.6",
+    "vuetify": "~2.6.10",
     "vuex": "~3.6.2"
   },
   "devDependencies": {
@@ -61,7 +61,7 @@
     "babel-jest": "~27.5.1",
     "codecov": "~4.0.0-0",
     "compression-webpack-plugin": "~9.2.0",
-    "cypress": "^10.3.0",
+    "cypress": "^10.9.0",
     "eslint": "~8.14.0",
     "eslint-plugin-prettier": "~4.0.0",
     "eslint-plugin-vue": "~8.7.1",
@@ -69,7 +69,7 @@
     "purgecss-webpack-plugin": "~4.1.3",
     "sass": "~1.50.1",
     "sass-loader": "~12.6.0",
-    "terser-webpack-plugin": "~5.3.1",
+    "terser-webpack-plugin": "~5.3.6",
     "ts-jest": "~27.1.4",
     "typescript": "~4.6.3",
     "vue-cli-plugin-vuetify": "~2.4.8",
