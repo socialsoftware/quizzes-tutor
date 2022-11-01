@@ -155,7 +155,7 @@ public class AnswersXmlImport {
         Course course = courseRepository.findByNameType(courseName, courseType)
                 .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName + ":" + courseType));
         CourseExecution courseExecution = course.getCourseExecution(acronym, academicTerm, Course.Type.valueOf(courseExecutionType))
-                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, acronym));
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND_STR, acronym));
 
         Integer quizKey = Integer.valueOf(quizElement.getAttributeValue("key"));
         Quiz quiz = courseExecution.getQuizzes().stream()
