@@ -51,7 +51,7 @@ class GetExternalUserAuthWebServiceIT extends SpockTestIT {
         response.status == 200
         response.data.token != ""
         response.data.user.key != null
-        response.data.user.username == USER_1_EMAIL
+        response.data.user.username == USER_1_USERNAME
 
         cleanup:
         courseExecution.getUsers().remove(userRepository.findByKey(response.data.user.key).get())
