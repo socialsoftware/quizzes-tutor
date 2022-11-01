@@ -151,7 +151,7 @@ public class QuizzesXmlImport {
                 .orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseName + ":" + courseType));
 
         CourseExecution courseExecution = course.getCourseExecution(acronym, academicTerm, Course.Type.valueOf(courseExecutionType))
-                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, acronym));
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND_STR, acronym));
 
         QuizDto quizDto2 = quizService.createQuiz(courseExecution.getId(), quizDto);
         importQuizQuestions(quizElement.getChild("quizQuestions"), quizDto2);
