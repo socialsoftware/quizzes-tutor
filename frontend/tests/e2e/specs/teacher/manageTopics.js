@@ -8,24 +8,23 @@ describe('Manage Topics Walk-through', () => {
       .should('be.empty')
       .type(topicName);
 
-    cy.route('POST', '/topics/courses/*').as('postTopic');
+    cy.intercept('POST', '/topics/courses/*').as('postTopic');
 
     cy.get('button').contains('Save').click();
 
-    cy.wait('@postTopic').its('status').should('eq', 200);
+    cy.wait('@postTopic').its('response.statusCode').should('eq', 200);
   }
 
   beforeEach(() => {
     cy.deleteQuestionsAndAnswers();
     cy.cleanTestTopics();
     cy.demoTeacherLogin();
-    cy.server();
-    cy.route('GET', '/topics/courses/*').as('getTopics');
+    cy.intercept('GET', '/topics/courses/*').as('getTopics');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="manageTopicsMenuButton"]').click();
     cy.get('[data-cy="Search"]').click();
 
-    cy.wait('@getTopics').its('status').should('eq', 200);
+    cy.wait('@getTopics').its('response.statusCode').should('eq', 200);
   });
 
   afterEach(() => {
@@ -58,11 +57,11 @@ describe('Manage Topics Walk-through', () => {
       .clear()
       .type('CY - EDITED');
 
-    cy.route('PUT', '/topics/*').as('putTopic');
+    cy.intercept('PUT', '/topics/*').as('putTopic');
 
     cy.get('button').contains('Save').click();
 
-    cy.wait('@putTopic').its('status').should('eq', 200);
+    cy.wait('@putTopic').its('response.statusCode').should('eq', 200);
 
     cy.get('[data-cy="topicsGrid"]').first().should('contain', 'CY - EDITED');
   });
@@ -72,7 +71,7 @@ describe('Manage Topics Walk-through', () => {
 
     createTopicWithName(topicName);
 
-    cy.route('DELETE', '/topics/*').as('deleteTopic');
+    cy.intercept('DELETE', '/topics/*').as('deleteTopic');
 
     cy.get('[data-cy="topicsGrid"]').contains(topicName).should('exist');
 
@@ -82,7 +81,7 @@ describe('Manage Topics Walk-through', () => {
         cy.get('[data-cy="topicsGridDeleteButton"]').click();
       });
 
-    cy.wait('@deleteTopic').its('status').should('eq', 200);
+    cy.wait('@deleteTopic').its('response.statusCode').should('eq', 200);
 
     cy.get('[data-cy="topicsGrid"]').contains(topicName).should('not.exist');
   });

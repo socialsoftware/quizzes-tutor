@@ -44,16 +44,15 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
   beforeEach(() => {
     cy.demoTeacherLogin();
-    cy.server();
-    cy.route('PUT', '/questions/courses/*').as('putQuestions');
-    cy.route('GET', '/topics/courses/*').as('getTopics');
+    cy.intercept('PUT', '/questions/courses/*').as('putQuestions');
+    cy.intercept('GET', '/topics/courses/*').as('getTopics');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="questionsTeacherMenuButton"]').click();
     cy.get('[data-cy="submitQueryButton"]').click();
 
-    cy.wait('@putQuestions').its('status').should('eq', 200);
+    cy.wait('@putQuestions').its('response.statusCode').should('eq', 200);
 
-    cy.wait('@getTopics').its('status').should('eq', 200);
+    cy.wait('@getTopics').its('response.statusCode').should('eq', 200);
   });
 
   afterEach(() => {
@@ -89,11 +88,11 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
         });
       });
 
-    cy.route('POST', '/questions/courses/*').as('postQuestion');
+    cy.intercept('POST', '/questions/courses/*').as('postQuestion');
 
     cy.get('button').contains('Save').click();
 
-    cy.wait('@postQuestion').its('status').should('eq', 200);
+    cy.wait('@postQuestion').its('response.statusCode').should('eq', 200);
 
     cy.get('[data-cy="questionTitleGrid"]')
       .first()
@@ -132,7 +131,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
   });
 
   it('Can update title (with right-click)', function () {
-    cy.route('PUT', '/questions/*').as('updateQuestion');
+    cy.intercept('PUT', '/questions/*').as('updateQuestion');
 
     cy.get('tbody tr')
       .first()
@@ -153,7 +152,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
         cy.get('button').contains('Save').click();
       });
 
-    cy.wait('@updateQuestion').its('status').should('eq', 200);
+    cy.wait('@updateQuestion').its('response.statusCode').should('eq', 200);
 
     cy.get('[data-cy="questionTitleGrid"]')
       .first()
@@ -166,7 +165,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
   });
 
   it('Can update content (with button)', function () {
-    cy.route('PUT', '/questions/*').as('updateQuestion');
+    cy.intercept('PUT', '/questions/*').as('updateQuestion');
 
     cy.get('tbody tr')
       .first()
@@ -187,7 +186,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
         cy.get('button').contains('Save').click();
       });
 
-    cy.wait('@updateQuestion').its('status').should('eq', 200);
+    cy.wait('@updateQuestion').its('response.statusCode').should('eq', 200);
 
     validateQuestionFull(
       'Cypress Question Example - 01 - Edited',
@@ -226,11 +225,11 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
         });
       });
 
-    cy.route('POST', '/questions/courses/*').as('postQuestion');
+    cy.intercept('POST', '/questions/courses/*').as('postQuestion');
 
     cy.get('button').contains('Save').click();
 
-    cy.wait('@postQuestion').its('status').should('eq', 200);
+    cy.wait('@postQuestion').its('response.statusCode').should('eq', 200);
 
     cy.get('[data-cy="questionTitleGrid"]')
       .first()
@@ -243,14 +242,14 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
   });
 
   it('Can delete created question', function () {
-    cy.route('DELETE', '/questions/*').as('deleteQuestion');
+    cy.intercept('DELETE', '/questions/*').as('deleteQuestion');
     cy.get('tbody tr')
       .first()
       .within(($list) => {
         cy.get('button').contains('delete').click();
       });
 
-    cy.wait('@deleteQuestion').its('status').should('eq', 200);
+    cy.wait('@deleteQuestion').its('response.statusCode').should('eq', 200);
   });
 
   it('Creates a new multiple choice question with only 2 options', function () {
@@ -282,11 +281,11 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
     cy.get(`[data-cy="Delete4"]`).click({ force: true });
     cy.get(`[data-cy="Delete3"]`).click({ force: true });
 
-    cy.route('POST', '/questions/courses/*').as('postQuestion');
+    cy.intercept('POST', '/questions/courses/*').as('postQuestion');
 
     cy.get('button').contains('Save').click();
 
-    cy.wait('@postQuestion').its('status').should('eq', 200);
+    cy.wait('@postQuestion').its('response.statusCode').should('eq', 200);
 
     cy.get('[data-cy="questionTitleGrid"]')
       .first()
@@ -338,11 +337,11 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
         });
       });
 
-    cy.route('POST', '/questions/courses/*').as('postQuestion');
+    cy.intercept('POST', '/questions/courses/*').as('postQuestion');
 
     cy.get('button').contains('Save').click();
 
-    cy.wait('@postQuestion').its('status').should('eq', 200);
+    cy.wait('@postQuestion').its('response.statusCode').should('eq', 200);
 
     cy.get('[data-cy="questionTitleGrid"]')
       .first()
