@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor
 
+import groovy.json.JsonOutput
 import groovyx.net.http.RESTClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
@@ -8,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.admin.AdminService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthPasswordDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DifficultQuestionRepository
@@ -324,12 +326,9 @@ class SpockTest extends Specification {
     }
 
     def externalUserLogin(username, password) {
-        def loggedUser = restClient.get(
+        def loggedUser = restClient.post(
                 path: '/auth/external',
-                query: [
-                        username: username,
-                        password: password,
-                ],
+                body: JsonOutput.toJson(new AuthPasswordDto(username, password)),
                 requestContentType: 'application/json'
         )
         restClient.headers['Authorization'] = "Bearer " + loggedUser.data.token

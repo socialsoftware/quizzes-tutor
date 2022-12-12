@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.webservice
 
+import groovy.json.JsonOutput
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
@@ -7,6 +8,7 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthPasswordDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
@@ -46,12 +48,9 @@ class TournamentIT extends SpockTestIT {
         courseExecution.addUser(user)
         userRepository.save(user)
 
-        def loggedUser = restClient.get(
+        def loggedUser = restClient.post(
                 path: '/auth/external',
-                query: [
-                        username: USER_1_USERNAME,
-                        password: USER_1_PASSWORD,
-                ],
+                body: JsonOutput.toJson(new AuthPasswordDto(USER_1_USERNAME, USER_1_PASSWORD)),
                 requestContentType: 'application/json'
         )
         restClient.headers['Authorization'] = "Bearer " + loggedUser.data.token

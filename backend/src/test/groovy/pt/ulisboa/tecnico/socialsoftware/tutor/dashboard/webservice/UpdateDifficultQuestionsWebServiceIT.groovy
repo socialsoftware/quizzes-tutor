@@ -160,7 +160,7 @@ class UpdateDifficultQuestionsWebServiceIT extends SpockTestIT {
         error.response.status == HttpStatus.SC_FORBIDDEN
     }
 
-    def "student cant update another students difficult questionss"() {
+    def "student cant update another students difficult questions"() {
         given:
         def newStudent = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, false, AuthUser.Type.EXTERNAL)
         newStudent.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))

@@ -30,6 +30,7 @@ import DifficultQuestion from '@/models/dashboard/DifficultQuestion';
 import WeeklyScore from '@/models/dashboard/WeeklyScore';
 import FailedAnswer from '@/models/dashboard/FailedAnswer';
 import TopicConjunction from '@/models/management/TopicConjunction';
+import AuthPasswordDto from '@/models/user/AuthPasswordDto';
 
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
@@ -83,7 +84,10 @@ export default class RemoteServices {
     password: string
   ): Promise<AuthDto> {
     return httpClient
-      .get(`/auth/external?username=${username}&password=${password}`)
+      .post(
+        `/auth/external?username=${username}&password=${password}`,
+        new AuthPasswordDto(username, password)
+      )
       .then((response) => {
         return new AuthDto(response.data);
       })

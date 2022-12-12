@@ -1,0 +1,9 @@
+export default class AuthPasswordDto {
+  username!: string;
+  password!: string;
+
+  constructor(username: string, password: string) {
+    this.username = username;
+    this.password = password;
+  }
+}

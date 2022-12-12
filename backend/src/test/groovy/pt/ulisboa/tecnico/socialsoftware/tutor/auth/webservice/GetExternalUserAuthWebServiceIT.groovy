@@ -1,10 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth.webservice
 
+import groovy.json.JsonOutput
 import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthPasswordDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
@@ -38,12 +40,9 @@ class GetExternalUserAuthWebServiceIT extends SpockTestIT {
         courseExecution.addUser(user)
 
         when:
-        def response = restClient.get(
+        def response = restClient.post(
                 path: '/auth/external',
-                query: [
-                        username: USER_1_USERNAME,
-                        password: USER_1_PASSWORD,
-                ],
+                body: JsonOutput.toJson(new AuthPasswordDto(USER_1_USERNAME, USER_1_PASSWORD)),
                 requestContentType: 'application/json'
         )
 

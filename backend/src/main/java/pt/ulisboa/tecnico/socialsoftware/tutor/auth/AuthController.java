@@ -2,11 +2,12 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthPasswordDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+
+import javax.validation.Valid;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_LOGIN_CREDENTIALS;
 
@@ -34,10 +35,10 @@ public class AuthController {
         return this.authUserService.fenixAuth(fenix);
     }
 
-    @GetMapping("/auth/external")
-    public AuthDto externalUserAuth(@RequestParam String username, @RequestParam String password) {
+    @PostMapping("/auth/external")
+    public AuthDto externalUserAuth(@Valid @RequestBody AuthPasswordDto authUsernameDto) {
         try {
-            return authUserService.externalUserAuth(username, password);
+            return authUserService.externalUserAuth(authUsernameDto.getUsername(), authUsernameDto.getPassword());
         } catch (TutorException e) {
             throw new TutorException(INVALID_LOGIN_CREDENTIALS);
         }
