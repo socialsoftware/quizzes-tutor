@@ -25,6 +25,7 @@ def quizFraudScores(quizId):
 
     result = {"scores": [{"userInfo": db.getAuthUserInformationByUserId(user_id).to_dict(), "score": user_score}
               for user_id, user_score in statistic.statistic.items()]}
+    db.close()
     return flask.jsonify(result)
 
 
@@ -38,4 +39,5 @@ def quizFraudScoresGraph(quizId):
                  for username, user_score in scores_in.items()]
     scores_out = [{"userInfo": db.getAuthUserInformationByUsername(username).to_dict(), "score": user_score}
                   for username, user_score in scores_out.items()]
+    db.close()
     return flask.jsonify({"scoresIn": scores_in, "scoresOut": scores_out})

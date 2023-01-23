@@ -27,7 +27,7 @@
       <v-alert border="left" colored-border type="warning" elevation="2">
         <v-row>
           <v-col class="col-sm-21 col-md-7 grow text-left font-weight-medium">
-            Producer and Consumer scores should be interpreted according to
+            Production and Consumption scores should be interpreted according to
             Mariana Carrasco MSc Thesis
           </v-col>
           <v-col class="shrink col-sm-6 col-md-2">
@@ -58,7 +58,7 @@
           <v-col class="col-sm-12 col-md-4"
             ><fraud-violin
               graphId="2"
-              title="Consumer Scores"
+              title="Consumption Scores"
               class="fraudViolin"
               :quizFraudScores="
                 quizFraudScores.map((e) => ({
@@ -71,7 +71,7 @@
           <v-col class="col-sm-12 col-md-4"
             ><fraud-violin
               graphId="3"
-              title="Producer Scores"
+              title="Production Scores"
               class="fraudViolin"
               :quizFraudScores="
                 quizFraudScores.map((e) => ({
@@ -114,7 +114,7 @@ export default class ShowQuizFraudScoresDialog extends Vue {
   headers: any[] = [
     { text: 'User', value: 'userInfo.name' },
     { text: 'Time Score', value: 'scoreTime' },
-    { text: 'Consumer Score', value: 'scoreCommunicationConsumer' },
+    { text: 'Consumption Score', value: 'scoreCommunicationConsumer' },
     { text: 'Production Score', value: 'scoreCommunicationProducer' },
   ];
   get quizFraudScores() {
