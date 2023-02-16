@@ -39,5 +39,5 @@ sqlalchemy==1.4.23
 statsmodels==0.12.2
 tqdm==4.51.0
 urllib3==1.26.12
-Werkzeug==2.0.1
+Werkzeug==2.2.3
 wheel==0.38.1
