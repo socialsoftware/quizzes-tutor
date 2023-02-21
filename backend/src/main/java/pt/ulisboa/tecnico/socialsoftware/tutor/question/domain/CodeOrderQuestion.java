@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -8,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderQuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeOrderSlotDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -51,7 +51,7 @@ public class CodeOrderQuestion extends QuestionDetails {
         if (codeOrderSlots.isEmpty()) {
             throw new TutorException(AT_LEAST_THREE_SLOTS_NEEDED);
         }
-        if (codeOrderSlots.stream().filter(x -> x.getOrder() != null).count() < 3 ){
+        if (codeOrderSlots.stream().filter(x -> x.getOrder() != null).count() < 3) {
             throw new TutorException(AT_LEAST_THREE_SLOTS_NEEDED);
         }
 

@@ -1,8 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderSlot;
-
-import javax.persistence.*;
 
 @Entity
 public class CodeOrderAnswerSlot {

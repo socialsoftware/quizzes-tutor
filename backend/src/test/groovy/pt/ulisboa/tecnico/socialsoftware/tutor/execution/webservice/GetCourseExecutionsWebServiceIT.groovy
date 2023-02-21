@@ -35,7 +35,7 @@ class GetCourseExecutionsWebServiceIT extends SpockTestIT {
 
         when: 'the web service is invoked'
         response = restClient.get(
-                path: '/executions/',
+                path: '/executions',
                 requestContentType: 'application/json'
         )
 
@@ -59,7 +59,7 @@ class GetCourseExecutionsWebServiceIT extends SpockTestIT {
 
         when: 'the web service is invoked'
         response = restClient.get(
-                path: '/executions/',
+                path: '/executions',
                 requestContentType: 'application/json'
         )
 

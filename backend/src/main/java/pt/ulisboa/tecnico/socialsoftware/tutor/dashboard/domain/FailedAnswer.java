@@ -1,12 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain;
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity

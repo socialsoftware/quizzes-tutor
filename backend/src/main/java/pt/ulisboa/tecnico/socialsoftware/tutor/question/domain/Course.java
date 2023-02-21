@@ -1,11 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
@@ -28,16 +28,17 @@ public class Course implements DomainEntity {
     @Column(nullable = false)
     private String name;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<CourseExecution> courseExecutions = new HashSet<>();
 
-    @OneToMany(mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(mappedBy = "course", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Question> questions = new HashSet<>();
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch=FetchType.LAZY, orphanRemoval=true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "course", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Topic> topics = new HashSet<>();
 
-    public Course() {}
+    public Course() {
+    }
 
     public Course(String name, Course.Type type) {
         setType(type);

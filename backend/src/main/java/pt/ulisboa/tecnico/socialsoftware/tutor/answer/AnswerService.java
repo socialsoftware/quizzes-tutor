@@ -163,7 +163,7 @@ public class AnswerService {
                 ));
 
         quizAnswerItems.forEach(quizAnswerItem -> {
-            QuizAnswer quizAnswer = quizAnswerRepository.getById(quizAnswerItem.getQuizAnswerId());
+            QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerItem.getQuizAnswerId()).get();
 
             if (quiz.isOneWay()) {
                 List<QuestionAnswerItem> questionAnswerItems = questionAnswerMap.get(quizAnswer.getStudent().getUsername());

@@ -1,9 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 import java.util.Locale;
 
 @Entity

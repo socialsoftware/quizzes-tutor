@@ -1,5 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto;
@@ -9,11 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Option;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
-
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.JoinColumn;
-import javax.persistence.ManyToOne;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUESTION_OPTION_MISMATCH;
 
@@ -28,11 +27,11 @@ public class MultipleChoiceAnswer extends AnswerDetails {
         super();
     }
 
-    public MultipleChoiceAnswer(QuestionAnswer questionAnswer){
+    public MultipleChoiceAnswer(QuestionAnswer questionAnswer) {
         super(questionAnswer);
     }
 
-    public MultipleChoiceAnswer(QuestionAnswer questionAnswer, Option option){
+    public MultipleChoiceAnswer(QuestionAnswer questionAnswer, Option option) {
         super(questionAnswer);
         this.setOption(option);
     }

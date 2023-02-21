@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.api;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.security.core.Authentication;
@@ -10,7 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
 
-import javax.validation.Valid;
 import java.security.Principal;
 import java.util.List;
 
@@ -49,7 +49,7 @@ public class DiscussionController {
 
     @PostMapping(value = "/discussions/create")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#questionAnswerId, 'QUESTION_ANSWER.ACCESS')")
-    public DiscussionDto createDiscussion(@RequestParam int questionAnswerId, @Valid @RequestBody DiscussionDto discussion){
+    public DiscussionDto createDiscussion(@RequestParam int questionAnswerId, @Valid @RequestBody DiscussionDto discussion) {
         return discussionApplicationalService.createDiscussion(questionAnswerId, discussion);
     }
 

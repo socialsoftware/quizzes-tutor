@@ -1,13 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthPasswordDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-
-import javax.validation.Valid;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_LOGIN_CREDENTIALS;
 

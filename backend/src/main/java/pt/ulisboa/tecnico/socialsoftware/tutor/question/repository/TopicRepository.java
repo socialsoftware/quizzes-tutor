@@ -17,9 +17,9 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
     @EntityGraph(attributePaths = {"course"})
     Optional<Topic> findTopicWithCourseById(int id);
 
-    @Query(value = "SELECT * FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId ORDER BY t.id", nativeQuery = true)
+    @Query(value = "SELECT t.* FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId ORDER BY t.id", nativeQuery = true)
     List<Topic> findTopics(int courseId);
 
-    @Query(value = "SELECT * FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId AND t.name = :name", nativeQuery = true)
+    @Query(value = "SELECT t.* FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId AND t.name = :name", nativeQuery = true)
     Topic findTopicByName(int courseId, String name);
 }

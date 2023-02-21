@@ -1,13 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInSpotDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;

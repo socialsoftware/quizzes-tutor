@@ -1,9 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.domain;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
-
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 
 @Entity
 @DiscriminatorValue(User.UserTypes.TEACHER)

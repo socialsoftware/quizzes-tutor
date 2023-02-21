@@ -1,15 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import jakarta.persistence.Embeddable;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.CodeOrderSlotStatementAnswerDetailsDto;
-
-import javax.persistence.Embeddable;
 
 @Embeddable
 public class CodeOrderSlotAnswerItem {
     private Integer slotId;
+
     private Integer assignedOrder;
 
-    public CodeOrderSlotAnswerItem() {}
+    public CodeOrderSlotAnswerItem() {
+    }
 
     public CodeOrderSlotAnswerItem(CodeOrderSlotStatementAnswerDetailsDto codeOrderSlotStatementAnswerDto) {
         slotId = codeOrderSlotStatementAnswerDto.getSlotId();

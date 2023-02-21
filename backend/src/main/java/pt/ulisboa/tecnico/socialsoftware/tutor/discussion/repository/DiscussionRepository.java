@@ -11,19 +11,19 @@ import java.util.List;
 @Repository
 @Transactional
 public interface DiscussionRepository extends JpaRepository<Discussion, Integer> {
-    @Query(value = "SELECT * FROM discussions d WHERE d.question_id = :questionId", nativeQuery = true)
+    @Query(value = "SELECT d.* FROM discussions d WHERE d.question_id = :questionId", nativeQuery = true)
     List<Discussion> findDiscussionsByQuestion(Integer questionId);
 
-    @Query(value = "SELECT * FROM discussions d WHERE d.user_id = :userId", nativeQuery = true)
+    @Query(value = "SELECT d.* FROM discussions d WHERE d.user_id = :userId", nativeQuery = true)
     List<Discussion> findQuestionsByUser(Integer userId);
 
-    @Query(value = "SELECT * FROM discussions d WHERE d.course_execution_id = :courseExecutionId", nativeQuery = true)
+    @Query(value = "SELECT d.* FROM discussions d WHERE d.course_execution_id = :courseExecutionId", nativeQuery = true)
     List<Discussion> findDiscussionsByCourseExecution(int courseExecutionId);
 
-    @Query(value = "SELECT * FROM discussions d WHERE d.course_execution_id = :courseExecutionId AND d.user_id = :userId", nativeQuery = true)
+    @Query(value = "SELECT d.* FROM discussions d WHERE d.course_execution_id = :courseExecutionId AND d.user_id = :userId", nativeQuery = true)
     List<Discussion> findDiscussionsByCourseExecutionIdAndUserId(int courseExecutionId, int userId);
 
-    @Query(value = "SELECT * FROM discussions d WHERE d.course_execution_id = :courseExecutionId AND d.closed = false", nativeQuery = true)
+    @Query(value = "SELECT d.* FROM discussions d WHERE d.course_execution_id = :courseExecutionId AND d.closed = false", nativeQuery = true)
     List<Discussion> findOpenDiscussionsByCourseExecutionId(int courseExecutionId);
 
     @Query(value = "SELECT d FROM Discussion d WHERE d.courseExecution.id = :courseExecutionId")

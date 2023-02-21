@@ -1,5 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
+import jakarta.persistence.ManyToMany;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -8,9 +11,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInQuestio
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeFillInSpot;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
-import javax.persistence.ManyToMany;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
@@ -63,13 +63,12 @@ public class CodeFillInAnswer extends AnswerDetails {
     public String getAnswerRepresentation() {
         var fillInSpots = ((CodeFillInQuestion) this.getQuestionAnswer().getQuestion().getQuestionDetails()).getFillInSpots();
         var answers = new ArrayList<String>();
-        for (var spot:fillInSpots) {
+        for (var spot : fillInSpots) {
             var option = this.getFillInOptions().stream().filter(x -> x.getFillInSpot().getId().equals(spot.getId())).findAny();
-            if (option.isPresent()){
+            if (option.isPresent()) {
                 Integer humanSequence = option.get().getSequence() + 1;
                 answers.add(humanSequence.toString());
-            }
-            else {
+            } else {
                 answers.add("-");
             }
         }
@@ -84,7 +83,7 @@ public class CodeFillInAnswer extends AnswerDetails {
     @Override
     public void remove() {
         if (codeFillInOptions != null) {
-            codeFillInOptions.forEach(codeFillInOption-> codeFillInOption.getQuestionAnswers().remove(this));
+            codeFillInOptions.forEach(codeFillInOption -> codeFillInOption.getQuestionAnswers().remove(this));
             codeFillInOptions.clear();
         }
     }
@@ -94,7 +93,7 @@ public class CodeFillInAnswer extends AnswerDetails {
         if (!codeFillInStatementAnswerDetailsDto.emptyAnswer()) {
             for (CodeFillInOptionStatementAnswerDto option : codeFillInStatementAnswerDetailsDto.getSelectedOptions()) {
 
-                if(option.getOptionId() == null){
+                if (option.getOptionId() == null) {
                     continue;
                 }
                 CodeFillInOption codeFillInOption = question.getFillInSpots().stream()

@@ -1,12 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import jakarta.persistence.DiscriminatorValue;
+import jakarta.persistence.Entity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.MultipleChoiceStatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
-import javax.persistence.DiscriminatorValue;
-import javax.persistence.Entity;
 import java.util.List;
 
 @Entity

@@ -1,11 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain;
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -63,35 +63,61 @@ public class QuestionSubmission {
         return "QuestionSubmission{" + "id=" + id + ", question=" + question + ", submitter=" + submitter + ", courseExecution=" + courseExecution + ", status=" + status.name() + "}";
     }
 
-    public Integer getId() { return id; }
+    public Integer getId() {
+        return id;
+    }
 
-    public Question getQuestion() { return question; }
+    public Question getQuestion() {
+        return question;
+    }
 
-    public void setQuestion(Question question) { this.question = question; }
+    public void setQuestion(Question question) {
+        this.question = question;
+    }
 
-    public Student getSubmitter() { return submitter; }
+    public Student getSubmitter() {
+        return submitter;
+    }
 
-    public void setSubmitter(Student submitter) { this.submitter = submitter; }
+    public void setSubmitter(Student submitter) {
+        this.submitter = submitter;
+    }
 
-    public CourseExecution getCourseExecution() { return courseExecution; }
+    public CourseExecution getCourseExecution() {
+        return courseExecution;
+    }
 
-    public void setCourseExecution(CourseExecution courseExecution) { this.courseExecution = courseExecution; }
+    public void setCourseExecution(CourseExecution courseExecution) {
+        this.courseExecution = courseExecution;
+    }
 
-    public Set<Review> getReviews() { return reviews; }
+    public Set<Review> getReviews() {
+        return reviews;
+    }
 
-    public void addReview(Review review) { this.reviews.add(review); }
+    public void addReview(Review review) {
+        this.reviews.add(review);
+    }
 
-    public boolean hasStudentRead() { return studentRead; }
+    public boolean hasStudentRead() {
+        return studentRead;
+    }
 
-    public void setStudentRead(boolean studentRead) { this.studentRead = studentRead; }
+    public void setStudentRead(boolean studentRead) {
+        this.studentRead = studentRead;
+    }
 
-    public boolean hasTeacherRead() { return teacherRead; }
+    public boolean hasTeacherRead() {
+        return teacherRead;
+    }
 
     public void setTeacherRead(boolean teacherRead) {
         this.teacherRead = teacherRead;
     }
 
-    public Status getStatus() { return status; }
+    public Status getStatus() {
+        return status;
+    }
 
     public void setStatus(Status status) {
         this.status = status;

@@ -14,7 +14,7 @@ import java.util.Set;
 @Repository
 @Transactional
 public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Integer> {
-    @Query(value = "SELECT * FROM quiz_answers qa WHERE qa.user_id = :userId AND qa.quiz_id = :quizId", nativeQuery = true)
+    @Query(value = "SELECT qa.* FROM quiz_answers qa WHERE qa.user_id = :userId AND qa.quiz_id = :quizId", nativeQuery = true)
     Optional<QuizAnswer> findQuizAnswer(Integer quizId, Integer userId);
 
     @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.completed = true AND qa.usedInStatistics = false")
@@ -30,7 +30,7 @@ public interface QuizAnswerRepository extends JpaRepository<QuizAnswer, Integer>
     Set<QuizAnswer> findNotAnsweredQuizAnswers(int quizId);
 
     @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.courseExecution.id = :courseExecutionId")
-    Set<QuizAnswer>  findByExecutionCourseId(int courseExecutionId);
+    Set<QuizAnswer> findByExecutionCourseId(int courseExecutionId);
 
     @Query(value = "SELECT qa FROM QuizAnswer qa WHERE qa.quiz.courseExecution.id = :courseExecutionId AND qa.student.id = :userId")
     Set<QuizAnswer> findByStudentAndCourseExecution(int userId, int courseExecutionId);

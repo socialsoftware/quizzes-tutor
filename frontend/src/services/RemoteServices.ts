@@ -84,10 +84,7 @@ export default class RemoteServices {
     password: string
   ): Promise<AuthDto> {
     return httpClient
-      .post(
-        `/auth/external?username=${username}&password=${password}`,
-        new AuthPasswordDto(username, password)
-      )
+      .post('/auth/external', new AuthPasswordDto(username, password))
       .then((response) => {
         return new AuthDto(response.data);
       })

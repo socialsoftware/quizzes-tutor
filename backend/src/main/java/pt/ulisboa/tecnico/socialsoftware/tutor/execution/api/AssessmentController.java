@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.api;
 
+import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService;
@@ -8,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.TopicConjunctionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 
-import javax.validation.Valid;
 import java.util.List;
 
 @RestController

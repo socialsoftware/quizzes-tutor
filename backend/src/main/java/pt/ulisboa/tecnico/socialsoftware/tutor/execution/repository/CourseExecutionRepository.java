@@ -13,7 +13,7 @@ import java.util.Set;
 @Repository
 @Transactional
 public interface CourseExecutionRepository extends JpaRepository<CourseExecution, Integer> {
-    @Query(value = "select * from course_executions ce where ce.acronym = :acronym and ce.academic_term = :academicTerm  and ce.type = :type", nativeQuery = true)
+    @Query(value = "select ce.* from course_executions ce where ce.acronym = :acronym and ce.academic_term = :academicTerm  and ce.type = :type", nativeQuery = true)
     Optional<CourseExecution> findByFields(String acronym, String academicTerm, String type);
 
     @Modifying

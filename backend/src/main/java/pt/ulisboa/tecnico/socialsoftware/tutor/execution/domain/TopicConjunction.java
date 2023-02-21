@@ -1,9 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain;
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 
-import javax.persistence.*;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;

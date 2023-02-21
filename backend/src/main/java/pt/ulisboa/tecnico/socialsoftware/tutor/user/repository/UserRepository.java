@@ -12,7 +12,7 @@ import java.util.Set;
 @Repository
 @Transactional
 public interface UserRepository extends JpaRepository<User, Integer> {
-    @Query(value = "select * from users u where u.key = :key", nativeQuery = true)
+    @Query(value = "select user from User user where user.key = :key")
     Optional<User> findByKey(Integer key);
 
     @Query(value = "select uc.course_executions_id from users_course_executions uc where uc.users_id = :userId", nativeQuery = true)

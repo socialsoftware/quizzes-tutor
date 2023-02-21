@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -8,7 +9,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInQuestionDt
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.CodeFillInSpotDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDetailsDto;
 
-import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
@@ -153,12 +153,11 @@ public class CodeFillInQuestion extends QuestionDetails {
     public String getAnswerRepresentation(List<Integer> selectedIds) {
         var result = new ArrayList<String>();
         var orderSpots = getFillInSpots().stream().sorted(Comparator.comparing(CodeFillInSpot::getSequence)).collect(Collectors.toList());
-        for (var spots: orderSpots) {
+        for (var spots : orderSpots) {
             var option = spots.getOptions().stream().filter(x -> selectedIds.contains(x.getId())).findAny();
-            if (option.isPresent()){
+            if (option.isPresent()) {
                 result.add(String.format("%s", option.get().getSequence() + 1));
-            }
-            else {
+            } else {
                 result.add("-");
             }
         }

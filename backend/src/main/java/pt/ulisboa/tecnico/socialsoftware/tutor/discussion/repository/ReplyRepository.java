@@ -12,7 +12,6 @@ import java.util.List;
 @Repository
 @Transactional
 public interface ReplyRepository extends JpaRepository<Reply, Integer> {
-
     @Query(value = "SELECT r.id,r.date,r.is_public,r.message,r.discussion_id,r.user_id FROM discussions d, replies r WHERE r.discussion_id = d.id  AND  d.question_id = :questionId AND r.is_public = true", nativeQuery = true)
     List<Reply> findClarificationsByQuestionId(int questionId);
 }

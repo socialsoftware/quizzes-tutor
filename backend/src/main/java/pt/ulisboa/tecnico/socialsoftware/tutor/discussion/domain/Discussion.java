@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain;
 
+import jakarta.persistence.*;
+import jakarta.validation.constraints.NotNull;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.QuestionAnswer;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
@@ -10,8 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
-import javax.persistence.*;
-import javax.validation.constraints.NotNull;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -26,24 +26,24 @@ public class Discussion implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @OneToOne(optional=false, fetch = FetchType.EAGER)
-    @JoinColumn(name="questionAnswer_id")
+    @OneToOne(optional = false, fetch = FetchType.EAGER)
+    @JoinColumn(name = "questionAnswer_id")
     private QuestionAnswer questionAnswer;
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="user_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "user_id")
     private Student student;
 
     @NotNull
-    @Column(name="message", columnDefinition="text")
+    @Column(name = "message", columnDefinition = "text")
     private String message;
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="question_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "question_id")
     private Question question;
 
-    @ManyToOne(fetch=FetchType.EAGER, optional=false)
-    @JoinColumn(name="course_execution_id")
+    @ManyToOne(fetch = FetchType.EAGER, optional = false)
+    @JoinColumn(name = "course_execution_id")
     private CourseExecution courseExecution;
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "discussion", orphanRemoval = true)
@@ -54,7 +54,8 @@ public class Discussion implements DomainEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean closed;
 
-    public Discussion(){}
+    public Discussion() {
+    }
 
     public Discussion(QuestionAnswer questionAnswer, DiscussionDto discussionDto) {
         checkConsistentDiscussion(discussionDto);
@@ -144,25 +145,25 @@ public class Discussion implements DomainEntity {
         return closed;
     }
 
-    public void addReply(Reply reply){
+    public void addReply(Reply reply) {
         this.replies.add(reply);
     }
 
-    public void removeReply(Reply reply){
+    public void removeReply(Reply reply) {
         this.replies.remove(reply);
     }
 
     private void checkConsistentDiscussion(DiscussionDto discussionDto) {
-        if (discussionDto.getMessage() == null || discussionDto.getMessage().trim().length() == 0){
+        if (discussionDto.getMessage() == null || discussionDto.getMessage().trim().length() == 0) {
             throw new TutorException(DISCUSSION_MISSING_MESSAGE);
         }
-        if (discussionDto.getDate() == null || discussionDto.getDate().trim().length() == 0){
+        if (discussionDto.getDate() == null || discussionDto.getDate().trim().length() == 0) {
             throw new TutorException(DISCUSSION_DATE_MISSING);
         }
     }
 
     public void changeStatus() {
-        if ((getReplies().isEmpty() || getReplies() == null) && !isClosed()){
+        if ((getReplies().isEmpty() || getReplies() == null) && !isClosed()) {
             throw new TutorException(CLOSE_NOT_POSSIBLE);
         }
 

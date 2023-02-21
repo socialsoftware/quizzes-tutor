@@ -13,7 +13,7 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface QuizRepository extends JpaRepository<Quiz, Integer> {
-    @Query(value = "SELECT * FROM quizzes q, course_executions c WHERE c.id = q.course_execution_id AND c.id = :executionId ORDER BY c.id", nativeQuery = true)
+    @Query(value = "SELECT q.* FROM quizzes q, course_executions c WHERE c.id = q.course_execution_id AND c.id = :executionId ORDER BY c.id", nativeQuery = true)
     List<Quiz> findQuizzesOfExecution(int executionId);
 
     @Query(value = "SELECT q FROM Quiz q WHERE q.courseExecution.id = :executionId AND q.qrCodeOnly = false AND q.type <> 'GENERATED' AND q.type <> 'TOURNAMENT' AND q.availableDate < :now AND (q.conclusionDate IS NULL OR q.conclusionDate > :now)")

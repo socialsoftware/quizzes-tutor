@@ -13,8 +13,8 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface AssessmentRepository extends JpaRepository<Assessment, Integer> {
-    @Query(value = "SELECT * FROM assessments a, course_executions c WHERE c.id = :courseExecutionId AND c.id = a.course_execution_id ORDER BY a.id", nativeQuery = true)
-    List<Assessment>  findByExecutionCourseId(int courseExecutionId);
+    @Query(value = "SELECT a.* FROM assessments a, course_executions c WHERE c.id = :courseExecutionId AND c.id = a.course_execution_id ORDER BY a.id", nativeQuery = true)
+    List<Assessment> findByExecutionCourseId(int courseExecutionId);
 
     @Query(value = "SELECT a.course_execution_id FROM assessments a WHERE a.id = :id", nativeQuery = true)
     Optional<Integer> findCourseExecutionIdById(int id);

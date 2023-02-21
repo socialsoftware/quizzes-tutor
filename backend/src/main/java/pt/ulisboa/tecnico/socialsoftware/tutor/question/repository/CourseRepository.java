@@ -11,6 +11,6 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface CourseRepository extends JpaRepository<Course, Integer> {
-    @Query(value = "select * from courses c where c.name = :name and c.type = :type", nativeQuery = true)
+    @Query(value = "select c.* from courses c where c.name = :name and c.type = :type", nativeQuery = true)
     Optional<Course> findByNameType(String name, String type);
 }

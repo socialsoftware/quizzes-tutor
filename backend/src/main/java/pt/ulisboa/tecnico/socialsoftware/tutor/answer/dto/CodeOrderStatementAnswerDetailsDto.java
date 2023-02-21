@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
+import jakarta.persistence.Transient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.CodeOrderQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 
-import javax.persistence.Transient;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;

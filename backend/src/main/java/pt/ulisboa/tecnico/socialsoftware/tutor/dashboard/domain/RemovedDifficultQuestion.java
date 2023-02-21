@@ -1,11 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain;
 
-import javax.persistence.Embeddable;
+import jakarta.persistence.Embeddable;
+
 import java.time.LocalDateTime;
 
 @Embeddable
 public class RemovedDifficultQuestion {
     private Integer questionId;
+
     private LocalDateTime removedDate;
 
     public RemovedDifficultQuestion() {

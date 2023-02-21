@@ -11,6 +11,7 @@ import org.springframework.security.crypto.password.PasswordEncoder
 import pt.ulisboa.tecnico.socialsoftware.tutor.admin.AdminService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.config.TutorPermissionEvaluator
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DashboardService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DifficultQuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.FailedAnswerService
@@ -57,6 +58,11 @@ class BeanConfiguration {
 
     @Value('${spring.mail.properties.mail.debug}')
     private String debug
+
+    @Bean
+    TutorPermissionEvaluator tutorPermissionEvaluator() {
+        return new TutorPermissionEvaluator();
+    }
 
     @Bean
     QuizService quizService() {

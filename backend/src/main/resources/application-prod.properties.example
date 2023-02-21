@@ -2,9 +2,10 @@
 spring.datasource.url=jdbc:postgresql://<DATABASE HOST>:<DATABASE PORT>/<DATABASE NAME>
 spring.datasource.username= <DATABASE USERNAME>
 spring.datasource.password= <DATABASE PASSWORD>
+spring.datasource.driver-class-name=org.postgresql.Driver
 
 ## Jpa
-spring.jpa.database-platform=org.hibernate.dialect.PostgreSQL9Dialect
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
 
 ## Resources
 figures.dir=${maven.basedir}/../data/images/

@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.auth;
 
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import jakarta.servlet.http.HttpServletRequest;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -12,7 +13,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepositor
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
-import javax.servlet.http.HttpServletRequest;
 import java.security.KeyPair;
 import java.security.KeyPairGenerator;
 import java.security.PrivateKey;
@@ -29,7 +29,9 @@ public class JwtTokenProvider {
     private static final Logger logger = LoggerFactory.getLogger(JwtTokenProvider.class);
 
     private AuthUserRepository authUserRepository;
+
     private static PublicKey publicKey;
+
     private static PrivateKey privateKey;
 
     public JwtTokenProvider(AuthUserRepository authUserRepository) {
@@ -59,7 +61,7 @@ public class JwtTokenProvider {
         claims.put("executions", courseExecution);
 
         Date now = new Date();
-        Date expiryDate = new Date(now.getTime() + 1000*60*60*24);
+        Date expiryDate = new Date(now.getTime() + 1000 * 60 * 60 * 24);
 
         return Jwts.builder()
                 .setClaims(claims)

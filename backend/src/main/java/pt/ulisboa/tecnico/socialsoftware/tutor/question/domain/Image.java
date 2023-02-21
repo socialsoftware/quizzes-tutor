@@ -1,11 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.question.domain;
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.ImageDto;
-
-import javax.persistence.*;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_URL_FOR_IMAGE;
 
@@ -22,10 +21,11 @@ public class Image implements DomainEntity {
     private Integer width;
 
     @OneToOne
-    @JoinColumn(name="question_id")
+    @JoinColumn(name = "question_id")
     private Question question;
 
-    public Image() {}
+    public Image() {
+    }
 
     public Image(ImageDto imageDto) {
         setUrl(imageDto.getUrl());

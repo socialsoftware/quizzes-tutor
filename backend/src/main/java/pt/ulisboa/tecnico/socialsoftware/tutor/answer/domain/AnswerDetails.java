@@ -1,11 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.AnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDetailsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
-
-import javax.persistence.*;
 
 @Entity
 @Table(name = "answer_details")

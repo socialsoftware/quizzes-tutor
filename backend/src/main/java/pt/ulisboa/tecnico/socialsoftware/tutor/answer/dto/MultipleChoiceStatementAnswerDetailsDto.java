@@ -1,10 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto;
 
+import jakarta.persistence.Transient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
-
-import javax.persistence.Transient;
 
 public class MultipleChoiceStatementAnswerDetailsDto extends StatementAnswerDetailsDto {
     private Integer optionId;

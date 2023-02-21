@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain;
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.DifficultQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage;
@@ -16,7 +17,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -243,14 +243,14 @@ public class CourseExecution implements DomainEntity {
     public int getNumberOfActiveTeachers() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(User.Role.TEACHER) && user.getAuthUser() != null && user.getAuthUser().isActive())
+                        user instanceof Teacher && user.getAuthUser() != null && user.getAuthUser().isActive())
                 .count();
     }
 
-    public int getNumberofInactiveTeachers() {
+    public int getNumberOfInactiveTeachers() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(User.Role.TEACHER) &&
+                        user instanceof Teacher &&
                                 (user.getAuthUser() == null || !user.getAuthUser().isActive()))
                 .count();
     }
@@ -258,14 +258,14 @@ public class CourseExecution implements DomainEntity {
     public int getNumberOfActiveStudents() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(User.Role.STUDENT) && user.getAuthUser() != null && user.getAuthUser().isActive())
+                        user instanceof Student && user.getAuthUser() != null && user.getAuthUser().isActive())
                 .count();
     }
 
     public int getNumberOfInactiveStudents() {
         return (int) this.users.stream()
                 .filter(user ->
-                        user.getRole().equals(User.Role.STUDENT) &&
+                        user instanceof Student &&
                                 (user.getAuthUser() == null || !user.getAuthUser().isActive()))
                 .count();
     }
@@ -280,14 +280,14 @@ public class CourseExecution implements DomainEntity {
 
     public Set<Student> getStudents() {
         return getUsers().stream()
-                .filter(user -> user.getRole().equals(User.Role.STUDENT))
+                .filter(Student.class::isInstance)
                 .map(Student.class::cast)
                 .collect(Collectors.toSet());
     }
 
     public Set<Teacher> getTeachers() {
         return getUsers().stream()
-                .filter(user -> user.getRole().equals(User.Role.TEACHER))
+                .filter(Teacher.class::isInstance)
                 .map(Teacher.class::cast)
                 .collect(Collectors.toSet());
     }

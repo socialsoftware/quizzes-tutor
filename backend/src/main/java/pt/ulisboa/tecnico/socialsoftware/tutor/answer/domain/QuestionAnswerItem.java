@@ -1,10 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
+import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementAnswerDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Entity
@@ -20,12 +20,18 @@ public abstract class QuestionAnswerItem {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
+
     @Column(name = "quiz_id")
     private Integer quizId;
+
     private String username;
+
     private Integer quizQuestionId;
+
     private LocalDateTime answerDate;
+
     private Integer timeTaken;
+
     private Integer timeToSubmission;
 
     protected QuestionAnswerItem() {

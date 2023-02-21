@@ -11,23 +11,39 @@ import java.util.List;
 
 public class CourseExecutionDto implements Serializable {
     private Course.Type courseExecutionType;
+
     private Course.Type courseType;
+
     private CourseExecution.Status status;
+
     private String endDate;
+
     private String academicTerm;
+
     private String acronym;
+
     private String name;
+
     private int courseExecutionId;
+
     private int courseId;
+
     private int numberOfQuestions;
+
     private int numberOfQuizzes;
+
     private int numberOfActiveStudents;
+
     private int numberOfInactiveStudents;
+
     private int numberOfActiveTeachers;
+
     private int numberOfInactiveTeachers;
+
     private List<UserDto> courseExecutionUsers;
 
-    public CourseExecutionDto() {}
+    public CourseExecutionDto() {
+    }
 
     public CourseExecutionDto(Course course) {
         this.courseId = course.getId();
@@ -45,7 +61,7 @@ public class CourseExecutionDto implements Serializable {
         this.name = courseExecution.getCourse().getName();
         this.status = courseExecution.getStatus();
         this.numberOfActiveTeachers = courseExecution.getNumberOfActiveTeachers();
-        this.numberOfInactiveTeachers = courseExecution.getNumberofInactiveTeachers();
+        this.numberOfInactiveTeachers = courseExecution.getNumberOfInactiveTeachers();
         this.numberOfActiveStudents = courseExecution.getNumberOfActiveStudents();
         this.numberOfInactiveStudents = courseExecution.getNumberOfInactiveStudents();
         this.numberOfQuizzes = courseExecution.getNumberOfQuizzes();

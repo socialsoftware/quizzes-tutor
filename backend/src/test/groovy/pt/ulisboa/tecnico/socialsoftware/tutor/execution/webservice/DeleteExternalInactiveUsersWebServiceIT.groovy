@@ -53,7 +53,7 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTestIT {
 
         when:
         response = restClient.post(
-                path: '/executions/' + courseExecution1.getId() + '/users/delete/',
+                path: '/executions/' + courseExecution1.getId() + '/users/delete',
                 body:
                         usersIdsList,
                 requestContentType: 'application/json'
