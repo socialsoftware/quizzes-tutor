@@ -61,7 +61,7 @@
     "babel-jest": "~27.5.1",
     "codecov": "~4.0.0-0",
     "compression-webpack-plugin": "~10.0.0",
-    "cypress": "^12.6.0",
+    "cypress": "^12.8.1",
     "eslint": "~8.14.0",
     "eslint-plugin-prettier": "~4.0.0",
     "eslint-plugin-vue": "~8.7.1",
@@ -75,7 +75,7 @@
     "vue-cli-plugin-vuetify": "~2.4.8",
     "vue-template-compiler": "~2.6.14",
     "vuetify-loader": "~1.7.2",
-    "webpack": "~5.75.0",
+    "webpack": "~5.76.0",
     "webpack-bundle-analyzer": "~4.7.0"
   },
   "eslintConfig": {
