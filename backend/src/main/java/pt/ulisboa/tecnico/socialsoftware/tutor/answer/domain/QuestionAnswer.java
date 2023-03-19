@@ -132,8 +132,10 @@ public class QuestionAnswer implements DomainEntity {
             throw new TutorException(QUESTION_ANSWER_HAS_DISCUSSION);
         }
 
-        this.quizQuestion.getQuestionAnswers().remove(this);
-        this.quizQuestion = null;
+        if (this.quizQuestion != null) {
+            this.quizQuestion.getQuestionAnswers().remove(this);
+            this.quizQuestion = null;
+        }
 
         if (this.answerDetails != null) {
             this.answerDetails.remove();

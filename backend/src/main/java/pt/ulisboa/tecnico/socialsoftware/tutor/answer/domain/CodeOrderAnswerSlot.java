@@ -59,8 +59,10 @@ public class CodeOrderAnswerSlot {
     }
 
     public void remove() {
-        this.codeOrderSlot.getOrderedSlots().remove(this);
-        this.codeOrderSlot = null;
+        if (this.codeOrderSlot != null) {
+            this.codeOrderSlot.getOrderedSlots().remove(this);
+            this.codeOrderSlot = null;
+        }
     }
 
     public boolean isCorrect() {
