@@ -30,7 +30,7 @@ class GetCourseExecutionsTest extends SpockTest {
         def result = courseService.getCourseExecutions(User.Role.ADMIN)
 
         then: "the returned data are correct"
-        result.size() == existingCourses
+        result.size() == existingCourseExecutions
         def tecnicoCourse = result.get(0)
         tecnicoCourse.name == COURSE_1_NAME
         tecnicoCourse.courseType == Course.Type.TECNICO
