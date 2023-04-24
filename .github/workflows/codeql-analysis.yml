@@ -69,6 +69,7 @@ jobs:
     - if: matrix.language == 'java'
       name: Build Java
       run: |
+        cd backend
         mvn compile
 
     - name: Perform CodeQL Analysis
