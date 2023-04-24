@@ -86,8 +86,7 @@ public class Tournament {
 
     public void setStartTime(LocalDateTime startTime) {
         // Added 2 minute as a buffer to take latency into consideration
-        if (startTime == null || (this.endTime != null && this.endTime.isBefore(startTime) ||
-                !DateHandler.now().isBefore(startTime.plusMinutes(2)))) {
+        if (startTime == null || (this.endTime != null && this.endTime.isBefore(startTime))) {
             throw new TutorException(TOURNAMENT_NOT_CONSISTENT, "startTime");
         }
 

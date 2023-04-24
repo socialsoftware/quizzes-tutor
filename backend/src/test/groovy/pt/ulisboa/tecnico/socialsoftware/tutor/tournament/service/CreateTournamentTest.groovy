@@ -46,10 +46,11 @@ class CreateTournamentTest extends TournamentTest {
         result.getCourseExecution() == externalCourseExecution
 
         where:
-        startTime            | endTime              | numberOfQuestions
-        STRING_DATE_TODAY    | STRING_DATE_TOMORROW | NUMBER_OF_QUESTIONS
-        STRING_DATE_TOMORROW | STRING_DATE_LATER    | NUMBER_OF_QUESTIONS
-        STRING_DATE_TOMORROW | STRING_DATE_LATER    | MAX_NUMBER_OF_QUESTIONS - 1
+        startTime             | endTime              | numberOfQuestions
+        STRING_DATE_YESTERDAY | STRING_DATE_TOMORROW | NUMBER_OF_QUESTIONS
+        STRING_DATE_TODAY     | STRING_DATE_TOMORROW | NUMBER_OF_QUESTIONS
+        STRING_DATE_TOMORROW  | STRING_DATE_LATER    | NUMBER_OF_QUESTIONS
+        STRING_DATE_TOMORROW  | STRING_DATE_LATER    | MAX_NUMBER_OF_QUESTIONS - 1
     }
 
     def "create a private tournament"() {
@@ -116,25 +117,24 @@ class CreateTournamentTest extends TournamentTest {
         tournamentRepository.count() == 0L
 
         where:
-        userType   | startTime             | endTime           | numberOfQuestions           | topicsType      || errorMessage
-        null       | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_MISSING_USER
-        "99"       | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "good one"      || USER_NOT_FOUND
-        "good one" | null                  | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_MISSING_START_TIME
-        "good one" | " "                   | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
-        "good one" | "bad"                 | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
-        "good one" | STRING_DATE_YESTERDAY | STRING_DATE_TODAY | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
-        "good one" | STRING_DATE_TOMORROW  | STRING_DATE_TODAY | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
-        "good one" | STRING_DATE_LATER     | STRING_DATE_TODAY | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
-        "good one" | STRING_DATE_TODAY     | null              | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_MISSING_END_TIME
-        "good one" | STRING_DATE_TODAY     | " "               | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
-        "good one" | STRING_DATE_TODAY     | "bad"             | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
-        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | null                        | "good one"      || TOURNAMENT_MISSING_NUMBER_OF_QUESTIONS
-        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | 0                           | "good one"      || TOURNAMENT_NOT_CONSISTENT
-        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | -1                          | "good one"      || TOURNAMENT_NOT_CONSISTENT
-        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | MAX_NUMBER_OF_QUESTIONS + 1 | "good one"      || TOURNAMENT_MAX_NUMBER_OF_QUESTIONS_EXCEEDED
-        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "null"          || TOURNAMENT_MISSING_TOPICS
-        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "empty"         || TOURNAMENT_MISSING_TOPICS
-        "good one" | STRING_DATE_TODAY     | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "missing topic" || TOPIC_NOT_FOUND
+        userType   | startTime            | endTime           | numberOfQuestions           | topicsType      || errorMessage
+        null       | STRING_DATE_TODAY    | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_MISSING_USER
+        "99"       | STRING_DATE_TODAY    | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "good one"      || USER_NOT_FOUND
+        "good one" | null                 | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_MISSING_START_TIME
+        "good one" | " "                  | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | "bad"                | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TOMORROW | STRING_DATE_TODAY | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_LATER    | STRING_DATE_TODAY | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TODAY    | null              | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_MISSING_END_TIME
+        "good one" | STRING_DATE_TODAY    | " "               | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TODAY    | "bad"             | NUMBER_OF_QUESTIONS         | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TODAY    | STRING_DATE_LATER | null                        | "good one"      || TOURNAMENT_MISSING_NUMBER_OF_QUESTIONS
+        "good one" | STRING_DATE_TODAY    | STRING_DATE_LATER | 0                           | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TODAY    | STRING_DATE_LATER | -1                          | "good one"      || TOURNAMENT_NOT_CONSISTENT
+        "good one" | STRING_DATE_TODAY    | STRING_DATE_LATER | MAX_NUMBER_OF_QUESTIONS + 1 | "good one"      || TOURNAMENT_MAX_NUMBER_OF_QUESTIONS_EXCEEDED
+        "good one" | STRING_DATE_TODAY    | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "null"          || TOURNAMENT_MISSING_TOPICS
+        "good one" | STRING_DATE_TODAY    | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "empty"         || TOURNAMENT_MISSING_TOPICS
+        "good one" | STRING_DATE_TODAY    | STRING_DATE_LATER | NUMBER_OF_QUESTIONS         | "missing topic" || TOPIC_NOT_FOUND
     }
 
     def "create tournament with existing user and topics from different courses"() {
