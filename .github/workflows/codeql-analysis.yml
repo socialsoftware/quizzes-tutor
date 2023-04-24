@@ -66,9 +66,15 @@ jobs:
     #    and modify them (or add more) to build your code if your project
     #    uses a compiled language
 
+    - uses: actions/setup-java@v3
+      with:
+        distribution: 'zulu'
+        java-version: 17
+    
     - if: matrix.language == 'java'
       name: Build Java
       run: |
+        cd backend
         mvn compile
 
     - name: Perform CodeQL Analysis
