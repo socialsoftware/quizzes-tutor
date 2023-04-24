@@ -59,6 +59,12 @@ export default new Vuex.Store({
       state.token = authResponse.token;
       localStorage.setItem('user', JSON.stringify(authResponse.user));
       state.user = authResponse.user;
+      localStorage.setItem('currentCourse', '');
+      state.currentCourse = null;
+      localStorage.setItem('statementQuiz', '');
+      state.statementQuiz = null;
+      localStorage.setItem('correctAnswers', '');
+      state.correctAnswers = [];
     },
     logout(state) {
       localStorage.setItem('token', '');
@@ -67,6 +73,10 @@ export default new Vuex.Store({
       state.user = null;
       localStorage.setItem('currentCourse', '');
       state.currentCourse = null;
+      localStorage.setItem('statementQuiz', '');
+      state.statementQuiz = null;
+      localStorage.setItem('correctAnswers', '');
+      state.correctAnswers = [];
     },
     error(state, errorMessage: string) {
       state.error = true;

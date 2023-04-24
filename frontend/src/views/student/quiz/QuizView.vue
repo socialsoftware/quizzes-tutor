@@ -293,6 +293,7 @@ export default class QuizView extends Vue {
         await this.$router.push({ name: 'quiz-results' });
       } else {
         this.quizSubmitted = true;
+        await this.$store.dispatch('statementQuiz', null);
       }
     } catch (error) {
       await this.$store.dispatch('error', error);

@@ -7,7 +7,7 @@ describe('Student walkthrough', () => {
   });
 
   afterEach(() => {
-    cy.contains('Logout').click();
+    cy.get('[data-cy="logoutButton"]').click({ force: true });
   });
 
   it('login submits a question', () => {

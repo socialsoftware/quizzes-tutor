@@ -528,6 +528,8 @@ Cypress.Commands.add('replyToDiscussion', (discussionContent, replyContent) => {
 
   cy.get('[data-cy="replyTextArea"]').should('be.visible').type(replyContent);
   cy.get('[data-cy="submitReplyButton"]').click();
+  cy.get('[data-cy="showDiscussionDialogCloseButton"]').click();
+
 });
 
 Cypress.Commands.add('deleteQuiz', (quizTitle) => {
