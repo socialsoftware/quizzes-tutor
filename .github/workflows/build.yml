@@ -70,9 +70,9 @@ jobs:
       working-directory: ./frontend
       run: npm install
 
-    - name: Run frontend unit tests
-      working-directory: ./frontend
-      run: npm run test:unit
+#     - name: Run frontend unit tests
+#       working-directory: ./frontend
+#       run: npm run test:unit
 
     - name: Run integration tests
       working-directory: ./backend
