@@ -234,7 +234,7 @@ export default class RemoteServices {
   static async deleteFailedAnswer(failedAnswerId: number) {
     return httpClient
       .delete(`/students/failedanswers/${failedAnswerId}`)
-      .then((response) => {
+      .then(() => {
         return;
       })
       .catch(async (error) => {
@@ -260,7 +260,7 @@ export default class RemoteServices {
   static async deleteDifficultQuestion(difficultQuestionId: number) {
     return httpClient
       .delete(`/students/difficultquestions/${difficultQuestionId}`)
-      .then((response) => {
+      .then(() => {
         return;
       })
       .catch(async (error) => {
@@ -988,7 +988,7 @@ export default class RemoteServices {
   static async submitAnswer(quizId: number, answer: StatementAnswer) {
     return httpClient
       .post(`/answers/${quizId}/submit`, answer)
-      .then((response) => {
+      .then(() => {
         return;
       })
       .catch(async (error) => {

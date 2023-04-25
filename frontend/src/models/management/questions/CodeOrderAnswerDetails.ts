@@ -29,7 +29,7 @@ export default class CodeOrderAnswerDetails extends AnswerDetails {
     );
   }
 
-  answerRepresentation(questionDetails: CodeOrderQuestionDetails): string {
+  answerRepresentation(): string {
     return (
       this.orderedSlots.map((x) => '' + (x.sequence || 0)).join(' | ') || '-'
     );

@@ -57,7 +57,6 @@
 import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import DifficultQuestion from '@/models/dashboard/DifficultQuestion';
-import Question from '@/models/management/Question';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import StudentViewDialog from '@/views/teacher/questions/StudentViewDialog.vue';
 

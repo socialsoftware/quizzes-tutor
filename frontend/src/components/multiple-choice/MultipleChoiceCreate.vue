@@ -56,7 +56,7 @@
 </template>
 
 <script lang="ts">
-import { Component, Model, PropSync, Vue, Watch } from 'vue-property-decorator';
+import { Component, PropSync, Vue } from 'vue-property-decorator';
 import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
 import Option from '@/models/management/Option';
 

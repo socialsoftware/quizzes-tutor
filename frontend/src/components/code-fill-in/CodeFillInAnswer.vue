@@ -118,21 +118,8 @@ export default class CodeFillInAnswer extends Vue {
     }, 100);
   }
   replaceDropdowns() {
-    var that = this;
-    function shuffle(arr: any) {
-      const array = arr.slice();
-      let currentIndex = array.length;
-      let temporaryValue;
-      let randomIndex;
-      while (currentIndex !== 0) {
-        randomIndex = Math.floor(Math.random() * currentIndex);
-        currentIndex -= 1;
-        temporaryValue = array[currentIndex];
-        array[currentIndex] = array[randomIndex];
-        array[randomIndex] = temporaryValue;
-      }
-      return array;
-    }
+    const that = this;
+
     function createOptionChild(
       optText: any,
       index: any,
@@ -167,18 +154,20 @@ export default class CodeFillInAnswer extends Vue {
       });
     }
     function getOptions(name: number, options: CodeFillInSpotStatement[]) {
-      const result = options.find((el) => el.sequence === name);
-      return result;
+      return options.find((el) => el.sequence === name);
     }
-    document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
+    document.querySelectorAll('.cm-custom-drop-down').forEach((e) => {
       const d = document.createElement('select');
       d.className = 'code-dropdown';
       d.onchange = this.selectedANewOption;
       d.name = e.innerHTML;
       e.parentNode?.replaceChild(d, e);
       let match = e.innerHTML.match(/\d+/);
-      var num = match ? match[0] : 0;
-      var something = getOptions(Number(num), this.questionDetails.fillInSpots);
+      const num = match ? match[0] : 0;
+      const something = getOptions(
+        Number(num),
+        this.questionDetails.fillInSpots
+      );
       addOptions(d, something);
     });
   }
@@ -186,18 +175,18 @@ export default class CodeFillInAnswer extends Vue {
     return convertMarkDown(text, image);
   }
   selectedANewOption(event: Event) {
-    var num = Number((event.target as any).name.match(/\d+/)[0]);
-    var selectIndex = (event.target as any).selectedIndex - 1;
-    var dataQuestion = this.questionDetails.fillInSpots.find(
+    const num = Number((event.target as any).name.match(/\d+/)[0]);
+    const selectIndex = (event.target as any).selectedIndex - 1;
+    const dataQuestion = this.questionDetails.fillInSpots.find(
       (el) => el.sequence === num
     );
-    var data = this.answerDetailsSynced.selectedOptions?.find(
+    const data = this.answerDetailsSynced.selectedOptions?.find(
       (el) => el.sequence === num
     );
     if (data) {
       data.optionId = dataQuestion?.options[selectIndex]?.optionId;
     } else {
-      var newData = new CodeFillInSpotAnswerStatement();
+      const newData = new CodeFillInSpotAnswerStatement();
       newData.optionId = dataQuestion?.options[selectIndex]?.optionId;
       newData.sequence = num;
       this.answerDetailsSynced.selectedOptions.push(newData);

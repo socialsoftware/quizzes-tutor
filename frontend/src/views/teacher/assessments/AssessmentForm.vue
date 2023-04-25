@@ -182,14 +182,13 @@
 </template>
 
 <script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+import { Component, Prop, Vue } from 'vue-property-decorator';
 import RemoteServices from '@/services/RemoteServices';
 import Assessment from '@/models/management/Assessment';
 import Question from '@/models/management/Question';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import TopicConjunction from '@/models/management/TopicConjunction';
-import { _ } from 'vue-underscore';
 import Topic from '@/models/management/Topic';
 import ShowQuestionListDialog from '@/views/teacher/questions/ShowQuestionListDialog.vue';
 

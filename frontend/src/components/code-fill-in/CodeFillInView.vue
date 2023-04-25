@@ -80,7 +80,7 @@ export default class ShowCodeFillInQuestion extends Vue {
   }
 
   replaceDropdowns() {
-    document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
+    document.querySelectorAll('.cm-custom-drop-down').forEach((e) => {
       const d = document.createElement('select');
       d.className = 'code-dropdown';
       d.name = e.innerHTML;

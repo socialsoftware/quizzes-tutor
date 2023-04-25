@@ -126,30 +126,33 @@ export default class CodeFillInAnswer extends Vue {
       const result = options.find((el) => el.sequence === name);
       return result || new StatementFillInSpot();
     }
-    document.querySelectorAll('.cm-custom-drop-down').forEach((e, index) => {
+    document.querySelectorAll('.cm-custom-drop-down').forEach((e) => {
       const d = document.createElement('select');
       d.className = 'code-dropdown';
       d.name = e.innerHTML;
       e.parentNode?.replaceChild(d, e);
       const match = e.innerHTML.match(/\d+/);
-      var num = Number(match ? match[0] : 0);
+      const num = Number(match ? match[0] : 0);
       const option = document.createElement('option');
-      var something = getOptions(Number(num), this.questionDetails.fillInSpots);
-      var optionAnswered = this.answerDetailsSynced.selectedOptions.find(
+      const something = getOptions(
+        Number(num),
+        this.questionDetails.fillInSpots
+      );
+      const optionAnswered = this.answerDetailsSynced.selectedOptions.find(
         (el) => el.sequence === num
       );
-      var optionAnsweredQuestion =
+      const optionAnsweredQuestion =
         optionAnswered &&
         something.options.find(
           (el) => el.optionId === optionAnswered?.optionId
         );
-      var correctOption = this.correctAnswerDetails.correctOptions.find(
+      const correctOption = this.correctAnswerDetails.correctOptions.find(
         (el) => el.sequence === num
       );
-      var correctOptionQuestion = something.options.find(
+      const correctOptionQuestion = something.options.find(
         (el) => el.optionId === correctOption?.optionId
       );
-      var text;
+      let text;
       if (
         optionAnswered &&
         optionAnswered.optionId === correctOption?.optionId

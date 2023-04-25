@@ -8,14 +8,7 @@
 </template>
 
 <script lang="ts">
-import {
-  Component,
-  Vue,
-  Watch,
-  Prop,
-  PropSync,
-  Emit,
-} from 'vue-property-decorator';
+import { Component, Vue, Watch, Prop, PropSync } from 'vue-property-decorator';
 
 import { codemirror } from 'vue-codemirror';
 import CodeMirror from 'codemirror';

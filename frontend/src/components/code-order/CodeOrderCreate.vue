@@ -43,7 +43,7 @@
 
 <script lang="ts">
 import CodeOrderQuestionDetails from '@/models/management/questions/CodeOrderQuestionDetails';
-import { Component, Vue, Prop, Watch, PropSync } from 'vue-property-decorator';
+import { Component, Vue, Prop, PropSync } from 'vue-property-decorator';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 import CodeOrderSlotEditor from '@/components/code-order/CodeOrderSlotEditor.vue';
 import draggable from 'vuedraggable';
