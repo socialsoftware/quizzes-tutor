@@ -18,7 +18,7 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     Optional<Question> findQuestionWithCourseById(int id);
 
     @Query(value = "SELECT q.* FROM questions q WHERE q.course_id = :courseId", nativeQuery = true)
-    List<Question> findQuestions(int courseId);
+    List<Question> findCourseQuestions(int courseId);
 
     @Query(value = "SELECT question FROM Question question WHERE question.course.id = :courseId AND (question.title LIKE %:content% OR question.content LIKE %:content%)")
     Set<Question> findQuestionsByContent(int courseId, String content);

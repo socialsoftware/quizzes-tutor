@@ -194,7 +194,7 @@ public class DemoService {
                 });
 
         // remove questions except to keep and that are not submitted
-        for (Question question : questionRepository.findQuestions(courseExecutionService.getDemoCourse().getCourseId())
+        for (Question question : questionRepository.findCourseQuestions(courseExecutionService.getDemoCourse().getCourseId())
                 .stream()
                 .filter(question -> !questions2Keep.contains(question.getId()) && questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId()) == null)
                 .collect(Collectors.toList())) {
@@ -240,7 +240,7 @@ public class DemoService {
         softwareEngineeringTopic.setCourse(courseRepository.findById(courseId).orElseThrow(() -> new TutorException(ErrorMessage.COURSE_NOT_FOUND)));
         topicRepository.save(softwareEngineeringTopic);
 
-        List<Question> questions = questionRepository.findQuestions(courseId);
+        List<Question> questions = questionRepository.findCourseQuestions(courseId);
         questions.forEach(question -> {
             question.setStatus(Question.Status.AVAILABLE);
             question.addTopic(softwareEngineeringTopic);

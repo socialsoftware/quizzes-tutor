@@ -538,6 +538,14 @@ export default class RemoteServices {
       });
   }
 
+  static async removeCourseNonQuizQuestions(courseId: number | undefined) {
+    return httpClient
+      .delete(`/admin/courses/${courseId}/removeCourseNonQuizQuestions`)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getCourseStudents(course: Course) {
     return httpClient
       .get(`/executions/${course.courseExecutionId}/students`)

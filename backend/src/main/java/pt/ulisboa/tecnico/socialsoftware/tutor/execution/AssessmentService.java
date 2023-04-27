@@ -72,7 +72,7 @@ public class AssessmentService {
 
         CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
 
-        List<Question> questions = questionRepository.findQuestions(courseExecution.getCourse().getId());
+        List<Question> questions = questionRepository.findCourseQuestions(courseExecution.getCourse().getId());
 
         Set<String> topicConjunctionTopics = new HashSet<>();
         topicConjunctions.forEach(topicConjunctionDto -> {
@@ -162,7 +162,7 @@ public class AssessmentService {
             topicConjunction.setAssessment(assessment);
             topicConjunctionRepository.save(topicConjunction);
         }
-        
+
         return new AssessmentDto(assessment);
     }
 
@@ -217,7 +217,7 @@ public class AssessmentService {
             } else {
                 CourseExecution courseExecution = courseExecutionRepository.findById(executionId).orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND));
 
-                return questionRepository.findQuestions(courseExecution.getCourse().getId()).stream()
+                return questionRepository.findCourseQuestions(courseExecution.getCourse().getId()).stream()
                         .filter(question -> question.getTopics().isEmpty())
                         .map(QuestionDto::new)
                         .collect(Collectors.toList());

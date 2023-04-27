@@ -56,7 +56,7 @@ class ImportExportMultipleChoiceQuestionsTest extends SpockTest {
         questionService.importQuestionsFromXml(questionsXml)
 
         then:
-        questionRepository.findQuestions(externalCourse.getId()).size() == 1
+        questionRepository.findCourseQuestions(externalCourse.getId()).size() == 1
         def questionResult = questionService.findQuestions(externalCourse.getId()).get(0)
         questionResult.getKey() == null
         questionResult.getTitle() == QUESTION_1_TITLE

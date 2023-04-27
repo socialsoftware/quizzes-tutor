@@ -42,7 +42,7 @@ class ImportExportCodeOrderQuestionsTest extends SpockTest {
         CodeOrderSlotDto slotDto3 = new CodeOrderSlotDto()
         slotDto3.content = OPTION_1_CONTENT;
         slotDto3.order = 3;
-        
+
         CodeOrderSlotDto slotDto4 = new CodeOrderSlotDto()
         slotDto4.content = OPTION_1_CONTENT;
         slotDto4.order = null;
@@ -51,7 +51,7 @@ class ImportExportCodeOrderQuestionsTest extends SpockTest {
         codeQuestionDto.getCodeOrderSlots().add(slotDto2)
         codeQuestionDto.getCodeOrderSlots().add(slotDto3)
         codeQuestionDto.getCodeOrderSlots().add(slotDto4)
-        
+
         questionDto.setQuestionDetailsDto(codeQuestionDto)
 
         questionId = questionService.createQuestion(externalCourse.getId(), questionDto).getId()
@@ -68,7 +68,7 @@ class ImportExportCodeOrderQuestionsTest extends SpockTest {
         questionService.importQuestionsFromXml(questionsXml)
 
         then:
-        questionRepository.findQuestions(externalCourse.getId()).size() == 1
+        questionRepository.findCourseQuestions(externalCourse.getId()).size() == 1
         def questionResult = questionService.findQuestions(externalCourse.getId()).get(0)
         questionResult.getKey() == null
         questionResult.getTitle() == QUESTION_1_TITLE

@@ -101,6 +101,18 @@
             <v-icon
               class="mr-2 action-button"
               v-on="on"
+              @click="removeCourseNonQuizQuestions(item)"
+              color="red"
+              >fas fa-eraser</v-icon
+            >
+          </template>
+          <span>Delete Course Non Quiz Questions</span>
+        </v-tooltip>
+        <v-tooltip bottom>
+          <template v-slot:activator="{ on }">
+            <v-icon
+              class="mr-2 action-button"
+              v-on="on"
               @click="deleteCourse(item)"
               color="red"
               data-cy="deleteCourse"
@@ -324,6 +336,20 @@ export default class CoursesView extends Vue {
 
   isExternalCourse(course: Course) {
     return course.courseExecutionType === 'EXTERNAL';
+  }
+
+  async removeCourseNonQuizQuestions(course: Course) {
+    if (
+      confirm(
+        'Are you sure you want to delete the questions that do not belong to any quiz?'
+      )
+    ) {
+      try {
+        await RemoteServices.removeCourseNonQuizQuestions(course.courseId);
+      } catch (error) {
+        await this.$store.dispatch('error', error);
+      }
+    }
   }
 
   async deleteCourse(courseToDelete: Course) {

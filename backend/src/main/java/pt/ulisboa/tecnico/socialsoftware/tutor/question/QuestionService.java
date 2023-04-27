@@ -110,7 +110,7 @@ public class QuestionService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<QuestionDto> findQuestions(int courseId) {
-        return questionRepository.findQuestions(courseId).stream().filter(q -> !q.isInSubmission()).map(QuestionDto::new).collect(Collectors.toList());
+        return questionRepository.findCourseQuestions(courseId).stream().filter(q -> !q.isInSubmission()).map(QuestionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(
@@ -125,7 +125,7 @@ public class QuestionService {
 
         Collection<Question> questions;
         if (query.getContent().trim().length() == 0) {
-            questions = questionRepository.findQuestions(courseId);
+            questions = questionRepository.findCourseQuestions(courseId);
         } else {
             questions = questionRepository.findQuestionsByContent(courseId, query.getContent().trim());
             questions.addAll(optionRepository.findQuestionsByOptionContent(courseId, query.getContent().trim()));
