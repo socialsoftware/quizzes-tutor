@@ -10,7 +10,7 @@ import org.springframework.security.access.expression.method.MethodSecurityExpre
 import org.springframework.security.config.annotation.method.configuration.EnableMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityCustomizer;
+import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
@@ -31,36 +31,31 @@ public class WebSecurityConfig {
     private String activeProfile;
 
     @Bean
-    public WebSecurityCustomizer webSecurityCustomizer() {
-        return web -> web.ignoring().requestMatchers(new AntPathRequestMatcher("/resources/**"));
-    }
-
-    @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
         if (!activeProfile.equals("prod")) {
             http
-                    .httpBasic().disable()
-                    .csrf().disable()
-                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
-                    .authorizeHttpRequests()
-                    .anyRequest().permitAll()
-                    .and()
+                    .httpBasic(AbstractHttpConfigurer::disable)
+                    .csrf(AbstractHttpConfigurer::disable)
+                    .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests((authorizeHttpRequests) ->
+                            authorizeHttpRequests
+                                    .requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll()
+                                    .anyRequest().permitAll())
                     .apply(new JwtConfigurer(jwtTokenProvider));
             return http.build();
         } else {
             http
-                    .httpBasic().disable()
-                    .csrf().disable()
-                    .sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS)
-                    .and()
-                    .authorizeHttpRequests()
-                    .requestMatchers(new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name())).permitAll()
-                    .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
-                    .requestMatchers(new AntPathRequestMatcher("/users/register/confirm")).permitAll()
-                    .requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
-                    .anyRequest().authenticated()
-                    .and()
+                    .httpBasic(AbstractHttpConfigurer::disable)
+                    .csrf(AbstractHttpConfigurer::disable)
+                    .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests((authorizeHttpRequests) ->
+                            authorizeHttpRequests
+                                    .requestMatchers(new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name())).permitAll()
+                                    .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
+                                    .requestMatchers(new AntPathRequestMatcher("/users/register/confirm")).permitAll()
+                                    .requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
+                                    .requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll()
+                                    .anyRequest().authenticated())
                     .apply(new JwtConfigurer(jwtTokenProvider));
             return http.build();
         }
