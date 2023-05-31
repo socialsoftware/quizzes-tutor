@@ -17,43 +17,45 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest {
     def student1
     def student2
     def teacher
-    def question
-    def questionSubmission
+    def questions = new Question[3]
 
     def setup() {
         createExternalCourseAndExecution()
 
         student1 = new Student(USER_1_NAME, USER_1_USERNAME, USER_1_EMAIL,
-                 false, AuthUser.Type.TECNICO)
+                false, AuthUser.Type.TECNICO)
         userRepository.save(student1)
         student2 = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL,
-                 false, AuthUser.Type.TECNICO)
+                false, AuthUser.Type.TECNICO)
         userRepository.save(student2)
         teacher = new Teacher(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL,
-                 false, AuthUser.Type.TECNICO)
+                false, AuthUser.Type.TECNICO)
         userRepository.save(teacher)
-        question = new Question()
-        question.setKey(1)
-        question.setTitle(QUESTION_1_TITLE)
-        question.setContent(QUESTION_1_CONTENT)
-        question.setCourse(externalCourse)
-        question.setStatus(Question.Status.SUBMITTED)
-        questionRepository.save(question)
-        def questionDetails = new MultipleChoiceQuestion()
-        question.setQuestionDetails(questionDetails)
-        questionDetailsRepository.save(questionDetails)
-        def optionOK = new Option()
-        optionOK.setContent(OPTION_1_CONTENT)
-        optionOK.setCorrect(true)
-        optionOK.setSequence(0)
-        optionOK.setQuestionDetails(questionDetails)
-        optionRepository.save(optionOK)
+
+        for (int i in 0..2) {
+            questions[i] = new Question()
+            questions[i].setKey(i + 1)
+            questions[i].setTitle(QUESTION_1_TITLE)
+            questions[i].setContent(QUESTION_1_CONTENT)
+            questions[i].setCourse(externalCourse)
+            questions[i].setStatus(Question.Status.SUBMITTED)
+            questionRepository.save(questions[i])
+            def questionDetails = new MultipleChoiceQuestion()
+            questions[i].setQuestionDetails(questionDetails)
+            questionDetailsRepository.save(questionDetails)
+            def optionOK = new Option()
+            optionOK.setContent(OPTION_1_CONTENT)
+            optionOK.setCorrect(true)
+            optionOK.setSequence(0)
+            optionOK.setQuestionDetails(questionDetails)
+            optionRepository.save(optionOK)
+        }
     }
 
-    def "get question submissions with 1 submitted question"(){
+    def "get question submissions with 1 submitted question"() {
         given: "a question submission"
         def questionSubmission = new QuestionSubmission()
-        questionSubmission.setQuestion(question)
+        questionSubmission.setQuestion(questions[0])
         questionSubmission.setSubmitter(student1)
         questionSubmission.setCourseExecution(externalCourseExecution)
         questionSubmission.setStatus(QuestionSubmission.Status.IN_REVIEW)
@@ -69,15 +71,15 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest {
         def submission = result.get(0)
 
         submission.getId() != null
-        submission.getQuestion().getId() == question.getId()
+        submission.getQuestion().getId() == questions[0].getId()
         submission.getSubmitterId() == student1.getId()
         submission.getCourseExecutionId() == externalCourseExecution.getId()
     }
 
-    def "get question submissions with 3 submitted questions"(){
+    def "get question submissions with 3 submitted questions"() {
         given: "a question submission"
         def questionSubmission1 = new QuestionSubmission()
-        questionSubmission1.setQuestion(question)
+        questionSubmission1.setQuestion(questions[0])
         questionSubmission1.setSubmitter(student1)
         questionSubmission1.setCourseExecution(externalCourseExecution)
         questionSubmission1.setStatus(QuestionSubmission.Status.IN_REVIEW)
@@ -87,7 +89,7 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest {
 
         and: "another question submission"
         def questionSubmission2 = new QuestionSubmission()
-        questionSubmission2.setQuestion(question)
+        questionSubmission2.setQuestion(questions[1])
         questionSubmission2.setSubmitter(student1)
         questionSubmission2.setCourseExecution(externalCourseExecution)
         questionSubmission2.setStatus(QuestionSubmission.Status.IN_REVIEW)
@@ -97,7 +99,7 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest {
 
         and: "another question submission"
         def questionSubmission3 = new QuestionSubmission()
-        questionSubmission3.setQuestion(question)
+        questionSubmission3.setQuestion(questions[2])
         questionSubmission3.setSubmitter(student2)
         questionSubmission3.setCourseExecution(externalCourseExecution)
         questionSubmission3.setStatus(QuestionSubmission.Status.IN_REVIEW)
@@ -117,9 +119,9 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest {
         submission1.getId() != null
         submission2.getId() != null
         submission3.getId() != null
-        submission1.getQuestion().getId() == question.getId()
-        submission2.getQuestion().getId() == question.getId()
-        submission3.getQuestion().getId() == question.getId()
+        submission1.getQuestion().getId() == questions[0].getId()
+        submission2.getQuestion().getId() == questions[1].getId()
+        submission3.getQuestion().getId() == questions[2].getId()
         submission1.getSubmitterId() == student1.getId()
         submission2.getSubmitterId() == student1.getId()
         submission3.getSubmitterId() == student2.getId()
@@ -128,7 +130,7 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest {
         submission3.getCourseExecutionId() == externalCourseExecution.getId()
     }
 
-    def "get question submissions with no submitted questions"(){
+    def "get question submissions with no submitted questions"() {
         when:
         def result = questionSubmissionService.getCourseExecutionQuestionSubmissions(externalCourseExecution.getId())
 

@@ -16,7 +16,7 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest {
     def student1
     def student2
     def student3
-    def question
+    def questions = new Question[4]
 
     def setup() {
         createExternalCourseAndExecution()
@@ -28,61 +28,64 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest {
                 false, AuthUser.Type.TECNICO)
         userRepository.save(student2)
         student3 = new Student(USER_3_NAME, USER_3_USERNAME, USER_3_EMAIL,
-               false, AuthUser.Type.TECNICO)
+                false, AuthUser.Type.TECNICO)
         userRepository.save(student3)
         externalCourseExecution.addUser(student1)
         externalCourseExecution.addUser(student2)
         externalCourseExecution.addUser(student3)
-        question = new Question()
-        question.setKey(1)
-        question.setTitle(QUESTION_1_TITLE)
-        question.setContent(QUESTION_1_CONTENT)
-        question.setCourse(externalCourse)
-        question.setStatus(Question.Status.SUBMITTED)
-        def questionDetails = new MultipleChoiceQuestion()
-        question.setQuestionDetails(questionDetails)
-        questionDetailsRepository.save(questionDetails)
-        def optionOK = new Option()
-        optionOK.setContent(OPTION_1_CONTENT)
-        optionOK.setCorrect(true)
-        optionOK.setSequence(0)
-        optionOK.setQuestionDetails(questionDetails)
-        optionRepository.save(optionOK)
-        questionRepository.save(question)
+        for (int i in 0..3) {
+            questions[i] = new Question()
+            questions[i].setKey(i + 1)
+            questions[i].setTitle(QUESTION_1_TITLE)
+            questions[i].setContent(QUESTION_1_CONTENT)
+            questions[i].setCourse(externalCourse)
+            questions[i].setStatus(Question.Status.SUBMITTED)
+            def questionDetails = new MultipleChoiceQuestion()
+            questions[i].setQuestionDetails(questionDetails)
+            questionDetailsRepository.save(questionDetails)
+            def optionOK = new Option()
+            optionOK.setContent(OPTION_1_CONTENT)
+            optionOK.setCorrect(true)
+            optionOK.setSequence(0)
+            optionOK.setQuestionDetails(questionDetails)
+            optionRepository.save(optionOK)
+            questionRepository.save(questions[i])
+        }
     }
 
     def "get all student question submissions info"() {
         given: "questionSubmissions"
         def questionSubmission1 = new QuestionSubmission()
-        questionSubmission1.setQuestion(question)
+        questionSubmission1.setQuestion(questions[0])
         questionSubmission1.setSubmitter(student1)
         questionSubmission1.setCourseExecution(externalCourseExecution)
         questionSubmission1.setStatus(QuestionSubmission.Status.IN_REVIEW)
         student1.addQuestionSubmission(questionSubmission1)
         questionSubmissionRepository.save(questionSubmission1)
         def questionSubmission2 = new QuestionSubmission()
-        questionSubmission2.setQuestion(question)
+        questionSubmission2.setQuestion(questions[1])
         questionSubmission2.setSubmitter(student2)
         questionSubmission2.setCourseExecution(externalCourseExecution)
         questionSubmission2.setStatus(QuestionSubmission.Status.IN_REVIEW)
         student2.addQuestionSubmission(questionSubmission2)
         questionSubmissionRepository.save(questionSubmission2)
         def questionSubmission3 = new QuestionSubmission()
-        questionSubmission3.setQuestion(question)
+        questionSubmission3.setQuestion(questions[2])
         questionSubmission3.setSubmitter(student3)
         questionSubmission3.setCourseExecution(externalCourseExecution)
         questionSubmission3.setStatus(QuestionSubmission.Status.IN_REVIEW)
         student3.addQuestionSubmission(questionSubmission3)
         questionSubmissionRepository.save(questionSubmission3)
         def questionSubmission4 = new QuestionSubmission()
-        questionSubmission4.setQuestion(question)
+        questionSubmission4.setQuestion(questions[3])
         questionSubmission4.setSubmitter(student3)
         questionSubmission4.setCourseExecution(externalCourseExecution)
         questionSubmission4.setStatus(QuestionSubmission.Status.IN_REVIEW)
         student3.addQuestionSubmission(questionSubmission4)
         questionSubmissionRepository.save(questionSubmission4)
 
-        when: def result = questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(externalCourseExecution.getId())
+        when:
+        def result = questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(externalCourseExecution.getId())
 
         then:
         result.size() == 3
@@ -108,7 +111,8 @@ class GetAllStudentsQuestionSubmissionsInfoTest extends SpockTest {
     }
 
     def "get all student question submissions info with no question submissions"() {
-        when: def result = questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(externalCourseExecution.getId())
+        when:
+        def result = questionSubmissionService.getAllStudentsQuestionSubmissionsInfo(externalCourseExecution.getId())
 
         then:
         result.size() == 3

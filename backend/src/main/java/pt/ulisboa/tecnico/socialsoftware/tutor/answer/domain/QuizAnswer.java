@@ -1,6 +1,8 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer.domain;
 
 import jakarta.persistence.*;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
@@ -30,6 +32,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QU
                 @Index(name = "quiz_answers_indx_3", columnList = "quiz_id, user_id")
         })
 public class QuizAnswer implements DomainEntity {
+    private static final Logger logger = LoggerFactory.getLogger(QuizAnswer.class);
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
@@ -219,6 +223,8 @@ public class QuizAnswer implements DomainEntity {
             if (currentSequenceQuestion < questionIds.size() - 1
                     && questionIds.get(currentSequenceQuestion + 1).equals(questionId)) {
                 currentSequenceQuestion = currentSequenceQuestion + 1;
+
+                logger.info("Student {} for quiz answer {} get question id {} with sequence {}", getStudent().getUsername(), getId(), questionId, currentSequenceQuestion);
             } else if (!questionIds.get(currentSequenceQuestion).equals(questionId)) {
                 throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE,
                         getStudent().getUsername() + " tried to get question with ID "

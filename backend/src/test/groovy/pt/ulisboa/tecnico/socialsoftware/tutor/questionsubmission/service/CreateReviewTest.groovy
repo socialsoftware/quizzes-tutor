@@ -71,12 +71,12 @@ class CreateReviewTest extends SpockTest {
         question.getStatus() == questionStatus
 
         where:
-        type                               || submissionStatus                       || questionStatus
-        Review.Type.APPROVE.name()         || QuestionSubmission.Status.APPROVED     || Question.Status.AVAILABLE
-        Review.Type.REJECT.name()          || QuestionSubmission.Status.REJECTED     || Question.Status.SUBMITTED
-        Review.Type.REQUEST_CHANGES.name() || QuestionSubmission.Status.IN_REVISION  || Question.Status.SUBMITTED
-        Review.Type.REQUEST_REVIEW.name()  || QuestionSubmission.Status.IN_REVIEW    || Question.Status.SUBMITTED
-        Review.Type.COMMENT.name()         || QuestionSubmission.Status.IN_REVIEW    || Question.Status.SUBMITTED
+        type                               || submissionStatus                      || questionStatus
+        Review.Type.APPROVE.name()         || QuestionSubmission.Status.APPROVED    || Question.Status.AVAILABLE
+        Review.Type.REJECT.name()          || QuestionSubmission.Status.REJECTED    || Question.Status.SUBMITTED
+        Review.Type.REQUEST_CHANGES.name() || QuestionSubmission.Status.IN_REVISION || Question.Status.SUBMITTED
+        Review.Type.REQUEST_REVIEW.name()  || QuestionSubmission.Status.IN_REVIEW   || Question.Status.SUBMITTED
+        Review.Type.COMMENT.name()         || QuestionSubmission.Status.IN_REVIEW   || Question.Status.SUBMITTED
     }
 
     def "create review for question submission that has already been reviewed"() {
@@ -100,10 +100,18 @@ class CreateReviewTest extends SpockTest {
     }
 
     @Unroll
-    def "invalid arguments: comment=#comment | hasQuestionSubmission=#hasQuestionSubmission | hasUser=#hasUser | type=#type || errorMessage"(){
-        given: "a questionSubmission"
+    def "invalid arguments: comment=#comment | hasQuestionSubmission=#hasQuestionSubmission | hasUser=#hasUser | type=#type || errorMessage"() {
+        given: "another question"
+        def anotherQuestion = new Question()
+        anotherQuestion.setKey(2)
+        anotherQuestion.setTitle(QUESTION_2_TITLE)
+        anotherQuestion.setContent(QUESTION_2_CONTENT)
+        anotherQuestion.setCourse(externalCourse)
+        anotherQuestion.setStatus(Question.Status.SUBMITTED)
+        questionRepository.save(anotherQuestion)
+        and: "a questionSubmission"
         def submission = new QuestionSubmission()
-        submission.setQuestion(question)
+        submission.setQuestion(anotherQuestion)
         submission.setSubmitter(student)
         submission.setCourseExecution(externalCourseExecution)
         submission.setStatus(QuestionSubmission.Status.IN_REVIEW)
@@ -123,13 +131,13 @@ class CreateReviewTest extends SpockTest {
         exception.errorMessage == errorMessage
 
         where:
-        comment           | hasQuestionSubmission  | hasUser  | type                       || errorMessage
-        null              | true                   | true     | Review.Type.APPROVE.name() || REVIEW_MISSING_COMMENT
-        ' '               | true                   | true     | Review.Type.APPROVE.name() || REVIEW_MISSING_COMMENT
-        REVIEW_1_COMMENT  | false                  | true     | Review.Type.APPROVE.name() || REVIEW_MISSING_QUESTION_SUBMISSION
-        REVIEW_1_COMMENT  | true                   | false    | Review.Type.APPROVE.name() || REVIEW_MISSING_USER
-        REVIEW_1_COMMENT  | true                   | true     | null                       || INVALID_TYPE_FOR_REVIEW
-        REVIEW_1_COMMENT  | true                   | true     | 'INVALID'                  || INVALID_TYPE_FOR_REVIEW
+        comment          | hasQuestionSubmission | hasUser | type                       || errorMessage
+        null             | true                  | true    | Review.Type.APPROVE.name() || REVIEW_MISSING_COMMENT
+        ' '              | true                  | true    | Review.Type.APPROVE.name() || REVIEW_MISSING_COMMENT
+        REVIEW_1_COMMENT | false                 | true    | Review.Type.APPROVE.name() || REVIEW_MISSING_QUESTION_SUBMISSION
+        REVIEW_1_COMMENT | true                  | false   | Review.Type.APPROVE.name() || REVIEW_MISSING_USER
+        REVIEW_1_COMMENT | true                  | true    | null                       || INVALID_TYPE_FOR_REVIEW
+        REVIEW_1_COMMENT | true                  | true    | 'INVALID'                  || INVALID_TYPE_FOR_REVIEW
     }
 
     @TestConfiguration

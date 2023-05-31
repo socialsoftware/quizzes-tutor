@@ -94,16 +94,21 @@ Cypress.Commands.add('addQuestionSubmission', (title, submissionStatus) => {
       VALUES ('${title}', 'Question?', 'SUBMITTED', (select course_id from course), current_timestamp) RETURNING id
       )
     INSERT INTO question_submissions (status, question_id, submitter_id, course_execution_id) 
-    VALUES ('${submissionStatus}', (SELECT id from quest), (select id from users where name = 'Demo Student'), (select course_execution_id from course));`);
+    VALUES ('${submissionStatus}', (SELECT id from quest), (select id from users where name = 'Demo Student'), (select course_execution_id from course))
+    ;`);
+
+  dbCommand(
+    `WITH quest AS (SELECT id FROM questions WHERE title='${title}' limit 1)
+      INSERT INTO question_details (question_type, question_id) VALUES ('multiple_choice', (SELECT id FROM quest));`
+  );
 
   //add options
   for (let content in [0, 1, 2, 3]) {
     let correct = content === '0' ? 't' : 'f';
     dbCommand(
       `WITH quest AS (SELECT id FROM questions WHERE title='${title}' limit 1),
-      quest_details as (INSERT INTO question_details (question_type, question_id) VALUES ('multiple_choice', (SELECT id FROM quest)) RETURNING id)
-      INSERT INTO options(content, correct, question_details_id, sequence) 
-      VALUES ('${content}', '${correct}', (SELECT id FROM quest_details), ${content});`
+        quest_details AS (SELECT id FROM question_detailS WHERE question_id = (SELECT id FROM quest))
+      INSERT INTO options(content, correct, question_details_id, sequence) VALUES ('${content}', '${correct}', (SELECT id FROM quest_details), ${content});`
     );
   }
 });

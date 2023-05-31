@@ -28,6 +28,7 @@ public class QuizAnswerItem {
     private LocalDateTime answerDate;
 
     @Lob
+    @Column(columnDefinition = "text")
     private String answers;
 
     public QuizAnswerItem() {

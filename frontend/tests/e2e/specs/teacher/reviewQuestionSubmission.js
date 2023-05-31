@@ -1,18 +1,24 @@
 describe('Teacher walkthrough', () => {
   beforeEach(() => {
+    cy.log('delete questions and answers');
     cy.deleteQuestionsAndAnswers();
+    cy.log('demo student login');
     cy.demoStudentLogin();
-    cy.contains('Logout').click();
+    cy.log('logout');
+    cy.logout();
+    cy.log('demo teacher login');
     cy.demoTeacherLogin();
-    cy.log('student submits a question');
+    cy.log('add question submission');
     cy.addQuestionSubmission('Test', 'IN_REVIEW');
+    cy.log('question submission added');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="submissionTeacherMenuButton"]').click();
   });
 
   afterEach(() => {
+    cy.log('remove question submission');
     cy.removeQuestionSubmission(true);
-    cy.contains('Logout').click();
+    cy.logout();
   });
 
   it('login comments on a submission', () => {

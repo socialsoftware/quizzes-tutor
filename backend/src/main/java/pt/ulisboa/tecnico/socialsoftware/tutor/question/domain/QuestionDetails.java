@@ -15,7 +15,6 @@ import java.util.List;
 @Table(name = "question_details")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "question_type",
-        columnDefinition = "varchar(32) not null default 'multiple_choice'",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class QuestionDetails implements DomainEntity {
     @Id

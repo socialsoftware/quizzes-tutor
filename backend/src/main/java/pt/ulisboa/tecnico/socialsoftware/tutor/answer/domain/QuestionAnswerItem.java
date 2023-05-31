@@ -14,7 +14,6 @@ import java.time.LocalDateTime;
         })
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "question_answer_type",
-        columnDefinition = "varchar(32) not null default 'multiple_choice'",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class QuestionAnswerItem {
     @Id
