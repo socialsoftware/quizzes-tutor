@@ -303,6 +303,7 @@
         </dependency>
 
         <!-- Spock testing framework -->
+        <!-- This can be migrated to 2.4-M1-groovy-4.0 when org.codehaus.groovy is migrated -->
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-spring</artifactId>
@@ -317,6 +318,7 @@
         </dependency>
 
         <!-- Specific Groovy version rather than the one specified by spock-core -->
+        <!-- This is deprecated, migrate to org.apache.groovy, but required because of http-builder -->
         <dependency>
             <groupId>org.codehaus.groovy</groupId>
             <artifactId>groovy</artifactId>
@@ -328,6 +330,7 @@
             <version>3.0.17</version>
             <type>pom</type>
         </dependency>
+        <!-- This should be removed, it is necessary to use WebClient instead of RESTClient on *IT tests -->
         <dependency>
             <groupId>org.codehaus.groovy.modules.http-builder</groupId>
             <artifactId>http-builder</artifactId>
