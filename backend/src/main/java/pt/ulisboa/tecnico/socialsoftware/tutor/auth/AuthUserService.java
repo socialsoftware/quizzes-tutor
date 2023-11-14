@@ -132,9 +132,8 @@ public class AuthUserService {
             authUser = (AuthTecnicoUser) userService.createStudentWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), AuthUser.Type.TECNICO);
             updateStudentCourses(authUser, fenixAttendingCourses);
         }
-
         // If user is teacher and is not in db
-        if (!fenixTeachingCourses.isEmpty()) {
+        else if (!fenixTeachingCourses.isEmpty()) {
             authUser = (AuthTecnicoUser) userService.createTeacherWithAuth(fenix.getPersonName(), username, fenix.getPersonEmail(), AuthUser.Type.TECNICO);
             updateTeacherCourses(authUser, fenixTeachingCourses);
         }
