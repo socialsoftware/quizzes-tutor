@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.1.1</version>
+        <version>3.1.5</version>
         <relativePath/>
     </parent>
     <groupId>pt.ulisboa.tecnico.socialsoftware</groupId>
@@ -299,7 +299,7 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.22</version>
+            <version>1.25.0</version>
         </dependency>
 
         <!-- Spock testing framework -->
