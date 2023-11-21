@@ -121,7 +121,7 @@ Cypress.Commands.add('time', (date, day, type) => {
   cy.get(
     get +
       ' > .calendar > .datepicker-controls > .text-right > .datepicker-button > svg > path'
-  ).click({ force: true });
+  ).click({ force: true});
 
   cy.wait(500);
   cy.get(
