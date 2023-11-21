@@ -391,7 +391,11 @@ export default class RemoteServices {
     status: String
   ): Promise<Question> {
     return httpClient
-      .post(`/questions/${questionId}/set-status`, status, {})
+      .post(`/questions/${questionId}/set-status`, status, {
+        headers: {
+          'Content-Type': 'text/plain',
+        },
+      })
       .then((response) => {
         return new Question(response.data);
       })
