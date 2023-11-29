@@ -484,12 +484,11 @@ public class AnswerService {
         try {
             quizAnswer.checkCanGetQuestion(questionId);
         } catch (TutorException te) {
-            for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
-                mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
-                        Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "The following behavior was detected but the student *was not able* to answer questions out of the predefined order: " + te.getMessage());
-            }
-
-            throw te;
+            mailer.sendSimpleMail(mailUsername, "rito.silva@tecnico.ulisboa.pt",
+                    Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "In course "
+                            + quizAnswer.getQuiz().getCourseExecution().getCourse().getName()
+                            + ", the following behavior was detected but the student *was not able* to answer questions out of the predefined order: "
+                            + te.getMessage());
         }
         Question question = questionRepository.findById(questionId)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
