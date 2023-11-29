@@ -115,7 +115,7 @@ public class QuestionAnswer implements DomainEntity {
         }
     }
 
-    public AnswerDetails setAnswerDetails(StatementAnswerDto statementAnswerDto) {
+    public AnswerDetails setAnswerDetailsByStatementAnswerDto(StatementAnswerDto statementAnswerDto) {
         this.answerDetails = statementAnswerDto.getAnswerDetails(this);
         if (this.answerDetails != null) {
             this.answerDetails.setQuestionAnswer(this);

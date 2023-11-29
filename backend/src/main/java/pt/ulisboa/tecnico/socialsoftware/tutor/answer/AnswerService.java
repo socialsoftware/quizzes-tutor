@@ -236,7 +236,7 @@ public class AnswerService {
                 .orElseThrow(() -> new TutorException(QUESTION_ANSWER_NOT_FOUND, questionAnswer.getId()));
 
         questionAnswer.setTimeTaken(statementAnswerDto.getTimeTaken());
-        AnswerDetails answer = questionAnswer.setAnswerDetails(statementAnswerDto);
+        AnswerDetails answer = questionAnswer.setAnswerDetailsByStatementAnswerDto(statementAnswerDto);
         if (answer != null) {
             answerDetailsRepository.save(answer);
         }
