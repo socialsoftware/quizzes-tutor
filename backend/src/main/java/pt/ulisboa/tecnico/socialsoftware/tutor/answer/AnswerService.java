@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.retry.annotation.Backoff;
@@ -47,6 +49,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class AnswerService {
+    private static final Logger logger = LoggerFactory.getLogger(AnswerService.class);
+
     @Autowired
     private Mailer mailer;
 
@@ -370,7 +374,10 @@ public class AnswerService {
         QuizAnswer quizAnswer = getQuizAnswer(student, quiz);
 
         if (quiz.getAvailableDate() == null || DateHandler.now().isAfter(quiz.getAvailableDate())) {
-            return getPreparedStatementQuizDto(student, quiz, quizAnswer);
+            StatementQuizDto result = getPreparedStatementQuizDto(student, quiz, quizAnswer);
+            if (quiz.isOneWay() && quiz.getConclusionDate() != null)
+                logger.info("Student {} for quiz answer {} get quiz {} with sequence {}", student.getUsername(), quizAnswer.getId(), result);
+            return result;
         } else {  // Send timer
             StatementQuizDto quizDto = new StatementQuizDto();
             quizDto.setTimeToAvailability(ChronoUnit.MILLIS.between(DateHandler.now(), quiz.getAvailableDate()));
@@ -398,7 +405,10 @@ public class AnswerService {
 
         QuizAnswer quizAnswer = getQuizAnswer(student, quiz);
 
-        return getPreparedStatementQuizDto(student, quiz, quizAnswer);
+        StatementQuizDto result = getPreparedStatementQuizDto(student, quiz, quizAnswer);
+        if (quiz.isOneWay() && quiz.getConclusionDate() != null)
+            logger.info("Student {} for quiz answer {} get quiz {} with sequence {}", student.getUsername(), quizAnswer.getId(), result);
+        return result;
     }
 
     private void commonChecks(Student student, Quiz quiz) {
@@ -481,16 +491,20 @@ public class AnswerService {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answer.getQuizAnswerId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND));
 
-        try {
-            quizAnswer.checkCanGetQuestion(questionId);
-        } catch (TutorException te) {
+        Integer sequenceQuestionId = quizAnswer.checkCorrectSequenceQuestion(answer.getSequence(), questionId);
+
+        if (!sequenceQuestionId.equals(questionId)) {
+            logger.info("Student of quiz answer {} tried to get question id {} with sequence {} but the correct question id is {}",
+                    quizAnswer.getId(), questionId, answer.getSequence() + 1, sequenceQuestionId);
+
             mailer.sendSimpleMail(mailUsername, "rito.silva@tecnico.ulisboa.pt",
                     Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "In course "
                             + quizAnswer.getQuiz().getCourseExecution().getCourse().getName()
-                            + ", the following behavior was detected but the student *was not able* to answer questions out of the predefined order: "
-                            + te.getMessage());
+                            + ", the student tried to get a sequence-question (" + answer.getSequence() + "," + questionId + ")"
+                            + " out of the predefined order but the correct question is " + sequenceQuestionId);
         }
-        Question question = questionRepository.findById(questionId)
+
+        Question question = questionRepository.findById(sequenceQuestionId)
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
 
         return new StatementQuestionDto(question);
@@ -509,7 +523,7 @@ public class AnswerService {
         } catch (TutorException te) {
             for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
                 mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
-                        Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "The following behavior was detected but the student *was not able* to answer questions out of the predefined order: " + te.getMessage());
+                        Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "The student tried to answer questions out of the predefined order: " + te.getMessage());
             }
 
             throw te;

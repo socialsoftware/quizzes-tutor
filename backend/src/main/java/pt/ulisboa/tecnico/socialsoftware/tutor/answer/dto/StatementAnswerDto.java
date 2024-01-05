@@ -9,12 +9,19 @@ import java.io.Serializable;
 
 public class StatementAnswerDto implements Serializable {
     private Integer timeTaken;
+
     private Integer timeToSubmission;
+
     private Integer sequence;
+
     private Integer quizAnswerId;
+
     private Integer questionAnswerId;
+
     private Integer questionId;
+
     private Integer quizQuestionId;
+
     private DiscussionDto userDiscussion;
 
     private StatementAnswerDetailsDto answerDetails;
@@ -32,8 +39,8 @@ public class StatementAnswerDto implements Serializable {
 
         this.answerDetails = questionAnswer.getStatementAnswerDetailsDto();
 
-        if (questionAnswer.getDiscussion() != null){
-            this.userDiscussion = new DiscussionDto(questionAnswer.getDiscussion(),false);
+        if (questionAnswer.getDiscussion() != null) {
+            this.userDiscussion = new DiscussionDto(questionAnswer.getDiscussion(), false);
         }
     }
 
@@ -93,7 +100,7 @@ public class StatementAnswerDto implements Serializable {
         this.timeToSubmission = timeToSubmission;
     }
 
-    public AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer){
+    public AnswerDetails getAnswerDetails(QuestionAnswer questionAnswer) {
         return this.getAnswerDetails() != null ? this.answerDetails.getAnswerDetails(questionAnswer) : null;
     }
 
@@ -117,10 +124,13 @@ public class StatementAnswerDto implements Serializable {
     public String toString() {
         return "StatementAnswerDto{" +
                 "timeTaken=" + timeTaken +
-                ", sequence=" + sequence +
-                ", questionAnswerId=" + questionAnswerId +
-                ", quizQuestionId=" + quizQuestionId +
                 ", timeToSubmission=" + timeToSubmission +
+                ", sequence=" + sequence +
+                ", quizAnswerId=" + quizAnswerId +
+                ", questionAnswerId=" + questionAnswerId +
+                ", questionId=" + questionId +
+                ", quizQuestionId=" + quizQuestionId +
+                ", userDiscussion=" + userDiscussion +
                 ", answerDetails=" + answerDetails +
                 '}';
     }

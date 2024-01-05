@@ -19,19 +19,31 @@ import java.util.stream.Collectors;
 
 public class StatementQuizDto implements Serializable {
     private Integer id;
+
     private Integer quizAnswerId;
+
     private String title;
+
     private boolean oneWay;
+
     private boolean timed;
+
     private String availableDate;
+
     private String conclusionDate;
+
     private Integer questionOrder = 0;
+
     private Long timeToAvailability;
+
     private Long timeToSubmission;
+
     private List<StatementQuestionDto> questions = new ArrayList<>();
+
     private List<StatementAnswerDto> answers = new ArrayList<>();
 
-    public StatementQuizDto() {}
+    public StatementQuizDto() {
+    }
 
     public StatementQuizDto(QuizAnswer quizAnswer, boolean complete) {
         this.id = quizAnswer.getQuiz().getId();
@@ -64,7 +76,7 @@ public class StatementQuizDto implements Serializable {
 
         List<QuestionAnswerItem> finalItems = new ArrayList<>();
         for (int i = 0; i < items.size() - 1; i++) {
-            if (!items.get(i).getQuizQuestionId().equals(items.get(i+1).getQuizQuestionId())) {
+            if (!items.get(i).getQuizQuestionId().equals(items.get(i + 1).getQuizQuestionId())) {
                 finalItems.add(items.get(i));
             }
         }
@@ -185,8 +197,10 @@ public class StatementQuizDto implements Serializable {
                 ", quizAnswerId=" + quizAnswerId +
                 ", title='" + title + '\'' +
                 ", oneWay=" + oneWay +
+                ", timed=" + timed +
                 ", availableDate='" + availableDate + '\'' +
                 ", conclusionDate='" + conclusionDate + '\'' +
+                ", questionOrder=" + questionOrder +
                 ", timeToAvailability=" + timeToAvailability +
                 ", timeToSubmission=" + timeToSubmission +
                 ", questions=" + questions +

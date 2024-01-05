@@ -14,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Comparator;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -84,10 +85,13 @@ public class QuizAnswer implements DomainEntity {
 
         for (int i = 0; i < quizQuestions.size(); i++) {
             new QuestionAnswer(this, quizQuestions.get(i), i);
+        }
 
-            if (quiz.isOneWay() && quiz.getType().equals(Quiz.QuizType.IN_CLASS)) {
-                this.questionIds.add(quizQuestions.get(i).getQuestion().getId());
-            }
+        if (quiz.isOneWay() && quiz.getType().equals(Quiz.QuizType.IN_CLASS)) {
+            questionIds = getQuestionAnswers().stream()
+                    .sorted(Comparator.comparing(QuestionAnswer::getSequence))
+                    .map(questionAnswer -> questionAnswer.getQuestion().getId())
+                    .collect(Collectors.toList());
         }
     }
 
@@ -218,20 +222,19 @@ public class QuizAnswer implements DomainEntity {
         }
     }
 
-    public void checkCanGetQuestion(Integer questionId) {
+    public Integer checkCorrectSequenceQuestion(Integer sequence, Integer questionId) {
         if (!questionIds.isEmpty()) {
-            if (currentSequenceQuestion < questionIds.size() - 1
-                    && questionIds.get(currentSequenceQuestion + 1).equals(questionId)) {
-                currentSequenceQuestion = currentSequenceQuestion + 1;
-
-                logger.info("Student {} for quiz answer {} get question id {} with sequence {}", getStudent().getUsername(), getId(), questionId, currentSequenceQuestion);
-            } else if (!questionIds.get(currentSequenceQuestion).equals(questionId)) {
-                throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE,
-                        getStudent().getUsername() + " tried to get question with ID "
-                                + questionId + " when they sequence is " + (currentSequenceQuestion + 1)
-                                + " and the question IDs sequence is " + questionIds.stream().map(String::valueOf).collect(Collectors.joining(", ")));
+            if (sequence.equals(currentSequenceQuestion + 1)) {
+                currentSequenceQuestion = sequence;
             }
+
+            logger.info("Student {} for quiz answer {} get question id {} with sequence {}", getStudent().getUsername(), getId(), questionId, (currentSequenceQuestion + 1));
+            logger.info("Question ids {}", questionIds);
+
+            return questionIds.get(currentSequenceQuestion);
         }
+
+        return questionId;
     }
 
     public void checkIsCurrentQuestion(Integer questionId) {

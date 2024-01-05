@@ -197,6 +197,10 @@ export default class QuizView extends Vue {
         this.statementQuiz.questions[order].image = question.image;
         this.statementQuiz.questions[order].questionDetails =
           question.questionDetails;
+
+        // ensure that the questions ids are equal to que returned by the server
+        this.statementQuiz.questions[order].questionId = question.questionId;
+        this.statementQuiz.answers[order].questionId = question.questionId;
       } catch (error) {
         await this.$store.dispatch('error', error);
         await this.$router.push({ name: 'available-quizzes' });

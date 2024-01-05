@@ -9,8 +9,11 @@ import java.io.Serializable;
 
 public class StatementQuestionDto implements Serializable {
     private String content;
+
     private ImageDto image;
+
     private Integer sequence;
+
     private Integer questionId;
 
     private StatementQuestionDetailsDto questionDetails;
@@ -36,6 +39,8 @@ public class StatementQuestionDto implements Serializable {
             this.image = new ImageDto(question.getImage());
 
         this.questionDetails = question.getStatementQuestionDetailsDto();
+
+        this.questionId = question.getId();
     }
 
     public String getContent() {
@@ -76,6 +81,7 @@ public class StatementQuestionDto implements Serializable {
                 "content='" + content + '\'' +
                 ", image=" + image +
                 ", sequence=" + sequence +
+                ", questionId=" + questionId +
                 ", questionDetails=" + questionDetails +
                 '}';
     }
