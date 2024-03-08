@@ -225,7 +225,7 @@ public class AnswerService {
         if (quizAnswer.isFraud()) {
             Student student = quizAnswer.getStudent();
             for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
-                mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
+                mailer.sendSimpleMail(mailUsername, "rito.silva@tecnico.ulisboa.pt",
                         Mailer.QUIZZES_TUTOR_SUBJECT + " Fraud Suspicion",
                         "Student " + student.getName() + "(" + student.getUsername() + ") may have answered OneWay quiz " +
                                 quizAnswer.getQuiz().getTitle() + " on " + quizAnswer.getCreationDate() + " by not following the predefined order. Check the log in the exported .csv file");
@@ -522,11 +522,11 @@ public class AnswerService {
             quizAnswer.checkIsCurrentQuestion(answer.getQuestionId());
         } catch (TutorException te) {
             for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
-                mailer.sendSimpleMail(mailUsername, teacher.getEmail(),
+                mailer.sendSimpleMail(mailUsername, "rito.silva@tecnico.ulisboa.pt",
                         Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "The student tried to answer questions out of the predefined order: " + te.getMessage());
             }
 
-            throw te;
+            // throw te;
         }
         if (answer.getTimeToSubmission() == null) {
             answer.setTimeToSubmission(0);
