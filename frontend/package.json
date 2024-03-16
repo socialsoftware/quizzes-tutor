@@ -15,7 +15,7 @@
   },
   "dependencies": {
     "@fortawesome/fontawesome-free": "~6.4.0",
-    "axios": "~1.6.2",
+    "axios": "~1.6.8",
     "glob-all": "^3.3.1",
     "material-design-icons-iconfont": "~6.7.0",
     "pg": "~8.10.0",
@@ -140,8 +140,8 @@
     ]
   },
   "engines": {
-    "node": ">=16.14.2",
-    "npm": ">=8.1.2"
+    "node": ">=21.7.1",
+    "npm": ">=10.5.0"
   },
   "license": "MIT"
 }

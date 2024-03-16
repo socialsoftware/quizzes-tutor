@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.0</version>
+        <version>3.2.3</version>
         <relativePath/>
     </parent>
     <groupId>pt.ulisboa.tecnico.socialsoftware</groupId>
@@ -24,9 +24,9 @@
     </repositories>
 
     <properties>
-        <java.version>17</java.version>
-        <maven.compiler.source>17</maven.compiler.source>
-        <maven.compiler.target>17</maven.compiler.target>
+        <java.version>21</java.version>
+        <maven.compiler.source>21</maven.compiler.source>
+        <maven.compiler.target>21</maven.compiler.target>
     </properties>
 
     <!-- Allows multiple properties files-->
@@ -58,7 +58,7 @@
                             more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
                         <groupId>org.codehaus.gmavenplus</groupId>
                         <artifactId>gmavenplus-plugin</artifactId>
-                        <version>3.0.0</version>
+                        <version>3.0.2</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -71,7 +71,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.2.5</version>
                         <configuration>
                             <excludes>
                                 <exclude>**/*IT</exclude>
@@ -81,7 +81,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.10</version>
+                        <version>0.8.11</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -112,7 +112,7 @@
                             more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
                         <groupId>org.codehaus.gmavenplus</groupId>
                         <artifactId>gmavenplus-plugin</artifactId>
-                        <version>3.0.0</version>
+                        <version>3.0.2</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -125,7 +125,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.2.5</version>
                         <configuration>
                             <excludes>
                                 <exclude>**/*Test</exclude>
@@ -136,7 +136,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>3.1.0</version>
+                        <version>3.2.5</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -152,6 +152,25 @@
                                         <include>**/*IT</include>
                                     </includes>
                                 </configuration>
+                            </execution>
+                        </executions>
+                    </plugin>
+                    <plugin>
+                        <groupId>org.jacoco</groupId>
+                        <artifactId>jacoco-maven-plugin</artifactId>
+                        <version>0.8.11</version>
+                        <executions>
+                            <execution>
+                                <goals>
+                                    <goal>prepare-agent</goal>
+                                </goals>
+                            </execution>
+                            <execution>
+                                <id>report</id>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>report</goal>
+                                </goals>
                             </execution>
                         </executions>
                     </plugin>
@@ -233,12 +252,12 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.0.2</version>
+            <version>2.3.0</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>swagger-ui</artifactId>
-            <version>4.15.5</version>
+            <version>5.10.3</version>
         </dependency>
 
         <!-- Fenix -->
@@ -299,52 +318,43 @@
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.25.0</version>
+            <version>1.26.0</version>
         </dependency>
 
         <!-- Spock testing framework -->
-        <!-- This can be migrated to 2.4-M1-groovy-4.0 when org.codehaus.groovy is migrated -->
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-spring</artifactId>
-            <version>2.4-M1-groovy-3.0</version>
+            <version>2.4-M1-groovy-4.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <version>2.4-M1-groovy-3.0</version>
+            <version>2.4-M1-groovy-4.0</version>
             <scope>test</scope>
         </dependency>
 
         <!-- Specific Groovy version rather than the one specified by spock-core -->
-        <!-- This is deprecated, migrate to org.apache.groovy, but required because of http-builder -->
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>3.0.17</version>
+            <version>4.0.18</version>
         </dependency>
         <dependency>
-            <groupId>org.codehaus.groovy</groupId>
+            <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>3.0.17</version>
+            <version>4.0.18</version>
             <type>pom</type>
-        </dependency>
-        <!-- This should be removed, it is necessary to use WebClient instead of RESTClient on *IT tests -->
-        <dependency>
-            <groupId>org.codehaus.groovy.modules.http-builder</groupId>
-            <artifactId>http-builder</artifactId>
-            <version>0.7.1</version>
         </dependency>
 
         <!-- Enables mocking of classes without default constructor (together with CGLIB) -->
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>3.2</version>
+            <version>3.3</version>
             <scope>test</scope>
         </dependency>
-
     </dependencies>
 
     <build>

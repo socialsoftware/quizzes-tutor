@@ -28,13 +28,13 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-    - uses: actions/checkout@v3
+    - uses: actions/checkout@v4
 
-    - name: Set up JDK 17
-      uses: actions/setup-java@v3
+    - name: Set up JDK 21
+      uses: actions/setup-java@v4
       with:
         distribution: 'zulu'
-        java-version: 17
+        java-version: 21
 
     - name: Cache Maven dependencies
       uses: actions/cache@v3
@@ -49,7 +49,7 @@ jobs:
       run: mvn clean -Ptest test
         
     - name: Register backend code coverage
-      uses: codecov/codecov-action@v3
+      uses: codecov/codecov-action@v4
       with:
         token: ${{secrets.CODECOV_TOKEN}}
         file: ./backend/target/site/jacoco/jacoco.xml
@@ -62,9 +62,9 @@ jobs:
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Use Node.js
-      uses: actions/setup-node@v3
+      uses: actions/setup-node@v4
       with:
-        node-version: '16.x'
+        node-version: '21.x'
 
     - name: Install npm
       working-directory: ./frontend
