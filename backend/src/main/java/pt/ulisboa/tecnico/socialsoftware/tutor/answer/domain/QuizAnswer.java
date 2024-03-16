@@ -53,10 +53,7 @@ public class QuizAnswer implements DomainEntity {
     private boolean usedInStatistics;
 
     private Integer currentSequenceQuestion = 0;
-
-    @ElementCollection
-    private List<Integer> questionIds = new ArrayList<>();
-
+    
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private Student student;
@@ -65,7 +62,7 @@ public class QuizAnswer implements DomainEntity {
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch = FetchType.EAGER, orphanRemoval = true)
     private List<QuestionAnswer> questionAnswers = new ArrayList<>();
 
     public QuizAnswer() {
@@ -85,13 +82,6 @@ public class QuizAnswer implements DomainEntity {
 
         for (int i = 0; i < quizQuestions.size(); i++) {
             new QuestionAnswer(this, quizQuestions.get(i), i);
-        }
-
-        if (quiz.isOneWay() && quiz.getType().equals(Quiz.QuizType.IN_CLASS)) {
-            questionIds = getQuestionAnswers().stream()
-                    .sorted(Comparator.comparing(QuestionAnswer::getSequence))
-                    .map(questionAnswer -> questionAnswer.getQuestion().getId())
-                    .collect(Collectors.toList());
         }
     }
 
@@ -223,25 +213,33 @@ public class QuizAnswer implements DomainEntity {
     }
 
     public Integer checkCorrectSequenceQuestion(Integer sequence, Integer questionId) {
-        if (!questionIds.isEmpty()) {
-            if (sequence.equals(currentSequenceQuestion + 1)) {
-                currentSequenceQuestion = sequence;
-            }
-
-            logger.info("Student {} for quiz answer {} get question id {} with sequence {}", getStudent().getUsername(), getId(), questionId, (currentSequenceQuestion + 1));
-            logger.info("Question ids {}", questionIds);
-
-            return questionIds.get(currentSequenceQuestion);
+        if (sequence.equals(currentSequenceQuestion + 1)) {
+            currentSequenceQuestion = sequence;
         }
 
-        return questionId;
+        logger.info("Student {} for quiz answer {} get question id {} with sequence {}", getStudent().getUsername(), getId(), questionId, (currentSequenceQuestion + 1));
+
+        return getQuestionIdBySequence(currentSequenceQuestion);
+    }
+
+    private Integer getQuestionIdBySequence(Integer sequence) {
+        for (QuestionAnswer questionAnswer : this.questionAnswers) {
+            if (questionAnswer.getSequence().equals(sequence)) {
+                return questionAnswer.getQuestion().getId();
+            }
+        }
+        return null;
     }
 
     public void checkIsCurrentQuestion(Integer questionId) {
-        if (!questionIds.isEmpty() && !questionIds.get(currentSequenceQuestion).equals(questionId)) {
+        if (!getQuestionIdBySequence(currentSequenceQuestion).equals(questionId)) {
             throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE, getStudent().getUsername() + " tried to submit question with ID "
                     + questionId + " when they sequence is " + (currentSequenceQuestion + 1)
-                    + " and the question IDs sequence is " + questionIds.stream().map(String::valueOf).collect(Collectors.joining(", ")));
+                    + " and the question IDs sequence is " +
+                    getQuestionAnswers().stream()
+                            .sorted(Comparator.comparing(QuestionAnswer::getSequence))
+                            .map(questionAnswer -> questionAnswer.getQuestion().getId())
+                            .map(String::valueOf).collect(Collectors.joining(", ")));
         } else if (completed) {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         }
@@ -260,4 +258,5 @@ public class QuizAnswer implements DomainEntity {
                 ", questionAnswers=" + questionAnswers +
                 '}';
     }
+
 }

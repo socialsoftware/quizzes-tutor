@@ -67,8 +67,8 @@ public enum ErrorMessage {
     CANNOT_DELETE_COURSE_EXECUTION("The course execution cannot be deleted %s"),
 
     QUESTION_KEY_ALREADY_EXISTS("Questions already exists with key %d"),
-    QUESTION_OPTION_MISMATCH("Question %d does not have option %d"),
-    QUESTION_ORDER_SLOT_MISMATCH("Question %d does not have slot %d"),
+    QUESTION_OPTION_MISMATCH("Question does not have option %d"),
+    QUESTION_ORDER_SLOT_MISMATCH("Question does not have slot %d"),
 
     DUPLICATE_TOPIC("Duplicate topic: %s"),
     DUPLICATE_USER("Duplicate user: %s"),

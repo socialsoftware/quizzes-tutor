@@ -500,7 +500,8 @@ public class AnswerService {
             mailer.sendSimpleMail(mailUsername, "rito.silva@tecnico.ulisboa.pt",
                     Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "In course "
                             + quizAnswer.getQuiz().getCourseExecution().getCourse().getName()
-                            + ", the student tried to get a sequence-question (" + answer.getSequence() + "," + questionId + ")"
+                            + ", the student " + quizAnswer.getStudent().getUsername() + "tried to get a sequence-question ("
+                            + answer.getSequence() + "," + questionId + ")"
                             + " out of the predefined order but the correct question is " + sequenceQuestionId);
         }
 
