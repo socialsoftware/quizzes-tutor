@@ -1,8 +1,10 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.webservice
 
-import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -16,7 +18,9 @@ class ExportCourseExecutionInfoWebServiceIT extends SpockTestIT {
         given:
         deleteAll()
         and:
-        restClient = new RESTClient("http://localhost:" + port)
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
         and: 'the demo course execution'
         courseExecutionDto = courseService.getDemoCourse()
     }
@@ -24,22 +28,16 @@ class ExportCourseExecutionInfoWebServiceIT extends SpockTestIT {
     def "teacher exports a course"() {
         given: 'a demon teacher'
         demoTeacherLogin()
-        and: 'prepare request response'
-        restClient.handler.failure = { resp, reader ->
-            [response: resp, reader: reader]
-        }
-        restClient.handler.success = { resp, reader ->
-            [response: resp, reader: reader]
-        }
-
+        
         when: "the web service is invoked"
-        def map = restClient.get(
-                path: "/executions/" + courseExecutionDto.getCourseExecutionId() + "/export",
-                requestContentType: "application/json"
-        )
+        webClient.get()
+                .uri('/executions/' + courseExecutionDto.getCourseExecutionId() + '/export')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
-        then: "the response status is OK"
-        assert map['response'].status == 200
-        assert map['reader'] != null
+        then: "no exception"
+        true
     }
 }

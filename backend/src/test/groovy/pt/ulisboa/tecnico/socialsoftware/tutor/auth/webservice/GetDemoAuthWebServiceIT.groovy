@@ -1,9 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth.webservice
 
-import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -15,49 +18,57 @@ class GetDemoAuthWebServiceIT extends SpockTestIT {
     def setup() {
         deleteAll()
 
-        restClient = new RESTClient("http://localhost:" + port)
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
     }
 
     def "demo student login"() {
         when:
-        def response = restClient.get(
-                path: '/auth/demo/student',
-                query: [
-                        createNew: false,
-                ],
-        )
+        def result = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path('/auth/demo/student')
+                        .queryParam('createNew', false)
+                        .build())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(AuthDto.class)
+                .block()
 
-        then: "check response status"
-        response.status == 200
-        response.data.token != ""
-        response.data.user.name == DEMO_STUDENT_NAME
-        response.data.user.role == User.Role.STUDENT.toString()
+        then: "check result status"
+        result.token != ""
+        result.user.name == DEMO_STUDENT_NAME
+        result.user.role == User.Role.STUDENT
     }
 
     def "demo admin login"() {
         when:
-        def response = restClient.get(
-                path: '/auth/demo/admin',
-        )
+        def result = webClient.get()
+                .uri('/auth/demo/admin')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(AuthDto.class)
+                .block()
 
         then: "check response status"
-        response.status == 200
-        response.data.token != ""
-        response.data.user.name == DEMO_ADMIN_NAME
-        response.data.user.role == User.Role.DEMO_ADMIN.toString()
+        result.token != ""
+        result.user.name == DEMO_ADMIN_NAME
+        result.user.role == User.Role.DEMO_ADMIN
     }
 
     def "demo teacher login"() {
         when:
-        def response = restClient.get(
-                path: '/auth/demo/teacher',
-        )
+        def result = webClient.get()
+                .uri('/auth/demo/teacher')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(AuthDto.class)
+                .block()
 
         then: "check response status"
-        response.status == 200
-        response.data.token != ""
-        response.data.user.name == DEMO_TEACHER_NAME
-        response.data.user.role == User.Role.TEACHER.toString()
+        result.token != ""
+        result.user.name == DEMO_TEACHER_NAME
+        result.user.role == User.Role.TEACHER
     }
 
 }

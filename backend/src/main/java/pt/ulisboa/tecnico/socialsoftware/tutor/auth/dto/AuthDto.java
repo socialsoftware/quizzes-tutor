@@ -1,10 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto;
 
-import java.io.Serializable;
-
-public class AuthDto implements Serializable {
+public class AuthDto {
     private String token;
+
     private AuthUserDto user;
+
+    public AuthDto() {
+    }
 
     public AuthDto(String token, AuthUserDto user) {
         this.token = token;
@@ -25,5 +27,13 @@ public class AuthDto implements Serializable {
 
     public void setUser(AuthUserDto user) {
         this.user = user;
+    }
+
+    @Override
+    public String toString() {
+        return "AuthDto{" +
+                "token='" + token + '\'' +
+                ", user=" + user +
+                '}';
     }
 }

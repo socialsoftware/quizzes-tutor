@@ -1,10 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.webservice
 
 import groovy.json.JsonOutput
-import groovyx.net.http.RESTClient
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
@@ -35,7 +37,9 @@ class TournamentIT extends SpockTestIT {
     def setup() {
         deleteAll()
 
-        restClient = new RESTClient("http://localhost:" + port)
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
 
         course = new Course(COURSE_1_NAME, Course.Type.EXTERNAL)
         courseRepository.save(course)

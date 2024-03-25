@@ -1,10 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.webservice
 
-import groovyx.net.http.HttpResponseException
-import groovyx.net.http.RESTClient
-import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto
@@ -15,13 +17,13 @@ class CreateExternalCourseExecutionWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
-    def response
-
     def setup() {
         deleteAll()
 
         given: 'a rest client'
-        restClient = new RESTClient("http://localhost:" + port)
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
     }
 
     def "demo admin creates a demo external course execution"() {
@@ -39,17 +41,18 @@ class CreateExternalCourseExecutionWebServiceIT extends SpockTestIT {
         courseExecutionDto.setAcademicTerm(DemoUtils.COURSE_ACADEMIC_TERM)
 
         when: 'the web service is invoked'
-        response = restClient.post(
-                path: '/executions/external',
-                body: courseExecutionDto,
-                requestContentType: 'application/json'
-        )
+        def result = webClient.post()
+                .uri('/executions/external')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(courseExecutionDto)
+                .retrieve()
+                .bodyToMono(CourseExecutionDto.class)
+                .block()
 
-        then: "the request returns OK"
-        response.status == 200
-        response.data.courseType == Course.Type.EXTERNAL.toString()
-        response.data.courseExecutionType == Course.Type.EXTERNAL.toString()
-        response.data.name == DemoUtils.COURSE_NAME
+        then:
+        result.courseType == Course.Type.EXTERNAL
+        result.courseExecutionType == Course.Type.EXTERNAL
+        result.name == DemoUtils.COURSE_NAME
         and: 'there are two courses in the database'
         courseRepository.findAll().size() == 2
         courseExecutionRepository.findAll().size() == 2
@@ -73,15 +76,17 @@ class CreateExternalCourseExecutionWebServiceIT extends SpockTestIT {
         courseExecutionDto.setAcademicTerm(DemoUtils.COURSE_ACADEMIC_TERM)
 
         when: 'the web service is invoked'
-        response = restClient.post(
-                path: '/executions/external',
-                body: courseExecutionDto,
-                requestContentType: 'application/json'
-        )
+        webClient.post()
+                .uri('/executions/external')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(courseExecutionDto)
+                .retrieve()
+                .bodyToMono(CourseExecutionDto.class)
+                .block()
 
         then: "the request returns 403"
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
         and: 'there is a single execution course in the database'
         courseRepository.findAll().size() == 2
         courseExecutionRepository.findAll().size() == 1
@@ -105,15 +110,17 @@ class CreateExternalCourseExecutionWebServiceIT extends SpockTestIT {
         courseExecutionDto.setAcademicTerm(DemoUtils.COURSE_ACADEMIC_TERM)
 
         when: 'the web service is invoked'
-        response = restClient.post(
-                path: '/executions/external',
-                body: courseExecutionDto,
-                requestContentType: 'application/json'
-        )
+        webClient.post()
+                .uri('/executions/external')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(courseExecutionDto)
+                .retrieve()
+                .bodyToMono(CourseExecutionDto.class)
+                .block()
 
         then: "the request returns 403"
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
         and: 'there is a single execution course in the database'
         courseRepository.findAll().size() == 2
         courseExecutionRepository.findAll().size() == 1

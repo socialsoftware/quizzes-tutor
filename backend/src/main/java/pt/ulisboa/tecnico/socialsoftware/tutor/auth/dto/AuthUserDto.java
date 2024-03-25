@@ -5,14 +5,13 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 
-import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class AuthUserDto implements Serializable {
+public class AuthUserDto {
     private Integer key;
 
     private Integer id;
@@ -28,6 +27,9 @@ public class AuthUserDto implements Serializable {
     private boolean admin;
 
     private Map<String, List<CourseExecutionDto>> courses;
+
+    public AuthUserDto() {
+    }
 
     public AuthUserDto(AuthUser authUser) {
         this.id = authUser.getUser().getId();
@@ -126,5 +128,19 @@ public class AuthUserDto implements Serializable {
         return courseExecutions.stream().sorted(Comparator.comparing(CourseExecutionDto::getName))
                 .collect(Collectors.groupingBy(CourseExecutionDto::getAcademicTerm,
                         Collectors.mapping(courseDto -> courseDto, Collectors.toList())));
+    }
+
+    @Override
+    public String toString() {
+        return "AuthUserDto{" +
+                "key=" + key +
+                ", id=" + id +
+                ", name='" + name + '\'' +
+                ", username='" + username + '\'' +
+                ", email='" + email + '\'' +
+                ", role=" + role +
+                ", admin=" + admin +
+                ", courses=" + courses +
+                '}';
     }
 }

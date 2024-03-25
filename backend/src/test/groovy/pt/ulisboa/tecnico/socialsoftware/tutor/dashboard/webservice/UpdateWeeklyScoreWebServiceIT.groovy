@@ -1,18 +1,19 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.webservice
 
-import groovyx.net.http.HttpResponseException
-import groovyx.net.http.RESTClient
-import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.WeeklyScoreDto
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class UpdateWeeklyScoreWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
-
-    def response
 
     def authUserDto
     def courseExecutionDto
@@ -22,7 +23,9 @@ class UpdateWeeklyScoreWebServiceIT extends SpockTestIT {
         given:
         deleteAll()
         and:
-        restClient = new RESTClient("http://localhost:" + port)
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
         and:
         courseExecutionDto = courseService.getDemoCourse()
         authUserDto = authUserService.demoStudentAuth(false).getUser()
@@ -34,16 +37,17 @@ class UpdateWeeklyScoreWebServiceIT extends SpockTestIT {
         demoStudentLogin()
 
         when:
-        response = restClient.put(
-                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyscores',
-                requestContentType: 'application/json'
-        )
+        def result = webClient.put()
+                .uri('/students/dashboards/' + dashboardDto.getId() + '/weeklyscores')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(WeeklyScoreDto.class)
+                .collectList()
+                .block()
 
         then:
-        response.status == 200
-        and:
-        response.data.size() == 1
-        def resultWeeklyScore = response.data.get(0)
+        result.size() == 1
+        def resultWeeklyScore = result.get(0)
         resultWeeklyScore.questionsAnswered == 0
         resultWeeklyScore.questionsUniquelyAnswered == 0
         resultWeeklyScore.percentageCorrect == 0
@@ -61,14 +65,17 @@ class UpdateWeeklyScoreWebServiceIT extends SpockTestIT {
         demoTeacherLogin()
 
         when:
-        response = restClient.put(
-                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyscores',
-                requestContentType: 'application/json'
-        )
+        webClient.put()
+                .uri('/students/dashboards/' + dashboardDto.getId() + '/weeklyscores')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(WeeklyScoreDto.class)
+                .collectList()
+                .block()
 
         then:
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
         and:
         weeklyScoreRepository.findAll().size() == 0
 
@@ -82,14 +89,17 @@ class UpdateWeeklyScoreWebServiceIT extends SpockTestIT {
         demoStudentLogin(true)
 
         when:
-        response = restClient.put(
-                path: '/students/dashboards/' + dashboardDto.getId() + '/weeklyscores',
-                requestContentType: 'application/json'
-        )
+        webClient.put()
+                .uri('/students/dashboards/' + dashboardDto.getId() + '/weeklyscores')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(WeeklyScoreDto.class)
+                .collectList()
+                .block()
 
         then:
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
         and:
         weeklyScoreRepository.findAll().size() == 0
 

@@ -1,10 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.webservice
 
-import groovyx.net.http.HttpResponseException
-import groovyx.net.http.RESTClient
-import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
@@ -20,7 +22,6 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
-    def response
     def student
     def dashboard
     def difficultQuestion
@@ -29,7 +30,9 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTestIT {
         given:
         deleteAll()
         and:
-        restClient = new RESTClient("http://localhost:" + port)
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
         and:
         createExternalCourseAndExecution()
         and:
@@ -79,15 +82,15 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTestIT {
         externalUserLogin(USER_1_USERNAME, USER_1_PASSWORD)
 
         when:
-        response = restClient.delete(
-                path: '/students/difficultquestions/' + difficultQuestion.getId(),
-                requestContentType: 'application/json'
-        )
+        webClient.delete()
+                .uri('/students/difficultquestions/' + difficultQuestion.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
         then:
-        response != null
-        response.status == 200
-        and:
+
         difficultQuestionRepository.count() == 1
         and:
         def result = difficultQuestionRepository.findAll().get(0)
@@ -100,17 +103,19 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTestIT {
         demoTeacherLogin()
 
         when:
-        response = restClient.delete(
-                path: '/students/difficultquestions/' + difficultQuestion.getId(),
-                requestContentType: 'application/json'
-        )
+        webClient.delete()
+                .uri('/students/difficultquestions/' + difficultQuestion.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
         then:
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
     }
 
-    def "student cant update another students difficult questionss"() {
+    def "student cant update another students difficult questions"() {
         given:
         def newStudent = new Student(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, false, AuthUser.Type.EXTERNAL)
         newStudent.authUser.setPassword(passwordEncoder.encode(USER_2_PASSWORD))
@@ -118,14 +123,16 @@ class RemoveDifficultQuestionsWebServiceIT extends SpockTestIT {
         externalUserLogin(USER_2_USERNAME, USER_2_PASSWORD)
 
         when:
-        response = restClient.delete(
-                path: '/students/difficultquestions/' + difficultQuestion.getId(),
-                requestContentType: 'application/json'
-        )
+        webClient.delete()
+                .uri('/students/difficultquestions/' + difficultQuestion.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
         then:
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
     }
 
     def cleanup() {

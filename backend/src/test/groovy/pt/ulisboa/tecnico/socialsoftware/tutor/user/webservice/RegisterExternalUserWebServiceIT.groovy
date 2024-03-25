@@ -1,8 +1,11 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.user.webservice
 
-import groovyx.net.http.RESTClient
+
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
@@ -20,7 +23,10 @@ class RegisterExternalUserWebServiceIT extends SpockTestIT {
     def setup() {
         deleteAll()
 
-        restClient = new RESTClient("http://localhost:" + port)
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
+
         course1 = new Course("Demo Course", Course.Type.EXTERNAL)
         courseRepository.save(course1)
         courseExecution1 = new CourseExecution(course1, COURSE_1_ACRONYM, COURSE_1_ACADEMIC_TERM, Course.Type.EXTERNAL, LOCAL_DATE_TOMORROW)

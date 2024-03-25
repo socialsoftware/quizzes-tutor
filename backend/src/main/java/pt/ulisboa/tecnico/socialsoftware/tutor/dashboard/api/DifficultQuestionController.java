@@ -39,7 +39,7 @@ public class DifficultQuestionController {
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#difficultQuestionId, 'DIFFICULTQUESTION.ACCESS')")
     public void deleteDifficultQuestions(Principal principal, @PathVariable int difficultQuestionId) {
         int studentId = ((AuthUser) ((Authentication) principal).getPrincipal()).getUser().getId();
-
+        
         this.difficultQuestionService.removeDifficultQuestion(studentId, difficultQuestionId);
     }
 }

@@ -1,11 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.webservice
 
-import groovyx.net.http.HttpResponseException
-import groovyx.net.http.RESTClient
-import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.DashboardDto
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class GetDashboardWebServiceIT extends SpockTestIT {
@@ -19,8 +22,10 @@ class GetDashboardWebServiceIT extends SpockTestIT {
     def setup() {
         given:
         deleteAll()
-        abd:
-        restClient = new RESTClient("http://localhost:" + port)
+        and:
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
         and:
         courseExecutionDto = courseService.getDemoCourse()
     }
@@ -30,15 +35,15 @@ class GetDashboardWebServiceIT extends SpockTestIT {
         demoStudentLogin()
 
         when:
-        response = restClient.get(
-                path: '/students/dashboards/executions/' + courseExecutionDto.getCourseExecutionId(),
-                requestContentType: 'application/json'
-        )
+        def result = webClient.get()
+                .uri('/students/dashboards/executions/' + courseExecutionDto.getCourseExecutionId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(DashboardDto.class)
+                .block()
 
         then:
-        response.status == 200
-        and:
-        response.data.id != null
+        result.id != null
         and:
         dashboardRepository.findAll().size() == 1
 
@@ -54,15 +59,15 @@ class GetDashboardWebServiceIT extends SpockTestIT {
         def dashboardDto = dashboardService.createDashboard(courseExecutionDto.getCourseExecutionId(), student.getId())
 
         when:
-        response = restClient.get(
-                path: '/students/dashboards/executions/' + courseExecutionDto.getCourseExecutionId(),
-                requestContentType: 'application/json'
-        )
+        def result = webClient.get()
+                .uri('/students/dashboards/executions/' + courseExecutionDto.getCourseExecutionId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(DashboardDto.class)
+                .block()
 
         then:
-        response.status == 200
-        and:
-        response.data.id == dashboardDto.id
+        result.id == dashboardDto.id
         and:
         dashboardRepository.findAll().size() == 1
 
@@ -75,14 +80,16 @@ class GetDashboardWebServiceIT extends SpockTestIT {
         demoTeacherLogin()
 
         when:
-        response = restClient.get(
-                path: '/students/dashboards/executions/' + courseExecutionDto.getCourseExecutionId(),
-                requestContentType: 'application/json'
-        )
+        def result = webClient.get()
+                .uri('/students/dashboards/executions/' + courseExecutionDto.getCourseExecutionId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(DashboardDto.class)
+                .block()
 
         then:
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
         and:
         dashboardRepository.findAll().size() == 0
 

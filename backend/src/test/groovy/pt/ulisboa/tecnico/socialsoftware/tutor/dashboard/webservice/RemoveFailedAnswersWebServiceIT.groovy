@@ -1,10 +1,12 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.webservice
 
-import groovyx.net.http.HttpResponseException
-import groovyx.net.http.RESTClient
-import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest
@@ -26,7 +28,9 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         given:
         deleteAll()
         and:
-        restClient = new RESTClient("http://localhost:" + port)
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
         and:
         createExternalCourseAndExecution()
         and:
@@ -50,16 +54,14 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         externalUserLogin(USER_1_USERNAME, USER_1_PASSWORD)
 
         when:
-        response = restClient.delete(
-                path: '/students/failedanswers/' + failedAnswer.getId(),
-                requestContentType: 'application/json'
-        )
+        webClient.delete()
+                .uri('/students/failedanswers/' + failedAnswer.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
         then:
-        response != null
-        response.status == 200
-
-        and:
         failedAnswerRepository.findAll().size() == 0
     }
 
@@ -68,14 +70,16 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         demoTeacherLogin()
 
         when:
-        response = restClient.delete(
-                path: '/students/failedanswers/' + failedAnswer.getId(),
-                requestContentType: 'application/json'
-        )
+        webClient.delete()
+                .uri('/students/failedanswers/' + failedAnswer.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
         then:
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
     }
 
     def "student can't get another student's failed answers from dashboard"() {
@@ -86,14 +90,16 @@ class RemoveFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         externalUserLogin(USER_2_USERNAME, USER_2_PASSWORD)
 
         when:
-        response = restClient.delete(
-                path: '/students/failedanswers/' + failedAnswer.getId(),
-                requestContentType: 'application/json'
-        )
+        webClient.delete()
+                .uri('/students/failedanswers/' + failedAnswer.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
         then:
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
     }
 
     def cleanup() {

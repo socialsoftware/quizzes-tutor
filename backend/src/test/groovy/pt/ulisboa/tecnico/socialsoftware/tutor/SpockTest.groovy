@@ -1,14 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor
 
-import groovy.json.JsonOutput
-import groovyx.net.http.RESTClient
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.beans.factory.annotation.Value
+import org.springframework.http.HttpHeaders
 import org.springframework.security.crypto.password.PasswordEncoder
+import org.springframework.web.reactive.function.client.WebClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.admin.AdminService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.AuthUserService
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthPasswordDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.repository.AuthUserRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository
@@ -55,6 +56,9 @@ import spock.lang.Specification
 import java.time.LocalDateTime
 
 class SpockTest extends Specification {
+
+    WebClient webClient
+    HttpHeaders headers
 
     @Value('${spring.mail.username}')
     public String mailerUsername
@@ -301,36 +305,51 @@ class SpockTest extends Specification {
         courseExecutionRepository.save(externalCourseExecution)
     }
 
-    RESTClient restClient
-
     def demoAdminLogin() {
-        def loginResponse = restClient.get(
-                path: '/auth/demo/admin'
-        )
-        restClient.headers['Authorization'] = "Bearer " + loginResponse.data.token
+        def result = webClient.get()
+                .uri('/auth/demo/admin')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(AuthDto.class)
+                .block()
+
+        headers.setBearerAuth(result.token)
     }
 
     def demoStudentLogin(create = false) {
-        def loginResponse = restClient.get(
-                path: '/auth/demo/student',
-                query: ['createNew': create]
-        )
-        restClient.headers['Authorization'] = "Bearer " + loginResponse.data.token
+        def result = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path('/auth/demo/student')
+                        .queryParam('createNew', create)
+                        .build())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(AuthDto.class)
+                .block()
+
+        headers.setBearerAuth(result.token)
     }
 
     def demoTeacherLogin() {
-        def loginResponse = restClient.get(
-                path: '/auth/demo/teacher'
-        )
-        restClient.headers['Authorization'] = "Bearer " + loginResponse.data.token
+        def result = webClient.get()
+                .uri('/auth/demo/teacher')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(AuthDto.class)
+                .block()
+
+        headers.setBearerAuth(result.token)
     }
 
     def externalUserLogin(username, password) {
-        def loggedUser = restClient.post(
-                path: '/auth/external',
-                body: JsonOutput.toJson(new AuthPasswordDto(username, password)),
-                requestContentType: 'application/json'
-        )
-        restClient.headers['Authorization'] = "Bearer " + loggedUser.data.token
+        def result = webClient.post()
+                .uri('/auth/external')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(new AuthPasswordDto(username, password))
+                .retrieve()
+                .bodyToMono(AuthDto.class)
+                .block()
+
+        headers.setBearerAuth(result.token)
     }
 }

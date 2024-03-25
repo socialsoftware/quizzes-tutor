@@ -1,13 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.webservice
 
-import groovyx.net.http.HttpResponseException
-import groovyx.net.http.RESTClient
-import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -15,13 +18,13 @@ class GetCourseExecutionsWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
-    def response
-
     def setup() {
         given:
         deleteAll()
         and:
-        restClient = new RESTClient("http://localhost:" + port)
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
         and: 'an external course execution'
         externalCourse = new Course("Software Engineering", Course.Type.EXTERNAL)
         courseRepository.save(externalCourse)
@@ -34,17 +37,17 @@ class GetCourseExecutionsWebServiceIT extends SpockTestIT {
         demoAdminLogin()
 
         when: 'the web service is invoked'
-        response = restClient.get(
-                path: '/executions',
-                requestContentType: 'application/json'
-        )
+        def result = webClient.get()
+                .uri('/executions')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(CourseExecutionDto.class)
+                .collectList()
+                .block()
 
-        then: 'the request returns OK'
-        response.status == 200
-        and: 'the response contains one course execution'
-        response.data != null
-        response.data.size() == 1
-        response.data.get(0).name == DemoUtils.COURSE_NAME
+        then: 'the response contains one course execution'
+        result.size() == 1
+        result.get(0).name == DemoUtils.COURSE_NAME
         and: 'there are two courses in the database'
         courseRepository.findAll().size() == 2
         courseExecutionRepository.findAll().size() == 2
@@ -58,14 +61,17 @@ class GetCourseExecutionsWebServiceIT extends SpockTestIT {
         demoStudentLogin()
 
         when: 'the web service is invoked'
-        response = restClient.get(
-                path: '/executions',
-                requestContentType: 'application/json'
-        )
+        webClient.get()
+                .uri('/executions')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(CourseExecutionDto.class)
+                .collectList()
+                .block()
 
         then: "the request returns 403"
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
 
         cleanup:
         courseRepository.delete(externalCourse)

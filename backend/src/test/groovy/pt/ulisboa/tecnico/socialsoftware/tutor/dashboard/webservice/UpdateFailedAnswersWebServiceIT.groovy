@@ -1,12 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.webservice
 
-import groovyx.net.http.HttpResponseException
-import groovyx.net.http.RESTClient
-import org.apache.http.HttpStatus
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.HttpStatus
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
+import org.springframework.web.reactive.function.client.WebClientResponseException
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard
+import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.dto.FailedAnswerDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.service.FailedAnswersSpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
@@ -16,7 +19,6 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
     @LocalServerPort
     private int port
 
-    def response
     def quiz
     def quizQuestion
 
@@ -24,7 +26,9 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         given:
         deleteAll()
         and:
-        restClient = new RESTClient("http://localhost:" + port)
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
         and:
         createExternalCourseAndExecution()
         and:
@@ -40,7 +44,6 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         quiz = createQuiz()
         quizQuestion = createQuizQuestion(quiz, question)
         answerQuiz(true, false, true, quizQuestion, quiz)
-
     }
 
     def "student updates failed answers"() {
@@ -48,17 +51,17 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         externalUserLogin(USER_1_USERNAME, USER_1_PASSWORD)
 
         when:
-        response = restClient.put(
-                path: '/students/dashboards/' + dashboard.getId() + '/failedanswers',
-                requestContentType: 'application/json'
-        )
+        def result = webClient.put()
+                .uri('/students/dashboards/' + dashboard.getId() + '/failedanswers')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(FailedAnswerDto.class)
+                .collectList()
+                .block()
 
         then:
-        response != null
-        response.status == 200
-        and:
-        response.data.size() == 1
-        def resultFailedAnswer = response.data.get(0)
+        result.size() == 1
+        def resultFailedAnswer = result.get(0)
         resultFailedAnswer.id != 0
         DateHandler.toLocalDateTime(resultFailedAnswer.collected).isAfter(DateHandler.now().minusMinutes(1))
         resultFailedAnswer.answered
@@ -71,14 +74,17 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         demoTeacherLogin()
 
         when:
-        response = restClient.put(
-                path: '/students/dashboards/' + dashboard.getId() + '/failedanswers',
-                requestContentType: 'application/json'
-        )
+        webClient.put()
+                .uri('/students/dashboards/' + dashboard.getId() + '/failedanswers')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(FailedAnswerDto.class)
+                .collectList()
+                .block()
 
         then:
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
     }
 
     def "student cant update another students failed answers"() {
@@ -89,14 +95,17 @@ class UpdateFailedAnswersWebServiceIT extends FailedAnswersSpockTest {
         externalUserLogin(USER_2_USERNAME, USER_2_PASSWORD)
 
         when:
-        response = restClient.put(
-                path: '/students/dashboards/' + dashboard.getId() + '/failedanswers',
-                requestContentType: 'application/json'
-        )
+        webClient.put()
+                .uri('/students/dashboards/' + dashboard.getId() + '/failedanswers')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(FailedAnswerDto.class)
+                .collectList()
+                .block()
 
         then:
-        def error = thrown(HttpResponseException)
-        error.response.status == HttpStatus.SC_FORBIDDEN
+        def error = thrown(WebClientResponseException)
+        error.statusCode == HttpStatus.FORBIDDEN
     }
 
     def cleanup() {

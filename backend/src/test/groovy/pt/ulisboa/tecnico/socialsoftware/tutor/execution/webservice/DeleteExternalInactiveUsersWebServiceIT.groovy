@@ -1,11 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.execution.webservice
 
-import groovyx.net.http.RESTClient
+
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
+import org.springframework.http.HttpHeaders
+import org.springframework.http.MediaType
+import org.springframework.web.reactive.function.client.WebClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
@@ -15,7 +19,6 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
-    def response
     def user1
     def user2
 
@@ -26,7 +29,10 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTestIT {
     def setup() {
         deleteAll()
 
-        restClient = new RESTClient("http://localhost:" + port)
+        webClient = WebClient.create("http://localhost:" + port)
+        headers = new HttpHeaders()
+        headers.setContentType(MediaType.APPLICATION_JSON)
+
         usersIdsList = new ArrayList<>()
         course1 = new Course("Demo Course", Course.Type.EXTERNAL)
         courseRepository.save(course1)
@@ -52,16 +58,15 @@ class DeleteExternalInactiveUsersWebServiceIT extends SpockTestIT {
         usersIdsList.add(user2.getId())
 
         when:
-        response = restClient.post(
-                path: '/executions/' + courseExecution1.getId() + '/users/delete',
-                body:
-                        usersIdsList,
-                requestContentType: 'application/json'
-        )
+        webClient.post()
+                .uri('/executions/' + courseExecution1.getId() + '/users/delete')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(usersIdsList)
+                .retrieve()
+                .bodyToMono(CourseExecutionDto.class)
+                .block()
 
-        then: "check response status"
-        response.status == 200
-        and: "the users were removed from the database"
+        then: "the users were removed from the database"
         userRepository.findById(user1.getId()).isEmpty()
         userRepository.findById(user2.getId()).isEmpty()
 
