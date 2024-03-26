@@ -375,8 +375,6 @@ public class AnswerService {
 
         if (quiz.getAvailableDate() == null || DateHandler.now().isAfter(quiz.getAvailableDate())) {
             StatementQuizDto result = getPreparedStatementQuizDto(student, quiz, quizAnswer);
-            if (quiz.isOneWay() && quiz.getConclusionDate() != null)
-                logger.info("Student {} for quiz answer {} get quiz {} with sequence {}", student.getUsername(), quizAnswer.getId(), result);
             return result;
         } else {  // Send timer
             StatementQuizDto quizDto = new StatementQuizDto();
@@ -406,8 +404,6 @@ public class AnswerService {
         QuizAnswer quizAnswer = getQuizAnswer(student, quiz);
 
         StatementQuizDto result = getPreparedStatementQuizDto(student, quiz, quizAnswer);
-        if (quiz.isOneWay() && quiz.getConclusionDate() != null)
-            logger.info("Student {} for quiz answer {} get quiz {} with sequence {}", student.getUsername(), quizAnswer.getId(), result);
         return result;
     }
 
@@ -483,7 +479,7 @@ public class AnswerService {
                 .filter(quizAnswer -> quizAnswer.getAnswerDate() != null)
                 .map(SolvedQuizDto::new)
                 .sorted(Comparator.comparing(SolvedQuizDto::getAnswerDate))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -522,10 +518,10 @@ public class AnswerService {
         try {
             quizAnswer.checkIsCurrentQuestion(answer.getQuestionId());
         } catch (TutorException te) {
-            for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
-                mailer.sendSimpleMail(mailUsername, "rito.silva@tecnico.ulisboa.pt",
-                        Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "The student tried to answer questions out of the predefined order: " + te.getMessage());
-            }
+//            for (Teacher teacher : quizAnswer.getQuiz().getCourseExecution().getTeachers()) {
+            mailer.sendSimpleMail(mailUsername, "rito.silva@tecnico.ulisboa.pt",
+                    Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "The student tried to answer questions out of the predefined order: " + te.getMessage());
+//            }
 
             // throw te;
         }
