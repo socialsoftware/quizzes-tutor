@@ -12,10 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.time.LocalDateTime;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_QUIZ_ANSWER_SEQUENCE;
@@ -53,7 +50,7 @@ public class QuizAnswer implements DomainEntity {
     private boolean usedInStatistics;
 
     private Integer currentSequenceQuestion = 0;
-    
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private Student student;
@@ -62,8 +59,14 @@ public class QuizAnswer implements DomainEntity {
     @JoinColumn(name = "quiz_id")
     private Quiz quiz;
 
-    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "quizAnswer", fetch = FetchType.LAZY, orphanRemoval = true)
     private List<QuestionAnswer> questionAnswers = new ArrayList<>();
+
+    @ElementCollection
+    @CollectionTable(name = "sequence_question_id_mapping")
+    @MapKeyColumn(name = "sequence")
+    @Column(name = "question_id")
+    private Map<Integer, Integer> sequenceQuestionIdMap = new HashMap<>();
 
     public QuizAnswer() {
     }
@@ -82,6 +85,10 @@ public class QuizAnswer implements DomainEntity {
 
         for (int i = 0; i < quizQuestions.size(); i++) {
             new QuestionAnswer(this, quizQuestions.get(i), i);
+
+            if (quiz.isOneWay() && quiz.getType().equals(Quiz.QuizType.IN_CLASS)) {
+                this.sequenceQuestionIdMap.put(i, quizQuestions.get(i).getQuestion().getId());
+            }
         }
     }
 
@@ -217,22 +224,11 @@ public class QuizAnswer implements DomainEntity {
             currentSequenceQuestion = sequence;
         }
 
-        logger.info("Student {} for quiz answer {} get question id {} with sequence {}", getStudent().getUsername(), getId(), questionId, (currentSequenceQuestion + 1));
-
-        return getQuestionIdBySequence(currentSequenceQuestion);
-    }
-
-    private Integer getQuestionIdBySequence(Integer sequence) {
-        for (QuestionAnswer questionAnswer : this.questionAnswers) {
-            if (questionAnswer.getSequence().equals(sequence)) {
-                return questionAnswer.getQuestion().getId();
-            }
-        }
-        return null;
+        return this.sequenceQuestionIdMap.get(currentSequenceQuestion);
     }
 
     public void checkIsCurrentQuestion(Integer questionId) {
-        if (!getQuestionIdBySequence(currentSequenceQuestion).equals(questionId)) {
+        if (!this.sequenceQuestionIdMap.get(currentSequenceQuestion).equals(questionId)) {
             throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE, getStudent().getUsername() + " tried to submit question with ID "
                     + questionId + " when they sequence is " + (currentSequenceQuestion + 1)
                     + " and the question IDs sequence is " +
@@ -244,19 +240,4 @@ public class QuizAnswer implements DomainEntity {
             throw new TutorException(QUIZ_ALREADY_COMPLETED);
         }
     }
-
-    @Override
-    public String toString() {
-        return "QuizAnswer{" +
-                "id=" + id +
-                ", creationDate=" + creationDate +
-                ", answerDate=" + answerDate +
-                ", completed=" + completed +
-                ", fraud=" + fraud +
-                ", student=" + student +
-                ", quiz=" + quiz +
-                ", questionAnswers=" + questionAnswers +
-                '}';
-    }
-
 }
