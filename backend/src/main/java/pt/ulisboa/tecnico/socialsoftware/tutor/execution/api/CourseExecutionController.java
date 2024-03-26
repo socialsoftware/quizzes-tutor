@@ -119,6 +119,7 @@ public class CourseExecutionController {
         response.setContentType("application/tar.gz");
         String sourceFolder = exportDir + "/quizzes-" + executionId;
         File file = new File(sourceFolder);
+        
         file.mkdir();
         for (Quiz quiz : courseExecutionQuizzes) {
             answerService.writeQuizAnswers(quiz.getId());

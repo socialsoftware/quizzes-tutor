@@ -31,7 +31,6 @@ class CreateReviewWebServiceIT extends SpockTestIT {
     def student
     def questionSubmission
     def reviewDto
-    def response
 
     def setup() {
         deleteAll()
@@ -90,23 +89,23 @@ class CreateReviewWebServiceIT extends SpockTestIT {
         reviewDto.setType(Review.Type.APPROVE.name())
 
         when:
-        response = restClient.post(
-                path: '/submissions/' + questionSubmission.getId() + '/reviews',
-                body: reviewDto,
-                query: ['executionId': courseExecution.getId()],
-                requestContentType: 'application/json'
-        )
+        def result = webClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path('/submissions/' + questionSubmission.getId() + '/reviews')
+                        .queryParam('executionId', courseExecution.getId())
+                        .build())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(reviewDto)
+                .retrieve()
+                .bodyToMono(ReviewDto.class)
+                .block()
 
-        then: "check the response status"
-        response != null
-        response.status == 200
-        and: "if it responds with the correct review"
-        def review = response.data
-        review.id != null
-        review.comment == REVIEW_1_COMMENT
-        review.questionSubmissionId == questionSubmission.getId()
-        review.userId == teacher.getId()
-        review.type == Review.Type.APPROVE.name()
+        then: "if it responds with the correct review"
+        result.id != null
+        result.comment == REVIEW_1_COMMENT
+        result.questionSubmissionId == questionSubmission.getId()
+        result.userId == teacher.getId()
+        result.type == Review.Type.APPROVE.name()
     }
 
     def cleanup() {

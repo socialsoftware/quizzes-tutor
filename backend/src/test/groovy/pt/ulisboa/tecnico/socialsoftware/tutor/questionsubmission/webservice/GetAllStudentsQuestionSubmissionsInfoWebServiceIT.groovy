@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.webservice
 
-
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
@@ -15,6 +14,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuesti
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.QuestionSubmissionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.UserQuestionSubmissionInfoDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 
@@ -29,7 +29,6 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTestIT {
     def student1
     def student2
     def questionDto
-    def response
 
     def setup() {
         deleteAll()
@@ -78,7 +77,6 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTestIT {
 
     def "get all student question submission info"() {
         given: "questionSubmissions"
-
         def questionSubmission1Dto = new QuestionSubmissionDto()
         questionSubmission1Dto.setCourseExecutionId(courseExecution.getId())
         questionSubmission1Dto.setSubmitterId(student1.getId())
@@ -98,27 +96,25 @@ class GetAllStudentsQuestionSubmissionInfoWebServiceIT extends SpockTestIT {
         questionSubmissionService.createQuestionSubmission(questionSubmission3Dto)
 
         when:
-        response = restClient.get(
-                path: '/submissions/' + courseExecution.getId() + '/all',
-                requestContentType: 'application/json'
-        )
+        def result = webClient.get()
+                .uri('/submissions/' + courseExecution.getId() + '/all')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(UserQuestionSubmissionInfoDto.class)
+                .collectList()
+                .block()
 
-        then: "check the response status"
-        response != null
-        response.status == 200
-        and: "if it responds with the correct info"
-        def info = response.data
-        info.get(0).submitterId == student2.getId()
-        info.get(1).submitterId == student1.getId()
-        info.get(0).totalQuestionSubmissions == 2
-        info.get(1).totalQuestionSubmissions == 1
-        info.get(0).questionSubmissions.size() == 2
-        info.get(1).questionSubmissions.size() == 1
-        info.get(0).username == student2.getUsername()
-        info.get(1).username == student1.getUsername()
-        info.get(0).name == student2.getName()
-        info.get(1).name == student1.getName()
-
+        then: "if it responds with the correct info"
+        result.get(0).submitterId == student2.getId()
+        result.get(1).submitterId == student1.getId()
+        result.get(0).totalQuestionSubmissions == 2
+        result.get(1).totalQuestionSubmissions == 1
+        result.get(0).questionSubmissions.size() == 2
+        result.get(1).questionSubmissions.size() == 1
+        result.get(0).username == student2.getUsername()
+        result.get(1).username == student1.getUsername()
+        result.get(0).name == student2.getName()
+        result.get(1).name == student1.getName()
     }
 
     def cleanup() {

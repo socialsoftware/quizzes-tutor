@@ -8,7 +8,9 @@ import org.springframework.web.reactive.function.client.WebClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class ExportCourseExecutionInfoWebServiceIT extends SpockTestIT {
+class
+
+extends SpockTestIT {
     @LocalServerPort
     private int port
 

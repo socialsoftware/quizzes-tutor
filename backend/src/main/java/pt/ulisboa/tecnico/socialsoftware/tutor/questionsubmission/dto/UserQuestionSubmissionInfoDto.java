@@ -10,14 +10,25 @@ import java.util.stream.Collectors;
 
 public class UserQuestionSubmissionInfoDto {
     private int submitterId;
+
     private int totalQuestionSubmissions = 0;
+
     private int numApprovedQuestionSubmissions = 0;
+
     private int numRejectedQuestionSubmissions = 0;
+
     private int numInReviewQuestionSubmissions = 0;
+
     private int numInRevisionQuestionSubmissions = 0;
+
     private List<QuestionSubmissionDto> questionSubmissions = new ArrayList<>();
+
     private String username;
+
     private String name;
+
+    public UserQuestionSubmissionInfoDto() {
+    }
 
     public UserQuestionSubmissionInfoDto(Student student) {
         setUserId(student.getId());
@@ -27,13 +38,21 @@ public class UserQuestionSubmissionInfoDto {
         setName(student.getName());
     }
 
-    public int getSubmitterId() { return submitterId; }
+    public int getSubmitterId() {
+        return submitterId;
+    }
 
-    public void setUserId(int submitterId) { this.submitterId = submitterId; }
+    public void setUserId(int submitterId) {
+        this.submitterId = submitterId;
+    }
 
-    public int getTotalQuestionSubmissions() { return totalQuestionSubmissions; }
+    public int getTotalQuestionSubmissions() {
+        return totalQuestionSubmissions;
+    }
 
-    public List<QuestionSubmissionDto> getQuestionSubmissions() { return questionSubmissions; }
+    public List<QuestionSubmissionDto> getQuestionSubmissions() {
+        return questionSubmissions;
+    }
 
     public void setQuestionSubmissions(List<QuestionSubmissionDto> questionSubmissions) {
         this.questionSubmissions = questionSubmissions;
@@ -42,7 +61,7 @@ public class UserQuestionSubmissionInfoDto {
     public void setNumQuestionSubmissions() {
         this.totalQuestionSubmissions = this.questionSubmissions.size();
 
-        for (QuestionSubmissionDto questionSubmissionDto: this.questionSubmissions) {
+        for (QuestionSubmissionDto questionSubmissionDto : this.questionSubmissions) {
             if (questionSubmissionDto.getStatus().equals(QuestionSubmission.Status.APPROVED.name())) {
                 numApprovedQuestionSubmissions++;
             } else if (questionSubmissionDto.getStatus().equals(QuestionSubmission.Status.REJECTED.name())) {
@@ -55,21 +74,37 @@ public class UserQuestionSubmissionInfoDto {
         }
     }
 
-    public int getNumApprovedQuestionSubmissions() { return numApprovedQuestionSubmissions; }
+    public int getNumApprovedQuestionSubmissions() {
+        return numApprovedQuestionSubmissions;
+    }
 
-    public int getNumRejectedQuestionSubmissions() { return numRejectedQuestionSubmissions; }
+    public int getNumRejectedQuestionSubmissions() {
+        return numRejectedQuestionSubmissions;
+    }
 
-    public int getNumInReviewQuestionSubmissions() { return numInReviewQuestionSubmissions; }
+    public int getNumInReviewQuestionSubmissions() {
+        return numInReviewQuestionSubmissions;
+    }
 
-    public int getNumInRevisionQuestionSubmissions() { return numInRevisionQuestionSubmissions; }
+    public int getNumInRevisionQuestionSubmissions() {
+        return numInRevisionQuestionSubmissions;
+    }
 
-    public String getUsername() { return username; }
+    public String getUsername() {
+        return username;
+    }
 
-    public void setUsername(String username) { this.username = username; }
+    public void setUsername(String username) {
+        this.username = username;
+    }
 
-    public String getName() { return name; }
+    public String getName() {
+        return name;
+    }
 
-    public void setName(String name) { this.name = name; }
+    public void setName(String name) {
+        this.name = name;
+    }
 
     public static final Comparator<UserQuestionSubmissionInfoDto> numSubmissionsComparator = (a, b) -> {
         if (a.getTotalQuestionSubmissions() == b.getTotalQuestionSubmissions()) {

@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.webservice
 
-import groovy.json.JsonOutput
+
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
@@ -27,7 +27,6 @@ class CreateQuestionSubmissionWebServiceIT extends SpockTestIT {
     def courseExecution
     def student
     def questionSubmissionDto
-    def response
 
     def setup() {
         deleteAll()
@@ -72,24 +71,22 @@ class CreateQuestionSubmissionWebServiceIT extends SpockTestIT {
         questionSubmissionDto.setQuestion(questionDto)
 
         when:
-        response = restClient.post(
-                path: '/submissions/' + courseExecution.getId(),
-                body: JsonOutput.toJson(questionSubmissionDto),
-                requestContentType: 'application/json'
-        )
+        def result = webClient.post()
+                .uri('/submissions/' + courseExecution.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(questionSubmissionDto)
+                .retrieve()
+                .bodyToMono(QuestionSubmissionDto.class)
+                .block()
 
-        then: "check the response status"
-        response != null
-        response.status == 200
-        and: "if it responds with the correct questionSubmission"
-        def questionSubmission = response.data
-        questionSubmission.id != null
-        questionSubmission.submitterId == student.getId()
-        questionSubmission.status == QuestionSubmission.Status.IN_REVISION.name()
-        questionSubmission.question != null
-        questionSubmission.question.title == questionDto.getTitle()
-        questionSubmission.question.content == questionDto.getContent()
-        questionSubmission.question.status == Question.Status.SUBMITTED.name()
+        then: "if it responds with the correct questionSubmission"
+        result.id != null
+        result.submitterId == student.getId()
+        result.status == QuestionSubmission.Status.IN_REVISION.name()
+        result.question != null
+        result.question.title == questionDto.getTitle()
+        result.question.content == questionDto.getContent()
+        result.question.status == Question.Status.SUBMITTED.name()
     }
 
     def cleanup() {
