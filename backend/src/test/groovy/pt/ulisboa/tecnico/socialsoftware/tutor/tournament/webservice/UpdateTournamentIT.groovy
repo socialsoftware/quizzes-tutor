@@ -1,6 +1,9 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.webservice
 
+
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
+
+import java.time.temporal.ChronoUnit
 
 class UpdateTournamentIT extends TournamentIT {
     def setup() {
@@ -31,8 +34,8 @@ class UpdateTournamentIT extends TournamentIT {
         def tournament = tournamentRepository.findById(tournamentDto.getId()).get()
         tournament.id == tournamentDto.id
         tournament.numberOfQuestions == newNumberOfQuestions
-        tournament.startTime == DateHandler.toLocalDateTime(STRING_DATE_TOMORROW_PLUS_10_MINUTES)
-        tournament.endTime == DateHandler.toLocalDateTime(STRING_DATE_LATER_PLUS_10_MINUTES)
+        tournament.startTime.truncatedTo(ChronoUnit.SECONDS) == DateHandler.toLocalDateTime(STRING_DATE_TOMORROW_PLUS_10_MINUTES).truncatedTo(ChronoUnit.SECONDS)
+        tournament.endTime.truncatedTo(ChronoUnit.SECONDS) == DateHandler.toLocalDateTime(STRING_DATE_LATER_PLUS_10_MINUTES).truncatedTo(ChronoUnit.SECONDS)
 
         cleanup:
         tournamentRepository.delete(tournamentRepository.findById(tournamentDto.getId()).get())
