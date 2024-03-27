@@ -8,6 +8,9 @@ import java.util.stream.Collectors;
 public class MultipleChoiceStatementQuestionDetailsDto extends StatementQuestionDetailsDto {
     private List<StatementOptionDto> options;
 
+    public MultipleChoiceStatementQuestionDetailsDto() {
+    }
+
     public MultipleChoiceStatementQuestionDetailsDto(MultipleChoiceQuestion question) {
         this.options = question.getOptions().stream()
                 .map(StatementOptionDto::new)

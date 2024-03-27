@@ -8,9 +8,7 @@ import org.springframework.web.reactive.function.client.WebClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class
-
-extends SpockTestIT {
+class ExportCourseExecutionInfoWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
@@ -30,7 +28,7 @@ extends SpockTestIT {
     def "teacher exports a course"() {
         given: 'a demon teacher'
         demoTeacherLogin()
-        
+
         when: "the web service is invoked"
         webClient.get()
                 .uri('/executions/' + courseExecutionDto.getCourseExecutionId() + '/export')

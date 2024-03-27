@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.webservice
 
-
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
@@ -29,7 +28,6 @@ class ToggleStudentNotificationReadWebServiceIT extends SpockTestIT {
     def teacher
     def questionDto
     def questionSubmission
-    def response
 
     def setup() {
         deleteAll()
@@ -82,15 +80,19 @@ class ToggleStudentNotificationReadWebServiceIT extends SpockTestIT {
 
     def "notify student on question submission"() {
         when:
-        response = restClient.put(
-                path: '/submissions/' + questionSubmission.getId() + '/toggle-notification-student',
-                query: ['hasRead': true],
-                requestContentType: 'application/json'
-        )
+        webClient.put()
+                .uri(uriBuilder -> uriBuilder
+                        .path('/submissions/' + questionSubmission.getId() + '/toggle-notification-student')
+                        .queryParam('hasRead', true)
+                        .build())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
-        then: "check the response status"
-        response != null
-        response.status == 200
+        then: "it changed"
+        def questionSubmission = questionSubmissionRepository.findById(questionSubmission.getId()).get()
+        questionSubmission.studentRead
     }
 
     def cleanup() {

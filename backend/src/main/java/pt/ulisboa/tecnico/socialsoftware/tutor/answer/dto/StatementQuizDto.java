@@ -63,12 +63,12 @@ public class StatementQuizDto implements Serializable {
         this.questions = quizAnswer.getQuestionAnswers().stream()
                 .map(questionAnswer -> new StatementQuestionDto(questionAnswer, ghost))
                 .sorted(Comparator.comparing(StatementQuestionDto::getSequence))
-                .collect(Collectors.toList());
+                .toList();
 
         this.answers = quizAnswer.getQuestionAnswers().stream()
                 .map(StatementAnswerDto::new)
                 .sorted(Comparator.comparing(StatementAnswerDto::getSequence))
-                .collect(Collectors.toList());
+                .toList();
     }
 
     public StatementQuizDto(QuizAnswer quizAnswer, List<QuestionAnswerItem> items) {

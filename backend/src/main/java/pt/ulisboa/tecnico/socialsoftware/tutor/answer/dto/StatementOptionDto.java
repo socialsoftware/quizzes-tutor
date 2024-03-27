@@ -7,7 +7,11 @@ import java.io.Serializable;
 
 public class StatementOptionDto implements Serializable {
     private Integer optionId;
+
     private String content;
+
+    public StatementOptionDto() {
+    }
 
     public StatementOptionDto(Option option) {
         this.optionId = option.getId();

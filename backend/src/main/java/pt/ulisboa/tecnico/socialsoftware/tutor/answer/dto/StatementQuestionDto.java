@@ -18,6 +18,9 @@ public class StatementQuestionDto implements Serializable {
 
     private StatementQuestionDetailsDto questionDetails;
 
+    public StatementQuestionDto() {
+    }
+
     public StatementQuestionDto(QuestionAnswer questionAnswer, boolean ghost) {
         Question question = questionAnswer.getQuizQuestion().getQuestion();
         if (!ghost) {

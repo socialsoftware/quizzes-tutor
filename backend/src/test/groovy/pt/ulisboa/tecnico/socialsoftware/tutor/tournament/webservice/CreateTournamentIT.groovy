@@ -13,29 +13,29 @@ class CreateTournamentIT extends TournamentIT {
         tournamentDto.setCanceled(false)
 
         when:
-        response = restClient.post(
-                path: '/tournaments/' + courseExecution.getId(),
-                query: ['topicsId': topic1.getId()],
-                body: tournamentDto,
-                requestContentType: 'application/json'
-        )
+        def result = webClient.post()
+                .uri(uriBuilder -> uriBuilder
+                        .path('/tournaments/' + courseExecution.getId())
+                        .queryParam('topicsId', topic1.getId())
+                        .build())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(tournamentDto)
+                .retrieve()
+                .bodyToMono(TournamentDto.class)
+                .block()
 
-        then: "check response status"
-        response.status == 200
-        response.data != null
-        and: "if it responds with the correct tournament"
-        def tournament = response.data
-        tournament.id != null
-        DateHandler.toISOString(DateHandler.toLocalDateTime(tournament.startTime)) == STRING_DATE_TOMORROW
-        DateHandler.toISOString(DateHandler.toLocalDateTime(tournament.endTime)) == STRING_DATE_LATER
-        tournament.topicsDto.id == [topic1.getId()]
-        tournament.numberOfQuestions == NUMBER_OF_QUESTIONS
-        tournament.canceled == false
-        tournament.privateTournament == false
-        tournament.password == ''
+        then: "if it responds with the correct tournament"
+        result.id != null
+        DateHandler.toISOString(DateHandler.toLocalDateTime(result.startTime)) == STRING_DATE_TOMORROW
+        DateHandler.toISOString(DateHandler.toLocalDateTime(result.endTime)) == STRING_DATE_LATER
+        result.topicsDto.id == [topic1.getId()]
+        result.numberOfQuestions == NUMBER_OF_QUESTIONS
+        !result.canceled
+        !result.privateTournament
+        result.password == ''
 
         cleanup:
-        tournamentRepository.delete(tournamentRepository.findById(tournament.id).get())
+        tournamentRepository.delete(tournamentRepository.findById(result.id).get())
         courseExecution.getUsers().remove(userRepository.findById(user.getId()).get())
         userRepository.delete(userRepository.findById(user.getId()).get())
     }

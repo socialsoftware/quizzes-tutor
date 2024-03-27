@@ -2,18 +2,20 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.webservice
 
 class RemoveTournamentIT extends TournamentIT {
     def setup() {
-        tournamentDto = createTournamentDto(STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        tournamentDto = createTournament(STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
     }
 
     def "user removes tournament"() {
         when:
-        response = restClient.delete(
-                path: '/tournaments/' + courseExecution.getId() + '/removeTournament/' + tournamentDto.getId(),
-                requestContentType: 'application/json'
-        )
+        webClient.delete()
+                .uri('/tournaments/' + courseExecution.getId() + '/removeTournament/' + tournamentDto.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
-        then: "check response status"
-        response.status == 200
+        then:
+        tournamentRepository.count() == 0
 
         cleanup:
         courseExecution.getUsers().remove(userRepository.findById(user.getId()).get())

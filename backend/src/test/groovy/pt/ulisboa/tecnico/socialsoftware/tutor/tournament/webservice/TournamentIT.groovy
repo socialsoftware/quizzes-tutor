@@ -1,6 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.webservice
 
-import groovy.json.JsonOutput
+
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.context.TestConfiguration
 import org.springframework.boot.test.web.server.LocalServerPort
@@ -10,7 +10,6 @@ import org.springframework.web.reactive.function.client.WebClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthPasswordDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
@@ -23,12 +22,9 @@ class TournamentIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
-    def response
     def user
-
     def course
     def courseExecution
-
     def topics
     def topic1
     def topicDto1
@@ -52,12 +48,7 @@ class TournamentIT extends SpockTestIT {
         courseExecution.addUser(user)
         userRepository.save(user)
 
-        def loggedUser = restClient.post(
-                path: '/auth/external',
-                body: JsonOutput.toJson(new AuthPasswordDto(USER_1_USERNAME, USER_1_PASSWORD)),
-                requestContentType: 'application/json'
-        )
-        restClient.headers['Authorization'] = "Bearer " + loggedUser.data.token
+        externalUserLogin(USER_1_USERNAME, USER_1_PASSWORD)
 
         topicDto1 = new TopicDto()
         topicDto1.setName(TOPIC_1_NAME)
@@ -68,7 +59,7 @@ class TournamentIT extends SpockTestIT {
         topics.add(topic1.getId())
     }
 
-    def createTournamentDto(String startTime, String endTime, Integer numberOfQuestions, boolean isCanceled) {
+    def createTournament(String startTime, String endTime, Integer numberOfQuestions, boolean isCanceled) {
         def tournamentDto = new TournamentDto()
         tournamentDto.setStartTime(startTime)
         tournamentDto.setEndTime(endTime)

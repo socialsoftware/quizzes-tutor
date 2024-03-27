@@ -2,7 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.webservice
 
 class LeaveTournamentIT extends TournamentIT {
     def setup() {
-        tournamentDto = createTournamentDto(STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        tournamentDto = createTournament(STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
     }
 
     def "user leaves tournament"() {
@@ -10,13 +10,17 @@ class LeaveTournamentIT extends TournamentIT {
         tournamentService.joinTournament(user.getId(), tournamentDto.getId(), "")
 
         when:
-        response = restClient.put(
-                path: '/tournaments/' + courseExecution.getId() + '/leaveTournament/' + tournamentDto.getId(),
-                requestContentType: 'application/json'
-        )
+        webClient.put()
+                .uri('/tournaments/' + courseExecution.getId() + '/leaveTournament/' + tournamentDto.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(tournamentDto)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
-        then: "check response status"
-        response.status == 200
+        then:
+        def tournament = tournamentRepository.findById(tournamentDto.getId()).get()
+        tournament.participants.size() == 0
 
         cleanup:
         tournamentRepository.delete(tournamentRepository.findById(tournamentDto.getId()).get())

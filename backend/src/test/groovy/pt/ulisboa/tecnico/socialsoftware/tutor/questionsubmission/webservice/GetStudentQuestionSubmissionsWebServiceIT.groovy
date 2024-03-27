@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.webservice
 
-
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
@@ -26,7 +25,6 @@ class GetStudentQuestionSubmissionsWebServiceIT extends SpockTestIT {
     def courseExecution
     def student
     def question
-    def response
 
     def setup() {
         deleteAll()
@@ -72,20 +70,19 @@ class GetStudentQuestionSubmissionsWebServiceIT extends SpockTestIT {
 
     def "get student's question submission"() {
         when:
-        response = restClient.get(
-                path: '/submissions/' + courseExecution.getId() + '/student',
-                requestContentType: 'application/json'
-        )
+        def result = webClient.get()
+                .uri('/submissions/' + courseExecution.getId() + '/student')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(QuestionSubmissionDto.class)
+                .collectList()
+                .block()
 
-        then: "check the response status"
-        response != null
-        response.status == 200
-        and: "if it responds with the correct question submissions"
-        def submissions = response.data
-        submissions.get(0).id != null
-        submissions.get(0).question.id == question.getId()
-        submissions.get(0).submitterId == student.getId()
-        submissions.get(0).courseExecutionId == courseExecution.getId()
+        then: "if it responds with the correct question submissions"
+        result.get(0).id != null
+        result.get(0).question.id == question.getId()
+        result.get(0).submitterId == student.getId()
+        result.get(0).courseExecutionId == courseExecution.getId()
     }
 
     def cleanup() {

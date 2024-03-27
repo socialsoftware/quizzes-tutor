@@ -1,14 +1,14 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.webservice
 
-import groovy.json.JsonOutput
+
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
 import org.springframework.http.MediaType
 import org.springframework.web.reactive.function.client.WebClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
+import pt.ulisboa.tecnico.socialsoftware.tutor.answer.dto.StatementQuizDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
-import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthPasswordDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.AssessmentDto
@@ -24,15 +24,10 @@ class SolveQuizTournamentIT extends SpockTestIT {
     private int port
 
     def assessmentDto
-
-    def response
     def user
-
     def course
     def courseExecution
-
     def question1
-
     def topicDto1
     def tournamentDto
 
@@ -54,12 +49,7 @@ class SolveQuizTournamentIT extends SpockTestIT {
         courseExecution.addUser(user)
         userRepository.save(user)
 
-        def loggedUser = restClient.post(
-                path: '/auth/external',
-                body: JsonOutput.toJson(new AuthPasswordDto(USER_1_USERNAME, USER_1_PASSWORD)),
-                requestContentType: 'application/json'
-        )
-        restClient.headers['Authorization'] = "Bearer " + loggedUser.data.token
+        externalUserLogin(USER_1_USERNAME, USER_1_PASSWORD)
 
         topicDto1 = new TopicDto()
         topicDto1.setName(TOPIC_1_NAME)
@@ -118,13 +108,17 @@ class SolveQuizTournamentIT extends SpockTestIT {
         tournamentService.joinTournament(user.getId(), tournamentDto.getId(), "")
 
         when:
-        response = restClient.put(
-                path: '/tournaments/' + courseExecution.getId() + '/solveQuiz/' + tournamentDto.getId(),
-                requestContentType: 'application/json'
-        )
+        def result = webClient.put()
+                .uri('/tournaments/' + courseExecution.getId() + '/solveQuiz/' + tournamentDto.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(StatementQuizDto.class)
+                .block()
 
         then: "check response status"
-        response.status == 200
+        result.id != null
+        result.questions.size() == NUMBER_OF_QUESTIONS
+        result.answers.size() == NUMBER_OF_QUESTIONS
 
         cleanup:
         tournamentRepository.delete(tournamentRepository.findById(tournamentDto.getId()).get())

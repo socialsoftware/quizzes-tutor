@@ -30,7 +30,6 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTestIT {
     def teacher
     def student
     def questionSubmission
-    def response
 
     def setup() {
         deleteAll()
@@ -90,24 +89,25 @@ class GetQuestionSubmissionReviewsWebServiceIT extends SpockTestIT {
         questionSubmissionService.createReview(reviewDto)
 
         when:
-        response = restClient.get(
-                path: '/submissions/' + questionSubmission.getId() + '/reviews',
-                query: ['executionId': courseExecution.getId()],
-                requestContentType: 'application/json'
-        )
+        def result = webClient.get()
+                .uri(uriBuilder -> uriBuilder
+                        .path('/submissions/' + questionSubmission.getId() + '/reviews')
+                        .queryParam('executionId', courseExecution.getId())
+                        .build())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(ReviewDto)
+                .collectList()
+                .block()
 
-        then: "check the response status"
-        response != null
-        response.status == 200
-        and: "if it responds with the correct question submissions"
-        def reviews = response.data
-        reviews.get(0).id != null
-        reviews.get(0).userId == teacher.getId()
-        reviews.get(0).questionSubmissionId == questionSubmission.getId()
-        reviews.get(0).comment == REVIEW_1_COMMENT
-        reviews.get(0).name == teacher.getName()
-        reviews.get(0).username == teacher.getUsername()
-        reviews.get(0).type == Review.Type.APPROVE.name()
+        then: "if it responds with the correct question submissions"
+        result.get(0).id != null
+        result.get(0).userId == teacher.getId()
+        result.get(0).questionSubmissionId == questionSubmission.getId()
+        result.get(0).comment == REVIEW_1_COMMENT
+        result.get(0).name == teacher.getName()
+        result.get(0).username == teacher.getUsername()
+        result.get(0).type == Review.Type.APPROVE.name()
     }
 
     def cleanup() {

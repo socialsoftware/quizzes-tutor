@@ -1,6 +1,5 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.webservice
 
-
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpHeaders
@@ -29,7 +28,6 @@ class GetCourseExecutionQuestionSubmissionsWebServiceIT extends SpockTestIT {
     def student1
     def student2
     def questionDto
-    def response
 
     def setup() {
         deleteAll()
@@ -98,25 +96,24 @@ class GetCourseExecutionQuestionSubmissionsWebServiceIT extends SpockTestIT {
         questionSubmissionService.createQuestionSubmission(questionSubmission3Dto)
 
         when:
-        response = restClient.get(
-                path: '/submissions/' + courseExecution.getId() + '/execution',
-                requestContentType: 'application/json'
-        )
+        def result = webClient.get()
+                .uri('/submissions/' + courseExecution.getId() + '/execution')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(QuestionSubmissionDto)
+                .collectList()
+                .block()
 
-        then: "check the response status"
-        response != null
-        response.status == 200
-        and: "if it responds with the correct question submissions"
-        def submissions = response.data
-        submissions.get(0).id != null
-        submissions.get(1).id != null
-        submissions.get(2).id != null
-        submissions.get(0).submitterId == student1.getId()
-        submissions.get(1).submitterId == student2.getId()
-        submissions.get(2).submitterId == student2.getId()
-        submissions.get(0).courseExecutionId == courseExecution.getId()
-        submissions.get(1).courseExecutionId == courseExecution.getId()
-        submissions.get(2).courseExecutionId == courseExecution.getId()
+        then: "if it responds with the correct question submissions"
+        result.get(0).id != null
+        result.get(1).id != null
+        result.get(2).id != null
+        result.get(0).submitterId == student1.getId()
+        result.get(1).submitterId == student2.getId()
+        result.get(2).submitterId == student2.getId()
+        result.get(0).courseExecutionId == courseExecution.getId()
+        result.get(1).courseExecutionId == courseExecution.getId()
+        result.get(2).courseExecutionId == courseExecution.getId()
     }
 
     def cleanup() {

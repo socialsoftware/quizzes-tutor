@@ -11,16 +11,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.dto.ExternalUserDto
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class ConfirmRegistrationWebServiceIT extends SpockTestIT {
     @LocalServerPort
     private int port
 
-    def response
     def user
-
-
     def course
     def courseExecution
 
@@ -45,31 +44,31 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
         user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_TODAY)
         courseExecution.addUser(user)
         userRepository.save(user)
+        and:
+        def externalUserDto = new ExternalUserDto()
+        externalUserDto.username = USER_1_USERNAME
+        externalUserDto.password = USER_1_PASSWORD
+        externalUserDto.confirmationToken = USER_1_TOKEN
 
         when:
-        response = restClient.post(
-                path: '/users/register/confirm',
-                body: [
-                        username         : USER_1_USERNAME,
-                        password         : USER_1_PASSWORD,
-                        confirmationToken: USER_1_TOKEN
-                ],
-                requestContentType: 'application/json'
-        )
+        def result = webClient.post()
+                .uri('/users/register/confirm')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(externalUserDto)
+                .retrieve()
+                .bodyToMono(ExternalUserDto.class)
+                .block()
 
-
-        then: "check response status"
-        response.status == 200
-        response.data != null
-        response.data.email == USER_1_EMAIL
-        response.data.username == USER_1_USERNAME
-        response.data.active == true
-        response.data.role == "STUDENT"
+        then:
+        result.email == USER_1_EMAIL
+        result.username == USER_1_USERNAME
+        result.active
+        result.role == User.Role.STUDENT
 
         cleanup:
-        courseExecution.getUsers().remove(userRepository.findByKey(response.data.key).get())
-        authUserRepository.delete(userRepository.findByKey(response.data.key).get().getAuthUser())
-        userRepository.delete(userRepository.findByKey(response.data.key).get())
+        courseExecution.getUsers().remove(userRepository.findByKey(result.key).get())
+        authUserRepository.delete(userRepository.findByKey(result.key).get().getAuthUser())
+        userRepository.delete(userRepository.findByKey(result.key).get())
     }
 
     def "user tries to confirm registration with an expired token"() {
@@ -80,31 +79,31 @@ class ConfirmRegistrationWebServiceIT extends SpockTestIT {
         user.getAuthUser().setTokenGenerationDate(LOCAL_DATE_BEFORE)
         courseExecution.addUser(user)
         userRepository.save(user)
+        and:
+        def externalUserDto = new ExternalUserDto()
+        externalUserDto.username = USER_1_USERNAME
+        externalUserDto.password = USER_1_PASSWORD
+        externalUserDto.confirmationToken = USER_1_TOKEN
 
         when:
-        response = restClient.post(
-                path: '/users/register/confirm',
-                body: [
-                        username         : USER_1_USERNAME,
-                        password         : USER_1_PASSWORD,
-                        confirmationToken: USER_1_TOKEN
-                ],
-                requestContentType: 'application/json'
-        )
+        def result = webClient.post()
+                .uri('/users/register/confirm')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(externalUserDto)
+                .retrieve()
+                .bodyToMono(ExternalUserDto.class)
+                .block()
 
-
-        then: "check response status"
-        response.status == 200
-        response.data != null
-        response.data.email == USER_1_EMAIL
-        response.data.username == USER_1_USERNAME
-        response.data.active == false
-        response.data.role == "STUDENT"
+        then:
+        result.email == USER_1_EMAIL
+        result.username == USER_1_USERNAME
+        !result.active
+        result.role == User.Role.STUDENT
 
         cleanup:
-        courseExecution.getUsers().remove(userRepository.findByKey(response.data.key).get())
-        authUserRepository.delete(userRepository.findByKey(response.data.key).get().getAuthUser())
-        userRepository.delete(userRepository.findByKey(response.data.key).get())
+        courseExecution.getUsers().remove(userRepository.findByKey(result.key).get())
+        authUserRepository.delete(userRepository.findByKey(result.key).get().getAuthUser())
+        userRepository.delete(userRepository.findByKey(result.key).get())
     }
 
     def cleanup() {

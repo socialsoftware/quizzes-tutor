@@ -1,20 +1,25 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.webservice
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.dto.TournamentDto
+
 class GetTournamentsIT extends TournamentIT {
     def setup() {
-        tournamentDto = createTournamentDto(STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        tournamentDto = createTournament(STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
     }
 
     def "user gets all tournament"() {
         when:
-        response = restClient.get(
-                path: '/tournaments/' + courseExecution.getId() + '/getTournaments',
-                requestContentType: 'application/json'
-        )
+        def result = webClient.get()
+                .uri('/tournaments/' + courseExecution.getId() + '/getTournaments')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToFlux(TournamentDto.class)
+                .collectList()
+                .block()
 
         then: "check response status"
-        response.status == 200
-        response.data != null
+        result.size() == 1
+        result.get(0).numberOfQuestions == NUMBER_OF_QUESTIONS
 
         cleanup:
         tournamentRepository.delete(tournamentRepository.findById(tournamentDto.getId()).get())

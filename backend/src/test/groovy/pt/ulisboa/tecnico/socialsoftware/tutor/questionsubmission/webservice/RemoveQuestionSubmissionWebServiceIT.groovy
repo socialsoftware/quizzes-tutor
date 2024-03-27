@@ -24,10 +24,8 @@ class RemoveQuestionSubmissionWebServiceIT extends SpockTestIT {
 
     def course
     def courseExecution
-    def teacher
     def student
     def questionSubmission
-    def response
 
     def setup() {
         deleteAll()
@@ -74,14 +72,15 @@ class RemoveQuestionSubmissionWebServiceIT extends SpockTestIT {
 
     def "remove question submission"() {
         when:
-        response = restClient.delete(
-                path: '/submissions/' + questionSubmission.getId(),
-                requestContentType: 'application/json'
-        )
+        webClient.delete()
+                .uri('/submissions/' + questionSubmission.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
-        then: "check the response status"
-        response != null
-        response.status == 200
+        then: "it is deleted"
+        questionSubmissionRepository.count() == 0
     }
 
     def cleanup() {

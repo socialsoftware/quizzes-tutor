@@ -27,7 +27,6 @@ class ToggleTeacherNotificationReadWebServiceIT extends SpockTestIT {
     def student
     def questionDto
     def questionSubmission
-    def response
 
     def setup() {
         deleteAll()
@@ -73,15 +72,19 @@ class ToggleTeacherNotificationReadWebServiceIT extends SpockTestIT {
 
     def "notify teacher on question submission"() {
         when:
-        response = restClient.put(
-                path: '/submissions/' + questionSubmission.getId() + '/toggle-notification-teacher',
-                query: ['hasRead': true],
-                requestContentType: 'application/json'
-        )
+        webClient.put()
+                .uri(uriBuilder -> uriBuilder
+                        .path('/submissions/' + questionSubmission.getId() + '/toggle-notification-teacher')
+                        .queryParam('hasRead', true)
+                        .build())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
-        then: "check the response status"
-        response != null
-        response.status == 200
+        then: "it was changed"
+        def questionSubmission = questionSubmissionRepository.findById(questionSubmission.getId()).get()
+        questionSubmission.teacherRead
     }
 
     def cleanup() {

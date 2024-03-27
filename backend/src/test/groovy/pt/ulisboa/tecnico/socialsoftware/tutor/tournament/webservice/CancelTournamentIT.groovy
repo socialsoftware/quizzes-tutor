@@ -2,18 +2,22 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.tournament.webservice
 
 class CancelTournamentIT extends TournamentIT {
     def setup() {
-        tournamentDto = createTournamentDto(STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
+        tournamentDto = createTournament(STRING_DATE_TOMORROW, STRING_DATE_LATER, NUMBER_OF_QUESTIONS, false)
     }
 
     def "user cancels tournament"() {
         when:
-        response = restClient.put(
-                path: '/tournaments/' + courseExecution.getId() + '/cancelTournament/' + tournamentDto.getId(),
-                requestContentType: 'application/json'
-        )
+        webClient.put()
+                .uri('/tournaments/' + courseExecution.getId() + '/cancelTournament/' + tournamentDto.getId())
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(tournamentDto)
+                .retrieve()
+                .bodyToMono(Void.class)
+                .block()
 
-        then: "check response status"
-        response.status == 200
+        then:
+        def tournament = tournamentRepository.findById(tournamentDto.getId()).get()
+        tournament.isCanceled()
 
         cleanup:
         tournamentRepository.delete(tournamentRepository.findById(tournamentDto.getId()).get())
