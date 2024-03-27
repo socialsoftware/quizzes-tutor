@@ -129,7 +129,7 @@ Cypress.Commands.add('time', (date, day, type) => {
       ' > .calendar > .month-container > :nth-child(1) > .datepicker-days > :nth-child(' +
       day +
       ') > .datepicker-day-text'
-  ).click({ force: true });
+  ).click({ force: true , multiple: true});
 });
 
 Cypress.Commands.add('selectTopic', (topic) => {
