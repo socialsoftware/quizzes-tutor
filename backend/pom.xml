@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.2.4</version>
+        <version>3.3.1</version>
         <relativePath/>
     </parent>
     <groupId>pt.ulisboa.tecnico.socialsoftware</groupId>
@@ -71,7 +71,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.2.5</version>
+                        <version>3.3.0</version>
                         <configuration>
                             <excludes>
                                 <exclude>**/*IT</exclude>
@@ -81,7 +81,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.11</version>
+                        <version>0.8.12</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -125,7 +125,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.2.5</version>
+                        <version>3.3.0</version>
                         <configuration>
                             <excludes>
                                 <exclude>**/*Test</exclude>
@@ -136,7 +136,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>3.2.5</version>
+                        <version>3.3.0</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -158,7 +158,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.11</version>
+                        <version>0.8.12</version>
                         <executions>
                             <execution>
                                 <goals>

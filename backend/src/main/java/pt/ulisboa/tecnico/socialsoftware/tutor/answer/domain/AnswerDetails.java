@@ -10,7 +10,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 @Table(name = "answer_details")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
 @DiscriminatorColumn(name = "answer_details_type",
-        columnDefinition = "varchar(32) not null default 'multiple_choice'",
         discriminatorType = DiscriminatorType.STRING)
 public abstract class AnswerDetails implements DomainEntity {
     @Id
