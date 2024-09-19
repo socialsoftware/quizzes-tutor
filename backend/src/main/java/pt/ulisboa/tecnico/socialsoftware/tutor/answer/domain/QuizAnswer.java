@@ -228,7 +228,8 @@ public class QuizAnswer implements DomainEntity {
     }
 
     public void checkIsCurrentQuestion(Integer questionId) {
-        if (!this.sequenceQuestionIdMap.get(currentSequenceQuestion).equals(questionId)) {
+        Integer currentSequenceQuestionId = this.sequenceQuestionIdMap.get(currentSequenceQuestion);
+        if (currentSequenceQuestionId != null && !currentSequenceQuestionId.equals(questionId)) {
             throw new TutorException(INVALID_QUIZ_ANSWER_SEQUENCE, getStudent().getUsername() + " tried to submit question with ID "
                     + questionId + " when they sequence is " + (currentSequenceQuestion + 1)
                     + " and the question IDs sequence is " +
