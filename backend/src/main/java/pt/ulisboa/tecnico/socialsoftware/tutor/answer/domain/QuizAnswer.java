@@ -219,7 +219,7 @@ public class QuizAnswer implements DomainEntity {
         }
     }
 
-    public Integer checkCorrectSequenceQuestion(Integer sequence, Integer questionId) {
+    public Integer checkCorrectSequenceQuestion(Integer sequence) {
         if (sequence.equals(currentSequenceQuestion + 1)) {
             currentSequenceQuestion = sequence;
         }

@@ -487,9 +487,9 @@ public class AnswerService {
         QuizAnswer quizAnswer = quizAnswerRepository.findById(answer.getQuizAnswerId())
                 .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND));
 
-        Integer sequenceQuestionId = quizAnswer.checkCorrectSequenceQuestion(answer.getSequence(), questionId);
+        Integer sequenceQuestionId = quizAnswer.checkCorrectSequenceQuestion(answer.getSequence());
 
-        if (!sequenceQuestionId.equals(questionId)) {
+        if (sequenceQuestionId != null && !sequenceQuestionId.equals(questionId)) {
             logger.info("Student of quiz answer {} tried to get question id {} with sequence {} but the correct question id is {}",
                     quizAnswer.getId(), questionId, answer.getSequence() + 1, sequenceQuestionId);
 
