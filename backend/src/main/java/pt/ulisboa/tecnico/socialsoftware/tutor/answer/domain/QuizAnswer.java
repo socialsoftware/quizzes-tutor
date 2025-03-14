@@ -86,7 +86,7 @@ public class QuizAnswer implements DomainEntity {
         for (int i = 0; i < quizQuestions.size(); i++) {
             new QuestionAnswer(this, quizQuestions.get(i), i);
 
-            if (quiz.isOneWay() && quiz.getType().equals(Quiz.QuizType.IN_CLASS)) {
+            if (quiz.isOneWay()) {
                 this.sequenceQuestionIdMap.put(i, quizQuestions.get(i).getQuestion().getId());
             }
         }

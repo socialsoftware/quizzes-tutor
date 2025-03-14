@@ -17,9 +17,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerItemR
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.repository.QuizAnswerRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.domain.Dashboard;
 import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.repository.DashboardRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.DifficultQuestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.Assessment;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.AssessmentRepository;
@@ -89,12 +87,6 @@ public class AnswerService {
 
     @Autowired
     private AnswersXmlImport xmlImporter;
-
-    @Autowired
-    private CourseExecutionService courseExecutionService;
-
-    @Autowired
-    private DifficultQuestionService difficultQuestionService;
 
     @Retryable(
             value = {SQLException.class},
@@ -489,7 +481,7 @@ public class AnswerService {
 
         Integer sequenceQuestionId = quizAnswer.checkCorrectSequenceQuestion(answer.getSequence());
 
-        if (sequenceQuestionId != null && !sequenceQuestionId.equals(questionId)) {
+        if (!sequenceQuestionId.equals(questionId)) {
             logger.info("Student of quiz answer {} tried to get question id {} with sequence {} but the correct question id is {}",
                     quizAnswer.getId(), questionId, answer.getSequence() + 1, sequenceQuestionId);
 
