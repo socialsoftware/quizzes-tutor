@@ -1,5 +1,3 @@
-# http://whitfin.io/speeding-up-maven-docker-builds/
-
 FROM maven:3.9.6-eclipse-temurin-21 as base
 
 COPY ./pom.xml ./pom.xml

@@ -11,31 +11,35 @@ services:
     env_file:
       - ./data/env/database.dev.env
       
-  fraud-service:
-    build:
-      context: ./fraud-service/
-    image: fraud-service:latest
-    container_name: fraud-service
-    depends_on: 
-      - postgres
-    links:
-      - postgres
-    ports:
-      - 5000:5000
-    restart: unless-stopped
-    env_file:
-      - ./data/env/fraud-service.dev.env
+#  fraud-service:
+#    build:
+#      context: ./fraud-service/
+#      platforms:
+#        - linux/amd64
+#    image: fraud-service:latest
+#    container_name: fraud-service
+#    depends_on:
+#      - postgres
+#    links:
+#      - postgres
+#    ports:
+#      - 5000:5000
+#    restart: unless-stopped
+#    env_file:
+#      - ./data/env/fraud-service.dev.env
 
   backend:
     build:
       context: ./backend/
       args:
         PROFILE: dev
+      platforms:
+        - linux/arm64
     image: tutor-backend
     container_name: backend
     depends_on:
       - postgres
-      - fraud-service
+#      - fraud-service
     links:
       - postgres
     ports:
@@ -56,7 +60,9 @@ services:
       dockerfile: Dockerfile
       args:
         NODE_ENV: dev
-    image: tutor-frontend                                                     
+      platforms:
+        - linux/arm64
+    image: tutor-frontend
     container_name: frontend
     depends_on:
       - backend

@@ -1,5 +1,3 @@
-## Build stage
-
 FROM node:21-alpine3.18 as build-stage
 WORKDIR /app
 COPY package.json ./
