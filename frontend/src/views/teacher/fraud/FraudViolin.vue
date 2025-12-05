@@ -57,7 +57,7 @@ export default class FraudViolin extends Vue {
     ];
 
     const layout: Partial<Layout> = {
-      title: this.title,
+      title: { text: this.title },
       autosize: true,
       yaxis: {
         zeroline: false,

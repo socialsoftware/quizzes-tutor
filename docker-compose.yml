@@ -11,22 +11,22 @@ services:
     env_file:
       - ./data/env/database.dev.env
       
-#  fraud-service:
-#    build:
-#      context: ./fraud-service/
-#      platforms:
-#        - linux/amd64
-#    image: fraud-service:latest
-#    container_name: fraud-service
-#    depends_on:
-#      - postgres
-#    links:
-#      - postgres
-#    ports:
-#      - 5000:5000
-#    restart: unless-stopped
-#    env_file:
-#      - ./data/env/fraud-service.dev.env
+  fraud-service:
+    build:
+      context: ./fraud-service/
+      platforms:
+        - linux/amd64
+    image: fraud-service:latest
+    container_name: fraud-service
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    ports:
+      - 5000:5000
+    restart: unless-stopped
+    env_file:
+      - ./data/env/fraud-service.dev.env
 
   backend:
     build:

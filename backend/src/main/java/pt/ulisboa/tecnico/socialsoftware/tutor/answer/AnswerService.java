@@ -515,7 +515,7 @@ public class AnswerService {
                     Mailer.QUIZZES_TUTOR_SUBJECT + " Alert", "The student tried to answer questions out of the predefined order: " + te.getMessage());
 //            }
 
-            // throw te;
+            throw te;
         }
         if (answer.getTimeToSubmission() == null) {
             answer.setTimeToSubmission(0);
