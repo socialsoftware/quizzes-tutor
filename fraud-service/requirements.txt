@@ -38,6 +38,6 @@ six==1.15.0
 sqlalchemy==1.4.23
 statsmodels==0.13.2
 tqdm==4.66.3
-urllib3==1.26.19
+urllib3==2.6.0
 Werkzeug==3.0.6
 wheel==0.38.1
