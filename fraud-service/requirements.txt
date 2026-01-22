@@ -40,4 +40,4 @@ statsmodels==0.13.2
 tqdm==4.66.3
 urllib3==1.26.19
 Werkzeug==3.0.6
-wheel==0.38.1
+wheel==0.46.2
