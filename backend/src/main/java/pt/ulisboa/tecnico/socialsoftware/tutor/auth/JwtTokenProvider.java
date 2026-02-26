@@ -55,18 +55,16 @@ public class JwtTokenProvider {
             generateKeys();
         }
 
-        Claims claims = Jwts.claims().setSubject(String.valueOf(authUser.getId()));
-        claims.put("role", authUser.getUser().getRole());
-        Set<Integer> courseExecution = userRepository.getUserCourseExecutionsIds(authUser.getUser().getId());
-        claims.put("executions", courseExecution);
-
         Date now = new Date();
         Date expiryDate = new Date(now.getTime() + 1000 * 60 * 60 * 24);
+        Set<Integer> courseExecution = userRepository.getUserCourseExecutionsIds(authUser.getUser().getId());
 
         return Jwts.builder()
-                .setClaims(claims)
-                .setIssuedAt(new Date())
-                .setExpiration(expiryDate)
+                .claim("role", authUser.getUser().getRole())
+                .claim("executions", courseExecution)
+                .subject(String.valueOf(authUser.getId()))
+                .issuedAt(new Date())
+                .expiration(expiryDate)
                 .signWith(privateKey)
                 .compact();
     }
@@ -85,14 +83,15 @@ public class JwtTokenProvider {
     }
 
     private static Claims getAllClaimsFromToken(String token) {
-        return Jwts.parserBuilder().setSigningKey(publicKey).build().parseClaimsJws(token).getBody();
+        return Jwts.parser().verifyWith(publicKey).build().parseSignedClaims(token).getPayload();
     }
 
     Authentication getAuthentication(String token) {
         Claims tokenClaims = getAllClaimsFromToken(token);
         int authUserId = Integer.parseInt(tokenClaims.getSubject());
         List<Integer> executions = (ArrayList<Integer>) tokenClaims.get("executions");
-        AuthUser authUser = this.authUserRepository.findById(authUserId).orElseThrow(() -> new TutorException(AUTHUSER_NOT_FOUND, authUserId));
+        AuthUser authUser = this.authUserRepository.findById(authUserId)
+                .orElseThrow(() -> new TutorException(AUTHUSER_NOT_FOUND, authUserId));
         authUser.setCourseExecutionsIds(executions);
         return new UsernamePasswordAuthenticationToken(authUser, "", authUser.getAuthorities());
     }

@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.9</version>
+        <version>3.5.11</version>
         <relativePath/>
     </parent>
     <groupId>pt.ulisboa.tecnico.socialsoftware</groupId>
@@ -27,6 +27,12 @@
         <java.version>21</java.version>
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
+        <!-- Security overrides for Spring Boot 3.5.11 -->
+        <snakeyaml.version>2.3</snakeyaml.version>
+        <tomcat.version>10.1.36</tomcat.version>
+        <spring-framework.version>6.2.3</spring-framework.version>
+        <spring-security.version>6.4.3</spring-security.version>
+        <logback.version>1.5.17</logback.version>
     </properties>
 
     <!-- Allows multiple properties files-->
@@ -81,7 +87,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.12</version>
+                        <version>0.8.14</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -158,7 +164,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.12</version>
+                        <version>0.8.14</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -252,12 +258,12 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.6.0</version>
+            <version>2.8.15</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>swagger-ui</artifactId>
-            <version>5.20.0</version>
+            <version>5.31.2</version>
         </dependency>
 
         <!-- Fenix -->
@@ -286,18 +292,18 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.11.5</version>
+            <version>0.13.0</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.11.5</version>
+            <version>0.13.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.5</version>
+            <version>0.13.0</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -313,25 +319,25 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.18.0</version>
+            <version>2.21.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.27.1</version>
+            <version>1.28.0</version>
         </dependency>
 
         <!-- Spock testing framework -->
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-spring</artifactId>
-            <version>2.4-M5-groovy-4.0</version>
+            <version>2.4-groovy-5.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <version>2.4-M5-groovy-4.0</version>
+            <version>2.4-groovy-5.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -339,12 +345,12 @@
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>4.0.26</version>
+            <version>5.0.4</version>
         </dependency>
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>4.0.26</version>
+            <version>5.0.4</version>
             <type>pom</type>
         </dependency>
 
@@ -352,7 +358,7 @@
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>3.4</version>
+            <version>3.5</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
