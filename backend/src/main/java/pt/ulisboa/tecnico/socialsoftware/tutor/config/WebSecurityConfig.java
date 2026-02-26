@@ -14,7 +14,6 @@ import org.springframework.security.config.annotation.web.configurers.AbstractHt
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
-import org.springframework.security.web.util.matcher.AntPathRequestMatcher;
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
@@ -37,26 +36,26 @@ public class WebSecurityConfig {
             http
                     .httpBasic(AbstractHttpConfigurer::disable)
                     .csrf(AbstractHttpConfigurer::disable)
-                    .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .authorizeHttpRequests((authorizeHttpRequests) ->
-                            authorizeHttpRequests
-                                    .requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll()
-                                    .anyRequest().permitAll());
+                    .sessionManagement((sessionManagement) -> sessionManagement
+                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
+                            .requestMatchers("/resources/**").permitAll()
+                            .anyRequest().permitAll());
             http.addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
             return http.build();
         } else {
             http
                     .httpBasic(AbstractHttpConfigurer::disable)
                     .csrf(AbstractHttpConfigurer::disable)
-                    .sessionManagement((sessionManagement) -> sessionManagement.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                    .authorizeHttpRequests((authorizeHttpRequests) ->
-                            authorizeHttpRequests
-                                    .requestMatchers(new AntPathRequestMatcher("/**", HttpMethod.OPTIONS.name())).permitAll()
-                                    .requestMatchers(new AntPathRequestMatcher("/auth/**")).permitAll()
-                                    .requestMatchers(new AntPathRequestMatcher("/users/register/confirm")).permitAll()
-                                    .requestMatchers(new AntPathRequestMatcher("/images/**")).permitAll()
-                                    .requestMatchers(new AntPathRequestMatcher("/resources/**")).permitAll()
-                                    .anyRequest().authenticated());
+                    .sessionManagement((sessionManagement) -> sessionManagement
+                            .sessionCreationPolicy(SessionCreationPolicy.STATELESS))
+                    .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests
+                            .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                            .requestMatchers("/auth/**").permitAll()
+                            .requestMatchers("/users/register/confirm").permitAll()
+                            .requestMatchers("/images/**").permitAll()
+                            .requestMatchers("/resources/**").permitAll()
+                            .anyRequest().authenticated());
             http.addFilterBefore(new JwtTokenFilter(jwtTokenProvider), UsernamePasswordAuthenticationFilter.class);
             return http.build();
         }
@@ -64,8 +63,7 @@ public class WebSecurityConfig {
 
     @Bean
     static MethodSecurityExpressionHandler createExpressionHandler(TutorPermissionEvaluator tutorPermissionEvaluator) {
-        DefaultMethodSecurityExpressionHandler expressionHandler =
-                new DefaultMethodSecurityExpressionHandler();
+        DefaultMethodSecurityExpressionHandler expressionHandler = new DefaultMethodSecurityExpressionHandler();
         expressionHandler.setPermissionEvaluator(tutorPermissionEvaluator);
         return expressionHandler;
     }
