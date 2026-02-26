@@ -4,28 +4,18 @@
   </v-overlay>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from '@/store';
 
-@Component
-export default class Loading extends Vue {
-  loading: boolean = this.$store.getters.getLoading;
+const store = useStore();
 
-  created() {
-    this.loading = this.$store.getters.getLoading;
-    this.$store.watch(
-      (state, getters) => getters.getLoading,
-      () => {
-        this.loading = this.$store.getters.getLoading;
-      }
-    );
-  }
-
-  @Watch('loading')
-  closeError() {
-    if (!this.loading) {
-      this.$store.dispatch('clearLoading');
+const loading = computed({
+  get: () => store.loading,
+  set: (val: boolean) => {
+    if (!val) {
+      store.clearLoading();
     }
   }
-}
+});
 </script>

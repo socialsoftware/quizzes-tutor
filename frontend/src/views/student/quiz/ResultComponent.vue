@@ -21,7 +21,7 @@
       </span>
       <div
         class="question-content"
-        v-html="convertMarkDown(question.content, question.image)"
+        v-html="convertMarkDownText(question.content || '', question.image)"
       ></div>
       <div @click="increaseOrder" class="square" data-cy="nextQuestionButton">
         <i
@@ -31,17 +31,17 @@
       </div>
     </div>
     <component
-      :is="question.questionDetails.type"
-      :questionDetails="question.questionDetails"
-      :answerDetails="answer.answerDetails"
-      :correctAnswerDetails="correctAnswer.correctAnswerDetails"
+      :is="question.questionDetails.type === 'multiple_choice' ? MultipleChoiceAnswer : (question.questionDetails.type === 'code_fill_in' ? CodeFillInAnswerResult : CodeOrderAnswerResult)"
+      :questionDetails="question.questionDetails as any"
+      :answerDetails="answer.answerDetails as any"
+      :correctAnswerDetails="correctAnswer.correctAnswerDetails as any"
     >
     </component>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Emit, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref } from 'vue';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementAnswer from '@/models/statement/StatementAnswer';
@@ -51,35 +51,33 @@ import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAns
 import CodeFillInAnswerResult from '@/components/code-fill-in/CodeFillInAnswerResult.vue';
 import CodeOrderAnswerResult from '@/components/code-order/CodeOrderAnswerResult.vue';
 
-@Component({
-  components: {
-    multiple_choice: MultipleChoiceAnswer,
-    code_fill_in: CodeFillInAnswerResult,
-    code_order: CodeOrderAnswerResult,
-  },
-})
-export default class ResultComponent extends Vue {
-  @Model('questionOrder', Number) questionOrder: number | undefined;
-  @Prop(StatementQuestion) readonly question!: StatementQuestion;
-  @Prop(StatementCorrectAnswer) readonly correctAnswer!: StatementCorrectAnswer;
-  @Prop(StatementAnswer) readonly answer!: StatementAnswer;
-  @Prop() readonly questionNumber!: number;
-  hover: boolean = false;
+const props = defineProps<{
+  questionOrder: number;
+  question: StatementQuestion;
+  correctAnswer: StatementCorrectAnswer;
+  answer: StatementAnswer;
+  questionNumber: number;
+}>();
 
-  @Emit()
-  increaseOrder() {
-    return 1;
-  }
+const emit = defineEmits([
+  'update:questionOrder',
+  'increase-order',
+  'decrease-order',
+]);
 
-  @Emit()
-  decreaseOrder() {
-    return 1;
-  }
+const hover = ref(false);
 
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
-  }
-}
+const increaseOrder = () => {
+  emit('increase-order');
+};
+
+const decreaseOrder = () => {
+  emit('decrease-order');
+};
+
+const convertMarkDownText = (text: string, image: Image | null = null): string => {
+  return convertMarkDown(text, image);
+};
 </script>
 
 <style lang="scss" scoped>

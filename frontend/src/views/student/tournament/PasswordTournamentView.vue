@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    :value="dialog"
-    @input="$emit('close-password-dialog')"
+    :model-value="dialog"
+    @update:model-value="$emit('close-password-dialog')"
     @keydown.esc="$emit('close-password-dialog')"
     max-width="75%"
     max-height="80%"
@@ -50,33 +50,36 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import Tournament from '@/models/user/Tournament';
 
-@Component
-export default class PasswordTournamentView extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
+const props = defineProps<{
+  dialog: boolean;
+  tournament: Tournament;
+}>();
 
-  joinTournament!: Tournament;
-  passwordFieldType: string = 'password';
-  password: string = '';
+const emit = defineEmits(['close-password-dialog', 'enter-password']);
 
-  async created() {
-    this.joinTournament = this.tournament;
-    this.password = '';
-    await this.$store.dispatch('loading');
-    await this.$store.dispatch('clearLoading');
-  }
+const store = useStore();
 
-  async switchVisibility() {
-    this.passwordFieldType =
-      this.passwordFieldType === 'password' ? 'text' : 'password';
-  }
+const joinTournament = ref<Tournament | null>(null);
+const passwordFieldType = ref('password');
+const password = ref('');
 
-  async passwordEmit() {
-    this.$emit('enter-password', this.password);
-  }
-}
+onMounted(async () => {
+  joinTournament.value = props.tournament;
+  password.value = '';
+  store.setLoading();
+  store.clearLoading();
+});
+
+const switchVisibility = async () => {
+  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+};
+
+const passwordEmit = async () => {
+  emit('enter-password', password.value);
+};
 </script>

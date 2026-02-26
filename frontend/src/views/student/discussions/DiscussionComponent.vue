@@ -51,9 +51,9 @@
               >
                 <div style="display: inline-flex; width: 100%">
                   <div style="width: 88%" class="text-left">
-                    <b v-if="user.role === 'TEACHER'"
+                    <b v-if="user?.role === 'TEACHER'"
                       >{{ user.name }} ({{ user.username }}) opened a discussion
-                      on {{ discussion.date }} :
+                      on {{ userDiscussion.date }} :
                     </b>
                     <b v-else
                       >You opened a discussion on {{ userDiscussion.date }} :</b
@@ -70,7 +70,7 @@
                     @change="changeDiscussionStatus(userDiscussion.id)"
                   />
                 </div>
-                <reply-component :discussion="userDiscussion" />
+                <reply-component v-if="userDiscussion" :discussion="userDiscussion" />
               </li>
             </ul>
           </div>
@@ -80,8 +80,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Emit, Prop, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, watch, onMounted } from 'vue';
+import { useStore } from '@/store';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Discussion from '@/models/management/Discussion';
 import ReplyComponent from '@/views/student/discussions/ReplyComponent.vue';
@@ -91,58 +92,61 @@ import Reply from '@/models/management/Reply';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import User from '@/models/user/User';
 
-@Component({
-  components: {
-    'reply-component': ReplyComponent,
-    'clarification-component': ClarificationComponent,
-  },
-})
-export default class DiscussionComponent extends Vue {
-  @Prop() readonly question!: StatementQuestion;
-  @Prop() readonly userDiscussion?: Discussion;
-  clarifications: Reply[] = [];
-  discussionMessage: string = '';
-  user: User = this.$store.getters.getUser;
+const props = defineProps<{
+  question: StatementQuestion;
+  userDiscussion?: Discussion;
+}>();
 
-  async created() {
-    await this.$store.dispatch('loading');
-    this.clarifications = await RemoteServices.getClarificationsByQuestionId(
-      this.question.questionId!
+const emit = defineEmits(['submitDiscussion', 'discussionMessage']);
+const store = useStore();
+
+const clarifications = ref<Reply[]>([]);
+const discussionMessage = ref('');
+const user = store.user as User | null;
+
+onMounted(async () => {
+  store.setLoading();
+  if (props.question?.questionId) {
+    clarifications.value = await RemoteServices.getClarificationsByQuestionId(
+      props.question.questionId
     );
-    await this.$store.dispatch('clearLoading');
   }
+  store.clearLoading();
+});
 
-  @Emit()
-  submitDiscussion() {
-    this.discussionMessage = '';
-    return 1;
-  }
+const submitDiscussion = () => {
+  emit('submitDiscussion');
+  discussionMessage.value = '';
+  return 1;
+};
 
-  @Emit('discussionMessage')
-  onInput() {
-    return this.discussionMessage;
-  }
+const onInput = () => {
+  emit('discussionMessage', discussionMessage.value);
+};
 
-  @Watch('question')
-  async onQuestionChange() {
-    this.discussionMessage = '';
-    await this.$store.dispatch('loading');
-    this.clarifications = await RemoteServices.getClarificationsByQuestionId(
-      this.question.questionId!
-    );
-    await this.$store.dispatch('clearLoading');
+watch(
+  () => props.question,
+  async () => {
+    discussionMessage.value = '';
+    store.setLoading();
+    if (props.question?.questionId) {
+      clarifications.value = await RemoteServices.getClarificationsByQuestionId(
+        props.question.questionId
+      );
+    }
+    store.clearLoading();
   }
+);
 
-  convertMarkDown(text: string) {
-    return convertMarkDown(text, null);
-  }
+const convertMarkDownText = (text: string) => {
+  return convertMarkDown(text, null);
+};
 
-  async changeDiscussionStatus(id: number) {
-    await this.$store.dispatch('loading');
-    await RemoteServices.changeDiscussionStatus(id);
-    await this.$store.dispatch('clearLoading');
-  }
-}
+const changeDiscussionStatus = async (id: number) => {
+  store.setLoading();
+  await RemoteServices.changeDiscussionStatus(id);
+  store.clearLoading();
+};
 </script>
 
 <style lang="scss" scoped>

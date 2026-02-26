@@ -31,39 +31,39 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 
-@Component
-export default class AvailableQuizzesView extends Vue {
-  quizzes: StatementQuiz[] = [];
+const store = useStore();
+const router = useRouter();
 
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      this.quizzes = (await RemoteServices.getAvailableQuizzes()).reverse();
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-  }
+const quizzes = ref<StatementQuiz[]>([]);
 
-  async solveQuiz(quiz: StatementQuiz) {
-    await this.$store.dispatch('loading');
-    try {
-      let statementQuiz: StatementQuiz = await RemoteServices.startQuiz(
-        quiz.id
-      );
-      await this.$store.dispatch('statementQuiz', statementQuiz);
-      await this.$router.push({ name: 'solve-quiz' });
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+onMounted(async () => {
+  store.setLoading();
+  try {
+    quizzes.value = (await RemoteServices.getAvailableQuizzes()).reverse();
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+});
+
+const solveQuiz = async (quiz: StatementQuiz) => {
+  store.setLoading();
+  try {
+    let statementQuiz: StatementQuiz = await RemoteServices.startQuiz(quiz.id);
+    store.setStatementQuiz(statementQuiz);
+    await router.push({ name: 'solve-quiz' });
+  } catch (error) {
+    store.setError(error as string);
+  }
+  store.clearLoading();
+};
 </script>
 
 <style lang="scss" scoped>

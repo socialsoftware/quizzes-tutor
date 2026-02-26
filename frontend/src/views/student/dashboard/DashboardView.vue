@@ -44,19 +44,19 @@
       </v-row>
     </v-card>
 
-    <div v-if="show === 'Global'" class="stats-container">
+    <div v-if="dashboardId && show === 'Global'" class="stats-container">
       <global-stats-view :dashboardId="dashboardId"></global-stats-view>
     </div>
 
-    <div v-if="show === 'Weekly'">
+    <div v-if="dashboardId && show === 'Weekly'">
       <weekly-scores-view :dashboardId="dashboardId"></weekly-scores-view>
     </div>
 
-    <div v-if="show === 'Failed'">
+    <div v-if="dashboardId && show === 'Failed'">
       <failed-answers-view :dashboardId="dashboardId"></failed-answers-view>
     </div>
 
-    <div v-if="show === 'Difficult'">
+    <div v-if="dashboardId && show === 'Difficult'">
       <difficult-questions-view
         :dashboardId="dashboardId"
       ></difficult-questions-view>
@@ -64,37 +64,30 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import GlobalStatsView from '@/views/student/dashboard/GlobalStatsView.vue';
 import DifficultQuestionsView from '@/views/student/dashboard/DifficultQuestionsView.vue';
 import WeeklyScoresView from '@/views/student/dashboard/WeeklyScoresView.vue';
 import FailedAnswersView from '@/views/student/dashboard/FailedAnswersView.vue';
 
-@Component({
-  components: {
-    GlobalStatsView,
-    WeeklyScoresView,
-    FailedAnswersView,
-    DifficultQuestionsView,
-  },
-})
-export default class DashboardView extends Vue {
-  dashboardId: number | null = null;
-  show: string | null = null;
+const store = useStore();
 
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      let dashboard = await RemoteServices.getUserDashboard();
+const dashboardId = ref<number | null>(null);
+const show = ref<string | null>(null);
 
-      this.dashboardId = dashboard.id;
-      this.show = 'Global';
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+onMounted(async () => {
+  store.setLoading();
+  try {
+    let dashboard = await RemoteServices.getUserDashboard();
+
+    dashboardId.value = dashboard.id;
+    show.value = 'Global';
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+});
 </script>

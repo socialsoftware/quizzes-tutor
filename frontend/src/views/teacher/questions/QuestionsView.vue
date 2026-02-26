@@ -49,8 +49,7 @@
         :items-per-page="15"
         :mobile-breakpoint="0"
         :search="search"
-        :sort-by="['creationDate']"
-        sort-desc
+        :sort-by="[{ key: 'creationDate', order: 'desc' }]"
       >
         <template v-slot:top>
           <v-card-title>
@@ -67,8 +66,8 @@
           <div
             class="clickableTitle"
             data-cy="questionTitleGrid"
-            @click="showQuestionDialog(item)"
-            @contextmenu="editQuestion(item, $event)"
+            @click.stop="showQuestionDialog(item)"
+            @contextmenu.stop="editQuestion(item, $event)"
           >
             {{ item.title }}
           </div>
@@ -97,11 +96,11 @@
             v-model="item.status"
             :items="statusList"
             dense
-            @change="setStatus(item.id, item.status)"
+            @update:model-value="setStatus(item.id as number, item.status)"
           >
-            <template v-slot:selection="{ item }">
-              <v-chip :color="getStatusColor(item)" small>
-                <span>{{ item }}</span>
+            <template v-slot:selection="{ item: selectItem }">
+              <v-chip :color="getStatusColor((selectItem as any).raw as string)" small>
+                <span>{{ (selectItem as any).raw }}</span>
               </v-chip>
             </template>
           </v-select>
@@ -113,74 +112,78 @@
             dense
             show-size
             small-chips
-            @change="handleFileUpload($event, item)"
+            @change="handleFileUpload($event.target.files[0], item)"
           />
         </template>
 
         <template v-slot:[`item.action`]="{ item }">
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ props }">
               <v-icon
                 class="mr-2 action-button"
-                @click="showQuestionDialog(item)"
-                v-on="on"
+                data-cy="showQuestionDialogButton"
+                @click.stop="showQuestionDialog(item)"
+                v-bind="props"
                 >visibility
               </v-icon>
             </template>
             <span>Show Question</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ props }">
               <v-icon
                 class="mr-2 action-button"
+                data-cy="showStudentViewDialogButton"
                 @click="showStudentViewDialog(item)"
-                v-on="on"
+                v-bind="props"
                 >school
               </v-icon>
             </template>
             <span>Student View</span>
           </v-tooltip>
-          <v-tooltip bottom data-cy="duplicateButton">
-            <template v-slot:activator="{ on }">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ props }">
               <v-icon
                 class="mr-2 action-button"
+                data-cy="duplicateQuestionButton"
                 @click="duplicateQuestion(item)"
-                v-on="on"
+                v-bind="props"
                 >cached
               </v-icon>
             </template>
             <span>Duplicate Question</span>
           </v-tooltip>
           <v-tooltip v-if="item.numberOfAnswers === 0" bottom>
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ props }">
               <v-icon
                 class="mr-2 action-button"
+                data-cy="editQuestionButton"
                 @click="editQuestion(item)"
-                v-on="on"
+                v-bind="props"
                 >edit
               </v-icon>
             </template>
             <span>Edit Question</span>
           </v-tooltip>
           <v-tooltip bottom>
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ props }">
               <v-icon
                 class="mr-2 action-button"
                 @click="showClarificationDialog(item)"
-                v-on="on"
+                v-bind="props"
                 >fas fa-comments
               </v-icon>
             </template>
             <span>Show Clarifications</span>
           </v-tooltip>
           <v-tooltip v-if="item.numberOfAnswers === 0" bottom>
-            <template v-slot:activator="{ on }">
+            <template v-slot:activator="{ props }">
               <v-icon
                 class="mr-2 action-button"
                 color="red"
                 data-cy="deleteQuestionButton"
                 @click="deleteQuestion(item)"
-                v-on="on"
+                v-bind="props"
                 >delete
               </v-icon>
             </template>
@@ -196,41 +199,46 @@
       </footer>
       <upload-questions-dialog
         v-if="uploadQuestionsDialog"
-        v-model="uploadQuestionsDialog"
-        v-on:questions-uploaded="onQuestionsUploaded"
-        v-on:close-dialog="onCloseUploadQuestionsDialog"
+        :dialog="uploadQuestionsDialog"
+        @update:dialog="uploadQuestionsDialog = $event"
+        @questions-uploaded="onQuestionsUploaded"
+        @close-dialog="onCloseUploadQuestionsDialog"
       />
       <edit-question-dialog
         v-if="currentQuestion && editQuestionDialog"
-        v-model="editQuestionDialog"
+        :dialog="editQuestionDialog"
+        @update:dialog="editQuestionDialog = $event"
         :question="currentQuestion"
-        v-on:save-question="onSaveQuestion"
+        @save-question="onSaveQuestion"
       />
       <show-question-dialog
         v-if="currentQuestion && questionDialog"
         v-model="questionDialog"
         :question="currentQuestion"
-        v-on:close-show-question-dialog="onCloseShowQuestionDialog"
+        @close-show-question-dialog="onCloseShowQuestionDialog"
       />
       <student-view-dialog
         v-if="statementQuestion && studentViewDialog"
-        v-model="studentViewDialog"
+        :dialog="studentViewDialog"
+        @update:dialog="studentViewDialog = $event"
         :statementQuestion="statementQuestion"
-        v-on:close-show-question-dialog="onCloseStudentViewDialog"
+        @close-show-question-dialog="onCloseStudentViewDialog"
       />
       <show-clarification-dialog
         v-if="currentQuestion && clarificationDialog"
-        v-model="clarificationDialog"
+        :dialog="clarificationDialog"
+        @update:dialog="clarificationDialog = $event"
         :question="currentQuestion"
-        v-on:remove-clarification="onRemoveClarification"
-        v-on:close-show-clarification-dialog="onCloseShowClarificationDialog"
+        @remove-clarification="onRemoveClarification"
+        @close-show-clarification-dialog="onCloseShowClarificationDialog"
       />
     </v-card>
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted, watch, onErrorCaptured, nextTick } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
@@ -244,286 +252,236 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import StudentViewDialog from '@/views/teacher/questions/StudentViewDialog.vue';
 import QueryQuestionForm from '@/views/teacher/questions/QueryQuestionForm.vue';
 
-@Component({
-  components: {
-    'query-question-form': QueryQuestionForm,
-    'upload-questions-dialog': UploadQuestionsDialog,
-    'show-question-dialog': ShowQuestionDialog,
-    'student-view-dialog': StudentViewDialog,
-    'show-clarification-dialog': ShowClarificationDialog,
-    'edit-question-dialog': EditQuestionDialog,
-    'edit-question-topics': EditQuestionTopics,
-  },
-})
-export default class QuestionsView extends Vue {
-  questions: Question[] = [];
-  topics: Topic[] = [];
-  currentQuestion: Question | null = null;
-  statementQuestion: StatementQuestion | null = null;
-  editQuestionDialog: boolean = false;
-  questionDialog: boolean = false;
-  studentViewDialog: boolean = false;
-  uploadQuestionsDialog: boolean = false;
-  clarificationDialog: boolean = false;
-  search: string = '';
-  statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
-  showQueryForm: boolean = true;
+const store = useStore();
 
-  headers: object = [
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'left',
-      width: '5px',
-      sortable: false,
-    },
-    { text: 'Title', value: 'title', width: '50%', align: 'left' },
-    {
-      text: 'Topics',
-      value: 'topics',
-      width: '30%',
-      align: 'center',
-      sortable: false,
-    },
-    { text: 'Status', value: 'status', width: '150px', align: 'left' },
-    {
-      text: 'Image',
-      value: 'image',
-      width: '10%',
-      align: 'center',
-      sortable: false,
-    },
-    {
-      text: 'Clarifications',
-      value: 'numberOfClarifications',
-      width: '5px',
-      align: 'center',
-    },
-    { text: 'Difficulty', value: 'difficulty', width: '5px', align: 'center' },
-    {
-      text: 'Answers',
-      value: 'numberOfAnswers',
-      width: '5px',
-      align: 'center',
-    },
-    {
-      text: 'Generated quizzes',
-      value: 'numberOfGeneratedQuizzes',
-      width: '5px',
-      align: 'center',
-    },
-    {
-      text: 'Non generated quizzes',
-      value: 'numberOfNonGeneratedQuizzes',
-      width: '5px',
-      align: 'center',
-    },
-    {
-      text: 'Creation Date',
-      value: 'creationDate',
-      width: '150px',
-      align: 'center',
-    },
-  ];
+const questions = ref<Question[]>([]);
 
-  @Watch('editQuestionDialog')
-  closeError() {
-    if (!this.editQuestionDialog) {
-      this.currentQuestion = null;
-    }
+onErrorCaptured((err, instance, info) => {
+  console.error('ERROR CAPTURED in QuestionsView:', err, info);
+  return false; // don't propagate
+});
+
+const topics = ref<Topic[]>([]);
+const currentQuestion = ref<Question | null>(null);
+const statementQuestion = ref<StatementQuestion | null>(null);
+const editQuestionDialog = ref(false);
+const questionDialog = ref(false);
+const studentViewDialog = ref(false);
+const uploadQuestionsDialog = ref(false);
+const clarificationDialog = ref(false);
+const search = ref('');
+const statusList = ref(['DISABLED', 'AVAILABLE', 'REMOVED']);
+const showQueryForm = ref(true);
+
+const headers = ref<any[]>([
+  { title: 'Actions', value: 'action', align: 'start', width: '5px', sortable: false },
+  { title: 'Title', value: 'title', width: '50%', align: 'start' },
+  { title: 'Topics', value: 'topics', width: '30%', align: 'center', sortable: false },
+  { title: 'Status', value: 'status', width: '150px', align: 'start' },
+  { title: 'Image', value: 'image', width: '10%', align: 'center', sortable: false },
+  { title: 'Clarifications', value: 'numberOfClarifications', width: '5px', align: 'center' },
+  { title: 'Difficulty', value: 'difficulty', width: '5px', align: 'center' },
+  { title: 'Answers', value: 'numberOfAnswers', width: '5px', align: 'center' },
+  { title: 'Generated quizzes', value: 'numberOfGeneratedQuizzes', width: '5px', align: 'center' },
+  { title: 'Non generated quizzes', value: 'numberOfNonGeneratedQuizzes', width: '5px', align: 'center' },
+  { title: 'Creation Date', value: 'creationDate', width: '150px', align: 'center' },
+]);
+
+watch(editQuestionDialog, (newVal) => {
+  if (!newVal) {
+    currentQuestion.value = null;
   }
+});
 
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      this.topics = await RemoteServices.getTopics();
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+onMounted(async () => {
+  store.setLoading();
+  try {
+    topics.value = await RemoteServices.getTopics();
+  } catch (error) {
+    store.setError(error as string);
   }
+  store.clearLoading();
+});
 
-  onQueryQuestions(questions: Question[]) {
-    this.questions = questions;
+const onQueryQuestions = (qs: Question[]) => {
+  questions.value = qs;
+};
+
+const customFilter = (value: any, query: string, item?: any) => {
+  return (
+    query != null &&
+    JSON.stringify(item?.raw || item).toLowerCase().indexOf(query.toLowerCase()) !== -1
+  );
+};
+
+const onQuestionChangedTopics = (questionId: Number, changedTopics: Topic[]) => {
+  let question = questions.value.find((question: Question) => question.id == questionId);
+  if (question) {
+    question.topics = changedTopics;
   }
+};
 
-  customFilter(value: string, search: string, question: Question) {
-    // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
-    return (
-      search != null &&
-      JSON.stringify(question).toLowerCase().indexOf(search.toLowerCase()) !==
-        -1
-    );
-  }
+const getDifficultyColor = (difficulty: number) => {
+  if (difficulty < 25) return 'red';
+  else if (difficulty < 50) return 'orange';
+  else if (difficulty < 75) return 'lime';
+  else return 'green';
+};
 
-  onQuestionChangedTopics(questionId: Number, changedTopics: Topic[]) {
-    let question = this.questions.find(
-      (question: Question) => question.id == questionId
-    );
+const setStatus = async (questionId: number, status: string) => {
+  try {
+    await RemoteServices.setQuestionStatus(questionId, status);
+    let question = questions.value.find((question) => question.id === questionId);
     if (question) {
-      question.topics = changedTopics;
+      question.status = status;
+    }
+  } catch (error) {
+    store.setError(error as string);
+  }
+};
+
+const getStatusColor = (status: string) => {
+  if (status === 'REMOVED') return 'red';
+  else if (status === 'DISABLED') return 'orange';
+  else return 'green';
+};
+
+const handleFileUpload = async (event: File, question: Question) => {
+  if (question.id) {
+    try {
+      const imageURL = await RemoteServices.uploadImage(event, question.id);
+      question.image = new Image();
+      question.image.url = imageURL;
+      confirm('Image ' + imageURL + ' was uploaded!');
+    } catch (error) {
+      store.setError(error as string);
     }
   }
+};
 
-  getDifficultyColor(difficulty: number) {
-    if (difficulty < 25) return 'red';
-    else if (difficulty < 50) return 'orange';
-    else if (difficulty < 75) return 'lime';
-    else return 'green';
+const showQuestionDialog = (question: Question) => {
+  console.log('showQuestionDialog called, id:', question?.id, 'title:', question?.title, 'type:', question?.questionDetailsDto?.type);
+  if (!question?.id) {
+    console.log('showQuestionDialog SKIPPED - no id');
+    return;
   }
+  currentQuestion.value = question;
+  questionDialog.value = true;
+  console.log('showQuestionDialog SET - currentQuestion:', currentQuestion.value?.title, 'questionDialog:', questionDialog.value);
+  nextTick(() => {
+    console.log('showQuestionDialog NEXTTICK - currentQuestion:', currentQuestion.value?.title, 'questionDialog:', questionDialog.value);
+  });
+};
 
-  async setStatus(questionId: number, status: string) {
+const showStudentViewDialog = async (question: Question) => {
+  if (question.id) {
     try {
-      await RemoteServices.setQuestionStatus(questionId, status);
-      let question = this.questions.find(
-        (question) => question.id === questionId
+      statementQuestion.value = await RemoteServices.getStatementQuestion(question.id);
+      studentViewDialog.value = true;
+    } catch (error) {
+      store.setError(error as string);
+    }
+  }
+};
+
+const showClarificationDialog = (question: Question) => {
+  currentQuestion.value = question;
+  clarificationDialog.value = true;
+};
+
+const onCloseShowQuestionDialog = () => {
+  currentQuestion.value = null;
+  questionDialog.value = false;
+};
+
+const onCloseStudentViewDialog = () => {
+  statementQuestion.value = null;
+  studentViewDialog.value = false;
+};
+
+const onRemoveClarification = (questionId: number) => {
+  let question = questions.value.find((question) => question.id === questionId);
+  if (question) {
+    question.numberOfClarifications--;
+  }
+};
+
+const onCloseShowClarificationDialog = () => {
+  currentQuestion.value = null;
+  clarificationDialog.value = false;
+};
+
+const newQuestion = () => {
+  currentQuestion.value = new Question();
+  editQuestionDialog.value = true;
+};
+
+const editQuestion = (question: Question, e?: Event) => {
+  if (e) e.preventDefault();
+  currentQuestion.value = question;
+  editQuestionDialog.value = true;
+};
+
+const duplicateQuestion = (question: Question) => {
+  currentQuestion.value = new Question(question);
+  currentQuestion.value.id = null;
+  currentQuestion.value.questionDetailsDto.setAsNew();
+  currentQuestion.value.image = null;
+  editQuestionDialog.value = true;
+};
+
+const onSaveQuestion = async (question: Question) => {
+  questions.value = questions.value.filter((q) => q.id !== question.id);
+  questions.value.unshift(question);
+  editQuestionDialog.value = false;
+  currentQuestion.value = null;
+};
+
+const exportCourseQuestions = async () => {
+  store.setLoading();
+  let fileName = (store.getCurrentCourse?.name || 'Course') + '-Questions.zip';
+  try {
+    let result = await RemoteServices.exportCourseQuestions();
+    const url = window.URL.createObjectURL(result as any);
+    const link = document.createElement('a');
+    link.href = url;
+    link.setAttribute('download', fileName);
+    document.body.appendChild(link);
+    link.click();
+  } catch (error) {
+    store.setError(error as string);
+  }
+  store.clearLoading();
+};
+
+const importCourseQuestions = () => {
+  uploadQuestionsDialog.value = true;
+};
+
+const onQuestionsUploaded = (qs: Question[]) => {
+  uploadQuestionsDialog.value = false;
+  questions.value = [...qs, ...questions.value];
+};
+
+const onCloseUploadQuestionsDialog = () => {
+  uploadQuestionsDialog.value = false;
+};
+
+const deleteQuestion = async (toDeletequestion: Question) => {
+  if (
+    toDeletequestion.id &&
+    confirm('Are you sure you want to delete this question?')
+  ) {
+    try {
+      await RemoteServices.deleteQuestion(toDeletequestion.id);
+      questions.value = questions.value.filter(
+        (question) => question.id != toDeletequestion.id
       );
-      if (question) {
-        question.status = status;
-      }
     } catch (error) {
-      await this.$store.dispatch('error', error);
+      store.setError(error as string);
     }
   }
-
-  getStatusColor(status: string) {
-    if (status === 'REMOVED') return 'red';
-    else if (status === 'DISABLED') return 'orange';
-    else return 'green';
-  }
-
-  async handleFileUpload(event: File, question: Question) {
-    if (question.id) {
-      try {
-        const imageURL = await RemoteServices.uploadImage(event, question.id);
-        question.image = new Image();
-        question.image.url = imageURL;
-        confirm('Image ' + imageURL + ' was uploaded!');
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-    }
-  }
-
-  showQuestionDialog(question: Question) {
-    this.currentQuestion = question;
-    this.questionDialog = true;
-  }
-
-  async showStudentViewDialog(question: Question) {
-    if (question.id) {
-      try {
-        this.statementQuestion = await RemoteServices.getStatementQuestion(
-          question.id
-        );
-        this.studentViewDialog = true;
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-    }
-  }
-
-  showClarificationDialog(question: Question) {
-    this.currentQuestion = question;
-    this.clarificationDialog = true;
-  }
-
-  onCloseShowQuestionDialog() {
-    this.currentQuestion = null;
-    this.questionDialog = false;
-  }
-
-  onCloseStudentViewDialog() {
-    this.statementQuestion = null;
-    this.studentViewDialog = false;
-  }
-
-  onRemoveClarification(questionId: number) {
-    let question = this.questions.find(
-      (question) => question.id === questionId
-    );
-    if (question) {
-      question.numberOfClarifications--;
-    }
-  }
-
-  onCloseShowClarificationDialog() {
-    this.currentQuestion = null;
-    this.clarificationDialog = false;
-  }
-
-  newQuestion() {
-    this.currentQuestion = new Question();
-    this.editQuestionDialog = true;
-  }
-
-  editQuestion(question: Question, e?: Event) {
-    if (e) e.preventDefault();
-    this.currentQuestion = question;
-    this.editQuestionDialog = true;
-  }
-
-  duplicateQuestion(question: Question) {
-    this.currentQuestion = new Question(question);
-    this.currentQuestion.id = null;
-    this.currentQuestion.questionDetailsDto.setAsNew();
-    this.currentQuestion.image = null;
-    this.editQuestionDialog = true;
-  }
-
-  async onSaveQuestion(question: Question) {
-    this.questions = this.questions.filter((q) => q.id !== question.id);
-    this.questions.unshift(question);
-    this.editQuestionDialog = false;
-    this.currentQuestion = null;
-  }
-
-  async exportCourseQuestions() {
-    await this.$store.dispatch('loading');
-    let fileName = this.$store.getters.getCurrentCourse.name + '-Questions.zip';
-    try {
-      let result = await RemoteServices.exportCourseQuestions();
-      const url = window.URL.createObjectURL(result);
-      const link = document.createElement('a');
-      link.href = url;
-      link.setAttribute('download', fileName);
-      document.body.appendChild(link);
-      link.click();
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-  }
-
-  importCourseQuestions() {
-    this.uploadQuestionsDialog = true;
-  }
-
-  onQuestionsUploaded(questions: Question[]) {
-    this.uploadQuestionsDialog = false;
-    this.questions = [...questions, ...this.questions];
-  }
-
-  onCloseUploadQuestionsDialog() {
-    this.uploadQuestionsDialog = false;
-  }
-
-  async deleteQuestion(toDeletequestion: Question) {
-    if (
-      toDeletequestion.id &&
-      confirm('Are you sure you want to delete this question?')
-    ) {
-      try {
-        await RemoteServices.deleteQuestion(toDeletequestion.id);
-        this.questions = this.questions.filter(
-          (question) => question.id != toDeletequestion.id
-        );
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-    }
-  }
-}
+};
 </script>
 
 <style lang="scss" scoped>

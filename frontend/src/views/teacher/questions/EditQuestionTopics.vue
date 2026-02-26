@@ -5,71 +5,69 @@
       :items="topics"
       multiple
       return-object
-      item-text="name"
+      item-title="name"
       item-value="name"
-      @change="saveTopics"
+      @update:model-value="saveTopics"
     >
-      <template v-slot:selection="data">
+      <template v-slot:selection="{ item }">
         <v-chip
-          v-bind="data.attrs"
-          :input-value="data.selected"
-          close
-          @click="data.select"
-          @click:close="removeTopic(data.item)"
+          closable
+          @click:close="removeTopic((item as any).raw)"
         >
-          {{ data.item.name }}
+          {{ (item as any).raw.name }}
         </v-chip>
-      </template>
-      <template v-slot:item="data">
-        <v-list-item-content>
-          <v-list-item-title>{{ data.item.name }}</v-list-item-title>
-        </v-list-item-content>
       </template>
     </v-autocomplete>
   </v-form>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, watch, onMounted } from 'vue';
+import { useStore } from '@/store';
 import Topic from '@/models/management/Topic';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
 
-@Component
-export default class EditQuestionTopics extends Vue {
-  @Prop({ type: Question, required: true }) readonly question!: Question;
-  @Prop({ type: Array, required: true }) readonly topics!: Topic[];
+const props = defineProps<{
+  question: Question;
+  topics: Topic[];
+}>();
 
-  questionTopics: Topic[] = [];
+const emit = defineEmits(['question-changed-topics']);
+const store = useStore();
+const questionTopics = ref<Topic[]>([]);
 
-  created() {
-    this.questionTopics = JSON.parse(JSON.stringify(this.question.topics));
-  }
+onMounted(() => {
+  questionTopics.value = JSON.parse(JSON.stringify(props.question.topics));
+});
 
-  async saveTopics() {
-    if (this.question.id) {
-      try {
-        await RemoteServices.updateQuestionTopics(
-          this.question.id,
-          this.questionTopics
-        );
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
+watch(() => props.question.topics, () => {
+  questionTopics.value = JSON.parse(JSON.stringify(props.question.topics));
+}, { deep: true });
+
+const saveTopics = async () => {
+  if (props.question.id) {
+    try {
+      await RemoteServices.updateQuestionTopics(
+        props.question.id,
+        questionTopics.value
+      );
+    } catch (error) {
+      store.setError(error as string);
     }
-
-    this.$emit(
-      'question-changed-topics',
-      this.question.id,
-      this.questionTopics
-    );
   }
 
-  removeTopic(topic: Topic) {
-    this.questionTopics = this.questionTopics.filter(
-      (element) => element.id != topic.id
-    );
-    this.saveTopics();
-  }
-}
+  emit(
+    'question-changed-topics',
+    props.question.id,
+    questionTopics.value
+  );
+};
+
+const removeTopic = (topic: Topic) => {
+  questionTopics.value = questionTopics.value.filter(
+    (element) => element.id != topic.id
+  );
+  saveTopics();
+};
 </script>

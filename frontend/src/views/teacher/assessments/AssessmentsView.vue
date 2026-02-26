@@ -1,7 +1,7 @@
 <template>
   <div>
     <assessment-form
-      v-if="editMode"
+      v-if="editMode && assessment"
       @switchMode="changeMode"
       @updateAssessment="updateAssessment"
       :edit-mode="editMode"
@@ -17,77 +17,72 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Assessment from '@/models/management/Assessment';
 import AssessmentForm from '@/views/teacher/assessments/AssessmentForm.vue';
 import AssessmentList from '@/views/teacher/assessments/AssessmentList.vue';
 
-@Component({
-  components: {
-    AssessmentForm,
-    AssessmentList,
-  },
-})
-export default class AssessmentsView extends Vue {
-  assessments: Assessment[] = [];
-  assessment: Assessment | null = null;
-  editMode: boolean = false;
+const store = useStore();
 
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      this.assessments = await RemoteServices.getAssessments();
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+const assessments = ref<Assessment[]>([]);
+const assessment = ref<Assessment | null>(null);
+const editMode = ref(false);
+
+onMounted(async () => {
+  store.setLoading();
+  try {
+    assessments.value = await RemoteServices.getAssessments();
+  } catch (error) {
+    store.setError(error as string);
   }
+  store.clearLoading();
+});
 
-  changeMode() {
-    this.editMode = !this.editMode;
-    if (this.editMode) {
-      this.assessment = new Assessment();
-    } else {
-      this.assessment = null;
-    }
+const changeMode = () => {
+  editMode.value = !editMode.value;
+  if (editMode.value) {
+    assessment.value = new Assessment();
+  } else {
+    assessment.value = null;
   }
+};
 
-  async editAssessment(assessmentId: number) {
-    try {
-      let assessment = this.assessments.find(
-        (assessment) => assessment.id === assessmentId
-      );
-      if (assessment) {
-        this.assessment = assessment;
-        this.editMode = true;
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-  }
-
-  updateAssessment(updatedAssessment: Assessment) {
-    this.assessments = this.assessments.filter(
-      (assessment) => assessment.id !== updatedAssessment.id
+const editAssessment = async (assessmentId: number) => {
+  try {
+    let foundAssessment = assessments.value.find(
+      (a) => a.id === assessmentId
     );
-    this.assessments.unshift(updatedAssessment);
-    this.editMode = false;
-    this.assessment = null;
+    if (foundAssessment) {
+      assessment.value = foundAssessment;
+      editMode.value = true;
+    }
+  } catch (error) {
+    store.setError(error as string);
   }
+};
 
-  newAssessment() {
-    this.assessment = new Assessment();
-    this.editMode = true;
-  }
+const updateAssessment = (updatedAssessment: Assessment) => {
+  assessments.value = assessments.value.filter(
+    (a) => a.id !== updatedAssessment.id
+  );
+  assessments.value.unshift(updatedAssessment);
+  editMode.value = false;
+  assessment.value = null;
+};
 
-  deleteAssessment(assessmentId: number) {
-    this.assessments = this.assessments.filter(
-      (assessment) => assessment.id !== assessmentId
-    );
-  }
-}
+const newAssessment = () => {
+  assessment.value = new Assessment();
+  editMode.value = true;
+};
+
+const deleteAssessment = (assessmentId: number) => {
+  assessments.value = assessments.value.filter(
+    (a) => a.id !== assessmentId
+  );
+};
 </script>
 
 <style lang="scss" scoped></style>

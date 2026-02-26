@@ -2,77 +2,69 @@
   <div :id="elementId"></div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { computed, watch, onMounted } from 'vue';
 import Plotly, { Layout, ViolinData } from 'plotly.js-cartesian-dist-min';
 import { FraudScore } from '@/models/management/fraud/FraudScore';
-@Component({})
-export default class FraudViolin extends Vue {
-  @Prop({ required: true, default: [] })
-  readonly quizFraudScores!: FraudScore[];
-  @Prop({ required: true })
-  readonly graphId!: string;
-  @Prop({ required: true })
-  readonly title!: string;
 
-  get scores() {
-    return this.quizFraudScores.map((qfs) => qfs.score);
-  }
+const props = withDefaults(defineProps<{
+  quizFraudScores?: FraudScore[];
+  graphId: string;
+  title: string;
+}>(), {
+  quizFraudScores: () => []
+});
 
-  get labels() {
-    return this.quizFraudScores.map((qfs) => `(User, ${qfs.userInfo.name})`);
-  }
+const scores = computed(() => props.quizFraudScores.map((qfs) => qfs.score));
+const labels = computed(() => props.quizFraudScores.map((qfs) => `(User, ${qfs.userInfo.name})`));
+const elementId = computed(() => 'fraud-graph-' + props.graphId);
 
-  @Watch('quizFraudScores', { deep: true })
-  onQuizFraudScoresChange() {
-    this.drawPlot();
-  }
-  get elementId() {
-    return 'fraud-graph-' + this.graphId;
-  }
-  mounted() {
-    this.drawPlot();
-  }
+watch(() => props.quizFraudScores, () => {
+  drawPlot();
+}, { deep: true });
 
-  drawPlot() {
-    let data: Partial<ViolinData>[] = [
-      {
-        type: 'violin',
-        y: this.scores,
-        points: 'all',
-        box: {
-          visible: true,
-        },
-        line: {
-          color: 'black',
-        },
-        text: this.labels,
-        fillcolor: '#1876d1',
-        opacity: 0.6,
-        meanline: {
-          visible: true,
-        },
-        x0: 'Scores',
+onMounted(() => {
+  drawPlot();
+});
+
+const drawPlot = () => {
+  let data: Partial<ViolinData>[] = [
+    {
+      type: 'violin',
+      y: scores.value,
+      points: 'all',
+      box: {
+        visible: true,
       },
-    ];
-
-    const layout: Partial<Layout> = {
-      title: { text: this.title },
-      autosize: true,
-      yaxis: {
-        zeroline: false,
+      line: {
+        color: 'black',
       },
-      width: 280,
-      showlegend: false,
-      margin: {
-        r: 25,
-        l: 25,
+      text: labels.value,
+      fillcolor: '#1876d1',
+      opacity: 0.6,
+      meanline: {
+        visible: true,
       },
-    };
+      x0: 'Scores',
+    },
+  ];
 
-    Plotly.newPlot(this.elementId, data, layout, { responsive: true });
-  }
-}
+  const layout: Partial<Layout> = {
+    title: { text: props.title },
+    autosize: true,
+    yaxis: {
+      zeroline: false,
+    },
+    width: 280,
+    showlegend: false,
+    margin: {
+      r: 25,
+      l: 25,
+    },
+  };
+
+  Plotly.newPlot(elementId.value, data, layout, { responsive: true });
+};
 </script>
 
 <style></style>

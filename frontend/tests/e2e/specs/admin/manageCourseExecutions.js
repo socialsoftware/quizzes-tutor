@@ -3,7 +3,7 @@ describe('Administration walkthrough', () => {
     cy.deleteQuestionsAndAnswers();
     cy.cleanTestCourses();
     cy.demoAdminLogin();
-    cy.get('[data-cy="administrationMenuButton"]').click();
+    cy.get('[data-cy="administrationMenuButton"]').click({ force: true });
     cy.get('[data-cy="manageCoursesMenuButton"]').click({ force: true });
   });
 
@@ -33,7 +33,7 @@ describe('Administration walkthrough', () => {
     cy.createCourseExecution('Demo Course', 'TEST-AO3', 'Spring Semester');
     cy.closeErrorMessage();
     cy.log('close dialog');
-    cy.get('[data-cy="cancelButton"]').click();
+    cy.get('[data-cy="cancelButton"]').click({ force: true });
     cy.deleteCourseExecution('TEST-AO3');
   });
 

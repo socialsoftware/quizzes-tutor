@@ -4,7 +4,7 @@
     class="quiz-container"
     @keydown.right="confirmAnswer"
     @keydown.left="decreaseOrder"
-    v-if="!confirmed"
+    v-if="statementQuiz && !confirmed"
   >
     <header>
       <span class="timer" @click="hideTime = !hideTime" v-if="statementQuiz">
@@ -58,8 +58,8 @@
       </span>
     </div>
     <question-component
-      v-model="questionOrder"
-      v-if="statementQuiz.answers[questionOrder]"
+      v-model:questionOrder="questionOrder"
+      v-if="statementQuiz && statementQuiz.answers[questionOrder]"
       :answer="statementQuiz.answers[questionOrder]"
       :question="statementQuiz.questions[questionOrder]"
       :questionNumber="statementQuiz.questions.length"
@@ -146,171 +146,166 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted, watch } from 'vue';
+import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 import QuestionComponent from '@/views/student/quiz/QuestionComponent.vue';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 
-@Component({
-  components: {
-    'question-component': QuestionComponent,
-  },
-})
-export default class QuizView extends Vue {
-  statementQuiz: StatementQuiz | null = this.$store.getters.getStatementQuiz;
-  confirmationDialog: boolean = false;
-  confirmed: boolean = false;
-  nextConfirmationDialog: boolean = false;
-  startTime: Date = new Date();
-  questionOrder: number = 0;
-  slideItemPosition: number = 1;
-  hideTime: boolean = false;
-  quizSubmitted: boolean = false;
+const store = useStore();
+const router = useRouter();
 
-  async created() {
-    if (!this.statementQuiz?.id) {
-      await this.$router.push({ name: 'create-quizzes' });
-    }
-    await this.setCurrentQuestion(this.statementQuiz?.questionOrder);
-  }
+const statementQuiz = ref<StatementQuiz | null>(store.statementQuiz);
+const confirmationDialog = ref(false);
+const confirmed = ref(false);
+const nextConfirmationDialog = ref(false);
+const startTime = ref<Date>(new Date());
+const questionOrder = ref(0);
+const slideItemPosition = ref(1);
+const hideTime = ref(false);
+const quizSubmitted = ref(false);
 
-  async setCurrentQuestion(order: number | undefined) {
-    if (!order) order = 0;
-    if (
-      this.statementQuiz != null &&
-      !this.statementQuiz.questions[order].content
-    ) {
-      let newAnswer = this.statementQuiz.answers[order];
-      newAnswer.timeTaken = 0;
-      newAnswer.timeToSubmission = this.statementQuiz.timeToSubmission;
-      try {
-        const question = await RemoteServices.getQuestion(
-          this.statementQuiz.id,
-          this.statementQuiz.questions[order].questionId,
-          newAnswer
-        );
-
-        this.statementQuiz.questions[order].content = question.content;
-        this.statementQuiz.questions[order].image = question.image;
-        this.statementQuiz.questions[order].questionDetails =
-          question.questionDetails;
-
-        // ensure that the questions ids are equal to que returned by the server
-        this.statementQuiz.questions[order].questionId = question.questionId;
-        this.statementQuiz.answers[order].questionId = question.questionId;
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-        await this.$router.push({ name: 'available-quizzes' });
-      }
-    }
-
-    this.slideItemPosition = order + 1;
-    this.questionOrder = order;
-  }
-
-  async increaseOrder() {
-    if (this.questionOrder + 1 < +this.statementQuiz!.questions.length) {
-      try {
-        this.calculateTime();
-        await this.setCurrentQuestion(this.questionOrder + 1);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-    }
-    this.nextConfirmationDialog = false;
-  }
-
-  decreaseOrder(): void {
-    if (this.questionOrder > 0 && !this.statementQuiz?.oneWay) {
-      this.calculateTime();
-      this.setCurrentQuestion(this.questionOrder - 1);
-    }
-  }
-
-  changeOrder(newOrder: number): void {
-    if (!this.statementQuiz?.oneWay) {
-      if (newOrder >= 0 && newOrder < +this.statementQuiz!.questions.length) {
-        this.calculateTime();
-        this.setCurrentQuestion(newOrder);
-      }
-    }
-  }
-
-  async changeAnswer() {
-    if (this.statementQuiz && this.statementQuiz.answers[this.questionOrder]) {
-      this.calculateTime();
-
-      try {
-        if (!!this.statementQuiz && this.statementQuiz.timed) {
-          let newAnswer = this.statementQuiz.answers[this.questionOrder];
-          newAnswer.timeToSubmission = this.statementQuiz.timeToSubmission;
-
-          await RemoteServices.submitAnswer(this.statementQuiz.id, newAnswer);
-        }
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-        await this.$router.push({ name: 'available-quizzes' });
-      }
-    }
-  }
-
-  confirmAnswer() {
-    if (
-      this.statementQuiz?.oneWay &&
-      this.questionOrder + 1 < +this.statementQuiz!.questions.length
-    ) {
-      this.nextConfirmationDialog = true;
-    } else {
-      this.increaseOrder();
-    }
-  }
-
-  @Watch('statementQuiz.timeToSubmission')
-  submissionTimerWatcher() {
-    if (!!this.statementQuiz && !this.statementQuiz.timeToSubmission) {
-      this.concludeQuiz();
-    }
-  }
-
-  convertToHHMMSS(time: number | undefined | null): string {
-    return milisecondsToHHMMSS(time);
-  }
-
-  async concludeQuiz() {
-    await this.$store.dispatch('loading');
+const setCurrentQuestion = async (order?: number) => {
+  if (order === undefined) order = 0;
+  if (statementQuiz.value != null && !statementQuiz.value.questions[order].content) {
+    let newAnswer = statementQuiz.value.answers[order];
+    newAnswer.timeTaken = 0;
+    newAnswer.timeToSubmission = statementQuiz.value.timeToSubmission;
     try {
-      this.calculateTime();
-      this.confirmed = true;
+      const question = await RemoteServices.getQuestion(
+        statementQuiz.value.id,
+        statementQuiz.value.questions[order].questionId,
+        newAnswer
+      );
 
-      let correctAnswers: StatementCorrectAnswer[] = [];
-      if (this.statementQuiz) {
-        correctAnswers = await RemoteServices.concludeQuiz(this.statementQuiz);
-      } else {
-        throw Error('No quiz');
-      }
+      statementQuiz.value.questions[order].content = question.content;
+      statementQuiz.value.questions[order].image = question.image;
+      statementQuiz.value.questions[order].questionDetails = question.questionDetails;
 
-      if (correctAnswers.length !== 0) {
-        await this.$store.dispatch('correctAnswers', correctAnswers);
-        await this.$router.push({ name: 'quiz-results' });
-      } else {
-        this.quizSubmitted = true;
-        await this.$store.dispatch('statementQuiz', null);
+      statementQuiz.value.questions[order].questionId = question.questionId;
+      statementQuiz.value.answers[order].questionId = question.questionId;
+    } catch (error) {
+      store.setError(error as string);
+      await router.push({ name: 'available-quizzes' });
+    }
+  }
+
+  slideItemPosition.value = order + 1;
+  questionOrder.value = order;
+};
+
+const calculateTime = () => {
+  if (statementQuiz.value) {
+    statementQuiz.value.answers[questionOrder.value].timeTaken +=
+      new Date().getTime() - startTime.value.getTime();
+    startTime.value = new Date();
+  }
+};
+
+onMounted(async () => {
+  if (!statementQuiz.value?.id) {
+    await router.push({ name: 'create-quizzes' });
+  }
+  await setCurrentQuestion(statementQuiz.value?.questionOrder);
+});
+
+const increaseOrder = async () => {
+  if (statementQuiz.value && questionOrder.value + 1 < statementQuiz.value.questions.length) {
+    try {
+      calculateTime();
+      await setCurrentQuestion(questionOrder.value + 1);
+    } catch (error) {
+      store.setError(error as string);
+    }
+  }
+  nextConfirmationDialog.value = false;
+};
+
+const decreaseOrder = (): void => {
+  if (questionOrder.value > 0 && !statementQuiz.value?.oneWay) {
+    calculateTime();
+    setCurrentQuestion(questionOrder.value - 1);
+  }
+};
+
+const changeOrder = (newOrder: number): void => {
+  if (!statementQuiz.value?.oneWay) {
+    if (newOrder >= 0 && statementQuiz.value && newOrder < statementQuiz.value.questions.length) {
+      calculateTime();
+      setCurrentQuestion(newOrder);
+    }
+  }
+};
+
+const changeAnswer = async () => {
+  if (statementQuiz.value && statementQuiz.value.answers[questionOrder.value]) {
+    calculateTime();
+
+    try {
+      if (statementQuiz.value && statementQuiz.value.timed) {
+        let newAnswer = statementQuiz.value.answers[questionOrder.value];
+        newAnswer.timeToSubmission = statementQuiz.value.timeToSubmission;
+
+        await RemoteServices.submitAnswer(statementQuiz.value.id, newAnswer);
       }
     } catch (error) {
-      await this.$store.dispatch('error', error);
+      store.setError(error as string);
+      await router.push({ name: 'available-quizzes' });
     }
-    await this.$store.dispatch('clearLoading');
   }
+};
 
-  calculateTime() {
-    if (this.statementQuiz) {
-      this.statementQuiz.answers[this.questionOrder].timeTaken +=
-        new Date().getTime() - this.startTime.getTime();
-      this.startTime = new Date();
+const confirmAnswer = () => {
+  if (
+    statementQuiz.value?.oneWay &&
+    statementQuiz.value && questionOrder.value + 1 < statementQuiz.value.questions.length
+  ) {
+    nextConfirmationDialog.value = true;
+  } else {
+    increaseOrder();
+  }
+};
+
+const concludeQuiz = async () => {
+  store.setLoading();
+  try {
+    calculateTime();
+    confirmed.value = true;
+
+    let correctAnswers: StatementCorrectAnswer[] = [];
+    if (statementQuiz.value) {
+      correctAnswers = await RemoteServices.concludeQuiz(statementQuiz.value);
+    } else {
+      throw Error('No quiz');
+    }
+
+    if (correctAnswers.length !== 0) {
+      store.correctAnswers = correctAnswers;
+      await router.push({ name: 'quiz-results' });
+    } else {
+      quizSubmitted.value = true;
+      store.statementQuiz = null;
+    }
+  } catch (error) {
+    store.setError(error as string);
+  }
+  store.clearLoading();
+};
+
+watch(
+  () => statementQuiz.value?.timeToSubmission,
+  (newVal) => {
+    if (statementQuiz.value && !newVal) {
+      concludeQuiz();
     }
   }
-}
+);
+
+const convertToHHMMSS = (time: number | undefined | null): string => {
+  return milisecondsToHHMMSS(time);
+};
 </script>

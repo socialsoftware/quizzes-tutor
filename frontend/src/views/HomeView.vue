@@ -5,96 +5,96 @@
     </h1>
 
     <div class="horizontal-btn-container" v-if="!isLoggedIn">
-      <v-btn :href="fenixUrl" depressed color="primary">
-        Log in with Fenix <v-icon>fas fa-sign-in-alt</v-icon>
+      <v-btn :href="fenixUrl" variant="flat" color="primary">
+        Log in with Fenix <i class="fas fa-sign-in-alt ml-3" style="font-size: 24px;" />
       </v-btn>
 
-      <v-btn href="./login/external" depressed color="primary">
-        External User Login <v-icon>fas fa-sign-in-alt</v-icon>
+      <v-btn href="./login/external" variant="flat" color="primary">
+        External User Login <i class="fas fa-sign-in-alt ml-3" style="font-size: 24px;" />
       </v-btn>
     </div>
 
     <div class="horizontal-btn-container" v-if="!isLoggedIn">
       <v-btn
-        depressed
-        small
+        variant="flat"
+        size="small"
         color="primary"
         @click="demoStudent(false)"
         data-cy="demoStudentLoginButton"
       >
-        <i class="fa fa-graduation-cap" />Demo as student
+        <i class="fa fa-graduation-cap mr-2" /> Demo as student
       </v-btn>
       <v-btn
-        depressed
-        small
+        variant="flat"
+        size="small"
         color="primary"
         @click="demoStudent(true)"
         data-cy="demoNewStudentLoginButton"
       >
-        <i class="fa fa-graduation-cap" />Demo as new student
+        <i class="fa fa-graduation-cap mr-2" /> Demo as new student
       </v-btn>
       <v-btn
-        depressed
-        small
+        variant="flat"
+        size="small"
         color="primary"
         @click="demoTeacher"
         data-cy="demoTeacherLoginButton"
       >
-        <i class="fa fa-graduation-cap" />Demo as teacher
+        <i class="fa fa-graduation-cap mr-2" /> Demo as teacher
       </v-btn>
       <v-btn
-        depressed
-        small
+        variant="flat"
+        size="small"
         color="primary"
         @click="demoAdmin"
         data-cy="demoAdminLoginButton"
       >
-        <i class="fa fa-user-cog" />Demo as administrator
+        <i class="fa fa-user-cog mr-2" /> Demo as administrator
       </v-btn>
     </div>
 
     <v-footer class="footer">
       <img
-        :src="require('../assets/img/ist_optimized.png')"
+        :src="istLogo"
         class="logo"
         alt="Técnico Logo"
       />
       <div>
         <v-btn
-          depressed
-          small
+          variant="flat"
+          size="small"
           color="secondary"
           href="https://github.com/socialsoftware/quizzes-tutor"
           target="_blank"
         >
-          <i class="fab fa-github" /> View code
+          <i class="fab fa-github mr-2" /> View code
         </v-btn>
       </div>
       <div>
         <v-btn
-          depressed
-          small
+          variant="flat"
+          size="small"
           color="secondary"
           href="https://quizzes-tecnico.slack.com/"
           target="_blank"
         >
-          <i class="fab fa-slack" /> Discussion Group
+          <i class="fab fa-slack mr-2" /> Discussion Group
         </v-btn>
       </div>
 
       <div>
         <v-btn
-          depressed
-          small
+          variant="flat"
+          size="small"
           color="secondary"
           href="https://github.com/socialsoftware/quizzes-tutor/issues"
           target="_blank"
         >
-          <i class="fab fa-github" /> Bug report
+          <i class="fab fa-github mr-2" /> Bug report
         </v-btn>
       </div>
       <img
-        :src="require('../assets/img/impress_optimized.png')"
+        :src="impressLogo"
         class="logo"
         alt="IMPRESS Logo"
       />
@@ -102,50 +102,52 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
-import Store from '@/store';
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from '@/store';
+import istLogo from '@/assets/img/ist_optimized.png';
+import impressLogo from '@/assets/img/impress_optimized.png';
 
-@Component
-export default class HomeView extends Vue {
-  appName: string = process.env.VUE_APP_NAME || 'ENV FILE MISSING';
-  fenixUrl: string = process.env.VUE_APP_FENIX_URL || '';
+const store = useStore();
 
-  get isLoggedIn() {
-    return Store.state.token;
-  }
+const appName: string = import.meta.env.VUE_APP_NAME || 'ENV FILE MISSING';
+const fenixUrl: string = import.meta.env.VUE_APP_FENIX_URL || '';
 
-  async demoStudent(createNew: boolean) {
-    await this.$store.dispatch('loading');
-    try {
-      if (createNew) await this.$store.dispatch('demoNewStudentLogin');
-      else await this.$store.dispatch('demoStudentLogin');
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+const isLoggedIn = computed(() => !!store.token);
+
+const demoStudent = async (createNew: boolean) => {
+  store.setLoading();
+  try {
+    if (createNew) {
+      await store.demoNewStudentLogin();
+    } else {
+      await store.demoStudentLogin();
     }
-    await this.$store.dispatch('clearLoading');
+  } catch (error) {
+    store.setError(error as string);
   }
+  store.clearLoading();
+};
 
-  async demoTeacher() {
-    await this.$store.dispatch('loading');
-    try {
-      await this.$store.dispatch('demoTeacherLogin');
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+const demoTeacher = async () => {
+  store.setLoading();
+  try {
+    await store.demoTeacherLogin();
+  } catch (error) {
+    store.setError(error as string);
   }
+  store.clearLoading();
+};
 
-  async demoAdmin() {
-    await this.$store.dispatch('loading');
-    try {
-      await this.$store.dispatch('demoAdminLogin');
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+const demoAdmin = async () => {
+  store.setLoading();
+  try {
+    await store.demoAdminLogin();
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+};
 </script>
 
 <style lang="scss" scoped>
@@ -170,10 +172,12 @@ export default class HomeView extends Vue {
     perspective-origin: 229.922px 34px;
     transform-origin: 229.922px 34px;
     caret-color: rgb(255, 255, 255);
-    background: rgba(0, 0, 0, 0.75) none no-repeat scroll 0 0 / auto padding-box
-      border-box;
+    background: rgba(0, 0, 0, 0.75) none no-repeat scroll 0 0 / auto padding-box border-box;
     border: 0 none rgb(255, 255, 255);
-    font: normal normal 100 normal 45px / 48px Roboto, sans-serif !important;
+    font-family: Roboto, sans-serif !important;
+    font-weight: 100 !important;
+    font-size: 45px !important;
+    line-height: 48px !important;
     margin-bottom: 70px !important;
     outline: rgb(255, 255, 255) none 0;
     padding: 10px 20px;

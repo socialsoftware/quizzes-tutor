@@ -1,8 +1,8 @@
 <template>
   <v-dialog
-    :value="dialog"
-    @input="$emit('dialog', false)"
-    @keydown.esc="$emit('dialog', false)"
+    :model-value="dialog"
+    @update:model-value="$emit('update:dialog', false)"
+    @keydown.esc="$emit('update:dialog', false)"
     max-width="75%"
   >
     <v-card>
@@ -19,48 +19,47 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="$emit('dialog')">close</v-btn>
+        <v-btn class="text-white" color="blue darken-1" @click="$emit('update:dialog', false)">close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import Question from '@/models/management/Question';
 import RemoteServices from '@/services/RemoteServices';
 import Reply from '@/models/management/Reply';
 import ClarificationComponent from '@/views/student/discussions/ClarificationComponent.vue';
 
-@Component({
-  components: {
-    'clarification-component': ClarificationComponent,
-  },
-})
-export default class ShowClarificationDialog extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Question, required: true }) readonly question!: Question;
-  clarifications: Reply[] = [];
+const props = defineProps<{
+  dialog: boolean;
+  question: Question;
+}>();
 
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      [this.clarifications] = await Promise.all([
-        RemoteServices.getClarificationsByQuestionId(this.question.id!),
-      ]);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-  }
+const emit = defineEmits(['update:dialog', 'remove-clarification']);
+const store = useStore();
 
-  onMakePrivate(clarificationId: number) {
-    this.clarifications = this.clarifications.filter(
-      (clarification) => clarification.id !== clarificationId
-    );
-    this.$emit('remove-clarification', this.question.id);
+const clarifications = ref<Reply[]>([]);
+
+onMounted(async () => {
+  store.setLoading();
+  try {
+    const fetchedClarifications = await RemoteServices.getClarificationsByQuestionId(props.question.id!);
+    clarifications.value = fetchedClarifications;
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+});
+
+const onMakePrivate = (clarificationId: number) => {
+  clarifications.value = clarifications.value.filter(
+    (clarification) => clarification.id !== clarificationId
+  );
+  emit('remove-clarification', props.question.id);
+};
 </script>
 
 <style lang="scss" scoped>

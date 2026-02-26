@@ -1,5 +1,6 @@
 import axios from 'axios';
-import Store from '@/store';
+import User from '@/models/user/User';
+import { useStore } from '@/store';
 import Question from '@/models/management/Question';
 import { Quiz } from '@/models/management/Quiz';
 import Course from '@/models/user/Course';
@@ -35,12 +36,12 @@ import AuthPasswordDto from '@/models/user/AuthPasswordDto';
 const httpClient = axios.create();
 httpClient.defaults.timeout = 100000;
 httpClient.defaults.baseURL =
-  process.env.VUE_APP_ROOT_API || 'http://localhost:8080';
+  import.meta.env.VUE_APP_ROOT_API || 'http://localhost:8080';
 httpClient.defaults.headers.post['Content-Type'] = 'application/json';
 httpClient.interceptors.request.use(
   (config) => {
     if (config.headers !== undefined && !config.headers.Authorization) {
-      const token = Store.getters.getToken;
+      const token = useStore().getToken;
 
       if (token) {
         config.headers.Authorization = `Bearer ${token}`;
@@ -54,10 +55,7 @@ httpClient.interceptors.response.use(
   (response) => {
     if (response.data.notification) {
       if (response.data.notification.errorMessages.length)
-        Store.dispatch(
-          'notification',
-          response.data.notification.errorMessages
-        );
+        useStore().setNotification(response.data.notification.errorMessages);
       response.data = response.data.response;
     }
     return response;
@@ -180,7 +178,7 @@ export default class RemoteServices {
   static async getUserDashboard(): Promise<Dashboard> {
     return httpClient
       .get(
-        `/students/dashboards/executions/${Store.getters.getCurrentCourse.courseExecutionId}`
+        `/students/dashboards/executions/${useStore().getCurrentCourse!.courseExecutionId}`
       )
       .then((response) => {
         return new Dashboard(response.data);
@@ -272,7 +270,7 @@ export default class RemoteServices {
 
   static async getQuestions(): Promise<Question[]> {
     return httpClient
-      .get(`/questions/courses/${Store.getters.getCurrentCourse.courseId}`)
+      .get(`/questions/courses/${useStore().getCurrentCourse!.courseId}`)
       .then((response) => {
         return response.data.map((question: any) => {
           return new Question(question);
@@ -286,7 +284,7 @@ export default class RemoteServices {
   static async getQuestionsByQuery(query: QuestionQuery): Promise<Question[]> {
     return httpClient
       .put(
-        `/questions/courses/${Store.getters.getCurrentCourse.courseId}`,
+        `/questions/courses/${useStore().getCurrentCourse!.courseId}`,
         query
       )
       .then((response) => {
@@ -315,7 +313,7 @@ export default class RemoteServices {
   static async exportCourseQuestions(): Promise<Blob> {
     return httpClient
       .get(
-        `/questions/courses/${Store.getters.getCurrentCourse.courseId}/export`,
+        `/questions/courses/${useStore().getCurrentCourse!.courseId}/export`,
         {
           responseType: 'blob',
         }
@@ -335,7 +333,7 @@ export default class RemoteServices {
     formData.append('file', file);
     return httpClient
       .post(
-        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/import/questions`,
+        `/executions/${useStore().getCurrentCourse!.courseExecutionId}/import/questions`,
         formData,
         {
           headers: {
@@ -356,7 +354,7 @@ export default class RemoteServices {
   static async createQuestion(question: Question): Promise<Question> {
     return httpClient
       .post(
-        `/questions/courses/${Store.getters.getCurrentCourse.courseId}`,
+        `/questions/courses/${useStore().getCurrentCourse!.courseId}`,
         question
       )
       .then((response) => {
@@ -429,7 +427,7 @@ export default class RemoteServices {
 
   static async getTopics(): Promise<Topic[]> {
     return httpClient
-      .get(`/topics/courses/${Store.getters.getCurrentCourse.courseId}`)
+      .get(`/topics/courses/${useStore().getCurrentCourse!.courseId}`)
       .then((response) => {
         return response.data.map((topic: any) => {
           return new Topic(topic);
@@ -442,7 +440,7 @@ export default class RemoteServices {
 
   static async createTopic(topic: Topic): Promise<Topic> {
     return httpClient
-      .post(`/topics/courses/${Store.getters.getCurrentCourse.courseId}`, topic)
+      .post(`/topics/courses/${useStore().getCurrentCourse!.courseId}`, topic)
       .then((response) => {
         return new Topic(response.data);
       })
@@ -598,7 +596,7 @@ export default class RemoteServices {
   static async getAvailableTopicsByCourseExecution(): Promise<Topic[]> {
     return httpClient
       .get(
-        `/executions/${Store.getters.getCurrentCourse.courseExecutionId}/topics/available`
+        `/executions/${useStore().getCurrentCourse!.courseExecutionId}/topics/available`
       )
       .then((response) => {
         return response.data.map((topic: any) => {
@@ -615,7 +613,7 @@ export default class RemoteServices {
   static async getAssessments(): Promise<Assessment[]> {
     return httpClient
       .get(
-        `/assessments/executions/${Store.getters.getCurrentCourse.courseExecutionId}`
+        `/assessments/executions/${useStore().getCurrentCourse!.courseExecutionId}`
       )
       .then((response) => {
         return response.data.map((assessment: any) => {
@@ -632,7 +630,7 @@ export default class RemoteServices {
   ): Promise<TopicConjunction[]> {
     return httpClient
       .get(
-        `/assessments/executions/${Store.getters.getCurrentCourse.courseExecutionId}/topicconjunctions`,
+        `/assessments/executions/${useStore().getCurrentCourse!.courseExecutionId}/topicconjunctions`,
         { params: { assessmentId: assessmentId } }
       )
       .then((response) => {
@@ -648,7 +646,7 @@ export default class RemoteServices {
   static async getAvailableAssessments() {
     return httpClient
       .get(
-        `/assessments/executions/${Store.getters.getCurrentCourse.courseExecutionId}/available`
+        `/assessments/executions/${useStore().getCurrentCourse!.courseExecutionId}/available`
       )
       .then((response) => {
         return response.data.map((assessment: any) => {
@@ -673,7 +671,7 @@ export default class RemoteServices {
     } else {
       return httpClient
         .post(
-          `/assessments/executions/${Store.getters.getCurrentCourse.courseExecutionId}`,
+          `/assessments/executions/${useStore().getCurrentCourse!.courseExecutionId}`,
           assessment
         )
         .then((response) => {
@@ -727,7 +725,7 @@ export default class RemoteServices {
   static async getTopicConjuctionQuestions(topicConjunction: TopicConjunction) {
     return httpClient
       .post(
-        `/assessments/executions/${Store.getters.getCurrentCourse.courseExecutionId}/topicconjunctions/questions`,
+        `/assessments/executions/${useStore().getCurrentCourse!.courseExecutionId}/topicconjunctions/questions`,
         topicConjunction
       )
       .then((response) => {
@@ -745,7 +743,7 @@ export default class RemoteServices {
   static async getNonGeneratedQuizzes(): Promise<Quiz[]> {
     return httpClient
       .get(
-        `/quizzes/executions/${Store.getters.getCurrentCourse.courseExecutionId}/non-generated`
+        `/quizzes/executions/${useStore().getCurrentCourse!.courseExecutionId}/non-generated`
       )
       .then((response) => {
         return response.data.map((quiz: any) => {
@@ -781,7 +779,7 @@ export default class RemoteServices {
     } else {
       return httpClient
         .post(
-          `/quizzes/executions/${Store.getters.getCurrentCourse.courseExecutionId}`,
+          `/quizzes/executions/${useStore().getCurrentCourse!.courseExecutionId}`,
           quiz
         )
         .then((response) => {
@@ -905,7 +903,7 @@ export default class RemoteServices {
   static async getAvailableQuizzes(): Promise<StatementQuiz[]> {
     return httpClient
       .get(
-        `/answers/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/available`
+        `/answers/${useStore().getCurrentCourse!.courseExecutionId}/quizzes/available`
       )
       .then((response) => {
         return response.data.map((statementQuiz: any) => {
@@ -920,7 +918,7 @@ export default class RemoteServices {
   static async generateStatementQuiz(params: object): Promise<StatementQuiz> {
     return httpClient
       .post(
-        `/answers/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/generate`,
+        `/answers/${useStore().getCurrentCourse!.courseExecutionId}/quizzes/generate`,
         params
       )
       .then((response) => {
@@ -934,7 +932,7 @@ export default class RemoteServices {
   static async getSolvedQuizzes(): Promise<SolvedQuiz[]> {
     return httpClient
       .get(
-        `/answers/${Store.getters.getCurrentCourse.courseExecutionId}/quizzes/solved`
+        `/answers/${useStore().getCurrentCourse!.courseExecutionId}/quizzes/solved`
       )
       .then((response) => {
         return response.data.map((solvedQuiz: any) => {
@@ -1058,7 +1056,7 @@ export default class RemoteServices {
   ): Promise<QuestionSubmission> {
     return httpClient
       .post(
-        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}`,
+        `/submissions/${useStore().getCurrentCourse!.courseExecutionId}`,
         questionSubmission
       )
       .then((response) => {
@@ -1114,7 +1112,7 @@ export default class RemoteServices {
   static async getStudentQuestionSubmissions(): Promise<QuestionSubmission[]> {
     return httpClient
       .get(
-        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/student`
+        `/submissions/${useStore().getCurrentCourse!.courseExecutionId}/student`
       )
       .then((response) => {
         return response.data.map((questionSubmission: any) => {
@@ -1131,7 +1129,7 @@ export default class RemoteServices {
   > {
     return httpClient
       .get(
-        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/execution`
+        `/submissions/${useStore().getCurrentCourse!.courseExecutionId}/execution`
       )
       .then((response) => {
         return response.data.map((questionSubmission: any) => {
@@ -1163,7 +1161,7 @@ export default class RemoteServices {
   > {
     return httpClient
       .get(
-        `/submissions/${Store.getters.getCurrentCourse.courseExecutionId}/all`
+        `/submissions/${useStore().getCurrentCourse!.courseExecutionId}/all`
       )
       .then((response) => {
         return response.data.map((userSubmissionsInfo: any) => {
@@ -1207,7 +1205,7 @@ export default class RemoteServices {
     topicsId: Number[],
     tournament: Tournament
   ): Promise<Tournament> {
-    let path: string = `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}?`;
+    let path: string = `/tournaments/${useStore().getCurrentCourse!.courseExecutionId}?`;
     for (const topicId of topicsId) {
       path += 'topicsId=' + topicId + '&';
     }
@@ -1215,7 +1213,7 @@ export default class RemoteServices {
     return httpClient
       .post(path, tournament)
       .then((response) => {
-        return new Tournament(response.data, Store.getters.getUser);
+        return new Tournament(response.data, (useStore().getUser as unknown as User) ?? undefined);
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
@@ -1225,11 +1223,11 @@ export default class RemoteServices {
   static getTournamentsForCourseExecution(): Promise<Tournament[]> {
     return httpClient
       .get(
-        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getTournaments`
+        `/tournaments/${useStore().getCurrentCourse!.courseExecutionId}/getTournaments`
       )
       .then((response) => {
         return response.data.map((tournament: any) => {
-          return new Tournament(tournament, Store.getters.getUser);
+          return new Tournament(tournament, (useStore().getUser as unknown as User) ?? undefined);
         });
       })
       .catch(async (error) => {
@@ -1240,11 +1238,11 @@ export default class RemoteServices {
   static getOpenedTournamentsForCourseExecution(): Promise<Tournament[]> {
     return httpClient
       .get(
-        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getOpenTournaments`
+        `/tournaments/${useStore().getCurrentCourse!.courseExecutionId}/getOpenTournaments`
       )
       .then((response) => {
         return response.data.map((tournament: any) => {
-          return new Tournament(tournament, Store.getters.getUser);
+          return new Tournament(tournament, (useStore().getUser as unknown as User) ?? undefined);
         });
       })
       .catch(async (error) => {
@@ -1255,11 +1253,11 @@ export default class RemoteServices {
   static getClosedTournamentsForCourseExecution(): Promise<Tournament[]> {
     return httpClient
       .get(
-        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/getClosedTournaments`
+        `/tournaments/${useStore().getCurrentCourse!.courseExecutionId}/getClosedTournaments`
       )
       .then((response) => {
         return response.data.map((tournament: any) => {
-          return new Tournament(tournament, Store.getters.getUser);
+          return new Tournament(tournament, (useStore().getUser as unknown as User) ?? undefined);
         });
       })
       .catch(async (error) => {
@@ -1270,10 +1268,10 @@ export default class RemoteServices {
   static getTournament(tournamentId: number): Promise<Tournament> {
     return httpClient
       .get(
-        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/tournament/${tournamentId}`
+        `/tournaments/${useStore().getCurrentCourse!.courseExecutionId}/tournament/${tournamentId}`
       )
       .then((response) => {
-        return new Tournament(response.data, Store.getters.getUser);
+        return new Tournament(response.data, (useStore().getUser as unknown as User) ?? undefined);
       })
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
@@ -1283,8 +1281,8 @@ export default class RemoteServices {
   static joinTournament(tournamentId: number, password: String) {
     return httpClient
       .put(
-        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/joinTournament/${tournamentId}?password=` +
-          password,
+        `tournaments/${useStore().getCurrentCourse!.courseExecutionId}/joinTournament/${tournamentId}?password=` +
+        password,
         {
           headers: {
             'Content-Type': 'text/plain',
@@ -1299,7 +1297,7 @@ export default class RemoteServices {
   static solveTournament(tournamentId: number): Promise<StatementQuiz> {
     return httpClient
       .put(
-        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/solveQuiz/${tournamentId}`
+        `tournaments/${useStore().getCurrentCourse!.courseExecutionId}/solveQuiz/${tournamentId}`
       )
       .then((response) => {
         return new StatementQuiz(response.data);
@@ -1312,7 +1310,7 @@ export default class RemoteServices {
   static leaveTournament(tournamentId: number) {
     return httpClient
       .put(
-        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/leaveTournament/${tournamentId}`
+        `tournaments/${useStore().getCurrentCourse!.courseExecutionId}/leaveTournament/${tournamentId}`
       )
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
@@ -1323,7 +1321,7 @@ export default class RemoteServices {
     topicsId: Number[],
     tournament: Tournament
   ): Promise<Tournament> {
-    let path: string = `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/updateTournament?`;
+    let path: string = `/tournaments/${useStore().getCurrentCourse!.courseExecutionId}/updateTournament?`;
     for (const topicId of topicsId) {
       path += 'topicsId=' + topicId + '&';
     }
@@ -1341,7 +1339,7 @@ export default class RemoteServices {
   static cancelTournament(tournamentId: number) {
     return httpClient
       .put(
-        `tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/cancelTournament/${tournamentId}`
+        `tournaments/${useStore().getCurrentCourse!.courseExecutionId}/cancelTournament/${tournamentId}`
       )
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
@@ -1351,7 +1349,7 @@ export default class RemoteServices {
   static removeTournament(tournamentId: number) {
     return httpClient
       .delete(
-        `/tournaments/${Store.getters.getCurrentCourse.courseExecutionId}/removeTournament/${tournamentId}`
+        `/tournaments/${useStore().getCurrentCourse!.courseExecutionId}/removeTournament/${tournamentId}`
       )
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
@@ -1363,7 +1361,7 @@ export default class RemoteServices {
   static async getCourseExecutionDiscussions(): Promise<Discussion[]> {
     return httpClient
       .get(
-        `/discussions/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}`
+        `/discussions/courseexecutions/${useStore().getCurrentCourse!.courseExecutionId}`
       )
       .then((response) => {
         return response.data.map((discussion: any) => {
@@ -1378,7 +1376,7 @@ export default class RemoteServices {
   static async getOpenCourseExecutionDiscussions(): Promise<Discussion[]> {
     return httpClient
       .get(
-        `/discussions/open/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}`
+        `/discussions/open/courseexecutions/${useStore().getCurrentCourse!.courseExecutionId}`
       )
       .then((response) => {
         return response.data.map((discussion: any) => {
@@ -1417,7 +1415,7 @@ export default class RemoteServices {
   static async getUserDiscussions(): Promise<Discussion[]> {
     return httpClient
       .get(
-        `/discussions/courseexecutions/${Store.getters.getCurrentCourse.courseExecutionId}/users`
+        `/discussions/courseexecutions/${useStore().getCurrentCourse!.courseExecutionId}/users`
       )
       .then((response) => {
         return response.data.map((discussion: any) => {
@@ -1474,7 +1472,7 @@ export default class RemoteServices {
     if (error.message === 'Network Error') {
       return 'Unable to connect to server';
     } else if (error.message === 'Request failed with status code 403') {
-      await Store.dispatch('logout');
+      await useStore().logout();
       await router.push({ path: '/' });
       return 'Unauthorized access or expired token';
     } else if (error.message.split(' ')[0] === 'timeout') {

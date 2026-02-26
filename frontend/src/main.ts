@@ -1,17 +1,20 @@
-import Vue from 'vue';
+import { createApp } from 'vue';
 import App from '@/App.vue';
 import router from '@/router';
-import store from '@/store';
+import { createPinia } from 'pinia';
 import vuetify from '@/vuetify';
 
-Vue.config.productionTip = false;
+const pinia = createPinia();
+const app = createApp(App);
 
-new Vue({
-  vuetify,
-  router,
-  store,
-  beforeCreate() {
-    this.$store.commit('initialiseStore');
-  },
-  render: (h) => h(App),
-}).$mount('#app');
+app.use(pinia);
+
+// Pinia requires a created pinia instance before we invoke useStore in router beforeEach guards
+import { useStore } from '@/store';
+const store = useStore();
+store.initialiseStore();
+
+app.use(router);
+app.use(vuetify);
+
+app.mount('#app');

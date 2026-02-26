@@ -1,9 +1,10 @@
 import Image from '@/models/management/Image';
 
-const sanitizeHtml = require('sanitize-html');
-const showdown = require('showdown');
+import sanitizeHtml from 'sanitize-html';
+import showdown from 'showdown';
+import { IOptions } from 'sanitize-html';
 
-const sanitizeParams = {
+const sanitizeParams: IOptions = {
   allowedTags: [
     'a',
     'b',
@@ -70,7 +71,7 @@ export function convertMarkDown(
   if (image && image.url) {
     text +=
       '  \n  \n  \n[image]: ' +
-      process.env.VUE_APP_ROOT_API +
+      import.meta.env.VUE_APP_ROOT_API +
       '/images/questions/' +
       image.url +
       ' "Image"';

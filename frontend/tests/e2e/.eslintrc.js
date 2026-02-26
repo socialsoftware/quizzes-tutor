@@ -1,8 +1,19 @@
 module.exports = {
-  plugins: ['cypress'],
   env: {
-    mocha: true,
-    'cypress/globals': true
+    mocha: true
+  },
+  globals: {
+    cy: 'readonly',
+    Cypress: 'readonly',
+    expect: 'readonly',
+    assert: 'readonly',
+    describe: 'readonly',
+    context: 'readonly',
+    it: 'readonly',
+    before: 'readonly',
+    beforeEach: 'readonly',
+    after: 'readonly',
+    afterEach: 'readonly'
   },
   rules: {
     strict: 'off'

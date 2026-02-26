@@ -5,8 +5,7 @@
       <v-data-table
         :headers="headers"
         :items="weeklyScores"
-        :sort-by="['week']"
-        :sort-desc="[true]"
+        :sort-by="[{ key: 'week', order: 'desc' }]"
         class="elevation-1"
         data-cy="weeklyScoresTable"
         multi-sort
@@ -22,66 +21,68 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import WeeklyScore from '@/models/dashboard/WeeklyScore';
 
-@Component
-export default class WeeklyScoresView extends Vue {
-  @Prop() readonly dashboardId!: number;
+const props = defineProps<{
+  dashboardId: number;
+}>();
 
-  weeklyScores: WeeklyScore[] = [];
+const store = useStore();
 
-  headers: object = [
-    {
-      text: 'Week',
-      value: 'week',
-      align: 'start',
-      width: '5px',
-    },
-    {
-      text: 'Quizzes Answered',
-      value: 'quizzesAnswered',
-      align: 'center',
-      width: '5px',
-    },
-    {
-      text: 'Questions Answered',
-      value: 'questionsAnswered',
-      align: 'center',
-      width: '5px',
-    },
-    {
-      text: 'Questions Uniquely Answered',
-      value: 'questionsUniquelyAnswered',
-      align: 'center',
-      width: '5px',
-    },
-    {
-      text: 'Percentage Correct',
-      value: 'percentageCorrect',
-      align: 'center',
-      width: '5px',
-    },
-    {
-      text: 'Improved Correct Questions',
-      value: 'improvedCorrectAnswers',
-      align: 'center',
-      width: '5px',
-    },
-  ];
+const weeklyScores = ref<WeeklyScore[]>([]);
 
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      this.weeklyScores = await RemoteServices.updateWeeklyScores(
-        this.dashboardId
-      );
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+const headers: any = [
+  {
+    title: 'Week',
+    value: 'week',
+    align: 'start',
+    width: '5px',
+  },
+  {
+    title: 'Quizzes Answered',
+    value: 'quizzesAnswered',
+    align: 'center',
+    width: '5px',
+  },
+  {
+    title: 'Questions Answered',
+    value: 'questionsAnswered',
+    align: 'center',
+    width: '5px',
+  },
+  {
+    title: 'Questions Uniquely Answered',
+    value: 'questionsUniquelyAnswered',
+    align: 'center',
+    width: '5px',
+  },
+  {
+    title: 'Percentage Correct',
+    value: 'percentageCorrect',
+    align: 'center',
+    width: '5px',
+  },
+  {
+    title: 'Improved Correct Questions',
+    value: 'improvedCorrectAnswers',
+    align: 'center',
+    width: '5px',
+  },
+];
+
+onMounted(async () => {
+  store.setLoading();
+  try {
+    weeklyScores.value = await RemoteServices.updateWeeklyScores(
+      props.dashboardId
+    );
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+});
 </script>

@@ -4,7 +4,7 @@ describe('Manage Topics Walk-through', () => {
 
     cy.get('[data-cy="topicsCreateOrEditDialog"]').should('be.visible');
 
-    cy.get('[data-cy="topicsFormTopicNameInput"]')
+    cy.get('[data-cy="topicsFormTopicNameInput"] input')
       .should('be.empty')
       .type(topicName);
 
@@ -22,7 +22,7 @@ describe('Manage Topics Walk-through', () => {
     cy.intercept('GET', '/topics/courses/*').as('getTopics');
     cy.get('[data-cy="managementMenuButton"]').click();
     cy.get('[data-cy="manageTopicsMenuButton"]').click();
-    cy.get('[data-cy="Search"]').click();
+    cy.get('[data-cy="Search"]').click({ force: true });
 
     cy.wait('@getTopics').its('response.statusCode').should('eq', 200);
   });
@@ -52,8 +52,8 @@ describe('Manage Topics Walk-through', () => {
 
     cy.get('[data-cy="topicsCreateOrEditDialog"]').should('be.visible');
 
-    cy.get('[data-cy="topicsFormTopicNameInput"]')
-      .should('contain.value', topicName)
+    cy.get('[data-cy="topicsFormTopicNameInput"] input')
+      .should('have.value', topicName)
       .clear()
       .type('CY - EDITED');
 

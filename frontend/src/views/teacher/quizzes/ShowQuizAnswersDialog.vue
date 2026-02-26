@@ -1,9 +1,9 @@
 <template>
   <div>
     <v-dialog
-      :value="dialog"
-      @input="$emit('dialog', false)"
-      @keydown.esc="$emit('dialog', false)"
+      :model-value="dialog"
+      @update:model-value="$emit('update:dialog', $event)"
+      @keydown.esc="$emit('update:dialog', false)"
       max-width="85%"
     >
       <v-data-table
@@ -33,25 +33,25 @@
           <span>
             {{ item.name }}
           </span>
-          <span v-if="item.fraud" v-bind:class="'red darken'"
+          <span v-if="item.fraud" class="text-red-darken-1"
             >(Fraud Suspicion: check log)</span
           >
         </template>
 
         <template v-slot:[`item.submissionLag`]="{ item }">
           <span
-            v-bind:class="[
+            :class="[
               new Date(item.answerDate).getTime() -
                 new Date(conclusionDate).getTime() <
               0
-                ? 'green'
-                : 'red darken-4',
+                ? 'text-green'
+                : 'text-red-darken-4',
             ]"
           >
             {{
               convertToHHMMSS(
                 new Date(item.answerDate).getTime() -
-                  new Date(conclusionDate).getTime()
+                  new Date(conclusionDate as Date | string).getTime()
               )
             }}
           </span>
@@ -60,7 +60,7 @@
         <template v-slot:[`item.answers`]="{ item }">
           <span
             v-for="(questionAnswer, index) in item.questionAnswers"
-            :key="questionAnswer.question.id"
+            :key="questionAnswer.question.id || index"
             v-bind:class="[
               'answer',
               questionAnswer.answerDetails.isCorrect(
@@ -96,74 +96,50 @@
     </v-dialog>
     <show-quiz-answers-details-dialog
       v-if="detailDialog"
-      v-model="detailDialog"
-      :quizAnswer="quizAnswerDetails"
+      v-model:dialog="detailDialog"
+      :quizAnswer="quizAnswerDetails as QuizAnswer"
       :questionNumber="quizAnswerDetailCurrentQuestion"
     />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref } from 'vue';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 import ShowQuizAnswersDetailsDialog from '@/views/teacher/quizzes/ShowQuizAnswersDetailsDialog.vue';
 
-@Component({
-  components: {
-    ShowQuizAnswersDetailsDialog,
-  },
-})
-export default class ShowStudentAnswersDialog extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ required: true }) readonly quizAnswers!: QuizAnswers;
-  @Prop({ required: true }) readonly conclusionDate!: String;
+defineProps<{
+  dialog: boolean;
+  quizAnswers: QuizAnswers;
+  conclusionDate: string | Date;
+}>();
 
-  detailDialog: boolean = false;
-  quizAnswerDetails?: QuizAnswer;
-  quizAnswerDetailCurrentQuestion?: number;
-  search: string = '';
-  timeout: number | null = null;
+defineEmits(['update:dialog']);
 
-  headers: object = [
-    { text: 'Name', value: 'name', align: 'left', width: '5%' },
-    {
-      text: 'Username',
-      value: 'username',
-      align: 'center',
-      width: '5%',
-    },
-    {
-      text: 'Start Date',
-      value: 'creationDate',
-      align: 'center',
-      width: '5%',
-    },
-    {
-      text: 'Submission Lag',
-      value: 'submissionLag',
-      align: 'center',
-      width: '5%',
-    },
-    {
-      text: 'Answers',
-      value: 'answers',
-      align: 'center',
-      width: '15%',
-    },
-  ];
+const detailDialog = ref(false);
+const quizAnswerDetails = ref<QuizAnswer | undefined>(undefined);
+const quizAnswerDetailCurrentQuestion = ref<number | undefined>(undefined);
+const search = ref('');
 
-  convertToHHMMSS(time: number | undefined | null): string {
-    return milisecondsToHHMMSS(time);
-  }
+const headers = ref<any[]>([
+  { title: 'Name', value: 'name', align: 'start', width: '5%' },
+  { title: 'Username', value: 'username', align: 'center', width: '5%' },
+  { title: 'Start Date', value: 'creationDate', align: 'center', width: '5%' },
+  { title: 'Submission Lag', value: 'submissionLag', align: 'center', width: '5%' },
+  { title: 'Answers', value: 'answers', align: 'center', width: '15%' },
+]);
 
-  openAnswerDetailsDialog(quizAnswerDetails: QuizAnswer, index: number) {
-    this.quizAnswerDetailCurrentQuestion = index;
-    this.quizAnswerDetails = quizAnswerDetails;
-    this.detailDialog = true;
-  }
-}
+const convertToHHMMSS = (time: number | undefined | null): string => {
+  return milisecondsToHHMMSS(time);
+};
+
+const openAnswerDetailsDialog = (quizAnswerD: QuizAnswer, index: number) => {
+  quizAnswerDetailCurrentQuestion.value = index;
+  quizAnswerDetails.value = quizAnswerD;
+  detailDialog.value = true;
+};
 </script>
 
 <style lang="scss">

@@ -9,55 +9,55 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, watch } from 'vue';
+import { useStore } from '@/store';
+import { useRouter, useRoute } from 'vue-router';
 import RemoteServices from '@/services/RemoteServices';
 import { QrcodeStream } from 'vue-qrcode-reader';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
-@Component({
-  components: {
-    'qrcode-stream': QrcodeStream,
-  },
-})
-export default class ScanView extends Vue {
-  quizId: number | null = null;
-  quiz: StatementQuiz | null = null;
-  timer: string = '';
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
 
-  async onDecode(decodedString: String) {
-    this.quizId = Number(decodedString);
-    await this.getQuizByQRCode();
-  }
+const quizId = ref<number | null>(null);
+const quiz = ref<StatementQuiz | null>(null);
+const timer = ref('');
 
-  async getQuizByQRCode() {
-    await this.$store.dispatch('loading');
-    if (this.quizId && this.$router.currentRoute.name === 'scan') {
-      try {
-        this.quiz = await RemoteServices.getQuizByQRCode(this.quizId);
+const getQuizByQRCode = async () => {
+  store.setLoading();
+  if (quizId.value && route.name === 'scan') {
+    try {
+      quiz.value = await RemoteServices.getQuizByQRCode(quizId.value);
 
-        if (!this.quiz.timeToAvailability) {
-          await this.$store.dispatch('statementQuiz', this.quiz);
-          await this.$router.push({ name: 'solve-quiz' });
-        }
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-        await this.$router.push({ name: 'home' });
+      if (!quiz.value.timeToAvailability) {
+        store.setStatementQuiz(quiz.value);
+        await router.push({ name: 'solve-quiz' });
       }
+    } catch (error) {
+      store.setError(error as string);
+      await router.push({ name: 'home' });
     }
-    await this.$store.dispatch('clearLoading');
   }
+  store.clearLoading();
+};
 
-  @Watch('quiz.timeToAvailability')
-  timerMethod() {
-    if (!!this.quiz && !this.quiz.timeToAvailability) {
-      this.getQuizByQRCode();
+const onDecode = async (decodedString: string) => {
+  quizId.value = Number(decodedString);
+  await getQuizByQRCode();
+};
+
+watch(
+  () => quiz.value?.timeToAvailability,
+  (newVal) => {
+    if (!!quiz.value && !newVal) {
+      getQuizByQRCode();
     }
-
-    this.timer = milisecondsToHHMMSS(this.quiz?.timeToAvailability);
+    timer.value = milisecondsToHHMMSS(newVal ?? 0);
   }
-}
+);
 </script>
 
 <style lang="scss" scoped></style>

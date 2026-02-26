@@ -1,25 +1,25 @@
 <template>
   <div>
     <nav>
-      <v-app-bar clipped-left color="primary">
+      <v-app-bar clipped-left color="primary" class="px-0">
         <v-app-bar-nav-icon
           aria-label="Menu"
           class="hidden-md-and-up"
           @click.stop="drawer = !drawer"
         />
 
-        <v-toolbar-title data-cy="homeLink">
+        <v-toolbar-title data-cy="homeLink" class="d-flex justify-start w-100">
           <v-btn
             v-if="currentCourse"
-            active-class="no-active"
+            class="home-btn"
             dark
-            text
+            variant="text"
             tile
             to="/"
           >
             {{ currentCourse.name }}
           </v-btn>
-          <v-btn v-else active-class="no-active" dark text tile to="/">
+          <v-btn v-else class="home-btn px-2" dark variant="text" tile to="/">
             {{ appName }}
           </v-btn>
         </v-toolbar-title>
@@ -28,8 +28,8 @@
 
         <v-toolbar-items class="hidden-sm-and-down" hide-details>
           <v-menu v-if="isTeacher && currentCourse" offset-y open-on-hover>
-            <template v-slot:activator="{ on }">
-              <v-btn dark data-cy="managementMenuButton" text v-on="on">
+            <template v-slot:activator="{ props }">
+              <v-btn dark data-cy="managementMenuButton" text v-bind="props">
                 Management
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
@@ -126,8 +126,8 @@
           </v-menu>
 
           <v-menu v-if="isStudent && currentCourse" offset-y open-on-hover>
-            <template v-slot:activator="{ on }">
-              <v-btn dark data-cy="quizzesStudentMenuButton" text v-on="on">
+            <template v-slot:activator="{ props }">
+              <v-btn dark data-cy="quizzesStudentMenuButton" text v-bind="props">
                 Quizzes
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
@@ -188,8 +188,8 @@
           </v-menu>
 
           <v-menu v-if="isStudent && currentCourse" offset-y open-on-hover>
-            <template v-slot:activator="{ on }">
-              <v-btn dark data-cy="Tournament" text v-on="on">
+            <template v-slot:activator="{ props }">
+              <v-btn dark data-cy="Tournament" text v-bind="props">
                 Tournaments
                 <v-icon>fas fa-trophy</v-icon>
               </v-btn>
@@ -248,8 +248,8 @@
           </v-btn>
 
           <v-menu v-if="isAdmin" offset-y open-on-hover>
-            <template v-slot:activator="{ on }">
-              <v-btn dark data-cy="administrationMenuButton" text v-on="on">
+            <template v-slot:activator="{ props }">
+              <v-btn dark data-cy="administrationMenuButton" text v-bind="props">
                 Administration
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
@@ -288,10 +288,9 @@
 
         <v-toolbar-items class="hidden-sm-and-down" hide-details>
           <v-menu v-if="!isLoggedIn" offset-y open-on-hover>
-            <template v-slot:activator="{ on }">
-              <v-btn dark text v-on="on">
-                Login
-                <v-icon>fas fa-sign-in-alt</v-icon>
+            <template v-slot:activator="{ props }">
+              <v-btn variant="text" v-bind="props">
+                Login <i class="fas fa-sign-in-alt ml-3" style="font-size: 24px;" />
               </v-btn>
             </template>
             <v-list>
@@ -596,65 +595,52 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, computed } from 'vue';
+import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 
-@Component
-export default class TopBar extends Vue {
-  appName: string = process.env.VUE_APP_NAME || 'ENV FILE MISSING';
-  fenixUrl: string = process.env.VUE_APP_FENIX_URL || '';
-  drawer: boolean = false;
-  logoutConfirmation: boolean = false;
+const store = useStore();
+const router = useRouter();
 
-  get currentCourse() {
-    return this.$store.getters.getCurrentCourse;
+const appName = import.meta.env.VUE_APP_NAME || 'ENV FILE MISSING';
+const fenixUrl = import.meta.env.VUE_APP_FENIX_URL || '';
+const drawer = ref(false);
+const logoutConfirmation = ref(false);
+
+const currentCourse = computed(() => store.currentCourse);
+const moreThanOneCourse = computed(() => {
+  const user = store.user;
+  return user && user.coursesNumber > 1 && store.currentCourse !== null;
+});
+
+const isLoggedIn = computed(() => store.isLoggedIn);
+const isTeacher = computed(() => store.isTeacher);
+const isAdmin = computed(() => store.isAdmin);
+const isStudent = computed(() => store.isStudent);
+
+const doLogout = () => {
+  logoutConfirmation.value = false;
+  store.logout();
+  router.push({ name: 'home' }).catch(() => {});
+};
+
+const logout = async () => {
+  const quiz = store.statementQuiz;
+  if (quiz && quiz.timed) {
+    logoutConfirmation.value = true;
+  } else {
+    doLogout();
   }
-
-  get moreThanOneCourse() {
-    return (
-      this.$store.getters.getUser.coursesNumber > 1 &&
-      this.$store.getters.getCurrentCourse
-    );
-  }
-
-  get isLoggedIn() {
-    return this.$store.getters.isLoggedIn;
-  }
-
-  get isTeacher() {
-    return this.$store.getters.isTeacher;
-  }
-
-  get isAdmin() {
-    return this.$store.getters.isAdmin;
-  }
-
-  get isStudent() {
-    return this.$store.getters.isStudent;
-  }
-
-  async logout() {
-    if (
-      this.$store.getters.getStatementQuiz !== null &&
-      this.$store.getters.getStatementQuiz.timed
-    ) {
-      this.logoutConfirmation = true;
-    } else {
-      this.doLogout();
-    }
-  }
-
-  doLogout() {
-    this.logoutConfirmation = false;
-    this.$store.dispatch('logout');
-    this.$router.push({ name: 'home' }).catch(() => {});
-  }
-}
+};
 </script>
 
 <style lang="scss" scoped>
-.no-active::before {
+:deep(.home-btn.v-btn--active .v-btn__overlay),
+:deep(.home-btn.v-btn--active .v-btn__underlay),
+:deep(.home-btn:hover .v-btn__overlay) {
   opacity: 0 !important;
+  background-color: transparent !important;
 }
 
 nav {

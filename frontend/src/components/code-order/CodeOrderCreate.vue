@@ -9,8 +9,8 @@
     <v-card-actions>
       <v-spacer />
       <v-tooltip top>
-        <template v-slot:activator="{ on }">
-          <v-btn color="primary" small @click="newSlot" v-on="on"
+        <template v-slot:activator="{ props }">
+          <v-btn color="primary" small @click="newSlot" v-bind="props"
             >New Slot</v-btn
           >
         </template>
@@ -23,98 +23,90 @@
       :list="sQuestionDetails.codeOrderSlots"
       class="list-group"
       handle=".handle"
+      item-key="order"
     >
-      <div
-        v-for="(element, index) in sQuestionDetails.codeOrderSlots"
-        :key="index"
-      >
-        <CodeOrderSlotEditor
-          :questionSlot.sync="sQuestionDetails.codeOrderSlots[index]"
-          :canDelete="sQuestionDetails.codeOrderSlots.length > 3"
-          :language="sQuestionDetails.language"
-          v-on:delete-row="removeRow(index)"
-          v-on:add-order="addOrderQuestion(element)"
-          v-on:remove-order="rmOrderQuestion(element)"
-        />
-      </div>
+      <template #item="{ element, index }">
+        <div :key="index">
+          <CodeOrderSlotEditor
+            v-model:questionSlot="sQuestionDetails.codeOrderSlots[index]"
+            :canDelete="sQuestionDetails.codeOrderSlots.length > 3"
+            :language="sQuestionDetails.language"
+            v-on:delete-row="removeRow(index)"
+            v-on:add-order="addOrderQuestion(element)"
+            v-on:remove-order="rmOrderQuestion(element)"
+          />
+        </div>
+      </template>
     </draggable>
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
+import { computed, onMounted } from 'vue';
 import CodeOrderQuestionDetails from '@/models/management/questions/CodeOrderQuestionDetails';
-import { Component, Vue, Prop, PropSync } from 'vue-property-decorator';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 import CodeOrderSlotEditor from '@/components/code-order/CodeOrderSlotEditor.vue';
 import draggable from 'vuedraggable';
 import CodeOrderSlot from '@/models/management/questions/CodeOrderSlot';
 
-@Component({
-  components: {
-    CodeOrderSlotEditor,
-    draggable,
-  },
-})
-export default class CodeOrderCreate extends Vue {
-  @PropSync('questionDetails', { type: CodeOrderQuestionDetails })
-  sQuestionDetails!: CodeOrderQuestionDetails;
-  @Prop({ default: true }) readonly readonlyEdit!: boolean;
+const props = withDefaults(defineProps<{
+  questionDetails: CodeOrderQuestionDetails;
+  readonlyEdit?: boolean;
+}>(), {
+  readonlyEdit: true
+});
 
-  get languages(): String[] {
-    return BaseCodeEditor.availableLanguages;
-  }
+const emit = defineEmits(['update:questionDetails']);
 
-  mounted() {
-    // minimum slots should be 3
-    while (this.sQuestionDetails.codeOrderSlots.length < 3) {
-      this.newSlot();
-    }
-  }
+const sQuestionDetails = computed({
+  get: () => props.questionDetails,
+  set: (val) => emit('update:questionDetails', val),
+});
 
-  newSlot() {
-    let newOrderSlot = new CodeOrderSlot();
-    newOrderSlot.order = this.sQuestionDetails.codeOrderSlots.length;
-    this.sQuestionDetails.codeOrderSlots.push(newOrderSlot);
-    this.updateList();
-  }
+const languages = computed(() => ['Java', 'Javascript', 'Python', 'CSharp']);
 
-  updateList() {
-    this.sQuestionDetails.codeOrderSlots =
-      this.sQuestionDetails.codeOrderSlots.sort((a, b) => {
-        if (a.order == null) {
-          return 1;
-        }
-        if (b.order == null) {
-          return -1;
-        }
-        return a.order > b.order ? 1 : -1;
-      });
-    this.endedReorder();
-  }
+const updateList = () => {
+  sQuestionDetails.value.codeOrderSlots = sQuestionDetails.value.codeOrderSlots.sort((a, b) => {
+    if (a.order == null) return 1;
+    if (b.order == null) return -1;
+    return a.order > b.order ? 1 : -1;
+  });
+  endedReorder();
+};
 
-  addOrderQuestion(element: CodeOrderSlot) {
-    element.order = this.sQuestionDetails.codeOrderSlots.length;
-    this.updateList();
-  }
+const endedReorder = () => {
+  sQuestionDetails.value.codeOrderSlots.forEach((element: CodeOrderSlot, index: number) => {
+    element.order = element.order != null ? index : element.order;
+  });
+};
 
-  rmOrderQuestion(element: CodeOrderSlot) {
-    element.order = null;
-    this.updateList();
-  }
+const newSlot = () => {
+  let newOrderSlot = new CodeOrderSlot();
+  newOrderSlot.order = sQuestionDetails.value.codeOrderSlots.length;
+  sQuestionDetails.value.codeOrderSlots.push(newOrderSlot);
+  updateList();
+};
 
-  removeRow(index: number) {
-    this.sQuestionDetails.codeOrderSlots.splice(index, 1);
-    this.updateList();
+onMounted(() => {
+  while (sQuestionDetails.value.codeOrderSlots.length < 3) {
+    newSlot();
   }
+});
 
-  endedReorder() {
-    this.sQuestionDetails.codeOrderSlots.forEach(
-      (element: CodeOrderSlot, index: number) => {
-        element.order = element.order != null ? index : element.order;
-      }
-    );
-  }
-}
+const addOrderQuestion = (element: CodeOrderSlot) => {
+  element.order = sQuestionDetails.value.codeOrderSlots.length;
+  updateList();
+};
+
+const rmOrderQuestion = (element: CodeOrderSlot) => {
+  element.order = null;
+  updateList();
+};
+
+const removeRow = (index: number) => {
+  sQuestionDetails.value.codeOrderSlots.splice(index, 1);
+  updateList();
+};
 </script>
 
 <style lang="scss">

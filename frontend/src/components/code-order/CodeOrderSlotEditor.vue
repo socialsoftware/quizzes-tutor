@@ -7,8 +7,8 @@
     <BaseCodeEditor
       class="slot-content"
       ref="codeEditor"
-      :code.sync="sQuestionSlot.content"
-      :language.sync="language"
+      v-model:code="sQuestionSlot.content"
+      :language="language"
     />
     <div class="toolbar">
       <v-btn icon>
@@ -32,24 +32,25 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import CodeOrderSlot from '@/models/management/questions/CodeOrderSlot';
-import { Component, PropSync, Vue, Prop } from 'vue-property-decorator';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
+import { computed } from 'vue';
 
-@Component({
-  components: {
-    BaseCodeEditor,
-  },
-})
-export default class CodeOrderSlotEditor extends Vue {
-  @PropSync('questionSlot', { type: CodeOrderSlot })
-  sQuestionSlot!: CodeOrderSlot;
-  @Prop({ default: false })
-  readonly canDelete!: boolean;
-  @Prop()
-  readonly language!: string;
-}
+const props = withDefaults(defineProps<{
+  questionSlot: CodeOrderSlot;
+  canDelete?: boolean;
+  language?: string;
+}>(), {
+  canDelete: false
+});
+
+const emit = defineEmits(['update:questionSlot', 'add-order', 'remove-order', 'delete-row']);
+
+const sQuestionSlot = computed({
+  get: () => props.questionSlot,
+  set: (val) => emit('update:questionSlot', val)
+});
 </script>
 
 <style lang="scss">

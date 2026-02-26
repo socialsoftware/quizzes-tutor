@@ -8,7 +8,7 @@
           v-for="assessment in availableAssessments"
           text
           :value="assessment.id"
-          :key="assessment.id"
+          :key="assessment.id!"
           >{{ assessment.title }}</v-btn
         >
         <!--          <v-btn text value="all">All</v-btn>-->
@@ -41,47 +41,48 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 import Assessment from '@/models/management/Assessment';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 
-@Component
-export default class CreateQuizzesView extends Vue {
-  assessmentId: number | null = null;
-  numberOfQuestions: number | null = null;
-  availableAssessments: Assessment[] = [];
+const store = useStore();
+const router = useRouter();
 
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      this.availableAssessments =
-        await RemoteServices.getAvailableAssessments();
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+const assessmentId = ref<number | null>(null);
+const numberOfQuestions = ref<number | null>(null);
+const availableAssessments = ref<Assessment[]>([]);
+
+onMounted(async () => {
+  store.setLoading();
+  try {
+    availableAssessments.value = await RemoteServices.getAvailableAssessments();
+  } catch (error) {
+    store.setError(error as string);
   }
+  store.clearLoading();
+});
 
-  async createQuiz() {
-    await this.$store.dispatch('loading');
-    try {
-      let statementQuiz: StatementQuiz =
-        await RemoteServices.generateStatementQuiz({
-          assessment: this.assessmentId,
-          numberOfQuestions: this.numberOfQuestions,
-        });
-      await this.$store.dispatch('statementQuiz', statementQuiz);
-      await this.$router.push({
-        name: 'solve-quiz',
+const createQuiz = async () => {
+  store.setLoading();
+  try {
+    let statementQuiz: StatementQuiz =
+      await RemoteServices.generateStatementQuiz({
+        assessment: assessmentId.value,
+        numberOfQuestions: numberOfQuestions.value,
       });
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+    store.statementQuiz = statementQuiz;
+    router.push({
+      name: 'solve-quiz',
+    });
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+};
 </script>
 
 <style lang="scss" scoped>

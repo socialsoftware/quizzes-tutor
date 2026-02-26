@@ -1,169 +1,121 @@
 <template>
   <div class="questionDetails-container" v-if="questionDetails">
     <div class="code-container" style="position: relative; text-align: left">
-      <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
+      <v-overlay :model-value="!CodemirrorUpdated" contained color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
-      <codemirror
+      <BaseCodeEditor
         ref="myCmStudent"
-        :value="questionDetails.code"
-        :options="cmOptions"
-      >
-      </codemirror>
+        v-model:code="questionDetails.code"
+        v-model:language="questionDetails.language"
+        :editable="false"
+      />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import {
-  Component,
-  Vue,
-  Prop,
-  Model,
-  Emit,
-  Watch,
-  PropSync,
-} from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue';
 import CodeFillInStatementQuestionDetails from '@/models/statement/questions/CodeFillInStatementQuestionDetails';
 import CodeFillInSpotStatement from '@/models/statement/questions/CodeFillInSpotStatement';
 import CodeFillInStatementAnswerDetails from '@/models/statement/questions/CodeFillInStatementAnswerDetails';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/clike/clike.js';
-import 'codemirror/theme/eclipse.css';
-import 'codemirror/theme/monokai.css';
-import 'codemirror/addon/mode/overlay.js';
-import CodeMirror from 'codemirror';
-import { codemirror } from 'vue-codemirror';
 import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
 import StatementFillInSpot from '@/models/statement/questions/CodeFillInSpotStatement';
+import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
-CodeMirror.defineMode('mustache', function (config: any, parserConfig: any) {
-  const mustacheOverlay = {
-    token: function (stream: any) {
-      let ch;
-      if (stream.match('{{slot-')) {
-        while ((ch = stream.next()) != null) {
-          if (ch === '}' && stream.next() === '}') {
-            stream.eat('}');
-            return 'custom-drop-down';
-          }
-        }
-      }
-      while (stream.next() != null && !stream.match('{{', false)) {
-        // empty
-      }
-      return null;
-    },
-  };
-  return CodeMirror.overlayMode(
-    CodeMirror.getMode(config, parserConfig.backdrop || 'text/x-java'),
-    mustacheOverlay
-  );
+const props = defineProps<{
+  questionOrder?: number;
+  questionDetails: CodeFillInStatementQuestionDetails;
+  answerDetails: CodeFillInStatementAnswerDetails;
+  correctAnswerDetails: CodeFillInStatementCorrectAnswerDetails;
+}>();
+
+const emit = defineEmits([
+  'update:questionOrder',
+  'update:answerDetails',
+  'increaseOrder',
+  'decreaseOrder'
+]);
+
+const answerDetailsSynced = computed({
+  get: () => props.answerDetails,
+  set: (val) => emit('update:answerDetails', val)
 });
 
-@Component({
-  components: {
-    codemirror,
-  },
-})
-export default class CodeFillInAnswer extends Vue {
-  @Model('questionOrder', Number) questionOrder: number | undefined;
-  @Prop(CodeFillInStatementQuestionDetails)
-  readonly questionDetails!: CodeFillInStatementQuestionDetails;
-  @PropSync('answerDetails', CodeFillInStatementAnswerDetails)
-  answerDetailsSynced!: CodeFillInStatementAnswerDetails;
-  @Prop(CodeFillInStatementCorrectAnswerDetails)
-  readonly correctAnswerDetails!: CodeFillInStatementCorrectAnswerDetails;
+const CodemirrorUpdated = ref(false);
+const myCmStudent = ref<any>(null);
 
-  hover: boolean = false;
-  cmOptions: any = {
-    // codemirror options
-    tabSize: 4,
-    mode: 'mustache',
-    theme: 'eclipse',
-    lineNumbers: true,
-    line: true,
-    readOnly: true,
-  };
-  CodemirrorUpdated: boolean = false;
-  @Emit()
-  increaseOrder() {
-    return 1;
-  }
-  @Emit()
-  decreaseOrder() {
-    return 1;
-  }
+const increaseOrder = () => emit('increaseOrder', 1);
+const decreaseOrder = () => emit('decreaseOrder', 1);
 
-  @Watch('questionDetails', { immediate: true, deep: true })
-  updateQuestion() {
-    this.CodemirrorUpdated = false;
-    setTimeout(() => {
-      (this.$refs.myCmStudent as any).codemirror.refresh();
-      this.replaceDropdowns();
-      document.body.addEventListener(
-        'mousedown',
-        function (evt: Event) {
-          if (
-            evt &&
-            evt.target &&
-            (evt.target as any).className === 'code-dropdown'
-          ) {
-            evt.stopPropagation();
-          }
-        },
-        true
-      );
-      this.CodemirrorUpdated = true;
-    }, 100);
-  }
-
-  replaceDropdowns() {
-    function getOptions(
-      name: number,
-      options: CodeFillInSpotStatement[]
-    ): StatementFillInSpot {
-      const result = options.find((el) => el.sequence === name);
-      return result || new StatementFillInSpot();
+const replaceDropdowns = () => {
+  const walkDOM = (node: Node, func: (node: Text) => void) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.nodeValue?.includes('{{slot-')) {
+        func(node as Text);
+      }
+    } else {
+      for (let i = 0; i < node.childNodes.length; i++) {
+        walkDOM(node.childNodes[i], func);
+      }
     }
-    document.querySelectorAll('.cm-custom-drop-down').forEach((e) => {
+  };
+
+  const getOptions = (name: number, options: CodeFillInSpotStatement[]): StatementFillInSpot => {
+    const result = options.find((el) => el.sequence === name);
+    return result || new StatementFillInSpot();
+  };
+
+  if (!myCmStudent.value) return;
+  const el = myCmStudent.value.$el;
+
+  walkDOM(el, (textNode: Text) => {
+    const text = textNode.nodeValue || '';
+    const regex = /\{\{slot-(\d+)\}\}/g;
+    let match;
+    let lastIndex = 0;
+    const parent = textNode.parentNode;
+    if (!parent) return;
+
+    if (parent.nodeName === 'SELECT' || parent.nodeName === 'OPTION') return;
+
+    const fragment = document.createDocumentFragment();
+    let found = false;
+
+    while ((match = regex.exec(text)) !== null) {
+      found = true;
+      const num = Number(match[1]);
+      const before = text.substring(lastIndex, match.index);
+      if (before) fragment.appendChild(document.createTextNode(before));
+
       const d = document.createElement('select');
       d.className = 'code-dropdown';
-      d.name = e.innerHTML;
-      e.parentNode?.replaceChild(d, e);
-      const match = e.innerHTML.match(/\d+/);
-      const num = Number(match ? match[0] : 0);
+      d.name = 'slot-' + num;
+
       const option = document.createElement('option');
-      const something = getOptions(
-        Number(num),
-        this.questionDetails.fillInSpots
+      const something = getOptions(num, props.questionDetails.fillInSpots);
+      const optionAnswered = answerDetailsSynced.value.selectedOptions?.find(
+        (el: any) => el.sequence === num
       );
-      const optionAnswered = this.answerDetailsSynced.selectedOptions.find(
-        (el) => el.sequence === num
+      const optionAnsweredQuestion = optionAnswered && something.options.find(
+        (el) => el.optionId === optionAnswered?.optionId
       );
-      const optionAnsweredQuestion =
-        optionAnswered &&
-        something.options.find(
-          (el) => el.optionId === optionAnswered?.optionId
-        );
-      const correctOption = this.correctAnswerDetails.correctOptions.find(
+      const correctOption = props.correctAnswerDetails.correctOptions.find(
         (el) => el.sequence === num
       );
       const correctOptionQuestion = something.options.find(
         (el) => el.optionId === correctOption?.optionId
       );
-      let text;
-      if (
-        optionAnswered &&
-        optionAnswered.optionId === correctOption?.optionId
-      ) {
-        text = ' ✔: ';
+
+      let displayText;
+      if (optionAnswered && optionAnswered.optionId === correctOption?.optionId) {
+        displayText = ' ✔: ';
       } else {
-        text = ' ✖: ';
-        const correctOption = document.createElement('option');
-        correctOption.innerHTML = ' ✔: ' + correctOptionQuestion?.content;
-        correctOption.classList.add('answerDetailsSynced-spot', 'correct');
-        d.appendChild(correctOption);
+        displayText = ' ✖: ';
+        const correctOptEl = document.createElement('option');
+        correctOptEl.innerHTML = ' ✔: ' + (correctOptionQuestion?.content || '');
+        correctOptEl.classList.add('answerDetailsSynced-spot', 'correct');
+        d.appendChild(correctOptEl);
       }
 
       something.options.forEach((element) => {
@@ -174,17 +126,15 @@ export default class CodeFillInAnswer extends Vue {
           )
         ) {
           const newOption = document.createElement('option');
-          newOption.innerHTML = element?.content;
+          newOption.innerHTML = element?.content || '';
           newOption.classList.add('answerDetailsSynced-spot');
           d.appendChild(newOption);
         }
       });
 
       option.innerHTML =
-        text +
-        (optionAnsweredQuestion
-          ? optionAnsweredQuestion.content
-          : 'Not Answered');
+        displayText +
+        (optionAnsweredQuestion ? optionAnsweredQuestion.content : 'Not Answered');
       option.classList.add(
         'answerDetailsSynced-spot',
         optionAnswered && optionAnswered.optionId === correctOption?.optionId
@@ -193,9 +143,39 @@ export default class CodeFillInAnswer extends Vue {
       );
       d.prepend(option);
       d.selectedIndex = 0;
-    });
-  }
-}
+
+      fragment.appendChild(d);
+      lastIndex = regex.lastIndex;
+    }
+
+    if (found) {
+      const after = text.substring(lastIndex);
+      if (after) fragment.appendChild(document.createTextNode(after));
+      parent.replaceChild(fragment, textNode);
+    }
+  });
+};
+
+watch(() => props.questionDetails, () => {
+  CodemirrorUpdated.value = false;
+  setTimeout(() => {
+    replaceDropdowns();
+    document.body.addEventListener(
+      'mousedown',
+      function (evt: Event) {
+        if (
+          evt &&
+          evt.target &&
+          (evt.target as any).className === 'code-dropdown'
+        ) {
+          evt.stopPropagation();
+        }
+      },
+      true
+    );
+    CodemirrorUpdated.value = true;
+  }, 500);
+}, { immediate: true, deep: true });
 </script>
 
 <style lang="scss">

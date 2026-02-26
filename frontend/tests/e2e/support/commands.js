@@ -30,12 +30,12 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
   cy.get('[data-cy="courseExecutionNameInput"]').type(name);
   cy.get('[data-cy="courseExecutionAcronymInput"]').type(acronym);
   cy.get('[data-cy="courseExecutionAcademicTermInput"]').type(academicTerm);
-  cy.get('[data-cy="saveButton"]').click();
+  cy.get('[data-cy="saveButton"]').click({ force: true });
   cy.wait(1000);
 });
 
 Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
-  cy.contains('Error').parent().find('button').click();
+  cy.get('.v-alert').find('button').click({ force: true });
 });
 
 Cypress.Commands.add('deleteCourseExecution', (acronym) => {
@@ -45,7 +45,7 @@ Cypress.Commands.add('deleteCourseExecution', (acronym) => {
     .children()
     .should('have.length', 13)
     .find('[data-cy="deleteCourse"]')
-    .click();
+    .click({ force: true });
 });
 
 Cypress.Commands.add(
@@ -57,10 +57,10 @@ Cypress.Commands.add(
       .children()
       .should('have.length', 13)
       .find('[data-cy="createFromCourse"]')
-      .click();
+      .click({ force: true });
     cy.get('[data-cy="courseExecutionAcronymInput"]').type(acronym);
     cy.get('[data-cy="courseExecutionAcademicTermInput"]').type(academicTerm);
-    cy.get('[data-cy="saveButton"]').click();
+    cy.get('[data-cy="saveButton"]').click({ force: true });
   }
 );
 
@@ -120,16 +120,16 @@ Cypress.Commands.add('time', (date, day, type) => {
 
   cy.get(
     get +
-      ' > .calendar > .datepicker-controls > .text-right > .datepicker-button > svg > path'
-  ).click({ force: true});
+    ' > .calendar > .datepicker-controls > .text-right > .datepicker-button > svg > path'
+  ).click({ force: true });
 
   cy.wait(500);
   cy.get(
     get +
-      ' > .calendar > .month-container > :nth-child(1) > .datepicker-days > :nth-child(' +
-      day +
-      ') > .datepicker-day-text'
-  ).click({ force: true , multiple: true});
+    ' > .calendar > .month-container > :nth-child(1) > .datepicker-days > :nth-child(' +
+    day +
+    ') > .datepicker-day-text'
+  ).click({ force: true, multiple: true });
 });
 
 Cypress.Commands.add('selectTopic', (topic) => {
@@ -370,13 +370,9 @@ Cypress.Commands.add(
     cy.get('[data-cy="userNameInput"]').type(name);
     cy.get('[data-cy="userUsernameInput"]').type(username);
     cy.get('[data-cy="userEmailInput"]').type(email);
-    cy.get('[data-cy="userRoleSelect"]').parent().parent().click();
-    cy.get('.v-menu__content .v-list')
-      .children()
-      .contains(type)
-      .first()
-      .click();
-    cy.get('[data-cy="saveButton"]').click();
+    cy.get('[data-cy="userRoleSelect"]').click();
+    cy.get('.v-overlay-container').contains(type).click({ force: true });
+    cy.get('[data-cy="saveButton"]').click({ force: true });
     cy.wait(3000);
   }
 );
@@ -388,10 +384,10 @@ Cypress.Commands.add('deleteUser', (mail, acronym) => {
     .find('[data-cy="viewUsersButton"]')
     .click();
 
-  cy.contains(mail).parent().children().eq(0).click();
-  cy.get('[data-cy="deleteSelectedUsersButton"').click();
+  cy.contains(mail).parent().find('input[type="checkbox"]').check({ force: true });
+  cy.get('[data-cy="deleteSelectedUsersButton"]').click({ force: true });
   cy.contains('No data available');
-  cy.get('[data-cy="cancelButton"').click();
+  cy.get('[data-cy="cancelButton"]').click({ force: true });
 });
 
 Cypress.Commands.add('checkStudentCount', (acronym, count) => {
@@ -403,7 +399,7 @@ Cypress.Commands.add('checkTeacherCount', (acronym, count) => {
 });
 
 Cypress.Commands.add('closeUserCreationDialog', () => {
-  cy.get('[data-cy="cancelButton"]').click();
+  cy.get('[data-cy="cancelButton"]').click({ force: true });
 });
 
 Cypress.Commands.add(

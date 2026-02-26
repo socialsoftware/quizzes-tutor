@@ -1,8 +1,8 @@
 <template>
   <ol>
     <li
-      v-for="question in questions"
-      :key="question.sequence"
+      v-for="(question, index) in questions"
+      :key="question.sequence || index"
       class="text-left"
     >
       <show-question :question="question" />
@@ -10,15 +10,11 @@
   </ol>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
 import Question from '@/models/management/Question';
 import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
-@Component({
-  components: { 'show-question': ShowQuestion },
-})
-export default class ShowQuestionList extends Vue {
-  @Prop({ type: Array, required: true }) readonly questions!: Question[];
-}
+defineProps<{
+  questions: Question[];
+}>();
 </script>

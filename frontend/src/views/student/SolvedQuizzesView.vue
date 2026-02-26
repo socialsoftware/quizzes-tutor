@@ -11,7 +11,7 @@
       <li
         class="list-row"
         v-for="quiz in quizzes"
-        :key="quiz.quizAnswerId"
+        :key="quiz.statementQuiz.id + quiz.answerDate"
         @click="showResults(quiz)"
       >
         <div class="col">
@@ -31,44 +31,46 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 import RemoteServices from '@/services/RemoteServices';
 import SolvedQuiz from '@/models/statement/SolvedQuiz';
 
-@Component
-export default class SolvedQuizzesView extends Vue {
-  quizzes: SolvedQuiz[] = [];
+const store = useStore();
+const router = useRouter();
 
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      this.quizzes = (await RemoteServices.getSolvedQuizzes()).reverse();
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+const quizzes = ref<SolvedQuiz[]>([]);
+
+onMounted(async () => {
+  store.setLoading();
+  try {
+    quizzes.value = (await RemoteServices.getSolvedQuizzes()).reverse();
+  } catch (error) {
+    store.setError(error as string);
+  }
+  store.clearLoading();
+});
+
+const calculateScore = (quiz: SolvedQuiz) => {
+  let correct = 0;
+  for (let i = 0; i < quiz.statementQuiz.questions.length; i++) {
+    if (
+      quiz.statementQuiz.answers[i] &&
+      quiz.statementQuiz.answers[i].isAnswerCorrect(quiz.correctAnswers[i])
+    ) {
+      correct += 1;
     }
-    await this.$store.dispatch('clearLoading');
   }
+  return `${correct}/${quiz.statementQuiz.questions.length}`;
+};
 
-  calculateScore(quiz: SolvedQuiz) {
-    let correct = 0;
-    for (let i = 0; i < quiz.statementQuiz.questions.length; i++) {
-      if (
-        quiz.statementQuiz.answers[i] &&
-        quiz.statementQuiz.answers[i].isAnswerCorrect(quiz.correctAnswers[i])
-      ) {
-        correct += 1;
-      }
-    }
-    return `${correct}/${quiz.statementQuiz.questions.length}`;
-  }
-
-  async showResults(quiz: SolvedQuiz) {
-    await this.$store.dispatch('statementQuiz', quiz.statementQuiz);
-    await this.$store.dispatch('correctAnswers', quiz.correctAnswers);
-    await this.$router.push({ name: 'quiz-results' });
-  }
-}
+const showResults = async (quiz: SolvedQuiz) => {
+  store.setStatementQuiz(quiz.statementQuiz);
+  store.setCorrectAnswers(quiz.correctAnswers);
+  await router.push({ name: 'quiz-results' });
+};
 </script>
 
 <style lang="scss" scoped>

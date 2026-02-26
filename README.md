@@ -82,7 +82,7 @@ Students can then answer those questions in sugested quizzes or generated quizze
   * [Postgres >= 14](https://www.postgresql.org/)
   * [Java 21](https://openjdk.org/projects/jdk/21/)
   * [Maven](https://maven.apache.org/download.cgi)
-  * [Node 21.6](https://nodejs.org/en/) ([Node Version Manager](https://github.com/nvm-sh/nvm) recommended)
+  * [Node 22](https://nodejs.org/en/) ([Node Version Manager](https://github.com/nvm-sh/nvm) recommended)
   * [Docker](https://www.docker.com/)
 * No download required
   * [Spring-boot](https://spring.io/)
@@ -121,8 +121,8 @@ mvn clean spring-boot:run
 * **Run frontend**
 ```
 cd frontend
-npm i
-npm start
+npm install
+npm run dev
 ```
 * **Access http://localhost:8081**
 

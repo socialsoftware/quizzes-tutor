@@ -4,32 +4,29 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 import LoginCard from '@/components/auth/LoginCard.vue';
 import ExternalUser from '@/models/user/ExternalUser';
 
-@Component({
-  components: { LoginCard },
-})
-export default class ExternalLoginView extends Vue {
-  async created() {}
+const store = useStore();
+const router = useRouter();
 
-  async login(username: string, password: string) {
-    const user = new ExternalUser();
-    user.username = username;
-    user.password = password;
+const login = async (username: string, password: string) => {
+  const user = new ExternalUser();
+  user.username = username;
+  user.password = password;
 
-    await this.$store.dispatch('loading');
-    try {
-      await this.$store.dispatch('externalLogin', user);
-      await this.$router.push({ name: 'courses' });
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+  store.setLoading();
+  try {
+    await store.externalLogin(user);
+    await router.push({ name: 'courses' });
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+};
 </script>
 
 <style lang="scss" scoped></style>

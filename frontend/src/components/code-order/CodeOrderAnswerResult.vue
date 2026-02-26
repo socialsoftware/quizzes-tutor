@@ -11,8 +11,8 @@
         <BaseCodeEditor
           class="content"
           ref="codeEditor"
-          :code.sync="slotById(el.slotId).content"
-          :language.sync="questionDetails.language"
+          v-model:code="slotById(el.slotId!)!.content"
+          v-model:language="questionDetails.language"
           :editable="false"
           :simple="true"
         />
@@ -32,8 +32,8 @@
         <BaseCodeEditor
           class="content"
           ref="codeEditor"
-          :code.sync="slotById(el.slotId).content"
-          :language.sync="questionDetails.language"
+          v-model:code="slotById(el.slotId!)!.content"
+          v-model:language="questionDetails.language"
           :editable="false"
           :simple="true"
         />
@@ -42,44 +42,29 @@
   </div>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import CodeOrderSlotStatementAnswerDetails from '@/models/statement/questions/CodeOrderSlotStatementAnswerDetails';
 import CodeOrderStatementAnswerDetails from '@/models/statement/questions/CodeOrderStatementAnswerDetails';
 import CodeOrderStatementCorrectAnswerDetails from '@/models/statement/questions/CodeOrderStatementCorrectAnswerDetails';
 import CodeOrderStatementQuestionDetails from '@/models/statement/questions/CodeOrderStatementQuestionDetails';
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import Image from '@/models/management/Image';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
-@Component({
-  components: {
-    BaseCodeEditor,
-  },
-})
-export default class CodeOrderAnswerResult extends Vue {
-  @Prop(CodeOrderStatementQuestionDetails)
-  readonly questionDetails!: CodeOrderStatementQuestionDetails;
-  @Prop(CodeOrderStatementAnswerDetails)
-  readonly answerDetails!: CodeOrderStatementAnswerDetails;
-  @Prop(CodeOrderStatementCorrectAnswerDetails)
-  readonly correctAnswerDetails!: CodeOrderStatementCorrectAnswerDetails;
+const props = defineProps<{
+  questionDetails: CodeOrderStatementQuestionDetails;
+  answerDetails: CodeOrderStatementAnswerDetails;
+  correctAnswerDetails: CodeOrderStatementCorrectAnswerDetails;
+}>();
 
-  slotById(slotId: number) {
-    return this.questionDetails.orderSlots.find((x) => x.id == slotId);
-  }
+const slotById = (slotId: number) => {
+  return props.questionDetails.orderSlots.find((x) => x.id == slotId);
+};
 
-  isCorrect(element: CodeOrderSlotStatementAnswerDetails, index: number) {
-    let correctPlaced = this.correctAnswerDetails.correctOrder[index];
-    return (
-      element.slotId == correctPlaced.slotId && correctPlaced.order != null
-    );
-  }
-
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
-  }
-}
+const isCorrect = (element: CodeOrderSlotStatementAnswerDetails, index: number) => {
+  let correctPlaced = props.correctAnswerDetails.correctOrder[index];
+  return (
+    element.slotId == correctPlaced.slotId && correctPlaced.order != null
+  );
+};
 </script>
 
 <style lang="scss">

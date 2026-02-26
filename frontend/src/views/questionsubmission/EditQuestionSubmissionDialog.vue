@@ -1,8 +1,8 @@
 <template>
   <v-dialog
-    :value="dialog"
-    @input="$emit('dialog', false)"
-    @keydown.esc="$emit('dialog', false)"
+    :model-value="dialog"
+    @update:model-value="$emit('update:dialog', $event)"
+    @keydown.esc="$emit('update:dialog', false)"
     max-width="75%"
     max-height="80%"
   >
@@ -26,7 +26,7 @@
               label="Question Type"
               required
               :items="questionTypesOptions"
-              @change="updateQuestionType"
+              @update:model-value="updateQuestionType"
               :readonly="editMode(editQuestionSubmission)"
             />
           </v-row>
@@ -53,16 +53,16 @@
           </v-row>
 
           <component
-            :is="editQuestionSubmission.question.questionDetailsDto.type"
+            :is="getQuestionComponent(editQuestionSubmission.question.questionDetailsDto.type)"
             :questionDetails="
-              editQuestionSubmission.question.questionDetailsDto
+              editQuestionSubmission.question.questionDetailsDto as any
             "
             :readonlyEdit="editMode(editQuestionSubmission)"
           />
 
           <v-row>
             <v-textarea
-              outline
+              variant="outlined"
               rows="1"
               v-model="comment"
               label="Comment"
@@ -76,7 +76,7 @@
         <v-spacer />
         <v-btn
           color="red darken-1"
-          @click="$emit('dialog', false)"
+          @click="$emit('update:dialog', false)"
           data-cy="CancelButton"
           >Cancel</v-btn
         >
@@ -97,8 +97,9 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, watch, onMounted, computed } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import QuestionSubmission from '../../models/management/QuestionSubmission';
 import MultipleChoiceCreate from '@/components/multiple-choice/MultipleChoiceCreate.vue';
@@ -106,102 +107,97 @@ import CodeFillInCreate from '@/components/code-fill-in/CodeFillInCreate.vue';
 import CodeOrderCreate from '@/components/code-order/CodeOrderCreate.vue';
 import { QuestionFactory, QuestionTypes } from '@/services/QuestionHelpers';
 
-@Component({
-  components: {
-    multiple_choice: MultipleChoiceCreate,
-    code_fill_in: CodeFillInCreate,
-    code_order: CodeOrderCreate,
-  },
-})
-export default class EditQuestionSubmissionDialog extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: QuestionSubmission, required: true })
-  readonly questionSubmission!: QuestionSubmission;
+const props = defineProps<{
+  dialog: boolean;
+  questionSubmission: QuestionSubmission;
+}>();
 
-  editQuestionSubmission: QuestionSubmission = new QuestionSubmission(
-    this.questionSubmission
-  );
-  comment: string = '';
-  questionType: string = '';
+const emit = defineEmits(['update:dialog', 'submit-submission', 'save-submission']);
 
-  created() {
-    this.questionType =
-      this.questionSubmission.question.questionDetailsDto.type;
-  }
+const store = useStore();
 
-  get questionTypesOptions() {
-    return Object.values(QuestionTypes).map((qt) => ({
-      text: qt.replace(/_/g, ' '),
-      value: qt,
-    }));
-  }
+const editQuestionSubmission = ref<QuestionSubmission>(
+  new QuestionSubmission(props.questionSubmission)
+);
+const comment = ref('');
+const questionType = ref('');
 
-  updateQuestionType() {
-    this.editQuestionSubmission.question.questionDetailsDto =
-      QuestionFactory.getFactory(
-        this.questionType
-      ).createEmptyQuestionDetails();
-  }
-
-  @Watch('questionSubmission', { immediate: true, deep: true })
-  updateQuestionSubmission() {
-    this.editQuestionSubmission = new QuestionSubmission(
-      this.questionSubmission
-    );
-  }
-
-  async createQuestionSubmission(requestReview: boolean) {
-    if (
-      this.editQuestionSubmission &&
-      (!this.editQuestionSubmission.question.title ||
-        !this.editQuestionSubmission.question.content)
-    ) {
-      await this.$store.dispatch(
-        'error',
-        'Error: Question must have title and content'
-      );
-      return;
-    } else if (requestReview && this.comment.trim().length == 0) {
-      await this.$store.dispatch(
-        'error',
-        'Error: Please insert a short comment to justify your submission'
-      );
-      return;
-    } else if (
-      !requestReview &&
-      this.comment.trim().length > 0 &&
-      !confirm('Comment will not be saved. Do you wish to proceed?')
-    ) {
-      return;
-    }
-    try {
-      let result;
-      if (this.editQuestionSubmission.question.id != null) {
-        result = await RemoteServices.updateQuestionSubmission(
-          this.editQuestionSubmission
-        );
-      } else {
-        result = await RemoteServices.createQuestionSubmission(
-          this.editQuestionSubmission
-        );
-      }
-      if (requestReview) {
-        this.$emit('submit-submission', this.comment, result);
-      } else {
-        this.$emit('save-submission', result);
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-  }
-
-  editMode(editQuestionSubmission: QuestionSubmission) {
-    return (
-      editQuestionSubmission.question &&
-      editQuestionSubmission.question.id !== null
-    );
-  }
+const getQuestionComponent = (type: string) => {
+  if (type === 'multiple_choice') return MultipleChoiceCreate;
+  if (type === 'code_fill_in') return CodeFillInCreate;
+  if (type === 'code_order') return CodeOrderCreate;
+  return null;
 }
+
+onMounted(() => {
+  questionType.value = props.questionSubmission.question.questionDetailsDto.type;
+});
+
+const questionTypesOptions = computed(() => {
+  return Object.values(QuestionTypes).map((qt) => ({
+    title: qt.replace(/_/g, ' '),
+    value: qt,
+  }));
+});
+
+const updateQuestionType = () => {
+  editQuestionSubmission.value.question.questionDetailsDto =
+    QuestionFactory.getFactory(
+      questionType.value
+    ).createEmptyQuestionDetails();
+};
+
+watch(() => props.questionSubmission, () => {
+  editQuestionSubmission.value = new QuestionSubmission(
+    props.questionSubmission
+  );
+}, { immediate: true, deep: true });
+
+const createQuestionSubmission = async (requestReview: boolean) => {
+  if (
+    editQuestionSubmission.value &&
+    (!editQuestionSubmission.value.question.title ||
+      !editQuestionSubmission.value.question.content)
+  ) {
+    store.setError('Error: Question must have title and content');
+    return;
+  } else if (requestReview && comment.value.trim().length == 0) {
+    store.setError('Error: Please insert a short comment to justify your submission');
+    return;
+  } else if (
+    !requestReview &&
+    comment.value.trim().length > 0 &&
+    !confirm('Comment will not be saved. Do you wish to proceed?')
+  ) {
+    return;
+  }
+  try {
+    let result;
+    if (editQuestionSubmission.value.question.id != null) {
+      result = await RemoteServices.updateQuestionSubmission(
+        editQuestionSubmission.value
+      );
+    } else {
+      result = await RemoteServices.createQuestionSubmission(
+        editQuestionSubmission.value
+      );
+    }
+    if (requestReview) {
+      emit('submit-submission', comment.value, result);
+    } else {
+      emit('save-submission', result);
+    }
+  } catch (error) {
+    store.setError(error as string);
+  }
+};
+
+const editMode = (editQS: QuestionSubmission) => {
+  return (
+    editQS.question &&
+    editQS.question.id !== null
+  );
+};
 </script>
 
 <style lang="scss" scoped>

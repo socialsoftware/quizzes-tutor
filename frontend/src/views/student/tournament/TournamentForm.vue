@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    :value="dialog"
-    @input="cancelTournament()"
+    :model-value="dialog"
+    @update:model-value="cancelTournament()"
     @keydown.esc="cancelTournament()"
     max-width="75%"
     max-height="80%"
@@ -26,23 +26,23 @@
             </v-flex>
             <v-row>
               <v-col cols="12" sm="6">
-                <VueCtkDateTimePicker
-                  label="Start Time"
+                <VueDatePicker
                   id="startTimeInput"
                   v-model="newStartTime"
-                  format="YYYY-MM-DDTHH:mm:ssZ"
-                >
-                </VueCtkDateTimePicker>
+                  model-type="iso"
+                  format="yyyy-MM-dd HH:mm"
+                  placeholder="Start Time"
+                ></VueDatePicker>
               </v-col>
               <v-spacer></v-spacer>
               <v-col cols="12" sm="6">
-                <VueCtkDateTimePicker
-                  label="End Time"
+                <VueDatePicker
                   id="endTimeInput"
                   v-model="newEndTime"
-                  format="YYYY-MM-DDTHH:mm:ssZ"
-                >
-                </VueCtkDateTimePicker>
+                  model-type="iso"
+                  format="yyyy-MM-dd HH:mm"
+                  placeholder="End Time"
+                ></VueDatePicker>
               </v-col>
             </v-row>
             <v-flex xs24 sm12 md8 v-if="!editMode">
@@ -83,7 +83,7 @@
                     />
                   </div>
                 </v-col>
-                <v-col cols="12" sm="6" v-if="this.typePassword">
+                <v-col cols="12" sm="6" v-if="typePassword">
                   <p>
                     <b>Set Password:</b>
                   </p>
@@ -95,7 +95,7 @@
                   >
                     <template slot="append">
                       <v-icon
-                        v-if="this.typePassword"
+                        v-if="typePassword"
                         medium
                         class="mr-2"
                         @click="switchVisibility()"
@@ -142,7 +142,7 @@
                   label="Search"
                   :items="allTopics"
                   :filter="topicSearch"
-                  :search-input.sync="currentTopicsSearchText"
+                  v-model:search="currentTopicsSearchText"
                   @change="currentTopicsSearchText = ''"
                   item-text="name"
                   return-object
@@ -161,11 +161,11 @@
               </template>
               <template v-slot:[`item.action`]="{ item }">
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
+                  <template v-slot:activator="{ props: activatorProps }">
                     <v-icon
                       small
                       class="mr-2"
-                      v-on="on"
+                      v-bind="activatorProps"
                       @click="removeTopic(item)"
                       data-cy="removeTopic"
                     >
@@ -195,7 +195,7 @@
                   label="Search"
                   :items="allTopics"
                   :filter="topicSearch"
-                  :search-input.sync="allTopicsSearchText"
+                  v-model:search="allTopicsSearchText"
                   @change="allTopicsSearchText = ''"
                   item-text="name"
                   return-object
@@ -214,11 +214,11 @@
               </template>
               <template v-slot:[`item.action`]="{ item }">
                 <v-tooltip bottom>
-                  <template v-slot:activator="{ on }">
+                  <template v-slot:activator="{ props: activatorProps }">
                     <v-icon
                       small
                       class="mr-2"
-                      v-on="on"
+                      v-bind="activatorProps"
                       @click="addTopic(item)"
                       data-cy="addTopic"
                     >
@@ -246,250 +246,238 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Tournament from '@/models/user/Tournament';
 import Topic from '@/models/management/Topic';
-import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
-import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
+import { VueDatePicker } from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
-Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
+const props = defineProps<{
+  dialog: boolean;
+  tournament: Tournament;
+  editMode: boolean;
+}>();
 
-@Component
-export default class TournamentForm extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
-  @Prop({ type: Boolean, required: true }) readonly editMode!: boolean;
+const emit = defineEmits([
+  'close-edit-dialog',
+  'close-dialog',
+  'new-tournament',
+  'edit-tournament'
+]);
 
-  editTournament!: Tournament;
-  currentTopicsSearch: string = '';
-  currentTopicsSearchText: string = '';
-  allTopicsSearch: string = '';
-  allTopicsSearchText: string = '';
+const store = useStore();
 
-  allTopics: Topic[] = [];
-  currentTopics: Topic[] = [];
-  availableTopics: Topic[] = [];
+const editTournament = ref<Tournament>(new Tournament());
+const currentTopicsSearch = ref('');
+const currentTopicsSearchText = ref('');
+const allTopicsSearch = ref('');
+const allTopicsSearchText = ref('');
 
-  oldStartTime: string = '';
-  oldEndTime: string = '';
-  oldNumberOfQuestions: number = -1;
-  oldTopics: String[] = [];
+const allTopics = ref<Topic[]>([]);
+const currentTopics = ref<Topic[]>([]);
+const availableTopics = ref<Topic[]>([]);
 
-  newStartTime: string = '';
-  newEndTime: string = '';
+const oldStartTime = ref('');
+const oldEndTime = ref('');
+const oldNumberOfQuestions = ref(-1);
+const oldTopics = ref<String[]>([]);
 
-  typePassword: boolean = false;
-  passwordFieldType: string = 'password';
-  password: string = '';
+const newStartTime = ref('');
+const newEndTime = ref('');
 
-  topicsId: Number[] = [];
+const typePassword = ref(false);
+const passwordFieldType = ref('password');
+const password = ref('');
 
-  topicHeaders: object = [
-    {
-      text: 'Topics',
-      value: 'topicsCreate',
-      align: 'left',
-      sortable: false,
-    },
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'center',
-      width: '150px',
-      sortable: false,
-    },
-  ];
+const topicsId = ref<Number[]>([]);
 
-  async created() {
-    this.editTournament = this.editMode
-      ? this.tournament
-      : new Tournament(this.tournament);
+const topicHeaders: any = [
+  {
+    title: 'Topics',
+    value: 'topicsCreate',
+    align: 'start',
+    sortable: false,
+  },
+  {
+    title: 'Actions',
+    value: 'action',
+    align: 'center',
+    width: '150px',
+    sortable: false,
+  },
+];
 
-    if (this.editMode) {
-      await this.storeOldValues();
+const storeOldValues = async () => {
+  if (editTournament.value.startTime) {
+    oldStartTime.value = newStartTime.value = editTournament.value.startTime;
+  }
+  if (editTournament.value.endTime) {
+    oldEndTime.value = newEndTime.value = editTournament.value.endTime;
+  }
+  if (editTournament.value.numberOfQuestions) {
+    oldNumberOfQuestions.value = editTournament.value.numberOfQuestions;
+  }
+  oldTopics.value = editTournament.value.topics!;
+};
+
+const updateCurrentTopics = async () => {
+  editTournament.value.topics!.forEach((topicName) => {
+    availableTopics.value.forEach((topic) => {
+      if (topic.name.valueOf() === topicName.valueOf()) {
+        addTopic(topic);
+      }
+    });
+  });
+};
+
+onMounted(async () => {
+  editTournament.value = props.editMode
+    ? props.tournament
+    : new Tournament(props.tournament);
+
+  if (props.editMode) {
+    await storeOldValues();
+  }
+
+  store.setLoading();
+  try {
+    allTopics.value = await RemoteServices.getAvailableTopicsByCourseExecution();
+    availableTopics.value = allTopics.value;
+    if (props.editMode && editTournament.value.topics !== undefined) {
+      await updateCurrentTopics();
     }
+  } catch (error) {
+    store.setError(error as string);
+  }
+  store.clearLoading();
+});
 
-    await this.$store.dispatch('loading');
+const resetChanges = async () => {
+  editTournament.value.startTime = oldStartTime.value;
+  editTournament.value.endTime = oldEndTime.value;
+  editTournament.value.numberOfQuestions = oldNumberOfQuestions.value;
+  editTournament.value.topics = oldTopics.value;
+};
+
+const cancelTournament = async () => {
+  if (props.editMode) {
+    await resetChanges();
+    emit('close-edit-dialog');
+  } else {
+    emit('close-dialog');
+  }
+};
+
+const saveTournament = async () => {
+  editTournament.value.startTime = newStartTime.value;
+  editTournament.value.endTime = newEndTime.value;
+
+  if (
+    editTournament.value &&
+    (!editTournament.value.startTime ||
+      !editTournament.value.endTime ||
+      !editTournament.value.numberOfQuestions ||
+      currentTopics.value.length == 0)
+  ) {
+    store.setError('Tournament must have Start Time, End Time, Number Of Questions and Topics');
+    if (props.editMode) {
+      await resetChanges();
+    }
+    return;
+  }
+
+  if (
+    !props.editMode &&
+    editTournament.value &&
+    editTournament.value.privateTournament &&
+    password.value === ''
+  ) {
+    store.setError('Tournament must have a password in order to be private');
+    return;
+  }
+
+  if (!props.editMode && editTournament.value && editTournament.value.id == null) {
+    editTournament.value.canceled = false;
+    editTournament.value.password = password.value;
+
+    topicsId.value = currentTopics.value.map((topic) => topic.id as Number);
+
     try {
-      this.allTopics =
-        await RemoteServices.getAvailableTopicsByCourseExecution();
-      this.availableTopics = this.allTopics;
-      if (this.editMode && this.editTournament.topics !== undefined) {
-        await this.updateCurrentTopics();
-      }
+      const result = await RemoteServices.createTournament(
+        topicsId.value,
+        editTournament.value
+      );
+      emit('new-tournament', result);
     } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-  }
-
-  async storeOldValues() {
-    if (this.editTournament.startTime) {
-      this.oldStartTime = this.newStartTime = this.editTournament.startTime;
-    }
-    if (this.editTournament.endTime) {
-      this.oldEndTime = this.newEndTime = this.editTournament.endTime;
-    }
-    if (this.editTournament.numberOfQuestions) {
-      this.oldNumberOfQuestions = this.editTournament.numberOfQuestions;
-    }
-    this.oldTopics = this.editTournament.topics!;
-  }
-
-  async updateCurrentTopics() {
-    this.editTournament.topics!.forEach((topicName) => {
-      this.availableTopics!.forEach((topic) => {
-        if (topic.name.valueOf() === topicName.valueOf()) {
-          this.addTopic(topic);
-        }
-      });
-    });
-  }
-
-  async resetChanges() {
-    this.editTournament.startTime = this.oldStartTime;
-    this.editTournament.endTime = this.oldEndTime;
-    this.editTournament.numberOfQuestions = this.oldNumberOfQuestions;
-    this.editTournament.topics = this.oldTopics;
-  }
-
-  async cancelTournament() {
-    if (this.editMode) {
-      await this.resetChanges();
-      this.$emit('close-edit-dialog');
-    } else {
-      this.$emit('close-dialog');
+      store.setError(error as string);
     }
   }
 
-  async saveTournament() {
-    this.editTournament.startTime = this.newStartTime;
-    this.editTournament.endTime = this.newEndTime;
+  if (props.editMode && editTournament.value && editTournament.value.id != null) {
+    let topicsList = currentTopics.value.map((topic) => topic.id as number);
 
-    if (
-      this.editTournament &&
-      (!this.editTournament.startTime ||
-        !this.editTournament.endTime ||
-        !this.editTournament.numberOfQuestions ||
-        this.currentTopics.length == 0)
-    ) {
-      await this.$store.dispatch(
-        'error',
-        'Tournament must have Start Time, End Time, Number Of Questions and Topics'
+    try {
+      const result = await RemoteServices.updateTournament(
+        topicsList,
+        editTournament.value
       );
-      if (this.editMode) {
-        await this.resetChanges();
-      }
-      return;
+      emit('edit-tournament', result);
+    } catch (error) {
+      store.setError(error as string);
     }
-
-    if (
-      !this.editMode &&
-      this.editTournament &&
-      this.editTournament.privateTournament &&
-      this.password === ''
-    ) {
-      await this.$store.dispatch(
-        'error',
-        'Tournament must have a password in order to be private'
-      );
-      return;
-    }
-
-    if (
-      !this.editMode &&
-      this.editTournament &&
-      this.editTournament.id == null
-    ) {
-      this.editTournament.canceled = false;
-      this.editTournament.password = this.password;
-
-      this.topicsId = this.currentTopics.map((topic) => {
-        return topic.id;
-      });
-
-      try {
-        const result = await RemoteServices.createTournament(
-          this.topicsId,
-          this.editTournament
-        );
-        this.$emit('new-tournament', result);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-    }
-
-    if (
-      this.editMode &&
-      this.editTournament &&
-      this.editTournament.id != null
-    ) {
-      let topicsList = this.currentTopics.map((topic) => {
-        return topic.id;
-      });
-
-      try {
-        const result = await RemoteServices.updateTournament(
-          topicsList,
-          this.editTournament
-        );
-        this.$emit('edit-tournament', result);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-      this.editTournament.topics = this.currentTopics.map((topic) => {
-        return topic.name;
-      });
-    }
+    editTournament.value.topics = currentTopics.value.map((topic) => topic.name);
   }
+};
 
-  async togglePrivacy() {
-    this.tournament.privateTournament = !this.tournament.privateTournament;
-    this.typePassword = !this.typePassword;
-    this.password = '';
+const togglePrivacy = async () => {
+  props.tournament.privateTournament = !props.tournament.privateTournament;
+  typePassword.value = !typePassword.value;
+  password.value = '';
+};
+
+const switchVisibility = async () => {
+  passwordFieldType.value = passwordFieldType.value === 'password' ? 'text' : 'password';
+};
+
+const topicFilter = (value: any, search: string, item?: any) => {
+  if (!item || !item.raw) return false;
+  let topic: Topic = item.raw;
+  let searchTopics = JSON.parse(search);
+  if (searchTopics !== '') {
+    return searchTopics
+      .map((searchTopic: Topic) => searchTopic.name)
+      .every((t: string) => topic.name.includes(t));
   }
+  return true;
+};
 
-  async switchVisibility() {
-    this.passwordFieldType =
-      this.passwordFieldType === 'password' ? 'text' : 'password';
-  }
+const topicSearch = (value: any, search: string, item?: any) => {
+  if (!item || !item.raw) return false;
+  let topic: Topic = item.raw;
+  return (
+    search != null &&
+    topic.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+  );
+};
 
-  topicFilter(value: string, search: string, topic: Topic) {
-    let searchTopics = JSON.parse(search);
+const removeTopic = (topic: Topic) => {
+  availableTopics.value.push(topic);
+  availableTopics.value.sort((a, b) => {
+    let result = a.name.localeCompare(b.name);
+    return result === 0 ? 0 : result > 0 ? 1 : -1;
+  });
+  currentTopics.value = currentTopics.value.filter((t) => t.id != topic.id);
+};
 
-    if (searchTopics !== '') {
-      return searchTopics
-        .map((searchTopic: Topic) => searchTopic.name)
-        .every((t: string) => topic.name.includes(t));
-    }
-    return true;
-  }
-
-  topicSearch(topic: Topic, search: string) {
-    return (
-      search != null &&
-      topic.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
-    );
-  }
-
-  removeTopic(topic: Topic) {
-    this.availableTopics.push(topic);
-    this.availableTopics.sort((a, b) => {
-      let result = a.name.localeCompare(b.name);
-      return result === 0 ? 0 : result > 0 ? 1 : -1;
-    });
-    this.currentTopics = this.currentTopics.filter((t) => t.id != topic.id);
-  }
-
-  addTopic(topic: Topic) {
-    this.currentTopics.push(topic);
-    this.currentTopics.sort((a, b) => {
-      let result = a.name.localeCompare(b.name);
-      return result === 0 ? 0 : result > 0 ? 1 : -1;
-    });
-    this.availableTopics = this.availableTopics.filter((t) => t.id != topic.id);
-  }
-}
+const addTopic = (topic: Topic) => {
+  currentTopics.value.push(topic);
+  currentTopics.value.sort((a, b) => {
+    let result = a.name.localeCompare(b.name);
+    return result === 0 ? 0 : result > 0 ? 1 : -1;
+  });
+  availableTopics.value = availableTopics.value.filter((t) => t.id != topic.id);
+};
 </script>

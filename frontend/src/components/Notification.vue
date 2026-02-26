@@ -9,33 +9,21 @@
   </v-alert>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { computed } from 'vue';
+import { useStore } from '@/store';
 
-@Component
-export default class Notification extends Vue {
-  dialog: boolean = this.$store.getters.getNotification;
-  messageList: string = this.$store.getters.getNotificationMessageList;
+const store = useStore();
 
-  created() {
-    this.dialog = this.$store.getters.getNotification;
-    this.messageList = this.$store.getters.getNotificationMessageList;
-    this.$store.watch(
-      (state, getters) => getters.getNotification,
-      () => {
-        this.dialog = this.$store.getters.getNotification;
-        this.messageList = this.$store.getters.getNotificationMessageList;
-      }
-    );
-  }
-
-  @Watch('dialog')
-  closeNotification() {
-    if (!this.dialog) {
-      this.$store.dispatch('clearNotification');
+const dialog = computed({
+  get: () => store.notification,
+  set: (val: boolean) => {
+    if (!val) {
+      store.clearNotification();
     }
   }
-}
+});
+const messageList = computed(() => store.notificationMessageList);
 </script>
 
 <style scoped lang="scss">

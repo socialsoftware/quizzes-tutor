@@ -1,19 +1,31 @@
-import { mount, Wrapper } from '@vue/test-utils';
-import Vue from 'vue';
-import Vuetify from 'vuetify';
+import { mount, VueWrapper, DOMWrapper } from '@vue/test-utils';
+import { flushPromises } from '@vue/test-utils';
+import { describe, test, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 import EditCourseDialog from '@/views/admin/courses/EditCourseDialog.vue';
 import { emptyCourse, filledCourse } from '../../../samples/Course';
 import RemoteServices from '@/services/RemoteServices';
-import Vuex from 'vuex';
+// No vuex
+import { useStore } from '@/store';
+
+globalThis.visualViewport = { width: 1024, height: 768, addEventListener: vi.fn(), removeEventListener: vi.fn(), offsetLeft: 0, offsetTop: 0, pageLeft: 0, pageTop: 0, scale: 1 } as any;
+globalThis.ResizeObserver = class { observe() { } unobserve() { } disconnect() { } } as any;
+globalThis.IntersectionObserver = class { observe() { } unobserve() { } disconnect() { } } as any;
+
+vi.mock('@/store', () => ({
+  useStore: vi.fn()
+}));
 
 describe('EditCourseDialog view test', () => {
-  let wrapper: Wrapper<EditCourseDialog>;
-  let vuetify: Vuetify;
-  const actions = { error: jest.fn() };
+  let wrapper: VueWrapper<any>;
+  let vuetify: ReturnType<typeof createVuetify>;
+  let mockStoreContext: any;
   let mockCreateExternalCourse: RemoteServices;
 
   beforeAll(() => {
-    mockCreateExternalCourse = jest
+    mockCreateExternalCourse = vi
       .spyOn(RemoteServices, 'createExternalCourse')
       .mockImplementation(() => {
         return Promise.resolve(filledCourse);
@@ -21,46 +33,44 @@ describe('EditCourseDialog view test', () => {
   });
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   beforeEach(() => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    Vue.use(Vuetify);
-    vuetify = new Vuetify();
-    const store = new Vuex.Store({
-      actions,
-    });
+    vuetify = createVuetify({ components, directives });
+
+    mockStoreContext = { error: vi.fn(), setError: vi.fn() };
+    (useStore as any).mockReturnValue(mockStoreContext);
+
+    const div = document.createElement('div');
+    document.body.appendChild(div);
 
     wrapper = mount(EditCourseDialog, {
       vuetify,
-      store,
-      propsData: { course: emptyCourse, dialog: true },
+      global: { plugins: [vuetify] },
+      props: { course: emptyCourse, dialog: true },
+      attachTo: div
     });
   });
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
   });
 
   test('fill and cancel', async () => {
-    const courseExecutionNameInput = wrapper.find(
-      'input[data-cy="courseExecutionNameInput"]'
-    );
-    courseExecutionNameInput.setValue('Software Engineering');
+    await flushPromises();
+    const courseExecutionNameInput = new DOMWrapper(document.querySelector('[data-cy="courseExecutionNameInput"] input') as Element);
+    await courseExecutionNameInput.setValue('Software Engineering');
 
-    const courseExecutionAcronymInput = wrapper.find(
-      'input[data-cy="courseExecutionAcronymInput"]'
-    );
-    courseExecutionAcronymInput.setValue('ES2021');
+    const courseExecutionAcronymInput = new DOMWrapper(document.querySelector('[data-cy="courseExecutionAcronymInput"] input') as Element);
+    await courseExecutionAcronymInput.setValue('ES2021');
 
-    const courseExecutionAcademicTermInput = wrapper.find(
-      'input[data-cy="courseExecutionAcademicTermInput"]'
-    );
-    courseExecutionAcademicTermInput.setValue('Spring Semester 20/21');
+    const courseExecutionAcademicTermInput = new DOMWrapper(document.querySelector('[data-cy="courseExecutionAcademicTermInput"] input') as Element);
+    await courseExecutionAcademicTermInput.setValue('Spring Semester 20/21');
 
-    const button = wrapper.find('button[data-cy="cancelButton"]');
+    const button = new DOMWrapper(document.querySelector('button[data-cy="cancelButton"]') as Element);
     await button.trigger('click');
 
     expect(wrapper.emitted('close-dialog')?.length).toBe(1);
@@ -69,22 +79,17 @@ describe('EditCourseDialog view test', () => {
   });
 
   test('fill and save', async () => {
-    const courseExecutionNameInput = wrapper.find(
-      'input[data-cy="courseExecutionNameInput"]'
-    );
-    courseExecutionNameInput.setValue('Software Engineering');
+    await flushPromises();
+    const courseExecutionNameInput = new DOMWrapper(document.querySelector('[data-cy="courseExecutionNameInput"] input') as Element);
+    await courseExecutionNameInput.setValue('Software Engineering');
 
-    const courseExecutionAcronymInput = wrapper.find(
-      'input[data-cy="courseExecutionAcronymInput"]'
-    );
-    courseExecutionAcronymInput.setValue('ES2021');
+    const courseExecutionAcronymInput = new DOMWrapper(document.querySelector('[data-cy="courseExecutionAcronymInput"] input') as Element);
+    await courseExecutionAcronymInput.setValue('ES2021');
 
-    const courseExecutionAcademicTermInput = wrapper.find(
-      'input[data-cy="courseExecutionAcademicTermInput"]'
-    );
-    courseExecutionAcademicTermInput.setValue('Spring Semester 20/21');
+    const courseExecutionAcademicTermInput = new DOMWrapper(document.querySelector('[data-cy="courseExecutionAcademicTermInput"] input') as Element);
+    await courseExecutionAcademicTermInput.setValue('Spring Semester 20/21');
 
-    const button = wrapper.find('button[data-cy="saveButton"]');
+    const button = new DOMWrapper(document.querySelector('button[data-cy="saveButton"]') as Element);
     await button.trigger('click');
 
     expect(wrapper.emitted('new-course')?.length).toBe(1);
@@ -94,15 +99,14 @@ describe('EditCourseDialog view test', () => {
   });
 
   test('fill and save without complete information', async () => {
-    const courseExecutionNameInput = wrapper.find(
-      'input[data-cy="courseExecutionNameInput"]'
-    );
-    courseExecutionNameInput.setValue('Software Engineering');
+    await flushPromises();
+    const courseExecutionNameInput = new DOMWrapper(document.querySelector('[data-cy="courseExecutionNameInput"] input') as Element);
+    await courseExecutionNameInput.setValue('Software Engineering');
 
-    const button = wrapper.find('button[data-cy="saveButton"]');
+    const button = new DOMWrapper(document.querySelector('button[data-cy="saveButton"]') as Element);
     await button.trigger('click');
 
-    expect(actions.error).toHaveBeenCalled();
+    expect(mockStoreContext.setError).toHaveBeenCalled();
     expect(mockCreateExternalCourse).not.toHaveBeenCalled();
   });
 });

@@ -5,18 +5,18 @@
       <v-btn
         style="margin-right: 2% !important"
         color="primary"
-        dark
+        class="text-white"
         @click="getDiscussions"
         >Refresh List</v-btn
       >
       <v-btn
         v-if="!showClosedDiscussions"
         color="primary"
-        dark
+        class="text-white"
         @click="toggleClosedDiscussions"
         >Show Closed Discussions</v-btn
       >
-      <v-btn v-else color="primary" dark @click="toggleClosedDiscussions"
+      <v-btn v-else color="primary" class="text-white" @click="toggleClosedDiscussions"
         >Hide Closed Discussions</v-btn
       >
     </v-card-title>
@@ -24,43 +24,39 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import Discussion from '@/models/management/Discussion';
 import RemoteServices from '@/services/RemoteServices';
 import DiscussionListComponent from '@/views/student/discussions/DiscussionListComponent.vue';
 
-@Component({
-  components: {
-    'discussion-list-component': DiscussionListComponent,
-  },
-})
-export default class TeacherDiscussionsView extends Vue {
-  discussions: Discussion[] = [];
-  showClosedDiscussions: boolean = false;
+const store = useStore();
+const discussions = ref<Discussion[]>([]);
+const showClosedDiscussions = ref(false);
 
-  async created() {
-    await this.$store.dispatch('loading');
-    await this.getDiscussions();
-    await this.$store.dispatch('clearLoading');
-  }
-
-  async toggleClosedDiscussions() {
-    this.showClosedDiscussions = !this.showClosedDiscussions;
-    await this.getDiscussions();
-  }
-
-  async getDiscussions() {
-    await this.$store.dispatch('loading');
-    if (this.showClosedDiscussions) {
-      this.discussions = await RemoteServices.getCourseExecutionDiscussions();
+const getDiscussions = async () => {
+  store.setLoading();
+  try {
+    if (showClosedDiscussions.value) {
+      discussions.value = await RemoteServices.getCourseExecutionDiscussions();
     } else {
-      this.discussions =
-        await RemoteServices.getOpenCourseExecutionDiscussions();
+      discussions.value = await RemoteServices.getOpenCourseExecutionDiscussions();
     }
-    await this.$store.dispatch('clearLoading');
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+};
+
+onMounted(() => {
+  getDiscussions();
+});
+
+const toggleClosedDiscussions = async () => {
+  showClosedDiscussions.value = !showClosedDiscussions.value;
+  await getDiscussions();
+};
 </script>
 
 <style scoped></style>

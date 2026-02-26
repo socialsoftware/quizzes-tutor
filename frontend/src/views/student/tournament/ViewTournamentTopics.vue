@@ -8,7 +8,7 @@
       append-icon="false"
     >
       <template v-slot:selection="data">
-        <v-chip v-bind="data.attrs">
+        <v-chip>
           {{ data.item }}
         </v-chip>
       </template>
@@ -16,19 +16,18 @@
   </v-form>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import Topic from '@/models/management/Topic';
 import Tournament from '@/models/user/Tournament';
 
-@Component
-export default class ViewTournamentTopics extends Vue {
-  @Prop({ type: Tournament, required: true }) readonly tournament!: Tournament;
+const props = defineProps<{
+  tournament: Tournament;
+}>();
 
-  tournamentTopics: Topic[] = [];
+const tournamentTopics = ref<Topic[]>([]);
 
-  created() {
-    this.tournamentTopics = JSON.parse(JSON.stringify(this.tournament.topics));
-  }
-}
+onMounted(() => {
+  tournamentTopics.value = JSON.parse(JSON.stringify(props.tournament.topics));
+});
 </script>

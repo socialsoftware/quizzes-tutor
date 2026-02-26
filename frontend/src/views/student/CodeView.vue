@@ -12,54 +12,58 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, watch } from 'vue';
+import { useStore } from '@/store';
+import { useRouter, useRoute } from 'vue-router';
 import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 
-@Component
-export default class CodeView extends Vue {
-  hasCode: boolean = false;
-  code: number | null = null;
-  quiz: StatementQuiz | null = null;
-  timer: string = '';
+const store = useStore();
+const router = useRouter();
+const route = useRoute();
 
-  async setCode() {
-    this.hasCode = true;
-    await this.getQuizByCode();
-  }
+const hasCode = ref(false);
+const code = ref<number | null>(null);
+const quiz = ref<StatementQuiz | null>(null);
+const timer = ref('');
 
-  async getQuizByCode() {
-    await this.$store.dispatch('loading');
-    if (this.code && this.$router.currentRoute.name === 'code') {
-      try {
-        this.quiz = await RemoteServices.getQuizByCode(
-          this.$store.getters.getCurrentCourse.courseExecutionId,
-          this.code
-        );
+const getQuizByCode = async () => {
+  store.setLoading();
+  if (code.value && route.name === 'code') {
+    try {
+      quiz.value = await RemoteServices.getQuizByCode(
+        store.currentCourse!.courseExecutionId as number,
+        code.value as number
+      );
 
-        if (!this.quiz.timeToAvailability) {
-          await this.$store.dispatch('statementQuiz', this.quiz);
-          await this.$router.push({ name: 'solve-quiz' });
-        }
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-        await this.$router.push({ name: 'home' });
+      if (!quiz.value.timeToAvailability) {
+        store.setStatementQuiz(quiz.value);
+        await router.push({ name: 'solve-quiz' });
       }
+    } catch (error) {
+      store.setError(error as string);
+      await router.push({ name: 'home' });
     }
-    await this.$store.dispatch('clearLoading');
   }
+  store.clearLoading();
+};
 
-  @Watch('quiz.timeToAvailability')
-  timerMethod() {
-    if (!!this.quiz && !this.quiz.timeToAvailability) {
-      this.getQuizByCode();
+const setCode = async () => {
+  hasCode.value = true;
+  await getQuizByCode();
+};
+
+watch(
+  () => quiz.value?.timeToAvailability,
+  (newVal) => {
+    if (!!quiz.value && !newVal) {
+      getQuizByCode();
     }
-
-    this.timer = milisecondsToHHMMSS(this.quiz?.timeToAvailability);
+    timer.value = milisecondsToHHMMSS(newVal ?? 0);
   }
-}
+);
 </script>
 
 <style lang="scss" scoped>

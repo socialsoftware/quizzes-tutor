@@ -1,8 +1,8 @@
 <template>
   <v-dialog
-    :value="dialog"
-    @input="$emit('dialog', false)"
-    @keydown.esc="$emit('dialog', false)"
+    :model-value="dialog"
+    @update:model-value="$emit('update:dialog', $event)"
+    @keydown.esc="$emit('update:dialog', false)"
     max-width="75%"
   >
     <v-card v-if="quiz">
@@ -14,24 +14,20 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn dark color="blue darken-1" @click="$emit('dialog')">close</v-btn>
+        <v-btn dark color="blue darken-1" @click="$emit('update:dialog', false)">close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
 import { Quiz } from '@/models/management/Quiz';
 import ShowQuestionList from '@/views/teacher/questions/ShowQuestionList.vue';
 
-@Component({
-  components: {
-    'show-question-list': ShowQuestionList,
-  },
-})
-export default class ShowQuizDialog extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Quiz, required: true }) readonly quiz!: Quiz | null;
-}
+defineProps<{
+  dialog: boolean;
+  quiz: Quiz | null;
+}>();
+
+defineEmits(['update:dialog']);
 </script>

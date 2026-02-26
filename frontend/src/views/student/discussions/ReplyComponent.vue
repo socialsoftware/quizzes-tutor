@@ -10,24 +10,24 @@
           :key="reply.id"
           class="text-left reply"
         >
-          <div v-if="user.role === 'STUDENT'" style="width: 100%">
+          <div v-if="user?.role === 'STUDENT'" style="width: 100%">
             <div>
-              <b v-if="user.id !== reply.userId"
+              <b v-if="user?.id !== reply.userId"
                 >{{ reply.name }} ({{ reply.username }}) replied on
                 {{ reply.date }} :
               </b>
               <b v-else>You replied on {{ reply.date }} :</b>
-              <span v-html="convertMarkDown(reply.message)" />
+              <span v-html="convertMarkDownText(reply.message)" />
             </div>
           </div>
           <div v-else style="display: inline-flex; width: 100%">
             <div style="width: 88%">
-              <b v-if="user.id !== reply.userId"
+              <b v-if="user?.id !== reply.userId"
                 >{{ reply.name }} ({{ reply.username }}) replied on
                 {{ reply.date }}:
               </b>
               <b v-else>You replied on {{ reply.date }} :</b>
-              <span v-html="convertMarkDown(reply.message)" />
+              <span v-html="convertMarkDownText(reply.message)" />
             </div>
             <v-switch
               style="width: 12%"
@@ -84,64 +84,76 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useStore } from '@/store';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Discussion from '@/models/management/Discussion';
 import RemoteServices from '../../../services/RemoteServices';
 import User from '@/models/user/User';
 import Reply from '@/models/management/Reply';
 
-@Component
-export default class ReplyComponent extends Vue {
-  @Prop() readonly discussion!: Discussion;
-  replyMessage: string = '';
-  user: User = this.$store.getters.getUser;
+const props = defineProps<{
+  discussion: Discussion;
+}>();
 
-  async submitReply() {
-    if (this.replyMessage.trim() === '') {
-      await this.$store.dispatch('error', 'Reply must have content');
-      return;
-    }
+const store = useStore();
+const replyMessage = ref('');
+const user = store.user as User | null;
 
-    let reply = new Reply();
-    reply.message = this.replyMessage;
-    reply.username = this.user.username;
-    reply.date = new Date().toISOString();
+const submitReply = async () => {
+  if (replyMessage.value.trim() === '') {
+    store.setError('Reply must have content');
+    return;
+  }
 
+  let reply = new Reply();
+  reply.message = replyMessage.value;
+  reply.username = user?.username ?? '';
+  reply.date = new Date().toISOString();
+
+  try {
     let replyResponse = await RemoteServices.addReply(
       reply,
-      this.discussion!.id
+      props.discussion.id
     );
 
-    if (this.discussion.replies === null) {
-      this.discussion.replies = [];
+    if (props.discussion.replies === null) {
+      props.discussion.replies = [];
     }
-    this.discussion.replies.push(replyResponse);
-    this.discussion.lastReplyDate = replyResponse.date;
+    props.discussion.replies.push(replyResponse);
+    props.discussion.lastReplyDate = replyResponse.date;
 
-    this.replyMessage = '';
+    replyMessage.value = '';
+  } catch (error) {
+    store.setError(error as string);
   }
+};
 
-  setReplyMessage(message: string) {
-    this.replyMessage = message;
-  }
+const setReplyMessage = (message: string) => {
+  replyMessage.value = message;
+};
 
-  convertMarkDown(text: string) {
-    return convertMarkDown(text, null);
-  }
+const convertMarkDownText = (text: string) => {
+  return convertMarkDown(text, null);
+};
 
-  clearTextarea(name: string) {
-    let textArea = document.querySelector(name);
+const clearTextarea = (name: string) => {
+  let textArea = document.querySelector(name);
+  if (textArea) {
     (textArea as HTMLTextAreaElement).value = ' ';
   }
+};
 
-  async changeReplyAvailability(id: number) {
-    await this.$store.dispatch('loading');
+const changeReplyAvailability = async (id: number) => {
+  store.setLoading();
+  try {
     await RemoteServices.changeReplyAvailability(id);
-    await this.$store.dispatch('clearLoading');
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+};
 </script>
 <style lang="scss" scoped>
 ul {

@@ -48,22 +48,30 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Vue, PropSync } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, computed } from 'vue';
 import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
 import Option from '@/models/management/Option';
 
-@Component
-export default class CodeFillInOptions extends Vue {
-  @PropSync('value', { type: CodeFillInSpot }) spot!: CodeFillInSpot;
-  currentText: string = '';
-  addNewElement() {
-    if (this.currentText) {
-      const option = new Option();
-      option.content = this.currentText;
-      this.spot.options.push(option);
-      this.currentText = '';
-    }
+const props = defineProps<{
+  modelValue: CodeFillInSpot;
+}>();
+
+const emit = defineEmits(['update:modelValue']);
+
+const spot = computed({
+  get: () => props.modelValue,
+  set: (val) => emit('update:modelValue', val)
+});
+
+const currentText = ref<string>('');
+
+const addNewElement = () => {
+  if (currentText.value) {
+    const option = new Option();
+    option.content = currentText.value;
+    spot.value.options.push(option);
+    currentText.value = '';
   }
-}
+};
 </script>

@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    :value="dialog"
-    @input="$emit('close-dialog')"
+    :model-value="dialog"
+    @update:model-value="$emit('close-dialog')"
     @keydown.esc="$emit('close-dialog')"
     max-width="75%"
     max-height="80%"
@@ -70,49 +70,53 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Course from '@/models/user/Course';
 import ExternalUser from '../../../models/user/ExternalUser';
 
-@Component
-export default class AddUserDialog extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Course, required: true }) readonly course!: Course;
+const props = defineProps<{
+  dialog: boolean;
+  course: Course;
+}>();
 
-  roles = ['TEACHER', 'STUDENT'];
-  user: ExternalUser = new ExternalUser();
-  valid = true;
-  success = false;
+const emit = defineEmits(['close-dialog', 'user-created', 'update:dialog']);
 
-  created() {
-    this.user = new ExternalUser();
+const store = useStore();
+const form = ref<any>(null);
+
+const roles = ['TEACHER', 'STUDENT'];
+const user = ref<ExternalUser>(new ExternalUser());
+const valid = ref(true);
+const success = ref(false);
+
+onMounted(() => {
+  user.value = new ExternalUser();
+});
+
+const validateEmail = (email: string) => {
+  return /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(email);
+};
+
+const addUser = async () => {
+  let createdUser: ExternalUser;
+  success.value = false;
+
+  if (!form.value?.validate()) return;
+
+  try {
+    createdUser = await RemoteServices.registerExternalUser(
+      props.course.courseExecutionId as number,
+      user.value
+    );
+    emit('user-created', createdUser);
+    success.value = true;
+  } catch (error) {
+    store.setError(error as string);
   }
-
-  validateEmail(email: string) {
-    return /^[a-zA-Z0-9_.+-]+@[a-zA-Z0-9-]+\.[a-zA-Z0-9-.]+$/.test(email);
-  }
-
-  async addUser() {
-    let user: ExternalUser;
-    this.success = false;
-
-    if (!(this.$refs.form as Vue & { validate: () => boolean }).validate())
-      return;
-
-    try {
-      user = await RemoteServices.registerExternalUser(
-        this.course.courseExecutionId as number,
-        this.user
-      );
-      this.$emit('user-created', user);
-      this.success = true;
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-  }
-}
+};
 </script>
 
 <style scoped>

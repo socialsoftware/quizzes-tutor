@@ -17,28 +17,27 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 
-@Component
-export default class UsersView extends Vue {
-  username: String = '';
+const store = useStore();
+const username = ref('');
 
-  async anonymize() {
-    if (confirm('Are you sure you want to anonymize the user?')) {
-      await this.$store.dispatch('loading');
-      try {
-        await RemoteServices.anonymizeUser(this.username);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-      await this.$store.dispatch('clearLoading');
-
-      this.username = '';
+const anonymize = async () => {
+  if (confirm('Are you sure you want to anonymize the user?')) {
+    store.setLoading();
+    try {
+      await RemoteServices.anonymizeUser(username.value);
+    } catch (error) {
+      store.setError(error as string);
     }
+    store.clearLoading();
+
+    username.value = '';
   }
-}
+};
 </script>
 
 <style lang="scss" scoped></style>

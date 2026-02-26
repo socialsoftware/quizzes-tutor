@@ -10,8 +10,8 @@
       <v-card-actions>
         <v-spacer />
         <v-tooltip top>
-          <template v-slot:activator="{ on }">
-            <v-btn color="primary" small @click="Dropdownify" v-on="on">
+          <template v-slot:activator="{ props }">
+            <v-btn color="primary" small @click="Dropdownify" v-bind="props">
               Answer Slot
             </v-btn>
           </template>
@@ -23,8 +23,8 @@
 
       <BaseCodeEditor
         ref="codeEditor"
-        :code.sync="sQuestionDetails.code"
-        :language.sync="sQuestionDetails.language"
+        v-model:code="sQuestionDetails.code"
+        v-model:language="sQuestionDetails.language"
       />
 
       <FillInOptions
@@ -38,68 +38,69 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop, PropSync } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, computed, onMounted } from 'vue';
 import CodeFillInQuestionDetails from '@/models/management/questions/CodeFillInQuestionDetails';
 import FillInOptions from '@/components/code-fill-in/CodeFillInOptions.vue';
 import Option from '@/models/management/Option';
 import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
-@Component({
-  components: {
-    BaseCodeEditor,
-    FillInOptions,
-  },
-})
-export default class CodeFillInQuestionEdit extends Vue {
-  @PropSync('questionDetails', { type: CodeFillInQuestionDetails })
-  sQuestionDetails!: CodeFillInQuestionDetails;
-  @Prop({ default: true }) readonly readonlyEdit!: boolean;
-  counter: number = 1;
+const props = withDefaults(defineProps<{
+  questionDetails: CodeFillInQuestionDetails;
+  readonlyEdit?: boolean;
+}>(), {
+  readonlyEdit: true
+});
 
-  get languages(): String[] {
-    return BaseCodeEditor.availableLanguages;
-  }
+const emit = defineEmits(['update:questionDetails']);
 
-  get baseCodeEditorRef(): BaseCodeEditor {
-    return this.$refs.codeEditor as BaseCodeEditor;
-  }
-  created() {
-    this.counter = this.getMaxDropdown();
-  }
-  getMaxDropdown() {
-    return (
-      (Math.max.apply(
-        Math,
-        this.sQuestionDetails.fillInSpots.map(function (o) {
-          return o.sequence;
-        })
-      ) |
-        0) +
-      1
+const sQuestionDetails = computed({
+  get: () => props.questionDetails,
+  set: (val) => emit('update:questionDetails', val),
+});
+
+const counter = ref<number>(1);
+const codeEditor = ref<any>(null);
+
+const languages = computed(() => ['Java', 'Javascript', 'Python', 'CSharp']);
+
+const getMaxDropdown = () => {
+  return (
+    (Math.max.apply(
+      Math,
+      sQuestionDetails.value.fillInSpots.map(function (o) {
+        return o.sequence || 0;
+      })
+    ) | 0) + 1
+  );
+};
+
+onMounted(() => {
+  counter.value = getMaxDropdown();
+});
+
+const onCmCodeChange = (newCode: string) => {
+  sQuestionDetails.value.code = newCode;
+};
+
+const Dropdownify = () => {
+  // Note: CM6 editor access might need updating in BaseCodeEditor
+  const content = codeEditor.value?.getSelection?.();
+  if (content) {
+    const option = new Option();
+    option.correct = true;
+    option.content = content;
+    const item = new CodeFillInSpot();
+    item.options = [option];
+    item.sequence = counter.value;
+    sQuestionDetails.value.fillInSpots.push(item);
+    codeEditor.value?.replaceSelection?.(
+      '{{slot-' + counter.value + '}}'
     );
+    counter.value++;
   }
-  onCmCodeChange(newCode: string) {
-    this.sQuestionDetails.code = newCode;
-  }
-  Dropdownify() {
-    const content = this.baseCodeEditorRef.codemirror.getSelection();
-    if (content) {
-      const option = new Option();
-      option.correct = true;
-      option.content = content;
-      const item = new CodeFillInSpot();
-      item.options = [option];
-      item.sequence = this.counter;
-      this.sQuestionDetails.fillInSpots.push(item);
-      this.baseCodeEditorRef.codemirror.replaceSelection(
-        '{{slot-' + this.counter + '}}'
-      );
-      this.counter++;
-    }
-  }
-}
+};
 </script>
 
 <style>

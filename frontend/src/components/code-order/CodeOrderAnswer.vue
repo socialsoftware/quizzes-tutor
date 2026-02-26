@@ -8,64 +8,68 @@
       :clone="cloneAnswerFromQuestion"
       draggable="li.dragable"
       :sort="false"
+      item-key="id"
     >
-      <h4 class="code-order-header" slot="header">
-        Answer Options:
-        <p class="question-warning">
-          All options might used or only part of them.
-        </p>
-      </h4>
-      <li
-        v-for="(el, index) in questionDetails.orderSlots"
-        :key="index"
-        :class="{
-          dragable: !answerDetails.orderedSlots.find((x) => x.slotId == el.id),
-        }"
-      >
-        <i class="fa fa-align-justify handle"></i>
-        <BaseCodeEditor
-          class="content"
-          ref="codeEditor"
-          :code.sync="el.content"
-          :language.sync="questionDetails.language"
-          :editable="false"
-          :simple="true"
-        />
-      </li>
+      <template #header>
+        <h4 class="code-order-header">
+          Answer Options:
+          <p class="question-warning">
+            All options might used or only part of them.
+          </p>
+        </h4>
+      </template>
+      <template #item="{ element, index }">
+        <li
+          :class="{
+            dragable: !answerDetails.orderedSlots.find((x) => x.slotId == element.id),
+          }"
+        >
+          <i class="fa fa-align-justify handle"></i>
+          <BaseCodeEditor
+            class="content"
+            ref="codeEditor"
+            v-model:code="element.content"
+            v-model:language="questionDetails.language"
+            :editable="false"
+            :simple="true"
+          />
+        </li>
+      </template>
     </draggable>
     <draggable
       class="code-order-answer-response"
       v-model="answerList"
       group="answer"
       draggable="li"
+      item-key="slotId"
     >
-      <h4 class="code-order-header" slot="header">Response:</h4>
-      <li
-        v-for="(el, index) in answerDetails.orderedSlots"
-        :key="index"
-        class="dragable"
-      >
-        <i class="fa fa-align-justify handle"></i>
-        <BaseCodeEditor
-          class="content"
-          ref="codeEditor"
-          :code.sync="
-            questionDetails.orderSlots.find((x) => x.id == el.slotId).content
-          "
-          :language.sync="questionDetails.language"
-          :editable="false"
-          :simple="true"
-        />
-        <v-btn @click="removeAnswer(index)" icon small>
-          <v-icon color="red lighten-1">mdi-playlist-remove </v-icon>
-        </v-btn>
-      </li>
+      <template #header>
+        <h4 class="code-order-header">Response:</h4>
+      </template>
+      <template #item="{ element: el, index }">
+        <li class="dragable">
+          <i class="fa fa-align-justify handle"></i>
+          <BaseCodeEditor
+            class="content"
+            ref="codeEditor"
+            v-model:code="
+              questionDetails.orderSlots.find((x) => x.id == el.slotId)!.content
+            "
+            v-model:language="questionDetails.language"
+            :editable="false"
+            :simple="true"
+          />
+          <v-btn @click="removeAnswer(index)" icon small>
+            <v-icon color="red lighten-1">mdi-playlist-remove </v-icon>
+          </v-btn>
+        </li>
+      </template>
     </draggable>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { computed } from 'vue';
 import CodeOrderStatementQuestionDetails from '@/models/statement/questions/CodeOrderStatementQuestionDetails';
 import CodeOrderStatementAnswerDetails from '@/models/statement/questions/CodeOrderStatementAnswerDetails';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
@@ -75,52 +79,41 @@ import CodeOrderSlotStatementQuestionDetails from '@/models/statement/questions/
 import CodeOrderSlotStatementAnswerDetails from '@/models/statement/questions/CodeOrderSlotStatementAnswerDetails';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
-@Component({
-  components: {
-    BaseCodeEditor,
-    draggable,
-  },
-})
-export default class CodeOrderAnswer extends Vue {
-  @Prop(CodeOrderStatementQuestionDetails)
-  readonly questionDetails!: CodeOrderStatementQuestionDetails;
-  @Prop(CodeOrderStatementAnswerDetails)
-  answerDetails!: CodeOrderStatementAnswerDetails;
+const props = defineProps<{
+  questionDetails: CodeOrderStatementQuestionDetails;
+  answerDetails: CodeOrderStatementAnswerDetails;
+}>();
 
-  get answerList() {
-    return this.answerDetails.orderedSlots;
-  }
+const emit = defineEmits(['question-answer-update']);
 
-  set answerList(value) {
-    this.answerDetails.orderedSlots = value;
-    this.updateAnswer();
+const answerList = computed({
+  get: () => props.answerDetails.orderedSlots,
+  set: (value) => {
+    props.answerDetails.orderedSlots = value;
+    updateAnswer();
   }
+});
 
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
-  }
+const cloneAnswerFromQuestion = (element: CodeOrderSlotStatementQuestionDetails) => {
+  return new CodeOrderSlotStatementAnswerDetails({
+    slotId: element.id,
+    order: null,
+  });
+};
 
-  cloneAnswerFromQuestion(element: CodeOrderSlotStatementQuestionDetails) {
-    return new CodeOrderSlotStatementAnswerDetails({
-      slotId: element.id,
-      order: null,
-    });
-  }
+const removeAnswer = (index: number) => {
+  props.answerDetails.orderedSlots.splice(index, 1);
+  updateAnswer();
+};
 
-  removeAnswer(index: number) {
-    this.answerDetails.orderedSlots.splice(index, 1);
-    this.updateAnswer();
-  }
-
-  updateAnswer() {
-    this.answerDetails.orderedSlots.forEach(
-      (element: CodeOrderSlotStatementAnswerDetails, index: number) => {
-        element.order = index;
-      }
-    );
-    this.$emit('question-answer-update');
-  }
-}
+const updateAnswer = () => {
+  props.answerDetails.orderedSlots.forEach(
+    (element: CodeOrderSlotStatementAnswerDetails, index: number) => {
+      element.order = index;
+    }
+  );
+  emit('question-answer-update');
+};
 </script>
 
 <style lang="scss">

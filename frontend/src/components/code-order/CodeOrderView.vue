@@ -2,7 +2,7 @@
   <ul class="code-order-view">
     <li
       v-for="el in questionDetails.codeOrderSlots"
-      :key="el.id"
+      :key="el.id!"
       :class="{
         'not-used': el.order == null,
         student: !!answerDetails,
@@ -15,8 +15,8 @@
       <BaseCodeEditor
         class="slot-content"
         ref="codeEditor"
-        :code.sync="el.content"
-        :language.sync="questionDetails.language"
+        v-model:code="el.content"
+        v-model:language="questionDetails.language"
         :editable="false"
         :simple="true"
       />
@@ -26,44 +26,32 @@
   </ul>
 </template>
 
-<script lang="ts">
+<script setup lang="ts">
 import CodeOrderAnswerDetails from '@/models/management/questions/CodeOrderAnswerDetails';
 import CodeOrderQuestionDetails from '@/models/management/questions/CodeOrderQuestionDetails';
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import Image from '@/models/management/Image';
 import CodeOrderSlot from '@/models/management/questions/CodeOrderSlot';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
-@Component({
-  components: {
-    BaseCodeEditor,
-  },
-})
-export default class CodeOrderView extends Vue {
-  @Prop() readonly questionDetails!: CodeOrderQuestionDetails;
-  @Prop() readonly answerDetails?: CodeOrderAnswerDetails;
+const props = defineProps<{
+  questionDetails: CodeOrderQuestionDetails;
+  answerDetails?: CodeOrderAnswerDetails;
+}>();
 
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
-  }
+const studentAnswerCorrect = (el: CodeOrderSlot): boolean => {
+  let answer = props.answerDetails?.orderedSlots.find(
+    (x) => x.slotId == el.id
+  );
+  return !!answer ? answer.correct : el.order == null;
+};
 
-  studentAnswerCorrect(el: CodeOrderSlot): boolean {
-    let answer = this.answerDetails?.orderedSlots.find(
-      (x) => x.slotId == el.id
-    );
-    return !!answer ? answer.correct : el.order == null;
-  }
-
-  studentAnswer(el: CodeOrderSlot): string {
-    let answer = this.answerDetails?.orderedSlots.find(
-      (x) => x.slotId == el.id
-    );
-    return `S[${!!answer ? (answer?.order || 0) + 1 : 'Not Used'}][${
-      this.studentAnswerCorrect(el) ? '✔' : '✖'
-    }]`;
-  }
-}
+const studentAnswer = (el: CodeOrderSlot): string => {
+  let answer = props.answerDetails?.orderedSlots.find(
+    (x) => x.slotId == el.id
+  );
+  return `S[${!!answer ? (answer?.order || 0) + 1 : 'Not Used'}][${
+    studentAnswerCorrect(el) ? '✔' : '✖'
+  }]`;
+};
 </script>
 
 <style lang="scss">

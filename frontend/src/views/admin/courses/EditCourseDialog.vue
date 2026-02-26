@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    :value="dialog"
-    @input="$emit('close-dialog')"
+    :model-value="dialog"
+    @update:model-value="$emit('close-dialog')"
     @keydown.esc="$emit('close-dialog')"
     max-width="75%"
     max-height="80%"
@@ -52,49 +52,46 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Course from '@/models/user/Course';
 
-@Component
-export default class EditCourseDialog extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Course, required: true }) readonly course!: Course;
+const props = defineProps<{
+  dialog: boolean;
+  course: Course;
+}>();
 
-  editCourse!: Course;
-  isCreateCourse: boolean = false;
+const emit = defineEmits(['close-dialog', 'new-course', 'update:dialog']);
+const store = useStore();
 
-  created() {
-    this.editCourse = new Course(this.course);
+const editCourse = ref<Course | null>(null);
+const isCreateCourse = ref(false);
 
-    this.isCreateCourse = !!this.editCourse.name;
+onMounted(() => {
+  editCourse.value = new Course(props.course);
+  isCreateCourse.value = !!editCourse.value.name;
+});
+
+const saveCourse = async () => {
+  if (
+    editCourse.value &&
+    (!editCourse.value.name ||
+      !editCourse.value.acronym ||
+      !editCourse.value.academicTerm)
+  ) {
+    store.setError('Course must have name, acronym and academicTerm');
+    return;
   }
 
-  async saveCourse() {
-    if (
-      this.editCourse &&
-      (!this.editCourse.name ||
-        !this.editCourse.acronym ||
-        !this.editCourse.academicTerm)
-    ) {
-      await this.$store.dispatch(
-        'error',
-        'Course must have name, acronym and academicTerm'
-      );
-      return;
-    }
-
-    if (this.editCourse && this.editCourse.courseExecutionId == null) {
-      try {
-        const result = await RemoteServices.createExternalCourse(
-          this.editCourse
-        );
-        this.$emit('new-course', result);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
+  if (editCourse.value && editCourse.value.courseExecutionId == null) {
+    try {
+      const result = await RemoteServices.createExternalCourse(editCourse.value);
+      emit('new-course', result);
+    } catch (error) {
+      store.setError(error as string);
     }
   }
-}
+};
 </script>

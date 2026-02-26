@@ -1,87 +1,97 @@
-import { mount, Wrapper } from '@vue/test-utils';
-import Vue from 'vue';
-import Vuetify from 'vuetify';
+import { mount, VueWrapper, flushPromises } from '@vue/test-utils';
+import { describe, test, expect, vi, beforeEach, afterEach, beforeAll, afterAll } from 'vitest';
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
 import { filledCourse, filledCourseWithUsers } from '../../../samples/Course';
 import RemoteServices from '@/services/RemoteServices';
-import Vuex from 'vuex';
+import { useStore } from '@/store';
+
+vi.mock('@/store', () => ({
+  useStore: vi.fn()
+}));
+
+globalThis.visualViewport = { width: 1024, height: 768, addEventListener: vi.fn(), removeEventListener: vi.fn(), offsetLeft: 0, offsetTop: 0, pageLeft: 0, pageTop: 0, scale: 1 } as any;
+globalThis.ResizeObserver = class { observe() { } unobserve() { } disconnect() { } } as any;
+globalThis.IntersectionObserver = class { observe() { } unobserve() { } disconnect() { } } as any;
 import CoursesView from '@/views/admin/courses/CoursesView.vue';
 import { userBeto, userZe } from '../../../samples/User';
 
 describe('CoursesView test', () => {
-  let wrapper: Wrapper<CoursesView>;
-  let vuetify: Vuetify;
-  const actions = {
-    loading: jest.fn(),
-    clearLoading: jest.fn(),
-    error: jest.fn(),
-  };
+  let wrapper: VueWrapper<any>;
+  let vuetify: ReturnType<typeof createVuetify>;
+  let mockStoreContext: any;
 
   beforeAll(() => {
-    jest.spyOn(RemoteServices, 'getCourses').mockImplementation(() => {
+    vi.spyOn(RemoteServices, 'getCourses').mockImplementation(() => {
       return Promise.all([filledCourse]);
     });
   });
 
   afterAll(() => {
-    jest.restoreAllMocks();
+    vi.restoreAllMocks();
   });
 
   beforeEach(() => {
-    Vue.use(Vuetify);
-    vuetify = new Vuetify();
-    const store = new Vuex.Store({
-      actions,
-    });
+    vuetify = createVuetify({ components, directives });
+
+    mockStoreContext = { setLoading: vi.fn(), clearLoading: vi.fn(), error: vi.fn(), setError: vi.fn() };
+    (useStore as any).mockReturnValue(mockStoreContext);
+
+    const div = document.createElement('div');
+    document.body.appendChild(div);
 
     wrapper = mount(CoursesView, {
       vuetify,
-      store,
+      global: { plugins: [vuetify] },
+      attachTo: div
     });
   });
 
   afterEach(() => {
-    wrapper.destroy();
+    wrapper.unmount();
+    document.body.innerHTML = '';
   });
 
   test('open and load courses', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
     const tr = wrapper.findAll('tbody > tr');
     expect(tr.length).toBe(1);
 
-    const td = tr.at(0).findAll('td');
+    const td = tr.at(0)!.findAll('td');
     expect(td.length).toBe(13);
 
-    expect(td.at(1).text()).toBe(filledCourse.courseType);
-    expect(td.at(2).text()).toBe(filledCourse.name);
-    expect(td.at(3).text()).toBe(filledCourse.courseExecutionType);
-    expect(td.at(4).text()).toBe(filledCourse.acronym);
-    expect(td.at(5).text()).toBe(filledCourse.academicTerm);
-    expect(td.at(6).text()).toBe(
+    expect(td.at(1)!.text()).toBe(filledCourse.courseType);
+    expect(td.at(2)!.text()).toBe(filledCourse.name);
+    expect(td.at(3)!.text()).toBe(filledCourse.courseExecutionType);
+    expect(td.at(4)!.text()).toBe(filledCourse.acronym);
+    expect(td.at(5)!.text()).toBe(filledCourse.academicTerm);
+    expect(td.at(6)!.text()).toBe(
       filledCourse.numberOfActiveTeachers?.toString()
     );
-    expect(td.at(7).text()).toBe(
+    expect(td.at(7)!.text()).toBe(
       filledCourse.numberOfInactiveTeachers?.toString()
     );
-    expect(td.at(8).text()).toBe(
+    expect(td.at(8)!.text()).toBe(
       filledCourse.numberOfActiveStudents?.toString()
     );
-    expect(td.at(9).text()).toBe(
+    expect(td.at(9)!.text()).toBe(
       filledCourse.numberOfInactiveStudents?.toString()
     );
-    expect(td.at(10).text()).toBe(filledCourse.numberOfQuestions?.toString());
-    expect(td.at(11).text()).toBe(filledCourse.numberOfQuizzes?.toString());
-    expect(td.at(12).text()).toBe(filledCourse.status?.toString());
+    expect(td.at(10)!.text()).toBe(filledCourse.numberOfQuestions?.toString());
+    expect(td.at(11)!.text()).toBe(filledCourse.numberOfQuizzes?.toString());
+    expect(td.at(12)!.text()).toBe(filledCourse.status?.toString());
   });
 
   test('select new course and open edit course dialog', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="createButton"]');
+    const button = wrapper.find('[data-cy="createButton"]');
     await button.trigger('click');
 
     expect(wrapper.findComponent({ name: 'EditCourseDialog' }).exists()).toBe(
@@ -90,11 +100,11 @@ describe('CoursesView test', () => {
   });
 
   test('select create course from course and open edit course dialog', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="createFromCourse"]');
+    const button = wrapper.find('[data-cy="createFromCourse"]');
     await button.trigger('click');
 
     const editCourseDialog = wrapper.findComponent({
@@ -114,11 +124,11 @@ describe('CoursesView test', () => {
   });
 
   test('select view users and open view users dialog', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="viewUsersButton"]');
+    const button = wrapper.find('[data-cy="viewUsersButton"]');
     await button.trigger('click');
 
     const viewUsersDialog = wrapper.findComponent({ name: 'ViewUsersDialog' });
@@ -129,11 +139,11 @@ describe('CoursesView test', () => {
   });
 
   test('select upload users and open upload users dialog', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="uploadUsersHandler"]');
+    const button = wrapper.find('[data-cy="uploadUsersHandler"]');
     await button.trigger('click');
 
     const uploadUsersDialog = wrapper.findComponent({
@@ -143,11 +153,11 @@ describe('CoursesView test', () => {
   });
 
   test('select add external user and open add user dialog', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="addExternalUser"]');
+    const button = wrapper.find('[data-cy="addExternalUser"]');
     await button.trigger('click');
 
     const addUserDialog = wrapper.findComponent({
@@ -161,16 +171,16 @@ describe('CoursesView test', () => {
   });
 
   test('select export and invoke remote', async () => {
-    const mockExportCourse = jest.spyOn(
+    const mockExportCourse = vi.spyOn(
       RemoteServices,
       'exportCourseExecutionInfo'
     );
 
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="exportCourse"]');
+    const button = wrapper.find('[data-cy="exportCourse"]');
     await button.trigger('click');
 
     expect(mockExportCourse).toHaveBeenCalled();
@@ -181,16 +191,16 @@ describe('CoursesView test', () => {
 
   // TODO: mock window.confirm
   test.skip('select delete course and invoke remote', async () => {
-    const mockDeleteCourse = jest.spyOn(
+    const mockDeleteCourse = vi.spyOn(
       RemoteServices,
       'deleteCourseExecution'
     );
 
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="deleteCourse"]');
+    const button = wrapper.find('[data-cy="deleteCourse"]');
     await button.trigger('click');
 
     expect(mockDeleteCourse).toHaveBeenCalled();
@@ -201,18 +211,18 @@ describe('CoursesView test', () => {
 
   // TODO: mock window.confirm and new Date()
   test.skip('select anonymize students in old tecnico course and invoke remote', async () => {
-    const mockAnonymizeCourse = jest.spyOn(RemoteServices, 'anonymizeCourse');
+    const mockAnonymizeCourse = vi.spyOn(RemoteServices, 'anonymizeCourse');
 
     const mockDate = new Date('2121-04-07T10:20:30Z');
-    // jest.spyOn(global, 'Date').mockImplementation(() => Date());
+    // vi.spyOn(global, 'Date').mockImplementation(() => Date());
 
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
     console.log(wrapper.html());
 
-    const button = wrapper.find('button[data-cy="anonymizeCourse"]');
+    const button = wrapper.find('[data-cy="anonymizeCourse"]');
     await button.trigger('click');
 
     expect(mockAnonymizeCourse).toHaveBeenCalled();
@@ -222,11 +232,11 @@ describe('CoursesView test', () => {
   });
 
   test('receive new-course event and observe that there is a new course', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="createButton"]');
+    const button = wrapper.find('[data-cy="createButton"]');
     await button.trigger('click');
 
     await wrapper
@@ -242,11 +252,11 @@ describe('CoursesView test', () => {
   });
 
   test('receive close-dialog from create course edit dialog and close dialog', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="createButton"]');
+    const button = wrapper.find('[data-cy="createButton"]');
     await button.trigger('click');
 
     await wrapper
@@ -259,31 +269,28 @@ describe('CoursesView test', () => {
   });
 
   test('receive delete-users event and observe results', async () => {
-    const mockDeleteExternalInactiveUsers = jest
+    const mockDeleteExternalInactiveUsers = vi
       .spyOn(RemoteServices, 'deleteExternalInactiveUsers')
       .mockImplementation(() => {
         return Promise.resolve(filledCourseWithUsers);
       });
 
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="viewUsersButton"]');
+    const button = wrapper.find('[data-cy="viewUsersButton"]');
     await button.trigger('click');
 
     await wrapper
       .findComponent({ name: 'ViewUsersDialog' })
       .vm.$emit('delete-users', [userZe]);
 
-    expect(actions.loading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    await flushPromises();
 
     expect(mockDeleteExternalInactiveUsers).toHaveBeenCalled();
 
-    await wrapper
-      .findComponent({ name: 'ViewUsersDialog' })
-      .vm.$emit('close-dialog');
     await wrapper
       .findComponent({ name: 'ViewUsersDialog' })
       .vm.$emit('close-dialog');
@@ -291,17 +298,17 @@ describe('CoursesView test', () => {
     const tr = wrapper.findAll('tbody > tr');
     expect(tr.length).toBe(1);
 
-    const td = tr.at(0).findAll('td');
-    expect(td.at(7).text()).toBe('0');
-    expect(td.at(9).text()).toBe('0');
+    const td = tr.at(0)!.findAll('td');
+    expect(td.at(7)!.text()).toBe('0');
+    expect(td.at(9)!.text()).toBe('0');
   });
 
   test('receive close-dialog event from view users dialog and close dialog', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="viewUsersButton"]');
+    const button = wrapper.find('[data-cy="viewUsersButton"]');
     await button.trigger('click');
 
     await wrapper
@@ -314,11 +321,11 @@ describe('CoursesView test', () => {
   });
 
   test('receive users-uploaded event and observe changed state', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="uploadUsersHandler"]');
+    const button = wrapper.find('[data-cy="uploadUsersHandler"]');
     await button.trigger('click');
 
     await wrapper
@@ -333,23 +340,23 @@ describe('CoursesView test', () => {
       false
     );
 
-    await Vue.nextTick();
+    await flushPromises();
 
     const tr = wrapper.findAll('tbody > tr');
     expect(tr.length).toBe(1);
 
-    const td = tr.at(0).findAll('td');
-    expect(td.at(7).text()).toBe(
+    const td = tr.at(0)!.findAll('td');
+    expect(td.at(7)!.text()).toBe(
       filledCourseWithUsers.numberOfInactiveTeachers?.toString()
     );
   });
 
   test('receive close-dialog from upload users dialog and close dialog', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="uploadUsersHandler"]');
+    const button = wrapper.find('[data-cy="uploadUsersHandler"]');
     await button.trigger('click');
 
     await wrapper
@@ -362,11 +369,11 @@ describe('CoursesView test', () => {
   });
 
   test('receive user-created event and observe changed state', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="addExternalUser"]');
+    const button = wrapper.find('[data-cy="addExternalUser"]');
     await button.trigger('click');
 
     await wrapper
@@ -381,22 +388,22 @@ describe('CoursesView test', () => {
       false
     );
 
-    await Vue.nextTick();
+    await flushPromises();
 
     const tr = wrapper.findAll('tbody > tr');
     expect(tr.length).toBe(1);
 
-    const td = tr.at(0).findAll('td');
-    expect(td.at(7).text()).toBe('0');
-    expect(td.at(9).text()).toBe('0');
+    const td = tr.at(0)!.findAll('td');
+    expect(td.at(7)!.text()).toBe('0');
+    expect(td.at(9)!.text()).toBe('0');
   });
 
   test('receive close-dialog from add external user dialog and close dialog', async () => {
-    expect(actions.loading).toHaveBeenCalled();
-    expect(actions.clearLoading).toHaveBeenCalled();
-    await Vue.nextTick();
+    expect(mockStoreContext.setLoading).toHaveBeenCalled();
+    expect(mockStoreContext.clearLoading).toHaveBeenCalled();
+    await flushPromises();
 
-    const button = wrapper.find('button[data-cy="addExternalUser"]');
+    const button = wrapper.find('[data-cy="addExternalUser"]');
     await button.trigger('click');
 
     await wrapper
@@ -409,5 +416,5 @@ describe('CoursesView test', () => {
   });
 
   // TODO: re-initialize per test the mock for getCourses with different implementations
-  test.skip('use hold tecnico course and verify tecnico executions courses only have three options available', async () => {});
+  test.skip('use hold tecnico course and verify tecnico executions courses only have three options available', async () => { });
 });

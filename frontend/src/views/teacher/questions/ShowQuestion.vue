@@ -3,7 +3,7 @@
     <span v-html="convertMarkDown(question.content, question.image)" />
     <br />
     <component
-      :is="question.questionDetailsDto.type"
+      :is="componentMap[question.questionDetailsDto.type]"
       :questionDetails="question.questionDetailsDto"
       :answerDetails="answer"
     />
@@ -11,9 +11,8 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
+<script setup lang="ts">
+import { convertMarkDown as convertMarkDownService } from '@/services/ConvertMarkdownService';
 import Question from '@/models/management/Question';
 import Image from '@/models/management/Image';
 import MultipleChoiceView from '@/components/multiple-choice/MultipleChoiceView.vue';
@@ -21,19 +20,18 @@ import CodeFillInView from '@/components/code-fill-in/CodeFillInView.vue';
 import CodeOrderView from '@/components/code-order/CodeOrderView.vue';
 import AnswerDetails from '@/models/management/questions/AnswerDetails';
 
-@Component({
-  components: {
-    multiple_choice: MultipleChoiceView,
-    code_fill_in: CodeFillInView,
-    code_order: CodeOrderView,
-  },
-})
-export default class ShowQuestion extends Vue {
-  @Prop({ type: Question, required: true }) readonly question!: Question;
-  @Prop() readonly answer?: AnswerDetails;
+const props = defineProps<{
+  question: Question;
+  answer?: AnswerDetails;
+}>();
 
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
-  }
-}
+const componentMap: Record<string, any> = {
+  multiple_choice: MultipleChoiceView,
+  code_fill_in: CodeFillInView,
+  code_order: CodeOrderView,
+};
+
+const convertMarkDown = (text: string, image: Image | null = null): string => {
+  return convertMarkDownService(text, image);
+};
 </script>

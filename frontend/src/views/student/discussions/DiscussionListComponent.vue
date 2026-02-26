@@ -3,8 +3,7 @@
     <v-data-table
       :headers="headers"
       :items="discussions"
-      :sort-by="'lastReplyDate'"
-      :sort-desc="true"
+      :sort-by="[{ key: 'lastReplyDate', order: 'desc' }]"
       :search="search"
       multi-sort
       :mobile-breakpoint="0"
@@ -33,12 +32,12 @@
 
       <template v-slot:[`item.action`]="{ item }">
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ props: activatorProps }">
             <v-icon
               data-cy="showDiscussionButton"
               class="mr-2 action-button"
-              v-on="on"
-              @click="showDiscussionDialog(item)"
+              v-bind="activatorProps"
+              @click="showDiscussionDialogAction(item)"
               >fas fa-comment-dots</v-icon
             >
           </template>
@@ -48,62 +47,46 @@
     </v-data-table>
     <show-discussion-dialog
       v-if="currentDiscussion"
-      v-model="discussionDialog"
+      v-model:dialog="discussionDialog"
       :discussion="currentDiscussion"
       v-on:close-show-question-dialog="onCloseShowDiscussionDialog"
     />
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref } from 'vue';
 import Discussion from '@/models/management/Discussion';
 import ShowDiscussionDialog from '@/views/student/discussions/ShowDiscussionDialog.vue';
 
-@Component({
-  components: {
-    'show-discussion-dialog': ShowDiscussionDialog,
-  },
-})
-export default class DiscussionListComponent extends Vue {
-  @Prop({ type: Array, required: true }) readonly discussions!: Discussion[];
-  search: string = '';
-  currentDiscussion: Discussion | null = null;
-  discussionDialog: boolean = false;
+const props = defineProps<{
+  discussions: Discussion[];
+}>();
 
-  headers: object = [
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'left',
-      width: '5px',
-      sortable: false,
-    },
-    {
-      text: 'Discussion Number',
-      value: 'id',
-    },
-    {
-      text: 'Question Title',
-      value: 'question.title',
-    },
-    { text: 'Question Content', value: 'question.content' },
-    { text: 'Message', value: 'message' },
-    { text: 'Last Reply Date', value: 'lastReplyDate' },
-    { text: 'Closed', value: 'closed' },
-    { text: 'Replies', value: 'replies.length' },
-  ];
+const search = ref('');
+const currentDiscussion = ref<Discussion | null>(null);
+const discussionDialog = ref(false);
 
-  showDiscussionDialog(discussion: Discussion) {
-    this.currentDiscussion = discussion;
-    this.discussionDialog = true;
-  }
+const headers = [
+  { title: 'Actions', value: 'action', align: 'start', width: '5px', sortable: false },
+  { title: 'Discussion Number', value: 'id' },
+  { title: 'Question Title', value: 'question.title' },
+  { title: 'Question Content', value: 'question.content' },
+  { title: 'Message', value: 'message' },
+  { title: 'Last Reply Date', value: 'lastReplyDate' },
+  { title: 'Closed', value: 'closed' },
+  { title: 'Replies', value: 'replies.length' },
+] as const;
 
-  onCloseShowDiscussionDialog() {
-    this.currentDiscussion = null;
-    this.discussionDialog = false;
-  }
-}
+const showDiscussionDialogAction = (discussion: Discussion) => {
+  currentDiscussion.value = discussion;
+  discussionDialog.value = true;
+};
+
+const onCloseShowDiscussionDialog = () => {
+  currentDiscussion.value = null;
+  discussionDialog.value = false;
+};
 </script>
 
 <style scoped></style>

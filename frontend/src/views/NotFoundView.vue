@@ -2,17 +2,17 @@
   <div class="container">Not Found</div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { useRouter } from 'vue-router';
 
-@Component
-export default class NotFoundView extends Vue {
-  created() {
-    setTimeout(async () => {
-      await this.$router.push({ name: 'home' });
-    }, 5000);
-  }
-}
+const router = useRouter();
+
+onMounted(() => {
+  setTimeout(async () => {
+    await router.push({ name: 'home' });
+  }, 5000);
+});
 </script>
 
 <style lang="scss" scoped></style>

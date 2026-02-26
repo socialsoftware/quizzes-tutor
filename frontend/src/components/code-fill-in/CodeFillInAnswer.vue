@@ -1,199 +1,183 @@
 <template>
   <div class="questionDetails-container" v-if="questionDetails">
     <div class="code-container" style="position: relative; text-align: left">
-      <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
+      <v-overlay :model-value="!CodemirrorUpdated" contained color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
-      <codemirror
+      <BaseCodeEditor
         ref="myCmStudent"
-        :value="questionDetails.code"
-        :options="cmOptions"
-      >
-      </codemirror>
+        v-model:code="questionDetails.code"
+        v-model:language="questionDetails.language"
+        :editable="false"
+      />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import {
-  Component,
-  Vue,
-  Prop,
-  Model,
-  Emit,
-  Watch,
-  PropSync,
-} from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue';
 import CodeFillInStatementQuestionDetails from '@/models/statement/questions/CodeFillInStatementQuestionDetails';
 import Image from '@/models/management/Image';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import CodeFillInSpotStatement from '@/models/statement/questions/CodeFillInSpotStatement';
 import CodeFillInStatementAnswerDetails from '@/models/statement/questions/CodeFillInStatementAnswerDetails';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/clike/clike.js';
-import 'codemirror/theme/eclipse.css';
-import 'codemirror/theme/monokai.css';
-import 'codemirror/addon/mode/overlay.js';
-import CodeMirror from 'codemirror';
-import { codemirror } from 'vue-codemirror';
 import CodeFillInSpotAnswerStatement from '@/models/statement/questions/CodeFillInSpotAnswerStatement';
+import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 
-CodeMirror.defineMode('mustache', function (config: any, parserConfig: any) {
-  const mustacheOverlay = {
-    token: function (stream: any) {
-      let ch;
-      if (stream.match('{{slot-')) {
-        while ((ch = stream.next()) != null) {
-          if (ch === '}' && stream.next() === '}') {
-            stream.eat('}');
-            return 'custom-drop-down';
-          }
-        }
-      }
-      while (stream.next() != null && !stream.match('{{', false)) {
-        // empty
-      }
-      return null;
-    },
-  };
-  return CodeMirror.overlayMode(
-    CodeMirror.getMode(config, parserConfig.backdrop || 'text/x-java'),
-    mustacheOverlay
-  );
+const props = defineProps<{
+  questionOrder?: number;
+  questionDetails: CodeFillInStatementQuestionDetails;
+  answerDetails: CodeFillInStatementAnswerDetails;
+  questionNumber?: number;
+  backsies?: boolean;
+}>();
+
+const emit = defineEmits([
+  'question-answer-update',
+  'update:questionOrder',
+  'update:answerDetails',
+  'increaseOrder',
+  'decreaseOrder'
+]);
+
+const answerDetailsSynced = computed({
+  get: () => props.answerDetails,
+  set: (val) => emit('update:answerDetails', val)
 });
 
-@Component({
-  components: {
-    codemirror,
-  },
-})
-export default class CodeFillInAnswer extends Vue {
-  @Model('questionOrder', Number) questionOrder: number | undefined;
-  @Prop(CodeFillInStatementQuestionDetails)
-  readonly questionDetails!: CodeFillInStatementQuestionDetails;
-  @PropSync('answerDetails', CodeFillInStatementAnswerDetails)
-  answerDetailsSynced!: CodeFillInStatementAnswerDetails;
-  @Prop() readonly questionNumber!: number;
-  @Prop() readonly backsies!: boolean;
-  hover: boolean = false;
-  cmOptions: any = {
-    // codemirror options
-    tabSize: 4,
-    mode: 'mustache',
-    theme: 'eclipse',
-    lineNumbers: true,
-    line: true,
-    readOnly: true,
+const CodemirrorUpdated = ref(false);
+const myCmStudent = ref<any>(null);
+
+const increaseOrder = () => emit('increaseOrder', 1);
+const decreaseOrder = () => emit('decreaseOrder', 1);
+
+const convertMarkDownFn = (text: string, image: Image | null = null): string => {
+  return convertMarkDown(text, image);
+};
+
+const selectedANewOption = (event: Event) => {
+  const num = Number(((event.target as any).name.match(/\d+/) || [0])[0]);
+  const selectIndex = (event.target as any).selectedIndex - 1;
+  const dataQuestion = props.questionDetails.fillInSpots.find(
+    (el) => el.sequence === num
+  );
+  const data = answerDetailsSynced.value.selectedOptions?.find(
+    (el: any) => el.sequence === num
+  );
+  if (data) {
+    data.optionId = dataQuestion?.options[selectIndex]?.optionId;
+  } else {
+    const newData = new CodeFillInSpotAnswerStatement();
+    newData.optionId = dataQuestion?.options[selectIndex]?.optionId;
+    newData.sequence = num;
+    answerDetailsSynced.value.selectedOptions.push(newData);
+  }
+  emit('question-answer-update');
+};
+
+const replaceDropdowns = () => {
+  const walkDOM = (node: Node, func: (node: Text) => void) => {
+    if (node.nodeType === Node.TEXT_NODE) {
+      if (node.nodeValue?.includes('{{slot-')) {
+        func(node as Text);
+      }
+    } else {
+      for (let i = 0; i < node.childNodes.length; i++) {
+        walkDOM(node.childNodes[i], func);
+      }
+    }
   };
-  CodemirrorUpdated: boolean = false;
-  @Emit()
-  increaseOrder() {
-    return 1;
-  }
-  @Emit()
-  decreaseOrder() {
-    return 1;
-  }
 
-  @Watch('questionDetails', { immediate: true, deep: true })
-  updateQuestion() {
-    this.CodemirrorUpdated = false;
-    setTimeout(() => {
-      (this.$refs.myCmStudent as any).codemirror.refresh();
-      this.replaceDropdowns();
-      document.body.addEventListener(
-        'mousedown',
-        function (evt: Event) {
-          if (
-            evt &&
-            evt.target &&
-            (evt.target as any).className === 'code-dropdown'
-          ) {
-            evt.stopPropagation();
-          }
-        },
-        true
-      );
-      this.CodemirrorUpdated = true;
-    }, 100);
-  }
-  replaceDropdowns() {
-    const that = this;
-
-    function createOptionChild(
-      optText: any,
-      index: any,
-      selected: boolean | undefined
-    ) {
+  const getOptions = (name: number, options: CodeFillInSpotStatement[]) => {
+    return options.find((el) => el.sequence === name);
+  };
+  
+  const addOptions = (select: HTMLSelectElement, options: any) => {
+    const data = answerDetailsSynced.value.selectedOptions?.find(
+      (el: any) => el.sequence === options.sequence
+    );
+    const blankO = document.createElement('option');
+    blankO.innerHTML = '-- select an option --';
+    if (!data) blankO.setAttribute('selected', '');
+    blankO.setAttribute('value', '');
+    select.appendChild(blankO);
+    
+    options.options.forEach((opt: any, i: number) => {
       const o = document.createElement('option');
-      o.appendChild(document.createTextNode(optText.content));
-      o.value = index;
-      if (selected) {
+      o.appendChild(document.createTextNode(opt.content));
+      o.value = String(i);
+      if (data && data.optionId == opt.optionId) {
         o.setAttribute('selected', '');
       }
-      return o;
-    }
-    function creatBlankOptionChild(selected: boolean) {
-      const o = document.createElement('option');
-      o.innerHTML = '-- select an option --';
-      if (selected) {
-        o.setAttribute('selected', '');
-      }
-      o.setAttribute('value', '');
-      return o;
-    }
-    function addOptions(select: any, options: any) {
-      const data = that.answerDetailsSynced.selectedOptions?.find(
-        (el) => el.sequence === options.sequence
-      );
-      select.appendChild(creatBlankOptionChild(!data));
-      options.options.forEach((opt: any, i: any) => {
-        select.appendChild(
-          createOptionChild(opt, i, data && data.optionId == opt.optionId)
-        );
-      });
-    }
-    function getOptions(name: number, options: CodeFillInSpotStatement[]) {
-      return options.find((el) => el.sequence === name);
-    }
-    document.querySelectorAll('.cm-custom-drop-down').forEach((e) => {
+      select.appendChild(o);
+    });
+  };
+
+  if (!myCmStudent.value) return;
+  const el = myCmStudent.value.$el;
+  
+  walkDOM(el, (textNode: Text) => {
+    const text = textNode.nodeValue || '';
+    const regex = /\{\{slot-(\d+)\}\}/g;
+    let match;
+    let lastIndex = 0;
+    const parent = textNode.parentNode;
+    if (!parent) return;
+    
+    if (parent.nodeName === 'SELECT' || parent.nodeName === 'OPTION') return;
+    
+    const fragment = document.createDocumentFragment();
+    let found = false;
+    
+    while ((match = regex.exec(text)) !== null) {
+      found = true;
+      const num = match[1];
+      const before = text.substring(lastIndex, match.index);
+      if (before) fragment.appendChild(document.createTextNode(before));
+      
       const d = document.createElement('select');
       d.className = 'code-dropdown';
-      d.onchange = this.selectedANewOption;
-      d.name = e.innerHTML;
-      e.parentNode?.replaceChild(d, e);
-      let match = e.innerHTML.match(/\d+/);
-      const num = match ? match[0] : 0;
+      d.onchange = selectedANewOption;
+      d.name = 'slot-' + num;
+      
       const something = getOptions(
         Number(num),
-        this.questionDetails.fillInSpots
+        props.questionDetails.fillInSpots
       );
-      addOptions(d, something);
-    });
-  }
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
-  }
-  selectedANewOption(event: Event) {
-    const num = Number((event.target as any).name.match(/\d+/)[0]);
-    const selectIndex = (event.target as any).selectedIndex - 1;
-    const dataQuestion = this.questionDetails.fillInSpots.find(
-      (el) => el.sequence === num
-    );
-    const data = this.answerDetailsSynced.selectedOptions?.find(
-      (el) => el.sequence === num
-    );
-    if (data) {
-      data.optionId = dataQuestion?.options[selectIndex]?.optionId;
-    } else {
-      const newData = new CodeFillInSpotAnswerStatement();
-      newData.optionId = dataQuestion?.options[selectIndex]?.optionId;
-      newData.sequence = num;
-      this.answerDetailsSynced.selectedOptions.push(newData);
+      if (something) addOptions(d, something);
+      
+      fragment.appendChild(d);
+      lastIndex = regex.lastIndex;
     }
-    this.$emit('question-answer-update');
-  }
-}
+    
+    if (found) {
+      const after = text.substring(lastIndex);
+      if (after) fragment.appendChild(document.createTextNode(after));
+      parent.replaceChild(fragment, textNode);
+    }
+  });
+};
+
+watch(() => props.questionDetails, () => {
+  CodemirrorUpdated.value = false;
+  setTimeout(() => {
+    replaceDropdowns();
+    document.body.addEventListener(
+      'mousedown',
+      function (evt: Event) {
+        if (
+          evt &&
+          evt.target &&
+          (evt.target as any).className === 'code-dropdown'
+        ) {
+          evt.stopPropagation();
+        }
+      },
+      true
+    );
+    CodemirrorUpdated.value = true;
+  }, 500);
+}, { immediate: true, deep: true });
 </script>
 
 <style>

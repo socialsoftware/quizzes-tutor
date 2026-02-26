@@ -4,7 +4,7 @@
     <v-card-text v-if="!success">
       <form>
         <v-text-field
-          v-model="username"
+          :model-value="username"
           label="Username"
           disabled
           required
@@ -27,7 +27,7 @@
           @click:append="showConfirmPassword = !showConfirmPassword"
         ></v-text-field>
         <v-btn
-          color="blue darken-1"
+          color="blue-darken-1"
           class="white--text"
           :disabled="!(password === confirmPassword && password != '')"
           @click="submit"
@@ -44,33 +44,28 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref } from 'vue';
 
-@Component
-export default class PasswordCard extends Vue {
-  @Prop({ required: true })
-  title: string | undefined;
-  @Prop({ required: true })
-  username: string | undefined;
-  @Prop({ required: true })
-  error: string | undefined;
-  @Prop({ required: true })
-  success: boolean | undefined;
+const props = defineProps<{
+  title: string;
+  username: string;
+  error: string;
+  success: boolean;
+}>();
 
-  password = '';
-  confirmPassword = '';
+const emit = defineEmits(['onSubmit']);
 
-  showPassword = false;
-  showConfirmPassword = false;
+const password = ref('');
+const confirmPassword = ref('');
+const showPassword = ref(false);
+const showConfirmPassword = ref(false);
 
-  created() {}
-
-  submit() {
-    if (this.password == this.confirmPassword)
-      this.$emit('onSubmit', this.password);
+const submit = () => {
+  if (password.value === confirmPassword.value) {
+    emit('onSubmit', password.value);
   }
-}
+};
 </script>
 
 <style scoped lang="scss">

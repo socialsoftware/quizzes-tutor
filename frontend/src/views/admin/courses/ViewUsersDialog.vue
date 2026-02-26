@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    :value="dialog"
-    @input="$emit('close-dialog')"
+    :model-value="dialog"
+    @update:model-value="$emit('close-dialog')"
     @keydown.esc="$emit('close-dialog')"
     max-width="75%"
     max-height="80%"
@@ -14,12 +14,13 @@
         <v-data-table
           v-model="selectedUsers"
           :headers="headers"
-          :items="this.course.courseExecutionUsers"
+          :items="course?.courseExecutionUsers || []"
           :search="search"
           disable-pagination
           :hide-default-footer="true"
           :mobile-breakpoint="0"
           show-select
+          return-object
         >
           <template v-slot:top>
             <v-card-title>
@@ -54,35 +55,25 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref } from 'vue';
 import Course from '@/models/user/Course';
 import User from '@/models/user/User';
 
-@Component
-export default class ViewUsersDialog extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Course, required: true }) readonly course!: Course;
+const props = defineProps<{
+  dialog: boolean;
+  course: Course;
+}>();
 
-  selectedUsers: User[] = [];
-  search: string = '';
-  items: object = [];
-  headers: object = [
-    { text: 'Username', value: 'username', align: 'left', width: '65%' },
-    {
-      text: 'Role',
-      value: 'role',
-      align: 'left',
-      width: '15%',
-    },
-    {
-      text: 'Active',
-      value: 'active',
-      align: 'left',
-      width: '15%',
-    },
-  ];
+const emit = defineEmits(['close-dialog', 'delete-users', 'update:dialog']);
 
-  async created() {}
-}
+const selectedUsers = ref<User[]>([]);
+const search = ref('');
+const items = ref<object[]>([]);
+
+const headers = [
+  { title: 'Username', value: 'username', align: 'start', width: '65%' },
+  { title: 'Role', value: 'role', align: 'start', width: '15%' },
+  { title: 'Active', value: 'active', align: 'start', width: '15%' },
+] as const;
 </script>

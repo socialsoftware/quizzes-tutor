@@ -1,27 +1,37 @@
-import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
-import 'vuetify/dist/vuetify.min.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@mdi/font/css/materialdesignicons.css';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
+import 'vuetify/styles';
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
+import { aliases, mdi } from 'vuetify/iconsets/mdi';
+import { fa } from 'vuetify/iconsets/fa';
 
-Vue.use(Vuetify);
-
-const vuetify = new Vuetify({
+export default createVuetify({
+  components,
+  directives,
   icons: {
-    iconfont: 'mdi',
+    defaultSet: 'mdi',
+    aliases,
+    sets: {
+      mdi,
+      fa,
+    },
   },
-  iconfont: 'fa',
   theme: {
     themes: {
-      dark: {
-        primary: 'blue',
-        secondary: '#b0bec5',
-        accent: '#8c9eff',
-        error: '#b71c1c',
+      light: {
+        colors: {
+          primary: '#1976D2',
+          secondary: '#424242',
+          accent: '#82B1FF',
+          error: '#FF5252',
+          info: '#2196F3',
+          success: '#4CAF50',
+          warning: '#FFC107',
+        }
       },
     },
   },
 });
-
-export default vuetify;

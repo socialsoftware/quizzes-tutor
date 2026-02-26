@@ -105,7 +105,7 @@ services:
     command: mvn -Ptest-int integration-test
 
   fe-unit-tests:
-    image: node:21-alpine3.18
+    image: node:22-alpine
     stop_signal: SIGKILL
     stdin_open: true
     tty: true

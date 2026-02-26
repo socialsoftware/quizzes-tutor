@@ -47,8 +47,8 @@
                   "
                 >
                   <div
-                    v-for="topic in selectedTournament.topics"
-                    :key="topic.id"
+                    v-for="(topic, index) in selectedTournament.topics"
+                    :key="index"
                   >
                     <v-chip>
                       {{ topic }}
@@ -122,7 +122,7 @@
             <v-data-table
               :headers="headers"
               :items="participants"
-              :sort-by="['name']"
+              :sort-by="[{ key: 'name', order: 'asc' }]"
               :hide-default-footer="true"
               :mobile-breakpoint="0"
               class="fill-height"
@@ -135,53 +135,56 @@
   </v-container>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import Tournament from '@/models/user/Tournament';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
 import TournamentParticipant from '@/models/user/TournamentParticipant';
 
-@Component({
-  components: { AnimatedNumber },
-})
-export default class TournamentResultsView extends Vue {
-  @Prop({ type: String, required: true }) id!: number;
+const props = defineProps<{
+  id: number;
+}>();
 
-  selectedTournament: Tournament | null = null;
-  participants: TournamentParticipant[] = [];
+const store = useStore();
 
-  headers: object = [
-    { text: 'Name', value: 'name', align: 'center' },
-    { text: 'Username', value: 'username', align: 'center' },
-    { text: 'Number of Answers', value: 'numberOfAnswered', align: 'center' },
-    {
-      text: 'Number of Correct Answers',
-      value: 'numberOfCorrect',
-      align: 'center',
-    },
-    { text: 'Score', value: 'score', align: 'center' },
-  ];
+const selectedTournament = ref<Tournament | null>(null);
+const participants = ref<TournamentParticipant[]>([]);
 
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      this.selectedTournament = await RemoteServices.getTournament(this.id);
-      if (this.selectedTournament)
-        this.participants = this.selectedTournament.participants;
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+const headers: any = [
+  { title: 'Name', value: 'name', align: 'center' },
+  { title: 'Username', value: 'username', align: 'center' },
+  { title: 'Number of Answers', value: 'numberOfAnswered', align: 'center' },
+  {
+    title: 'Number of Correct Answers',
+    value: 'numberOfCorrect',
+    align: 'center',
+  },
+  { title: 'Score', value: 'score', align: 'center' },
+];
+
+onMounted(async () => {
+  store.setLoading();
+  try {
+    selectedTournament.value = await RemoteServices.getTournament(props.id);
+    if (selectedTournament.value) {
+      participants.value = selectedTournament.value.participants;
     }
-    await this.$store.dispatch('clearLoading');
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+});
 </script>
 
 <style lang="scss" scoped>
+@use "sass:color";
+
 @mixin background-opacity($color, $opacity: 1) {
-  $red: red($color);
-  $green: green($color);
-  $blue: blue($color);
+  $red: color.red($color);
+  $green: color.green($color);
+  $blue: color.blue($color);
   background: rgba($red, $green, $blue, $opacity) !important;
 }
 

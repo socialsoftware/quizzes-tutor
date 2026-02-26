@@ -13,7 +13,7 @@ async function queryDB(query: string, credentials: string) {
 
 export default defineConfig({
   defaultCommandTimeout: 10000,
-  retries: 3,
+  retries: 0,
   fixturesFolder: 'tests/e2e/fixtures',
   projectId: '6y833w',
   videoCompression: false,

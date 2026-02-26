@@ -27,12 +27,12 @@
       </v-col>
       <v-col v-if="sQuestionDetails.options.length > 2">
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ props }">
             <v-icon
               :data-cy="`Delete${index + 1}`"
               small
               class="ma-1 action-button"
-              v-on="on"
+              v-bind="props"
               @click="removeOption(index)"
               color="red"
               >close</v-icon
@@ -55,22 +55,27 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, PropSync, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { computed } from 'vue';
 import MultipleChoiceQuestionDetails from '@/models/management/questions/MultipleChoiceQuestionDetails';
 import Option from '@/models/management/Option';
 
-@Component
-export default class MultipleChoiceCreate extends Vue {
-  @PropSync('questionDetails', { type: MultipleChoiceQuestionDetails })
-  sQuestionDetails!: MultipleChoiceQuestionDetails;
+const props = defineProps<{
+  questionDetails: MultipleChoiceQuestionDetails;
+}>();
 
-  addOption() {
-    this.sQuestionDetails.options.push(new Option());
-  }
+const emit = defineEmits(['update:questionDetails']);
 
-  removeOption(index: number) {
-    this.sQuestionDetails.options.splice(index, 1);
-  }
-}
+const sQuestionDetails = computed({
+  get: () => props.questionDetails,
+  set: (val) => emit('update:questionDetails', val),
+});
+
+const addOption = () => {
+  sQuestionDetails.value.options.push(new Option());
+};
+
+const removeOption = (index: number) => {
+  sQuestionDetails.value.options.splice(index, 1);
+};
 </script>

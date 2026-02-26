@@ -1,9 +1,9 @@
 <template>
   <v-dialog
-    v-model="detailDialog"
+    :model-value="dialog"
     max-width="70%"
-    @input="$emit('dialog', false)"
-    @keydown.esc="$emit('dialog', false)"
+    @update:model-value="$emit('update:dialog', $event)"
+    @keydown.esc="$emit('update:dialog', false)"
   >
     <v-card>
       <v-card-title>
@@ -39,47 +39,42 @@
         />
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" text @click="dialog2 = false"> Close </v-btn>
+        <v-btn color="primary" text @click="$emit('update:dialog', false)"> Close </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
-@Component({
-  components: {
-    ShowQuestion,
-  },
-})
-export default class ShowQuizAnswersDetailsDialog extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ required: true }) readonly quizAnswer!: QuizAnswer;
-  @Prop({ required: false }) readonly questionNumber?: number;
+const props = defineProps<{
+  dialog: boolean;
+  quizAnswer: QuizAnswer;
+  questionNumber?: number;
+}>();
 
-  currentQuestion: number = 0;
-  detailDialog?: boolean;
+defineEmits(['update:dialog']);
 
-  created() {
-    this.currentQuestion = this.questionNumber || 0;
-    this.detailDialog = this.dialog;
+const currentQuestion = ref(0);
+
+onMounted(() => {
+  currentQuestion.value = props.questionNumber || 0;
+});
+
+const previousQuestion = () => {
+  if (currentQuestion.value > 0) {
+    currentQuestion.value -= 1;
   }
+};
 
-  previousQuestion() {
-    if (this.currentQuestion > 0) {
-      this.currentQuestion = this.currentQuestion - 1;
-    }
+const nextQuestion = () => {
+  if (currentQuestion.value < props.quizAnswer.questionAnswers.length - 1) {
+    currentQuestion.value += 1;
   }
-
-  nextQuestion() {
-    if (this.currentQuestion < this.quizAnswer.questionAnswers.length - 1) {
-      this.currentQuestion = this.currentQuestion + 1;
-    }
-  }
-}
+};
 </script>
 
 <style lang="scss" scoped>

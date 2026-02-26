@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    :value="dialog"
-    @input="$emit('close')"
+    :model-value="dialog"
+    @update:model-value="$emit('close')"
     @keydown.esc="$emit('close')"
     max-width="75%"
   >
@@ -9,8 +9,8 @@
       <v-card-text>
         <ol>
           <li
-            v-for="question in questions"
-            :key="question.id"
+            v-for="(question, index) in questions"
+            :key="question.id || index"
             class="text-left"
           >
             {{ question.status }}
@@ -26,24 +26,20 @@
 
       <v-card-actions>
         <v-spacer></v-spacer>
-        <v-btn dark color="blue darken-1" @click="$emit('close')">close</v-btn>
+        <v-btn class="text-white" color="blue darken-1" @click="$emit('close')">close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
 import Question from '@/models/management/Question';
 import ShowQuestion from '@/views/teacher/questions/ShowQuestion.vue';
 
-@Component({
-  components: {
-    'show-question': ShowQuestion,
-  },
-})
-export default class ShowQuestionListDialog extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: Array, required: true }) readonly questions!: Question[];
-}
+defineProps<{
+  dialog: boolean;
+  questions: Question[];
+}>();
+
+defineEmits(['close']);
 </script>

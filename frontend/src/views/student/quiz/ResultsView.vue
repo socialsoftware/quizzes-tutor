@@ -1,5 +1,5 @@
 <template>
-  <div class="quiz-container" v-if="correctAnswers.length > 0">
+  <div class="quiz-container" v-if="statementQuiz && correctAnswers.length > 0">
     <div class="question-navigation">
       <div
         data-cy="navigationButtons"
@@ -56,7 +56,7 @@
       <!--      /></span>-->
     </div>
     <result-component
-      v-model="questionOrder"
+      v-model:questionOrder="questionOrder"
       :answer="statementQuiz.answers[questionOrder]"
       :correctAnswer="correctAnswers[questionOrder]"
       :question="statementQuiz.questions[questionOrder]"
@@ -73,8 +73,9 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import ResultComponent from '@/views/student/quiz/ResultComponent.vue';
 import DiscussionComponent from '@/views/student/discussions/DiscussionComponent.vue';
 import Discussion from '@/models/management/Discussion';
@@ -82,94 +83,82 @@ import RemoteServices from '@/services/RemoteServices';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import StatementCorrectAnswer from '@/models/statement/StatementCorrectAnswer';
 
-@Component({
-  components: {
-    'result-component': ResultComponent,
-    'discussion-component': DiscussionComponent,
-  },
-})
-export default class ResultsView extends Vue {
-  statementQuiz: StatementQuiz | null = this.$store.getters.getStatementQuiz;
-  correctAnswers: StatementCorrectAnswer[] =
-    this.$store.getters.getCorrectAnswers;
-  questionOrder: number = 0;
-  slideItemPosition: number = 1;
-  discussion: Discussion = new Discussion();
+const store = useStore();
 
-  async created() {
-    if (this.correctAnswers.length === 0) {
-      await this.$store.dispatch('loading');
-      setTimeout(() => {
-        this.concludeQuiz();
-      }, 2000);
+const statementQuiz = ref<StatementQuiz | null>(store.statementQuiz);
+const correctAnswers = ref<StatementCorrectAnswer[]>(store.correctAnswers);
+const questionOrder = ref(0);
+const slideItemPosition = ref(1);
+const discussion = ref<Discussion>(new Discussion());
 
-      await this.$store.dispatch('clearLoading');
-    }
+const updateDiscussion = () => {
+  discussion.value = new Discussion();
+};
 
-    this.updateDiscussion();
+const concludeQuiz = async () => {
+  if (statementQuiz.value) {
+    correctAnswers.value = await RemoteServices.concludeQuiz(statementQuiz.value);
+  } else {
+    throw Error('No quiz');
+  }
+};
+
+onMounted(async () => {
+  if (correctAnswers.value.length === 0) {
+    store.setLoading();
+    setTimeout(() => {
+      concludeQuiz();
+    }, 2000);
+    store.clearLoading();
+  }
+  updateDiscussion();
+});
+
+const submitDiscussion = async () => {
+  if (discussion.value.message === '') {
+    store.setError('Discussion must have content');
+    return;
   }
 
-  async concludeQuiz() {
-    if (this.statementQuiz) {
-      this.correctAnswers = await RemoteServices.concludeQuiz(
-        this.statementQuiz
-      );
-    } else {
-      throw Error('No quiz');
-    }
-  }
-
-  async submitDiscussion() {
-    if (this.discussion!.message === '') {
-      await this.$store.dispatch('error', 'Discussion must have content');
-      return;
-    }
-
-    this.discussion!.courseExecutionId =
-      this.$store.getters.getCurrentCourse.courseExecutionId;
-    this.discussion!.date = new Date().toISOString();
-    this.statementQuiz!.answers[this.questionOrder].userDiscussion =
+  discussion.value.courseExecutionId = store.currentCourse?.courseExecutionId as number;
+  discussion.value.date = new Date().toISOString();
+  
+  if (statementQuiz.value) {
+    statementQuiz.value.answers[questionOrder.value].userDiscussion =
       await RemoteServices.createDiscussion(
-        this.discussion!,
-        this.statementQuiz!.answers[this.questionOrder].questionAnswerId
+        discussion.value,
+        statementQuiz.value.answers[questionOrder.value].questionAnswerId
       );
   }
+};
 
-  increaseOrder(): void {
-    if (this.questionOrder + 1 < +this.statementQuiz!.questions.length) {
-      this.questionOrder += 1;
-      this.slideItemPosition += 1;
-    }
-
-    this.updateDiscussion();
+const increaseOrder = (): void => {
+  if (statementQuiz.value && questionOrder.value + 1 < statementQuiz.value.questions.length) {
+    questionOrder.value += 1;
+    slideItemPosition.value += 1;
   }
+  updateDiscussion();
+};
 
-  decreaseOrder(): void {
-    if (this.questionOrder > 0) {
-      this.questionOrder -= 1;
-      this.slideItemPosition -= 1;
-    }
-
-    this.updateDiscussion();
+const decreaseOrder = (): void => {
+  if (questionOrder.value > 0) {
+    questionOrder.value -= 1;
+    slideItemPosition.value -= 1;
   }
+  updateDiscussion();
+};
 
-  changeOrder(n: number): void {
-    if (n >= 0 && n < +this.statementQuiz!.questions.length) {
-      this.questionOrder = n;
-      this.slideItemPosition = n + 1;
-    }
-
-    this.updateDiscussion();
+const changeOrder = (n: number): void => {
+  if (statementQuiz.value && n >= 0 && n < statementQuiz.value.questions.length) {
+    questionOrder.value = n;
+    slideItemPosition.value = n + 1;
   }
+  updateDiscussion();
+};
 
-  updateDiscussion() {
-    this.discussion = new Discussion();
-  }
-
-  updateMessage(discussionMessage: string) {
-    this.discussion!.message = discussionMessage;
-  }
-}
+const updateMessage = (discussionMessage: string) => {
+  discussion.value.message = discussionMessage;
+};
 </script>
 
 <style lang="scss" scoped>

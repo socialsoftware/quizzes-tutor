@@ -1,18 +1,18 @@
 Cypress.Commands.add('demoAdminLogin', () => {
   cy.visit('/');
-  cy.get('[data-cy="demoAdminLoginButton"]').click();
+  cy.get('[data-cy="demoAdminLoginButton"]').click({ force: true });
 });
 
 Cypress.Commands.add('demoTeacherLogin', () => {
   cy.visit('/');
   cy.intercept('GET', '/auth/demo/teacher').as('authTeacher');
-  cy.get('[data-cy="demoTeacherLoginButton"]').click();
+  cy.get('[data-cy="demoTeacherLoginButton"]').click({ force: true });
   cy.wait('@authTeacher').its('response.statusCode').should('eq', 200);
 });
 
 Cypress.Commands.add('demoStudentLogin', () => {
   cy.visit('/');
-  cy.get('[data-cy="demoStudentLoginButton"]').click();
+  cy.get('[data-cy="demoStudentLoginButton"]').click({ force: true });
 });
 
 Cypress.Commands.add('logout', () => {

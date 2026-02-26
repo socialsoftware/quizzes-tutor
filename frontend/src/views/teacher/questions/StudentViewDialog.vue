@@ -1,9 +1,9 @@
 <template>
   <v-dialog
-    :value="dialog"
+    :model-value="dialog"
     max-width="75%"
-    @input="$emit('dialog', false)"
-    @keydown.esc="$emit('dialog', false)"
+    @update:model-value="$emit('update:dialog', false)"
+    @keydown.esc="$emit('update:dialog', false)"
   >
     <v-card>
       <v-card-title>
@@ -20,7 +20,7 @@
               class="question-content"
               v-html="
                 convertMarkDown(
-                  statementQuestion.content,
+                  statementQuestion.content || '',
                   statementQuestion.image
                 )
               "
@@ -28,7 +28,7 @@
             <div class="square"></div>
           </div>
           <component
-            :is="statementQuestion.questionDetails.type"
+            :is="componentMap[statementQuestion.questionDetails.type]"
             :answerDetails="statementAnswerDetails"
             :questionDetails="statementQuestion.questionDetails"
           >
@@ -39,9 +39,9 @@
         <v-spacer />
         <v-btn
           color="blue darken-1"
-          dark
+          class="text-white"
           data-cy="closeButton"
-          @click="$emit('dialog')"
+          @click="$emit('update:dialog', false)"
           >close</v-btn
         >
       </v-card-actions>
@@ -49,39 +49,39 @@
   </v-dialog>
 </template>
 
-<script lang="ts">
-import { Component, Model, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAnswer.vue';
 import CodeFillInAnswer from '@/components/code-fill-in/CodeFillInAnswer.vue';
 import CodeOrderAnswer from '@/components/code-order/CodeOrderAnswer.vue';
 import Image from '@/models/management/Image';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
+import { convertMarkDown as convertMarkDownService } from '@/services/ConvertMarkdownService';
 import { QuestionFactory } from '@/services/QuestionHelpers';
 import StatementAnswerDetails from '@/models/statement/questions/StatementAnswerDetails';
 
-@Component({
-  components: {
-    multiple_choice: MultipleChoiceAnswer,
-    code_fill_in: CodeFillInAnswer,
-    code_order: CodeOrderAnswer,
-  },
-})
-export default class StudentViewDialog extends Vue {
-  @Model('dialog', Boolean) dialog!: boolean;
-  @Prop({ type: StatementQuestion, required: true })
-  readonly statementQuestion!: StatementQuestion;
+const props = defineProps<{
+  dialog: boolean;
+  statementQuestion: StatementQuestion;
+}>();
 
-  statementAnswerDetails!: StatementAnswerDetails;
+defineEmits(['update:dialog']);
 
-  created() {
-    this.statementAnswerDetails = QuestionFactory.getFactory(
-      this.statementQuestion.questionDetails.type
-    ).createEmptyStatementAnswerDetails();
-  }
+const statementAnswerDetails = ref<StatementAnswerDetails | null>(null);
 
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
-  }
-}
+const componentMap: Record<string, any> = {
+  multiple_choice: MultipleChoiceAnswer,
+  code_fill_in: CodeFillInAnswer,
+  code_order: CodeOrderAnswer,
+};
+
+onMounted(() => {
+  statementAnswerDetails.value = QuestionFactory.getFactory(
+    props.statementQuestion.questionDetails.type
+  ).createEmptyStatementAnswerDetails();
+});
+
+const convertMarkDown = (text: string, image: Image | null = null): string => {
+  return convertMarkDownService(text, image);
+};
 </script>

@@ -10,47 +10,47 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useRoute } from 'vue-router';
+import { useStore } from '@/store';
 import PasswordCard from '@/components/auth/PasswordCard.vue';
 import ExternalUser from '@/models/user/ExternalUser';
-import RemoteServices from '../../services/RemoteServices';
+import RemoteServices from '@/services/RemoteServices';
 
-@Component({
-  components: { PasswordCard },
-})
-export default class RegistrationConfirmationView extends Vue {
-  TITLE = 'Registration Confirmation';
+const route = useRoute();
+const store = useStore();
 
-  username: string = '';
-  token: string = '';
-  errorMsg: string = '';
-  success: boolean = false;
+const TITLE = 'Registration Confirmation';
 
-  async created() {
-    this.username = this.$route.query.username as string;
-    this.token = this.$route.query.token as string;
-    this.errorMsg = this.username && this.token ? '' : 'Invalid query';
-  }
+const username = ref<string>('');
+const token = ref<string>('');
+const errorMsg = ref<string>('');
+const success = ref<boolean>(false);
 
-  async confirmRegistration(password: string) {
-    const externalUser = new ExternalUser();
-    externalUser.username = this.username;
-    externalUser.password = password;
-    externalUser.confirmationToken = this.token;
+onMounted(() => {
+  username.value = (route.query.username as string) || '';
+  token.value = (route.query.token as string) || '';
+  errorMsg.value = username.value && token.value ? '' : 'Invalid query';
+});
 
-    try {
-      const user = await RemoteServices.confirmRegistration(externalUser);
-      if (user.active) {
-        this.success = true;
-      } else {
-        this.errorMsg = 'Confirmation link has expired. A new email was sent';
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+const confirmRegistration = async (password: string) => {
+  const externalUser = new ExternalUser();
+  externalUser.username = username.value;
+  externalUser.password = password;
+  externalUser.confirmationToken = token.value;
+
+  try {
+    const user = await RemoteServices.confirmRegistration(externalUser);
+    if (user.active) {
+      success.value = true;
+    } else {
+      errorMsg.value = 'Confirmation link has expired. A new email was sent';
     }
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+};
 </script>
 
 <style lang="scss" scoped></style>

@@ -24,3 +24,7 @@ yarn-error.log*
 *.sln
 *.sw*
 /.env.production
+/run_cypress.sh
+/start_servers.sh
+/run_cypress.sh
+/run_test.sh

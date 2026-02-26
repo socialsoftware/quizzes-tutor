@@ -23,7 +23,7 @@
           <v-spacer />
           <v-btn
             color="primary"
-            dark
+            class="text-white"
             @click="newTopic"
             data-cy="topicsNewTopicBtn"
             >New Topic</v-btn
@@ -33,10 +33,10 @@
 
       <template v-slot:[`item.action`]="{ item }">
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ props }">
             <v-icon
               class="mr-2 action-button"
-              v-on="on"
+              v-bind="props"
               @click="showQuestionsDialog(item.id)"
               >visibility</v-icon
             >
@@ -44,10 +44,10 @@
           <span>Show Questions</span>
         </v-tooltip>
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ props }">
             <v-icon
               class="mr-2 action-button"
-              v-on="on"
+              v-bind="props"
               @click="editTopic(item)"
               data-cy="topicsGridEditButton"
               >edit</v-icon
@@ -56,10 +56,10 @@
           <span>Edit Topic</span>
         </v-tooltip>
         <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
+          <template v-slot:activator="{ props }">
             <v-icon
               class="mr-2 action-button"
-              v-on="on"
+              v-bind="props"
               @click="deleteTopic(item)"
               color="red"
               data-cy="topicsGridDeleteButton"
@@ -114,123 +114,123 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Topic from '@/models/management/Topic';
 import ShowQuestionListDialog from '@/views/teacher/questions/ShowQuestionListDialog.vue';
 import Question from '@/models/management/Question';
 
-@Component({
-  components: { ShowQuestionListDialog },
-})
-export default class TopicsView extends Vue {
-  topics: Topic[] = [];
-  editedTopic: Topic = new Topic();
-  topicDialog: boolean = false;
-  search: string = '';
-  questionsDialog: boolean = false;
-  questionsToShow: Question[] = [];
-  headers: object = [
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'left',
-      width: '5px',
-      sortable: false,
-    },
-    { text: 'Name', value: 'name', align: 'left' },
-    {
-      text: 'Questions',
-      value: 'numberOfQuestions',
-      align: 'center',
-      width: '115px',
-    },
-  ];
+const store = useStore();
 
-  async created() {
-    await this.$store.dispatch('loading');
+const topics = ref<Topic[]>([]);
+const editedTopic = ref<Topic | null>(new Topic());
+const topicDialog = ref(false);
+const search = ref('');
+const questionsDialog = ref(false);
+const questionsToShow = ref<Question[]>([]);
+
+const headers: any = [
+  {
+    title: 'Actions',
+    value: 'action',
+    align: 'start',
+    width: '10%',
+    sortable: false,
+  },
+  { title: 'Name', value: 'name', align: 'start' },
+  {
+    title: 'Questions',
+    value: 'numberOfQuestions',
+    align: 'center',
+    width: '10%',
+  },
+];
+
+onMounted(async () => {
+  store.setLoading();
+  try {
+    topics.value = await RemoteServices.getTopics();
+  } catch (error) {
+    store.setError(error as string);
+  }
+  store.clearLoading();
+});
+
+const customFilter = (value: any, query: string, item?: any) => {
+  return (
+    query != null &&
+    typeof value === 'string' &&
+    value.toLocaleLowerCase().indexOf(query.toLocaleLowerCase()) !== -1
+  );
+};
+
+const formTitle = () => {
+  return editedTopic.value === null ? 'New Topic' : 'Edit Topic';
+};
+
+const newTopic = () => {
+  editedTopic.value = new Topic();
+  topicDialog.value = true;
+};
+
+const closeDialogue = () => {
+  topicDialog.value = false;
+};
+
+const editTopic = (topic: Topic, e?: Event) => {
+  if (e) e.preventDefault();
+  editedTopic.value = { ...topic };
+  topicDialog.value = true;
+};
+
+const deleteTopic = async (toDeleteTopic: Topic) => {
+  if (confirm('Are you sure you want to delete this topic?')) {
     try {
-      this.topics = await RemoteServices.getTopics();
+      await RemoteServices.deleteTopic(toDeleteTopic);
+      topics.value = topics.value.filter(
+        (topic) => topic.id !== toDeleteTopic.id
+      );
     } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-  }
-
-  customFilter(value: string, search: string) {
-    // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
-    return (
-      search != null &&
-      typeof value === 'string' &&
-      value.toLocaleLowerCase().indexOf(search.toLocaleLowerCase()) !== -1
-    );
-  }
-
-  formTitle() {
-    return this.editedTopic === null ? 'New Topic' : 'Edit Topic';
-  }
-
-  newTopic() {
-    this.editedTopic = new Topic();
-    this.topicDialog = true;
-  }
-
-  closeDialogue() {
-    this.topicDialog = false;
-  }
-
-  editTopic(topic: Topic, e?: Event) {
-    if (e) e.preventDefault();
-    this.editedTopic = { ...topic };
-    this.topicDialog = true;
-  }
-
-  async deleteTopic(toDeleteTopic: Topic) {
-    if (confirm('Are you sure you want to delete this topic?')) {
-      try {
-        await RemoteServices.deleteTopic(toDeleteTopic);
-        this.topics = this.topics.filter(
-          (topic) => topic.id !== toDeleteTopic.id
-        );
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
+      store.setError(error as string);
     }
   }
+};
 
-  async saveTopic() {
-    try {
-      if (this.editedTopic.id) {
-        this.editedTopic = await RemoteServices.updateTopic(this.editedTopic);
-        this.topics = this.topics.filter(
-          (topic) => topic.id !== this.editedTopic.id
-        );
-      } else if (this.editedTopic) {
-        this.editedTopic = await RemoteServices.createTopic(this.editedTopic);
-      }
-
-      this.topics.unshift(this.editedTopic);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
+const saveTopic = async () => {
+  if (!editedTopic.value) return;
+  try {
+    if (editedTopic.value.id) {
+      const updated = await RemoteServices.updateTopic(editedTopic.value);
+      topics.value = topics.value.filter(
+        (topic) => topic.id !== updated.id
+      );
+      editedTopic.value = updated;
+    } else {
+      editedTopic.value = await RemoteServices.createTopic(editedTopic.value);
     }
-    this.closeDialogue();
-  }
 
-  async showQuestionsDialog(topicId: number) {
-    try {
-      this.questionsToShow = await RemoteServices.getTopicQuestions(topicId);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    this.questionsDialog = true;
+    topics.value.unshift(editedTopic.value);
+  } catch (error) {
+    store.setError(error as string);
   }
+  closeDialogue();
+};
 
-  onCloseQuestionsDialog() {
-    this.questionsDialog = false;
-    this.questionsToShow = [];
+const showQuestionsDialog = async (topicId: number) => {
+  try {
+    questionsToShow.value = await RemoteServices.getTopicQuestions(topicId);
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  questionsDialog.value = true;
+};
+
+const onCloseQuestionsDialog = () => {
+  questionsDialog.value = false;
+  questionsToShow.value = [];
+};
 </script>
 
 <style lang="scss" scoped />

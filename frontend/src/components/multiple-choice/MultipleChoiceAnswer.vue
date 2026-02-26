@@ -17,7 +17,7 @@ Used on:
       <span
         v-if="
           isReadonly &&
-          correctAnswerDetails.correctOptionId ===
+          correctAnswerDetails?.correctOptionId ===
             questionDetails.options[index].optionId
         "
         class="fas fa-check option-letter"
@@ -40,64 +40,58 @@ Used on:
   </ul>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop, Emit } from 'vue-property-decorator';
+<script setup lang="ts">
+import { computed } from 'vue';
 import MultipleChoiceStatementQuestionDetails from '@/models/statement/questions/MultipleChoiceStatementQuestionDetails';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import MultipleChoiceStatementAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementAnswerDetails';
 import MultipleChoiceStatementCorrectAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementCorrectAnswerDetails';
 
-@Component
-export default class MultipleChoiceAnswer extends Vue {
-  @Prop(MultipleChoiceStatementQuestionDetails)
-  readonly questionDetails!: MultipleChoiceStatementQuestionDetails;
-  @Prop(MultipleChoiceStatementAnswerDetails)
-  answerDetails!: MultipleChoiceStatementAnswerDetails;
-  @Prop(MultipleChoiceStatementCorrectAnswerDetails)
-  readonly correctAnswerDetails?: MultipleChoiceStatementCorrectAnswerDetails;
+const props = defineProps<{
+  questionDetails: MultipleChoiceStatementQuestionDetails;
+  answerDetails: MultipleChoiceStatementAnswerDetails;
+  correctAnswerDetails?: MultipleChoiceStatementCorrectAnswerDetails;
+}>();
 
-  get isReadonly() {
-    return !!this.correctAnswerDetails;
-  }
+const emit = defineEmits(['question-answer-update']);
 
-  optionClass(index: number) {
-    if (this.isReadonly) {
-      if (
-        !!this.correctAnswerDetails &&
-        this.correctAnswerDetails.correctOptionId ===
-          this.questionDetails.options[index].optionId
-      ) {
-        return 'correct';
-      } else if (
-        this.answerDetails.optionId ===
-        this.questionDetails.options[index].optionId
-      ) {
-        return 'wrong';
-      } else {
-        return '';
-      }
+const isReadonly = computed(() => {
+  return !!props.correctAnswerDetails;
+});
+
+const optionClass = (index: number) => {
+  if (isReadonly.value) {
+    if (
+      !!props.correctAnswerDetails &&
+      props.correctAnswerDetails.correctOptionId ===
+        props.questionDetails.options[index].optionId
+    ) {
+      return 'correct';
+    } else if (
+      props.answerDetails.optionId ===
+      props.questionDetails.options[index].optionId
+    ) {
+      return 'wrong';
     } else {
-      return this.answerDetails.optionId ===
-        this.questionDetails.options[index].optionId
-        ? 'selected'
-        : '';
+      return '';
     }
+  } else {
+    return props.answerDetails.optionId ===
+      props.questionDetails.options[index].optionId
+      ? 'selected'
+      : '';
   }
+};
 
-  @Emit('question-answer-update')
-  selectOption(optionId: number) {
-    if (this.answerDetails.optionId === optionId) {
-      this.answerDetails.optionId = null;
-    } else {
-      this.answerDetails.optionId = optionId;
-    }
+const selectOption = (optionId: number) => {
+  if (props.answerDetails.optionId === optionId) {
+    props.answerDetails.optionId = null;
+  } else {
+    props.answerDetails.optionId = optionId;
   }
-
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
-  }
-}
+  emit('question-answer-update', optionId);
+};
 </script>
 
 <style lang="scss" scoped>

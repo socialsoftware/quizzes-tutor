@@ -11,7 +11,7 @@
             >{{ clarification.name }} ({{ clarification.username }}) replied on
             {{ clarification.date }} :</b
           >
-          <span v-html="convertMarkDown(clarification.message)" />
+          <span v-html="convertMarkDownText(clarification.message)" />
           <v-switch
             v-if="canChange"
             style="width: 12%"
@@ -28,28 +28,30 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { useStore } from '@/store';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Reply from '@/models/management/Reply';
 import RemoteServices from '@/services/RemoteServices';
 
-@Component
-export default class ClarificationComponent extends Vue {
-  @Prop() readonly clarifications!: Reply[];
-  @Prop() readonly canChange!: boolean;
+const props = defineProps<{
+  clarifications: Reply[];
+  canChange: boolean;
+}>();
 
-  convertMarkDown(text: string) {
-    return convertMarkDown(text, null);
-  }
+const emit = defineEmits(['make-private']);
+const store = useStore();
 
-  async changeReplyAvailability(id: number) {
-    await this.$store.dispatch('loading');
-    await RemoteServices.changeReplyAvailability(id);
-    await this.$store.dispatch('clearLoading');
-    this.$emit('make-private', id);
-  }
-}
+const convertMarkDownText = (text: string) => {
+  return convertMarkDown(text, null);
+};
+
+const changeReplyAvailability = async (id: number) => {
+  store.setLoading();
+  await RemoteServices.changeReplyAvailability(id);
+  store.clearLoading();
+  emit('make-private', id);
+};
 </script>
 
 <style lang="scss" scoped>

@@ -34,7 +34,7 @@
               :items="topics"
               attach
               chips
-              item-text="name"
+              item-title="name"
               item-value="id"
               label="Topics"
               multiple
@@ -74,24 +74,24 @@
               label="Percentage of Correct Answers"
               ><template v-slot:prepend>
                 <v-text-field
-                  :value="query.difficulty[0]"
+                  :model-value="query.difficulty[0]"
                   class="mt-0 pt-0"
                   hide-details
                   single-line
                   type="number"
                   style="width: 40px"
-                  @change="$set(query.difficulty, 0, $event)"
+                  @update:model-value="$set(query.difficulty, 0, $event)"
                 ></v-text-field>
               </template>
               <template v-slot:append>
                 <v-text-field
-                  :value="query.difficulty[1]"
+                  :model-value="query.difficulty[1]"
                   class="mt-0 pt-0"
                   hide-details
                   single-line
                   type="number"
                   style="width: 50px"
-                  @change="$set(query.difficulty, 1, $event)"
+                  @update:model-value="$set(query.difficulty, 1, $event)"
                 ></v-text-field> </template
             ></v-range-slider>
           </v-col>
@@ -102,6 +102,7 @@
     <v-card-actions>
       <v-spacer />
       <v-btn
+        class="text-white"
         color="green darken-1"
         @click="queryQuestions"
         data-cy="submitQueryButton"
@@ -111,42 +112,50 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Topic from '@/models/management/Topic';
 import QuestionQuery from '@/models/management/QuestionQuery';
 
-@Component
-export default class QueryQuestionForm extends Vue {
-  @Prop() readonly availableOnly!: boolean;
-  topics: Topic[] = [];
-  status: string[] = ['AVAILABLE', 'DISABLED', 'REMOVED'];
-  query: QuestionQuery = new QuestionQuery();
+const props = defineProps<{
+  availableOnly: boolean;
+}>();
 
-  async created() {
-    if (this.availableOnly) {
-      this.query.status = ['AVAILABLE'];
-    }
+const emit = defineEmits(['query-questions']);
+const store = useStore();
 
-    await this.$store.dispatch('loading');
-    try {
-      this.topics = await RemoteServices.getTopics();
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+const topics = ref<Topic[]>([]);
+const status = ref<string[]>(['AVAILABLE', 'DISABLED', 'REMOVED']);
+const query = ref<QuestionQuery>(new QuestionQuery());
+
+onMounted(async () => {
+  if (props.availableOnly) {
+    query.value.status = ['AVAILABLE'];
   }
 
-  async queryQuestions() {
-    await this.$store.dispatch('loading');
-    try {
-      let questions = await RemoteServices.getQuestionsByQuery(this.query);
-      this.$emit('query-questions', questions);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+  store.setLoading();
+  try {
+    topics.value = await RemoteServices.getTopics();
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+});
+
+const $set = (arr: any[], index: number, value: any) => {
+  arr[index] = value;
+};
+
+const queryQuestions = async () => {
+  store.setLoading();
+  try {
+    let questions = await RemoteServices.getQuestionsByQuery(query.value);
+    emit('query-questions', questions);
+  } catch (error) {
+    store.setError(error as string);
+  }
+  store.clearLoading();
+};
 </script>

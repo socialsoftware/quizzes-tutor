@@ -26,46 +26,49 @@
       <v-container fluid>
         <v-row>
           <v-col>
-            <VueCtkDateTimePicker
+            <VueDatePicker
               id="availableDateInput"
               v-model="quiz.availableDate"
-              format="YYYY-MM-DDTHH:mm:ssZ"
-              label="*Available Date"
-            ></VueCtkDateTimePicker>
+              model-type="iso"
+              format="yyyy-MM-dd HH:mm"
+              placeholder="*Available Date"
+            ></VueDatePicker>
           </v-col>
           <v-col v-if="quiz.timed">
-            <VueCtkDateTimePicker
+            <VueDatePicker
               id="conclusionDateInput"
               v-model="quiz.conclusionDate"
-              format="YYYY-MM-DDTHH:mm:ssZ"
-              label="*Conclusion Date"
-            ></VueCtkDateTimePicker>
+              model-type="iso"
+              format="yyyy-MM-dd HH:mm"
+              placeholder="*Conclusion Date"
+            ></VueDatePicker>
           </v-col>
           <v-col v-if="quiz.timed">
-            <VueCtkDateTimePicker
+            <VueDatePicker
               id="resultsDateInput"
               v-model="quiz.resultsDate"
-              format="YYYY-MM-DDTHH:mm:ssZ"
-              label="Results Date"
-            ></VueCtkDateTimePicker>
+              model-type="iso"
+              format="yyyy-MM-dd HH:mm"
+              placeholder="Results Date"
+            ></VueDatePicker>
           </v-col>
         </v-row>
         <v-row>
           <v-col>
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-switch v-model="quiz.scramble" label="Scramble" v-on="on" />
+              <template v-slot:activator="{ props }">
+                <v-switch v-model="quiz.scramble" label="Scramble" v-bind="props" />
               </template>
               <span>Question order is scrambled</span>
             </v-tooltip>
           </v-col>
           <v-col>
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-switch
                   v-model="quiz.qrCodeOnly"
                   label="QRCode Only"
-                  v-on="on"
+                  v-bind="props"
                 />
               </template>
               <span>Students can only start quiz with the qrcode</span>
@@ -73,11 +76,11 @@
           </v-col>
           <v-col>
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-switch
                   v-model="quiz.oneWay"
                   label="One Way Quiz"
-                  v-on="on"
+                  v-bind="props"
                 />
               </template>
               <span>Students cannot go to previous question</span>
@@ -85,8 +88,8 @@
           </v-col>
           <v-col>
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
-                <v-switch v-model="quiz.timed" label="Timer" v-on="on" />
+              <template v-slot:activator="{ props }">
+                <v-switch v-model="quiz.timed" label="Timer" v-bind="props" />
               </template>
               <span>Displays a timer to conclusion and to show results</span>
             </v-tooltip>
@@ -115,8 +118,7 @@
           :items="quizQuestions"
           :items-per-page="15"
           :mobile-breakpoint="0"
-          :sort-by="['sequence']"
-          :sort-desc="[false]"
+          :sort-by="[{ key: 'sequence', order: 'asc' }]"
           must-sort
         >
           <template v-slot:[`item.title`]="{ item }">
@@ -137,11 +139,11 @@
 
           <template v-slot:[`item.action`]="{ item }">
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-icon
                   class="mr-2 action-button"
                   @click="showQuestionDialog(item)"
-                  v-on="on"
+                  v-bind="props"
                 >
                   visibility
                 </v-icon>
@@ -150,11 +152,11 @@
             </v-tooltip>
             <div v-if="item.sequence">
               <v-tooltip bottom>
-                <template v-slot:activator="{ on }">
+                <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
                     @click="removeFromQuiz(item)"
-                    v-on="on"
+                    v-bind="props"
                   >
                     remove
                   </v-icon>
@@ -162,11 +164,11 @@
                 <span>Remove from Quiz</span>
               </v-tooltip>
               <v-tooltip v-if="item.sequence !== 1" bottom>
-                <template v-slot:activator="{ on }">
+                <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
                     @click="changeQuestionPosition(item, 0)"
-                    v-on="on"
+                    v-bind="props"
                   >
                     mdi-chevron-double-up
                   </v-icon>
@@ -174,7 +176,7 @@
                 <span>Move to first</span>
               </v-tooltip>
               <v-tooltip v-if="item.sequence !== 1" bottom>
-                <template v-slot:activator="{ on }">
+                <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
                     @click="
@@ -183,7 +185,7 @@
                         quizQuestions.indexOf(item) - 1
                       )
                     "
-                    v-on="on"
+                    v-bind="props"
                   >
                     mdi-chevron-up
                   </v-icon>
@@ -191,11 +193,11 @@
                 <span>Move up</span>
               </v-tooltip>
               <v-tooltip v-if="quizQuestions.length > 1" bottom>
-                <template v-slot:activator="{ on }">
+                <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
                     @click="openSetPosition(item)"
-                    v-on="on"
+                    v-bind="props"
                   >
                     mdi-weather-sunny
                   </v-icon>
@@ -203,7 +205,7 @@
                 <span>Set Position</span>
               </v-tooltip>
               <v-tooltip v-if="item.sequence !== quizQuestions.length" bottom>
-                <template v-slot:activator="{ on }">
+                <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
                     @click="
@@ -212,7 +214,7 @@
                         quizQuestions.indexOf(item) + 1
                       )
                     "
-                    v-on="on"
+                    v-bind="props"
                   >
                     mdi-chevron-down
                   </v-icon>
@@ -220,13 +222,13 @@
                 <span>Move down</span>
               </v-tooltip>
               <v-tooltip v-if="item.sequence !== quizQuestions.length" bottom>
-                <template v-slot:activator="{ on }">
+                <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
                     @click="
                       changeQuestionPosition(item, quizQuestions.length - 1)
                     "
-                    v-on="on"
+                    v-bind="props"
                   >
                     mdi-chevron-double-down
                   </v-icon>
@@ -295,11 +297,11 @@
 
           <template v-slot:[`item.action`]="{ item }">
             <v-tooltip bottom>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-icon
                   class="mr-2 action-button"
                   @click="showQuestionDialog(item)"
-                  v-on="on"
+                  v-bind="props"
                 >
                   visibility
                 </v-icon>
@@ -307,13 +309,13 @@
               <span>Show Question</span>
             </v-tooltip>
             <v-tooltip v-if="!item.sequence" bottom>
-              <template v-slot:activator="{ on }">
+              <template v-slot:activator="{ props }">
                 <v-icon
                   id="addToQuizButton1"
                   class="mr-2 action-button"
                   data-cy="addToQuizButton"
                   @click="addToQuiz(item)"
-                  v-on="on"
+                  v-bind="props"
                 >
                   add
                 </v-icon>
@@ -333,11 +335,11 @@
 
     <show-quiz-dialog
       v-if="quiz"
-      v-model="quizDialog"
+      v-model:dialog="quizDialog"
       :quiz="quiz"
       v-on:close-quiz-dialog="onCloseQuizDialog"
     />
-    <v-dialog v-model="positionDialog" max-width="200px" persistent>
+    <v-dialog v-model:dialog="positionDialog" max-width="200px" persistent>
       <v-card>
         <v-card-text>
           <v-text-field v-model="position" label="position" required>
@@ -354,295 +356,260 @@
       v-if="currentQuestion"
       v-model="questionDialog"
       :question="currentQuestion"
-      v-on:close-show-question-dialog="onCloseShowQuestionDialog"
+      @update:modelValue="!$event ? onCloseShowQuestionDialog() : null"
     />
     <edit-question-dialog
       v-if="currentQuestion && editQuestionDialog"
-      v-model="editQuestionDialog"
+      v-model:dialog="editQuestionDialog"
       :question="currentQuestion"
       v-on:save-question="onSaveQuestion"
     />
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, watch, computed } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import { Quiz } from '@/models/management/Quiz';
 import Question from '@/models/management/Question';
 import EditQuestionDialog from '@/views/teacher/questions/EditQuestionDialog.vue';
 import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
-import VueCtkDateTimePicker from 'vue-ctk-date-time-picker';
-import 'vue-ctk-date-time-picker/dist/vue-ctk-date-time-picker.css';
+import { VueDatePicker } from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 import QueryQuestionForm from '@/views/teacher/questions/QueryQuestionForm.vue';
 
-Vue.component('VueCtkDateTimePicker', VueCtkDateTimePicker);
+const props = defineProps<{
+  quiz: Quiz;
+  editMode: boolean;
+}>();
 
-@Component({
-  components: {
-    'query-question-form': QueryQuestionForm,
-    'show-question-dialog': ShowQuestionDialog,
-    'edit-question-dialog': EditQuestionDialog,
-    'show-quiz-dialog': ShowQuizDialog,
+const emit = defineEmits(['switchMode', 'updateQuiz']);
+
+const store = useStore();
+
+const quizQuestions = ref<Question[]>([]);
+const questions = ref<Question[]>([]);
+const search = ref<string>('');
+const currentQuestion = ref<Question | null | undefined>(null);
+const position = ref<number | null>(null);
+
+const positionDialog = ref(false);
+const questionDialog = ref(false);
+const editQuestionDialog = ref(false);
+const quizDialog = ref(false);
+
+const showQueryForm = ref<boolean>(true);
+
+const headers = ref<any[]>([
+  { title: 'Sequence', value: 'sequence', align: 'center', width: '5px' },
+  { title: 'Actions', value: 'action', align: 'start', width: '250px', sortable: false },
+  { title: 'Title', value: 'title', align: 'start', width: '60%', sortable: false },
+  { title: 'Topics', value: 'topics', align: 'start', width: '40%' },
+  { title: 'Answers', value: 'numberOfAnswers', align: 'center', width: '5px' },
+]);
+
+const canSave = computed(() => {
+  return (
+    !!props.quiz.title &&
+    !!props.quiz.availableDate &&
+    ((props.quiz.timed && props.quiz.conclusionDate !== undefined) || !props.quiz.timed)
+  );
+});
+
+const onQueryQuestions = async (qs: Question[]) => {
+  let quizQuestionIds: number[] = [];
+  if (props.quiz && props.quiz.questions) {
+    quizQuestions.value.forEach(( quizQuestion ) => {
+      if (quizQuestion.id) quizQuestionIds.push(quizQuestion.id);
+    });
+  }
+
+  questions.value = qs.filter(
+    (question) => question.id && !quizQuestionIds.includes(question.id)
+  );
+
+  showQueryForm.value = false;
+};
+
+watch(
+  () => props.quiz,
+  () => {
+    if (props.quiz && quizQuestions.value.length === 0) {
+      props.quiz.questions.forEach((question, index) => {
+        question.sequence = index + 1;
+        quizQuestions.value.push(question);
+      });
+    }
   },
-})
-export default class QuizForm extends Vue {
-  @Prop(Quiz) readonly quiz!: Quiz;
-  @Prop(Boolean) readonly editMode!: boolean;
-  quizQuestions: Question[] = [];
-  questions: Question[] = [];
-  search: string = '';
-  currentQuestion: Question | null | undefined = null;
-  position: number | null = null;
+  { immediate: true, deep: true }
+);
 
-  positionDialog: boolean = false;
-  questionDialog: boolean = false;
-  editQuestionDialog: boolean = false;
-  quizDialog: boolean = false;
-
-  showQueryForm: boolean = true;
-
-  headers: object[] = [
-    {
-      text: 'Sequence',
-      value: 'sequence',
-      align: 'center',
-      width: '5px',
-    },
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'left',
-      width: '250px',
-      sortable: false,
-    },
-    {
-      text: 'Title',
-      value: 'title',
-      align: 'left',
-      width: '60%',
-      sortable: false,
-    },
-    {
-      text: 'Topics',
-      value: 'topics',
-      align: 'left',
-      width: '40%',
-    },
-    {
-      text: 'Answers',
-      value: 'numberOfAnswers',
-      align: 'center',
-      width: '5px',
-    },
-  ];
-
-  get canSave(): boolean {
-    return (
-      !!this.quiz.title &&
-      !!this.quiz.availableDate &&
-      ((this.quiz.timed && this.quiz.conclusionDate !== undefined) ||
-        !this.quiz.timed)
-    );
-  }
-
-  async onQueryQuestions(questions: Question[]) {
-    let quizQuestionIds: number[] = [];
-    if (this.quiz && this.quiz.questions) {
-      this.quizQuestions.forEach((quizQuestion) => {
-        if (quizQuestion.id) quizQuestionIds.push(quizQuestion.id);
-      });
-    }
-
-    this.questions = questions.filter(
-      (question) => question.id && !quizQuestionIds.includes(question.id)
-    );
-
-    this.showQueryForm = false;
-  }
-
-  @Watch('quiz')
-  onQuizChange() {
-    if (this.quiz && this.quizQuestions.length === 0) {
-      this.quiz.questions.forEach((question, index) => {
-        question.sequence = index + 1;
-        this.quizQuestions.push(question);
-      });
-    }
-  }
-
-  switchMode() {
-    this.clean();
-    this.$emit('switchMode');
-  }
-
-  async save() {
-    try {
-      this.quiz.questions = this.quizQuestions;
-      let updatedQuiz = await RemoteServices.saveQuiz(this.quiz);
-      this.clean();
-      this.$emit('updateQuiz', updatedQuiz);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-  }
-
-  customFilter(value: string, search: string, question: Question) {
-    // noinspection SuspiciousTypeOfGuard,SuspiciousTypeOfGuard
-    return (
-      search != null &&
-      JSON.stringify(question).toLowerCase().indexOf(search.toLowerCase()) !==
-        -1
-    );
-  }
-
-  customSort(items: Question[], index: string, isDesc: string) {
-    items.sort((a: any, b: any) => {
-      if (index == 'sequence') {
-        if (isDesc == 'false') {
-          return this.compare(a.sequence, b.sequence);
-        } else {
-          return this.compare(b.sequence, a.sequence);
-        }
-      } else {
-        if (isDesc == 'false') {
-          return a[index] < b[index] ? -1 : 1;
-        } else {
-          return b[index] < a[index] ? -1 : 1;
-        }
-      }
-    });
-    return items;
-  }
-
-  compare(a: number | null, b?: number | null) {
-    if (a == b) {
-      return 0;
-    } else if (a == null) {
-      return 1;
-    } else if (b == null) {
-      return -1;
-    } else {
-      return a < b ? -1 : 1;
-    }
-  }
-
-  showQuestionDialog(question: Question) {
-    this.currentQuestion = question;
-    this.questionDialog = true;
-  }
-
-  onCloseShowQuestionDialog() {
-    this.currentQuestion = null;
-    this.questionDialog = false;
-  }
-
-  editQuestion(question: Question, e?: Event) {
-    if (e) e.preventDefault();
-    this.currentQuestion = question;
-    this.editQuestionDialog = true;
-  }
-
-  async onSaveQuestion(question: Question) {
-    if (this.questions.find((q) => q.id !== question.id)) {
-      this.questions = this.questions.filter((q) => q.id !== question.id);
-      this.questions.unshift(question);
-    } else {
-      let quizQuestion = this.quizQuestions.find((q) => q.id == question.id);
-      if (quizQuestion) {
-        this.quizQuestions = this.quizQuestions.filter(
-          (q) => q.id !== question.id
-        );
-        question.sequence = quizQuestion.sequence;
-        this.quizQuestions.unshift(question);
-      }
-    }
-
-    this.editQuestionDialog = false;
-    this.currentQuestion = null;
-  }
-
-  addToQuiz(question: Question) {
-    question.sequence = this.quizQuestions.length + 1;
-    this.quizQuestions.push(question);
-    let index: number = this.questions.indexOf(question);
-    this.questions.splice(index, 1);
-  }
-
-  removeFromQuiz(question: Question) {
-    let index: number = this.quizQuestions.indexOf(question);
-    this.quizQuestions.splice(index, 1);
+const clean = () => {
+  quizQuestions.value.forEach((question) => {
     question.sequence = null;
-    this.quizQuestions
-      .sort((qq1, qq2) => this.compare(qq1.sequence, qq2.sequence))
-      .forEach((question, index) => {
-        question.sequence = index + 1;
-      });
-    this.questions.push(question);
-  }
+  });
+  quizQuestions.value = [];
+  questions.value = [];
+};
 
-  openSetPosition(question: Question) {
-    if (question.sequence) {
-      this.positionDialog = true;
-      this.position = question.sequence;
-      this.currentQuestion = question;
+const switchMode = () => {
+  clean();
+  emit('switchMode');
+};
+
+const save = async () => {
+  try {
+    props.quiz.questions = quizQuestions.value;
+    let updatedQuiz = await RemoteServices.saveQuiz(props.quiz);
+    clean();
+    emit('updateQuiz', updatedQuiz);
+  } catch (error) {
+    store.setError(error as string);
+  }
+};
+
+const customFilter = (value: string, query: string, item: any) => {
+  return (
+    query != null &&
+    JSON.stringify(item?.raw || item).toLowerCase().indexOf(query.toLowerCase()) !== -1
+  );
+};
+
+const compare = (a: number | null | undefined, b?: number | null | undefined) => {
+  if (a == b) {
+    return 0;
+  } else if (a == null) {
+    return 1;
+  } else if (b == null) {
+    return -1;
+  } else {
+    return a < b ? -1 : 1;
+  }
+};
+
+const customSort = (items: any[], index: string, isDesc: string) => {
+  items.sort((a: any, b: any) => {
+    if (index == 'sequence') {
+      if (isDesc == 'false') {
+        return compare(a.sequence, b.sequence);
+      } else {
+        return compare(b.sequence, a.sequence);
+      }
+    } else {
+      if (isDesc == 'false') {
+        return a[index] < b[index] ? -1 : 1;
+      } else {
+        return b[index] < a[index] ? -1 : 1;
+      }
+    }
+  });
+  return items;
+};
+
+const showQuestionDialog = (question: Question) => {
+  currentQuestion.value = question;
+  questionDialog.value = true;
+};
+
+const onCloseShowQuestionDialog = () => {
+  currentQuestion.value = null;
+  questionDialog.value = false;
+};
+
+const editQuestion = (question: Question, e?: Event) => {
+  if (e) e.preventDefault();
+  currentQuestion.value = question;
+  editQuestionDialog.value = true;
+};
+
+const onSaveQuestion = async (question: Question) => {
+  if (questions.value.find((q) => q.id !== question.id)) {
+    questions.value = questions.value.filter((q) => q.id !== question.id);
+    questions.value.unshift(question);
+  } else {
+    let quizQuestion = quizQuestions.value.find((q) => q.id == question.id);
+    if (quizQuestion) {
+      quizQuestions.value = quizQuestions.value.filter((q) => q.id !== question.id);
+      question.sequence = quizQuestion.sequence;
+      quizQuestions.value.unshift(question);
     }
   }
 
-  closeSetPosition() {
-    this.positionDialog = false;
-    this.position = null;
-    this.currentQuestion = undefined;
-  }
+  editQuestionDialog.value = false;
+  currentQuestion.value = null;
+};
 
-  saveSetPosition() {
-    if (
-      this.currentQuestion &&
-      this.currentQuestion.sequence !== this.position &&
-      this.position &&
-      this.position > 0 &&
-      this.position <= this.quizQuestions.length
-    ) {
-      this.changeQuestionPosition(this.currentQuestion, this.position - 1);
-    }
-    this.closeSetPosition();
-  }
+const addToQuiz = (question: Question) => {
+  question.sequence = quizQuestions.value.length + 1;
+  quizQuestions.value.push(question);
+  let index: number = questions.value.indexOf(question);
+  questions.value.splice(index, 1);
+};
 
-  changeQuestionPosition(question: Question, position: number) {
-    if (question.sequence) {
-      this.quizQuestions.sort((qq1, qq2) =>
-        this.compare(qq1.sequence, qq2.sequence)
-      );
-      let currentPosition: number = this.quizQuestions.indexOf(question);
-      this.quizQuestions.splice(
-        position,
-        0,
-        this.quizQuestions.splice(currentPosition, 1)[0]
-      );
-      this.quizQuestions.forEach((question, index) => {
-        question.sequence = index + 1;
-      });
-    }
-  }
-
-  clean() {
-    this.quizQuestions.forEach((question) => {
-      question.sequence = null;
+const removeFromQuiz = (question: Question) => {
+  let index: number = quizQuestions.value.indexOf(question);
+  quizQuestions.value.splice(index, 1);
+  question.sequence = null;
+  quizQuestions.value
+    .sort((qq1, qq2) => compare(qq1.sequence, qq2.sequence))
+    .forEach((q, i) => {
+      q.sequence = i + 1;
     });
-    this.quizQuestions = [];
-    this.questions = [];
-  }
+  questions.value.push(question);
+};
 
-  openShowQuiz() {
-    this.quizDialog = true;
-    this.quiz.questions = this.quizQuestions;
+const openSetPosition = (question: Question) => {
+  if (question.sequence) {
+    positionDialog.value = true;
+    position.value = question.sequence;
+    currentQuestion.value = question;
   }
+};
 
-  onCloseQuizDialog() {
-    this.quizDialog = false;
+const closeSetPosition = () => {
+  positionDialog.value = false;
+  position.value = null;
+  currentQuestion.value = undefined;
+};
+
+const changeQuestionPosition = (question: Question, pos: number) => {
+  if (question.sequence) {
+    quizQuestions.value.sort((qq1, qq2) => compare(qq1.sequence, qq2.sequence));
+    let currentPosition: number = quizQuestions.value.indexOf(question);
+    quizQuestions.value.splice(
+      pos,
+      0,
+      quizQuestions.value.splice(currentPosition, 1)[0]
+    );
+    quizQuestions.value.forEach((q, i) => {
+      q.sequence = i + 1;
+    });
   }
-}
+};
+
+const saveSetPosition = () => {
+  if (
+    currentQuestion.value &&
+    currentQuestion.value.sequence !== position.value &&
+    position.value &&
+    position.value > 0 &&
+    position.value <= quizQuestions.value.length
+  ) {
+    changeQuestionPosition(currentQuestion.value, position.value - 1);
+  }
+  closeSetPosition();
+};
+
+const openShowQuiz = () => {
+  quizDialog.value = true;
+  props.quiz.questions = quizQuestions.value;
+};
+
+const onCloseQuizDialog = () => {
+  quizDialog.value = false;
+};
 </script>
 
 <style lang="scss" scoped></style>

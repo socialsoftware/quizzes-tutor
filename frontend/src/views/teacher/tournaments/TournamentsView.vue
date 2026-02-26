@@ -56,91 +56,56 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 import Tournament from '@/models/user/Tournament';
 import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
 import RemoteServices from '@/services/RemoteServices';
 
-@Component({
-  components: {
-    'view-tournament-topics': ViewTournamentTopics,
-  },
-})
-export default class TournamentsView extends Vue {
-  tournaments: Tournament[] = [];
-  search: string = '';
-  headers: object = [
-    {
-      text: 'Course Acronym',
-      value: 'courseAcronym',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'Tournament Number',
-      value: 'id',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'Topics',
-      value: 'topics',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'State',
-      value: 'isCanceled',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'Privacy',
-      value: 'privateTournament',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'Start/End Time',
-      value: 'times',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'Number of Questions',
-      value: 'numberOfQuestions',
-      align: 'center',
-      width: '10%',
-    },
-  ];
+const store = useStore();
+const router = useRouter();
 
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      this.tournaments =
-        await RemoteServices.getTournamentsForCourseExecution();
-      this.tournaments.sort((a, b) => this.sortById(a, b));
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-  }
+const emit = defineEmits(['close-show-dashboard-dialog']);
 
-  sortById(a: Tournament, b: Tournament) {
-    if (a.id && b.id) return a.id > b.id ? 1 : -1;
-    else return 0;
-  }
+const tournaments = ref<Tournament[]>([]);
+const search = ref('');
 
-  async openTournamentDashboard(tournament: Tournament) {
-    this.$emit('close-show-dashboard-dialog', false);
-    if (tournament)
-      await this.$router.push({
-        path: '/teacher/tournament',
-        query: { id: tournament.id.toString() },
-      });
+const headers: any[] = [
+  { title: 'Course Acronym', value: 'courseAcronym', align: 'center', width: '10%' },
+  { title: 'Tournament Number', value: 'id', align: 'center', width: '10%' },
+  { title: 'Topics', value: 'topics', align: 'center', width: '10%' },
+  { title: 'State', value: 'isCanceled', align: 'center', width: '10%' },
+  { title: 'Privacy', value: 'privateTournament', align: 'center', width: '10%' },
+  { title: 'Start/End Time', value: 'times', align: 'center', width: '10%' },
+  { title: 'Number of Questions', value: 'numberOfQuestions', align: 'center', width: '10%' },
+];
+
+const sortById = (a: Tournament, b: Tournament) => {
+  if (a.id && b.id) return a.id > b.id ? 1 : -1;
+  else return 0;
+};
+
+onMounted(async () => {
+  store.setLoading();
+  try {
+    tournaments.value = await RemoteServices.getTournamentsForCourseExecution();
+    tournaments.value.sort((a, b) => sortById(a, b));
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+});
+
+const openTournamentDashboard = async (tournament: Tournament) => {
+  emit('close-show-dashboard-dialog', false);
+  if (tournament)
+    await router.push({
+      path: '/teacher/tournament',
+      query: { id: tournament.id.toString() },
+    });
+};
 </script>
 
 <style lang="scss" scoped></style>
