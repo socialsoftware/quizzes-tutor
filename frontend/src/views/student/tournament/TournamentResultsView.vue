@@ -182,9 +182,9 @@ onMounted(async () => {
 @use "sass:color";
 
 @mixin background-opacity($color, $opacity: 1) {
-  $red: color.red($color);
-  $green: color.green($color);
-  $blue: color.blue($color);
+  $red: color.channel($color, "red", $space: rgb);
+  $green: color.channel($color, "green", $space: rgb);
+  $blue: color.channel($color, "blue", $space: rgb);
   background: rgba($red, $green, $blue, $opacity) !important;
 }
 

@@ -29,7 +29,7 @@
         <v-toolbar-items class="hidden-sm-and-down" hide-details>
           <v-menu v-if="isTeacher && currentCourse" offset-y open-on-hover>
             <template v-slot:activator="{ props }">
-              <v-btn dark data-cy="managementMenuButton" text v-bind="props">
+              <v-btn dark data-cy="managementMenuButton" variant="text" v-bind="props">
                 Management
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
@@ -127,7 +127,7 @@
 
           <v-menu v-if="isStudent && currentCourse" offset-y open-on-hover>
             <template v-slot:activator="{ props }">
-              <v-btn dark data-cy="quizzesStudentMenuButton" text v-bind="props">
+              <v-btn dark data-cy="quizzesStudentMenuButton" variant="text" v-bind="props">
                 Quizzes
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
@@ -189,7 +189,7 @@
 
           <v-menu v-if="isStudent && currentCourse" offset-y open-on-hover>
             <template v-slot:activator="{ props }">
-              <v-btn dark data-cy="Tournament" text v-bind="props">
+              <v-btn dark data-cy="Tournament" variant="text" v-bind="props">
                 Tournaments
                 <v-icon>fas fa-trophy</v-icon>
               </v-btn>
@@ -218,7 +218,7 @@
             v-if="isStudent && currentCourse"
             dark
             data-cy="submissionStudentMenuButton"
-            text
+            variant="text"
             to="/student/submissions"
           >
             Submissions
@@ -229,7 +229,7 @@
             v-if="isStudent && currentCourse"
             dark
             data-cy="dashboardMenuButton"
-            text
+            variant="text"
             to="/student/dashboard"
           >
             Dashboard
@@ -240,7 +240,7 @@
             v-if="isLoggedIn && moreThanOneCourse"
             active-class="no-active"
             dark
-            text
+            variant="text"
             to="/courses"
           >
             Change course
@@ -249,7 +249,7 @@
 
           <v-menu v-if="isAdmin" offset-y open-on-hover>
             <template v-slot:activator="{ props }">
-              <v-btn dark data-cy="administrationMenuButton" text v-bind="props">
+              <v-btn dark data-cy="administrationMenuButton" variant="text" v-bind="props">
                 Administration
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
@@ -311,7 +311,7 @@
             v-if="isLoggedIn"
             dark
             data-cy="logoutButton"
-            text
+            variant="text"
             @click="logout"
           >
             Logout
@@ -578,12 +578,12 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="secondary" text @click="logoutConfirmation = false">
+          <v-btn color="secondary" variant="text" @click="logoutConfirmation = false">
             Cancel
           </v-btn>
           <v-btn
             color="primary"
-            text
+            variant="text"
             data-cy="confirmationButton"
             @click="doLogout"
           >

@@ -33,6 +33,7 @@ h2 {
 .v-icon {
   padding: 0 0 0 10px;
 }
+
 i {
   padding: 0 10px 0 0;
 }
@@ -85,4 +86,14 @@ footer {
   font-style: italic;
   padding-bottom: 20px;
   font-size: 20px;
+}
+
+// Restore Vuetify 2 uppercase button text
+.v-btn {
+  text-transform: uppercase !important;
+}
+
+// But DEMO buttons on landing page (small + primary) are lowercase ("smalls")
+.v-btn--size-small.bg-primary {
+  text-transform: none !important;
 }

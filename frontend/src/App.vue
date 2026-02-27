@@ -60,7 +60,7 @@ axios.interceptors.response.use(undefined, (err) => {
 }
 
 /*noinspection CssUnusedSymbol*/
-.application--wrap {
+.v-application__wrap {
   min-height: initial !important;
 }
 </style>

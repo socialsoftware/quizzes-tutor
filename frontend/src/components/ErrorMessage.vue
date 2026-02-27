@@ -1,9 +1,7 @@
 <template>
-  <v-dialog v-model="dialog">
-    <v-alert v-model="dialog" type="error" close-text="Close Alert" closable>
-      {{ errorMessage }}
-    </v-alert>
-  </v-dialog>
+  <v-alert v-model="dialog" type="error" close-text="Close Alert" closable>
+    {{ errorMessage }}
+  </v-alert>
 </template>
 
 <script setup lang="ts">
@@ -24,11 +22,6 @@ const errorMessage = computed(() => store.errorMessage);
 </script>
 
 <style scoped lang="scss">
-/*https://github.com/vuetifyjs/vuetify/issues/9175*/
-.v-dialog__container {
-  display: unset !important;
-}
-
 .v-alert {
   z-index: 9999;
   position: absolute;

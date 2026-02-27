@@ -11,6 +11,11 @@ import { fa } from 'vuetify/iconsets/fa';
 export default createVuetify({
   components,
   directives,
+  defaults: {
+    VBtn: {
+      style: 'text-transform: uppercase; letter-spacing: 0.0892857143em;',
+    },
+  },
   icons: {
     defaultSet: 'mdi',
     aliases,
@@ -20,16 +25,14 @@ export default createVuetify({
     },
   },
   theme: {
+    defaultTheme: 'dark',
     themes: {
-      light: {
+      dark: {
         colors: {
           primary: '#1976D2',
           secondary: '#424242',
-          accent: '#82B1FF',
-          error: '#FF5252',
-          info: '#2196F3',
-          success: '#4CAF50',
-          warning: '#FFC107',
+          accent: '#8c9eff',
+          error: '#b71c1c',
         }
       },
     },
