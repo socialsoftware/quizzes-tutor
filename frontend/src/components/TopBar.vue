@@ -262,14 +262,12 @@
 
     <v-dialog v-model="logoutConfirmation" width="50%">
       <v-card>
-        <v-card-title primary-title class="secondary white--text headline">
+        <v-card-title class="bg-secondary text-white text-h5">
           Confirmation
         </v-card-title>
 
-        <v-card-text class="text--black title">
-          <br />
+        <v-card-text class="text-h6 text-center mt-4 mb-4">
           Are you sure you want to logout?
-          <br />
         </v-card-text>
 
         <v-divider />

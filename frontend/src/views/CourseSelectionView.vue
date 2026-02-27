@@ -65,29 +65,28 @@
 
     <v-dialog v-model="confirmationDialog" v-if="selectedCourse" width="50%">
       <v-card>
-        <v-card-title primary-title class="secondary white--text headline">
+        <v-card-title class="bg-secondary text-white text-h5">
           Confirmation
         </v-card-title>
 
-        <v-card-text class="text--black title">
-          <br />
+        <v-card-text class="text-h6 text-center mt-4 mb-4">
           Are you sure you want to activate
           <span class="bold">{{ selectedCourse.name }}</span>
           for
           <span class="bold">{{ selectedCourse.academicTerm }}</span
           >?
+          <br /><br />
+          <span class="text-caption">(Once activated students will be able to login and use this platform)</span>
           <br />
-          (Once activated students will be able to login and use this platform)
-          <br />
-          (You have to logout and login to start managing it)
+          <span class="text-caption">(You have to logout and login to start managing it)</span>
         </v-card-text>
 
         <v-divider />
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="secondary" text @click="unselectCourse"> Cancel </v-btn>
-          <v-btn color="primary" text @click="activateCourse"> I'm sure </v-btn>
+          <v-btn color="secondary" variant="text" @click="unselectCourse"> Cancel </v-btn>
+          <v-btn color="primary" variant="text" @click="activateCourse"> I'm sure </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -162,7 +161,7 @@ const compareTerm = (term1: string, term2: string) => {
 };
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .title {
   text-align: center;
   font-family: 'Baloo Tamma', cursive;
