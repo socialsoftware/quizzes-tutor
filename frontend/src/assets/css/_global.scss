@@ -102,10 +102,13 @@ footer {
 // Restore Vuetify 2 uppercase button text
 .v-btn {
   text-transform: uppercase !important;
-  padding: 0 16px !important;
-  height: 36px !important;
-  min-width: 64px !important;
+}
 
+// Emulate Vue 2 small heights for filled buttons used in tables and forms
+.v-btn--variant-elevated,
+.v-btn--variant-flat {
+  height: 36px !important;
+  padding: 0 16px !important;
 }
 
 // But DEMO buttons on landing page (small + primary) are lowercase ("smalls")

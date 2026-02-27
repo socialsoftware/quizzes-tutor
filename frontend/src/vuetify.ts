@@ -32,8 +32,6 @@ export default createVuetify({
   defaults: {
     VBtn: {
       style: 'text-transform: uppercase; letter-spacing: 0.0892857143em;',
-      size: 'small',
-      height: 36,
     },
     VTextField: {
       variant: 'underlined',
