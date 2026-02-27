@@ -8,6 +8,24 @@ import * as directives from 'vuetify/directives';
 import { aliases, mdi } from 'vuetify/iconsets/mdi';
 import { fa } from 'vuetify/iconsets/fa';
 
+import { h } from 'vue';
+import type { IconSet, IconProps } from 'vuetify';
+
+const custom: IconSet = {
+  component: (props: IconProps) => {
+    const icon = props.icon as string;
+    if (typeof icon !== 'string') return h(props.tag);
+
+    if (icon.startsWith('fa') && icon.includes('-')) {
+      return h(props.tag, { class: [icon] });
+    } else if (icon.startsWith('mdi-')) {
+      return h(props.tag, { class: ['mdi', icon] });
+    } else {
+      return h(props.tag, { class: ['material-icons'] }, icon);
+    }
+  },
+};
+
 export default createVuetify({
   components,
   directives,
@@ -17,11 +35,10 @@ export default createVuetify({
     },
   },
   icons: {
-    defaultSet: 'mdi',
+    defaultSet: 'custom',
     aliases,
     sets: {
-      mdi,
-      fa,
+      custom,
     },
   },
   theme: {
