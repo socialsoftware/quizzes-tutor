@@ -42,8 +42,16 @@ export default createVuetify({
     },
   },
   theme: {
-    defaultTheme: 'dark',
+    defaultTheme: 'light',
     themes: {
+      light: {
+        colors: {
+          primary: '#1976D2',
+          secondary: '#424242',
+          accent: '#8c9eff',
+          error: '#b71c1c',
+        }
+      },
       dark: {
         colors: {
           primary: '#1976D2',
