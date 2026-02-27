@@ -1,6 +1,6 @@
 <template>
-  <v-overlay :value="loading" absolute>
-    <v-progress-circular indeterminate size="64" />
+  <v-overlay v-model="loading" absolute class="align-center justify-center">
+    <v-progress-circular indeterminate size="64" color="white" />
   </v-overlay>
 </template>
 
