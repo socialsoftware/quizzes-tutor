@@ -14,7 +14,7 @@
         <v-card-title>
           <v-text-field
             v-model="search"
-            append-icon="search"
+            append-inner-icon="search"
             label="Search"
             data-cy="Search"
             class="mx-2"
