@@ -103,7 +103,7 @@
             to="/student/submissions"
           >
             Submissions
-            <v-icon>fa-user-edit</v-icon>
+            <v-icon>fas fa-user-edit</v-icon>
           </v-btn>
 
           <v-btn
