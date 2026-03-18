@@ -73,13 +73,13 @@ const tournaments = ref<Tournament[]>([]);
 const search = ref('');
 
 const headers: any[] = [
-  { title: 'Course Acronym', value: 'courseAcronym', align: 'center', width: '10%' },
-  { title: 'Tournament Number', value: 'id', align: 'center', width: '10%' },
-  { title: 'Topics', value: 'topics', align: 'center', width: '10%' },
-  { title: 'State', value: 'isCanceled', align: 'center', width: '10%' },
-  { title: 'Privacy', value: 'privateTournament', align: 'center', width: '10%' },
-  { title: 'Start/End Time', value: 'times', align: 'center', width: '10%' },
-  { title: 'Number of Questions', value: 'numberOfQuestions', align: 'center', width: '10%' },
+  { title: 'Course Acronym', key: 'courseAcronym', align: 'center', width: '10%' },
+  { title: 'Tournament Number', key: 'id', align: 'center', width: '10%' },
+  { title: 'Topics', key: 'topics', align: 'center', width: '10%' },
+  { title: 'State', key: 'isCanceled', align: 'center', width: '10%' },
+  { title: 'Privacy', key: 'privateTournament', align: 'center', width: '10%' },
+  { title: 'Start/End Time', key: 'times', align: 'center', width: '10%' },
+  { title: 'Number of Questions', key: 'numberOfQuestions', align: 'center', width: '10%' },
 ];
 
 const sortById = (a: Tournament, b: Tournament) => {

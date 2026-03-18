@@ -31,13 +31,25 @@ export default createVuetify({
   directives,
   defaults: {
     VBtn: {
+      variant: 'elevated',
       style: 'text-transform: uppercase; letter-spacing: 0.0892857143em;',
+    },
+    VCardActions: {
+      VBtn: {
+        variant: 'elevated',
+      },
     },
     VTextField: {
       variant: 'underlined',
     },
     VSelect: {
       variant: 'underlined',
+    },
+    VDataTable: {
+      itemsPerPageText: 'Rows per page:',
+    },
+    VDataTableServer: {
+      itemsPerPageText: 'Rows per page:',
     },
   },
   icons: {

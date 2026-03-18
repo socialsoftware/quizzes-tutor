@@ -11,10 +11,10 @@ export default class Review {
   username!: string;
 
   static statusOptions = [
-    { text: 'Comment', value: 'COMMENT' },
-    { text: 'Request Changes', value: 'REQUEST_CHANGES', color: 'yellow' },
-    { text: 'Approve', value: 'APPROVE', color: 'green' },
-    { text: 'Reject', value: 'REJECT', color: 'red' },
+    { title: 'Comment', key: 'COMMENT' },
+    { title: 'Request Changes', key: 'REQUEST_CHANGES', color: 'yellow' },
+    { title: 'Approve', key: 'APPROVE', color: 'green' },
+    { title: 'Reject', key: 'REJECT', color: 'red' },
   ];
 
   constructor(jsonObj?: Review) {

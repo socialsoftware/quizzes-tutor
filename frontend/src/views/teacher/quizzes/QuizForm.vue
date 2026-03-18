@@ -403,11 +403,11 @@ const quizDialog = ref(false);
 const showQueryForm = ref<boolean>(true);
 
 const headers = ref<any[]>([
-  { title: 'Sequence', value: 'sequence', align: 'center', width: '5px' },
-  { title: 'Actions', value: 'action', align: 'start', width: '250px', sortable: false },
-  { title: 'Title', value: 'title', align: 'start', width: '60%', sortable: false },
-  { title: 'Topics', value: 'topics', align: 'start', width: '40%' },
-  { title: 'Answers', value: 'numberOfAnswers', align: 'center', width: '5px' },
+  { title: 'Sequence', key: 'sequence', align: 'center', width: '5px' },
+  { title: 'Actions', key: 'action', align: 'start', width: '250px', sortable: false },
+  { title: 'Title', key: 'title', align: 'start', width: '60%', sortable: false },
+  { title: 'Topics', key: 'topics', align: 'start', width: '40%' },
+  { title: 'Answers', key: 'numberOfAnswers', align: 'center', width: '5px' },
 ]);
 
 const canSave = computed(() => {

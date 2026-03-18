@@ -1,8 +1,9 @@
-import { createApp } from 'vue';
+import { createApp, defineComponent, h } from 'vue';
 import App from '@/App.vue';
 import router from '@/router';
 import { createPinia } from 'pinia';
 import vuetify from '@/vuetify';
+import { VDataTable } from 'vuetify/components/VDataTable';
 
 const pinia = createPinia();
 const app = createApp(App);

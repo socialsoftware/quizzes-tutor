@@ -124,20 +124,20 @@ const questionsToShow = ref<Question[]>([]);
 const headers = [
   {
     title: 'Actions',
-    value: 'action',
+    key: 'action',
     align: 'start',
     sortable: false,
     width: '10%',
   },
-  { title: 'Order', value: 'sequence', align: 'center', width: '10%' },
-  { title: 'Title', value: 'title', width: '50%', align: 'start' },
+  { title: 'Order', key: 'sequence', align: 'center', width: '10%' },
+  { title: 'Title', key: 'title', width: '50%', align: 'start' },
   {
     title: 'Number of questions',
-    value: 'numberOfQuestions',
+    key: 'numberOfQuestions',
     align: 'center',
     width: '15%',
   },
-  { title: 'Status', value: 'status', align: 'center', width: '15%' },
+  { title: 'Status', key: 'status', align: 'center', width: '15%' },
 ] as any;
 
 const setStatus = async (assessmentId: number, status: string) => {
@@ -176,7 +176,7 @@ const getStatusColor = (status: string) => {
   else return 'green';
 };
 
-const convertMarkDown = (text: string, image: Image | null = null): string => {
+const convertMarkDown = (title: string, image: Image | null = null): string => {
   return convertMarkDownService(text, image);
 };
 

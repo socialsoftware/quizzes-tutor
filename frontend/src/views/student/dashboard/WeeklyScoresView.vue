@@ -38,37 +38,37 @@ const weeklyScores = ref<WeeklyScore[]>([]);
 const headers: any = [
   {
     title: 'Week',
-    value: 'week',
+    key: 'week',
     align: 'start',
     width: '5px',
   },
   {
     title: 'Quizzes Answered',
-    value: 'quizzesAnswered',
+    key: 'quizzesAnswered',
     align: 'center',
     width: '5px',
   },
   {
     title: 'Questions Answered',
-    value: 'questionsAnswered',
+    key: 'questionsAnswered',
     align: 'center',
     width: '5px',
   },
   {
     title: 'Questions Uniquely Answered',
-    value: 'questionsUniquelyAnswered',
+    key: 'questionsUniquelyAnswered',
     align: 'center',
     width: '5px',
   },
   {
     title: 'Percentage Correct',
-    value: 'percentageCorrect',
+    key: 'percentageCorrect',
     align: 'center',
     width: '5px',
   },
   {
     title: 'Improved Correct Questions',
-    value: 'improvedCorrectAnswers',
+    key: 'improvedCorrectAnswers',
     align: 'center',
     width: '5px',
   },

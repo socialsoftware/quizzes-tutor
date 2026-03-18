@@ -28,8 +28,14 @@
       show-expand
       multi-sort
       :mobile-breakpoint="0"
-      :items-per-page="15"
-      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      v-model:items-per-page="itemsPerPage"
+      :items-per-page-options="[
+        { key: 15, title: '15' },
+        { key: 30, title: '30' },
+        { key: 50, title: '50' },
+        { key: 100, title: '100' },
+        { key: -1, title: 'All' }
+      ]"
     >
       <template v-slot:item="{ item: displayItem, toggleExpand, isExpanded }">
         <tr
@@ -167,45 +173,48 @@ const processHeaders = (arr: any[]) => {
   return arr.map((h: any) => ({
     ...h,
     title: h.text || h.title,
+    key: h.value || h.key,
     align: h.align === 'left' ? 'start' : h.align === 'right' ? 'end' : h.align
   }));
 };
 
 const studentHeaders = ref<any[]>(processHeaders(QuestionSubmission.questionSubmissionHeader.slice()));
+const itemsPerPage = ref<number>(15);
+
 const headers = ref<any[]>([
   {
     title: 'Student',
-    value: 'name',
+    key: 'name',
     align: 'center',
     width: '50%',
   },
   {
     title: 'Approved',
-    value: 'numApprovedQuestionSubmissions',
+    key: 'numApprovedQuestionSubmissions',
     align: 'center',
     width: '10%',
   },
   {
     title: 'Rejected',
-    value: 'numRejectedQuestionSubmissions',
+    key: 'numRejectedQuestionSubmissions',
     align: 'center',
     width: '10%',
   },
   {
     title: 'In Review',
-    value: 'numInReviewQuestionSubmissions',
+    key: 'numInReviewQuestionSubmissions',
     align: 'center',
     width: '10%',
   },
   {
     title: 'In Revision',
-    value: 'numInRevisionQuestionSubmissions',
+    key: 'numInRevisionQuestionSubmissions',
     align: 'center',
     width: '10%',
   },
   {
     title: 'Total',
-    value: 'totalQuestionSubmissions',
+    key: 'totalQuestionSubmissions',
     align: 'center',
     width: '10%',
   },

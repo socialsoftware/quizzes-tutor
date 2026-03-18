@@ -73,20 +73,20 @@ const studentViewDialog = ref(false);
 const headers: any = [
   {
     title: 'Actions',
-    value: 'action',
+    key: 'action',
     align: 'start',
     width: '5px',
     sortable: false,
   },
   {
     title: 'Question',
-    value: 'questionAnswerDto.question.content',
+    key: 'questionAnswerDto.question.content',
     align: 'start',
     sortable: false,
     width: '500px',
   },
-  { title: 'Answered', value: 'answered', align: 'center', width: '5px' },
-  { title: 'Collected', value: 'collected', align: 'center', width: '10px' },
+  { title: 'Answered', key: 'answered', align: 'center', width: '5px' },
+  { title: 'Collected', key: 'collected', align: 'center', width: '10px' },
 ];
 
 onMounted(async () => {

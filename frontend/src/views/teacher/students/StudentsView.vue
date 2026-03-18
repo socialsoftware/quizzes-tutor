@@ -70,19 +70,19 @@ const students = ref<Student[]>([]);
 const search = ref('');
 
 const headers: any[] = [
-  { title: 'Username', value: 'username', align: 'start', width: '10%' },
-  { title: 'Name', value: 'name', align: 'start', width: '40%' },
-  { title: 'Proposed Quizzes', value: 'numberOfTeacherQuizzes', align: 'center', width: '10%' },
-  { title: 'Answers Proposed Quizzes', value: 'numberOfTeacherAnswers', align: 'center', width: '10%' },
-  { title: 'Correct Answers Proposed Quizzes', value: 'percentageOfCorrectTeacherAnswers', align: 'center', width: '10%' },
-  { title: 'Generated Quizzes', value: 'numberOfStudentQuizzes', align: 'center', width: '10%' },
-  { title: 'Answers Generated Quizzes', value: 'numberOfStudentAnswers', align: 'center', width: '10%' },
-  { title: 'Correct Answers Generated Quizzes', value: 'percentageOfCorrectStudentAnswers', align: 'center', width: '10%' },
-  { title: 'InClass Quizzes', value: 'numberOfInClassQuizzes', align: 'center', width: '10%' },
-  { title: 'Answers InClass Quizzes', value: 'numberOfInClassAnswers', align: 'center', width: '10%' },
-  { title: 'Correct Answers InClass Quizzes', value: 'percentageOfCorrectInClassAnswers', align: 'center', width: '10%' },
-  { title: 'Total Answers', value: 'numberOfAnswers', align: 'center', width: '10%' },
-  { title: 'Correct Answers', value: 'percentageOfCorrectAnswers', align: 'center', width: '10%' },
+  { title: 'Username', key: 'username', align: 'start', width: '10%' },
+  { title: 'Name', key: 'name', align: 'start', width: '40%' },
+  { title: 'Proposed Quizzes', key: 'numberOfTeacherQuizzes', align: 'center', width: '10%' },
+  { title: 'Answers Proposed Quizzes', key: 'numberOfTeacherAnswers', align: 'center', width: '10%' },
+  { title: 'Correct Answers Proposed Quizzes', key: 'percentageOfCorrectTeacherAnswers', align: 'center', width: '10%' },
+  { title: 'Generated Quizzes', key: 'numberOfStudentQuizzes', align: 'center', width: '10%' },
+  { title: 'Answers Generated Quizzes', key: 'numberOfStudentAnswers', align: 'center', width: '10%' },
+  { title: 'Correct Answers Generated Quizzes', key: 'percentageOfCorrectStudentAnswers', align: 'center', width: '10%' },
+  { title: 'InClass Quizzes', key: 'numberOfInClassQuizzes', align: 'center', width: '10%' },
+  { title: 'Answers InClass Quizzes', key: 'numberOfInClassAnswers', align: 'center', width: '10%' },
+  { title: 'Correct Answers InClass Quizzes', key: 'percentageOfCorrectInClassAnswers', align: 'center', width: '10%' },
+  { title: 'Total Answers', key: 'numberOfAnswers', align: 'center', width: '10%' },
+  { title: 'Correct Answers', key: 'percentageOfCorrectAnswers', align: 'center', width: '10%' },
 ];
 
 onMounted(async () => {

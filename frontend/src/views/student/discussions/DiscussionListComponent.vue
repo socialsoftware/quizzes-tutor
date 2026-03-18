@@ -68,14 +68,14 @@ const currentDiscussion = ref<Discussion | null>(null);
 const discussionDialog = ref(false);
 
 const headers = [
-  { title: 'Actions', value: 'action', align: 'start', width: '5px', sortable: false },
-  { title: 'Discussion Number', value: 'id' },
-  { title: 'Question Title', value: 'question.title' },
-  { title: 'Question Content', value: 'question.content' },
-  { title: 'Message', value: 'message' },
-  { title: 'Last Reply Date', value: 'lastReplyDate' },
-  { title: 'Closed', value: 'closed' },
-  { title: 'Replies', value: 'replies.length' },
+  { title: 'Actions', key: 'action', align: 'start', width: '5px', sortable: false },
+  { title: 'Discussion Number', key: 'id' },
+  { title: 'Question Title', key: 'question.title' },
+  { title: 'Question Content', key: 'question.content' },
+  { title: 'Message', key: 'message' },
+  { title: 'Last Reply Date', key: 'lastReplyDate' },
+  { title: 'Closed', key: 'closed' },
+  { title: 'Replies', key: 'replies.length' },
 ] as const;
 
 const showDiscussionDialogAction = (discussion: Discussion) => {

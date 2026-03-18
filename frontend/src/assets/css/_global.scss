@@ -27,14 +27,37 @@ body {
 
     .v-btn {
       margin: 0 5px;
+      min-width: 140px;
     }
   }
+}
+
+.table .v-data-table-rows-no-data {
+  color: rgba(0, 0, 0, 0.38) !important;
 }
 
 .table td,
 .table th {
   display: table-cell;
   vertical-align: inherit;
+}
+
+.table .v-data-table th {
+  font-size: 0.75rem !important;
+  font-weight: 500 !important;
+  color: rgba(0, 0, 0, 0.6) !important;
+  white-space: nowrap !important;
+
+  &:hover {
+    font-weight: bold !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+  }
+
+  &.v-data-table__th--sorted {
+    background-color: #58b459 !important;
+    color: rgba(0, 0, 0, 0.87) !important;
+    font-weight: bold !important;
+  }
 }
 
 h2 {
@@ -97,6 +120,9 @@ footer {
   font-style: italic;
   padding-bottom: 20px;
   font-size: 20px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 // Restore Vuetify 2 uppercase button text
@@ -114,4 +140,67 @@ footer {
 // But DEMO buttons on landing page (small + primary) are lowercase ("smalls")
 .v-btn--size-small.bg-primary {
   text-transform: none !important;
+}
+
+.table {
+  .v-data-table-footer {
+    .v-select .v-field__outline {
+      display: none !important;
+    }
+
+    .v-select {
+      max-width: 65px !important;
+      margin-left: 4px;
+    }
+
+    .v-select .v-field__input {
+      padding: 4px 4px !important; // Restore minimal vertical padding
+      font-size: 0.75rem !important; // Even smaller font (12px)
+    }
+
+    .v-select .v-field {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.42) !important; // Slightly darker again so it shows
+      border-radius: 0 !important;
+      background: transparent !important;
+      box-shadow: none !important;
+    }
+
+    // Hide first/last pagination arrows and make prev/next smaller & closer
+    .v-pagination__first,
+    .v-pagination__last {
+      display: none !important;
+    }
+
+    .v-pagination__prev .v-btn,
+    .v-pagination__next .v-btn {
+      width: 28px !important;
+      height: 28px !important;
+      min-width: 28px !important;
+      margin: 0 2px !important;
+      padding: 0 !important;
+
+      .v-icon {
+        font-size: 18px !important;
+      }
+    }
+  }
+
+  // When the table has no data, replace the "0-0 of 0" text with a "-" to emulate Vuetify 2
+  .v-data-table:has(.v-data-table-rows-no-data) {
+    .v-data-table-footer__info div {
+      font-size: 0 !important;
+
+      &::after {
+        content: "-";
+        font-size: 0.875rem !important;
+      }
+    }
+  }
+}
+
+// Remove elevation and borders from transparent v-cards
+// This globally fixes Vuetify 2 `outlined color="transparent"` cards which render with shadows in Vuetify 3
+.v-card.bg-transparent {
+  box-shadow: none !important;
+  border: none !important;
 }

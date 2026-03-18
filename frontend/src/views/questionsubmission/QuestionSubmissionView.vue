@@ -186,6 +186,7 @@ const editQuestionSubmissionDialog = ref<boolean>(false);
 const questionSubmissionDialog = ref<boolean>(false);
 const search = ref<string>('');
 const topicsComponentKey = ref<number>(0);
+const itemsPerPage = ref<number>(15);
 
 const getRaw = (item: any): QuestionSubmission => {
   return item.raw || item;
@@ -195,15 +196,16 @@ const processHeaders = () => {
   let mapped = QuestionSubmission.questionSubmissionHeader.map((h: any) => ({
     ...h,
     title: h.text || h.title,
+    key: h.value || h.key,
     align: h.align === 'left' ? 'start' : h.align === 'right' ? 'end' : h.align
   }));
   
   if (store.isTeacher) {
     mapped.splice(3, 0, {
       title: 'Submitted by',
-      value: 'name',
+      key: 'name',
       align: 'center',
-      width: '10%',
+      width: '150px',
       sortable: true
     });
   }

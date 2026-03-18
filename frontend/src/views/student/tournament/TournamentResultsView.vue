@@ -153,15 +153,15 @@ const selectedTournament = ref<Tournament | null>(null);
 const participants = ref<TournamentParticipant[]>([]);
 
 const headers: any = [
-  { title: 'Name', value: 'name', align: 'center' },
-  { title: 'Username', value: 'username', align: 'center' },
-  { title: 'Number of Answers', value: 'numberOfAnswered', align: 'center' },
+  { title: 'Name', key: 'name', align: 'center' },
+  { title: 'Username', key: 'username', align: 'center' },
+  { title: 'Number of Answers', key: 'numberOfAnswered', align: 'center' },
   {
     title: 'Number of Correct Answers',
-    value: 'numberOfCorrect',
+    key: 'numberOfCorrect',
     align: 'center',
   },
-  { title: 'Score', value: 'score', align: 'center' },
+  { title: 'Score', key: 'score', align: 'center' },
 ];
 
 onMounted(async () => {

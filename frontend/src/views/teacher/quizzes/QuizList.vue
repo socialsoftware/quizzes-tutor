@@ -250,16 +250,16 @@ const quizFraudScoresDialog = ref(false);
 
 const qrValue = ref<number | null>(null);
 const headers = ref<any[]>([
-  { title: 'Actions', value: 'action', align: 'start', width: '150px', sortable: false },
-  { title: 'Title', value: 'title', align: 'start', width: '30%' },
-  { title: 'Code', value: 'code', align: 'center', width: '150px' },
-  { title: 'Available Date', value: 'availableDate', align: 'center', width: '150px' },
-  { title: 'Conclusion Date', value: 'conclusionDate', align: 'center', width: '150px' },
-  { title: 'Results Date', value: 'resultsDate', align: 'center', width: '150px' },
-  { title: 'Options', value: 'options', align: 'center', width: '150px', sortable: false },
-  { title: 'Questions', value: 'numberOfQuestions', width: '5px', align: 'center' },
-  { title: 'Answers', value: 'numberOfAnswers', width: '5px', align: 'center' },
-  { title: 'Creation Date', value: 'creationDate', width: '150px', align: 'center' },
+  { title: 'Actions', key: 'action', align: 'start', width: '150px', sortable: false },
+  { title: 'Title', key: 'title', align: 'start', width: '30%' },
+  { title: 'Code', key: 'code', align: 'center', width: '150px' },
+  { title: 'Available Date', key: 'availableDate', align: 'center', width: '150px' },
+  { title: 'Conclusion Date', key: 'conclusionDate', align: 'center', width: '150px' },
+  { title: 'Results Date', key: 'resultsDate', align: 'center', width: '150px' },
+  { title: 'Options', key: 'options', align: 'center', width: '150px', sortable: false },
+  { title: 'Questions', key: 'numberOfQuestions', width: '5px', align: 'center' },
+  { title: 'Answers', key: 'numberOfAnswers', width: '5px', align: 'center' },
+  { title: 'Creation Date', key: 'creationDate', width: '150px', align: 'center' },
 ]);
 
 const showQuizDialog = async (quizId: number) => {

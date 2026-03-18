@@ -297,13 +297,13 @@ const topicsId = ref<Number[]>([]);
 const topicHeaders: any = [
   {
     title: 'Topics',
-    value: 'topicsCreate',
+    key: 'topicsCreate',
     align: 'start',
     sortable: false,
   },
   {
     title: 'Actions',
-    value: 'action',
+    key: 'action',
     align: 'center',
     width: '150px',
     sortable: false,

@@ -72,8 +72,8 @@ const search = ref('');
 const items = ref<object[]>([]);
 
 const headers = [
-  { title: 'Username', value: 'username', align: 'start', width: '65%' },
-  { title: 'Role', value: 'role', align: 'start', width: '15%' },
-  { title: 'Active', value: 'active', align: 'start', width: '15%' },
+  { title: 'Username', key: 'username', align: 'start', width: '65%' },
+  { title: 'Role', key: 'role', align: 'start', width: '15%' },
+  { title: 'Active', key: 'active', align: 'start', width: '15%' },
 ] as const;
 </script>

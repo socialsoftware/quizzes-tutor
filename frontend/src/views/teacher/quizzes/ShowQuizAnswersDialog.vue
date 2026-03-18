@@ -124,11 +124,11 @@ const quizAnswerDetailCurrentQuestion = ref<number | undefined>(undefined);
 const search = ref('');
 
 const headers = ref<any[]>([
-  { title: 'Name', value: 'name', align: 'start', width: '5%' },
-  { title: 'Username', value: 'username', align: 'center', width: '5%' },
-  { title: 'Start Date', value: 'creationDate', align: 'center', width: '5%' },
-  { title: 'Submission Lag', value: 'submissionLag', align: 'center', width: '5%' },
-  { title: 'Answers', value: 'answers', align: 'center', width: '15%' },
+  { title: 'Name', key: 'name', align: 'start', width: '5%' },
+  { title: 'Username', key: 'username', align: 'center', width: '5%' },
+  { title: 'Start Date', key: 'creationDate', align: 'center', width: '5%' },
+  { title: 'Submission Lag', key: 'submissionLag', align: 'center', width: '5%' },
+  { title: 'Answers', key: 'answers', align: 'center', width: '15%' },
 ]);
 
 const convertToHHMMSS = (time: number | undefined | null): string => {

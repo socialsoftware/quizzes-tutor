@@ -111,10 +111,10 @@ const props = defineProps<{
 defineEmits(['update:dialog']);
 
 const headers: any[] = [
-  { title: 'User', value: 'userInfo.name' },
-  { title: 'Time Score', value: 'scoreTime' },
-  { title: 'Consumption Score', value: 'scoreCommunicationConsumer' },
-  { title: 'Production Score', value: 'scoreCommunicationProducer' },
+  { title: 'User', key: 'userInfo.name' },
+  { title: 'Time Score', key: 'scoreTime' },
+  { title: 'Consumption Score', key: 'scoreCommunicationConsumer' },
+  { title: 'Production Score', key: 'scoreCommunicationProducer' },
 ];
 
 const quizFraudScores = computed(() => {

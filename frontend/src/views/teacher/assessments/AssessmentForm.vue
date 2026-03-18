@@ -213,14 +213,14 @@ const questionsToShow = ref<Question[]>([]);
 const topicHeaders = [
   {
     title: 'Actions',
-    value: 'action',
+    key: 'action',
     align: 'start',
     width: '10%',
     sortable: false,
   },
   {
     title: 'Topics',
-    value: 'topics',
+    key: 'topics',
     align: 'start',
     sortable: false,
   },

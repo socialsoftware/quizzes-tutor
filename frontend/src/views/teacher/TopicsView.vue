@@ -134,15 +134,15 @@ const questionsToShow = ref<Question[]>([]);
 const headers: any = [
   {
     title: 'Actions',
-    value: 'action',
+    key: 'action',
     align: 'start',
     width: '10%',
     sortable: false,
   },
-  { title: 'Name', value: 'name', align: 'start' },
+  { title: 'Name', key: 'name', align: 'start' },
   {
     title: 'Questions',
-    value: 'numberOfQuestions',
+    key: 'numberOfQuestions',
     align: 'center',
     width: '10%',
   },
