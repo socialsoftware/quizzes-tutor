@@ -21,15 +21,22 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark @click="getQuestionSubmissions"
+          <v-btn
+            color="primary"
+            class="mr-2"
+            dark
+            @click="getQuestionSubmissions"
             >Refresh List</v-btn
-          ><v-btn
+          >
+          <v-btn
             v-if="store.isTeacher"
             color="primary"
+            class="mr-2"
             dark
             to="/management/submissions/students"
             >Sort by Students</v-btn
-          ><v-btn
+          >
+          <v-btn
             v-if="store.isStudent"
             color="primary"
             dark

@@ -10,11 +10,17 @@
       />
 
       <v-spacer />
-      <v-btn color="primary" dark @click="getUserQuestionSubmissionsInfo"
+      <v-btn
+        color="primary"
+        class="mr-2"
+        dark
+        @click="getUserQuestionSubmissionsInfo"
         >Refresh List</v-btn
-      ><v-btn
+      >
+      <v-btn
         v-if="store.isTeacher"
         color="primary"
+        class="mr-2"
         dark
         to="/management/submissions"
         >Sort by Date</v-btn
