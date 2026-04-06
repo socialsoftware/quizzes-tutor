@@ -2,12 +2,10 @@
   <v-app id="app">
     <top-bar />
     <v-main>
-      <div class="scrollbar">
-        <error-message />
-        <notification />
-        <loading />
-        <router-view />
-      </div>
+      <error-message />
+      <notification />
+      <loading />
+      <router-view />
     </v-main>
   </v-app>
 </template>
@@ -40,22 +38,15 @@ axios.interceptors.response.use(undefined, (err) => {
 <style scoped>
 #app {
   background-image: url('assets/img/background.jpg');
-  background-position: 0 0;
+  background-position: center center;
   background-repeat: no-repeat;
-  background-size: 100% 100%;
-  height: 100%;
+  background-size: cover;
+  background-attachment: fixed;
   min-height: 100vh;
-  width: 100vw;
   color: #2c3e50;
-  content: ' ';
   display: flex;
   flex-direction: column;
-  left: 0;
-  margin: 0 !important;
-  overflow: hidden;
-  position: absolute;
   text-align: center;
-  top: 0;
   z-index: 1;
 }
 
