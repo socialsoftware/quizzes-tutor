@@ -153,7 +153,7 @@ const updateAnswer = () => {
       flex-grow: 1;
       max-width: 95%;
 
-      & .CodeMirror {
+      & .cm-editor {
         height: auto;
       }
     }

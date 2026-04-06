@@ -70,7 +70,7 @@ const sQuestionSlot = computed({
   & > .slot-content {
     flex-grow: 1;
 
-    & .CodeMirror {
+    & .cm-editor {
       max-height: 150px !important;
       height: 150px !important;
     }

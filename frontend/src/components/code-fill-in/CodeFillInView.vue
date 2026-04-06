@@ -192,7 +192,7 @@ onMounted(() => {
 #ViewCodeMirror select.code-dropdown option {
   color: #272822;
 }
-#ViewCodeMirror .CodeMirror {
+#ViewCodeMirror .cm-editor {
   border: 1px solid #eee;
   height: auto;
 }

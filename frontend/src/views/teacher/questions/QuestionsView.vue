@@ -488,8 +488,8 @@ const deleteQuestion = async (toDeletequestion: Question) => {
 .question-textarea {
   text-align: left;
 
-  .CodeMirror,
-  .CodeMirror-scroll {
+  :deep(.cm-editor),
+  :deep(.cm-scroller) {
     min-height: 200px !important;
   }
 }
@@ -497,8 +497,8 @@ const deleteQuestion = async (toDeletequestion: Question) => {
 .option-textarea {
   text-align: left;
 
-  .CodeMirror,
-  .CodeMirror-scroll {
+  :deep(.cm-editor),
+  :deep(.cm-scroller) {
     min-height: 100px !important;
   }
 }

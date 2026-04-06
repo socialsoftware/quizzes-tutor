@@ -84,7 +84,7 @@ const isCorrect = (element: CodeOrderSlotStatementAnswerDetails, index: number) 
     text-align: left;
   }
 
-  & .CodeMirror {
+  & .cm-editor {
     height: auto;
   }
 

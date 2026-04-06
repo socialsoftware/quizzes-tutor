@@ -196,7 +196,7 @@ watch(() => props.questionDetails, () => {
 .code-container select.code-dropdown option {
   color: #272822;
 }
-.code-container .CodeMirror {
+.code-container .cm-editor {
   border: 1px solid #eee;
   height: auto;
 }

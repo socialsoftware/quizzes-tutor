@@ -110,7 +110,7 @@ const removeRow = (index: number) => {
 </script>
 
 <style lang="scss">
-.code-order-create .CodeMirror {
+.code-order-create .cm-editor {
   height: auto;
 }
 </style>

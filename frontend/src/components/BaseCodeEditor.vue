@@ -11,7 +11,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, ref, onMounted } from 'vue';
+import { computed, ref, shallowRef, onMounted } from 'vue';
 import { Codemirror } from 'vue-codemirror';
 import { java } from '@codemirror/lang-java';
 import { javascript } from '@codemirror/lang-javascript';
@@ -67,7 +67,7 @@ const extensions = computed(() => {
   return exts;
 });
 
-const cmRef = ref<any>(null);
+const cmRef = shallowRef<any>(null);
 const editorDiv = ref<any>(null);
 
 defineExpose({

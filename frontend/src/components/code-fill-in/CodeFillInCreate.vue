@@ -116,7 +116,7 @@ const Dropdownify = () => {
 .code-create {
   text-align: left;
 }
-.CodeMirror-linenumber.CodeMirror-gutter-elt {
+.cm-lineNumbers .cm-gutterElement {
   left: 0;
 }
 </style>

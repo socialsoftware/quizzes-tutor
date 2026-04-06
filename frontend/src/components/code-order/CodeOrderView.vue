@@ -85,7 +85,7 @@ const studentAnswer = (el: CodeOrderSlot): string => {
       flex-grow: 1;
       text-align: left;
 
-      & .CodeMirror {
+      & .cm-editor {
         height: auto;
       }
 
