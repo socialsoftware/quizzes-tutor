@@ -4,11 +4,11 @@ import { ISOtoString } from '@/services/ConvertDateService';
 export class Quiz {
   id!: number;
   number!: number;
-  scramble!: boolean;
-  qrCodeOnly!: boolean;
+  scramble: boolean = false;
+  qrCodeOnly: boolean = false;
   code!: number;
-  timed!: boolean;
-  oneWay!: boolean;
+  timed: boolean = false;
+  oneWay: boolean = false;
   title!: string;
   creationDate!: string;
   availableDate!: string;

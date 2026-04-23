@@ -29,7 +29,7 @@
             <VueDatePicker
               id="availableDateInput"
               v-model="quiz.availableDate"
-              model-type="iso"
+              model-type="yyyy-MM-dd HH:mm:ss"
               format="yyyy-MM-dd HH:mm"
               placeholder="*Available Date"
             ></VueDatePicker>
@@ -38,7 +38,7 @@
             <VueDatePicker
               id="conclusionDateInput"
               v-model="quiz.conclusionDate"
-              model-type="iso"
+              model-type="yyyy-MM-dd HH:mm:ss"
               format="yyyy-MM-dd HH:mm"
               placeholder="*Conclusion Date"
             ></VueDatePicker>
@@ -47,7 +47,7 @@
             <VueDatePicker
               id="resultsDateInput"
               v-model="quiz.resultsDate"
-              model-type="iso"
+              model-type="yyyy-MM-dd HH:mm:ss"
               format="yyyy-MM-dd HH:mm"
               placeholder="Results Date"
             ></VueDatePicker>

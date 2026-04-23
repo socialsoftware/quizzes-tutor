@@ -37,10 +37,21 @@ public class DateHandler {
      *  Converts ISO8601 string format to LocalDateTime
      */
     public static LocalDateTime toLocalDateTime(String date) {
+        if (date == null || date.isEmpty()) return null;
         try {
             return ZonedDateTime.parse(date).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
         } catch (Exception e) {
-            return null;
+            try {
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
+                return LocalDateTime.parse(date, formatter);
+            } catch (Exception e2) {
+                try {
+                    DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+                    return LocalDateTime.parse(date, formatter2);
+                } catch (Exception e3) {
+                    return null;
+                }
+            }
         }
     }
 
