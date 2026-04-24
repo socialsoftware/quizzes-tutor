@@ -43,11 +43,11 @@ public class DateHandler {
         } catch (Exception e) {
             try {
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
-                return LocalDateTime.parse(date, formatter);
+                return LocalDateTime.parse(date, formatter).atZone(ZoneId.of("Europe/Lisbon")).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
             } catch (Exception e2) {
                 try {
                     DateTimeFormatter formatter2 = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
-                    return LocalDateTime.parse(date, formatter2);
+                    return LocalDateTime.parse(date, formatter2).atZone(ZoneId.of("Europe/Lisbon")).withZoneSameInstant(ZoneOffset.UTC).toLocalDateTime();
                 } catch (Exception e3) {
                     return null;
                 }

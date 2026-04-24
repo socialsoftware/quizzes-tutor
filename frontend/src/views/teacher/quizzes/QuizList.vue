@@ -35,7 +35,7 @@
             <v-icon
               class="mr-2 action-button"
               v-bind="props"
-              @click="showQuizDialog(item.id)"
+              @click="openQuizDialog(item.id)"
               >visibility</v-icon
             >
           </template>
@@ -143,7 +143,7 @@
 
       <template v-slot:[`item.title`]="{ item }">
         <div
-          @click="showQuizDialog(item.id)"
+          @click="openQuizDialog(item.id)"
           @contextmenu="editQuiz(item, $event)"
           class="clickableTitle"
         >
@@ -262,7 +262,7 @@ const headers = ref<any[]>([
   { title: 'Creation Date', key: 'creationDate', width: '150px', align: 'center' },
 ]);
 
-const showQuizDialog = async (quizId: number) => {
+const openQuizDialog = async (quizId: number) => {
   try {
     quiz.value = await RemoteServices.getQuiz(quizId);
     quizDialog.value = true;
