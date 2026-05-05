@@ -6,6 +6,7 @@
       :extensions="extensions"
       :disabled="!editable"
       :tab-size="4"
+      @ready="handleReady"
     />
   </div>
 </template>
@@ -24,10 +25,12 @@ const props = withDefaults(defineProps<{
   language?: string;
   editable?: boolean;
   simple?: boolean;
+  customExtensions?: any[];
 }>(), {
   language: 'Java',
   editable: true,
-  simple: false
+  simple: false,
+  customExtensions: () => []
 });
 
 const emit = defineEmits(['update:code', 'update:language']);
@@ -59,7 +62,8 @@ const extensions = computed(() => {
   const exts: any[] = [
     getLanguageExtension(props.language),
     oneDark,
-    EditorView.lineWrapping
+    EditorView.lineWrapping,
+    ...props.customExtensions
   ];
   if (!props.simple) {
     exts.push(lineNumbers());
@@ -69,13 +73,18 @@ const extensions = computed(() => {
 
 const cmRef = shallowRef<any>(null);
 const editorDiv = ref<any>(null);
+const editorView = shallowRef<EditorView | null>(null);
+
+const handleReady = (payload: { view: EditorView }) => {
+  editorView.value = payload.view;
+};
 
 defineExpose({
   getSelection: () => {
     if (editorDiv.value && editorDiv.value.cypressSelectionText) {
       return editorDiv.value.cypressSelectionText;
     }
-    const view = cmRef.value?.view;
+    const view = editorView.value || cmRef.value?.view;
     if (!view) return '';
     const selection = view.state.selection.main;
     return view.state.sliceDoc(selection.from, selection.to);
@@ -87,7 +96,7 @@ defineExpose({
        emit('update:code', val);
        return;
     }
-    const view = cmRef.value?.view;
+    const view = editorView.value || cmRef.value?.view;
     if (!view) return;
     const selection = view.state.selection.main;
     view.dispatch({
@@ -100,7 +109,7 @@ onMounted(() => {
   // Expose setSelection to Cypress
   if (editorDiv.value) {
     (editorDiv.value as any).cypressSetSelection = (from: number, to: number) => {
-      const view = cmRef.value?.view;
+      const view = editorView.value || cmRef.value?.view;
       if (view) {
         view.dispatch({selection: {anchor: from, head: to}});
       }

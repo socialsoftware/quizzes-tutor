@@ -1,8 +1,8 @@
 <template>
   <ul class="code-order-view">
     <li
-      v-for="el in questionDetails.codeOrderSlots"
-      :key="el.id!"
+      v-for="(el, index) in questionDetails.codeOrderSlots"
+      :key="el.id || index"
       :class="{
         'not-used': el.order == null,
         student: !!answerDetails,
@@ -15,8 +15,8 @@
       <BaseCodeEditor
         class="slot-content"
         ref="codeEditor"
-        v-model:code="el.content"
-        v-model:language="questionDetails.language"
+        :code="el.content || ''"
+        :language="questionDetails.language || 'Java'"
         :editable="false"
         :simple="true"
       />

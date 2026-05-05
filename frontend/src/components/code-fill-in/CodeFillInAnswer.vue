@@ -1,14 +1,12 @@
 <template>
   <div class="questionDetails-container" v-if="questionDetails">
     <div class="code-container" style="position: relative; text-align: left">
-      <v-overlay :model-value="!CodemirrorUpdated" contained color="white" opacity="1">
-        <v-progress-circular indeterminate size="40" color="primary" />
-      </v-overlay>
       <BaseCodeEditor
         ref="myCmStudent"
         v-model:code="questionDetails.code"
         v-model:language="questionDetails.language"
         :editable="false"
+        :customExtensions="customExtensions"
       />
     </div>
   </div>
@@ -23,6 +21,7 @@ import CodeFillInSpotStatement from '@/models/statement/questions/CodeFillInSpot
 import CodeFillInStatementAnswerDetails from '@/models/statement/questions/CodeFillInStatementAnswerDetails';
 import CodeFillInSpotAnswerStatement from '@/models/statement/questions/CodeFillInSpotAnswerStatement';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
+import { WidgetType, Decoration, MatchDecorator, ViewPlugin } from '@codemirror/view';
 
 const props = defineProps<{
   questionOrder?: number;
@@ -75,109 +74,81 @@ const selectedANewOption = (event: Event) => {
   emit('question-answer-update');
 };
 
-const replaceDropdowns = () => {
-  const walkDOM = (node: Node, func: (node: Text) => void) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      if (node.nodeValue?.includes('{{slot-')) {
-        func(node as Text);
-      }
-    } else {
-      for (let i = 0; i < node.childNodes.length; i++) {
-        walkDOM(node.childNodes[i], func);
-      }
-    }
-  };
+class SelectWidget extends WidgetType {
+  constructor(public slotNumber: number, public propsRef: any, public answerDetailsRef: any) {
+    super();
+  }
 
-  const getOptions = (name: number, options: CodeFillInSpotStatement[]) => {
-    return options.find((el) => el.sequence === name);
-  };
-  
-  const addOptions = (select: HTMLSelectElement, options: any) => {
-    const data = answerDetailsSynced.value.selectedOptions?.find(
-      (el: any) => el.sequence === options.sequence
+  eq(other: SelectWidget) {
+    // If the selected option id changes, we want the widget to re-render
+    const thisData = this.answerDetailsRef.value.selectedOptions?.find((el: any) => el.sequence === this.slotNumber);
+    const otherData = other.answerDetailsRef.value.selectedOptions?.find((el: any) => el.sequence === other.slotNumber);
+    return this.slotNumber === other.slotNumber && thisData?.optionId === otherData?.optionId;
+  }
+
+  toDOM() {
+    const d = document.createElement('select');
+    d.className = 'code-dropdown';
+    d.name = 'slot-' + this.slotNumber;
+    d.onchange = selectedANewOption;
+
+    const something = this.propsRef.questionDetails.fillInSpots.find(
+      (el: any) => el.sequence === this.slotNumber
     );
-    const blankO = document.createElement('option');
-    blankO.innerHTML = '-- select an option --';
-    if (!data) blankO.setAttribute('selected', '');
-    blankO.setAttribute('value', '');
-    select.appendChild(blankO);
-    
-    options.options.forEach((opt: any, i: number) => {
-      const o = document.createElement('option');
-      o.appendChild(document.createTextNode(opt.content));
-      o.value = String(i);
-      if (data && data.optionId == opt.optionId) {
-        o.setAttribute('selected', '');
-      }
-      select.appendChild(o);
-    });
-  };
 
-  if (!myCmStudent.value) return;
-  const el = myCmStudent.value.$el;
-  
-  walkDOM(el, (textNode: Text) => {
-    const text = textNode.nodeValue || '';
-    const regex = /\{\{slot-(\d+)\}\}/g;
-    let match;
-    let lastIndex = 0;
-    const parent = textNode.parentNode;
-    if (!parent) return;
-    
-    if (parent.nodeName === 'SELECT' || parent.nodeName === 'OPTION') return;
-    
-    const fragment = document.createDocumentFragment();
-    let found = false;
-    
-    while ((match = regex.exec(text)) !== null) {
-      found = true;
-      const num = match[1];
-      const before = text.substring(lastIndex, match.index);
-      if (before) fragment.appendChild(document.createTextNode(before));
-      
-      const d = document.createElement('select');
-      d.className = 'code-dropdown';
-      d.onchange = selectedANewOption;
-      d.name = 'slot-' + num;
-      
-      const something = getOptions(
-        Number(num),
-        props.questionDetails.fillInSpots
+    if (something) {
+      const data = this.answerDetailsRef.value.selectedOptions?.find(
+        (el: any) => el.sequence === this.slotNumber
       );
-      if (something) addOptions(d, something);
+      const blankO = document.createElement('option');
+      blankO.innerHTML = '-- select an option --';
+      if (!data) blankO.setAttribute('selected', '');
+      blankO.setAttribute('value', '');
+      d.appendChild(blankO);
       
-      fragment.appendChild(d);
-      lastIndex = regex.lastIndex;
-    }
-    
-    if (found) {
-      const after = text.substring(lastIndex);
-      if (after) fragment.appendChild(document.createTextNode(after));
-      parent.replaceChild(fragment, textNode);
-    }
-  });
-};
-
-watch(() => props.questionDetails, () => {
-  CodemirrorUpdated.value = false;
-  setTimeout(() => {
-    replaceDropdowns();
-    document.body.addEventListener(
-      'mousedown',
-      function (evt: Event) {
-        if (
-          evt &&
-          evt.target &&
-          (evt.target as any).className === 'code-dropdown'
-        ) {
-          evt.stopPropagation();
+      something.options.forEach((opt: any, i: number) => {
+        const o = document.createElement('option');
+        o.appendChild(document.createTextNode(opt.content));
+        o.value = String(i);
+        if (data && data.optionId == opt.optionId) {
+          o.setAttribute('selected', '');
         }
-      },
-      true
-    );
-    CodemirrorUpdated.value = true;
-  }, 500);
-}, { immediate: true, deep: true });
+        d.appendChild(o);
+      });
+    }
+
+    // Prevent mousedown from blurring the editor and intercepting click
+    d.onmousedown = (e) => e.stopPropagation();
+
+    return d;
+  }
+}
+
+const customExtensions = computed(() => {
+  // Read length/options to ensure reactivity when answers change
+  const _ = answerDetailsSynced.value?.selectedOptions?.map((o: any) => o.optionId);
+
+  const slotMatcher = new MatchDecorator({
+    regexp: /\{\{slot-(\d+)\}\}/g,
+    decoration: (match) => Decoration.replace({
+      widget: new SelectWidget(Number(match[1]), props, answerDetailsSynced)
+    })
+  });
+
+  const slotPlugin = ViewPlugin.fromClass(class {
+    decorations: any;
+    constructor(view: any) {
+      this.decorations = slotMatcher.createDeco(view);
+    }
+    update(update: any) {
+      this.decorations = slotMatcher.updateDeco(update, this.decorations);
+    }
+  }, {
+    decorations: v => v.decorations
+  });
+
+  return [slotPlugin];
+});
 </script>
 
 <style>

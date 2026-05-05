@@ -6,9 +6,11 @@
       :list="questionDetails.orderSlots"
       :group="{ name: 'answer', pull: 'clone', put: false }"
       :clone="cloneAnswerFromQuestion"
-      draggable="li.dragable"
+      draggable=".dragable"
       :sort="false"
       item-key="id"
+      handle=".handle"
+      :force-fallback="true"
     >
       <template #header>
         <h4 class="code-order-header">
@@ -40,8 +42,10 @@
       class="code-order-answer-response"
       v-model="answerList"
       group="answer"
-      draggable="li"
+      draggable=".dragable"
       item-key="slotId"
+      handle=".handle"
+      :force-fallback="true"
     >
       <template #header>
         <h4 class="code-order-header">Response:</h4>
@@ -149,9 +153,14 @@ const updateAnswer = () => {
       opacity: 0.6;
     }
 
+    &.dragable > .handle {
+      cursor: grab;
+    }
+
     & > .content {
       flex-grow: 1;
       max-width: 95%;
+      pointer-events: none;
 
       & .cm-editor {
         height: auto;

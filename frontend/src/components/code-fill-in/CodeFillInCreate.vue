@@ -11,7 +11,7 @@
         <v-spacer />
         <v-tooltip top>
           <template v-slot:activator="{ props }">
-            <v-btn color="primary" small @click="Dropdownify" v-bind="props">
+            <v-btn color="primary" small v-bind="props" @mousedown.prevent="Dropdownify">
               Answer Slot
             </v-btn>
           </template>

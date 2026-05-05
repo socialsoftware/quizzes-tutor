@@ -361,10 +361,6 @@ const handleFileUpload = async (event: File, question: Question) => {
 
 const showQuestionDialog = (question: Question) => {
   console.log('showQuestionDialog called, id:', question?.id, 'title:', question?.title, 'type:', question?.questionDetailsDto?.type);
-  if (!question?.id) {
-    console.log('showQuestionDialog SKIPPED - no id');
-    return;
-  }
   currentQuestion.value = question;
   questionDialog.value = true;
   console.log('showQuestionDialog SET - currentQuestion:', currentQuestion.value?.title, 'questionDialog:', questionDialog.value);

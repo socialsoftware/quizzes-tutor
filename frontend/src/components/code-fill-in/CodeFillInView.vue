@@ -5,12 +5,13 @@
       v-model:code="questionDetails.code"
       v-model:language="questionDetails.language"
       :editable="false"
+      :customExtensions="customExtensions"
     />
   </div>
 </template>
 
 <script setup lang="ts">
-import { ref, watch, onMounted } from 'vue';
+import { computed } from 'vue';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import CodeFillInQuestionDetails from '@/models/management/questions/CodeFillInQuestionDetails';
@@ -18,158 +19,112 @@ import CodeFillInAnswerDetails from '@/models/management/questions/CodeFillInAns
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
 import Option from '@/models/management/Option';
+import { WidgetType, Decoration, MatchDecorator, ViewPlugin } from '@codemirror/view';
 
 const props = defineProps<{
   questionDetails: CodeFillInQuestionDetails;
   answerDetails?: CodeFillInAnswerDetails;
 }>();
 
-const myCmView = ref<any>(null);
-const CodemirrorUpdated = ref(false);
-
 const convertMarkDownFn = (text: string, image: Image | null = null): string => {
   return convertMarkDown(text, image);
 };
 
-const studentAnswered = (option: Option): boolean => {
-  return (
-    (props.answerDetails &&
-      props.answerDetails.options.some((x) => x.id === option.id)) ||
-    false
-  );
-};
-
-const createOptionChild = (option: Option, index: number) => {
-  const o = document.createElement('option');
-  o.appendChild(
-    document.createTextNode(
-      (studentAnswered(option) ? ' S - ' : '') +
-        (option.correct ? ' ✔: ' : ' ✖: ') +
-        option.content
-    )
-  );
-  o.value = option.id?.toString() || index.toString();
-  return o;
-};
-
-const addOptions = (select: HTMLSelectElement, options: Option[]) => {
-  options.forEach((opt: Option, i: number) => {
-    const optionEl = createOptionChild(opt, i);
-    if (studentAnswered(opt)) {
-      select.prepend(optionEl);
-    } else {
-      select.appendChild(optionEl);
-    }
-  });
-};
-
-const getOptions = (name: number, options: CodeFillInSpot[]): Option[] => {
-  const result = options.find((el) => el.sequence === name);
-  return result?.options || [];
-};
-
-const replaceDropdowns = () => {
-  const walkDOM = (node: Node, func: (node: Text) => void) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      if (node.nodeValue?.includes('{{slot-')) {
-        func(node as Text);
-      }
-    } else {
-      for (let i = 0; i < node.childNodes.length; i++) {
-        walkDOM(node.childNodes[i], func);
-      }
-    }
-  };
-
-  if (!myCmView.value) return;
-  const el = myCmView.value.$el;
-
-  walkDOM(el, (textNode: Text) => {
-    const text = textNode.nodeValue || '';
-    const regex = /\{\{slot-(\d+)\}\}/g;
-    let match;
-    let lastIndex = 0;
-    const parent = textNode.parentNode;
-    if (!parent) return;
-
-    if (parent.nodeName === 'SELECT' || parent.nodeName === 'OPTION') return;
-
-    const fragment = document.createDocumentFragment();
-    let found = false;
-
-    while ((match = regex.exec(text)) !== null) {
-      found = true;
-      const num = Number(match[1]);
-      const before = text.substring(lastIndex, match.index);
-      if (before) fragment.appendChild(document.createTextNode(before));
-
-      const d = document.createElement('select');
-      d.className = 'code-dropdown';
-      d.name = 'slot-' + num;
-
-      addOptions(
-        d,
-        getOptions(num, props.questionDetails.fillInSpots)
-      );
-      d.selectedIndex = 0;
-
-      if (studentAnswered) {
-        let isCorrect = false;
-        let isAnswered = false;
-        const opts = getOptions(num, props.questionDetails.fillInSpots);
-        for (const opt of opts) {
-          if (studentAnswered(opt)) {
-            isAnswered = true;
-            if (opt.correct) isCorrect = true;
-          }
-        }
-        if (isAnswered) {
-          d.classList.add(isCorrect ? 'correct' : 'incorrect');
-        }
-      }
-
-      fragment.appendChild(d);
-      lastIndex = regex.lastIndex;
-    }
-
-    if (found) {
-      const after = text.substring(lastIndex);
-      if (after) fragment.appendChild(document.createTextNode(after));
-      parent.replaceChild(fragment, textNode);
-    }
-  });
-};
-
-const updateQuestion = () => {
-  replaceDropdowns();
-  CodemirrorUpdated.value = true;
-  document.body.addEventListener(
-    'mousedown',
-    function (evt: Event) {
-      const htmlTarget = evt?.target as HTMLElement;
-      if (htmlTarget?.className === 'code-dropdown') {
-        evt.stopPropagation();
-      }
-    },
-    true
-  );
-};
-
-const refreshQuestion = () => {
-  CodemirrorUpdated.value = false;
-  setTimeout(() => {
-    updateQuestion();
-  }, 1000);
-};
-
-watch(() => props.questionDetails, () => {
-  if (CodemirrorUpdated.value) {
-    refreshQuestion();
+class SelectWidget extends WidgetType {
+  constructor(public slotNumber: number, public propsRef: any) {
+    super();
   }
-}, { immediate: false, deep: true });
 
-onMounted(() => {
-  refreshQuestion();
+  eq(other: SelectWidget) {
+    return this.slotNumber === other.slotNumber;
+  }
+
+  toDOM() {
+    const d = document.createElement('select');
+    d.className = 'code-dropdown';
+    d.name = 'slot-' + this.slotNumber;
+    
+    const studentAnsweredLocal = (option: Option): boolean => {
+      return (
+        (this.propsRef.answerDetails &&
+          this.propsRef.answerDetails.options.some((x: any) => x.id === option.id)) ||
+        false
+      );
+    };
+
+    const createOptionChildLocal = (option: Option, index: number) => {
+      const o = document.createElement('option');
+      o.appendChild(
+        document.createTextNode(
+          (studentAnsweredLocal(option) ? ' S - ' : '') +
+            (option.correct ? ' ✔: ' : ' ✖: ') +
+            option.content
+        )
+      );
+      o.value = option.id?.toString() || index.toString();
+      return o;
+    };
+
+    const addOptionsLocal = (select: HTMLSelectElement, options: Option[]) => {
+      options.forEach((opt: Option, i: number) => {
+        const optionEl = createOptionChildLocal(opt, i);
+        if (studentAnsweredLocal(opt)) {
+          select.prepend(optionEl);
+        } else {
+          select.appendChild(optionEl);
+        }
+      });
+    };
+
+    const getOptionsLocal = (name: number, options: CodeFillInSpot[]): Option[] => {
+      const result = options.find((el: any) => el.sequence === name);
+      return result?.options || [];
+    };
+
+    addOptionsLocal(
+      d,
+      getOptionsLocal(this.slotNumber, this.propsRef.questionDetails.fillInSpots)
+    );
+    d.selectedIndex = 0;
+
+    let isCorrect = false;
+    let isAnswered = false;
+    const opts = getOptionsLocal(this.slotNumber, this.propsRef.questionDetails.fillInSpots);
+    for (const opt of opts) {
+      if (studentAnsweredLocal(opt)) {
+        isAnswered = true;
+        if (opt.correct) isCorrect = true;
+      }
+    }
+    if (isAnswered) {
+      d.classList.add(isCorrect ? 'correct' : 'incorrect');
+    }
+
+    return d;
+  }
+}
+
+const customExtensions = computed(() => {
+  const slotMatcher = new MatchDecorator({
+    regexp: /\{\{slot-(\d+)\}\}/g,
+    decoration: (match) => Decoration.replace({
+      widget: new SelectWidget(Number(match[1]), props)
+    })
+  });
+
+  const slotPlugin = ViewPlugin.fromClass(class {
+    decorations: any;
+    constructor(view: any) {
+      this.decorations = slotMatcher.createDeco(view);
+    }
+    update(update: any) {
+      this.decorations = slotMatcher.updateDeco(update, this.decorations);
+    }
+  }, {
+    decorations: v => v.decorations
+  });
+
+  return [slotPlugin];
 });
 </script>
 
