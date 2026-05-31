@@ -3,237 +3,215 @@
     :model-value="dialog"
     @update:model-value="cancelTournament()"
     @keydown.esc="cancelTournament()"
-    max-width="75%"
-    max-height="80%"
+    max-width="70%"
+    max-height="95%"
   >
-    <v-card>
-      <v-card-title v-if="!editMode">
+    <v-card class="compact-tournament-card">
+      <v-card-title class="py-2 px-4" v-if="!editMode">
         <span class="headline">
           <b>New Tournament</b>
         </span>
       </v-card-title>
-      <v-card-title v-if="editMode">
+      <v-card-title class="py-2 px-4" v-if="editMode">
         <span class="headline">
           <b>Edit Tournament</b>
         </span>
       </v-card-title>
 
-      <v-card-text class="text-left" v-if="editTournament">
-        <v-container grid-list-md fluid>
-          <v-layout column wrap>
-            <v-flex xs24 sm12 md8>
+      <v-card-text class="text-left py-1 px-4" v-if="editTournament">
+        <v-container fluid class="pa-1">
+          <v-row class="my-0">
+            <v-col cols="12" class="py-1">
               <b>Date:</b>
-            </v-flex>
-            <v-row>
-              <v-col cols="12" sm="6">
-                <VueDatePicker
-                  id="startTimeInput"
-                  v-model="newStartTime"
-                  model-type="iso"
-                  format="yyyy-MM-dd HH:mm"
-                  placeholder="Start Time"
-                ></VueDatePicker>
-              </v-col>
-              <v-spacer></v-spacer>
-              <v-col cols="12" sm="6">
-                <VueDatePicker
-                  id="endTimeInput"
-                  v-model="newEndTime"
-                  model-type="iso"
-                  format="yyyy-MM-dd HH:mm"
-                  placeholder="End Time"
-                ></VueDatePicker>
-              </v-col>
-            </v-row>
-            <v-flex xs24 sm12 md8 v-if="!editMode">
-              <v-row>
-                <v-col cols="12" sm="4">
-                  <p>
-                    <b>Number Of Questions:</b>
-                    {{ editTournament.numberOfQuestions }}
-                  </p>
-                  <v-text-field
-                    min="1"
-                    step="1"
-                    type="number"
-                    v-model="editTournament.numberOfQuestions"
-                    label="Number Of Questions"
-                    data-cy="NumberOfQuestions"
-                  />
-                </v-col>
-                <v-col cols="12" sm="2">
-                  <p>
-                    <b>Privacy:</b>
-                  </p>
-                  <div
-                    class="switchContainer"
-                    style="
-                      display: flex;
-                      flex-direction: row;
-                      position: relative;
-                    "
-                  >
-                    <v-switch
-                      data-cy="SwitchPrivacy"
-                      v-model="editTournament.privateTournament"
-                      :label="
-                        editTournament.privateTournament ? 'Private' : 'Public'
-                      "
-                      @change="togglePrivacy()"
-                    />
-                  </div>
-                </v-col>
-                <v-col cols="12" sm="6" v-if="typePassword">
-                  <p>
-                    <b>Set Password:</b>
-                  </p>
-                  <v-text-field
-                    :type="passwordFieldType"
-                    v-model="password"
-                    label="Password"
-                    data-cy="Password"
-                  >
-                    <template slot="append">
-                      <v-icon
-                        v-if="typePassword"
-                        medium
-                        class="mr-2"
-                        @click="switchVisibility()"
-                        >visibility</v-icon
-                      >
-                    </template>
-                  </v-text-field>
-                </v-col>
-              </v-row>
-            </v-flex>
-            <v-flex xs24 sm12 md8 v-if="editMode">
-              <p>
-                <b>Number Of Questions:</b>
-                {{ oldNumberOfQuestions }}
-              </p>
+            </v-col>
+          </v-row>
+          <v-row class="my-0">
+            <v-col cols="12" sm="6" class="py-1">
+              <VueDatePicker
+                id="startTimeInput"
+                v-model="newStartTime"
+                model-type="iso"
+                format="yyyy-MM-dd HH:mm"
+                placeholder="Start Time"
+              ></VueDatePicker>
+            </v-col>
+            <v-col cols="12" sm="6" class="py-1">
+              <VueDatePicker
+                id="endTimeInput"
+                v-model="newEndTime"
+                model-type="iso"
+                format="yyyy-MM-dd HH:mm"
+                placeholder="End Time"
+              ></VueDatePicker>
+            </v-col>
+          </v-row>
+          <v-row v-if="!editMode" class="my-0 align-center">
+            <v-col cols="12" class="d-flex align-center py-1">
+              <span class="text-no-wrap mr-3"><b>Number Of Questions:</b></span>
               <v-text-field
                 min="1"
                 step="1"
                 type="number"
                 v-model="editTournament.numberOfQuestions"
-                label="Number Of Questions"
                 data-cy="NumberOfQuestions"
+                hide-details
+                density="compact"
+                variant="outlined"
+                style="max-width: 100px; margin-right: 40px;"
               />
-            </v-flex>
-          </v-layout>
+              <span class="text-no-wrap mr-3"><b>Privacy:</b></span>
+              <v-switch
+                data-cy="SwitchPrivacy"
+                v-model="editTournament.privateTournament"
+                :label="
+                  editTournament.privateTournament ? 'Private' : 'Public'
+                "
+                @change="togglePrivacy()"
+                hide-details
+                density="compact"
+                class="mt-0"
+              />
+            </v-col>
+          </v-row>
+          <v-row v-if="!editMode && typePassword" class="my-0 align-center">
+            <v-col cols="12" sm="6" class="d-flex align-center py-1">
+              <span class="text-no-wrap mr-3"><b>Set Password:</b></span>
+              <v-text-field
+                :type="passwordFieldType"
+                v-model="password"
+                data-cy="Password"
+                hide-details
+                density="compact"
+                variant="outlined"
+                style="max-width: 150px;"
+                :append-icon="passwordFieldType === 'password' ? 'mdi-eye-off' : 'mdi-eye'"
+                @click:append="switchVisibility()"
+              />
+            </v-col>
+          </v-row>
+          <v-row v-if="editMode" class="my-0 align-center">
+            <v-col cols="12" class="d-flex align-center py-1">
+              <span class="text-no-wrap mr-3">
+                <b>Number Of Questions:</b>
+                (Old: {{ oldNumberOfQuestions }})
+              </span>
+              <v-text-field
+                min="1"
+                step="1"
+                type="number"
+                v-model="editTournament.numberOfQuestions"
+                data-cy="NumberOfQuestions"
+                hide-details
+                density="compact"
+                variant="outlined"
+                style="max-width: 150px;"
+              />
+            </v-col>
+          </v-row>
         </v-container>
-      </v-card-text>
-      <v-card-text class="text-center" v-if="editTournament">
-        <v-row>
-          <v-col cols="12" sm="6" class="light-green lighten-4">
-            <v-data-table
-              :headers="topicHeaders"
-              :custom-filter="topicFilter"
-              :items="currentTopics"
-              :search="JSON.stringify(currentTopicsSearch)"
-              :mobile-breakpoint="0"
-              :items-per-page="5"
-              :footer-props="{ itemsPerPageOptions: [5, 10, 15] }"
-            >
-              <template v-slot:top>
-                <h2>Currently selected</h2>
-                <v-autocomplete
-                  v-model="currentTopicsSearch"
-                  label="Search"
-                  :items="allTopics"
-                  :filter="topicSearch"
-                  v-model:search="currentTopicsSearchText"
-                  @change="currentTopicsSearchText = ''"
-                  item-text="name"
-                  return-object
-                  chips
-                  small-chips
-                  clearable
-                  deletable-chips
-                  multiple
-                  dense
-                  class="mx-4"
-                >
-                </v-autocomplete>
-              </template>
-              <template v-slot:[`item.topicsCreate`]="{ item }">
-                {{ item.name }}
-              </template>
-              <template v-slot:[`item.action`]="{ item }">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ props: activatorProps }">
-                    <v-icon
-                      small
-                      class="mr-2"
-                      v-bind="activatorProps"
-                      @click="removeTopic(item)"
-                      data-cy="removeTopic"
-                    >
-                      remove</v-icon
-                    >
-                  </template>
-                  <span>Remove from Tournament</span>
-                </v-tooltip>
-              </template>
-            </v-data-table>
+
+        <v-row class="mt-2 align-stretch justify-center">
+          <v-col cols="12" sm="5" class="d-flex flex-column">
+            <div class="currently-selected-list flex-grow-1">
+              <v-data-table
+                :headers="topicHeaders"
+                :custom-filter="topicFilter"
+                :items="currentTopics"
+                :search="JSON.stringify(currentTopicsSearch)"
+                :mobile-breakpoint="0"
+                :items-per-page="5"
+                :footer-props="{ itemsPerPageOptions: [5, 10, 15] }"
+              >
+                <template v-slot:top>
+                  <h2 class="text-center w-100">Currently selected</h2>
+                  <v-autocomplete
+                    v-model="currentTopicsSearch"
+                    label="Search"
+                    :items="allTopics"
+                    :filter="topicSearch"
+                    v-model:search="currentTopicsSearchText"
+                    @change="currentTopicsSearchText = ''"
+                    item-text="name"
+                    return-object
+                    chips
+                    small-chips
+                    clearable
+                    deletable-chips
+                    multiple
+                    dense
+                    class="mx-4"
+                  >
+                  </v-autocomplete>
+                </template>
+                <template v-slot:[`item.topicsCreate`]="{ item }">
+                  {{ (item as any).raw.name }}
+                </template>
+                <template v-slot:[`item.action`]="{ item }">
+                  <v-icon
+                    icon="mdi-minus"
+                    class="mr-2"
+                    @click="removeTopic((item as any).raw)"
+                    data-cy="removeTopic"
+                  >
+                    <v-tooltip activator="parent" location="bottom">Remove from Tournament</v-tooltip>
+                  </v-icon>
+                </template>
+              </v-data-table>
+            </div>
           </v-col>
-          <v-col cols="12" sm="6" class="red lighten-4">
-            <v-data-table
-              :headers="topicHeaders"
-              :custom-filter="topicFilter"
-              :items="availableTopics"
-              :search="JSON.stringify(allTopicsSearch)"
-              :mobile-breakpoint="0"
-              :items-per-page="5"
-              :footer-props="{ itemsPerPageOptions: [5, 10, 15] }"
-              data-cy="Topics"
-            >
-              <template v-slot:top>
-                <h2>Available topics</h2>
-                <v-autocomplete
-                  v-model="allTopicsSearch"
-                  label="Search"
-                  :items="allTopics"
-                  :filter="topicSearch"
-                  v-model:search="allTopicsSearchText"
-                  @change="allTopicsSearchText = ''"
-                  item-text="name"
-                  return-object
-                  chips
-                  small-chips
-                  clearable
-                  deletable-chips
-                  multiple
-                  dense
-                  class="mx-4"
-                >
-                </v-autocomplete>
-              </template>
-              <template v-slot:[`item.topicsCreate`]="{ item }">
-                {{ item.name }}
-              </template>
-              <template v-slot:[`item.action`]="{ item }">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ props: activatorProps }">
-                    <v-icon
-                      small
-                      class="mr-2"
-                      v-bind="activatorProps"
-                      @click="addTopic(item)"
-                      data-cy="addTopic"
-                    >
-                      add</v-icon
-                    >
-                  </template>
-                  <span>Add to Tournament</span>
-                </v-tooltip>
-              </template>
-            </v-data-table>
+          <v-col cols="12" sm="5" class="d-flex flex-column">
+            <div class="available-topics-list flex-grow-1">
+              <v-data-table
+                :headers="topicHeaders"
+                :custom-filter="topicFilter"
+                :items="availableTopics"
+                :search="JSON.stringify(allTopicsSearch)"
+                :mobile-breakpoint="0"
+                :items-per-page="5"
+                :footer-props="{ itemsPerPageOptions: [5, 10, 15] }"
+                data-cy="Topics"
+              >
+                <template v-slot:top>
+                  <h2 class="text-center w-100">Available topics</h2>
+                  <v-autocomplete
+                    v-model="allTopicsSearch"
+                    label="Search"
+                    :items="allTopics"
+                    :filter="topicSearch"
+                    v-model:search="allTopicsSearchText"
+                    @change="allTopicsSearchText = ''"
+                    item-text="name"
+                    return-object
+                    chips
+                    small-chips
+                    clearable
+                    deletable-chips
+                    multiple
+                    dense
+                    class="mx-4"
+                  >
+                  </v-autocomplete>
+                </template>
+                <template v-slot:[`item.topicsCreate`]="{ item }">
+                  {{ (item as any).raw.name }}
+                </template>
+                <template v-slot:[`item.action`]="{ item }">
+                  <v-icon
+                    icon="mdi-plus"
+                    class="mr-2"
+                    @click="addTopic((item as any).raw)"
+                    data-cy="addTopic"
+                  >
+                    <v-tooltip activator="parent" location="bottom">Add to Tournament</v-tooltip>
+                  </v-icon>
+                </template>
+              </v-data-table>
+            </div>
           </v-col>
         </v-row>
       </v-card-text>
 
-      <v-card-actions>
+      <v-card-actions class="px-6 py-2">
         <v-spacer />
         <v-btn color="primary" @click="cancelTournament" data-cy="cancelButton"
           >Cancel</v-btn
@@ -481,3 +459,28 @@ const addTopic = (topic: Topic) => {
   availableTopics.value = availableTopics.value.filter((t) => t.id != topic.id);
 };
 </script>
+
+<style scoped>
+:deep(.dp__main) {
+  width: 100%;
+}
+
+.compact-tournament-card {
+  padding-top: 12px !important;
+  padding-bottom: 12px !important;
+}
+
+.currently-selected-list {
+  border: 2px solid #a5d6a7 !important;
+  background-color: #e8f5e9 !important;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.available-topics-list {
+  border: 2px solid #ffcdd2 !important;
+  background-color: #ffebee !important;
+  border-radius: 8px;
+  padding: 12px;
+}
+</style>

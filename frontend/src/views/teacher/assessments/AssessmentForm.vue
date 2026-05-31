@@ -30,8 +30,8 @@
             ></v-text-field>
           </v-col>
         </v-row>
-        <v-row>
-          <v-col class="bg-light-green-lighten-4">
+        <div class="topics-flex-container">
+          <div class="currently-selected-list">
             <v-data-table
               :headers="topicHeaders"
               :custom-filter="topicFilter"
@@ -42,7 +42,7 @@
               :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
             >
               <template v-slot:top>
-                <h2>Currently selected</h2>
+                <h2 class="text-center w-100">Currently selected</h2>
                 <v-autocomplete
                   v-model="currentTopicsSearch"
                   label="Search"
@@ -72,35 +72,11 @@
                 <div v-else>No Topic</div>
               </template>
               <template v-slot:[`item.action`]="{ item }">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ props }">
-                    <v-icon
-                      class="mr-2 action-button"
-                      v-bind="props"
-                      @click="removeTopicConjunction(item)"
-                    >
-                      chevron_right</v-icon
-                    >
-                  </template>
-                  <span>Remove from Assessment</span>
-                </v-tooltip>
-
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ props }">
-                    <v-icon
-                      class="mr-2 action-button"
-                      v-bind="props"
-                      @click="showQuestionsDialog(item)"
-                    >
-                      visibility</v-icon
-                    >
-                  </template>
-                  <span>Show Questions</span>
-                </v-tooltip>
+                <!-- Vazio de acordo com o pedido -->
               </template>
             </v-data-table>
-          </v-col>
-          <v-col class="bg-red-lighten-4">
+          </div>
+          <div class="available-topics-list">
             <v-data-table
               :headers="topicHeaders"
               :custom-filter="topicFilter"
@@ -109,9 +85,10 @@
               :mobile-breakpoint="0"
               :items-per-page="15"
               :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+              data-cy="Topics"
             >
               <template v-slot:top>
-                <h2>Available topics</h2>
+                <h2 class="text-center w-100">Available topics</h2>
                 <v-autocomplete
                   v-model="allTopicsSearch"
                   label="Search"
@@ -141,34 +118,32 @@
                 <div v-else>No Topic</div>
               </template>
               <template v-slot:[`item.action`]="{ item }">
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ props }">
-                    <v-icon
-                      class="mr-2 action-button"
-                      v-bind="props"
-                      @click="addTopicConjunction(item)"
-                    >
-                      chevron_left</v-icon
-                    >
-                  </template>
-                  <span>Add to Assessment</span>
-                </v-tooltip>
-                <v-tooltip bottom>
-                  <template v-slot:activator="{ props }">
-                    <v-icon
-                      class="mr-2 action-button"
-                      v-bind="props"
-                      @click="showQuestionsDialog(item)"
-                    >
-                      visibility</v-icon
-                    >
-                  </template>
-                  <span>Show Questions</span>
-                </v-tooltip>
+                <div class="d-flex" style="gap: 8px;">
+                  <v-btn
+                    density="compact"
+                    variant="flat"
+                    color="grey-lighten-3"
+                    icon
+                    @click="addTopicConjunction((item as any).raw)"
+                  >
+                    <v-icon>mdi-chevron-left</v-icon>
+                    <v-tooltip activator="parent" location="bottom">Add to Assessment</v-tooltip>
+                  </v-btn>
+                  <v-btn
+                    density="compact"
+                    variant="flat"
+                    color="grey-lighten-3"
+                    icon
+                    @click="showQuestionsDialog((item as any).raw)"
+                  >
+                    <v-icon>mdi-eye</v-icon>
+                    <v-tooltip activator="parent" location="bottom">Show Questions</v-tooltip>
+                  </v-btn>
+                </div>
               </template>
             </v-data-table>
-          </v-col>
-        </v-row>
+          </div>
+        </div>
       </v-container>
     </v-card-text>
 
@@ -341,4 +316,27 @@ const convertMarkDown = (text: string, image: Image | null = null): string => {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.topics-flex-container {
+  display: flex;
+  gap: 20px;
+  width: 100%;
+  align-items: stretch;
+}
+
+.currently-selected-list {
+  flex: 1;
+  border: 2px solid #a5d6a7 !important;
+  background-color: #e8f5e9 !important;
+  border-radius: 8px;
+  padding: 12px;
+}
+
+.available-topics-list {
+  flex: 1;
+  border: 2px solid #ffcdd2 !important;
+  background-color: #ffebee !important;
+  border-radius: 8px;
+  padding: 12px;
+}
+</style>

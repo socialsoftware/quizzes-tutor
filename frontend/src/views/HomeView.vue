@@ -152,7 +152,8 @@ const demoAdmin = async () => {
 
 <style lang="scss" scoped>
 .container {
-  height: 100%;
+  min-height: calc(100vh - var(--v-layout-top, 64px));
+  position: relative;
   display: flex;
   flex-direction: column;
   flex-wrap: nowrap;

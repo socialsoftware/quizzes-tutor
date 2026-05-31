@@ -31,7 +31,7 @@
           dense
           hide-details
           variant="outlined"
-          @update:model-value="setStatus(item.id as number, item.status)"
+          @update:model-value="setStatus((item as any).raw.id as number, item.status)"
         >
           <template v-slot:selection="{ item: selectionItem }">
             <v-chip :color="getStatusColor((selectionItem as any).title)" small>
@@ -41,45 +41,33 @@
         </v-select>
       </template>
       <template v-slot:[`item.action`]="{ item }">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="showQuestionsDialog(item.id as number)"
-              >visibility</v-icon
-            >
-          </template>
-          <span>Show Questions</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="editAssessment(item.id as number)"
-              >edit</v-icon
-            >
-          </template>
-          <span>Edit Assessment</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="deleteAssessment(item.id as number)"
-              color="red"
-              >delete</v-icon
-            >
-          </template>
-          <span>Delete Assessment</span>
-        </v-tooltip>
+        <v-icon
+          icon="mdi-eye"
+          class="mr-2 action-button"
+          @click="showQuestionsDialog((item as any).raw.id as number)"
+        >
+          <v-tooltip activator="parent" location="bottom">Show Questions</v-tooltip>
+        </v-icon>
+        <v-icon
+          icon="mdi-pencil"
+          class="mr-2 action-button"
+          @click="editAssessment((item as any).raw.id as number)"
+        >
+          <v-tooltip activator="parent" location="bottom">Edit Assessment</v-tooltip>
+        </v-icon>
+        <v-icon
+          icon="mdi-delete"
+          class="mr-2 action-button"
+          @click="deleteAssessment((item as any).raw.id as number)"
+          color="red"
+        >
+          <v-tooltip activator="parent" location="bottom">Delete Assessment</v-tooltip>
+        </v-icon>
       </template>
       <template v-slot:[`item.title`]="{ item }">
         <div
-          @click="showQuestionsDialog(item.id as number)"
-          @contextmenu="editAssessment(item.id as number, $event)"
+          @click="showQuestionsDialog((item as any).raw.id as number)"
+          @contextmenu="editAssessment((item as any).raw.id as number, $event)"
           class="clickableTitle"
         >
           {{ item.title }}
@@ -87,7 +75,7 @@
       </template>
     </v-data-table>
     <footer>
-      <v-icon class="mr-2 action-button">mouse</v-icon>Right-click on
+      <v-icon icon="mdi-mouse" class="mr-2 action-button" />Right-click on
       assessment's title to edit it.
     </footer>
 
@@ -177,7 +165,7 @@ const getStatusColor = (status: string) => {
 };
 
 const convertMarkDown = (title: string, image: Image | null = null): string => {
-  return convertMarkDownService(text, image);
+  return convertMarkDownService(title, image);
 };
 
 const showQuestionsDialog = async (assessmentId: number) => {
