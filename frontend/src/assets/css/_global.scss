@@ -210,3 +210,66 @@ footer {
   box-shadow: none !important;
   border: none !important;
 }
+
+// ─── GLOBAL UI CHANGES ────────────────────────────────────────────────────────
+
+// 1. Progress bar — força cor azul e aumenta largura mínima
+.v-progress-linear {
+  min-width: 120px !important;
+
+  .v-progress-linear__determinate,
+  .v-progress-linear__buffer {
+    background-color: #1565C0 !important; // azul mais escuro e carregado
+  }
+
+  // fallback para quando a cor vem via style inline
+  &:not([style*="background"]) .v-progress-linear__background {
+    background-color: rgba(21, 101, 192, 0.2) !important;
+  }
+}
+
+// 2. Tabelas compactas — reduz o padding das células para tornar a tabela mais comprimida
+.table .v-data-table {
+  td,
+  th {
+    padding-top: 4px !important;
+    padding-bottom: 4px !important;
+    height: 36px !important;
+  }
+}
+
+// 3. Cabeçalhos da tabela — quebra apenas nos espaços entre palavras (nunca a meio de uma palavra)
+.table .v-data-table th {
+  white-space: normal !important;   // permite quebra de linha
+  word-break: keep-all !important;  // nunca parte palavras a meio
+  overflow-wrap: normal !important; // só quebra em espaços
+  line-height: 1.3 !important;
+  vertical-align: middle !important;
+  min-width: 60px !important;
+}
+
+// 4. Classe reutilizável para feedback visual verde ao clicar (usada em Discussions e Student Quizzes)
+.active-green-selection {
+  background-color: rgba(88, 180, 89, 0.18) !important;
+  outline: 2px solid #58b459 !important;
+  outline-offset: -2px;
+  transition: background-color 0.2s ease, outline 0.2s ease;
+}
+
+// Versão para linhas de tabela (tr) — usa box-shadow porque border/outline não funcionam em tr com border-collapse
+tr.active-green-selection {
+  background-color: rgba(88, 180, 89, 0.18) !important;
+  box-shadow: inset 4px 0 0 #58b459 !important;
+  transition: background-color 0.2s ease;
+
+  td {
+    background-color: rgba(88, 180, 89, 0.18) !important;
+  }
+}
+
+// Versão para cards/barras (divs, v-card)
+.active-green-selection.v-card,
+div.active-green-selection {
+  border: 2px solid #58b459 !important;
+  background-color: rgba(88, 180, 89, 0.12) !important;
+}

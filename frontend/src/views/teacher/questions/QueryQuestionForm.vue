@@ -11,20 +11,22 @@
             <v-text-field v-model="query.content" label="Content"
           /></v-col>
           <v-col>
-            <VueCtkDateTimePicker
-              label="Begin Creation Date"
-              id="beginCreationDate"
+            <v-text-field
               v-model="query.beginCreationDate"
-              format="YYYY-MM-DDTHH:mm:ssZ"
-            ></VueCtkDateTimePicker>
+              label="Begin Creation Date"
+              variant="outlined"
+              density="compact"
+              clearable
+            />
           </v-col>
           <v-col>
-            <VueCtkDateTimePicker
-              label="End Creation Date"
-              id="endCreationDate"
+            <v-text-field
               v-model="query.endCreationDate"
-              format="YYYY-MM-DDTHH:mm:ssZ"
-            ></VueCtkDateTimePicker>
+              label="End Creation Date"
+              variant="outlined"
+              density="compact"
+              clearable
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -65,13 +67,15 @@
             ></v-checkbox>
           </v-col>
           <v-col>
+            <!-- O "0" vem antes do label, depois o slider, depois o "100" -->
             <v-range-slider
               v-model="query.difficulty"
               :max="100"
               :min="0"
               step="10"
               hide-details
-              label="Percentage of Correct Answers"
+              color="primary"
+              track-color="#bdbdbd"
               ><template v-slot:prepend>
                 <v-text-field
                   :model-value="query.difficulty[0]"
@@ -82,6 +86,7 @@
                   style="width: 40px"
                   @update:model-value="$set(query.difficulty, 0, $event)"
                 ></v-text-field>
+                <span class="slider-label">Percentage of Correct Answers</span>
               </template>
               <template v-slot:append>
                 <v-text-field
@@ -159,3 +164,28 @@ const queryQuestions = async () => {
   store.clearLoading();
 };
 </script>
+
+<style lang="scss" scoped>
+// Afinar a track do slider para corresponder ao exemplo de referência
+:deep(.v-slider-track__background),
+:deep(.v-slider-track__fill) {
+  height: 2px !important;
+  border-radius: 1px !important;
+}
+
+:deep(.v-slider-thumb) {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+// Label "Percentage of Correct Answers" alinhado verticalmente dentro do prepend
+.slider-label {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  align-self: center;
+  margin: 0 8px;
+}
+
+// Estilo do VueDatePicker — removido (não está ativo)
+</style>

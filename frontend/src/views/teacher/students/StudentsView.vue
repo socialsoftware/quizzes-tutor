@@ -108,7 +108,7 @@ watch(course, async () => {
 });
 
 const getPercentageColor = (percentage: number) => {
-  if (percentage < 25) return 'red';
+  if (percentage < 25) return 'error';  // mapeado para #7f0000 no tema Vuetify
   else if (percentage < 50) return 'orange';
   else if (percentage < 75) return 'lime';
   else return 'green';

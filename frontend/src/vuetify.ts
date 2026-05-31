@@ -67,7 +67,7 @@ export default createVuetify({
           primary: '#1976D2',
           secondary: '#424242',
           accent: '#8c9eff',
-          error: '#b71c1c',
+          error: '#7f0000',   // vermelho mais escuro e carregado
         }
       },
       dark: {
@@ -75,7 +75,7 @@ export default createVuetify({
           primary: '#1976D2',
           secondary: '#424242',
           accent: '#8c9eff',
-          error: '#b71c1c',
+          error: '#7f0000',   // vermelho mais escuro e carregado
         }
       },
     },

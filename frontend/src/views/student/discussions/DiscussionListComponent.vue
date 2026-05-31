@@ -9,6 +9,10 @@
       :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      :row-props="({ item }) => ({
+        class: selectedDiscussionId === (item.raw || item).id ? 'active-green-selection' : 'discussion-row',
+      })"
+      @click:row="(event, row) => selectRow(row)"
     >
       <template v-slot:top>
         <v-card-title style="width: 50%">
@@ -66,6 +70,16 @@ const props = defineProps<{
 const search = ref('');
 const currentDiscussion = ref<Discussion | null>(null);
 const discussionDialog = ref(false);
+const selectedDiscussionId = ref<number | null>(null);
+
+const selectRow = (row: any) => {
+  const discussion = row?.item?.raw || row?.item || row;
+  if (selectedDiscussionId.value === discussion.id) {
+    selectedDiscussionId.value = null;
+  } else {
+    selectedDiscussionId.value = discussion.id;
+  }
+};
 
 const headers = [
   { title: 'Actions', key: 'action', align: 'start', width: '5px', sortable: false },
@@ -89,4 +103,8 @@ const onCloseShowDiscussionDialog = () => {
 };
 </script>
 
-<style scoped></style>
+<style scoped>
+.discussion-row {
+  cursor: pointer;
+}
+</style>

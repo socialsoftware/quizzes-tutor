@@ -48,32 +48,24 @@
           v-bind:class="{ clickableRow: hasSubmissions(displayItem) }"
           @click="() => { if (hasSubmissions(displayItem)) toggleExpand(displayItem as any) }"
         >
-          <td>
+          <td style="width: 48px; padding: 0 4px;">
             <v-icon v-if="!isExpanded(displayItem as any)">fa-angle-down</v-icon>
             <v-icon v-else>fa-angle-up</v-icon>
           </td>
-          <td>{{ getRaw(displayItem)?.name }}</td>
-          <td>
-            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.approved?.color">{{
-              getRaw(displayItem)?.numQuestionSubmissions?.approved?.num
-            }}</v-chip>
+          <td style="width: 50%;">{{ getRaw(displayItem)?.name }}</td>
+          <td style="width: 10%; text-align: center;">
+            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.approved?.color">{{ getRaw(displayItem)?.numQuestionSubmissions?.approved?.num }}</v-chip>
           </td>
-          <td>
-            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.rejected?.color">{{
-              getRaw(displayItem)?.numQuestionSubmissions?.rejected?.num
-            }}</v-chip>
+          <td style="width: 10%; text-align: center;">
+            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.rejected?.color">{{ getRaw(displayItem)?.numQuestionSubmissions?.rejected?.num }}</v-chip>
           </td>
-          <td>
-            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.in_review?.color">{{
-              getRaw(displayItem)?.numQuestionSubmissions?.in_review?.num
-            }}</v-chip>
+          <td style="width: 10%; text-align: center;">
+            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.in_review?.color">{{ getRaw(displayItem)?.numQuestionSubmissions?.in_review?.num }}</v-chip>
           </td>
-          <td>
-            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.in_revision?.color">{{
-              getRaw(displayItem)?.numQuestionSubmissions?.in_revision?.num
-            }}</v-chip>
+          <td style="width: 10%; text-align: center;">
+            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.in_revision?.color">{{ getRaw(displayItem)?.numQuestionSubmissions?.in_revision?.num }}</v-chip>
           </td>
-          <td>
+          <td style="width: 10%; text-align: center;">
             <v-chip>{{ getRaw(displayItem)?.totalQuestionSubmissions }}</v-chip>
           </td>
         </tr>
@@ -189,6 +181,12 @@ const itemsPerPage = ref<number>(15);
 
 const headers = ref<any[]>([
   {
+    key: 'data-table-expand',
+    title: '',
+    width: '48px',
+    sortable: false,
+  },
+  {
     title: 'Student',
     key: 'name',
     align: 'center',
@@ -263,5 +261,11 @@ const showQuestionSubmissionDialogAction = async (questionSubmission: QuestionSu
 }
 .studentSubmissions {
   border: 1px lightgrey solid;
+}
+
+// Evita deslocamento da tabela ao ordenar — fixa o layout das colunas
+.v-card.table .v-data-table table {
+  table-layout: fixed !important;
+  width: 100% !important;
 }
 </style>

@@ -30,115 +30,68 @@
       </template>
 
       <template v-slot:[`item.action`]="{ item }">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="openQuizDialog(item.id)"
-              >visibility</v-icon
-            >
-          </template>
-          <span>Show Questions</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="duplicateQuiz(item.id)"
-              >cached</v-icon
-            >
-          </template>
-          <span>Duplicate Quiz</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="showQuizAnswers(item)"
-              >mdi-table</v-icon
-            >
-          </template>
-          <span>View Results</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="exportQuiz(item.id)"
-              >fas fa-download</v-icon
-            >
-          </template>
-          <span>Export</span>
-        </v-tooltip>
-        <v-tooltip bottom v-if="item.qrCodeOnly">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="showQrCode(item.id)"
-              >fas fa-qrcode</v-icon
-            >
-          </template>
-          <span>Show QR Code</span>
-        </v-tooltip>
-        <v-tooltip bottom v-if="item.numberOfAnswers === 0">
-          <template v-slot:activator="{ props }">
-            <v-icon class="mr-2 action-button" v-bind="props" @click="editQuiz(item)"
-              >edit</v-icon
-            >
-          </template>
-          <span>Edit Quiz</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="populateWithQuizAnswers(item.id)"
-              >people</v-icon
-            >
-          </template>
-          <span>Populate with answers</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="removeNonAnsweredQuizAnswers(item.id)"
-              >people_outline</v-icon
-            >
-          </template>
-          <span>Remove non answered</span>
-        </v-tooltip>
-        <v-tooltip bottom v-if="isFraudServiceAvailableToQuiz(item)">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="showQuizFraudScores(item)"
-              >mdi-account-alert</v-icon
-            >
-          </template>
-          <span>View Fraud Scores</span>
-        </v-tooltip>
-        <v-tooltip bottom v-if="item.numberOfAnswers === 0">
-          <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              data-cy="deleteQuizButton"
-              @click="deleteQuiz(item.id)"
-              color="red"
-              >delete</v-icon
-            >
-          </template>
-          <span>Delete Quiz</span>
-        </v-tooltip>
+        <div class="quiz-actions-grid">
+          <v-tooltip bottom>
+            <template v-slot:activator="{ props }">
+              <v-icon class="action-button" v-bind="props" @click="openQuizDialog(item.id)">visibility</v-icon>
+            </template>
+            <span>Show Questions</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ props }">
+              <v-icon class="action-button" v-bind="props" @click="duplicateQuiz(item.id)">cached</v-icon>
+            </template>
+            <span>Duplicate Quiz</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ props }">
+              <v-icon class="action-button" v-bind="props" @click="showQuizAnswers(item)">mdi-table</v-icon>
+            </template>
+            <span>View Results</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ props }">
+              <v-icon class="action-button" v-bind="props" @click="exportQuiz(item.id)">fas fa-download</v-icon>
+            </template>
+            <span>Export</span>
+          </v-tooltip>
+          <v-tooltip bottom v-if="item.numberOfAnswers === 0">
+            <template v-slot:activator="{ props }">
+              <v-icon class="action-button" v-bind="props" @click="editQuiz(item)">edit</v-icon>
+            </template>
+            <span>Edit Quiz</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ props }">
+              <v-icon class="action-button" v-bind="props" @click="populateWithQuizAnswers(item.id)">people</v-icon>
+            </template>
+            <span>Populate with answers</span>
+          </v-tooltip>
+          <v-tooltip bottom>
+            <template v-slot:activator="{ props }">
+              <v-icon class="action-button" v-bind="props" @click="removeNonAnsweredQuizAnswers(item.id)">people_outline</v-icon>
+            </template>
+            <span>Remove non answered</span>
+          </v-tooltip>
+          <v-tooltip bottom v-if="item.qrCodeOnly">
+            <template v-slot:activator="{ props }">
+              <v-icon class="action-button" v-bind="props" @click="showQrCode(item.id)">fas fa-qrcode</v-icon>
+            </template>
+            <span>Show QR Code</span>
+          </v-tooltip>
+          <v-tooltip bottom v-if="isFraudServiceAvailableToQuiz(item)">
+            <template v-slot:activator="{ props }">
+              <v-icon class="action-button" v-bind="props" @click="showQuizFraudScores(item)">mdi-account-alert</v-icon>
+            </template>
+            <span>View Fraud Scores</span>
+          </v-tooltip>
+          <v-tooltip bottom v-if="item.numberOfAnswers === 0">
+            <template v-slot:activator="{ props }">
+              <v-icon class="action-button" v-bind="props" data-cy="deleteQuizButton" @click="deleteQuiz(item.id)" color="red">delete</v-icon>
+            </template>
+            <span>Delete Quiz</span>
+          </v-tooltip>
+        </div>
       </template>
 
       <template v-slot:[`item.title`]="{ item }">
@@ -250,15 +203,15 @@ const quizFraudScoresDialog = ref(false);
 
 const qrValue = ref<number | null>(null);
 const headers = ref<any[]>([
-  { title: 'Actions', key: 'action', align: 'start', width: '150px', sortable: false },
+  { title: 'Actions', key: 'action', align: 'start', width: '75px', sortable: false },
   { title: 'Title', key: 'title', align: 'start', width: '30%' },
   { title: 'Code', key: 'code', align: 'center', width: '150px' },
   { title: 'Available Date', key: 'availableDate', align: 'center', width: '150px' },
   { title: 'Conclusion Date', key: 'conclusionDate', align: 'center', width: '150px' },
   { title: 'Results Date', key: 'resultsDate', align: 'center', width: '150px' },
   { title: 'Options', key: 'options', align: 'center', width: '150px', sortable: false },
-  { title: 'Questions', key: 'numberOfQuestions', width: '5px', align: 'center' },
-  { title: 'Answers', key: 'numberOfAnswers', width: '5px', align: 'center' },
+  { title: 'Questions', key: 'numberOfQuestions', width: '100px', align: 'center' },
+  { title: 'Answers', key: 'numberOfAnswers', width: '100px', align: 'center' },
   { title: 'Creation Date', key: 'creationDate', width: '150px', align: 'center' },
 ]);
 
@@ -385,5 +338,15 @@ const isFraudServiceAvailableToQuiz = (q: Quiz) => {
   height: 80vw !important;
   max-width: 80vh !important;
   max-height: 80vh !important;
+}
+
+// Grid de 2 ícones por linha na coluna Actions dos quizzes
+.quiz-actions-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 32px);
+  gap: 4px;
+  align-items: center;
+  justify-items: center;
+  padding: 4px 0;
 }
 </style>

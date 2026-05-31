@@ -1,9 +1,9 @@
 <template>
   <div>
-    <v-card-title>
+    <v-card-title class="d-flex align-center">
       <v-spacer />
       <v-btn
-        style="margin-right: 2% !important"
+        style="margin-right: 8px"
         color="primary"
         class="text-white"
         @click="getDiscussions"
