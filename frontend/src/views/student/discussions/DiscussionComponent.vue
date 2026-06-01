@@ -28,7 +28,7 @@
             solo
             data-cy="discussionTextArea"
             v-model="discussionMessage"
-            v-on:input="onInput"
+            @update:modelValue="onInput"
             name="input-7-4"
             label="Enter discussion message here"
           ></v-textarea>

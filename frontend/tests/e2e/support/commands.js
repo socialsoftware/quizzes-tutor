@@ -416,7 +416,7 @@ Cypress.Commands.add(
     cy.get('[data-cy="Option2"]').type(option2);
     cy.get('[data-cy="Option3"]').type(option3);
     cy.get('[data-cy="Option4"]').type(correct);
-    cy.get('[data-cy="Switch4"]').click({ force: true });
+    cy.get('[data-cy="Switch4"]').find('input').click({ force: true });
     cy.get('[data-cy="saveQuestionButton"]').click();
   }
 );
@@ -431,33 +431,16 @@ Cypress.Commands.add(
     cy.get('[data-cy="submitQueryButton"]').click();
     cy.get('[data-cy="quizTitleTextArea"]').type(quizTitle);
 
-    cy.get('#availableDateInput-input').click();
-    cy.get(
-      '.datetimepicker > .datepicker > .datepicker-buttons-container > .datepicker-button > .datepicker-button-content'
-    )
-      .first()
-      .click();
+    cy.get('#availableDateInput').click();
+    cy.get('.dp__today').click();
+    cy.get('.dp__action_select').click();
 
-    cy.get('[data-cy="searchField"]').type(questionTitle);
-    cy.contains(questionTitle)
-      .parent()
-      .should('have.length', 1)
-      .parent()
-      .children()
-      .should('have.length', 3)
-      .find('[data-cy="addToQuizButton"]')
-      .click();
+    cy.get('[data-cy="searchField"] input').type(questionTitle);
+    cy.contains('div', questionTitle).closest('tr').contains('.action-button', 'add').first().click();
 
-    cy.get('[data-cy="searchField"]').clear();
-    cy.get('[data-cy="searchField"]').type(questionTitle2);
-    cy.contains(questionTitle2)
-      .parent()
-      .should('have.length', 1)
-      .parent()
-      .children()
-      .should('have.length', 3)
-      .find('[data-cy="addToQuizButton"]')
-      .click();
+    cy.get('[data-cy="searchField"] input').clear();
+    cy.get('[data-cy="searchField"] input').type(questionTitle2);
+    cy.contains('div', questionTitle2).closest('tr').contains('.action-button', 'add').first().click();
 
     cy.get('[data-cy="saveQuizButton"]').click();
   }
@@ -467,7 +450,7 @@ Cypress.Commands.add(
   'solveQuizz',
   (quizTitle, numberOfQuizQuestions, option) => {
     cy.get('[data-cy="quizzesStudentMenuButton"]').click();
-    cy.contains('Available').click();
+    cy.contains('Available').click({ force: true });
 
     cy.contains(quizTitle).click();
 
@@ -493,12 +476,14 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('createDiscussion', (discussionContent) => {
   cy.get('[data-cy="quizzesStudentMenuButton"]').click();
-  cy.contains('Solved').click();
+  cy.contains('Solved').click({ force: true });
 
   cy.contains('Quiz Title').click();
   cy.get('[data-cy="nextQuestionButton"]').click();
   cy.get('[data-cy="discussionTextArea"]').type(discussionContent);
+  cy.intercept('POST', '**/discussions/create*').as('createDiscussion');
   cy.get('[data-cy="submitDiscussionButton"]').click();
+  cy.wait('@createDiscussion');
 
   cy.get('[data-cy="quizzesStudentMenuButton"]').click();
   cy.get('[data-cy="discussionsStudentMenuButton"]').click();

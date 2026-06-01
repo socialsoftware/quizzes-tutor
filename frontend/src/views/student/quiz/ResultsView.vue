@@ -115,7 +115,7 @@ onMounted(async () => {
 });
 
 const submitDiscussion = async () => {
-  if (discussion.value.message === '') {
+  if (!discussion.value.message || discussion.value.message.trim() === '') {
     store.setError('Discussion must have content');
     return;
   }

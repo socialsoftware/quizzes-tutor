@@ -1,0 +1,83 @@
+
+DevTools listening on ws://127.0.0.1:54365/devtools/browser/cbb533ec-6670-4ba3-86bb-7af18c0782c1
+Warning: The allowCypressEnv configuration option is enabled. This allows any browser code to read values from Cypress.env(). This is insecure and will be removed in a future major version.
+
+1. Replace Cypress.env() calls with cy.env() (for sensitive values) or Cypress.expose() (for public configuration)
+2. Set allowCypressEnv: false in your Cypress configuration to disable Cypress.env()
+
+Learn more: https://on.cypress.io/cypress-env-migration
+
+
+Opening `/dev/tty` failed (6): Device not configured
+resize:  can't open terminal /dev/tty
+tput: No value for $TERM and no -T specified
+================================================================================
+
+  (Run Starting)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Cypress:        15.11.0                                                                        │
+  │ Browser:        Electron 138 (headless)                                                        │
+  │ Node Version:   v20.20.0 (/opt/homebrew/Cellar/node@20/20.20.0/bin/node)                       │
+  │ Specs:          1 found (discussion.js)                                                        │
+  │ Searched:       tests/e2e/specs/student/discussion.js                                          │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+────────────────────────────────────────────────────────────────────────────────────────────────────
+                                                                                                    
+  Running:  discussion.js                                                                   (1 of 1)
+
+
+  Student Walkthrough
+    1) student creates discussion
+
+
+  0 passing (24s)
+  1 failing
+
+  1) Student Walkthrough
+       student creates discussion:
+     AssertionError: Timed out retrying after 10000ms: Expected to find content: 'DISCUSSAO' but never did.
+      at Context.eval (webpack://quizzes-tutor-frontend/./tests/e2e/support/commands.js:489:5)
+      at wrapped (http://localhost:8081/__cypress/runner/cypress_runner.js:146318:43)
+
+
+
+
+  (Results)
+
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ Tests:        1                                                                                │
+  │ Passing:      0                                                                                │
+  │ Failing:      1                                                                                │
+  │ Pending:      0                                                                                │
+  │ Skipped:      0                                                                                │
+  │ Screenshots:  1                                                                                │
+  │ Video:        false                                                                            │
+  │ Duration:     24 seconds                                                                       │
+  │ Spec Ran:     discussion.js                                                                    │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+
+
+  (Screenshots)
+
+  -  /Users/rodrigoascensao/Desktop/Faculdade/quizzes-tutor/frontend/tests/e2e/screen     (1280x720)
+     shots/discussion.js/Student Walkthrough -- student creates discussion (failed).p               
+     ng                                                                                             
+
+
+Opening `/dev/tty` failed (6): Device not configured
+resize:  can't open terminal /dev/tty
+tput: No value for $TERM and no -T specified
+================================================================================
+
+  (Run Finished)
+
+
+       Spec                                              Tests  Passing  Failing  Pending  Skipped  
+  ┌────────────────────────────────────────────────────────────────────────────────────────────────┐
+  │ ✖  discussion.js                            00:24        1        -        1        -        - │
+  └────────────────────────────────────────────────────────────────────────────────────────────────┘
+    ✖  1 of 1 failed (100%)                     00:24        1        -        1        -        -  
+

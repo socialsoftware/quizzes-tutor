@@ -1453,6 +1453,7 @@ export default class RemoteServices {
     discussion: Discussion,
     questionAnswerId: number
   ): Promise<Discussion> {
+    console.log("PAYLOAD BEING SENT:", JSON.stringify(discussion));
     return httpClient
       .post(
         `/discussions/create?questionAnswerId=${questionAnswerId}`,
@@ -1477,8 +1478,10 @@ export default class RemoteServices {
       return 'Unauthorized access or expired token';
     } else if (error.message.split(' ')[0] === 'timeout') {
       return 'Request timeout - Server took too long to respond';
-    } else if (error.response) {
+    } else if (error.response && error.response.data && error.response.data.message) {
       return error.response.data.message;
+    } else if (error.response) {
+      return error.message + ' - ' + JSON.stringify(error.response.data);
     } else {
       console.log(error);
       return 'Unknown Error - Contact admin';

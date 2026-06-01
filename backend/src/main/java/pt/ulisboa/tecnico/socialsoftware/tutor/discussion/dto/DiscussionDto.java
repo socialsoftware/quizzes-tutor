@@ -4,6 +4,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -24,6 +25,7 @@ public class DiscussionDto implements Serializable {
     private QuestionDto question;
 
 
+    @JsonCreator
     public DiscussionDto() {
     }
 
