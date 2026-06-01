@@ -144,13 +144,13 @@
                   </v-autocomplete>
                 </template>
                 <template v-slot:[`item.topicsCreate`]="{ item }">
-                  {{ (item as any).raw.name }}
+                  {{ (item as any).name }}
                 </template>
                 <template v-slot:[`item.action`]="{ item }">
                   <v-icon
                     icon="mdi-minus"
                     class="mr-2"
-                    @click="removeTopic((item as any).raw)"
+                    @click="removeTopic(item)"
                     data-cy="removeTopic"
                   >
                     <v-tooltip activator="parent" location="bottom">Remove from Tournament</v-tooltip>
@@ -193,13 +193,13 @@
                   </v-autocomplete>
                 </template>
                 <template v-slot:[`item.topicsCreate`]="{ item }">
-                  {{ (item as any).raw.name }}
+                  {{ (item as any).name }}
                 </template>
                 <template v-slot:[`item.action`]="{ item }">
                   <v-icon
                     icon="mdi-plus"
                     class="mr-2"
-                    @click="addTopic((item as any).raw)"
+                    @click="addTopic(item)"
                     data-cy="addTopic"
                   >
                     <v-tooltip activator="parent" location="bottom">Add to Tournament</v-tooltip>
@@ -243,7 +243,8 @@ const emit = defineEmits([
   'close-edit-dialog',
   'close-dialog',
   'new-tournament',
-  'edit-tournament'
+  'edit-tournament',
+  'update:dialog'
 ]);
 
 const store = useStore();
@@ -288,7 +289,7 @@ const topicHeaders: any = [
   },
 ];
 
-const storeOldValues = async () => {
+const storeOldValues = () => {
   if (editTournament.value.startTime) {
     oldStartTime.value = newStartTime.value = editTournament.value.startTime;
   }
@@ -301,7 +302,7 @@ const storeOldValues = async () => {
   oldTopics.value = editTournament.value.topics!;
 };
 
-const updateCurrentTopics = async () => {
+const updateCurrentTopics = () => {
   editTournament.value.topics!.forEach((topicName) => {
     availableTopics.value.forEach((topic) => {
       if (topic.name.valueOf() === topicName.valueOf()) {
@@ -317,7 +318,7 @@ onMounted(async () => {
     : new Tournament(props.tournament);
 
   if (props.editMode) {
-    await storeOldValues();
+    storeOldValues();
   }
 
   store.setLoading();
@@ -325,7 +326,7 @@ onMounted(async () => {
     allTopics.value = await RemoteServices.getAvailableTopicsByCourseExecution();
     availableTopics.value = allTopics.value;
     if (props.editMode && editTournament.value.topics !== undefined) {
-      await updateCurrentTopics();
+      updateCurrentTopics();
     }
   } catch (error) {
     store.setError(error as string);
@@ -333,20 +334,21 @@ onMounted(async () => {
   store.clearLoading();
 });
 
-const resetChanges = async () => {
+const resetChanges = () => {
   editTournament.value.startTime = oldStartTime.value;
   editTournament.value.endTime = oldEndTime.value;
   editTournament.value.numberOfQuestions = oldNumberOfQuestions.value;
   editTournament.value.topics = oldTopics.value;
 };
 
-const cancelTournament = async () => {
+const cancelTournament = () => {
   if (props.editMode) {
-    await resetChanges();
+    resetChanges();
     emit('close-edit-dialog');
   } else {
     emit('close-dialog');
   }
+  emit('update:dialog', false);
 };
 
 const saveTournament = async () => {

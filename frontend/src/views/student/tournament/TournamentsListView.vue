@@ -187,8 +187,8 @@
       answers. <v-icon class="mr-2">mouse</v-icon>Left-click on tournament's
       number to view the current ranking.
     </footer>
-    <create-tournament-dialog
-      v-if="currentTournament"
+    <tournament-dialog
+      v-if="currentTournament && createTournamentDialog"
       v-model:dialog="createTournamentDialog"
       :tournament="currentTournament"
       :edit-mode="false"
@@ -196,14 +196,14 @@
       @close-dialog="onCloseDialog"
     />
     <edit-password-dialog
-      v-if="currentTournament"
+      v-if="currentTournament && editPasswordDialog"
       v-model:dialog="editPasswordDialog"
       :tournament="currentTournament"
       @enter-password="joinPrivateTournament"
       @close-password-dialog="onClosePasswordDialog"
     />
-    <edit-tournament-dialog
-      v-if="currentTournament"
+    <tournament-dialog
+      v-if="currentTournament && editTournamentDialog"
       v-model:dialog="editTournamentDialog"
       :tournament="currentTournament"
       :edit-mode="true"
@@ -218,8 +218,7 @@ import { ref, watch, onMounted } from 'vue';
 import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
 import RemoteServices from '@/services/RemoteServices';
-import CreateTournamentDialog from '@/views/student/tournament/TournamentForm.vue';
-import EditTournamentDialog from '@/views/student/tournament/TournamentForm.vue';
+import TournamentDialog from '@/views/student/tournament/TournamentForm.vue';
 import EditPasswordDialog from '@/views/student/tournament/PasswordTournamentView.vue';
 import ViewTournamentTopics from '@/views/student/tournament/ViewTournamentTopics.vue';
 import Tournament from '@/models/user/Tournament';

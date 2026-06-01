@@ -11,22 +11,24 @@
             <v-text-field v-model="query.content" label="Content"
           /></v-col>
           <v-col>
-            <v-text-field
+            <div class="text-caption mb-1">Begin Creation Date</div>
+            <VueDatePicker
+              id="beginCreationDateInput"
               v-model="query.beginCreationDate"
-              label="Begin Creation Date"
-              variant="outlined"
-              density="compact"
-              clearable
-            />
+              model-type="iso"
+              format="yyyy-MM-dd HH:mm"
+              placeholder="Begin Creation Date"
+            ></VueDatePicker>
           </v-col>
           <v-col>
-            <v-text-field
+            <div class="text-caption mb-1">End Creation Date</div>
+            <VueDatePicker
+              id="endCreationDateInput"
               v-model="query.endCreationDate"
-              label="End Creation Date"
-              variant="outlined"
-              density="compact"
-              clearable
-            />
+              model-type="iso"
+              format="yyyy-MM-dd HH:mm"
+              placeholder="End Creation Date"
+            ></VueDatePicker>
           </v-col>
         </v-row>
         <v-row>
@@ -123,6 +125,8 @@ import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Topic from '@/models/management/Topic';
 import QuestionQuery from '@/models/management/QuestionQuery';
+import { VueDatePicker } from '@vuepic/vue-datepicker';
+import '@vuepic/vue-datepicker/dist/main.css';
 
 const props = defineProps<{
   availableOnly: boolean;
@@ -187,5 +191,7 @@ const queryQuestions = async () => {
   margin: 0 8px;
 }
 
-// Estilo do VueDatePicker — removido (não está ativo)
+:deep(.dp__main) {
+  width: 100%;
+}
 </style>
