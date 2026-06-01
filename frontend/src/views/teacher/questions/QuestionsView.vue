@@ -274,16 +274,16 @@ const statusList = ref(['DISABLED', 'AVAILABLE', 'REMOVED']);
 const showQueryForm = ref(true);
 
 const headers = ref<any[]>([
-  { title: 'Actions', key: 'action', align: 'start', width: '5px', sortable: false },
-  { title: 'Title', key: 'title', width: '50%', align: 'start' },
-  { title: 'Topics', key: 'topics', width: '30%', align: 'center', sortable: false },
+  { title: 'Actions', key: 'action', align: 'start', width: '15%', sortable: false },
+  { title: 'Title', key: 'title', align: 'start' },
+  { title: 'Topics', key: 'topics', align: 'center', sortable: false },
   { title: 'Status', key: 'status', width: '150px', align: 'start' },
-  { title: 'Image', key: 'image', width: '10%', align: 'center', sortable: false },
-  { title: 'Clarifications', key: 'numberOfClarifications', width: '5px', align: 'center' },
-  { title: 'Difficulty', key: 'difficulty', width: '5px', align: 'center' },
-  { title: 'Answers', key: 'numberOfAnswers', width: '5px', align: 'center' },
-  { title: 'Generated quizzes', key: 'numberOfGeneratedQuizzes', width: '5px', align: 'center' },
-  { title: 'Non generated quizzes', key: 'numberOfNonGeneratedQuizzes', width: '5px', align: 'center' },
+  { title: 'Image', key: 'image', align: 'center', sortable: false },
+  { title: 'Clarifications', key: 'numberOfClarifications', align: 'center' },
+  { title: 'Difficulty', key: 'difficulty', align: 'center' },
+  { title: 'Answers', key: 'numberOfAnswers', align: 'center' },
+  { title: 'Generated quizzes', key: 'numberOfGeneratedQuizzes', align: 'center' },
+  { title: 'Non generated quizzes', key: 'numberOfNonGeneratedQuizzes', align: 'center' },
   { title: 'Creation Date', key: 'creationDate', width: '150px', align: 'center' },
 ]);
 
