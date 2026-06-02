@@ -197,16 +197,16 @@ Cypress.Commands.add(
   'submitQuestion',
   (valid, comment, title, content, opt1, opt2, opt3, opt4) => {
     cy.get('[data-cy="NewSubmission"]').click();
-    cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
-    cy.get('[data-cy="QuestionContent"]').type(content);
-    cy.get('[data-cy="Switch1"]').click({ force: true });
+    cy.get('[data-cy="QuestionTitle"]').find('input, textarea').first().type(title, { force: true });
+    cy.get('[data-cy="QuestionContent"]').find('input, textarea').first().type(content);
+    cy.get('[data-cy="Switch1"]').find('input').first().click({ force: true });
     if (valid) {
-      cy.get('[data-cy="Option1"]').type(opt1);
-      cy.get('[data-cy="Option2"]').type(opt2);
-      cy.get('[data-cy="Option3"]').type(opt3);
-      cy.get('[data-cy="Option4"]').type(opt4);
+      cy.get('[data-cy="Option1"]').find('input, textarea').first().type(opt1);
+      cy.get('[data-cy="Option2"]').find('input, textarea').first().type(opt2);
+      cy.get('[data-cy="Option3"]').find('input, textarea').first().type(opt3);
+      cy.get('[data-cy="Option4"]').find('input, textarea').first().type(opt4);
       if (comment != null) {
-        cy.get('[data-cy="Comment"]').type(comment);
+        cy.get('[data-cy="Comment"]').find('input, textarea').first().type(comment);
         cy.get('[data-cy="RequestReviewButton"]').click();
       } else {
         cy.get('[data-cy="RequestReviewButton"]').click();
@@ -220,7 +220,7 @@ Cypress.Commands.add(
         .children()
         .should('have.length', 6);
     } else {
-      cy.get('[data-cy="Comment"]').type(comment);
+      cy.get('[data-cy="Comment"]').find('input, textarea').first().type(comment);
       cy.get('[data-cy="RequestReviewButton"]').click();
     }
   }
@@ -237,16 +237,16 @@ Cypress.Commands.add(
   'saveQuestion',
   (valid, comment, title, content, opt1, opt2, opt3, opt4) => {
     cy.get('[data-cy="NewSubmission"]').click();
-    cy.get('[data-cy="QuestionTitle"]').type(title, { force: true });
-    cy.get('[data-cy="QuestionContent"]').type(content);
-    cy.get('[data-cy="Switch1"]').click({ force: true });
+    cy.get('[data-cy="QuestionTitle"]').find('input, textarea').first().type(title, { force: true });
+    cy.get('[data-cy="QuestionContent"]').find('input, textarea').first().type(content);
+    cy.get('[data-cy="Switch1"]').find('input').first().click({ force: true });
     if (valid) {
-      cy.get('[data-cy="Option1"]').type(opt1);
-      cy.get('[data-cy="Option2"]').type(opt2);
-      cy.get('[data-cy="Option3"]').type(opt3);
-      cy.get('[data-cy="Option4"]').type(opt4);
+      cy.get('[data-cy="Option1"]').find('input, textarea').first().type(opt1);
+      cy.get('[data-cy="Option2"]').find('input, textarea').first().type(opt2);
+      cy.get('[data-cy="Option3"]').find('input, textarea').first().type(opt3);
+      cy.get('[data-cy="Option4"]').find('input, textarea').first().type(opt4);
       if (comment != null) {
-        cy.get('[data-cy="Comment"]').type(comment);
+        cy.get('[data-cy="Comment"]').find('input, textarea').first().type(comment);
         cy.get('[data-cy="SaveButton"]').click();
       } else {
         cy.get('[data-cy="SaveButton"]').click();
@@ -259,7 +259,7 @@ Cypress.Commands.add(
         .children()
         .should('have.length', 5);
     } else {
-      cy.get('[data-cy="Comment"]').type(comment);
+      cy.get('[data-cy="Comment"]').find('input, textarea').first().type(comment);
       cy.get('[data-cy="SaveButton"]').click();
     }
   }
@@ -269,13 +269,9 @@ Cypress.Commands.add(
   'viewQuestion',
   (title, content, op1, op2, op3, op4, status = null) => {
     cy.contains(title)
-      .parent()
-      .parent()
-      .parent()
-      .should('have.length', 1)
-      .children()
-      .should('have.length', 6)
-      .find('[data-cy="ViewSubmission"]')
+      .closest('tr')
+      .find('[data-cy="ViewSubmission"], .fa-comments, .fa-comment-dots, td#actions .action-button')
+      .first()
       .click();
     cy.contains(title);
     cy.contains(content);
@@ -292,13 +288,9 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('deleteQuestionSubmission', (title) => {
   cy.contains(title)
-    .parent()
-    .parent()
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 6)
-    .find('[data-cy="DeleteSubmission"]')
+    .closest('tr')
+    .find('[data-cy="DeleteSubmission"], .mdi-delete, td#actions .action-button')
+    .last()
     .click();
 });
 
@@ -306,16 +298,12 @@ Cypress.Commands.add(
   'reviewQuestionSubmission',
   (select, title, comment = null) => {
     cy.contains(title)
-      .parent()
-      .parent()
-      .parent()
-      .should('have.length', 1)
-      .children()
-      .should('have.length', 7)
-      .find('[data-cy="ViewSubmission"]')
+      .closest('tr')
+      .find('[data-cy="ViewSubmission"], .fa-comments, .fa-comment-dots, td#actions .action-button')
+      .first()
       .click();
     if (comment != null) {
-      cy.get('[data-cy="Comment"]').type(comment);
+      cy.get('[data-cy="Comment"]').find('input, textarea').first().type(comment);
     }
     cy.get('[data-cy=SelectMenu]').type(select + '{enter}', { force: true });
     cy.get('[data-cy="SubmitButton"]').click();
@@ -327,13 +315,9 @@ Cypress.Commands.add(
   (title, comment, isComment, type = null) => {
     if (!isComment) {
       cy.contains(title)
-        .parent()
-        .parent()
-        .parent()
-        .should('have.length', 1)
-        .children()
-        .should('have.length', 7)
-        .find('[data-cy="ViewSubmission"]')
+        .closest('tr')
+        .find('[data-cy="ViewSubmission"], .fa-comments, .fa-comment-dots, td#actions .action-button')
+        .first()
         .click();
     }
     cy.get('[data-cy=ReviewLog]').click();
@@ -347,12 +331,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add('checkSubmissionStatus', (title, status) => {
   cy.contains(title)
-    .parent()
-    .parent()
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 7)
+    .closest('tr')
     .contains(status);
 });
 
@@ -410,13 +389,13 @@ Cypress.Commands.add(
 
     //creates question1
     cy.get('[data-cy="newQuestionButton"]').click();
-    cy.get('[data-cy="questionTitleTextArea"]').type(title);
-    cy.get('[data-cy="questionQuestionTextArea"]').type(question);
-    cy.get('[data-cy="Option1"]').type(option1);
-    cy.get('[data-cy="Option2"]').type(option2);
-    cy.get('[data-cy="Option3"]').type(option3);
-    cy.get('[data-cy="Option4"]').type(correct);
-    cy.get('[data-cy="Switch4"]').find('input').click({ force: true });
+    cy.get('[data-cy="questionTitleTextArea"]').find('input, textarea').first().type(title);
+    cy.get('[data-cy="questionQuestionTextArea"]').find('input, textarea').first().type(question);
+    cy.get('[data-cy="Option1"]').find('input, textarea').first().type(option1);
+    cy.get('[data-cy="Option2"]').find('input, textarea').first().type(option2);
+    cy.get('[data-cy="Option3"]').find('input, textarea').first().type(option3);
+    cy.get('[data-cy="Option4"]').find('input, textarea').first().type(correct);
+    cy.get('[data-cy="Switch4"]').find('input').first().click({ force: true });
     cy.get('[data-cy="saveQuestionButton"]').click();
   }
 );

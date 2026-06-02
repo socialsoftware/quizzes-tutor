@@ -195,6 +195,8 @@ Cypress.Commands.add('deleteQuestionsAndAnswers', () => {
          DELETE FROM topic_conjunctions;
          DELETE FROM topics_questions;
          DELETE FROM assessments;
+         DELETE FROM reviews;
+         DELETE FROM question_submissions;
          DELETE FROM options;
          DELETE FROM question_details;
          DELETE FROM questions;
