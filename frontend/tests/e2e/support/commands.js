@@ -27,9 +27,9 @@
 
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
   cy.get('[data-cy="createButton"]').click({ force: true });
-  cy.get('[data-cy="courseExecutionNameInput"]').type(name);
-  cy.get('[data-cy="courseExecutionAcronymInput"]').type(acronym);
-  cy.get('[data-cy="courseExecutionAcademicTermInput"]').type(academicTerm);
+  cy.get('[data-cy="courseExecutionNameInput"]').find('input, textarea').first().type(name);
+  cy.get('[data-cy="courseExecutionAcronymInput"]').find('input, textarea').first().type(acronym);
+  cy.get('[data-cy="courseExecutionAcademicTermInput"]').find('input, textarea').first().type(academicTerm);
   cy.get('[data-cy="saveButton"]').click({ force: true });
   cy.wait(1000);
 });
@@ -58,8 +58,8 @@ Cypress.Commands.add(
       .should('have.length', 13)
       .find('[data-cy="createFromCourse"]')
       .click({ force: true });
-    cy.get('[data-cy="courseExecutionAcronymInput"]').type(acronym);
-    cy.get('[data-cy="courseExecutionAcademicTermInput"]').type(academicTerm);
+    cy.get('[data-cy="courseExecutionAcronymInput"]').find('input, textarea').first().type(acronym);
+    cy.get('[data-cy="courseExecutionAcademicTermInput"]').find('input, textarea').first().type(academicTerm);
     cy.get('[data-cy="saveButton"]').click({ force: true });
   }
 );
@@ -85,9 +85,9 @@ Cypress.Commands.add('createPrivateTournament', (numberOfQuestions) => {
     .should('be.visible')
     .click({ force: true });
 
-  cy.get('[data-cy="SwitchPrivacy"]').click({ force: true });
+  cy.get('[data-cy="SwitchPrivacy"] input').check({ force: true });
   cy.wait(500);
-  cy.get('[data-cy="Password"]').type('123', { force: true });
+  cy.get('[data-cy="Password"] input').type('123', { force: true });
   cy.tournamentCreation(numberOfQuestions);
   cy.get('[data-cy="saveButton"]').click();
   cy.wait(100);
@@ -97,7 +97,7 @@ Cypress.Commands.add('tournamentCreation', (numberOfQuestions) => {
   cy.time('Start Time', 22, 0);
   cy.wait(100);
   cy.time('End Time', 25, 1);
-  cy.get('[data-cy="NumberOfQuestions"]').type(numberOfQuestions, {
+  cy.get('[data-cy="NumberOfQuestions"] input').type(numberOfQuestions, {
     force: true,
   });
   cy.selectTopic('Software Architecture');
@@ -111,39 +111,23 @@ Cypress.Commands.add('createOpenTournament', (numberOfQuestions) => {
 Cypress.Commands.add('time', (date, day, type) => {
   let get = '';
   if (type === 0) {
-    get = '#startTimeInput-picker-container-DatePicker';
+    get = '#startTimeInput';
   } else {
-    get = '#endTimeInput-picker-container-DatePicker';
+    get = '#endTimeInput';
   }
 
-  cy.get('label').contains(date).click({ force: true });
-
-  cy.get(
-    get +
-    ' > .calendar > .datepicker-controls > .text-right > .datepicker-button > svg > path'
-  ).click({ force: true });
-
-  cy.wait(500);
-  cy.get(
-    get +
-    ' > .calendar > .month-container > :nth-child(1) > .datepicker-days > :nth-child(' +
-    day +
-    ') > .datepicker-day-text'
-  ).click({ force: true, multiple: true });
+  cy.get(get + ' input').click();
+  
+  cy.wait(1000);
+  cy.get('.dp__cell_inner').eq(day).click();
+  cy.get('.dp__action_select').click();
 });
 
 Cypress.Commands.add('selectTopic', (topic) => {
-  cy.get('[data-cy="Topics"]')
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 4)
-    .contains(topic)
-    .parent()
-    .should('have.length', 1)
-    .children()
-    .should('have.length', 2)
+  cy.get('[data-cy="Topics"] tbody')
+    .contains('tr', topic)
     .find('[data-cy="addTopic"]')
-    .click();
+    .click({ force: true });
 });
 
 Cypress.Commands.add('joinTournament', (tournament) => {
@@ -152,7 +136,7 @@ Cypress.Commands.add('joinTournament', (tournament) => {
 
 Cypress.Commands.add('joinPrivateTournament', (tournament) => {
   cy.joinTournament(tournament);
-  cy.get('[data-cy="Password"]').type('123');
+  cy.get('[data-cy="Password"] input').type('123');
   cy.get('[data-cy="joinPrivateTournament"]').click();
 });
 
@@ -168,7 +152,7 @@ Cypress.Commands.add('editTournament', (tournament) => {
   cy.selectTournamentWithAction(tournament, 'EditTournament');
 
   cy.time('End Time', 24, 1);
-  cy.get('[data-cy="NumberOfQuestions"]')
+  cy.get('[data-cy="NumberOfQuestions"] input')
     .clear({
       force: true,
     })
@@ -347,9 +331,9 @@ Cypress.Commands.add(
       .find('[data-cy="addExternalUser"]')
       .click();
 
-    cy.get('[data-cy="userNameInput"]').type(name);
-    cy.get('[data-cy="userUsernameInput"]').type(username);
-    cy.get('[data-cy="userEmailInput"]').type(email);
+    cy.get('[data-cy="userNameInput"]').find('input, textarea').first().type(name);
+    cy.get('[data-cy="userUsernameInput"]').find('input, textarea').first().type(username);
+    cy.get('[data-cy="userEmailInput"]').find('input, textarea').first().type(email);
     cy.get('[data-cy="userRoleSelect"]').click();
     cy.get('.v-overlay-container').contains(type).click({ force: true });
     cy.get('[data-cy="saveButton"]').click({ force: true });
@@ -409,7 +393,7 @@ Cypress.Commands.add(
 
     cy.get('[data-cy="newQuizButton"]').click();
     cy.get('[data-cy="submitQueryButton"]').click();
-    cy.get('[data-cy="quizTitleTextArea"]').type(quizTitle);
+    cy.get('[data-cy="quizTitleTextArea"]').find('input, textarea').first().type(quizTitle);
 
     cy.get('#availableDateInput').click();
     cy.get('.dp__today').click();
@@ -460,7 +444,7 @@ Cypress.Commands.add('createDiscussion', (discussionContent) => {
 
   cy.contains('Quiz Title').click();
   cy.get('[data-cy="nextQuestionButton"]').click();
-  cy.get('[data-cy="discussionTextArea"]').type(discussionContent);
+  cy.get('[data-cy="discussionTextArea"]').find('input, textarea').first().type(discussionContent);
   cy.intercept('POST', '**/discussions/create*').as('createDiscussion');
   cy.get('[data-cy="submitDiscussionButton"]').click();
   cy.wait('@createDiscussion');
@@ -487,7 +471,7 @@ Cypress.Commands.add('replyToDiscussion', (discussionContent, replyContent) => {
     .should('be.visible')
     .click();
 
-  cy.get('[data-cy="replyTextArea"]').should('be.visible').type(replyContent);
+  cy.get('[data-cy="replyTextArea"]').should('be.visible').find('input, textarea').first().type(replyContent);
   cy.get('[data-cy="submitReplyButton"]').click();
   cy.get('[data-cy="showDiscussionDialogCloseButton"]').click();
 

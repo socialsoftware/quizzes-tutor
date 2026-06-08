@@ -66,14 +66,14 @@
                 :label="
                   editTournament.privateTournament ? 'Private' : 'Public'
                 "
-                @change="togglePrivacy()"
+                @update:model-value="togglePrivacy()"
                 hide-details
                 density="compact"
                 class="mt-0"
               />
             </v-col>
           </v-row>
-          <v-row v-if="!editMode && typePassword" class="my-0 align-center">
+          <v-row v-if="!editMode && editTournament.privateTournament" class="my-0 align-center">
             <v-col cols="12" sm="6" class="d-flex align-center py-1">
               <span class="text-no-wrap mr-3"><b>Set Password:</b></span>
               <v-text-field
@@ -144,17 +144,17 @@
                   </v-autocomplete>
                 </template>
                 <template v-slot:[`item.topicsCreate`]="{ item }">
-                  {{ (item as any).name }}
+                  {{ (item.raw || item).name }}
                 </template>
                 <template v-slot:[`item.action`]="{ item }">
-                  <v-icon
-                    icon="mdi-minus"
-                    class="mr-2"
-                    @click="removeTopic(item)"
-                    data-cy="removeTopic"
-                  >
-                    <v-tooltip activator="parent" location="bottom">Remove from Tournament</v-tooltip>
-                  </v-icon>
+                  <span data-cy="removeTopic" @click="removeTopic(item.raw || item)">
+                    <v-icon
+                      icon="mdi-minus"
+                      class="mr-2"
+                    >
+                      <v-tooltip activator="parent" location="bottom">Remove from Tournament</v-tooltip>
+                    </v-icon>
+                  </span>
                 </template>
               </v-data-table>
             </div>
@@ -193,17 +193,17 @@
                   </v-autocomplete>
                 </template>
                 <template v-slot:[`item.topicsCreate`]="{ item }">
-                  {{ (item as any).name }}
+                  {{ (item.raw || item).name }}
                 </template>
                 <template v-slot:[`item.action`]="{ item }">
-                  <v-icon
-                    icon="mdi-plus"
-                    class="mr-2"
-                    @click="addTopic(item)"
-                    data-cy="addTopic"
-                  >
-                    <v-tooltip activator="parent" location="bottom">Add to Tournament</v-tooltip>
-                  </v-icon>
+                  <span data-cy="addTopic" @click="addTopic(item.raw || item)">
+                    <v-icon
+                      icon="mdi-plus"
+                      class="mr-2"
+                    >
+                      <v-tooltip activator="parent" location="bottom">Add to Tournament</v-tooltip>
+                    </v-icon>
+                  </span>
                 </template>
               </v-data-table>
             </div>
@@ -267,7 +267,7 @@ const oldTopics = ref<String[]>([]);
 const newStartTime = ref('');
 const newEndTime = ref('');
 
-const typePassword = ref(false);
+
 const passwordFieldType = ref('password');
 const password = ref('');
 
@@ -412,9 +412,7 @@ const saveTournament = async () => {
   }
 };
 
-const togglePrivacy = async () => {
-  props.tournament.privateTournament = !props.tournament.privateTournament;
-  typePassword.value = !typePassword.value;
+const togglePrivacy = () => {
   password.value = '';
 };
 
