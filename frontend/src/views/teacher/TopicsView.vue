@@ -34,37 +34,38 @@
       <template v-slot:[`item.action`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="showQuestionsDialog(item.id)"
-              >visibility</v-icon
-            >
+            <span data-cy="topicsGridShowButton" v-bind="props">
+              <v-icon
+                class="mr-2 action-button"
+                @click="showQuestionsDialog(item.id)"
+                >visibility</v-icon
+              >
+            </span>
           </template>
           <span>Show Questions</span>
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="editTopic(item)"
-              data-cy="topicsGridEditButton"
-              >edit</v-icon
-            >
+            <span data-cy="topicsGridEditButton" v-bind="props">
+              <v-icon
+                class="mr-2 action-button"
+                @click="editTopic(item)"
+                >edit</v-icon
+              >
+            </span>
           </template>
           <span>Edit Topic</span>
         </v-tooltip>
         <v-tooltip bottom>
           <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="deleteTopic(item)"
-              color="red"
-              data-cy="topicsGridDeleteButton"
-              >delete</v-icon
-            >
+            <span data-cy="topicsGridDeleteButton" v-bind="props">
+              <v-icon
+                class="mr-2 action-button"
+                color="red"
+                @click="deleteTopic(item)"
+                >delete</v-icon
+              >
+            </span>
           </template>
           <span>Delete Topic</span>
         </v-tooltip>

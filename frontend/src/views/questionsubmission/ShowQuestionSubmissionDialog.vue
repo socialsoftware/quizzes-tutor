@@ -47,12 +47,13 @@
                       v-model="selected"
                       :items="statusOptions"
                       data-cy="SelectMenu"
+                      item-value="key"
                       chips
                       label="Review Type"
                     >
                       <template #selection="{ item: selectItem }">
                         <v-chip size="small" :color="(selectItem as any).raw.color">{{
-                          (selectItem as any).raw.text
+                          (selectItem as any).raw.title
                         }}</v-chip>
                       </template>
                     </v-select>

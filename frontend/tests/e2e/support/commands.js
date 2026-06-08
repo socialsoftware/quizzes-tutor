@@ -305,7 +305,8 @@ Cypress.Commands.add(
     if (comment != null) {
       cy.get('[data-cy="Comment"]').find('input, textarea').first().type(comment);
     }
-    cy.get('[data-cy=SelectMenu]').type(select + '{enter}', { force: true });
+    cy.get('[data-cy=SelectMenu]').click();
+    cy.get('.v-overlay-container').contains(select).click({ force: true });
     cy.get('[data-cy="SubmitButton"]').click();
   }
 );
