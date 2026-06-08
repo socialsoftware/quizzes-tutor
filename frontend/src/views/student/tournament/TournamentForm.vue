@@ -423,8 +423,9 @@ const switchVisibility = async () => {
 };
 
 const topicFilter = (value: any, search: string, item?: any) => {
-  if (!item || !item.raw) return false;
-  let topic: Topic = item.raw;
+  const rawItem = item?.raw || item;
+  if (!rawItem) return false;
+  let topic: Topic = rawItem;
   let searchTopics = JSON.parse(search);
   if (searchTopics !== '') {
     return searchTopics
@@ -435,8 +436,9 @@ const topicFilter = (value: any, search: string, item?: any) => {
 };
 
 const topicSearch = (value: any, search: string, item?: any) => {
-  if (!item || !item.raw) return false;
-  let topic: Topic = item.raw;
+  const rawItem = item?.raw || item;
+  if (!rawItem) return false;
+  let topic: Topic = rawItem;
   return (
     search != null &&
     topic.name.toLowerCase().indexOf(search.toLowerCase()) !== -1

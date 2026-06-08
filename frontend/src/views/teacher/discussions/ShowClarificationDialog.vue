@@ -1,8 +1,7 @@
 <template>
   <v-dialog
-    :model-value="dialog"
-    @update:model-value="$emit('update:dialog', false)"
-    @keydown.esc="$emit('update:dialog', false)"
+    v-model="dialogOpen"
+    @keydown.esc="dialogOpen = false"
     max-width="75%"
   >
     <v-card>
@@ -19,7 +18,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn class="text-white" color="blue darken-1" @click="$emit('update:dialog', false)">close</v-btn>
+        <v-btn class="text-white" color="blue darken-1" @click="dialogOpen = false">close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>
@@ -33,12 +32,13 @@ import RemoteServices from '@/services/RemoteServices';
 import Reply from '@/models/management/Reply';
 import ClarificationComponent from '@/views/student/discussions/ClarificationComponent.vue';
 
+const dialogOpen = defineModel<boolean>('dialog', { default: false });
+
 const props = defineProps<{
-  dialog: boolean;
   question: Question;
 }>();
 
-const emit = defineEmits(['update:dialog', 'remove-clarification']);
+const emit = defineEmits(['remove-clarification']);
 const store = useStore();
 
 const clarifications = ref<Reply[]>([]);

@@ -31,7 +31,7 @@
           dense
           hide-details
           variant="outlined"
-          @update:model-value="setStatus((item as any).raw.id as number, item.status)"
+          @update:model-value="setStatus(item.id as number, item.status)"
         >
           <template v-slot:selection="{ item: selectionItem }">
             <v-chip :color="getStatusColor((selectionItem as any).title)" small>
@@ -41,33 +41,35 @@
         </v-select>
       </template>
       <template v-slot:[`item.action`]="{ item }">
-        <v-icon
-          icon="mdi-eye"
-          class="mr-2 action-button"
-          @click="showQuestionsDialog((item as any).raw.id as number)"
-        >
-          <v-tooltip activator="parent" location="bottom">Show Questions</v-tooltip>
-        </v-icon>
-        <v-icon
-          icon="mdi-pencil"
-          class="mr-2 action-button"
-          @click="editAssessment((item as any).raw.id as number)"
-        >
-          <v-tooltip activator="parent" location="bottom">Edit Assessment</v-tooltip>
-        </v-icon>
-        <v-icon
-          icon="mdi-delete"
-          class="mr-2 action-button"
-          @click="deleteAssessment((item as any).raw.id as number)"
-          color="red"
-        >
-          <v-tooltip activator="parent" location="bottom">Delete Assessment</v-tooltip>
-        </v-icon>
+        <div class="d-flex flex-column align-center" style="gap: 4px;">
+          <v-icon
+            icon="mdi-eye"
+            class="action-button"
+            @click="showQuestionsDialog(item.id as number)"
+          >
+            <v-tooltip activator="parent" location="bottom">Show Questions</v-tooltip>
+          </v-icon>
+          <v-icon
+            icon="mdi-pencil"
+            class="action-button"
+            @click="editAssessment(item.id as number)"
+          >
+            <v-tooltip activator="parent" location="bottom">Edit Assessment</v-tooltip>
+          </v-icon>
+          <v-icon
+            icon="mdi-delete"
+            class="action-button"
+            @click="deleteAssessment(item.id as number)"
+            color="red"
+          >
+            <v-tooltip activator="parent" location="bottom">Delete Assessment</v-tooltip>
+          </v-icon>
+        </div>
       </template>
       <template v-slot:[`item.title`]="{ item }">
         <div
-          @click="showQuestionsDialog((item as any).raw.id as number)"
-          @contextmenu="editAssessment((item as any).raw.id as number, $event)"
+          @click="showQuestionsDialog(item.id as number)"
+          @contextmenu="editAssessment(item.id as number, $event)"
           class="clickableTitle"
         >
           {{ item.title }}

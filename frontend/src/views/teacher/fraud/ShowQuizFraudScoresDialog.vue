@@ -1,8 +1,7 @@
 <template>
   <v-dialog
-    :model-value="dialog"
-    @update:model-value="$emit('update:dialog', false)"
-    @keydown.esc="$emit('update:dialog', false)"
+    v-model="dialogOpen"
+    @keydown.esc="dialogOpen = false"
     max-width="75%"
     styles="overflow:hidden"
   >
@@ -102,13 +101,12 @@ import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInforma
 import { UserFraudScore } from '@/models/management/fraud/UserFraudScore';
 import { Quiz } from '@/models/management/Quiz';
 
+const dialogOpen = defineModel<boolean>('dialog', { default: false });
+
 const props = defineProps<{
-  dialog: boolean;
   quizFraudInformation: QuizFraudInformation;
   quiz: Quiz;
 }>();
-
-defineEmits(['update:dialog']);
 
 const headers: any[] = [
   { title: 'User', key: 'userInfo.name' },

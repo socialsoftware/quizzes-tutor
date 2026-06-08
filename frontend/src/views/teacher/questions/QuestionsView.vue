@@ -117,78 +117,80 @@
         </template>
 
         <template v-slot:[`item.action`]="{ item }">
-          <v-tooltip bottom>
-            <template v-slot:activator="{ props }">
-              <v-icon
-                class="mr-2 action-button"
-                data-cy="showQuestionDialogButton"
-                @click.stop="showQuestionDialog(item)"
-                v-bind="props"
-                >visibility
-              </v-icon>
-            </template>
-            <span>Show Question</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ props }">
-              <v-icon
-                class="mr-2 action-button"
-                data-cy="showStudentViewDialogButton"
-                @click="showStudentViewDialog(item)"
-                v-bind="props"
-                >school
-              </v-icon>
-            </template>
-            <span>Student View</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ props }">
-              <v-icon
-                class="mr-2 action-button"
-                data-cy="duplicateQuestionButton"
-                @click="duplicateQuestion(item)"
-                v-bind="props"
-                >cached
-              </v-icon>
-            </template>
-            <span>Duplicate Question</span>
-          </v-tooltip>
-          <v-tooltip v-if="item.numberOfAnswers === 0" bottom>
-            <template v-slot:activator="{ props }">
-              <v-icon
-                class="mr-2 action-button"
-                data-cy="editQuestionButton"
-                @click="editQuestion(item)"
-                v-bind="props"
-                >edit
-              </v-icon>
-            </template>
-            <span>Edit Question</span>
-          </v-tooltip>
-          <v-tooltip bottom>
-            <template v-slot:activator="{ props }">
-              <v-icon
-                class="mr-2 action-button"
-                @click="showClarificationDialog(item)"
-                v-bind="props"
-                >fas fa-comments
-              </v-icon>
-            </template>
-            <span>Show Clarifications</span>
-          </v-tooltip>
-          <v-tooltip v-if="item.numberOfAnswers === 0" bottom>
-            <template v-slot:activator="{ props }">
-              <v-icon
-                class="mr-2 action-button"
-                color="red"
-                data-cy="deleteQuestionButton"
-                @click="deleteQuestion(item)"
-                v-bind="props"
-                >delete
-              </v-icon>
-            </template>
-            <span>Delete Question</span>
-          </v-tooltip>
+          <div class="d-flex flex-column align-center" style="gap: 4px;">
+            <v-tooltip bottom>
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  class="action-button"
+                  data-cy="showQuestionDialogButton"
+                  @click.stop="showQuestionDialog(item)"
+                  v-bind="props"
+                  >visibility
+                </v-icon>
+              </template>
+              <span>Show Question</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  class="action-button"
+                  data-cy="showStudentViewDialogButton"
+                  @click="showStudentViewDialog(item)"
+                  v-bind="props"
+                  >school
+                </v-icon>
+              </template>
+              <span>Student View</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  class="action-button"
+                  data-cy="duplicateQuestionButton"
+                  @click="duplicateQuestion(item)"
+                  v-bind="props"
+                  >cached
+                </v-icon>
+              </template>
+              <span>Duplicate Question</span>
+            </v-tooltip>
+            <v-tooltip v-if="item.numberOfAnswers === 0" bottom>
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  class="action-button"
+                  data-cy="editQuestionButton"
+                  @click="editQuestion(item)"
+                  v-bind="props"
+                  >edit
+                </v-icon>
+              </template>
+              <span>Edit Question</span>
+            </v-tooltip>
+            <v-tooltip bottom>
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  class="action-button"
+                  @click="showClarificationDialog(item)"
+                  v-bind="props"
+                  >fas fa-comments
+                </v-icon>
+              </template>
+              <span>Show Clarifications</span>
+            </v-tooltip>
+            <v-tooltip v-if="item.numberOfAnswers === 0" bottom>
+              <template v-slot:activator="{ props }">
+                <v-icon
+                  class="action-button"
+                  color="red"
+                  data-cy="deleteQuestionButton"
+                  @click="deleteQuestion(item)"
+                  v-bind="props"
+                  >delete
+                </v-icon>
+              </template>
+              <span>Delete Question</span>
+            </v-tooltip>
+          </div>
         </template>
       </v-data-table>
       <footer>

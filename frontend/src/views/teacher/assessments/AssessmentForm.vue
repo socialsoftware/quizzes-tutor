@@ -72,7 +72,28 @@
                 <div v-else>No Topic</div>
               </template>
               <template v-slot:[`item.action`]="{ item }">
-                <!-- Vazio de acordo com o pedido -->
+                <div class="d-flex flex-column align-center" style="gap: 4px;">
+                  <v-btn
+                    density="compact"
+                    variant="flat"
+                    color="grey-lighten-3"
+                    icon
+                    @click="removeTopicConjunction(item)"
+                  >
+                    <v-icon>mdi-chevron-right</v-icon>
+                    <v-tooltip activator="parent" location="bottom">Remove from Assessment</v-tooltip>
+                  </v-btn>
+                  <v-btn
+                    density="compact"
+                    variant="flat"
+                    color="grey-lighten-3"
+                    icon
+                    @click="showQuestionsDialog(item)"
+                  >
+                    <v-icon>mdi-eye</v-icon>
+                    <v-tooltip activator="parent" location="bottom">Show Questions</v-tooltip>
+                  </v-btn>
+                </div>
               </template>
             </v-data-table>
           </div>
@@ -118,13 +139,13 @@
                 <div v-else>No Topic</div>
               </template>
               <template v-slot:[`item.action`]="{ item }">
-                <div class="d-flex" style="gap: 8px;">
+                <div class="d-flex flex-column align-center" style="gap: 4px;">
                   <v-btn
                     density="compact"
                     variant="flat"
                     color="grey-lighten-3"
                     icon
-                    @click="addTopicConjunction((item as any).raw)"
+                    @click="addTopicConjunction(item)"
                   >
                     <v-icon>mdi-chevron-left</v-icon>
                     <v-tooltip activator="parent" location="bottom">Add to Assessment</v-tooltip>
@@ -134,7 +155,7 @@
                     variant="flat"
                     color="grey-lighten-3"
                     icon
-                    @click="showQuestionsDialog((item as any).raw)"
+                    @click="showQuestionsDialog(item)"
                   >
                     <v-icon>mdi-eye</v-icon>
                     <v-tooltip activator="parent" location="bottom">Show Questions</v-tooltip>
@@ -233,7 +254,8 @@ const topicFilter = (
   search: string,
   topicConjunction?: any
 ) => {
-  if (!topicConjunction || !topicConjunction.raw) return false;
+  const rawItem = topicConjunction?.raw || topicConjunction;
+  if (!rawItem) return false;
   let searchTopics = [];
   try {
     searchTopics = JSON.parse(search);
@@ -245,17 +267,18 @@ const topicFilter = (
     return searchTopics
       .map((searchTopic: Topic) => searchTopic.name)
       .every((t: string) =>
-        topicConjunction.raw.topics.map((topic: Topic) => topic.name).includes(t)
+        rawItem.topics.map((topic: Topic) => topic.name).includes(t)
       );
   }
   return true;
 };
 
 const topicSearch = (value: any, search: string, item?: any) => {
-  if (!item || !item.raw) return false;
+  const rawItem = item?.raw || item;
+  if (!rawItem) return false;
   return (
     search != null &&
-    item.raw.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
+    rawItem.name.toLowerCase().indexOf(search.toLowerCase()) !== -1
   );
 };
 

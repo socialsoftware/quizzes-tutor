@@ -13,9 +13,9 @@
       <template v-slot:selection="{ item }">
         <v-chip
           closable
-          @click:close="removeTopic((item as any).raw)"
+          @click:close="removeTopic(item as Topic)"
         >
-          {{ (item as any).raw.name }}
+          {{ (item as Topic).name }}
         </v-chip>
       </template>
     </v-autocomplete>
@@ -30,7 +30,7 @@
     >
       <template v-slot:selection="{ item }">
         <v-chip>
-          {{ (item as any).raw.name }}
+          {{ (item as Topic).name }}
         </v-chip>
       </template>
     </v-select>
