@@ -29,7 +29,7 @@
             <VueDatePicker
               id="availableDateInput"
               v-model="quiz.availableDate"
-              model-type="yyyy-MM-dd HH:mm:ss"
+              model-type="iso"
               format="yyyy-MM-dd HH:mm"
               placeholder="*Available Date"
             ></VueDatePicker>
@@ -38,7 +38,7 @@
             <VueDatePicker
               id="conclusionDateInput"
               v-model="quiz.conclusionDate"
-              model-type="yyyy-MM-dd HH:mm:ss"
+              model-type="iso"
               format="yyyy-MM-dd HH:mm"
               placeholder="*Conclusion Date"
             ></VueDatePicker>
@@ -47,7 +47,7 @@
             <VueDatePicker
               id="resultsDateInput"
               v-model="quiz.resultsDate"
-              model-type="yyyy-MM-dd HH:mm:ss"
+              model-type="iso"
               format="yyyy-MM-dd HH:mm"
               placeholder="Results Date"
             ></VueDatePicker>
@@ -124,8 +124,8 @@
           <template v-slot:[`item.title`]="{ item }">
             <div
               class="clickableTitle"
-              @click="showQuestionDialog(item)"
-              @contextmenu="editQuestion(item, $event)"
+              @click="showQuestionDialog(item.raw || item)"
+              @contextmenu="editQuestion(item.raw || item, $event)"
             >
               {{ item.title }}
             </div>
@@ -142,7 +142,7 @@
               <template v-slot:activator="{ props }">
                 <v-icon
                   class="mr-2 action-button"
-                  @click="showQuestionDialog(item)"
+                  @click="showQuestionDialog(item.raw || item)"
                   v-bind="props"
                 >
                   visibility
@@ -155,7 +155,7 @@
                 <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
-                    @click="removeFromQuiz(item)"
+                    @click="removeFromQuiz(item.raw || item)"
                     v-bind="props"
                   >
                     remove
@@ -167,7 +167,7 @@
                 <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
-                    @click="changeQuestionPosition(item, 0)"
+                    @click="changeQuestionPosition(item.raw || item, 0)"
                     v-bind="props"
                   >
                     mdi-chevron-double-up
@@ -181,8 +181,8 @@
                     class="mr-2 action-button"
                     @click="
                       changeQuestionPosition(
-                        item,
-                        quizQuestions.indexOf(item) - 1
+                        item.raw || item,
+                        quizQuestions.indexOf(item.raw || item) - 1
                       )
                     "
                     v-bind="props"
@@ -196,7 +196,7 @@
                 <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
-                    @click="openSetPosition(item)"
+                    @click="openSetPosition(item.raw || item)"
                     v-bind="props"
                   >
                     mdi-weather-sunny
@@ -210,8 +210,8 @@
                     class="mr-2 action-button"
                     @click="
                       changeQuestionPosition(
-                        item,
-                        quizQuestions.indexOf(item) + 1
+                        item.raw || item,
+                        quizQuestions.indexOf(item.raw || item) + 1
                       )
                     "
                     v-bind="props"
@@ -226,7 +226,7 @@
                   <v-icon
                     class="mr-2 action-button"
                     @click="
-                      changeQuestionPosition(item, quizQuestions.length - 1)
+                      changeQuestionPosition(item.raw || item, quizQuestions.length - 1)
                     "
                     v-bind="props"
                   >
@@ -282,8 +282,8 @@
           <template v-slot:[`item.title`]="{ item }">
             <div
               class="clickableTitle"
-              @click="showQuestionDialog(item)"
-              @contextmenu="editQuestion(item, $event)"
+              @click="showQuestionDialog(item.raw || item)"
+              @contextmenu="editQuestion(item.raw || item, $event)"
             >
               {{ item.title }}
             </div>
@@ -298,27 +298,27 @@
           <template v-slot:[`item.action`]="{ item }">
             <v-tooltip bottom>
               <template v-slot:activator="{ props }">
-                <v-icon
+                <span
                   class="mr-2 action-button"
-                  @click="showQuestionDialog(item)"
+                  @click="showQuestionDialog(item.raw || item)"
                   v-bind="props"
                 >
-                  visibility
-                </v-icon>
+                  <v-icon>visibility</v-icon>
+                </span>
               </template>
               <span>Show Question</span>
             </v-tooltip>
             <v-tooltip v-if="!item.sequence" bottom>
               <template v-slot:activator="{ props }">
-                <v-icon
+                <span
                   id="addToQuizButton1"
                   class="mr-2 action-button"
                   data-cy="addToQuizButton"
-                  @click="addToQuiz(item)"
+                  @click="addToQuiz(item.raw || item)"
                   v-bind="props"
                 >
-                  add
-                </v-icon>
+                  <v-icon>add</v-icon>
+                </span>
               </template>
               <span>Add to Quiz</span>
             </v-tooltip>

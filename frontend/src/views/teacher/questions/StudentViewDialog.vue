@@ -11,7 +11,7 @@
       </v-card-title>
       <v-card-text class="text-left">
         <div
-          v-if="statementQuestion && statementQuestion.questionDetails"
+          v-if="statementQuestion && statementQuestion.questionDetails && statementAnswerDetails"
           class="question-container"
         >
           <div class="question">

@@ -9,10 +9,10 @@
       :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
-      :row-props="({ item }) => ({
+      :row-props="({ item }: any) => ({
         class: selectedDiscussionId === (item.raw || item).id ? 'active-green-selection' : 'discussion-row',
       })"
-      @click:row="(event, row) => selectRow(row)"
+      @click:row="(_event: any, row: any) => selectRow(row)"
     >
       <template v-slot:top>
         <v-card-title style="width: 50%">

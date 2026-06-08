@@ -36,11 +36,11 @@
       :mobile-breakpoint="0"
       v-model:items-per-page="itemsPerPage"
       :items-per-page-options="[
-        { key: 15, title: '15' },
-        { key: 30, title: '30' },
-        { key: 50, title: '50' },
-        { key: 100, title: '100' },
-        { key: -1, title: 'All' }
+        { value: 15, title: '15' },
+        { value: 30, title: '30' },
+        { value: 50, title: '50' },
+        { value: 100, title: '100' },
+        { value: -1, title: 'All' }
       ]"
     >
       <template v-slot:item="{ item: displayItem, toggleExpand, isExpanded }">
@@ -77,9 +77,9 @@
               :headers="studentHeaders"
               :items="getRaw(displayItem).questionSubmissions"
               :sort-by="[{ key: 'question.creationDate', order: 'desc' }]"
-              hide-default-footer
               class="studentSubmissions"
             >
+              <template #bottom></template>
               <template v-slot:item="{ item: subItem }">
                 <tr>
                   <td>

@@ -13,26 +13,27 @@
         <template v-slot:[`item.action`]="{ item }">
           <v-tooltip bottom>
             <template v-slot:activator="{ props: activatorProps }">
-              <v-icon
+              <span
                 class="mr-2 action-button"
                 data-cy="showStudentViewDialog"
-                @click="showStudentViewDialog(item)"
+                @click="showStudentViewDialog(item.raw || item)"
                 v-bind="activatorProps"
-                >school
-              </v-icon>
+              >
+                <v-icon>school</v-icon>
+              </span>
             </template>
             <span>Student View</span>
           </v-tooltip>
           <v-tooltip bottom>
             <template v-slot:activator="{ props: activatorProps }">
-              <v-icon
+              <span
                 class="mr-2 action-button"
-                color="red"
                 data-cy="deleteFailedAnswerButton"
-                @click="deleteFailedAnswer(item)"
+                @click="deleteFailedAnswer(item.raw || item)"
                 v-bind="activatorProps"
-                >delete
-              </v-icon>
+              >
+                <v-icon color="red">delete</v-icon>
+              </span>
             </template>
             <span>Delete Failed Answer</span>
           </v-tooltip>

@@ -86,7 +86,7 @@
                   single-line
                   type="number"
                   style="width: 40px"
-                  @update:model-value="$set(query.difficulty, 0, $event)"
+                  @update:model-value="query.difficulty[0] = $event as any"
                 ></v-text-field>
                 <span class="slider-label">Percentage of Correct Answers</span>
               </template>
@@ -98,7 +98,7 @@
                   single-line
                   type="number"
                   style="width: 50px"
-                  @update:model-value="$set(query.difficulty, 1, $event)"
+                  @update:model-value="query.difficulty[1] = $event as any"
                 ></v-text-field> </template
             ></v-range-slider>
           </v-col>
@@ -152,10 +152,6 @@ onMounted(async () => {
   }
   store.clearLoading();
 });
-
-const $set = (arr: any[], index: number, value: any) => {
-  arr[index] = value;
-};
 
 const queryQuestions = async () => {
   store.setLoading();

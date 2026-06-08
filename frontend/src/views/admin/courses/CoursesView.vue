@@ -4,10 +4,10 @@
       :headers="headers"
       :items="courses"
       :search="search"
-      disable-pagination
-      :hide-default-footer="true"
+      :items-per-page="-1"
       :mobile-breakpoint="0"
     >
+      <template #bottom></template>
       <template v-slot:top>
         <v-card-title>
           <v-text-field
@@ -22,102 +22,107 @@
           >
         </v-card-title>
       </template>
-      <template v-slot:[`item.action`]="{ item }">
-        <v-tooltip bottom>
+      <template v-slot:item.action="{ item }">
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
-            <v-icon
+            <span
               class="mr-2 action-button"
               v-bind="props"
-              @click="createFromCourse(item)"
+              @click="createFromCourse(getRaw(item))"
               data-cy="createFromCourse"
-              >cached</v-icon
             >
+              <v-icon>cached</v-icon>
+            </span>
           </template>
           <span>Create from Course</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isExternalCourse(item)">
+        <v-tooltip location="bottom" v-if="isExternalCourse(getRaw(item))">
           <template v-slot:activator="{ props }">
-            <v-icon
+            <span
               class="mr-2 action-button"
               v-bind="props"
-              @click="viewCourseExecutionUsers(item)"
+              @click="viewCourseExecutionUsers(getRaw(item))"
               data-cy="viewUsersButton"
-              >fas fa-user</v-icon
             >
+              <v-icon>fas fa-user</v-icon>
+            </span>
           </template>
           <span>View Users</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isExternalCourse(item)">
+        <v-tooltip location="bottom" v-if="isExternalCourse(getRaw(item))">
           <template v-slot:activator="{ props }">
-            <v-icon
+            <span
               class="mr-2 action-button"
               v-bind="props"
-              @click="uploadUsersHandler(item)"
+              @click="uploadUsersHandler(getRaw(item))"
               data-cy="uploadUsersHandler"
-              >attach_file</v-icon
             >
+              <v-icon>attach_file</v-icon>
+            </span>
           </template>
           <span>Upload External Users</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="isExternalCourse(item)">
+        <v-tooltip location="bottom" v-if="isExternalCourse(getRaw(item))">
           <template v-slot:activator="{ props }">
-            <v-icon
+            <span
               class="mr-2 action-button"
               v-bind="props"
-              @click="addExternalUser(item)"
+              @click="addExternalUser(getRaw(item))"
               data-cy="addExternalUser"
-              >person_add</v-icon
             >
+              <v-icon>person_add</v-icon>
+            </span>
           </template>
           <span>Add Student/Teacher</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="hasCourseSemesterFinished(item)">
+        <v-tooltip location="bottom" v-if="hasCourseSemesterFinished(getRaw(item))">
           <template v-slot:activator="{ props }">
-            <v-icon
+            <span
               class="mr-2 action-button"
               v-bind="props"
-              @click="anonymizeCourse(item)"
-              color="red"
+              @click="anonymizeCourse(getRaw(item))"
               data-cy="anonymizeCourse"
-              >lock</v-icon
             >
+              <v-icon color="red">lock</v-icon>
+            </span>
           </template>
           <span>Anonymize Course's Users</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
-            <v-icon
-              class="mr-2"
+            <span
+              class="mr-2 action-button"
               v-bind="props"
-              @click="exportCourseExecutionInfo(item)"
+              @click="exportCourseExecutionInfo(getRaw(item))"
               data-cy="exportCourse"
-              >fas fa-download</v-icon
             >
+              <v-icon>fas fa-download</v-icon>
+            </span>
           </template>
           <span>Export</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
-            <v-icon
+            <span
               class="mr-2 action-button"
               v-bind="props"
-              @click="removeCourseNonQuizQuestions(item)"
-              color="red"
-              >fas fa-eraser</v-icon
+              @click="removeCourseNonQuizQuestions(getRaw(item))"
             >
+              <v-icon color="red">fas fa-eraser</v-icon>
+            </span>
           </template>
           <span>Delete Course Non Quiz Questions</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
-            <v-icon
+            <span
               class="mr-2 action-button"
               v-bind="props"
-              @click="deleteCourse(item)"
-              color="red"
+              @click="deleteCourse(getRaw(item))"
               data-cy="deleteCourse"
-              >delete</v-icon
             >
+              <v-icon color="red">delete</v-icon>
+            </span>
           </template>
           <span>Delete Course</span>
         </v-tooltip>
@@ -177,6 +182,8 @@ const uploadUsersDialog = ref(false);
 const addUserDialog = ref(false);
 const viewUsersDialog = ref(false);
 const search = ref('');
+
+const getRaw = (item: any): Course => item.raw || item;
 
 const headers = [
   { title: 'Actions', key: 'action', align: 'start', sortable: false, width: '25%' },
