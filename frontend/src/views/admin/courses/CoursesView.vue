@@ -22,110 +22,112 @@
           >
         </v-card-title>
       </template>
-      <template v-slot:item.action="{ item }">
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <span
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="createFromCourse(getRaw(item))"
-              data-cy="createFromCourse"
-            >
-              <v-icon>cached</v-icon>
-            </span>
-          </template>
-          <span>Create from Course</span>
-        </v-tooltip>
-        <v-tooltip location="bottom" v-if="isExternalCourse(getRaw(item))">
-          <template v-slot:activator="{ props }">
-            <span
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="viewCourseExecutionUsers(getRaw(item))"
-              data-cy="viewUsersButton"
-            >
-              <v-icon>fas fa-user</v-icon>
-            </span>
-          </template>
-          <span>View Users</span>
-        </v-tooltip>
-        <v-tooltip location="bottom" v-if="isExternalCourse(getRaw(item))">
-          <template v-slot:activator="{ props }">
-            <span
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="uploadUsersHandler(getRaw(item))"
-              data-cy="uploadUsersHandler"
-            >
-              <v-icon>attach_file</v-icon>
-            </span>
-          </template>
-          <span>Upload External Users</span>
-        </v-tooltip>
-        <v-tooltip location="bottom" v-if="isExternalCourse(getRaw(item))">
-          <template v-slot:activator="{ props }">
-            <span
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="addExternalUser(getRaw(item))"
-              data-cy="addExternalUser"
-            >
-              <v-icon>person_add</v-icon>
-            </span>
-          </template>
-          <span>Add Student/Teacher</span>
-        </v-tooltip>
-        <v-tooltip location="bottom" v-if="hasCourseSemesterFinished(getRaw(item))">
-          <template v-slot:activator="{ props }">
-            <span
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="anonymizeCourse(getRaw(item))"
-              data-cy="anonymizeCourse"
-            >
-              <v-icon color="red">lock</v-icon>
-            </span>
-          </template>
-          <span>Anonymize Course's Users</span>
-        </v-tooltip>
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <span
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="exportCourseExecutionInfo(getRaw(item))"
-              data-cy="exportCourse"
-            >
-              <v-icon>fas fa-download</v-icon>
-            </span>
-          </template>
-          <span>Export</span>
-        </v-tooltip>
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <span
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="removeCourseNonQuizQuestions(getRaw(item))"
-            >
-              <v-icon color="red">fas fa-eraser</v-icon>
-            </span>
-          </template>
-          <span>Delete Course Non Quiz Questions</span>
-        </v-tooltip>
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props }">
-            <span
-              class="mr-2 action-button"
-              v-bind="props"
-              @click="deleteCourse(getRaw(item))"
-              data-cy="deleteCourse"
-            >
-              <v-icon color="red">delete</v-icon>
-            </span>
-          </template>
-          <span>Delete Course</span>
-        </v-tooltip>
+      <template v-slot:[`item.action`]="{ item }">
+        <div class="d-flex flex-row flex-wrap align-center" style="max-width: 120px;">
+          <v-tooltip location="bottom">
+            <template v-slot:activator="{ props }">
+              <span
+                class="mr-2 action-button"
+                v-bind="props"
+                @click="createFromCourse(getRaw(item))"
+                data-cy="createFromCourse"
+              >
+                <v-icon>cached</v-icon>
+              </span>
+            </template>
+            <span>Create from Course</span>
+          </v-tooltip>
+          <v-tooltip location="bottom" v-if="isExternalCourse(getRaw(item))">
+            <template v-slot:activator="{ props }">
+              <span
+                class="mr-2 action-button"
+                v-bind="props"
+                @click="viewCourseExecutionUsers(getRaw(item))"
+                data-cy="viewUsersButton"
+              >
+                <v-icon>fas fa-user</v-icon>
+              </span>
+            </template>
+            <span>View Users</span>
+          </v-tooltip>
+          <v-tooltip location="bottom" v-if="isExternalCourse(getRaw(item))">
+            <template v-slot:activator="{ props }">
+              <span
+                class="mr-2 action-button"
+                v-bind="props"
+                @click="uploadUsersHandler(getRaw(item))"
+                data-cy="uploadUsersHandler"
+              >
+                <v-icon>attach_file</v-icon>
+              </span>
+            </template>
+            <span>Upload External Users</span>
+          </v-tooltip>
+          <v-tooltip location="bottom" v-if="isExternalCourse(getRaw(item))">
+            <template v-slot:activator="{ props }">
+              <span
+                class="mr-2 action-button"
+                v-bind="props"
+                @click="addExternalUser(getRaw(item))"
+                data-cy="addExternalUser"
+              >
+                <v-icon>person_add</v-icon>
+              </span>
+            </template>
+            <span>Add Student/Teacher</span>
+          </v-tooltip>
+          <v-tooltip location="bottom" v-if="hasCourseSemesterFinished(getRaw(item))">
+            <template v-slot:activator="{ props }">
+              <span
+                class="mr-2 action-button"
+                v-bind="props"
+                @click="anonymizeCourse(getRaw(item))"
+                data-cy="anonymizeCourse"
+              >
+                <v-icon color="red">lock</v-icon>
+              </span>
+            </template>
+            <span>Anonymize Course's Users</span>
+          </v-tooltip>
+          <v-tooltip location="bottom">
+            <template v-slot:activator="{ props }">
+              <span
+                class="mr-2 action-button"
+                v-bind="props"
+                @click="exportCourseExecutionInfo(getRaw(item))"
+                data-cy="exportCourse"
+              >
+                <v-icon>fas fa-download</v-icon>
+              </span>
+            </template>
+            <span>Export</span>
+          </v-tooltip>
+          <v-tooltip location="bottom">
+            <template v-slot:activator="{ props }">
+              <span
+                class="mr-2 action-button"
+                v-bind="props"
+                @click="removeCourseNonQuizQuestions(getRaw(item))"
+              >
+                <v-icon color="red">fas fa-eraser</v-icon>
+              </span>
+            </template>
+            <span>Delete Course Non Quiz Questions</span>
+          </v-tooltip>
+          <v-tooltip location="bottom">
+            <template v-slot:activator="{ props }">
+              <span
+                class="mr-2 action-button"
+                v-bind="props"
+                @click="deleteCourse(getRaw(item))"
+                data-cy="deleteCourse"
+              >
+                <v-icon color="red">delete</v-icon>
+              </span>
+            </template>
+            <span>Delete Course</span>
+          </v-tooltip>
+        </div>
       </template>
     </v-data-table>
 
@@ -186,19 +188,19 @@ const search = ref('');
 const getRaw = (item: any): Course => (item as any).raw || item;
 
 const headers = [
-  { title: 'Actions', key: 'action', align: 'start', sortable: false, width: '25%' },
-  { title: 'Course Type', key: 'courseType', align: 'center', width: '10%' },
-  { title: 'Name', key: 'name', align: 'start', width: '25%' },
-  { title: 'Execution Type', key: 'courseExecutionType', align: 'center', width: '10%' },
-  { title: 'Acronym', key: 'acronym', align: 'center', width: '10%' },
-  { title: 'Academic Term', key: 'academicTerm', align: 'center', width: '10%' },
-  { title: 'Number of Active Teachers', key: 'numberOfActiveTeachers', align: 'center', width: '5%' },
-  { title: 'Number of Inactive Teachers', key: 'numberOfInactiveTeachers', align: 'center', width: '5%' },
-  { title: 'Number of Active Students', key: 'numberOfActiveStudents', align: 'center', width: '5%' },
-  { title: 'Number of Inactive Students', key: 'numberOfInactiveStudents', align: 'center', width: '5%' },
-  { title: 'Number of Questions', key: 'numberOfQuestions', align: 'center', width: '5%' },
-  { title: 'Number of Quizzes', key: 'numberOfQuizzes', align: 'center', width: '5%' },
-  { title: 'Status', key: 'status', align: 'center', width: '5%' }
+  { title: 'Actions', key: 'action', align: 'start', sortable: false, width: '120px' },
+  { title: 'Course Type', key: 'courseType', align: 'center', width: '110px' },
+  { title: 'Name', key: 'name', align: 'start', width: '220px' },
+  { title: 'Execution Type', key: 'courseExecutionType', align: 'center', width: '120px' },
+  { title: 'Acronym', key: 'acronym', align: 'center', width: '100px' },
+  { title: 'Academic Term', key: 'academicTerm', align: 'center', width: '120px' },
+  { title: 'Number of Active Teachers', key: 'numberOfActiveTeachers', align: 'center', width: '110px' },
+  { title: 'Number of Inactive Teachers', key: 'numberOfInactiveTeachers', align: 'center', width: '110px' },
+  { title: 'Number of Active Students', key: 'numberOfActiveStudents', align: 'center', width: '110px' },
+  { title: 'Number of Inactive Students', key: 'numberOfInactiveStudents', align: 'center', width: '110px' },
+  { title: 'Number of Questions', key: 'numberOfQuestions', align: 'center', width: '100px' },
+  { title: 'Number of Quizzes', key: 'numberOfQuizzes', align: 'center', width: '100px' },
+  { title: 'Status', key: 'status', align: 'center', width: '100px' }
 ] as any;
 
 onMounted(async () => {
