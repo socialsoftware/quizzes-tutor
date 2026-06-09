@@ -87,6 +87,12 @@ i {
   display: inline-flex !important;
   align-items: center;
   justify-content: center;
+
+  .v-icon,
+  i {
+    padding: 0 !important;
+    margin: 0 !important;
+  }
 }
 
 .action-button:hover {
