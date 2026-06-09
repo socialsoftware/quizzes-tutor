@@ -1,29 +1,32 @@
-// ***********************************************
-// This example commands.js shows you how to
-// create various custom commands and overwrite
-// existing commands.
-//
-// For more comprehensive examples of custom
-// commands please read more here:
-// https://on.cypress.io/custom-commands
-// ***********************************************
-//
-//
-// -- This is a parent command --
-// Cypress.Commands.add("login", (email, password) => { ... })
-//
-//
-// -- This is a child command --
-// Cypress.Commands.add("drag", { prevSubject: 'element'}, (subject, options) => { ... })
-//
-//
-// -- This is a dual command --
-// Cypress.Commands.add("dismiss", { prevSubject: 'optional'}, (subject, options) => { ... })
-//
-//
-// -- This will overwrite an existing command --
-// Cypress.Commands.overwrite("visit", (originalFn, url, options) => { ... })
-/// <reference types="Cypress" />
+export function getFormattedDate(daysOffset = 0) {
+  const date = new Date(Date.now() + daysOffset * 86400000);
+  const month = (date.getMonth() + 1).toString().padStart(2, "0");
+  const day = date.getDate().toString().padStart(2, "0");
+  return `${date.getFullYear()}-${month}-${day}`;
+}
+
+Cypress.Commands.add("selectDateTime", (wrapperId, dateString) => {
+  const targetDate = new Date(dateString);
+  const day = targetDate.getDate();
+  const targetMonth = targetDate.getMonth();
+  const currentMonth = new Date().getMonth();
+  const nextMonth = targetMonth !== currentMonth;
+
+  cy.get(`${wrapperId} input`).click({ force: true });
+  if (nextMonth) {
+    cy.get('button[aria-label="Next month"]').click({ force: true });
+    cy.wait(500);
+  }
+  cy.get('.dp__cell_inner:not(.dp__cell_offset)')
+    .contains(new RegExp(`^${day}$`))
+    .click({ force: true });
+  
+  cy.get('.dp__action_select').click({ force: true });
+});
+
+Cypress.Commands.add("selectDate", (wrapperId, dateString) => {
+  cy.selectDateTime(wrapperId, dateString);
+});
 
 Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
   cy.get('[data-cy="createButton"]').click({ force: true });
@@ -94,9 +97,9 @@ Cypress.Commands.add('createPrivateTournament', (numberOfQuestions) => {
 });
 
 Cypress.Commands.add('tournamentCreation', (numberOfQuestions) => {
-  cy.time('Start Time', 22, 0);
+  cy.selectDateTime('#startTimeInput', getFormattedDate(1));
   cy.wait(100);
-  cy.time('End Time', 25, 1);
+  cy.selectDateTime('#endTimeInput', getFormattedDate(2));
   cy.get('[data-cy="NumberOfQuestions"] input').type(numberOfQuestions, {
     force: true,
   });
@@ -108,20 +111,7 @@ Cypress.Commands.add('createOpenTournament', (numberOfQuestions) => {
   cy.updateTournamentStartTime();
 });
 
-Cypress.Commands.add('time', (date, day, type) => {
-  let get = '';
-  if (type === 0) {
-    get = '#startTimeInput';
-  } else {
-    get = '#endTimeInput';
-  }
 
-  cy.get(get + ' input').click();
-  
-  cy.wait(1000);
-  cy.get('.dp__cell_inner').eq(day).click();
-  cy.get('.dp__action_select').click();
-});
 
 Cypress.Commands.add('selectTopic', (topic) => {
   cy.get('[data-cy="Topics"] tbody')
@@ -151,7 +141,7 @@ Cypress.Commands.add('leaveTournament', (tournament) => {
 Cypress.Commands.add('editTournament', (tournament) => {
   cy.selectTournamentWithAction(tournament, 'EditTournament');
 
-  cy.time('End Time', 24, 1);
+  cy.selectDateTime('#endTimeInput', getFormattedDate(3));
   cy.get('[data-cy="NumberOfQuestions"] input')
     .clear({
       force: true,
@@ -395,9 +385,7 @@ Cypress.Commands.add(
     cy.get('[data-cy="submitQueryButton"]').click();
     cy.get('[data-cy="quizTitleTextArea"]').find('input, textarea').first().type(quizTitle);
 
-    cy.get('#availableDateInput').click();
-    cy.get('.dp__today').click();
-    cy.get('.dp__action_select').click();
+    cy.selectDateTime('#availableDateInput', getFormattedDate(0));
 
     cy.get('[data-cy="searchField"] input').type(questionTitle);
     cy.contains('div', questionTitle).closest('tr').contains('.action-button', 'add').first().click();
