@@ -1,7 +1,7 @@
 <template>
   <v-dialog
-    :value="dialog"
-    @input="$emit('update:dialog', false)"
+    :model-value="dialog"
+    @update:model-value="$emit('update:dialog', $event)"
     @keydown.esc="$emit('update:dialog', false)"
     max-width="75%"
     max-height="80%"

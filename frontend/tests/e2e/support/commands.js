@@ -471,8 +471,8 @@ Cypress.Commands.add('replyToDiscussion', (discussionContent, replyContent) => {
     .should('be.visible')
     .click();
 
-  cy.get('[data-cy="replyTextArea"]').should('be.visible').find('input, textarea').first().type(replyContent);
-  cy.get('[data-cy="submitReplyButton"]').click();
+  cy.get('[data-cy="replyTextArea"]').scrollIntoView().should('be.visible').find('input, textarea').first().type(replyContent);
+  cy.get('[data-cy="submitReplyButton"]').scrollIntoView().click({ force: true });
   cy.get('[data-cy="showDiscussionDialogCloseButton"]').click();
 
 });

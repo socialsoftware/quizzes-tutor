@@ -37,13 +37,9 @@
       <template v-slot:[`item.action`]="{ item }">
         <v-tooltip bottom>
           <template v-slot:activator="{ props: activatorProps }">
-            <v-icon
-              data-cy="showDiscussionButton"
-              class="mr-2 action-button"
-              v-bind="activatorProps"
-              @click="showDiscussionDialogAction(item)"
-              >fas fa-comment-dots</v-icon
-            >
+            <span data-cy="showDiscussionButton" v-bind="activatorProps" @click="showDiscussionDialogAction(item)">
+              <v-icon class="mr-2 action-button">fas fa-comment-dots</v-icon>
+            </span>
           </template>
           <span>Show Discussion</span>
         </v-tooltip>
