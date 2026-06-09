@@ -5,35 +5,23 @@
       v-model="questionTopics"
       :items="topics"
       multiple
+      chips
+      closable-chips
       return-object
       item-title="name"
       item-value="name"
       @update:model-value="saveTopics"
-    >
-      <template v-slot:selection="{ item }">
-        <v-chip
-          closable
-          @click:close="removeTopic(item as Topic)"
-        >
-          {{ (item as Topic).name }}
-        </v-chip>
-      </template>
-    </v-autocomplete>
+    ></v-autocomplete>
 
     <v-select
       v-else
       v-model="questionTopics"
       :items="topics"
       multiple
+      chips
       disabled
       append-icon="false"
-    >
-      <template v-slot:selection="{ item }">
-        <v-chip>
-          {{ (item as Topic).name }}
-        </v-chip>
-      </template>
-    </v-select>
+    ></v-select>
   </v-form>
 </template>
 

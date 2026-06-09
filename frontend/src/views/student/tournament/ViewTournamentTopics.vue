@@ -4,15 +4,10 @@
       v-model="tournamentTopics"
       :items="tournament.topics"
       multiple
+      chips
       disabled
       append-icon="false"
-    >
-      <template v-slot:selection="data">
-        <v-chip>
-          {{ data.item }}
-        </v-chip>
-      </template>
-    </v-select>
+    ></v-select>
   </v-form>
 </template>
 

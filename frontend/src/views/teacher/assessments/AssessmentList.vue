@@ -34,8 +34,8 @@
           @update:model-value="setStatus(item.id as number, item.status)"
         >
           <template v-slot:selection="{ item: selectionItem }">
-            <v-chip :color="getStatusColor((selectionItem as any).title)" small>
-              <span>{{ (selectionItem as any).title }}</span>
+            <v-chip :color="getStatusColor(selectionItem.title || selectionItem)" small>
+              <span>{{ selectionItem.title || selectionItem }}</span>
             </v-chip>
           </template>
         </v-select>

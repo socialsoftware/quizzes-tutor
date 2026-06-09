@@ -99,8 +99,8 @@
             @update:model-value="setStatus(((item as any).raw || item).id as number, ((item as any).raw || item).status)"
           >
             <template v-slot:selection="{ item: selectItem }">
-              <v-chip :color="getStatusColor((selectItem as any).raw as string)" small>
-                <span>{{ (selectItem as any).raw }}</span>
+              <v-chip :color="getStatusColor(selectItem.title || selectItem)" small>
+                <span>{{ selectItem.title || selectItem }}</span>
               </v-chip>
             </template>
           </v-select>
@@ -255,7 +255,7 @@ const showQueryForm = ref(true);
 const headers = ref<any[]>([
   { title: 'Actions', key: 'action', align: 'start', width: '15%', sortable: false },
   { title: 'Title', key: 'title', align: 'start' },
-  { title: 'Topics', key: 'topics', align: 'center', sortable: false },
+  { title: 'Topics', key: 'topics', align: 'center', width: '20%', sortable: false },
   { title: 'Status', key: 'status', width: '150px', align: 'start' },
   { title: 'Image', key: 'image', align: 'center', sortable: false },
   { title: 'Clarifications', key: 'numberOfClarifications', align: 'center' },

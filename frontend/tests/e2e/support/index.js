@@ -17,3 +17,10 @@
 import './login';
 import './commands';
 import './database';
+
+Cypress.on('uncaught:exception', (err, runnable) => {
+  // returning false here prevents Cypress from failing the test
+  if (err.message.includes('ResizeObserver loop')) {
+    return false;
+  }
+});
