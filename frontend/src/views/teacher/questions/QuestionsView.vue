@@ -33,7 +33,7 @@
         </v-col>
       </v-row>
     </v-card>
-    <query-question-form
+    <QueryQuestionForm
       v-show="showQueryForm"
       :availableOnly="false"
       class="table"
@@ -66,16 +66,16 @@
           <div
             class="clickableTitle"
             data-cy="questionTitleGrid"
-            @click.stop="showQuestionDialog(item)"
-            @contextmenu.stop="editQuestion(item, $event)"
+            @click.stop="showQuestionDialog((item as any).raw || item)"
+            @contextmenu.stop="editQuestion((item as any).raw || item, $event)"
           >
-            {{ item.title }}
+            {{ ((item as any).raw || item).title }}
           </div>
         </template>
 
         <template v-slot:[`item.topics`]="{ item }">
-          <edit-question-topics
-            :question="item"
+          <EditQuestionTopics
+            :question="(item as any).raw || item"
             :topics="topics"
             data-cy="Topics"
             v-on:question-changed-topics="onQuestionChangedTopics"
@@ -84,19 +84,19 @@
 
         <template v-slot:[`item.difficulty`]="{ item }">
           <v-chip
-            v-if="item.difficulty"
-            :color="getDifficultyColor(item.difficulty)"
+            v-if="((item as any).raw || item).difficulty"
+            :color="getDifficultyColor(((item as any).raw || item).difficulty)"
             dark
-            >{{ item.difficulty + '%' }}
+            >{{ ((item as any).raw || item).difficulty + '%' }}
           </v-chip>
         </template>
 
         <template v-slot:[`item.status`]="{ item }">
           <v-select
-            v-model="item.status"
+            v-model="((item as any).raw || item).status"
             :items="statusList"
             dense
-            @update:model-value="setStatus(item.id as number, item.status)"
+            @update:model-value="setStatus(((item as any).raw || item).id as number, ((item as any).raw || item).status)"
           >
             <template v-slot:selection="{ item: selectItem }">
               <v-chip :color="getStatusColor((selectItem as any).raw as string)" small>
@@ -112,7 +112,7 @@
             dense
             show-size
             small-chips
-            @change="handleFileUpload($event.target.files[0], item)"
+            @change="handleFileUpload($event.target.files[0], (item as any).raw || item)"
           />
         </template>
 
@@ -120,73 +120,49 @@
           <div class="d-flex flex-column align-center" style="gap: 4px;">
             <v-tooltip bottom>
               <template v-slot:activator="{ props }">
-                <v-icon
-                  class="action-button"
-                  data-cy="showQuestionDialogButton"
-                  @click.stop="showQuestionDialog(item)"
-                  v-bind="props"
-                  >visibility
-                </v-icon>
+                <span data-cy="showQuestionDialogButton" v-bind="props" @click.stop="showQuestionDialog((item as any).raw || item)">
+                  <v-icon class="action-button">visibility</v-icon>
+                </span>
               </template>
               <span>Show Question</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ props }">
-                <v-icon
-                  class="action-button"
-                  data-cy="showStudentViewDialogButton"
-                  @click="showStudentViewDialog(item)"
-                  v-bind="props"
-                  >school
-                </v-icon>
+                <span data-cy="showStudentViewDialogButton" v-bind="props" @click="showStudentViewDialog((item as any).raw || item)">
+                  <v-icon class="action-button">school</v-icon>
+                </span>
               </template>
               <span>Student View</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ props }">
-                <v-icon
-                  class="action-button"
-                  data-cy="duplicateQuestionButton"
-                  @click="duplicateQuestion(item)"
-                  v-bind="props"
-                  >cached
-                </v-icon>
+                <span data-cy="duplicateQuestionButton" v-bind="props" @click="duplicateQuestion((item as any).raw || item)">
+                  <v-icon class="action-button">cached</v-icon>
+                </span>
               </template>
               <span>Duplicate Question</span>
             </v-tooltip>
-            <v-tooltip v-if="item.numberOfAnswers === 0" bottom>
+            <v-tooltip v-if="((item as any).raw || item).numberOfAnswers === 0" bottom>
               <template v-slot:activator="{ props }">
-                <v-icon
-                  class="action-button"
-                  data-cy="editQuestionButton"
-                  @click="editQuestion(item)"
-                  v-bind="props"
-                  >edit
-                </v-icon>
+                <span data-cy="editQuestionButton" v-bind="props" @click="editQuestion((item as any).raw || item)">
+                  <v-icon class="action-button">edit</v-icon>
+                </span>
               </template>
               <span>Edit Question</span>
             </v-tooltip>
             <v-tooltip bottom>
               <template v-slot:activator="{ props }">
-                <v-icon
-                  class="action-button"
-                  @click="showClarificationDialog(item)"
-                  v-bind="props"
-                  >fas fa-comments
-                </v-icon>
+                <span data-cy="showClarificationsButton" v-bind="props" @click="showClarificationDialog((item as any).raw || item)">
+                  <v-icon class="action-button">fas fa-comments</v-icon>
+                </span>
               </template>
               <span>Show Clarifications</span>
             </v-tooltip>
-            <v-tooltip v-if="item.numberOfAnswers === 0" bottom>
+            <v-tooltip v-if="((item as any).raw || item).numberOfAnswers === 0" bottom>
               <template v-slot:activator="{ props }">
-                <v-icon
-                  class="action-button"
-                  color="red"
-                  data-cy="deleteQuestionButton"
-                  @click="deleteQuestion(item)"
-                  v-bind="props"
-                  >delete
-                </v-icon>
+                <span data-cy="deleteQuestionButton" v-bind="props" @click="deleteQuestion((item as any).raw || item)">
+                  <v-icon class="action-button" color="red">delete</v-icon>
+                </span>
               </template>
               <span>Delete Question</span>
             </v-tooltip>
@@ -199,27 +175,28 @@
         <v-icon class="mr-2 action-button">mouse</v-icon>
         Right-click on question's title to edit it.
       </footer>
-      <upload-questions-dialog
+      <UploadQuestionsDialog
         v-if="uploadQuestionsDialog"
         :dialog="uploadQuestionsDialog"
         @update:dialog="uploadQuestionsDialog = $event"
         @questions-uploaded="onQuestionsUploaded"
         @close-dialog="onCloseUploadQuestionsDialog"
       />
-      <edit-question-dialog
+      <EditQuestionDialog
         v-if="currentQuestion && editQuestionDialog"
         :dialog="editQuestionDialog"
         @update:dialog="editQuestionDialog = $event"
         :question="currentQuestion"
         @save-question="onSaveQuestion"
       />
-      <show-question-dialog
+
+      <ShowQuestionDialog
         v-if="currentQuestion && questionDialog"
         v-model="questionDialog"
         :question="currentQuestion"
         @close-show-question-dialog="onCloseShowQuestionDialog"
       />
-      <student-view-dialog
+      <StudentViewDialog
         v-if="statementQuestion && studentViewDialog"
         :dialog="studentViewDialog"
         @update:dialog="studentViewDialog = $event"

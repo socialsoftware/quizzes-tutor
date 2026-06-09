@@ -15,7 +15,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
     validateQuestion(title, content);
 
-    cy.get('button').contains('close').should('be.visible').click();
+    cy.get('body').type('{esc}');
 
     Cypress.on('uncaught:exception', (err, runnable) => {
       console.log(err);
@@ -113,11 +113,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
   });
 
   it('Can view question (with button)', function () {
-    cy.get('tbody tr')
-      .first()
-      .within(($list) => {
-        cy.get('[data-cy="showQuestionDialogButton"]').first().click({ force: true });
-      });
+    cy.get('[data-cy="showQuestionDialogButton"]').first().click({ force: true });
 
     cy.wait(1000);
 
@@ -126,7 +122,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
       'Cypress Question Example - Content - 01'
     );
 
-    cy.get('button').contains('close').click();
+    cy.get('body').type('{esc}');
   });
 
   it('Can view question (with click)', function () {
@@ -139,7 +135,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
       'Cypress Question Example - Content - 01'
     );
 
-    cy.get('button').contains('close').click();
+    cy.get('body').type('{esc}');
   });
 
   it('Can update title (with right-click)', function () {
@@ -209,11 +205,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
   // missing update all with questions as well and change data. Should also be tested for errors :D
 
   it('Can duplicate question', function () {
-    cy.get('tbody tr')
-      .first()
-      .within(($list) => {
-        cy.get('[data-cy="duplicateQuestionButton"]').first().click({ force: true });
-      });
+    cy.get('[data-cy="duplicateQuestionButton"]').first().click({ force: true });
 
     cy.wait(1000); //making sure codemirror loaded
 
@@ -251,11 +243,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
   it('Can delete created question', function () {
     cy.intercept('DELETE', '/questions/*').as('deleteQuestion');
-    cy.get('tbody tr')
-      .first()
-      .within(($list) => {
-        cy.get('[data-cy="deleteQuestionButton"]').first().click({ force: true });
-      });
+    cy.get('[data-cy="deleteQuestionButton"]').first().click({ force: true });
 
     cy.wait('@deleteQuestion').its('response.statusCode').should('eq', 200);
   });

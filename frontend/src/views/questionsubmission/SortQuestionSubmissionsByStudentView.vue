@@ -156,7 +156,7 @@ const questionSubmissionDialog = ref<boolean>(false);
 const search = ref<string>('');
 
 const getRaw = (item: any): UserQuestionSubmissionInfo => {
-  return item.raw || item;
+  return (item as any).raw || item;
 };
 
 const hasSubmissions = (item: any): boolean => {
@@ -164,7 +164,7 @@ const hasSubmissions = (item: any): boolean => {
 };
 
 const getSubRaw = (item: any): QuestionSubmission => {
-  return item.raw || item;
+  return (item as any).raw || item;
 };
 
 const processHeaders = (arr: any[]) => {

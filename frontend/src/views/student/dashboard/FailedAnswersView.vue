@@ -16,7 +16,7 @@
               <span
                 class="mr-2 action-button"
                 data-cy="showStudentViewDialog"
-                @click="showStudentViewDialog(item.raw || item)"
+                @click="showStudentViewDialog((item as any).raw || item)"
                 v-bind="activatorProps"
               >
                 <v-icon>school</v-icon>
@@ -29,7 +29,7 @@
               <span
                 class="mr-2 action-button"
                 data-cy="deleteFailedAnswerButton"
-                @click="deleteFailedAnswer(item.raw || item)"
+                @click="deleteFailedAnswer((item as any).raw || item)"
                 v-bind="activatorProps"
               >
                 <v-icon color="red">delete</v-icon>

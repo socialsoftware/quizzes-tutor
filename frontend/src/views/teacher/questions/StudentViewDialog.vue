@@ -2,7 +2,7 @@
   <v-dialog
     :model-value="dialog"
     max-width="75%"
-    @update:model-value="$emit('update:dialog', false)"
+    @update:model-value="$emit('update:dialog', $event)"
     @keydown.esc="$emit('update:dialog', false)"
   >
     <v-card>

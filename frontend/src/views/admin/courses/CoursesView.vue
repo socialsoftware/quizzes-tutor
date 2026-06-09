@@ -183,7 +183,7 @@ const addUserDialog = ref(false);
 const viewUsersDialog = ref(false);
 const search = ref('');
 
-const getRaw = (item: any): Course => item.raw || item;
+const getRaw = (item: any): Course => (item as any).raw || item;
 
 const headers = [
   { title: 'Actions', key: 'action', align: 'start', sortable: false, width: '25%' },

@@ -10,7 +10,7 @@
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
       :row-props="({ item }: any) => ({
-        class: selectedDiscussionId === (item.raw || item).id ? 'active-green-selection' : 'discussion-row',
+        class: selectedDiscussionId === ((item as any).raw || item).id ? 'active-green-selection' : 'discussion-row',
       })"
       @click:row="(_event: any, row: any) => selectRow(row)"
     >

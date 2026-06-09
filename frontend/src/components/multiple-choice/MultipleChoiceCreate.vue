@@ -28,15 +28,14 @@
       <v-col v-if="sQuestionDetails.options.length > 2">
         <v-tooltip bottom>
           <template v-slot:activator="{ props }">
-            <v-icon
-              :data-cy="`Delete${index + 1}`"
-              small
-              class="ma-1 action-button"
-              v-bind="props"
-              @click="removeOption(index)"
-              color="red"
-              >close</v-icon
-            >
+            <span :data-cy="`Delete${index + 1}`" v-bind="props" @click="removeOption(index)">
+              <v-icon
+                small
+                class="ma-1 action-button"
+                color="red"
+                >close</v-icon
+              >
+            </span>
           </template>
           <span>Remove Option</span>
         </v-tooltip>

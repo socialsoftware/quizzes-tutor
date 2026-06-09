@@ -196,7 +196,7 @@ const topicsComponentKey = ref<number>(0);
 const itemsPerPage = ref<number>(15);
 
 const getRaw = (item: any): QuestionSubmission => {
-  return item.raw || item;
+  return (item as any).raw || item;
 };
 
 const processHeaders = () => {

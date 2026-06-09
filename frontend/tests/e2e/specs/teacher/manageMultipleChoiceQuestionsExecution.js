@@ -17,6 +17,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
           }
         });
       });
+    cy.get('body').type('{esc}');
   }
 
   function validateQuestionFull(
@@ -31,7 +32,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     validateQuestion(title, content, optionPrefix, correctIndex);
 
-    cy.get('button').contains('close').click();
+    cy.get('body').type('{esc}');
   }
 
   before(() => {
@@ -68,11 +69,11 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('span.headline').should('contain', 'New Question');
 
-    cy.get('[data-cy="questionTitleTextArea"]').type(
+    cy.get('[data-cy="questionTitleTextArea"] input').first().type(
       'Cypress Question Example - 01',
       { force: true }
     );
-    cy.get('[data-cy="questionQuestionTextArea"]').type(
+    cy.get('[data-cy="questionQuestionTextArea"] textarea').first().type(
       'Cypress Question Example - Content - 01',
       { force: true }
     );
@@ -82,7 +83,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
       .each(($el, index, $list) => {
         cy.get($el).within(($ls) => {
           if (index === 2) {
-            cy.get(`[data-cy="Switch${index + 1}"]`).check({ force: true });
+            cy.get(`[data-cy="Switch${index + 1}"] input`).check({ force: true });
           }
           cy.get(`[data-cy="Option${index + 1}"]`).type('Option ' + index);
         });
@@ -105,18 +106,14 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
   });
 
   it('Can view question (with button)', function () {
-    cy.get('tbody tr')
-      .first()
-      .within(($list) => {
-        cy.get('button').contains('visibility').click();
-      });
+    cy.get('[data-cy="showQuestionDialogButton"]').first().click({ force: true });
 
     validateQuestion(
       'Cypress Question Example - 01',
       'Cypress Question Example - Content - 01'
     );
 
-    cy.get('button').contains('close').click();
+    cy.get('body').type('{esc}');
   });
 
   it('Can view question (with click)', function () {
@@ -127,17 +124,13 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
       'Cypress Question Example - Content - 01'
     );
 
-    cy.get('button').contains('close').click();
+    cy.get('body').type('{esc}');
   });
 
   it('Can update title (with right-click)', function () {
     cy.intercept('PUT', '/questions/*').as('updateQuestion');
 
-    cy.get('tbody tr')
-      .first()
-      .within(($list) => {
-        cy.get('button').contains('edit').click();
-      });
+    cy.get('[data-cy="questionTitleGrid"]').first().rightclick();
 
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
@@ -145,7 +138,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
       .within(($list) => {
         cy.get('span.headline').should('contain', 'Edit Question');
 
-        cy.get('[data-cy="questionTitleTextArea"]')
+        cy.get('[data-cy="questionTitleTextArea"] input').first()
           .clear({ force: true })
           .type('Cypress Question Example - 01 - Edited', { force: true });
 
@@ -170,7 +163,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
     cy.get('tbody tr')
       .first()
       .within(($list) => {
-        cy.get('button').contains('edit').click();
+        cy.get('[data-cy="editQuestionButton"]').click();
       });
 
     cy.get('[data-cy="createOrEditQuestionDialog"]')
@@ -179,7 +172,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
       .within(($list) => {
         cy.get('span.headline').should('contain', 'Edit Question');
 
-        cy.get('[data-cy="questionQuestionTextArea"]')
+        cy.get('[data-cy="questionQuestionTextArea"] textarea').first()
           .clear({ force: true })
           .type('Cypress New Content For Question!', { force: true });
 
@@ -197,11 +190,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
   // missing update all with questions as well and change data. Should also be tested for errors :D
 
   it('Can duplicate question', function () {
-    cy.get('tbody tr')
-      .first()
-      .within(($list) => {
-        cy.get('button').contains('cached').click();
-      });
+    cy.get('[data-cy="duplicateQuestionButton"]').first().click({ force: true });
 
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
@@ -209,10 +198,10 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('span.headline').should('contain', 'New Question');
 
-    cy.get('[data-cy="questionTitleTextArea"]')
+    cy.get('[data-cy="questionTitleTextArea"] input').first()
       .should('have.value', 'Cypress Question Example - 01 - Edited')
       .type('{end} - DUP', { force: true });
-    cy.get('[data-cy="questionQuestionTextArea"]').should(
+    cy.get('[data-cy="questionQuestionTextArea"] textarea').first().should(
       'have.value',
       'Cypress New Content For Question!'
     );
@@ -243,11 +232,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
   it('Can delete created question', function () {
     cy.intercept('DELETE', '/questions/*').as('deleteQuestion');
-    cy.get('tbody tr')
-      .first()
-      .within(($list) => {
-        cy.get('button').contains('delete').click();
-      });
+    cy.get('[data-cy="deleteQuestionButton"]').first().click({ force: true });
 
     cy.wait('@deleteQuestion').its('response.statusCode').should('eq', 200);
   });
@@ -261,11 +246,11 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('span.headline').should('contain', 'New Question');
 
-    cy.get('[data-cy="questionTitleTextArea"]').type(
+    cy.get('[data-cy="questionTitleTextArea"] input').first().type(
       'Cypress Question Example - 01 (2 Options)',
       { force: true }
     );
-    cy.get('[data-cy="questionQuestionTextArea"]').type(
+    cy.get('[data-cy="questionQuestionTextArea"] textarea').first().type(
       'Cypress Question Example - Content - 01 (2 Options)',
       {
         force: true,
@@ -275,7 +260,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
     cy.get('[data-cy="questionOptionsInput"').should('have.length', 4);
 
     cy.get(`[data-cy="Option1"]`).type('Option2 0');
-    cy.get(`[data-cy="Switch1"]`).check({ force: true });
+    cy.get(`[data-cy="Switch1"] input`).check({ force: true });
     cy.get(`[data-cy="Option2"]`).type('Option2 1');
 
     cy.get(`[data-cy="Delete4"]`).click({ force: true });
@@ -308,11 +293,11 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('span.headline').should('contain', 'New Question');
 
-    cy.get('[data-cy="questionTitleTextArea"]').type(
+    cy.get('[data-cy="questionTitleTextArea"] input').first().type(
       'Cypress Question Example - 01 (10 Options)',
       { force: true }
     );
-    cy.get('[data-cy="questionQuestionTextArea"]').type(
+    cy.get('[data-cy="questionQuestionTextArea"] textarea').first().type(
       'Cypress Question Example - Content - 01 (10 Options)',
       {
         force: true,
@@ -331,7 +316,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
       .each(($el, index, $list) => {
         cy.get($el).within(($ls) => {
           if (index === 6) {
-            cy.get(`[data-cy="Switch${index + 1}"]`).check({ force: true });
+            cy.get(`[data-cy="Switch${index + 1}"] input`).check({ force: true });
           }
           cy.get(`[data-cy="Option${index + 1}"]`).type('Option10 ' + index);
         });

@@ -124,8 +124,8 @@
           <template v-slot:[`item.title`]="{ item }">
             <div
               class="clickableTitle"
-              @click="showQuestionDialog(item.raw || item)"
-              @contextmenu="editQuestion(item.raw || item, $event)"
+              @click="showQuestionDialog((item as any).raw || item)"
+              @contextmenu="editQuestion((item as any).raw || item, $event)"
             >
               {{ item.title }}
             </div>
@@ -142,7 +142,7 @@
               <template v-slot:activator="{ props }">
                 <v-icon
                   class="mr-2 action-button"
-                  @click="showQuestionDialog(item.raw || item)"
+                  @click="showQuestionDialog((item as any).raw || item)"
                   v-bind="props"
                 >
                   visibility
@@ -155,7 +155,7 @@
                 <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
-                    @click="removeFromQuiz(item.raw || item)"
+                    @click="removeFromQuiz((item as any).raw || item)"
                     v-bind="props"
                   >
                     remove
@@ -167,7 +167,7 @@
                 <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
-                    @click="changeQuestionPosition(item.raw || item, 0)"
+                    @click="changeQuestionPosition((item as any).raw || item, 0)"
                     v-bind="props"
                   >
                     mdi-chevron-double-up
@@ -181,8 +181,8 @@
                     class="mr-2 action-button"
                     @click="
                       changeQuestionPosition(
-                        item.raw || item,
-                        quizQuestions.indexOf(item.raw || item) - 1
+                        (item as any).raw || item,
+                        quizQuestions.indexOf((item as any).raw || item) - 1
                       )
                     "
                     v-bind="props"
@@ -196,7 +196,7 @@
                 <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
-                    @click="openSetPosition(item.raw || item)"
+                    @click="openSetPosition((item as any).raw || item)"
                     v-bind="props"
                   >
                     mdi-weather-sunny
@@ -210,8 +210,8 @@
                     class="mr-2 action-button"
                     @click="
                       changeQuestionPosition(
-                        item.raw || item,
-                        quizQuestions.indexOf(item.raw || item) + 1
+                        (item as any).raw || item,
+                        quizQuestions.indexOf((item as any).raw || item) + 1
                       )
                     "
                     v-bind="props"
@@ -226,7 +226,7 @@
                   <v-icon
                     class="mr-2 action-button"
                     @click="
-                      changeQuestionPosition(item.raw || item, quizQuestions.length - 1)
+                      changeQuestionPosition((item as any).raw || item, quizQuestions.length - 1)
                     "
                     v-bind="props"
                   >
@@ -282,8 +282,8 @@
           <template v-slot:[`item.title`]="{ item }">
             <div
               class="clickableTitle"
-              @click="showQuestionDialog(item.raw || item)"
-              @contextmenu="editQuestion(item.raw || item, $event)"
+              @click="showQuestionDialog((item as any).raw || item)"
+              @contextmenu="editQuestion((item as any).raw || item, $event)"
             >
               {{ item.title }}
             </div>
@@ -300,7 +300,7 @@
               <template v-slot:activator="{ props }">
                 <span
                   class="mr-2 action-button"
-                  @click="showQuestionDialog(item.raw || item)"
+                  @click="showQuestionDialog((item as any).raw || item)"
                   v-bind="props"
                 >
                   <v-icon>visibility</v-icon>
@@ -314,7 +314,7 @@
                   id="addToQuizButton1"
                   class="mr-2 action-button"
                   data-cy="addToQuizButton"
-                  @click="addToQuiz(item.raw || item)"
+                  @click="addToQuiz((item as any).raw || item)"
                   v-bind="props"
                 >
                   <v-icon>add</v-icon>

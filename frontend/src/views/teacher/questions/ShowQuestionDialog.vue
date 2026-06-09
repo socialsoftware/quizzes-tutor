@@ -1,7 +1,7 @@
 <template>
   <v-dialog
     :model-value="modelValue"
-    @update:model-value="$emit('update:modelValue', false)"
+    @update:model-value="$emit('update:modelValue', $event)"
     @keydown.esc="$emit('update:modelValue', false)"
     max-width="75%"
   >

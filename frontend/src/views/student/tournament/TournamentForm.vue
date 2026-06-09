@@ -144,10 +144,10 @@
                   </v-autocomplete>
                 </template>
                 <template v-slot:[`item.topicsCreate`]="{ item }">
-                  {{ (item.raw || item).name }}
+                  {{ ((item as any).raw || item).name }}
                 </template>
                 <template v-slot:[`item.action`]="{ item }">
-                  <span data-cy="removeTopic" @click="removeTopic(item.raw || item)">
+                  <span data-cy="removeTopic" @click="removeTopic((item as any).raw || item)">
                     <v-icon
                       icon="mdi-minus"
                       class="mr-2"
@@ -193,10 +193,10 @@
                   </v-autocomplete>
                 </template>
                 <template v-slot:[`item.topicsCreate`]="{ item }">
-                  {{ (item.raw || item).name }}
+                  {{ ((item as any).raw || item).name }}
                 </template>
                 <template v-slot:[`item.action`]="{ item }">
-                  <span data-cy="addTopic" @click="addTopic(item.raw || item)">
+                  <span data-cy="addTopic" @click="addTopic((item as any).raw || item)">
                     <v-icon
                       icon="mdi-plus"
                       class="mr-2"

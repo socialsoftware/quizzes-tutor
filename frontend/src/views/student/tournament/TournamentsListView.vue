@@ -30,9 +30,9 @@
       </template>
 
       <template v-slot:[`item.actions`]="{ item }">
-        <v-tooltip bottom v-if="(item.raw || item).canChange()">
+        <v-tooltip bottom v-if="((item as any).raw || item).canChange()">
           <template v-slot:activator="{ props: activatorProps }">
-            <span data-cy="EditTournament" v-bind="activatorProps" @click="editTournament(item.raw || item)">
+            <span data-cy="EditTournament" v-bind="activatorProps" @click="editTournament((item as any).raw || item)">
               <v-icon
                 large
                 class="mr-2"
@@ -43,9 +43,9 @@
           <span>Edit Tournament</span>
         </v-tooltip>
 
-        <v-tooltip bottom v-if="(item.raw || item).canJoinPublic()">
+        <v-tooltip bottom v-if="((item as any).raw || item).canJoinPublic()">
           <template v-slot:activator="{ props: activatorProps }">
-            <span data-cy="JoinTournament" v-bind="activatorProps" @click="joinPublicTournament(item.raw || item)">
+            <span data-cy="JoinTournament" v-bind="activatorProps" @click="joinPublicTournament((item as any).raw || item)">
               <v-icon
                 large
                 class="mr-2"
@@ -55,9 +55,9 @@
           </template>
           <span>Join Tournament</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="(item.raw || item).canJoinPrivate()">
+        <v-tooltip bottom v-if="((item as any).raw || item).canJoinPrivate()">
           <template v-slot:activator="{ props: activatorProps }">
-            <span data-cy="JoinTournament" v-bind="activatorProps" @click="openPasswordDialog(item.raw || item)">
+            <span data-cy="JoinTournament" v-bind="activatorProps" @click="openPasswordDialog((item as any).raw || item)">
               <v-icon
                 large
                 class="mr-2"
@@ -67,9 +67,9 @@
           </template>
           <span>Join Tournament</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="(item.raw || item).canLeave()">
+        <v-tooltip bottom v-if="((item as any).raw || item).canLeave()">
           <template v-slot:activator="{ props: activatorProps }">
-            <span data-cy="LeaveTournament" v-bind="activatorProps" @click="leaveTournament(item.raw || item)">
+            <span data-cy="LeaveTournament" v-bind="activatorProps" @click="leaveTournament((item as any).raw || item)">
               <v-icon
                 large
                 class="mr-2"
@@ -79,9 +79,9 @@
           </template>
           <span>Leave Tournament</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="(item.raw || item).canSolveQuiz()">
+        <v-tooltip bottom v-if="((item as any).raw || item).canSolveQuiz()">
           <template v-slot:activator="{ props: activatorProps }">
-            <span data-cy="SolveQuiz" v-bind="activatorProps" @click="solveQuiz(item.raw || item)">
+            <span data-cy="SolveQuiz" v-bind="activatorProps" @click="solveQuiz((item as any).raw || item)">
               <v-icon
                 large
                 class="mr-2"
@@ -91,7 +91,7 @@
           </template>
           <span>Solve Quiz</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="(item.raw || item).canSeeResults()">
+        <v-tooltip bottom v-if="((item as any).raw || item).canSeeResults()">
           <template v-slot:activator="{ props: activatorProps }">
             <span data-cy="SeeSolvedQuiz" v-bind="activatorProps" @click="openSolvedQuiz()">
               <v-icon
@@ -104,9 +104,9 @@
           <span>See Solved Quiz</span>
         </v-tooltip>
 
-        <v-tooltip bottom v-if="(item.raw || item).canChange()">
+        <v-tooltip bottom v-if="((item as any).raw || item).canChange()">
           <template v-slot:activator="{ props: activatorProps }">
-            <span data-cy="CancelTournament" v-bind="activatorProps" @click="cancelTournament(item.raw || item)">
+            <span data-cy="CancelTournament" v-bind="activatorProps" @click="cancelTournament((item as any).raw || item)">
               <v-icon
                 large
                 class="mr-2"
@@ -116,9 +116,9 @@
           </template>
           <span>Cancel Tournament</span>
         </v-tooltip>
-        <v-tooltip bottom v-if="(item.raw || item).canChange()">
+        <v-tooltip bottom v-if="((item as any).raw || item).canChange()">
           <template v-slot:activator="{ props: activatorProps }">
-            <span data-cy="RemoveTournament" v-bind="activatorProps" @click="removeTournament(item.raw || item)">
+            <span data-cy="RemoveTournament" v-bind="activatorProps" @click="removeTournament((item as any).raw || item)">
               <v-icon
                 large
                 class="mr-2"
@@ -132,45 +132,45 @@
       </template>
 
       <template v-slot:[`item.id`]="{ item }">
-        <v-chip color="primary" class="text-white" size="small" @click="openTournamentDashboard(item.raw || item)">
-          <span> {{ (item.raw || item).id }} </span>
+        <v-chip color="primary" class="text-white" size="small" @click="openTournamentDashboard((item as any).raw || item)">
+          <span> {{ ((item as any).raw || item).id }} </span>
         </v-chip>
       </template>
 
       <template v-slot:[`item.creator`]="{ item }">
         <v-chip size="small">
-          <span> {{ (item.raw || item).creator.name }} </span>
+          <span> {{ ((item as any).raw || item).creator.name }} </span>
         </v-chip>
       </template>
 
       <template v-slot:[`item.topics`]="{ item }">
-        <view-tournament-topics :tournament="item.raw || item" />
+        <view-tournament-topics :tournament="(item as any).raw || item" />
       </template>
 
       <template v-slot:[`item.state`]="{ item }">
-        <v-chip :color="(item.raw || item).getStateColor()" class="text-white">
-          {{ (item.raw || item).getStateName() }}
+        <v-chip :color="((item as any).raw || item).getStateColor()" class="text-white">
+          {{ ((item as any).raw || item).getStateName() }}
         </v-chip>
       </template>
 
       <template v-slot:[`item.privateTournament`]="{ item }">
-        <v-chip :color="(item.raw || item).getPrivateColor()" class="text-white">
-          {{ (item.raw || item).getPrivateName() }}
+        <v-chip :color="((item as any).raw || item).getPrivateColor()" class="text-white">
+          {{ ((item as any).raw || item).getPrivateName() }}
         </v-chip>
       </template>
 
       <template v-slot:[`item.times`]="{ item }">
         <v-chip size="x-small">
-          {{ (item.raw || item).startTime }}
+          {{ ((item as any).raw || item).startTime }}
         </v-chip>
         <v-chip size="x-small">
-          {{ (item.raw || item).endTime }}
+          {{ ((item as any).raw || item).endTime }}
         </v-chip>
       </template>
 
       <template v-slot:[`item.enrolled`]="{ item }">
-        <v-chip :color="(item.raw || item).getEnrolledColor()" class="text-white">
-          {{ (item.raw || item).getEnrolledName() }}
+        <v-chip :color="((item as any).raw || item).getEnrolledColor()" class="text-white">
+          {{ ((item as any).raw || item).getEnrolledName() }}
         </v-chip>
       </template>
     </v-data-table>
