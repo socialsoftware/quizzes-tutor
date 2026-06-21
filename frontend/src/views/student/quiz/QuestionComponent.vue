@@ -4,6 +4,7 @@
       <span
         v-if="backsies"
         class="square"
+        data-cy="previousQuestionButton"
         @click="decreaseOrder"
         @mouseover="hover = true"
         @mouseleave="hover = false"
