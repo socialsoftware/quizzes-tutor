@@ -61,11 +61,13 @@
               v-model="query.clarificationsOnly"
               label="Clarifications Only"
               hide-details
+              color="primary"
             ></v-checkbox>
             <v-checkbox
               v-model="query.noAnswersOnly"
               label="No Answers Only"
               hide-details
+              color="primary"
             ></v-checkbox>
           </v-col>
           <v-col>

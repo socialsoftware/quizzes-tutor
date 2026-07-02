@@ -255,7 +255,7 @@ const showQuestionSubmissionDialogAction = async (questionSubmission: QuestionSu
 };
 
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .clickableRow {
   cursor: pointer;
 }
@@ -264,7 +264,7 @@ const showQuestionSubmissionDialogAction = async (questionSubmission: QuestionSu
 }
 
 // Evita deslocamento da tabela ao ordenar — fixa o layout das colunas
-.v-card.table .v-data-table table {
+:deep(.v-data-table table) {
   table-layout: fixed !important;
   width: 100% !important;
 }
