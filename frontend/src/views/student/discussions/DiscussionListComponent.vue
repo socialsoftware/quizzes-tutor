@@ -1,5 +1,5 @@
 <template>
-  <v-card max-width="1200" class="mx-auto my-7">
+  <v-card max-width="1200" class="mx-auto my-7 table">
     <v-data-table
       :headers="headers"
       :items="discussions"
@@ -102,5 +102,9 @@ const onCloseShowDiscussionDialog = () => {
 <style scoped>
 .discussion-row {
   cursor: pointer;
+}
+.table {
+  margin-left: auto !important;
+  margin-right: auto !important;
 }
 </style>

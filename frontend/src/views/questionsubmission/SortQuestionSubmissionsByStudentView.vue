@@ -43,13 +43,13 @@
         { value: -1, title: 'All' }
       ]"
     >
-      <template v-slot:item="{ item: displayItem, toggleExpand, isExpanded }">
+      <template v-slot:item="{ item: displayItem, internalItem, toggleExpand, isExpanded }">
         <tr
           v-bind:class="{ clickableRow: hasSubmissions(displayItem) }"
-          @click="() => { if (hasSubmissions(displayItem)) toggleExpand(displayItem as any) }"
+          @click="() => { if (hasSubmissions(displayItem)) toggleExpand(internalItem) }"
         >
           <td style="width: 48px; padding: 0 4px;">
-            <v-icon v-if="!isExpanded(displayItem as any)">fa-angle-down</v-icon>
+            <v-icon v-if="!isExpanded(internalItem)">fa-angle-down</v-icon>
             <v-icon v-else>fa-angle-up</v-icon>
           </td>
           <td style="width: 50%;">{{ getRaw(displayItem)?.name }}</td>
@@ -255,7 +255,7 @@ const showQuestionSubmissionDialogAction = async (questionSubmission: QuestionSu
 };
 
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .clickableRow {
   cursor: pointer;
 }
@@ -264,7 +264,7 @@ const showQuestionSubmissionDialogAction = async (questionSubmission: QuestionSu
 }
 
 // Evita deslocamento da tabela ao ordenar — fixa o layout das colunas
-.v-card.table .v-data-table table {
+:deep(.v-data-table table) {
   table-layout: fixed !important;
   width: 100% !important;
 }

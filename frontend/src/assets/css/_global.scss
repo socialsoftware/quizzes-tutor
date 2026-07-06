@@ -138,7 +138,7 @@ footer {
 // Restore Vuetify 2 uppercase button text and size
 .v-btn {
   text-transform: uppercase !important;
-  font-size: 0.875rem !important;
+  font-size: 0.95rem !important;
   letter-spacing: 0.0892857143em !important;
 }
 
@@ -236,6 +236,7 @@ footer {
 
 // 2. Tabelas compactas — reduz o padding das células para tornar a tabela mais comprimida
 .table .v-data-table {
+
   td,
   th {
     padding-top: 4px !important;
@@ -246,8 +247,8 @@ footer {
 
 // 3. Cabeçalhos da tabela — quebra apenas nos espaços entre palavras (nunca a meio de uma palavra)
 .table .v-data-table th {
-  white-space: normal !important;   // permite quebra de linha
-  word-break: keep-all !important;  // nunca parte palavras a meio
+  white-space: normal !important; // permite quebra de linha
+  word-break: keep-all !important; // nunca parte palavras a meio
   overflow-wrap: normal !important; // só quebra em espaços
   line-height: 1.3 !important;
   vertical-align: middle !important;

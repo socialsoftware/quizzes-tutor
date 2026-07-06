@@ -272,6 +272,7 @@ const onCreateUser = (user: ExternalUser) => {
     );
     courses.value[index].courseExecutionUsers = currentCourse.value.courseExecutionUsers;
     updateUserNumbers(courses.value[index]);
+    courses.value = [...courses.value];
   }
 };
 
@@ -360,6 +361,7 @@ const onDeleteUsers = async (users: User[]) => {
       courses.value[index].courseExecutionUsers = currentCourse.value.courseExecutionUsers;
 
       updateUserNumbers(courses.value[index]);
+      courses.value = [...courses.value];
     } catch (error) {
       store.setError(error as string);
     }

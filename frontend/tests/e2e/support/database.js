@@ -19,7 +19,7 @@ function dbCommand(command) {
 
 Cypress.Commands.add('beforeEachTournament', () => {
   dbCommand(`
-      WITH tmpCourse as (SELECT ce.course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course')      
+      WITH tmpCourse as (SELECT ce.course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course' LIMIT 1)      
         ,insert1 as (INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (1, 0, 'AVAILABLE', 'test1', (select course_execution_id from tmpCourse)))
         ,insert2 as (INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (2, 0, 'AVAILABLE', 'test2', (select course_execution_id from tmpCourse)))
         ,insert3 as (INSERT INTO topic_conjunctions (id, assessment_id) VALUES (100, 1))
@@ -88,7 +88,7 @@ Cypress.Commands.add('afterEachTournament', () => {
 
 Cypress.Commands.add('addQuestionSubmission', (title, submissionStatus) => {
   dbCommand(`
-    WITH course as (SELECT ce.course_id as course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course')     
+    WITH course as (SELECT ce.course_id as course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course' LIMIT 1)     
     , quest AS (
       INSERT INTO questions (title, content, status, course_id, creation_date) 
       VALUES ('${title}', 'Question?', 'SUBMITTED', (select course_id from course), current_timestamp) RETURNING id
@@ -168,7 +168,7 @@ Cypress.Commands.add('deleteFailedAnswers', () => {
 
 Cypress.Commands.add('addTopicAndAssessment', () => {
   dbCommand(`
-      WITH tmpCourse as (SELECT ce.course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course')      
+      WITH tmpCourse as (SELECT ce.course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course' LIMIT 1)      
         ,insert1 as (INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (1, 0, 'AVAILABLE', 'assessment one', (select course_execution_id from tmpCourse)))
         ,insert2 as (INSERT INTO topic_conjunctions (id, assessment_id) VALUES (100, 1))
         ,insert3 as (INSERT INTO topics (id, name, course_id) VALUES (82, 'Software Architecture', (select course_id from tmpCourse)))
@@ -184,6 +184,8 @@ Cypress.Commands.add('deleteDifficultQuestions', () => {
 
 Cypress.Commands.add('deleteQuestionsAndAnswers', () => {
   dbCommand(`
+         DELETE FROM code_order_answer_slot;
+         DELETE FROM code_order_slot;
          DELETE FROM replies;
          DELETE FROM discussions;
          DELETE FROM answer_details;

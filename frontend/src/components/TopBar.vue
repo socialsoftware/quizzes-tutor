@@ -47,7 +47,7 @@
                 data-cy="quizzesTeacherMenuButton"
                 to="/management/quizzes"
                prepend-icon="ballot" title="Quizzes"></v-list-item>
-              <v-list-item to="/management/assessments" prepend-icon="book" title="Assessments"></v-list-item>
+              <v-list-item data-cy="assessmentsTeacherMenuButton" to="/management/assessments" prepend-icon="book" title="Assessments"></v-list-item>
               <v-list-item to="/management/students" prepend-icon="school" title="Students"></v-list-item>
               <v-list-item
                 data-cy="discussionsTeacherButton"
