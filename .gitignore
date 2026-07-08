@@ -1,6 +1,7 @@
 .idea
 .mvn
 .DS_Store
+.vscode
 
 scripts
 
