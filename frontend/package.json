@@ -24,7 +24,7 @@
     "sanitize-html": "~2.13.0",
     "showdown": "~2.1.0",
     "typeface-roboto": "~1.1.13",
-    "vue": "~2.7.15",
+    "vue": "~3.0.0",
     "vue-class-component": "~7.2.6",
     "vue-codemirror": "~4.0.6",
     "vue-ctk-date-time-picker": "~2.5.0",
