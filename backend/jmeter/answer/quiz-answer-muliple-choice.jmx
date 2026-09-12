@@ -206,7 +206,7 @@
         </elementProp>
       </ThreadGroup>
       <hashTree>
-        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as teacher" enabled="true">
+        <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Login as teacher">
           <stringProp name="HTTPSampler.domain">${server}</stringProp>
           <stringProp name="HTTPSampler.port">${port}</stringProp>
           <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
@@ -356,7 +356,11 @@
 	&quot;availableDate&quot;:&quot;2025-05-01T19:58:00+01:00&quot;,&#xd;
 	&quot;oneWay&quot;: true,&#xd;
 	&quot;timed&quot;:true,&#xd;
+<<<<<<< Updated upstream
 	&quot;conclusionDate&quot;:&quot;2028-08-29T22:59:00+01:00&quot;&#xd;
+=======
+	&quot;conclusionDate&quot;:&quot;2030-08-29T22:59:00+01:00&quot;&#xd;
+>>>>>>> Stashed changes
 }</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>
@@ -456,7 +460,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
           <stringProp name="filename"></stringProp>
         </ResultCollector>
         <hashTree/>
-        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report">
+        <ResultCollector guiclass="SummaryReport" testclass="ResultCollector" testname="Summary Report" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
@@ -510,7 +514,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
           <stringProp name="LoopController.loops">1</stringProp>
         </LoopController>
         <hashTree>
-          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Strudent counter">
+          <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Strudent counter" enabled="true">
             <stringProp name="CounterConfig.start">1</stringProp>
             <stringProp name="CounterConfig.end">${number_of_students}</stringProp>
             <stringProp name="CounterConfig.incr">1</stringProp>
@@ -548,7 +552,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             </collectionProp>
           </HeaderManager>
           <hashTree/>
-          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Start quiz">
+          <HTTPSamplerProxy guiclass="HttpTestSampleGui" testclass="HTTPSamplerProxy" testname="Start quiz" enabled="true">
             <stringProp name="HTTPSampler.domain">${server}</stringProp>
             <stringProp name="HTTPSampler.port">${port}</stringProp>
             <stringProp name="HTTPSampler.protocol">${protocol}</stringProp>
@@ -592,7 +596,7 @@ vars.put(&quot;questions&quot;, result.toString());</stringProp>
             <stringProp name="LoopController.loops">${number_of_questions}</stringProp>
           </LoopController>
           <hashTree>
-            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Questions counter">
+            <CounterConfig guiclass="CounterConfigGui" testclass="CounterConfig" testname="Questions counter" enabled="true">
               <stringProp name="CounterConfig.start">1</stringProp>
               <stringProp name="CounterConfig.end">${number_of_questions}</stringProp>
               <stringProp name="CounterConfig.incr">1</stringProp>
@@ -821,7 +825,7 @@ vars.put(&quot;answers&quot;, result.toString());</stringProp>
           <stringProp name="filename"></stringProp>
         </ResultCollector>
         <hashTree/>
-        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report">
+        <ResultCollector guiclass="StatVisualizer" testclass="ResultCollector" testname="Aggregate Report" enabled="true">
           <boolProp name="ResultCollector.error_logging">false</boolProp>
           <objProp>
             <name>saveConfig</name>
