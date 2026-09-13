@@ -1,11 +1,13 @@
 <template>
   <v-app id="app">
     <top-bar />
-    <v-main>
-      <error-message />
-      <notification />
-      <loading />
-      <router-view />
+    <v-main class="app-main">
+      <div class="scrollbar">
+        <error-message />
+        <notification />
+        <loading />
+        <router-view />
+      </div>
     </v-main>
   </v-app>
 </template>
@@ -35,19 +37,38 @@ axios.interceptors.response.use(undefined, (err) => {
 });
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 #app {
   background-image: url('assets/img/background.jpg');
-  background-position: center center;
+  background-position: 0 0;
   background-repeat: no-repeat;
-  background-size: cover;
-  background-attachment: fixed;
+  background-size: 100% 100%;
+  height: 100%;
   min-height: 100vh;
+  width: 100vw;
   color: #2c3e50;
+  content: ' ';
   display: flex;
   flex-direction: column;
+  left: 0;
+  margin: 0 !important;
+  overflow: hidden;
+  position: absolute;
   text-align: center;
+  top: 0;
   z-index: 1;
+}
+
+// v-main wrapper must be transparent and fill the v-application so the
+// background on #app shows through exactly like Vue2 (no cover/fixed shift)
+:deep(.app-main) {
+  --v-layout-top: 64px;
+  padding-top: 64px !important;
+  background: transparent !important;
+  height: 100%;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
 }
 
 /*noinspection CssUnusedSymbol*/

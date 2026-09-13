@@ -16,7 +16,7 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn class="text-white" color="blue darken-1" @click="$emit('update:modelValue', false)">close</v-btn>
+        <v-btn class="text-white" color="blue-darken-1" @click="$emit('update:modelValue', false)">close</v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

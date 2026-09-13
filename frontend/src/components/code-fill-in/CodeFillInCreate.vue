@@ -9,9 +9,9 @@
     <div class="code-create">
       <v-card-actions>
         <v-spacer />
-        <v-tooltip top>
+        <v-tooltip location="top">
           <template v-slot:activator="{ props }">
-            <v-btn color="primary" small v-bind="props" @mousedown.prevent="Dropdownify">
+            <v-btn color="primary" size="small" v-bind="props" @mousedown.prevent="Dropdownify">
               Answer Slot
             </v-btn>
           </template>

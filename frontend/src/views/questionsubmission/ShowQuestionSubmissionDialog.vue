@@ -14,7 +14,7 @@
             {{ questionSubmission.getStatus() }}
           </v-chip>
         </v-card-title>
-        <v-card ripple outlined class="text-left" id="question">
+        <v-card variant="outlined" class="text-left" id="question">
           <v-card-title>
             <span class="headline">{{
               questionSubmission.question.title
@@ -25,14 +25,14 @@
           </v-card-text>
         </v-card>
         <v-card-title class="headline">Reviews</v-card-title>
-        <v-card outlined>
+        <v-card variant="outlined">
           <div
             class="text-left"
             v-if="
               store.isTeacher && questionSubmission.isInDiscussion()
             "
           >
-            <v-card flat>
+            <v-card variant="flat">
               <v-card-text>
                 <v-row align="center" class="newReview">
                   <v-textarea

@@ -30,6 +30,10 @@ export default createVuetify({
   components,
   directives,
   defaults: {
+    VAppBar: {
+      height: 64,
+      elevation: 4,
+    },
     VBtn: {
       variant: 'elevated',
       style: 'text-transform: uppercase; letter-spacing: 0.0892857143em;',
@@ -42,14 +46,34 @@ export default createVuetify({
     VTextField: {
       variant: 'underlined',
     },
+    VTextarea: {
+      variant: 'underlined',
+    },
+    VAutocomplete: {
+      variant: 'underlined',
+    },
+    VCombobox: {
+      variant: 'underlined',
+    },
     VSelect: {
       variant: 'underlined',
     },
+    VDialog: {
+      width: 'auto',
+    },
+    VMenu: {
+      offset: 8,
+    },
+    VList: {
+      density: 'compact',
+    },
     VDataTable: {
       itemsPerPageText: 'Rows per page:',
+      density: 'comfortable',
     },
     VDataTableServer: {
       itemsPerPageText: 'Rows per page:',
+      density: 'comfortable',
     },
   },
   icons: {

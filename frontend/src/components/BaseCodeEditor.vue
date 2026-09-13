@@ -17,8 +17,17 @@ import { Codemirror } from 'vue-codemirror';
 import { java } from '@codemirror/lang-java';
 import { javascript } from '@codemirror/lang-javascript';
 import { python } from '@codemirror/lang-python';
-import { oneDark } from '@codemirror/theme-one-dark';
-import { lineNumbers, EditorView } from '@codemirror/view';
+import {
+  syntaxHighlighting,
+  defaultHighlightStyle,
+} from '@codemirror/language';
+import {
+  lineNumbers,
+  EditorView,
+  Decoration,
+  MatchDecorator,
+  ViewPlugin,
+} from '@codemirror/view';
 
 const props = withDefaults(defineProps<{
   code: string;
@@ -58,11 +67,70 @@ const getLanguageExtension = (lang: string) => {
   }
 };
 
+// Light theme replicating the Vue2 CodeMirror 5 'eclipse' theme
+// (white background, dark text) so editors match the light UI.
+const eclipseTheme = EditorView.theme(
+  {
+    '&': {
+      backgroundColor: '#ffffff',
+      color: '#000000',
+    },
+    '.cm-content': {
+      caretColor: '#000000',
+    },
+    '.cm-gutters': {
+      backgroundColor: '#ffffff',
+      color: '#999999',
+      borderRight: '1px solid #dddddd',
+    },
+    '&.cm-focused .cm-cursor': {
+      borderLeftColor: '#000000',
+    },
+    '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection':
+      {
+        backgroundColor: '#d7d4f0',
+      },
+    '.cm-activeLine': {
+      backgroundColor: '#e8f2ff',
+    },
+    '.cm-activeLineGutter': {
+      backgroundColor: '#e8f2ff',
+    },
+  },
+  { dark: false }
+);
+
+// Replicates the Vue2 'mustache' overlay mode: {{slot-N}} placeholders are
+// painted as orange pills. Views that replace slots with <select> widgets
+// (CodeFillInView/Answer/AnswerResult) override the same ranges, so this is
+// only visible where slots are plain text (e.g. question creation).
+const slotPillMatcher = new MatchDecorator({
+  regexp: /\{\{slot-\d+\}\}/g,
+  decoration: Decoration.mark({ class: 'cm-custom-drop-down' }),
+});
+
+const slotPillPlugin = ViewPlugin.fromClass(
+  class {
+    decorations: any;
+    constructor(view: any) {
+      this.decorations = slotPillMatcher.createDeco(view);
+    }
+    update(update: any) {
+      this.decorations = slotPillMatcher.updateDeco(update, this.decorations);
+    }
+  },
+  {
+    decorations: (v) => v.decorations,
+  }
+);
+
 const extensions = computed(() => {
   const exts: any[] = [
     getLanguageExtension(props.language),
-    oneDark,
+    eclipseTheme,
+    syntaxHighlighting(defaultHighlightStyle),
     EditorView.lineWrapping,
+    slotPillPlugin,
     ...props.customExtensions
   ];
   if (!props.simple) {
@@ -120,6 +188,21 @@ onMounted(() => {
 
 <style scoped>
 .base-code-editor {
+  text-align: left;
+}
+</style>
+
+<style>
+.cm-custom-drop-down {
+  background: #ffa014;
+  color: white;
+  font-size: x-small;
+  padding: 4px 2px 4px 2px;
+  border-radius: 5px;
+  font-weight: bolder;
+  height: 16px;
+}
+.code-create {
   text-align: left;
 }
 </style>

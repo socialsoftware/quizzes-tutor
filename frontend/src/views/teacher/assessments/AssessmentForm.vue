@@ -7,7 +7,7 @@
         {{ editMode ? 'Close' : 'Create' }}
       </v-btn>
 
-      <v-btn color="green darken-1" class="text-white" @click="saveAssessment">Save</v-btn>
+      <v-btn color="green-darken-1" class="text-white" @click="saveAssessment">Save</v-btn>
     </v-card-title>
     <v-card-text>
       <v-container fluid>
@@ -54,11 +54,11 @@
                   item-title="name"
                   return-object
                   chips
-                  small-chips
+                 
                   clearable
-                  deletable-chips
+                  closable-chips
                   multiple
-                  dense
+                  density="compact"
                   class="mx-4"
                 >
                 </v-autocomplete>
@@ -121,11 +121,11 @@
                   item-title="name"
                   return-object
                   chips
-                  small-chips
+                 
                   clearable
-                  deletable-chips
+                  closable-chips
                   multiple
-                  dense
+                  density="compact"
                   class="mx-4"
                 >
                 </v-autocomplete>
@@ -211,7 +211,7 @@ const topicHeaders = [
     title: 'Actions',
     key: 'action',
     align: 'start',
-    width: '10%',
+    width: '5px',
     sortable: false,
   },
   {

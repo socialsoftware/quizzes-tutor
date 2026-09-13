@@ -17,8 +17,8 @@
           @click:append="showPassword = !showPassword"
         ></v-text-field>
         <v-btn
-          color="blue darken-1"
-          class="white--text"
+          color="blue-darken-1"
+          class="text-white"
           :disabled="!(username !== '' && password !== '')"
           @click="submit"
           >login</v-btn

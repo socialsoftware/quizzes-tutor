@@ -32,7 +32,7 @@
       </template>
 
       <template v-slot:[`item.action`]="{ item }">
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
             <span data-cy="topicsGridShowButton" v-bind="props">
               <v-icon
@@ -44,7 +44,7 @@
           </template>
           <span>Show Questions</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
             <span data-cy="topicsGridEditButton" v-bind="props">
               <v-icon
@@ -56,7 +56,7 @@
           </template>
           <span>Edit Topic</span>
         </v-tooltip>
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
             <span data-cy="topicsGridDeleteButton" v-bind="props">
               <v-icon
@@ -101,8 +101,8 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="red darken-1" @click="closeDialogue">Cancel</v-btn>
-          <v-btn color="green darken-1" @click="saveTopic">Save</v-btn>
+          <v-btn color="red-darken-1" @click="closeDialogue">Cancel</v-btn>
+          <v-btn color="green-darken-1" @click="saveTopic">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -137,7 +137,7 @@ const headers: any = [
     title: 'Actions',
     key: 'action',
     align: 'start',
-    width: '10%',
+    width: '5px',
     sortable: false,
   },
   { title: 'Name', key: 'name', align: 'start' },
@@ -145,7 +145,7 @@ const headers: any = [
     title: 'Questions',
     key: 'numberOfQuestions',
     align: 'center',
-    width: '10%',
+    width: '115px',
   },
 ];
 

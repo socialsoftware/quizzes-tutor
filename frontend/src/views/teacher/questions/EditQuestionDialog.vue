@@ -18,7 +18,7 @@
       </v-card-title>
 
       <v-card-text class="pa-4 text-left" v-if="editQuestion">
-        <v-form ref="form" lazy-validation>
+        <v-form ref="form" validate-on="submit">
           <v-row>
             <v-select
               v-model="questionType"
@@ -63,12 +63,12 @@
 
       <v-card-actions>
         <v-spacer />
-        <v-btn class="text-white" color="red darken-1" @click="$emit('update:dialog', false)"
+        <v-btn class="text-white" color="red-darken-1" @click="$emit('update:dialog', false)"
           >Cancel</v-btn
         >
         <v-btn
           class="text-white"
-          color="green darken-1"
+          color="green-darken-1"
           @click="saveQuestion"
           :disabled="disableCreateButton"
           data-cy="saveQuestionButton"

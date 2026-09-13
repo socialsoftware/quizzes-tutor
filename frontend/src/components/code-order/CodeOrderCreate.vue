@@ -8,9 +8,9 @@
     />
     <v-card-actions>
       <v-spacer />
-      <v-tooltip top>
+      <v-tooltip location="top">
         <template v-slot:activator="{ props }">
-          <v-btn color="primary" small @click="newSlot" v-bind="props"
+          <v-btn color="primary" size="small" @click="newSlot" v-bind="props"
             >New Slot</v-btn
           >
         </template>

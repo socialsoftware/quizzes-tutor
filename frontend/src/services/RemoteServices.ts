@@ -1453,7 +1453,6 @@ export default class RemoteServices {
     discussion: Discussion,
     questionAnswerId: number
   ): Promise<Discussion> {
-    console.log("PAYLOAD BEING SENT:", JSON.stringify(discussion));
     return httpClient
       .post(
         `/discussions/create?questionAnswerId=${questionAnswerId}`,

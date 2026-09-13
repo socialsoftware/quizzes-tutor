@@ -2,12 +2,12 @@
   <div class="container">
     <h2>Dashboard</h2>
 
-    <v-card class="table" outlined color="transparent">
+    <v-card class="table" variant="outlined" color="transparent">
       <v-row>
         <v-col>
           <v-btn
             color="primary"
-            dark
+           
             data-cy="globalStatisticsMenuButton"
             v-on:click="show = 'Global'"
           >
@@ -17,7 +17,7 @@
         <v-col>
           <v-btn
             color="primary"
-            dark
+           
             data-cy="weeklyScoresMenuButton"
             v-on:click="show = 'Weekly'"
             >Weekly Scores
@@ -26,7 +26,7 @@
         <v-col>
           <v-btn
             color="primary"
-            dark
+           
             data-cy="failedAnswersMenuButton"
             v-on:click="show = 'Failed'"
             >Failed Answers
@@ -35,7 +35,7 @@
         <v-col>
           <v-btn
             color="primary"
-            dark
+           
             data-cy="difficultQuestionsMenuButton"
             v-on:click="show = 'Difficult'"
             >Difficult Questions

@@ -8,25 +8,25 @@
       class="slot-content"
       ref="codeEditor"
       v-model:code="sQuestionSlot.content"
-      :language="language"
+      v-model:language="language"
     />
     <div class="toolbar">
       <v-btn icon>
         <v-icon
           v-if="sQuestionSlot.order == null"
           @click="$emit('add-order')"
-          color="grey lighten-1"
+          color="grey-lighten-1"
           >mdi-checkbox-blank-outline
         </v-icon>
         <v-icon
           v-if="sQuestionSlot.order != null"
           @click="$emit('remove-order')"
-          color="green lighten-1"
+          color="green-lighten-1"
           >mdi-checkbox-marked-outline</v-icon
         >
       </v-btn>
       <v-btn v-if="canDelete" @click="$emit('delete-row')" icon>
-        <v-icon color="red lighten-1">mdi-delete-forever </v-icon>
+        <v-icon color="red-lighten-1">mdi-delete-forever </v-icon>
       </v-btn>
     </div>
   </div>
@@ -35,7 +35,7 @@
 <script setup lang="ts">
 import CodeOrderSlot from '@/models/management/questions/CodeOrderSlot';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
-import { computed } from 'vue';
+import { computed, ref, watch } from 'vue';
 
 const props = withDefaults(defineProps<{
   questionSlot: CodeOrderSlot;
@@ -50,6 +50,11 @@ const emit = defineEmits(['update:questionSlot', 'add-order', 'remove-order', 'd
 const sQuestionSlot = computed({
   get: () => props.questionSlot,
   set: (val) => emit('update:questionSlot', val)
+});
+
+const language = ref(props.language);
+watch(() => props.language, (val) => {
+  language.value = val;
 });
 </script>
 

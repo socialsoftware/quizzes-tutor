@@ -78,9 +78,6 @@ const solveQuiz = async (quiz: StatementQuiz) => {
     font-size: 26px;
     margin: 20px 0;
     text-align: center;
-    small {
-      font-size: 0.5em;
-    }
   }
 
   ul {

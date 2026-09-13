@@ -9,9 +9,9 @@
     <v-card>
       <v-card-title>
         <span class="headline"> Upload Users </span>
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
-            <v-icon color="blue darken-1" dark v-bind="props"
+            <v-icon color="blue-darken-1" v-bind="props"
               >info</v-icon
             >
           </template>
@@ -27,8 +27,8 @@
 
       <v-file-input
         show-size
-        dense
-        small-chips
+        density="compact"
+        chips
         label="Select a .csv file"
         v-model="chosenFile"
         accept=".csv"
@@ -37,13 +37,13 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="red darken-1"
+          color="red-darken-1"
           @click="$emit('close-dialog')"
           data-cy="cancelButton"
           >Cancel</v-btn
         >
         <v-btn
-          color="green darken-1"
+          color="green-darken-1"
           @click="uploadUsers(course)"
           data-cy="uploadFileButton"
           >Upload File</v-btn

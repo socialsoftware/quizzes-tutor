@@ -5,10 +5,10 @@
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
       <BaseCodeEditor
-        ref="myCmStudent"
         v-model:code="questionDetails.code"
         v-model:language="questionDetails.language"
         :editable="false"
+        :customExtensions="customExtensions"
       />
     </div>
   </div>
@@ -17,11 +17,16 @@
 <script setup lang="ts">
 import { ref, computed, watch } from 'vue';
 import CodeFillInStatementQuestionDetails from '@/models/statement/questions/CodeFillInStatementQuestionDetails';
-import CodeFillInSpotStatement from '@/models/statement/questions/CodeFillInSpotStatement';
 import CodeFillInStatementAnswerDetails from '@/models/statement/questions/CodeFillInStatementAnswerDetails';
 import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
 import StatementFillInSpot from '@/models/statement/questions/CodeFillInSpotStatement';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
+import {
+  WidgetType,
+  Decoration,
+  MatchDecorator,
+  ViewPlugin,
+} from '@codemirror/view';
 
 const props = defineProps<{
   questionOrder?: number;
@@ -43,139 +48,150 @@ const answerDetailsSynced = computed({
 });
 
 const CodemirrorUpdated = ref(false);
-const myCmStudent = ref<any>(null);
+
+// Loading overlay timing (decorations themselves apply instantly via the
+// editor); mirrors the Vue2 refresh delay.
+watch(
+  () => props.questionDetails,
+  () => {
+    CodemirrorUpdated.value = false;
+    setTimeout(() => {
+      CodemirrorUpdated.value = true;
+    }, 500);
+  },
+  { immediate: true, deep: true }
+);
 
 const increaseOrder = () => emit('increaseOrder', 1);
 const decreaseOrder = () => emit('decreaseOrder', 1);
 
-const replaceDropdowns = () => {
-  const walkDOM = (node: Node, func: (node: Text) => void) => {
-    if (node.nodeType === Node.TEXT_NODE) {
-      if (node.nodeValue?.includes('{{slot-')) {
-        func(node as Text);
-      }
-    } else {
-      for (let i = 0; i < node.childNodes.length; i++) {
-        walkDOM(node.childNodes[i], func);
-      }
-    }
-  };
+// Replaces {{slot-N}} placeholders with result <select> widgets managed by
+// the editor itself. The previous implementation walked the rendered DOM and
+// spliced nodes by hand, which breaks under CodeMirror 6: syntax
+// highlighting splits slot text across text nodes and the editor wipes
+// hand-inserted DOM on re-render, so options never appeared in the solution.
+class ResultSelectWidget extends WidgetType {
+  constructor(
+    public slotNumber: number,
+    public questionDetailsRef: any,
+    public answerDetailsRef: any,
+    public correctAnswerDetailsRef: any
+  ) {
+    super();
+  }
 
-  const getOptions = (name: number, options: CodeFillInSpotStatement[]): StatementFillInSpot => {
-    const result = options.find((el) => el.sequence === name);
-    return result || new StatementFillInSpot();
-  };
+  eq(other: ResultSelectWidget) {
+    return this.slotNumber === other.slotNumber;
+  }
 
-  if (!myCmStudent.value) return;
-  const el = myCmStudent.value.$el;
+  toDOM() {
+    const num = this.slotNumber;
+    const d = document.createElement('select');
+    d.className = 'code-dropdown';
+    d.name = 'slot-' + num;
 
-  walkDOM(el, (textNode: Text) => {
-    const text = textNode.nodeValue || '';
-    const regex = /\{\{slot-(\d+)\}\}/g;
-    let match;
-    let lastIndex = 0;
-    const parent = textNode.parentNode;
-    if (!parent) return;
-
-    if (parent.nodeName === 'SELECT' || parent.nodeName === 'OPTION') return;
-
-    const fragment = document.createDocumentFragment();
-    let found = false;
-
-    while ((match = regex.exec(text)) !== null) {
-      found = true;
-      const num = Number(match[1]);
-      const before = text.substring(lastIndex, match.index);
-      if (before) fragment.appendChild(document.createTextNode(before));
-
-      const d = document.createElement('select');
-      d.className = 'code-dropdown';
-      d.name = 'slot-' + num;
-
-      const option = document.createElement('option');
-      const something = getOptions(num, props.questionDetails.fillInSpots);
-      const optionAnswered = answerDetailsSynced.value.selectedOptions?.find(
+    const something: StatementFillInSpot =
+      this.questionDetailsRef.fillInSpots.find(
+        (el: any) => el.sequence === num
+      ) || new StatementFillInSpot();
+    const optionAnswered = this.answerDetailsRef.selectedOptions?.find(
+      (el: any) => el.sequence === num
+    );
+    const optionAnsweredQuestion =
+      optionAnswered &&
+      something.options.find(
+        (el: any) => el.optionId === optionAnswered?.optionId
+      );
+    const correctOption =
+      this.correctAnswerDetailsRef.correctOptions.find(
         (el: any) => el.sequence === num
       );
-      const optionAnsweredQuestion = optionAnswered && something.options.find(
-        (el) => el.optionId === optionAnswered?.optionId
-      );
-      const correctOption = props.correctAnswerDetails.correctOptions.find(
-        (el) => el.sequence === num
-      );
-      const correctOptionQuestion = something.options.find(
-        (el) => el.optionId === correctOption?.optionId
-      );
-
-      let displayText;
-      if (optionAnswered && optionAnswered.optionId === correctOption?.optionId) {
-        displayText = ' ✔: ';
-      } else {
-        displayText = ' ✖: ';
-        const correctOptEl = document.createElement('option');
-        correctOptEl.innerHTML = ' ✔: ' + (correctOptionQuestion?.content || '');
-        correctOptEl.classList.add('answerDetailsSynced-spot', 'correct');
-        d.appendChild(correctOptEl);
-      }
-
-      something.options.forEach((element) => {
-        if (
-          !(
-            element.optionId === optionAnswered?.optionId ||
-            element.optionId === correctOption?.optionId
-          )
-        ) {
-          const newOption = document.createElement('option');
-          newOption.innerHTML = element?.content || '';
-          newOption.classList.add('answerDetailsSynced-spot');
-          d.appendChild(newOption);
-        }
-      });
-
-      option.innerHTML =
-        displayText +
-        (optionAnsweredQuestion ? optionAnsweredQuestion.content : 'Not Answered');
-      option.classList.add(
-        'answerDetailsSynced-spot',
-        optionAnswered && optionAnswered.optionId === correctOption?.optionId
-          ? 'correct'
-          : 'incorrect'
-      );
-      d.prepend(option);
-      d.selectedIndex = 0;
-
-      fragment.appendChild(d);
-      lastIndex = regex.lastIndex;
-    }
-
-    if (found) {
-      const after = text.substring(lastIndex);
-      if (after) fragment.appendChild(document.createTextNode(after));
-      parent.replaceChild(fragment, textNode);
-    }
-  });
-};
-
-watch(() => props.questionDetails, () => {
-  CodemirrorUpdated.value = false;
-  setTimeout(() => {
-    replaceDropdowns();
-    document.body.addEventListener(
-      'mousedown',
-      function (evt: Event) {
-        if (
-          evt &&
-          evt.target &&
-          (evt.target as any).className === 'code-dropdown'
-        ) {
-          evt.stopPropagation();
-        }
-      },
-      true
+    const correctOptionQuestion = something.options.find(
+      (el: any) => el.optionId === correctOption?.optionId
     );
-    CodemirrorUpdated.value = true;
-  }, 500);
-}, { immediate: true, deep: true });
+
+    const answeredCorrectly =
+      !!optionAnswered &&
+      optionAnswered.optionId === correctOption?.optionId;
+
+    if (!answeredCorrectly) {
+      const correctOptEl = document.createElement('option');
+      correctOptEl.innerHTML =
+        ' ✔: ' + (correctOptionQuestion?.content || '');
+      correctOptEl.classList.add('answerDetailsSynced-spot', 'correct');
+      d.appendChild(correctOptEl);
+    }
+
+    something.options.forEach((element: any) => {
+      if (
+        !(
+          element.optionId === optionAnswered?.optionId ||
+          element.optionId === correctOption?.optionId
+        )
+      ) {
+        const newOption = document.createElement('option');
+        newOption.innerHTML = element?.content || '';
+        newOption.classList.add('answerDetailsSynced-spot');
+        d.appendChild(newOption);
+      }
+    });
+
+    const option = document.createElement('option');
+    option.innerHTML =
+      (answeredCorrectly ? ' ✔: ' : ' ✖: ') +
+      (optionAnsweredQuestion
+        ? optionAnsweredQuestion.content
+        : 'Not Answered');
+    option.classList.add(
+      'answerDetailsSynced-spot',
+      answeredCorrectly ? 'correct' : 'incorrect'
+    );
+    d.prepend(option);
+    d.selectedIndex = 0;
+
+    // Prevent mousedown from blurring the editor and intercepting click
+    d.onmousedown = (e) => e.stopPropagation();
+
+    return d;
+  }
+}
+
+const customExtensions = computed(() => {
+  // Read lengths so decorations recompute when data arrives/changes
+  const _selected = props.answerDetails?.selectedOptions?.length;
+  const _spots = props.questionDetails?.fillInSpots?.length;
+  const _correct = props.correctAnswerDetails?.correctOptions?.length;
+
+  const slotMatcher = new MatchDecorator({
+    regexp: /\{\{slot-(\d+)\}\}/g,
+    decoration: (match) =>
+      Decoration.replace({
+        widget: new ResultSelectWidget(
+          Number(match[1]),
+          props.questionDetails,
+          props.answerDetails,
+          props.correctAnswerDetails
+        ),
+      }),
+  });
+
+  const slotPlugin = ViewPlugin.fromClass(
+    class {
+      decorations: any;
+      constructor(view: any) {
+        this.decorations = slotMatcher.createDeco(view);
+      }
+      update(update: any) {
+        this.decorations = slotMatcher.updateDeco(update, this.decorations);
+      }
+    },
+    {
+      decorations: (v) => v.decorations,
+    }
+  );
+
+  return [slotPlugin];
+});
 </script>
 
 <style lang="scss">

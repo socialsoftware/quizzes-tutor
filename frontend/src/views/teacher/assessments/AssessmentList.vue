@@ -28,14 +28,14 @@
         <v-select
           v-model="item.status"
           :items="statusList"
-          dense
+          density="compact"
           hide-details
           variant="outlined"
           @update:model-value="setStatus(item.id as number, item.status)"
         >
           <template v-slot:selection="{ item: selectionItem }">
-            <v-chip :color="getStatusColor(selectionItem.title || selectionItem)" small>
-              <span>{{ selectionItem.title || selectionItem }}</span>
+            <v-chip :color="getStatusColor((selectionItem as any).title || selectionItem)" size="small">
+              <span>{{ (selectionItem as any).title || selectionItem }}</span>
             </v-chip>
           </template>
         </v-select>
@@ -117,17 +117,17 @@ const headers = [
     key: 'action',
     align: 'start',
     sortable: false,
-    width: '10%',
+    width: '5px',
   },
-  { title: 'Order', key: 'sequence', align: 'center', width: '10%' },
-  { title: 'Title', key: 'title', width: '50%', align: 'start' },
+  { title: 'Order', key: 'sequence', align: 'center', width: '5px' },
+  { title: 'Title', key: 'title', width: '80%', align: 'start' },
   {
     title: 'Number of questions',
     key: 'numberOfQuestions',
     align: 'center',
-    width: '15%',
+    width: '5px',
   },
-  { title: 'Status', key: 'status', align: 'center', width: '15%' },
+  { title: 'Status', key: 'status', align: 'center', width: '5px' },
 ] as any;
 
 const setStatus = async (assessmentId: number, status: string) => {

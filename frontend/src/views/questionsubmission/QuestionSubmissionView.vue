@@ -24,7 +24,7 @@
           <v-btn
             color="primary"
             class="mr-2"
-            dark
+           
             @click="getQuestionSubmissions"
             >Refresh List</v-btn
           >
@@ -32,14 +32,14 @@
             v-if="store.isTeacher"
             color="primary"
             class="mr-2"
-            dark
+           
             to="/management/submissions/students"
             >Sort by Students</v-btn
           >
           <v-btn
             v-if="store.isStudent"
             color="primary"
-            dark
+           
             @click="newSubmission"
             data-cy="NewSubmission"
             >New Submission</v-btn
@@ -50,7 +50,7 @@
       <template v-slot:item="{ item: displayItem }">
         <tr v-bind:class="{ unread: hasUnreadReviews(getRaw(displayItem)) }">
           <td id="actions">
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <v-icon
                   v-if="hasUnreadReviews(getRaw(displayItem))"
@@ -115,9 +115,9 @@
               @click="showQuestionSubmissionDialog(getRaw(displayItem))"
               class="clickableId"
             >
-              <v-layout class="d-flex justify-center">
+              <div class="d-flex justify-center">
                 {{ getRaw(displayItem).id }}
-              </v-layout>
+              </div>
             </div>
           </td>
           <td id="title">
@@ -125,16 +125,16 @@
               @click="showQuestionSubmissionDialog(getRaw(displayItem))"
               class="clickableTitle"
             >
-              <v-layout class="d-flex justify-center">
+              <div class="d-flex justify-center">
                 {{ getRaw(displayItem).question.title }}
-              </v-layout>
+              </div>
             </div>
           </td>
           <td id="submittedBy" v-if="store.isTeacher">
             {{ getRaw(displayItem).name }}
           </td>
           <td id="status">
-            <v-chip :color="getRaw(displayItem).getStatusColor()" small>
+            <v-chip :color="getRaw(displayItem).getStatusColor()" size="small">
               <span>{{ getRaw(displayItem).getStatus() }}</span>
             </v-chip>
           </td>
@@ -212,7 +212,7 @@ const processHeaders = () => {
       title: 'Submitted by',
       key: 'name',
       align: 'center',
-      width: '150px',
+      width: '10%',
       sortable: true
     });
   }

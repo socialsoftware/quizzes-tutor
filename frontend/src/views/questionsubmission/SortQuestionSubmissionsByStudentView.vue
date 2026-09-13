@@ -13,7 +13,7 @@
       <v-btn
         color="primary"
         class="mr-2"
-        dark
+       
         @click="getUserQuestionSubmissionsInfo"
         >Refresh List</v-btn
       >
@@ -21,7 +21,7 @@
         v-if="store.isTeacher"
         color="primary"
         class="mr-2"
-        dark
+       
         to="/management/submissions"
         >Sort by Date</v-btn
       >
@@ -83,7 +83,7 @@
               <template v-slot:item="{ item: subItem }">
                 <tr>
                   <td>
-                    <v-tooltip bottom>
+                    <v-tooltip location="bottom">
                       <template v-slot:activator="{ props }">
                         <v-icon
                           class="mr-2 action-button"

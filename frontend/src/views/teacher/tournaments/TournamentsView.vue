@@ -23,7 +23,7 @@
         </v-card-title>
       </template>
       <template v-slot:[`item.id`]="{ item }">
-        <v-chip color="primary" small @click="openTournamentDashboard(item)">
+        <v-chip color="primary" size="small" @click="openTournamentDashboard(item)">
           <span> {{ item.id }} </span>
         </v-chip>
       </template>

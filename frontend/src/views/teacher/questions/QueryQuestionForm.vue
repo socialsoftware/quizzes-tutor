@@ -11,24 +11,20 @@
             <v-text-field v-model="query.content" label="Content"
           /></v-col>
           <v-col>
-            <div class="text-caption mb-1">Begin Creation Date</div>
-            <VueDatePicker
+            <DateTimeSideBySidePicker
               id="beginCreationDateInput"
               v-model="query.beginCreationDate"
-              model-type="iso"
-              format="yyyy-MM-dd HH:mm"
+              :locale="datePickerLocale"
               placeholder="Begin Creation Date"
-            ></VueDatePicker>
+            />
           </v-col>
           <v-col>
-            <div class="text-caption mb-1">End Creation Date</div>
-            <VueDatePicker
+            <DateTimeSideBySidePicker
               id="endCreationDateInput"
               v-model="query.endCreationDate"
-              model-type="iso"
-              format="yyyy-MM-dd HH:mm"
+              :locale="datePickerLocale"
               placeholder="End Creation Date"
-            ></VueDatePicker>
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -112,7 +108,7 @@
       <v-spacer />
       <v-btn
         class="text-white"
-        color="green darken-1"
+        color="green-darken-1"
         @click="queryQuestions"
         data-cy="submitQueryButton"
         >Submit Query</v-btn
@@ -127,8 +123,8 @@ import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Topic from '@/models/management/Topic';
 import QuestionQuery from '@/models/management/QuestionQuery';
-import { VueDatePicker } from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
+import { pt } from 'date-fns/locale';
+import DateTimeSideBySidePicker from '@/components/DateTimeSideBySidePicker.vue';
 
 const props = defineProps<{
   availableOnly: boolean;
@@ -136,6 +132,7 @@ const props = defineProps<{
 
 const emit = defineEmits(['query-questions']);
 const store = useStore();
+const datePickerLocale = pt;
 
 const topics = ref<Topic[]>([]);
 const status = ref<string[]>(['AVAILABLE', 'DISABLED', 'REMOVED']);

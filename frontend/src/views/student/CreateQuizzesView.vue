@@ -6,7 +6,7 @@
       <v-btn-toggle v-model="assessmentId" mandatory class="button-group">
         <v-btn
           v-for="assessment in availableAssessments"
-          text
+          variant="text"
           :value="assessment.id"
           :key="assessment.id!"
           >{{ assessment.title }}</v-btn
@@ -21,13 +21,13 @@
           mandatory
           class="button-group"
         >
-          <v-btn text value="5">5</v-btn>
-          <v-btn text value="10">10</v-btn>
-          <v-btn text value="20">20</v-btn>
+          <v-btn variant="text" value="5">5</v-btn>
+          <v-btn variant="text" value="10">10</v-btn>
+          <v-btn variant="text" value="20">20</v-btn>
         </v-btn-toggle>
       </div>
       <div>
-        <v-btn @click="createQuiz" depressed color="primary">
+        <v-btn @click="createQuiz" variant="flat" color="primary">
           Create quiz
         </v-btn>
       </div>

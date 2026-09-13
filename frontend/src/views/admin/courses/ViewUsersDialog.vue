@@ -39,13 +39,13 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="blue-darken-1"
           @click="$emit('close-dialog')"
           data-cy="cancelButton"
           >Close</v-btn
         >
         <v-btn
-          color="blue darken-1"
+          color="blue-darken-1"
           @click="$emit('delete-users', selectedUsers)"
           data-cy="deleteSelectedUsersButton"
           >Delete Selected Users</v-btn

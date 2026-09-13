@@ -7,7 +7,7 @@
     max-height="80%"
   >
     <v-card>
-      <v-form ref="form" v-model="valid" lazy-validation>
+      <v-form ref="form" v-model="valid" validate-on="submit">
         <v-card-title>
           <span class="headline">Add user to External Course</span>
         </v-card-title>
@@ -56,12 +56,12 @@
         <v-card-actions>
           <v-spacer />
           <v-btn
-            color="blue darken-1"
+            color="blue-darken-1"
             @click="$emit('close-dialog')"
             data-cy="cancelButton"
             >Close</v-btn
           >
-          <v-btn color="blue darken-1" @click="addUser" data-cy="saveButton"
+          <v-btn color="blue-darken-1" @click="addUser" data-cy="saveButton"
             >Add</v-btn
           >
         </v-card-actions>
@@ -104,7 +104,8 @@ const addUser = async () => {
   let createdUser: ExternalUser;
   success.value = false;
 
-  if (!form.value?.validate()) return;
+  const { valid } = (await form.value?.validate()) ?? { valid: false };
+  if (!valid) return;
 
   try {
     createdUser = await RemoteServices.registerExternalUser(

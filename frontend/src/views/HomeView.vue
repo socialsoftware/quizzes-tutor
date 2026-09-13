@@ -6,11 +6,11 @@
 
     <div class="horizontal-btn-container" v-if="!isLoggedIn">
       <v-btn :href="fenixUrl" variant="flat" color="primary">
-        Log in with Fenix <i class="fas fa-sign-in-alt ml-3" style="font-size: 24px;" />
+        Log in with Fenix <v-icon>fas fa-sign-in-alt</v-icon>
       </v-btn>
 
       <v-btn href="./login/external" variant="flat" color="primary">
-        External User Login <i class="fas fa-sign-in-alt ml-3" style="font-size: 24px;" />
+        External User Login <v-icon>fas fa-sign-in-alt</v-icon>
       </v-btn>
     </div>
 
@@ -22,7 +22,7 @@
         @click="demoStudent(false)"
         data-cy="demoStudentLoginButton"
       >
-        <i class="fa fa-graduation-cap mr-2" /> Demo as student
+        <i class="fa fa-graduation-cap mr-2" />Demo as student
       </v-btn>
       <v-btn
         variant="flat"
@@ -31,7 +31,7 @@
         @click="demoStudent(true)"
         data-cy="demoNewStudentLoginButton"
       >
-        <i class="fa fa-graduation-cap mr-2" /> Demo as new student
+        <i class="fa fa-graduation-cap mr-2" />Demo as new student
       </v-btn>
       <v-btn
         variant="flat"
@@ -40,7 +40,7 @@
         @click="demoTeacher"
         data-cy="demoTeacherLoginButton"
       >
-        <i class="fa fa-graduation-cap mr-2" /> Demo as teacher
+        <i class="fa fa-graduation-cap mr-2" />Demo as teacher
       </v-btn>
       <v-btn
         variant="flat"
@@ -49,7 +49,7 @@
         @click="demoAdmin"
         data-cy="demoAdminLoginButton"
       >
-        <i class="fa fa-user-cog mr-2" /> Demo as administrator
+        <i class="fa fa-user-cog mr-2" />Demo as administrator
       </v-btn>
     </div>
 
@@ -67,7 +67,7 @@
           href="https://github.com/socialsoftware/quizzes-tutor"
           target="_blank"
         >
-          <i class="fab fa-github mr-2" /> View code
+          <i class="fab fa-github" /> View code
         </v-btn>
       </div>
       <div>
@@ -78,7 +78,7 @@
           href="https://quizzes-tecnico.slack.com/"
           target="_blank"
         >
-          <i class="fab fa-slack mr-2" /> Discussion Group
+          <i class="fab fa-slack" /> Discussion Group
         </v-btn>
       </div>
 
@@ -90,7 +90,7 @@
           href="https://github.com/socialsoftware/quizzes-tutor/issues"
           target="_blank"
         >
-          <i class="fab fa-github mr-2" /> Bug report
+          <i class="fab fa-github" /> Bug report
         </v-btn>
       </div>
       <img

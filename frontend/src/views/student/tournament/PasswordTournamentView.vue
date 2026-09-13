@@ -15,7 +15,7 @@
 
       <v-card-text class="text-left">
         <v-container grid-list-md fluid>
-          <v-layout column wrap>
+          <div class="d-flex flex-column flex-wrap">
             <v-row>
               <v-text-field
                 :type="passwordFieldType"
@@ -43,7 +43,7 @@
                 >Join</v-btn
               >
             </v-card-actions>
-          </v-layout>
+          </div>
         </v-container>
       </v-card-text>
     </v-card>

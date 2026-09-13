@@ -18,7 +18,7 @@
       </v-card-title>
 
       <v-card-text class="pa-4 text-left" v-if="editQuestionSubmission">
-        <v-form ref="form" lazy-validation>
+        <v-form ref="form" validate-on="submit">
           <v-row>
             <v-select
               v-model="questionType"
@@ -75,19 +75,19 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="red darken-1"
+          color="red-darken-1"
           @click="$emit('update:dialog', false)"
           data-cy="CancelButton"
           >Cancel</v-btn
         >
         <v-btn
-          color="green darken-1"
+          color="green-darken-1"
           @click="createQuestionSubmission(false)"
           data-cy="SaveButton"
           >Save</v-btn
         >
         <v-btn
-          color="blue darken-1"
+          color="blue-darken-1"
           @click="createQuestionSubmission(true)"
           data-cy="RequestReviewButton"
           >Request Review</v-btn

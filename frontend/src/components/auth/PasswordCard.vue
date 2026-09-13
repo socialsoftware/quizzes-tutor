@@ -28,7 +28,7 @@
         ></v-text-field>
         <v-btn
           color="blue-darken-1"
-          class="white--text"
+          class="text-white"
           :disabled="!(password === confirmPassword && password != '')"
           @click="submit"
           >submit</v-btn

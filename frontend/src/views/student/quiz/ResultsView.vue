@@ -9,7 +9,7 @@
       >
         <v-sheet class="mx-auto" max-width="400">
           <v-slide-group v-model="slideItemPosition" show-arrows>
-            <v-slide-item
+            <v-slide-group-item
               v-for="index in +statementQuiz.questions.length"
               :key="index"
             >
@@ -33,7 +33,7 @@
               >
                 {{ index }}
               </span>
-            </v-slide-item>
+            </v-slide-group-item>
           </v-slide-group>
         </v-sheet>
       </div>

@@ -27,22 +27,20 @@
           </v-row>
           <v-row class="my-0">
             <v-col cols="12" sm="6" class="py-1">
-              <VueDatePicker
+              <DateTimeSideBySidePicker
                 id="startTimeInput"
                 v-model="newStartTime"
-                model-type="iso"
-                format="yyyy-MM-dd HH:mm"
+                :locale="datePickerLocale"
                 placeholder="Start Time"
-              ></VueDatePicker>
+              />
             </v-col>
             <v-col cols="12" sm="6" class="py-1">
-              <VueDatePicker
+              <DateTimeSideBySidePicker
                 id="endTimeInput"
                 v-model="newEndTime"
-                model-type="iso"
-                format="yyyy-MM-dd HH:mm"
+                :locale="datePickerLocale"
                 placeholder="End Time"
-              ></VueDatePicker>
+              />
             </v-col>
           </v-row>
           <v-row v-if="!editMode" class="my-0 align-center">
@@ -134,11 +132,11 @@
                     item-text="name"
                     return-object
                     chips
-                    small-chips
+                   
                     clearable
-                    deletable-chips
+                    closable-chips
                     multiple
-                    dense
+                    density="compact"
                     class="mx-4"
                   >
                   </v-autocomplete>
@@ -183,11 +181,11 @@
                     item-text="name"
                     return-object
                     chips
-                    small-chips
+                   
                     clearable
-                    deletable-chips
+                    closable-chips
                     multiple
-                    dense
+                    density="compact"
                     class="mx-4"
                   >
                   </v-autocomplete>
@@ -230,8 +228,8 @@ import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Tournament from '@/models/user/Tournament';
 import Topic from '@/models/management/Topic';
-import { VueDatePicker } from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
+import { pt } from 'date-fns/locale';
+import DateTimeSideBySidePicker from '@/components/DateTimeSideBySidePicker.vue';
 
 const props = defineProps<{
   dialog: boolean;
@@ -248,6 +246,7 @@ const emit = defineEmits([
 ]);
 
 const store = useStore();
+const datePickerLocale = pt;
 
 const editTournament = ref<Tournament>(new Tournament());
 const currentTopicsSearch = ref('');

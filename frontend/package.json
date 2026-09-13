@@ -23,6 +23,7 @@
     "@vuepic/vue-datepicker": "^12.1.0",
     "axios": "^1.17.0",
     "codemirror": "^6.0.2",
+    "date-fns": "^4.4.0",
     "material-design-icons-iconfont": "~6.7.0",
     "pinia": "^3.0.4",
     "plotly.js-cartesian-dist-min": "~3.4.0",

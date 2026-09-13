@@ -363,18 +363,18 @@ const router = createRouter({
   ],
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
   const store = useStore();
   if (to.meta?.requiredAuth == 'None') {
-    next();
+    return true;
   } else if (to.meta?.requiredAuth == 'Admin' && store.isAdmin) {
-    next();
+    return true;
   } else if (to.meta?.requiredAuth == 'Teacher' && store.isTeacher) {
-    next();
+    return true;
   } else if (to.meta?.requiredAuth == 'Student' && store.isStudent) {
-    next();
+    return true;
   } else {
-    next('/');
+    return '/';
   }
 });
 

@@ -3,7 +3,7 @@
     <v-card-title class="d-flex align-center">
       <v-spacer />
       <v-btn
-        style="margin-right: 8px"
+        style="margin-right: 2% !important"
         color="primary"
         class="text-white"
         @click="getDiscussions"

@@ -5,13 +5,13 @@
 
       <v-spacer />
 
-      <v-btn color="primary" dark @click="switchMode">
+      <v-btn color="primary" @click="switchMode">
         {{ editMode ? 'Close' : 'Create' }}
       </v-btn>
 
       <v-btn
         v-if="editMode && canSave"
-        color="green darken-1"
+        color="green-darken-1"
         data-cy="saveQuizButton"
         @click="save"
         >Save
@@ -26,36 +26,33 @@
       <v-container fluid>
         <v-row>
           <v-col>
-            <VueDatePicker
+            <DateTimeSideBySidePicker
               id="availableDateInput"
               v-model="quiz.availableDate"
-              model-type="iso"
-              format="yyyy-MM-dd HH:mm"
+              :locale="datePickerLocale"
               placeholder="*Available Date"
-            ></VueDatePicker>
+            />
           </v-col>
           <v-col v-if="quiz.timed">
-            <VueDatePicker
+            <DateTimeSideBySidePicker
               id="conclusionDateInput"
               v-model="quiz.conclusionDate"
-              model-type="iso"
-              format="yyyy-MM-dd HH:mm"
+              :locale="datePickerLocale"
               placeholder="*Conclusion Date"
-            ></VueDatePicker>
+            />
           </v-col>
           <v-col v-if="quiz.timed">
-            <VueDatePicker
+            <DateTimeSideBySidePicker
               id="resultsDateInput"
               v-model="quiz.resultsDate"
-              model-type="iso"
-              format="yyyy-MM-dd HH:mm"
+              :locale="datePickerLocale"
               placeholder="Results Date"
-            ></VueDatePicker>
+            />
           </v-col>
         </v-row>
         <v-row>
           <v-col>
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <v-switch v-model="quiz.scramble" label="Scramble" v-bind="props" />
               </template>
@@ -63,7 +60,7 @@
             </v-tooltip>
           </v-col>
           <v-col>
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <v-switch
                   v-model="quiz.qrCodeOnly"
@@ -75,7 +72,7 @@
             </v-tooltip>
           </v-col>
           <v-col>
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <v-switch
                   v-model="quiz.oneWay"
@@ -87,7 +84,7 @@
             </v-tooltip>
           </v-col>
           <v-col>
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <v-switch v-model="quiz.timed" label="Timer" v-bind="props" />
               </template>
@@ -104,7 +101,7 @@
           <v-btn
             v-if="quizQuestions.length !== 0"
             color="primary"
-            dark
+           
             @click="openShowQuiz"
             >Show Quiz
           </v-btn>
@@ -138,7 +135,7 @@
           </template>
 
           <template v-slot:[`item.action`]="{ item }">
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <v-icon
                   class="mr-2 action-button"
@@ -151,7 +148,7 @@
               <span>Show Question</span>
             </v-tooltip>
             <div v-if="item.sequence">
-              <v-tooltip bottom>
+              <v-tooltip location="bottom">
                 <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
@@ -256,7 +253,7 @@
           <v-spacer></v-spacer>
           <v-btn
             color="primary"
-            dark
+           
             v-on:click="showQueryForm = !showQueryForm"
           >
             {{ !showQueryForm ? 'Open Query Form' : 'Close Query Form' }}
@@ -296,7 +293,7 @@
           </template>
 
           <template v-slot:[`item.action`]="{ item }">
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <span
                   class="mr-2 action-button"
@@ -347,8 +344,8 @@
         </v-card-text>
         <v-card-actions>
           <div class="flex-grow-1"></div>
-          <v-btn color="red darken-1" @click="closeSetPosition">Close</v-btn>
-          <v-btn color="green darken-1" @click="saveSetPosition">Save</v-btn>
+          <v-btn color="red-darken-1" @click="closeSetPosition">Close</v-btn>
+          <v-btn color="green-darken-1" @click="saveSetPosition">Save</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -376,8 +373,8 @@ import Question from '@/models/management/Question';
 import EditQuestionDialog from '@/views/teacher/questions/EditQuestionDialog.vue';
 import ShowQuestionDialog from '@/views/teacher/questions/ShowQuestionDialog.vue';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
-import { VueDatePicker } from '@vuepic/vue-datepicker';
-import '@vuepic/vue-datepicker/dist/main.css';
+import { pt } from 'date-fns/locale';
+import DateTimeSideBySidePicker from '@/components/DateTimeSideBySidePicker.vue';
 import QueryQuestionForm from '@/views/teacher/questions/QueryQuestionForm.vue';
 
 const props = defineProps<{
@@ -386,6 +383,7 @@ const props = defineProps<{
 }>();
 
 const emit = defineEmits(['switchMode', 'updateQuiz']);
+const datePickerLocale = pt;
 
 const store = useStore();
 

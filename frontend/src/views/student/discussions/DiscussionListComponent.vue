@@ -26,16 +26,16 @@
         </v-card-title>
       </template>
       <template v-slot:[`item.closed`]="{ item }">
-        <v-chip v-if="item.closed === true" :color="'green'" dark>Yes</v-chip>
-        <v-chip v-else :color="'red'" dark>No</v-chip>
+        <v-chip v-if="item.closed === true" :color="'green'">Yes</v-chip>
+        <v-chip v-else :color="'red'">No</v-chip>
       </template>
       <template v-slot:[`item.replies.length`]="{ item }">
-        <v-chip v-if="item.replies === null" :color="'grey'" dark>0</v-chip>
-        <v-chip v-else :color="'grey'" dark>{{ item.replies.length }}</v-chip>
+        <v-chip v-if="item.replies === null" :color="'grey'">0</v-chip>
+        <v-chip v-else :color="'grey'">{{ item.replies.length }}</v-chip>
       </template>
 
       <template v-slot:[`item.action`]="{ item }">
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props: activatorProps }">
             <span data-cy="showDiscussionButton" v-bind="activatorProps" @click="showDiscussionDialogAction(item)">
               <v-icon class="mr-2 action-button">fas fa-comment-dots</v-icon>

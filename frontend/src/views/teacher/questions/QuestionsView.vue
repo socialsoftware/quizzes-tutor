@@ -1,11 +1,10 @@
 <template>
   <v-container fluid>
-    <v-card class="table" outlined color="transparent">
+    <v-card class="table" variant="outlined" color="transparent">
       <v-row>
         <v-col>
           <v-btn
             color="primary"
-            dark
             data-cy="queryQuestions"
             v-on:click="showQueryForm = !showQueryForm"
           >
@@ -15,19 +14,18 @@
         <v-col>
           <v-btn
             color="primary"
-            dark
             data-cy="newQuestionButton"
             @click="newQuestion"
             >New Question
           </v-btn>
         </v-col>
         <v-col>
-          <v-btn color="primary" dark @click="exportCourseQuestions"
+          <v-btn color="primary" @click="exportCourseQuestions"
             >Export All Course Questions
           </v-btn>
         </v-col>
         <v-col>
-          <v-btn color="primary" dark @click="importCourseQuestions"
+          <v-btn color="primary" @click="importCourseQuestions"
             >Import Questions to Course
           </v-btn>
         </v-col>
@@ -86,7 +84,7 @@
           <v-chip
             v-if="((item as any).raw || item).difficulty"
             :color="getDifficultyColor(((item as any).raw || item).difficulty)"
-            dark
+           
             >{{ ((item as any).raw || item).difficulty + '%' }}
           </v-chip>
         </template>
@@ -95,12 +93,12 @@
           <v-select
             v-model="((item as any).raw || item).status"
             :items="statusList"
-            dense
+            density="compact"
             @update:model-value="setStatus(((item as any).raw || item).id as number, ((item as any).raw || item).status)"
           >
             <template v-slot:selection="{ item: selectItem }">
-              <v-chip :color="getStatusColor(selectItem.title || selectItem)" small>
-                <span>{{ selectItem.title || selectItem }}</span>
+              <v-chip :color="getStatusColor((selectItem as any).title || selectItem)" size="small">
+                <span>{{ (selectItem as any).title || selectItem }}</span>
               </v-chip>
             </template>
           </v-select>
@@ -109,16 +107,16 @@
         <template v-slot:[`item.image`]="{ item }">
           <v-file-input
             accept="image/*"
-            dense
+            density="compact"
             show-size
-            small-chips
+           
             @change="handleFileUpload($event.target.files[0], (item as any).raw || item)"
           />
         </template>
 
         <template v-slot:[`item.action`]="{ item }">
           <div class="d-flex flex-column align-center" style="gap: 4px;">
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <span data-cy="showQuestionDialogButton" v-bind="props" @click.stop="showQuestionDialog((item as any).raw || item)">
                   <v-icon class="action-button">visibility</v-icon>
@@ -126,7 +124,7 @@
               </template>
               <span>Show Question</span>
             </v-tooltip>
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <span data-cy="showStudentViewDialogButton" v-bind="props" @click="showStudentViewDialog((item as any).raw || item)">
                   <v-icon class="action-button">school</v-icon>
@@ -134,7 +132,7 @@
               </template>
               <span>Student View</span>
             </v-tooltip>
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <span data-cy="duplicateQuestionButton" v-bind="props" @click="duplicateQuestion((item as any).raw || item)">
                   <v-icon class="action-button">cached</v-icon>
@@ -150,7 +148,7 @@
               </template>
               <span>Edit Question</span>
             </v-tooltip>
-            <v-tooltip bottom>
+            <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
                 <span data-cy="showClarificationsButton" v-bind="props" @click="showClarificationDialog((item as any).raw || item)">
                   <v-icon class="action-button">fas fa-comments</v-icon>
@@ -216,7 +214,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, watch, onErrorCaptured, nextTick } from 'vue';
+import { ref, onMounted, watch } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Question from '@/models/management/Question';
@@ -235,11 +233,6 @@ const store = useStore();
 
 const questions = ref<Question[]>([]);
 
-onErrorCaptured((err, instance, info) => {
-  console.error('ERROR CAPTURED in QuestionsView:', err, info);
-  return false; // don't propagate
-});
-
 const topics = ref<Topic[]>([]);
 const currentQuestion = ref<Question | null>(null);
 const statementQuestion = ref<StatementQuestion | null>(null);
@@ -253,16 +246,16 @@ const statusList = ref(['DISABLED', 'AVAILABLE', 'REMOVED']);
 const showQueryForm = ref(true);
 
 const headers = ref<any[]>([
-  { title: 'Actions', key: 'action', align: 'start', width: '15%', sortable: false },
-  { title: 'Title', key: 'title', align: 'start' },
-  { title: 'Topics', key: 'topics', align: 'center', width: '20%', sortable: false },
+  { title: 'Actions', key: 'action', align: 'start', width: '5px', sortable: false },
+  { title: 'Title', key: 'title', align: 'start', width: '50%' },
+  { title: 'Topics', key: 'topics', align: 'center', width: '30%', sortable: false },
   { title: 'Status', key: 'status', width: '150px', align: 'start' },
-  { title: 'Image', key: 'image', align: 'center', sortable: false },
-  { title: 'Clarifications', key: 'numberOfClarifications', align: 'center' },
-  { title: 'Difficulty', key: 'difficulty', align: 'center' },
-  { title: 'Answers', key: 'numberOfAnswers', align: 'center' },
-  { title: 'Generated quizzes', key: 'numberOfGeneratedQuizzes', align: 'center' },
-  { title: 'Non generated quizzes', key: 'numberOfNonGeneratedQuizzes', align: 'center' },
+  { title: 'Image', key: 'image', align: 'center', width: '10%', sortable: false },
+  { title: 'Clarifications', key: 'numberOfClarifications', align: 'center', width: '5px' },
+  { title: 'Difficulty', key: 'difficulty', align: 'center', width: '5px' },
+  { title: 'Answers', key: 'numberOfAnswers', align: 'center', width: '5px' },
+  { title: 'Generated quizzes', key: 'numberOfGeneratedQuizzes', align: 'center', width: '5px' },
+  { title: 'Non generated quizzes', key: 'numberOfNonGeneratedQuizzes', align: 'center', width: '5px' },
   { title: 'Creation Date', key: 'creationDate', width: '150px', align: 'center' },
 ]);
 
@@ -339,13 +332,8 @@ const handleFileUpload = async (event: File, question: Question) => {
 };
 
 const showQuestionDialog = (question: Question) => {
-  console.log('showQuestionDialog called, id:', question?.id, 'title:', question?.title, 'type:', question?.questionDetailsDto?.type);
   currentQuestion.value = question;
   questionDialog.value = true;
-  console.log('showQuestionDialog SET - currentQuestion:', currentQuestion.value?.title, 'questionDialog:', questionDialog.value);
-  nextTick(() => {
-    console.log('showQuestionDialog NEXTTICK - currentQuestion:', currentQuestion.value?.title, 'questionDialog:', questionDialog.value);
-  });
 };
 
 const showStudentViewDialog = async (question: Question) => {

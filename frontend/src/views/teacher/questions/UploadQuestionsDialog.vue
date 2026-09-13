@@ -9,9 +9,9 @@
     <v-card>
       <v-card-title>
         <span class="headline"> Import Questions </span>
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
-            <v-icon color="blue darken-1" class="text-white" v-bind="props"
+            <v-icon color="blue-darken-1" class="text-white" v-bind="props"
               >info</v-icon
             >
           </template>
@@ -23,8 +23,8 @@
 
       <v-file-input
         show-size
-        dense
-        small-chips
+        density="compact"
+       
         label="Select a .xml file"
         v-model="chosenFile"
         accept=".xml"
@@ -34,14 +34,14 @@
         <v-spacer />
         <v-btn
           class="text-white"
-          color="red darken-1"
+          color="red-darken-1"
           @click="$emit('close-dialog')"
           data-cy="cancelButton"
           >Cancel</v-btn
         >
         <v-btn
           class="text-white"
-          color="green darken-1"
+          color="green-darken-1"
           :disabled="disabled"
           @click="uploadQuestions"
           data-cy="uploadFileButton"

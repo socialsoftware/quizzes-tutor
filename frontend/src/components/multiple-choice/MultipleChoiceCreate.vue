@@ -26,11 +26,11 @@
         />
       </v-col>
       <v-col v-if="sQuestionDetails.options.length > 2">
-        <v-tooltip bottom>
+        <v-tooltip location="bottom">
           <template v-slot:activator="{ props }">
             <span :data-cy="`Delete${index + 1}`" v-bind="props" @click="removeOption(index)">
               <v-icon
-                small
+                size="small"
                 class="ma-1 action-button"
                 color="red"
                 >close</v-icon
@@ -45,7 +45,7 @@
     <v-row>
       <v-btn
         class="ma-auto"
-        color="blue darken-1"
+        color="blue-darken-1"
         @click="addOption"
         data-cy="addOptionMultipleChoice"
         >Add Option</v-btn

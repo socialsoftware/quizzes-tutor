@@ -17,7 +17,7 @@
             class="mx-2"
           />
           <v-spacer />
-          <v-btn color="primary" dark @click="newCourse" data-cy="createButton"
+          <v-btn color="primary" @click="newCourse" data-cy="createButton"
             >New Course</v-btn
           >
         </v-card-title>
@@ -188,19 +188,19 @@ const search = ref('');
 const getRaw = (item: any): Course => (item as any).raw || item;
 
 const headers = [
-  { title: 'Actions', key: 'action', align: 'start', sortable: false, width: '120px' },
-  { title: 'Course Type', key: 'courseType', align: 'center', width: '110px' },
-  { title: 'Name', key: 'name', align: 'start', width: '220px' },
-  { title: 'Execution Type', key: 'courseExecutionType', align: 'center', width: '120px' },
-  { title: 'Acronym', key: 'acronym', align: 'center', width: '100px' },
-  { title: 'Academic Term', key: 'academicTerm', align: 'center', width: '120px' },
-  { title: 'Number of Active Teachers', key: 'numberOfActiveTeachers', align: 'center', width: '110px' },
-  { title: 'Number of Inactive Teachers', key: 'numberOfInactiveTeachers', align: 'center', width: '110px' },
-  { title: 'Number of Active Students', key: 'numberOfActiveStudents', align: 'center', width: '110px' },
-  { title: 'Number of Inactive Students', key: 'numberOfInactiveStudents', align: 'center', width: '110px' },
-  { title: 'Number of Questions', key: 'numberOfQuestions', align: 'center', width: '100px' },
-  { title: 'Number of Quizzes', key: 'numberOfQuizzes', align: 'center', width: '100px' },
-  { title: 'Status', key: 'status', align: 'center', width: '100px' }
+  { title: 'Actions', key: 'action', align: 'start', sortable: false, width: '25%' },
+  { title: 'Course Type', key: 'courseType', align: 'center', width: '10%' },
+  { title: 'Name', key: 'name', align: 'start', width: '25%' },
+  { title: 'Execution Type', key: 'courseExecutionType', align: 'center', width: '10%' },
+  { title: 'Acronym', key: 'acronym', align: 'center', width: '10%' },
+  { title: 'Academic Term', key: 'academicTerm', align: 'center', width: '10%' },
+  { title: 'Number of Active Teachers', key: 'numberOfActiveTeachers', align: 'center', width: '5%' },
+  { title: 'Number of Inactive Teachers', key: 'numberOfInactiveTeachers', align: 'center', width: '5%' },
+  { title: 'Number of Active Students', key: 'numberOfActiveStudents', align: 'center', width: '5%' },
+  { title: 'Number of Inactive Students', key: 'numberOfInactiveStudents', align: 'center', width: '5%' },
+  { title: 'Number of Questions', key: 'numberOfQuestions', align: 'center', width: '5%' },
+  { title: 'Number of Quizzes', key: 'numberOfQuizzes', align: 'center', width: '5%' },
+  { title: 'Status', key: 'status', align: 'center', width: '5%' }
 ] as any;
 
 onMounted(async () => {

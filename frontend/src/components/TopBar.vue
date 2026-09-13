@@ -1,7 +1,7 @@
 <template>
   <div>
     <nav>
-      <v-app-bar clipped-left color="primary" class="px-0">
+      <v-app-bar color="primary">
         <v-app-bar-nav-icon
           aria-label="Menu"
           class="hidden-md-and-up"
@@ -12,29 +12,28 @@
           <v-btn
             v-if="currentCourse"
             class="home-btn"
-            dark
             variant="text"
             tile
             to="/"
           >
             {{ currentCourse.name }}
           </v-btn>
-          <v-btn v-else class="home-btn px-2" dark variant="text" tile to="/">
+          <v-btn v-else class="home-btn px-2" variant="text" tile to="/">
             {{ appName }}
           </v-btn>
         </v-toolbar-title>
 
         <v-spacer />
 
-        <v-toolbar-items class="hidden-sm-and-down" hide-details>
-          <v-menu v-if="isTeacher && currentCourse" offset-y open-on-hover>
+        <div class="v-toolbar-items hidden-sm-and-down">
+          <v-menu v-if="isTeacher && currentCourse" open-on-hover>
             <template v-slot:activator="{ props }">
-              <v-btn dark data-cy="managementMenuButton" variant="text" v-bind="props">
+              <v-btn data-cy="managementMenuButton" variant="text" v-bind="props">
                 Management
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
             </template>
-            <v-list dense>
+            <v-list density="compact">
               <v-list-item
                 data-cy="questionsTeacherMenuButton"
                 to="/management/questions"
@@ -62,14 +61,14 @@
             </v-list>
           </v-menu>
 
-          <v-menu v-if="isStudent && currentCourse" offset-y open-on-hover>
+          <v-menu v-if="isStudent && currentCourse" open-on-hover>
             <template v-slot:activator="{ props }">
-              <v-btn dark data-cy="quizzesStudentMenuButton" variant="text" v-bind="props">
+              <v-btn data-cy="quizzesStudentMenuButton" variant="text" v-bind="props">
                 Quizzes
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
             </template>
-            <v-list dense>
+            <v-list density="compact">
               <v-list-item to="/student/available" prepend-icon="assignment" title="Available"></v-list-item>
               <v-list-item to="/student/create" prepend-icon="create" title="Create"></v-list-item>
               <v-list-item to="/student/scan" prepend-icon="fas fa-qrcode" title="Scan"></v-list-item>
@@ -82,14 +81,14 @@
             </v-list>
           </v-menu>
 
-          <v-menu v-if="isStudent && currentCourse" offset-y open-on-hover>
+          <v-menu v-if="isStudent && currentCourse" open-on-hover>
             <template v-slot:activator="{ props }">
-              <v-btn dark data-cy="Tournament" variant="text" v-bind="props">
+              <v-btn data-cy="Tournament" variant="text" v-bind="props">
                 Tournaments
                 <v-icon>fas fa-trophy</v-icon>
               </v-btn>
             </template>
-            <v-list dense>
+            <v-list density="compact">
               <v-list-item data-cy="Open" to="/student/tournaments/open" prepend-icon="fas fa-medal" title="Open Tournaments"></v-list-item>
               <v-list-item data-cy="Closed" to="/student/tournaments/closed" prepend-icon="fas fa-award" title="Closed Tournaments"></v-list-item>
             </v-list>
@@ -97,7 +96,6 @@
 
           <v-btn
             v-if="isStudent && currentCourse"
-            dark
             data-cy="submissionStudentMenuButton"
             variant="text"
             to="/student/submissions"
@@ -108,7 +106,6 @@
 
           <v-btn
             v-if="isStudent && currentCourse"
-            dark
             data-cy="dashboardMenuButton"
             variant="text"
             to="/student/dashboard"
@@ -120,7 +117,6 @@
           <v-btn
             v-if="isLoggedIn && moreThanOneCourse"
             active-class="no-active"
-            dark
             variant="text"
             to="/courses"
           >
@@ -128,14 +124,14 @@
             <v-icon>fa fa-book</v-icon>
           </v-btn>
 
-          <v-menu v-if="isAdmin" offset-y open-on-hover>
+          <v-menu v-if="isAdmin" open-on-hover>
             <template v-slot:activator="{ props }">
-              <v-btn dark data-cy="administrationMenuButton" variant="text" v-bind="props">
+              <v-btn data-cy="administrationMenuButton" variant="text" v-bind="props">
                 Administration
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
             </template>
-            <v-list dense>
+            <v-list density="compact">
               <v-list-item to="/admin/users" prepend-icon="fas fa-users" title="Manage Users"></v-list-item>
               <v-list-item
                 data-cy="manageCoursesMenuButton"
@@ -144,13 +140,14 @@
               <v-list-item to="/admin/export" prepend-icon="fas fa-download" title="Export"></v-list-item>
             </v-list>
           </v-menu>
-        </v-toolbar-items>
+        </div>
 
-        <v-toolbar-items class="hidden-sm-and-down" hide-details>
-          <v-menu v-if="!isLoggedIn" offset-y open-on-hover>
+        <div class="v-toolbar-items hidden-sm-and-down">
+          <v-menu v-if="!isLoggedIn" open-on-hover>
             <template v-slot:activator="{ props }">
               <v-btn variant="text" v-bind="props">
-                Login <i class="fas fa-sign-in-alt ml-3" style="font-size: 24px;" />
+                Login
+                <v-icon>fas fa-sign-in-alt</v-icon>
               </v-btn>
             </template>
             <v-list>
@@ -161,7 +158,6 @@
 
           <v-btn
             v-if="isLoggedIn"
-            dark
             data-cy="logoutButton"
             variant="text"
             @click="logout"
@@ -169,12 +165,12 @@
             Logout
             <v-icon>fas fa-sign-out-alt</v-icon>
           </v-btn>
-        </v-toolbar-items>
+        </div>
       </v-app-bar>
 
       <!-- Start of mobile side menu -->
-      <v-navigation-drawer v-model="drawer" absolute app dark temporary>
-        <v-toolbar flat>
+      <v-navigation-drawer v-model="drawer" theme="dark" temporary>
+        <v-toolbar elevation="0">
           <v-list>
             <v-list-item>
               <v-list-item-title class="title">Menu</v-list-item-title>
@@ -182,15 +178,14 @@
           </v-list>
         </v-toolbar>
 
-        <v-list class="pt-0" dense>
+        <v-list class="pt-0" density="compact">
           <!-- Management Group-->
           <v-list-group
             v-if="isTeacher && currentCourse"
             :value="false"
-            prepend-icon="fas fa-file-alt"
           >
-            <template v-slot:activator>
-              <v-list-item-title>Management</v-list-item-title>
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="fas fa-file-alt" title="Management"></v-list-item>
             </template>
             <v-list-item to="/management/questions" prepend-icon="question_answer" title="Questions"></v-list-item>
             <v-list-item to="/management/topics" prepend-icon="category" title="Topics"></v-list-item>
@@ -208,10 +203,9 @@
           <v-list-group
             v-if="isStudent && currentCourse"
             :value="false"
-            prepend-icon="account_circle"
           >
-            <template v-slot:activator>
-              <v-list-item-title>Student</v-list-item-title>
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="account_circle" title="Student"></v-list-item>
             </template>
 
             <v-list-item
@@ -242,10 +236,9 @@
           <v-list-group
             v-if="isAdmin"
             :value="false"
-            prepend-icon="fas fa-file-alt"
           >
-            <template v-slot:activator>
-              <v-list-item-title>Administration</v-list-item-title>
+            <template v-slot:activator="{ props }">
+              <v-list-item v-bind="props" prepend-icon="fas fa-file-alt" title="Administration"></v-list-item>
             </template>
             <v-list-item to="/admin/users" prepend-icon="fas fa-users" title="Manage Users"></v-list-item>
             <v-list-item to="/admin/courses" prepend-icon="fas fa-school" title="Manage Courses"></v-list-item>

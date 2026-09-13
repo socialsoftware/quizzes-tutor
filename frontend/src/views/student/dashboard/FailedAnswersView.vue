@@ -11,7 +11,7 @@
         multi-sort
       >
         <template v-slot:[`item.action`]="{ item }">
-          <v-tooltip bottom>
+          <v-tooltip location="bottom">
             <template v-slot:activator="{ props: activatorProps }">
               <span
                 class="mr-2 action-button"
@@ -24,7 +24,7 @@
             </template>
             <span>Student View</span>
           </v-tooltip>
-          <v-tooltip bottom>
+          <v-tooltip location="bottom">
             <template v-slot:activator="{ props: activatorProps }">
               <span
                 class="mr-2 action-button"

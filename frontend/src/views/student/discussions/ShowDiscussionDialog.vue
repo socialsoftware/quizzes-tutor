@@ -61,8 +61,8 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          dark
-          color="blue darken-1"
+         
+          color="blue-darken-1"
           data-cy="showDiscussionDialogCloseButton"
           @click="$emit('update:dialog', false)"
           >close</v-btn

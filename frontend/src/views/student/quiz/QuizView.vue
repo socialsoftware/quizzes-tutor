@@ -25,7 +25,7 @@
       <div data-cy="navigationButtons" class="navigation-buttons">
         <v-sheet class="mx-auto" max-width="300">
           <v-slide-group v-model="slideItemPosition" show-arrows center-active>
-            <v-slide-item
+            <template
               v-for="index in +statementQuiz.questions.length"
               :key="index"
             >
@@ -44,7 +44,7 @@
               >
                 {{ index }}
               </span>
-            </v-slide-item>
+            </template>
           </v-slide-group>
         </v-sheet>
       </div>
@@ -89,12 +89,12 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="secondary" text @click="confirmationDialog = false">
+          <v-btn color="secondary" variant="text" @click="confirmationDialog = false">
             Cancel
           </v-btn>
           <v-btn
             color="primary"
-            text
+            variant="text"
             data-cy="confirmationButton"
             @click="concludeQuiz"
           >
@@ -118,13 +118,13 @@
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="secondary" text @click="nextConfirmationDialog = false">
+          <v-btn color="secondary" variant="text" @click="nextConfirmationDialog = false">
             Cancel
           </v-btn>
           <v-btn
             data-cy="confirmationButton"
             color="primary"
-            text
+            variant="text"
             @click="increaseOrder"
           >
             I'm sure

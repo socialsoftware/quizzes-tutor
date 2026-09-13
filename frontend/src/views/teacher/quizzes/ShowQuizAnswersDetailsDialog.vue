@@ -39,7 +39,7 @@
         />
       </v-card-text>
       <v-card-actions>
-        <v-btn color="primary" text @click="$emit('update:dialog', false)"> Close </v-btn>
+        <v-btn color="primary" variant="text" @click="$emit('update:dialog', false)"> Close </v-btn>
       </v-card-actions>
     </v-card>
   </v-dialog>

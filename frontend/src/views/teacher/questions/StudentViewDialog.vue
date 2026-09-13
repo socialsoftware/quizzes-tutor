@@ -38,7 +38,7 @@
       <v-card-actions>
         <v-spacer />
         <v-btn
-          color="blue darken-1"
+          color="blue-darken-1"
           class="text-white"
           data-cy="closeButton"
           @click="$emit('update:dialog', false)"

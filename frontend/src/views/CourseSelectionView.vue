@@ -14,7 +14,7 @@
               <v-tooltip
                 v-for="course in courseExecutions[term]"
                 :key="(course.acronym || '') + (course.academicTerm || '')"
-                bottom
+                location="bottom"
               >
                 <template v-slot:activator="{ props }">
                   <v-list-item
@@ -32,15 +32,15 @@
                       <v-btn icon>
                         <v-icon
                           v-if="course.status === 'INACTIVE'"
-                          color="grey lighten-1"
+                          color="grey-lighten-1"
                           >mdi-key</v-icon
                         >
                         <v-icon
                           v-else-if="course.status === 'HISTORIC'"
-                          color="grey lighten-1"
+                          color="grey-lighten-1"
                           >mdi-book-open-variant</v-icon
                         >
-                        <v-icon v-else color="grey lighten-1"
+                        <v-icon v-else color="grey-lighten-1"
                           >mdi-location-enter</v-icon
                         >
                       </v-btn>
