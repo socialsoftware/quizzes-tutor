@@ -1,5 +1,8 @@
 .idea
-.mvn
+**/.mvn/*
+!**/.mvn/wrapper/
+**/.mvn/wrapper/*
+!**/.mvn/wrapper/maven-wrapper.properties
 .DS_Store
 
 scripts

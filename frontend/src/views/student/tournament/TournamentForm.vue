@@ -249,9 +249,9 @@ const store = useStore();
 const datePickerLocale = pt;
 
 const editTournament = ref<Tournament>(new Tournament());
-const currentTopicsSearch = ref('');
+const currentTopicsSearch = ref<Topic[]>([]);
 const currentTopicsSearchText = ref('');
-const allTopicsSearch = ref('');
+const allTopicsSearch = ref<Topic[]>([]);
 const allTopicsSearchText = ref('');
 
 const allTopics = ref<Topic[]>([]);
