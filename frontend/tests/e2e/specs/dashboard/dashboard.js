@@ -7,7 +7,7 @@ describe('Dashboard', () => {
     cy.request('http://localhost:8080/auth/demo/teacher')
       .as('loginResponse')
       .then((response) => {
-        Cypress.env('token', response.body.token);
+        Cypress.expose('token', response.body.token);
         return response;
       });
 
@@ -122,7 +122,7 @@ describe('Dashboard', () => {
           result[0].id +
           '/difficultquestions',
         headers: {
-          Authorization: 'Bearer ' + Cypress.env('token'),
+          Authorization: 'Bearer ' + Cypress.expose('token'),
         },
       });
     });

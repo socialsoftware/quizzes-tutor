@@ -186,7 +186,7 @@ const queryQuestions = async () => {
   margin: 0 8px;
 }
 
-:deep(.dp__main) {
+:deep(.dp--main) {
   width: 100%;
 }
 </style>

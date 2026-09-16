@@ -24,9 +24,9 @@
     </repositories>
 
     <properties>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>25</java.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
     </properties>
 
     <!-- Allows multiple properties files-->
@@ -58,7 +58,7 @@
                             more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
                         <groupId>org.codehaus.gmavenplus</groupId>
                         <artifactId>gmavenplus-plugin</artifactId>
-                        <version>4.1.1</version>
+                        <version>5.1.0</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -112,7 +112,7 @@
                             more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
                         <groupId>org.codehaus.gmavenplus</groupId>
                         <artifactId>gmavenplus-plugin</artifactId>
-                        <version>4.1.1</version>
+                        <version>5.1.0</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -346,12 +346,12 @@
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>5.0.4</version>
+            <version>5.1.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>5.0.4</version>
+            <version>5.1.2</version>
             <type>pom</type>
         </dependency>
 

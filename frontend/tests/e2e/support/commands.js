@@ -17,11 +17,11 @@ Cypress.Commands.add("selectDateTime", (wrapperId, dateString) => {
     cy.get('button[aria-label="Next month"]').click({ force: true });
     cy.wait(500);
   }
-  cy.get('.dp__cell_inner:not(.dp__cell_offset)')
+  cy.get('.dp--cell-inner:not(.dp--cell-offset)')
     .contains(new RegExp(`^${day}$`))
     .click({ force: true });
   
-  cy.get('.dp__action_select').click({ force: true });
+  cy.get('.dp--action-select').click({ force: true });
 });
 
 Cypress.Commands.add("selectDate", (wrapperId, dateString) => {

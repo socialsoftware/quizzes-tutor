@@ -1,12 +1,12 @@
 <template>
   <div :id="id" class="dtp-side-by-side" ref="rootEl">
-    <div class="dp__input_wrap">
-      <span class="dp__input_icon dp__input_icons">
+    <div class="dp--input-wrap">
+      <span class="dp--input-icon dp--input-icons">
         <i class="mdi mdi-calendar"></i>
       </span>
       <input
         type="text"
-        class="dp__input dp__input_reg dp__input_icon_pad"
+        class="dp--input dp--input-reg dp--input-icon-pad"
         readonly
         :placeholder="placeholder"
         :value="displayValue"
@@ -17,7 +17,7 @@
       <div
         v-if="open"
         ref="menuEl"
-        class="dtp-menu dp__menu dp__menu_index dp__theme_light"
+        class="dtp-menu dp--menu dp--menu-index dp--theme-light"
         :style="menuStyle"
       >
         <div class="dtp-menu-content">
@@ -40,18 +40,18 @@
             />
           </div>
         </div>
-        <div class="dp__action_row">
-          <div class="dp__action_buttons">
+        <div class="dp--action-row">
+          <div class="dp--action-buttons">
             <button
               type="button"
-              class="dp__action_button dp__action_cancel"
+              class="dp--action-button dp--action-cancel"
               @click="cancel"
             >
               Cancel
             </button>
             <button
               type="button"
-              class="dp__action_button dp__action_select"
+              class="dp--action-button dp--action-select"
               @click="confirm"
             >
               Select
@@ -214,7 +214,7 @@ onBeforeUnmount(removeListeners);
   width: 100%;
 }
 
-.dp__input_wrap {
+.dp--input-wrap {
   position: relative;
 }
 

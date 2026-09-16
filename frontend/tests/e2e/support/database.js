@@ -1,20 +1,8 @@
-function dbPasswordCommand(password) {
-  if (Cypress.platform === 'win32') {
-    return `set PGPASSWORD=${password}&& `;
-  } else {
-    return `PGPASSWORD=${password} `;
-  }
-}
-
+// Cypress 16 removed `Cypress.env()`. The psql invocation moved to the
+// `execSql` node task, which reads the credentials from the config itself, so
+// they are never exposed to the browser process.
 function dbCommand(command) {
-  return cy.exec(
-    dbPasswordCommand(Cypress.env('psql_db_password')) +
-      `psql -d ${Cypress.env('psql_db_name')} ` +
-      `-U ${Cypress.env('psql_db_username')} ` +
-      `-h ${Cypress.env('psql_db_host')} ` +
-      `-p ${Cypress.env('psql_db_port')} ` +
-      `-c "${command.replace(/\r?\n/g, ' ')}"`
-  );
+  return cy.task('execSql', command);
 }
 
 Cypress.Commands.add('beforeEachTournament', () => {
@@ -206,17 +194,8 @@ Cypress.Commands.add('deleteQuestionsAndAnswers', () => {
     `);
 });
 
-const credentials = {
-  user: Cypress.env('psql_db_username'),
-  host: Cypress.env('psql_db_host'),
-  database: Cypress.env('psql_db_name'),
-  password: Cypress.env('psql_db_password'),
-  port: Cypress.env('psql_db_port'),
-};
-
 Cypress.Commands.add('getDemoCourseExecutionId', () => {
   cy.task('queryDatabase', {
     query: "SELECT id FROM course_executions WHERE acronym = 'DemoCourse'",
-    credentials: credentials,
   });
 });

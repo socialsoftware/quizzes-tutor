@@ -3,7 +3,8 @@
 Practical notes for running Quizzes Tutor on a developer machine: where the demo data comes
 from, how to run against a database dump, and how to run each test suite.
 
-Prerequisites: Java 21, Maven, Node >= 20.14, PostgreSQL, and `psql` on the `PATH`.
+Prerequisites: Java 25, Node >= 22.12, PostgreSQL, and `psql` on the `PATH`. Maven does not
+need to be installed — `backend/mvnw` downloads the version the project pins.
 
 ---
 
@@ -78,7 +79,7 @@ Start it:
 
 ```bash
 cd backend
-mvn -Pdev spring-boot:run     # add -o to work offline
+./mvnw -Pdev spring-boot:run     # add -o to work offline
 # wait for "Started TutorApplication in ... seconds"
 ```
 
@@ -94,7 +95,7 @@ mvn -Pdev spring-boot:run     # add -o to work offline
 
 ```bash
 cd backend
-mvn clean -Ptest test
+./mvnw clean -Ptest test
 ```
 
 Around 91 `*Test.groovy` files. Reports in `target/surefire-reports/`, coverage in
@@ -105,7 +106,7 @@ Around 91 `*Test.groovy` files. Reports in `target/surefire-reports/`, coverage 
 ```bash
 cd backend
 PSQL_INT_TEST_DB_USERNAME=<user> PSQL_INT_TEST_DB_PASSWORD=<password> \
-  mvn clean verify -Ptest-int
+  ./mvnw clean verify -Ptest-int
 ```
 
 > **These tests write to and delete from the database.** `application-test-int.properties` points
@@ -115,7 +116,7 @@ PSQL_INT_TEST_DB_USERNAME=<user> PSQL_INT_TEST_DB_PASSWORD=<password> \
 > ```bash
 > psql -h localhost -U <user> -d postgres -c "CREATE DATABASE tutordb_test;"
 > PSQL_INT_TEST_DB_USERNAME=<user> PSQL_INT_TEST_DB_PASSWORD=<password> \
->   mvn clean verify -Ptest-int \
+>   ./mvnw clean verify -Ptest-int \
 >   -Dspring.datasource.url=jdbc:postgresql://localhost:5432/tutordb_test
 > ```
 
@@ -134,11 +135,19 @@ Needs the backend on `:8080`, the frontend on `:8081`, `psql` on the `PATH`, and
 
 ```bash
 cd frontend
-npm run test:e2e                                                   # headless, all specs
-npx cypress run --browser firefox                                  # other browser engine
+npm run test:e2e                                                   # headless, all specs (Firefox)
+npx cypress run                                                    # bundled Electron (deprecated)
 npx cypress run --spec "tests/e2e/specs/teacher/manageQuizzes.js"  # single spec
 npm run cypress                                                    # interactive runner
 ```
+
+> **Use Firefox, not the bundled Electron.** Cypress 16 deprecates Electron, and its renderer
+> dies partway through the longer specs: the page goes blank and the next selector times out.
+> The same suite scores **34/55 on Electron and 54/55 on Firefox**, so `test:e2e` and CI both
+> pass `--browser firefox`. Run it on an otherwise idle machine either way — running the suite
+> alongside a Maven build took it from 2 failing specs to 8.
+>
+> The one remaining failure, `student/createRandomQuiz.js`, predates this and is unrelated.
 
 > **The suite is destructive.** `cy.deleteQuestionsAndAnswers()` in
 > `tests/e2e/support/database.js` issues `DELETE FROM` with no `WHERE` clause against
@@ -195,7 +204,7 @@ pg_isready                         # expect: accepting connections
 
 # 2 — backend (pick the database in application-dev.properties first)
 cd backend
-mvn -Pdev spring-boot:run
+./mvnw -Pdev spring-boot:run
 
 # 3 — frontend
 cd frontend
@@ -235,5 +244,5 @@ cp data/env/fraud-service.dev.env.example data/env/fraud-service.dev.env
 ```
 
 Note that Compose publishes PostgreSQL on host port **5433**, while `application-dev.properties`
-and `application-test-int.properties` expect **5432**. Running Maven on the host against the
+and `application-test-int.properties` expect **5432**. Running the backend build on the host against the
 Compose database needs `-Dspring.datasource.url=jdbc:postgresql://localhost:5433/tutordb`.

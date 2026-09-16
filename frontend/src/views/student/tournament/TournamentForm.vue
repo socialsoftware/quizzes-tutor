@@ -462,7 +462,7 @@ const addTopic = (topic: Topic) => {
 </script>
 
 <style scoped>
-:deep(.dp__main) {
+:deep(.dp--main) {
   width: 100%;
 }
 
