@@ -60,16 +60,15 @@ import { ref } from 'vue';
 import Course from '@/models/user/Course';
 import User from '@/models/user/User';
 
-const props = defineProps<{
+defineProps<{
   dialog: boolean;
   course: Course;
 }>();
 
-const emit = defineEmits(['close-dialog', 'delete-users', 'update:dialog']);
+defineEmits(['close-dialog', 'delete-users', 'update:dialog']);
 
 const selectedUsers = ref<User[]>([]);
 const search = ref('');
-const items = ref<object[]>([]);
 
 const headers = [
   { title: 'Username', key: 'username', align: 'start', width: '65%' },

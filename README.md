@@ -80,7 +80,7 @@ Students can then answer those questions in sugested quizzes or generated quizze
 # Technologies
 
 * Require download
-  * [Postgres >= 14](https://www.postgresql.org/)
+  * [Postgres 18](https://www.postgresql.org/)
   * [Java 25](https://openjdk.org/projects/jdk/25/)
   * [Node 24](https://nodejs.org/en/) ([Node Version Manager](https://github.com/nvm-sh/nvm) recommended)
   * [Docker](https://www.docker.com/)

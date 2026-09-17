@@ -81,12 +81,12 @@ import ReplyComponent from '@/views/student/discussions/ReplyComponent.vue';
 import User from '@/models/user/User';
 import RemoteServices from '@/services/RemoteServices';
 
-const props = defineProps<{
+defineProps<{
   dialog: boolean;
   discussion: Discussion;
 }>();
 
-const emit = defineEmits(['update:dialog']);
+defineEmits(['update:dialog']);
 
 const store = useStore();
 const user = store.user as User | null;

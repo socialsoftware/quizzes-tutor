@@ -192,8 +192,6 @@ const store = useStore();
 const quiz = ref<Quiz | null>(null);
 const quizAnswers = ref<QuizAnswers | null>(null);
 const quizFraudInformation = ref<QuizFraudInformation | null>(null);
-const correctSequence = ref<number[]>([]);
-const timeToSubmission = ref<number>(0);
 const search = ref<string>('');
 
 const quizDialog = ref(false);

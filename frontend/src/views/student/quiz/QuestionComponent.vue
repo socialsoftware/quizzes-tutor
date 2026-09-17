@@ -43,7 +43,7 @@ import StatementAnswer from '@/models/statement/StatementAnswer';
 import CodeFillInAnswer from '@/components/code-fill-in/CodeFillInAnswer.vue';
 import CodeOrderAnswer from '@/components/code-order/CodeOrderAnswer.vue';
 
-const props = defineProps<{
+defineProps<{
   questionOrder: number;
   question?: StatementQuestion;
   answer?: StatementAnswer;

@@ -41,14 +41,14 @@ const studentAnswerCorrect = (el: CodeOrderSlot): boolean => {
   let answer = props.answerDetails?.orderedSlots.find(
     (x) => x.slotId == el.id
   );
-  return !!answer ? answer.correct : el.order == null;
+  return answer ? answer.correct : el.order == null;
 };
 
 const studentAnswer = (el: CodeOrderSlot): string => {
   let answer = props.answerDetails?.orderedSlots.find(
     (x) => x.slotId == el.id
   );
-  return `S[${!!answer ? (answer?.order || 0) + 1 : 'Not Used'}][${
+  return `S[${answer ? (answer?.order || 0) + 1 : 'Not Used'}][${
     studentAnswerCorrect(el) ? '✔' : '✖'
   }]`;
 };

@@ -60,9 +60,21 @@ export const useStore = defineStore('main', {
       const token = localStorage.getItem('token');
       if (token) this.token = token;
       const user = localStorage.getItem('user');
-      if (user) { try { this.user = JSON.parse(user); } catch (e) { } }
+      if (user) {
+        try {
+          this.user = JSON.parse(user);
+        } catch {
+          // stored value is not valid JSON; keep the default
+        }
+      }
       const currentCourse = localStorage.getItem('currentCourse');
-      if (currentCourse) { try { this.currentCourse = JSON.parse(currentCourse); } catch (e) { } }
+      if (currentCourse) {
+        try {
+          this.currentCourse = JSON.parse(currentCourse);
+        } catch {
+          // stored value is not valid JSON; keep the default
+        }
+      }
     },
     loginMut(authResponse: AuthDto) {
       localStorage.setItem('token', authResponse.token);

@@ -75,12 +75,6 @@ const saveTopics = async () => {
   );
 };
 
-const removeTopic = (topic: Topic) => {
-  questionTopics.value = questionTopics.value.filter(
-    (element) => element.id != topic.id
-  );
-  saveTopics();
-};
 
 const canEditTopics = () => {
   return (

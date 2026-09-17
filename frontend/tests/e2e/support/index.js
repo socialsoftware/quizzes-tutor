@@ -18,7 +18,7 @@ import './login';
 import './commands';
 import './database';
 
-Cypress.on('uncaught:exception', (err, runnable) => {
+Cypress.on('uncaught:exception', (err, _runnable) => {
   // returning false here prevents Cypress from failing the test
   if (err.message.includes('ResizeObserver loop')) {
     return false;

@@ -49,10 +49,6 @@ const syncedCode = computed({
   set: (val: string) => emit('update:code', val)
 });
 
-const syncedLanguage = computed({
-  get: () => props.language,
-  set: (val: string) => emit('update:language', val)
-});
 
 const getLanguageExtension = (lang: string) => {
   switch (lang) {

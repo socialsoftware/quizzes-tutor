@@ -159,7 +159,7 @@ onMounted(async () => {
   store.clearLoading();
 });
 
-const customFilter = (value: any, query: string, item?: any) => {
+const customFilter = (value: any, query: string, _item?: any) => {
   return (
     query != null &&
     typeof value === 'string' &&

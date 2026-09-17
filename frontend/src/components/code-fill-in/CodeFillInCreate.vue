@@ -80,9 +80,6 @@ onMounted(() => {
   counter.value = getMaxDropdown();
 });
 
-const onCmCodeChange = (newCode: string) => {
-  sQuestionDetails.value.code = newCode;
-};
 
 const Dropdownify = () => {
   // Note: CM6 editor access might need updating in BaseCodeEditor

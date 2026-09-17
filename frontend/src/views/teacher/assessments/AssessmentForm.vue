@@ -182,7 +182,6 @@ import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Assessment from '@/models/management/Assessment';
 import Question from '@/models/management/Question';
-import { convertMarkDown as convertMarkDownService } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import TopicConjunction from '@/models/management/TopicConjunction';
 import Topic from '@/models/management/Topic';
@@ -259,7 +258,7 @@ const topicFilter = (
   let searchTopics = [];
   try {
     searchTopics = JSON.parse(search);
-  } catch (e) {
+  } catch (_e) {
     searchTopics = [];
   }
 
@@ -334,9 +333,6 @@ const addTopicConjunction = (topicConjuntion: TopicConjunction) => {
   );
 };
 
-const convertMarkDown = (text: string, image: Image | null = null): string => {
-  return convertMarkDownService(text, image);
-};
 </script>
 
 <style lang="scss" scoped>

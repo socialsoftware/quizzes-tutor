@@ -44,7 +44,6 @@ Used on:
 import { computed } from 'vue';
 import MultipleChoiceStatementQuestionDetails from '@/models/statement/questions/MultipleChoiceStatementQuestionDetails';
 import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import Image from '@/models/management/Image';
 import MultipleChoiceStatementAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementAnswerDetails';
 import MultipleChoiceStatementCorrectAnswerDetails from '@/models/statement/questions/MultipleChoiceStatementCorrectAnswerDetails';
 

@@ -59,7 +59,7 @@ import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Course from '@/models/user/Course';
 
-const props = defineProps<{
+defineProps<{
   dialog: boolean;
   course: Course;
 }>();

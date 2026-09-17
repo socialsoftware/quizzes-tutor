@@ -59,7 +59,7 @@ import { ref } from 'vue';
 import Discussion from '@/models/management/Discussion';
 import ShowDiscussionDialog from '@/views/student/discussions/ShowDiscussionDialog.vue';
 
-const props = defineProps<{
+defineProps<{
   discussions: Discussion[];
 }>();
 

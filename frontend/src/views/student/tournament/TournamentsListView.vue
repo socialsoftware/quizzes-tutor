@@ -321,10 +321,6 @@ const openTournamentDashboard = async (tournament: Tournament) => {
   }
 };
 
-const printType = () => {
-  if (props.type === 'OPEN') return 'Open Tournaments';
-  else return 'Closed Tournaments';
-};
 
 const openSolvedQuiz = async () => {
   await router.push({ name: 'solved-quizzes' });

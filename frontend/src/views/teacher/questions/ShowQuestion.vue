@@ -20,7 +20,7 @@ import CodeFillInView from '@/components/code-fill-in/CodeFillInView.vue';
 import CodeOrderView from '@/components/code-order/CodeOrderView.vue';
 import AnswerDetails from '@/models/management/questions/AnswerDetails';
 
-const props = defineProps<{
+defineProps<{
   question: Question;
   answer?: AnswerDetails;
 }>();

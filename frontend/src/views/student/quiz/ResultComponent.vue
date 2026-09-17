@@ -51,7 +51,7 @@ import MultipleChoiceAnswer from '@/components/multiple-choice/MultipleChoiceAns
 import CodeFillInAnswerResult from '@/components/code-fill-in/CodeFillInAnswerResult.vue';
 import CodeOrderAnswerResult from '@/components/code-order/CodeOrderAnswerResult.vue';
 
-const props = defineProps<{
+defineProps<{
   questionOrder: number;
   question: StatementQuestion;
   correctAnswer: StatementCorrectAnswer;

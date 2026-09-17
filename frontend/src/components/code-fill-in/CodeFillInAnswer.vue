@@ -13,11 +13,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch } from 'vue';
+import { ref, computed } from 'vue';
 import CodeFillInStatementQuestionDetails from '@/models/statement/questions/CodeFillInStatementQuestionDetails';
 import Image from '@/models/management/Image';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import CodeFillInSpotStatement from '@/models/statement/questions/CodeFillInSpotStatement';
 import CodeFillInStatementAnswerDetails from '@/models/statement/questions/CodeFillInStatementAnswerDetails';
 import CodeFillInSpotAnswerStatement from '@/models/statement/questions/CodeFillInSpotAnswerStatement';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
@@ -47,12 +45,7 @@ const answerDetailsSynced = computed({
 const CodemirrorUpdated = ref(false);
 const myCmStudent = ref<any>(null);
 
-const increaseOrder = () => emit('increaseOrder', 1);
-const decreaseOrder = () => emit('decreaseOrder', 1);
 
-const convertMarkDownFn = (text: string, image: Image | null = null): string => {
-  return convertMarkDown(text, image);
-};
 
 const selectedANewOption = (event: Event) => {
   const num = Number(((event.target as any).name.match(/\d+/) || [0])[0]);

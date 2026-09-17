@@ -44,7 +44,6 @@
 <script setup lang="ts">
 import { computed, onMounted } from 'vue';
 import CodeOrderQuestionDetails from '@/models/management/questions/CodeOrderQuestionDetails';
-import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 import CodeOrderSlotEditor from '@/components/code-order/CodeOrderSlotEditor.vue';
 import draggable from 'vuedraggable';
 import CodeOrderSlot from '@/models/management/questions/CodeOrderSlot';

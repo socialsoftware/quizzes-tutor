@@ -3,7 +3,7 @@
 Practical notes for running Quizzes Tutor on a developer machine: where the demo data comes
 from, how to run against a database dump, and how to run each test suite.
 
-Prerequisites: Java 25, Node 24, PostgreSQL, and `psql` on the `PATH` (`package.json` accepts
+Prerequisites: Java 25, Node 24, PostgreSQL 18, and `psql` on the `PATH` (`package.json` accepts
 Node 22.12 and above; 24 is what CI and the Docker images use). Maven does not
 need to be installed — `backend/mvnw` downloads the version the project pins.
 
@@ -120,6 +120,12 @@ PSQL_INT_TEST_DB_USERNAME=<user> PSQL_INT_TEST_DB_PASSWORD=<password> \
 >   ./mvnw clean verify -Ptest-int \
 >   -Dspring.datasource.url=jdbc:postgresql://localhost:5432/tutordb_test
 > ```
+
+> **Keep the checkout on a path with no accented characters.** The export endpoint builds its
+> output path from the working directory, and the forked test JVM reads that path as Latin-1, so
+> `ExportCourseExecutionInfoWebServiceIT` fails with a `FileNotFoundException` naming a mangled
+> directory. The same test passes from an ASCII path. Nothing else in the suite is affected, and
+> CI never hits it.
 
 ### Frontend unit tests — vitest, no servers needed
 

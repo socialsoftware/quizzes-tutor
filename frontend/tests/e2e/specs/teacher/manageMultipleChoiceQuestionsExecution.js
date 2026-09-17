@@ -7,10 +7,10 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
   ) {
     cy.get('[data-cy="showQuestionDialog"]')
       .should('be.visible')
-      .within(($ls) => {
+      .within((_$ls) => {
         cy.get('.headline').should('contain', title);
         cy.get('span > p').should('contain', content);
-        cy.get('li').each(($el, index, $list) => {
+        cy.get('li').each(($el, _index, _$list) => {
           cy.get($el).should('contain', optionPrefix);
           if ($el.text().includes('[★]')) {
             cy.get($el).should('contain', optionPrefix + correctIndex);
@@ -80,8 +80,8 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('[data-cy="questionOptionsInput"')
       .should('have.length', 4)
-      .each(($el, index, $list) => {
-        cy.get($el).within(($ls) => {
+      .each(($el, index, _$list) => {
+        cy.get($el).within((_$ls) => {
           if (index === 2) {
             cy.get(`[data-cy="Switch${index + 1}"] input`).check({ force: true });
           }
@@ -135,7 +135,7 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
       .should('be.visible')
-      .within(($list) => {
+      .within((_$list) => {
         cy.get('span.headline').should('contain', 'Edit Question');
 
         cy.get('[data-cy="questionTitleTextArea"] input').first()
@@ -162,14 +162,14 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('tbody tr')
       .first()
-      .within(($list) => {
+      .within((_$list) => {
         cy.get('[data-cy="editQuestionButton"]').click();
       });
 
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
       .should('be.visible')
-      .within(($list) => {
+      .within((_$list) => {
         cy.get('span.headline').should('contain', 'Edit Question');
 
         cy.get('[data-cy="questionQuestionTextArea"] textarea').first()
@@ -208,8 +208,8 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('[data-cy="questionOptionsInput"')
       .should('have.length', 4)
-      .each(($el, index, $list) => {
-        cy.get($el).within(($ls) => {
+      .each(($el, _index, _$list) => {
+        cy.get($el).within((_$ls) => {
           cy.get('textarea').should('contain.value', 'Option ');
         });
       });
@@ -259,12 +259,12 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('[data-cy="questionOptionsInput"').should('have.length', 4);
 
-    cy.get(`[data-cy="Option1"]`).type('Option2 0');
-    cy.get(`[data-cy="Switch1"] input`).check({ force: true });
-    cy.get(`[data-cy="Option2"]`).type('Option2 1');
+    cy.get('[data-cy="Option1"]').type('Option2 0');
+    cy.get('[data-cy="Switch1"] input').check({ force: true });
+    cy.get('[data-cy="Option2"]').type('Option2 1');
 
-    cy.get(`[data-cy="Delete4"]`).click({ force: true });
-    cy.get(`[data-cy="Delete3"]`).click({ force: true });
+    cy.get('[data-cy="Delete4"]').click({ force: true });
+    cy.get('[data-cy="Delete3"]').click({ force: true });
 
     cy.intercept('POST', '/questions/courses/*').as('postQuestion');
 
@@ -313,8 +313,8 @@ describe('Manage Multiple Choice Questions Walk-through', () => {
 
     cy.get('[data-cy="questionOptionsInput"')
       .should('have.length', 10)
-      .each(($el, index, $list) => {
-        cy.get($el).within(($ls) => {
+      .each(($el, index, _$list) => {
+        cy.get($el).within((_$ls) => {
           if (index === 6) {
             cy.get(`[data-cy="Switch${index + 1}"] input`).check({ force: true });
           }

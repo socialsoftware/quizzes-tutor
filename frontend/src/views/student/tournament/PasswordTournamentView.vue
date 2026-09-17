@@ -24,7 +24,7 @@
                 @keyup.enter="passwordEmit"
                 data-cy="Password"
               >
-                <template slot="append">
+                <template v-slot:append>
                   <v-icon medium class="mr-2" @click="switchVisibility()"
                     >visibility</v-icon
                   >

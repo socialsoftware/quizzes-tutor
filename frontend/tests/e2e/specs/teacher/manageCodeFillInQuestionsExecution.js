@@ -2,7 +2,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
   function validateQuestion(title, content) {
     cy.get('[data-cy="showQuestionDialog"]')
       .should('be.visible')
-      .within(($ls) => {
+      .within((_$ls) => {
         cy.get('.headline').should('contain', title);
         cy.get('span > p').should('contain', content);
       });
@@ -17,7 +17,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
     cy.get('body').type('{esc}');
 
-    Cypress.on('uncaught:exception', (err, runnable) => {
+    Cypress.on('uncaught:exception', (err, _runnable) => {
       console.log(err);
       // returning false here prevents Cypress from
       // failing the test
@@ -143,7 +143,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
     cy.get('tbody tr')
       .first()
-      .within(($list) => {
+      .within((_$list) => {
         cy.get('[data-cy="editQuestionButton"]').first().click({ force: true });
       });
 
@@ -152,7 +152,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
       .should('be.visible')
-      .within(($list) => {
+      .within((_$list) => {
         cy.get('span.headline').should('contain', 'Edit Question');
 
         cy.get('[data-cy="questionTitleTextArea"] input').first()
@@ -175,7 +175,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
     cy.get('tbody tr')
       .first()
-      .within(($list) => {
+      .within((_$list) => {
         cy.get('[data-cy="editQuestionButton"]').first().click({ force: true });
       });
 
@@ -184,7 +184,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
       .should('be.visible')
-      .within(($list) => {
+      .within((_$list) => {
         cy.get('span.headline').should('contain', 'Edit Question');
 
         cy.get('[data-cy="questionQuestionTextArea"] textarea').first()

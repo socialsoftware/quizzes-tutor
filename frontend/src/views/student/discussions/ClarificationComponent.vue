@@ -34,7 +34,7 @@ import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Reply from '@/models/management/Reply';
 import RemoteServices from '@/services/RemoteServices';
 
-const props = defineProps<{
+defineProps<{
   clarifications: Reply[];
   canChange: boolean;
 }>();

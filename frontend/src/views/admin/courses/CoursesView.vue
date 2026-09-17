@@ -348,7 +348,7 @@ const closeUploadUsersDialog = async (updatedCourse: Course) => {
 const onDeleteUsers = async (users: User[]) => {
   let course: Course;
   store.setLoading();
-  if (!!currentCourse.value) {
+  if (currentCourse.value) {
     try {
       course = await RemoteServices.deleteExternalInactiveUsers(
         currentCourse.value,

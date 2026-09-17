@@ -29,6 +29,38 @@ export default defineConfigWithVueTs(
       'no-console': 'off',
       'no-debugger': 'off',
       quotes: ['error', 'single', { avoidEscape: true }],
+      // A binding that has to stay but is deliberately not read is marked by
+      // naming it `_foo`, the usual convention; the codebase already did this.
+      'no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^_',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
+    },
+  },
+  {
+    // vue-eslint-parser reports a `<script setup>` component import as unused
+    // when the template refers to it in kebab-case (`<edit-course-dialog>` for
+    // `EditCourseDialog`), which Vue resolves but the rule does not follow.
+    // Capitalised bindings in an SFC are components, so skip them here; the
+    // template is what decides whether they are used.
+    files: ['**/*.vue', '**/*.ts'],
+    rules: {
+      // The base rule does not understand TypeScript parameter properties
+      // (`constructor(public slotNumber: number)` declares a class field), so
+      // the TypeScript-aware one replaces it here.
+      'no-unused-vars': 'off',
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        {
+          argsIgnorePattern: '^_',
+          varsIgnorePattern: '^(_|[A-Z])',
+          caughtErrorsIgnorePattern: '^_',
+        },
+      ],
     },
   },
   {

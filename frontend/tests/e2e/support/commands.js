@@ -1,11 +1,11 @@
 export function getFormattedDate(daysOffset = 0) {
   const date = new Date(Date.now() + daysOffset * 86400000);
-  const month = (date.getMonth() + 1).toString().padStart(2, "0");
-  const day = date.getDate().toString().padStart(2, "0");
+  const month = (date.getMonth() + 1).toString().padStart(2, '0');
+  const day = date.getDate().toString().padStart(2, '0');
   return `${date.getFullYear()}-${month}-${day}`;
 }
 
-Cypress.Commands.add("selectDateTime", (wrapperId, dateString) => {
+Cypress.Commands.add('selectDateTime', (wrapperId, dateString) => {
   const targetDate = new Date(dateString);
   const day = targetDate.getDate();
   const targetMonth = targetDate.getMonth();
@@ -24,7 +24,7 @@ Cypress.Commands.add("selectDateTime", (wrapperId, dateString) => {
   cy.get('.dp--action-select').click({ force: true });
 });
 
-Cypress.Commands.add("selectDate", (wrapperId, dateString) => {
+Cypress.Commands.add('selectDate', (wrapperId, dateString) => {
   cy.selectDateTime(wrapperId, dateString);
 });
 
@@ -37,7 +37,7 @@ Cypress.Commands.add('createCourseExecution', (name, acronym, academicTerm) => {
   cy.wait(1000);
 });
 
-Cypress.Commands.add('closeErrorMessage', (name, acronym, academicTerm) => {
+Cypress.Commands.add('closeErrorMessage', (_name, _acronym, _academicTerm) => {
   cy.get('.v-alert').find('button').click({ force: true });
 });
 
@@ -202,7 +202,7 @@ Cypress.Commands.add(
 
 Cypress.Commands.add(
   'editQuestionSubmission',
-  (valid, title, content, opt1, opt2, opt3, opt4, comment) => {
+  (_valid, _title, _content, _opt1, _opt2, _opt3, _opt4, _comment) => {
     cy.get('[data-cy="EditSubmission"]').first().click();
   }
 );

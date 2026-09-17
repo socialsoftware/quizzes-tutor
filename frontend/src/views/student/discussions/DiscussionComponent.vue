@@ -138,9 +138,6 @@ watch(
   }
 );
 
-const convertMarkDownText = (text: string) => {
-  return convertMarkDown(text, null);
-};
 
 const changeDiscussionStatus = async (id: number) => {
   store.setLoading();

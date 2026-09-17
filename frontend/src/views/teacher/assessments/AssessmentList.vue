@@ -93,7 +93,6 @@
 import { ref } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDown as convertMarkDownService } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Assessment from '@/models/management/Assessment';
 import Question from '@/models/management/Question';
@@ -166,9 +165,6 @@ const getStatusColor = (status: string) => {
   else return 'green';
 };
 
-const convertMarkDown = (title: string, image: Image | null = null): string => {
-  return convertMarkDownService(title, image);
-};
 
 const showQuestionsDialog = async (assessmentId: number) => {
   store.setLoading();

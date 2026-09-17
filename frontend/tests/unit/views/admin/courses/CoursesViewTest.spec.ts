@@ -213,7 +213,7 @@ describe('CoursesView test', () => {
   test.skip('select anonymize students in old tecnico course and invoke remote', async () => {
     const mockAnonymizeCourse = vi.spyOn(RemoteServices, 'anonymizeCourse');
 
-    const mockDate = new Date('2121-04-07T10:20:30Z');
+    const _mockDate = new Date('2121-04-07T10:20:30Z');
     // vi.spyOn(global, 'Date').mockImplementation(() => Date());
 
     expect(mockStoreContext.setLoading).toHaveBeenCalled();

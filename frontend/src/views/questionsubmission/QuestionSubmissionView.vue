@@ -193,7 +193,6 @@ const editQuestionSubmissionDialog = ref<boolean>(false);
 const questionSubmissionDialog = ref<boolean>(false);
 const search = ref<string>('');
 const topicsComponentKey = ref<number>(0);
-const itemsPerPage = ref<number>(15);
 
 const getRaw = (item: any): QuestionSubmission => {
   return (item as any).raw || item;

@@ -20,7 +20,7 @@
           </p>
         </h4>
       </template>
-      <template #item="{ element, index }">
+      <template #item="{ element }">
         <li
           :class="{
             dragable: !answerDetails.orderedSlots.find((x) => x.slotId == element.id),
@@ -76,8 +76,6 @@
 import { computed } from 'vue';
 import CodeOrderStatementQuestionDetails from '@/models/statement/questions/CodeOrderStatementQuestionDetails';
 import CodeOrderStatementAnswerDetails from '@/models/statement/questions/CodeOrderStatementAnswerDetails';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
-import Image from '@/models/management/Image';
 import draggable from 'vuedraggable';
 import CodeOrderSlotStatementQuestionDetails from '@/models/statement/questions/CodeOrderSlotStatementQuestionDetails';
 import CodeOrderSlotStatementAnswerDetails from '@/models/statement/questions/CodeOrderSlotStatementAnswerDetails';

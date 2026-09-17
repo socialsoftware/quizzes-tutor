@@ -12,7 +12,6 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import CodeFillInQuestionDetails from '@/models/management/questions/CodeFillInQuestionDetails';
 import CodeFillInAnswerDetails from '@/models/management/questions/CodeFillInAnswerDetails';
@@ -26,9 +25,6 @@ const props = defineProps<{
   answerDetails?: CodeFillInAnswerDetails;
 }>();
 
-const convertMarkDownFn = (text: string, image: Image | null = null): string => {
-  return convertMarkDown(text, image);
-};
 
 class SelectWidget extends WidgetType {
   constructor(public slotNumber: number, public propsRef: any) {

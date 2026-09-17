@@ -35,17 +35,13 @@ const props = defineProps<{
   correctAnswerDetails: CodeFillInStatementCorrectAnswerDetails;
 }>();
 
-const emit = defineEmits([
+defineEmits([
   'update:questionOrder',
   'update:answerDetails',
   'increaseOrder',
   'decreaseOrder'
 ]);
 
-const answerDetailsSynced = computed({
-  get: () => props.answerDetails,
-  set: (val) => emit('update:answerDetails', val)
-});
 
 const CodemirrorUpdated = ref(false);
 
@@ -62,8 +58,6 @@ watch(
   { immediate: true, deep: true }
 );
 
-const increaseOrder = () => emit('increaseOrder', 1);
-const decreaseOrder = () => emit('decreaseOrder', 1);
 
 // Replaces {{slot-N}} placeholders with result <select> widgets managed by
 // the editor itself. The previous implementation walked the rendered DOM and
