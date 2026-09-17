@@ -43,7 +43,7 @@
   "devDependencies": {
     "@eslint/js": "^10.0.1",
     "@mdi/font": "~7.4.47",
-    "@types/node": "^25.3.1",
+    "@types/node": "^24.13.5",
     "@types/plotly.js-dist-min": "~2.3.4",
     "@types/qrcode": "~1.5.6",
     "@types/sanitize-html": "^2.16.0",

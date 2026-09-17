@@ -2,7 +2,7 @@
 
 <p align="center">
   <a href="https://github.com/socialsoftware/quizzes-tutor/actions">
-    <img src="https://img.shields.io/github/workflow/status/socialsoftware/quizzes-tutor/build" alt="Build">
+    <img src="https://img.shields.io/github/actions/workflow/status/socialsoftware/quizzes-tutor/build.yml?branch=master" alt="Build">
   </a>
   <a href="https://quizzes-tutor.tecnico.ulisboa.pt/">
     <img src="https://img.shields.io/website?url=https%3A%2F%2Fquizzes-tutor.tecnico.ulisboa.pt" alt="Website">
@@ -53,6 +53,7 @@
   <a href="#about">About</a> •
   <a href="#technologies">Technologies</a> •
   <a href="#installation">Installation</a> •
+  <a href="#testing">Testing</a> •
   <a href="#patreons">Patreons</a> •
   <a href="#contributing">Contributing</a> •
   <a href="#license">License</a>
@@ -80,11 +81,11 @@ Students can then answer those questions in sugested quizzes or generated quizze
 
 * Require download
   * [Postgres >= 14](https://www.postgresql.org/)
-  * [Java 21](https://openjdk.org/projects/jdk/21/)
-  * [Maven](https://maven.apache.org/download.cgi)
-  * [Node 22](https://nodejs.org/en/) ([Node Version Manager](https://github.com/nvm-sh/nvm) recommended)
+  * [Java 25](https://openjdk.org/projects/jdk/25/)
+  * [Node 24](https://nodejs.org/en/) ([Node Version Manager](https://github.com/nvm-sh/nvm) recommended)
   * [Docker](https://www.docker.com/)
 * No download required
+  * [Maven](https://maven.apache.org/) (`backend/mvnw` fetches the pinned version)
   * [Spring-boot](https://spring.io/)
   * [Vue.js](https://vuejs.org/)
 
@@ -93,7 +94,7 @@ Students can then answer those questions in sugested quizzes or generated quizze
 * **Install**
 ```
 sudo apt update && sudo apt upgrade
-sudo apt install openjdk-21-jdk postgresql
+sudo apt install openjdk-25-jdk postgresql
 ```
 * **Start db, change to postgres user and create DB**
 ```
@@ -114,7 +115,7 @@ exit
 * **Run server**
 ```
 cd backend
-mvn clean spring-boot:run
+./mvnw clean spring-boot:run
 ```
 * **See documentation on http://localhost:8080/swagger-ui.html**
 * **Rename `frontend/example.env` to `.env` and fill its fields**
@@ -125,6 +126,20 @@ npm install
 npm run dev
 ```
 * **Access http://localhost:8081**
+
+# Testing
+
+```
+cd backend  && ./mvnw clean -Ptest test   # unit tests (Spock, H2 in memory)
+cd frontend && npm run test:unit          # unit tests (vitest)
+cd frontend && npm run test:e2e           # end-to-end (Cypress, needs both servers)
+```
+
+See [RUNNING-AND-TESTING.md](RUNNING-AND-TESTING.md) for the integration and load tests, for
+running against a database dump, and for where the demo quizzes come from.
+
+> The Cypress suite and the backend integration tests **delete data without a `WHERE` clause**.
+> Point them at a disposable database only.
 
 # Patreons
 

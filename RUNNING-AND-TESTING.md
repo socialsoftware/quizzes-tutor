@@ -3,7 +3,8 @@
 Practical notes for running Quizzes Tutor on a developer machine: where the demo data comes
 from, how to run against a database dump, and how to run each test suite.
 
-Prerequisites: Java 25, Node >= 22.12, PostgreSQL, and `psql` on the `PATH`. Maven does not
+Prerequisites: Java 25, Node 24, PostgreSQL, and `psql` on the `PATH` (`package.json` accepts
+Node 22.12 and above; 24 is what CI and the Docker images use). Maven does not
 need to be installed — `backend/mvnw` downloads the version the project pins.
 
 ---
@@ -98,7 +99,7 @@ cd backend
 ./mvnw clean -Ptest test
 ```
 
-Around 91 `*Test.groovy` files. Reports in `target/surefire-reports/`, coverage in
+91 `*Test.groovy` files, 601 tests. Reports in `target/surefire-reports/`, coverage in
 `target/site/jacoco/`.
 
 ### Backend integration tests — 36 `*IT.groovy`, needs PostgreSQL
