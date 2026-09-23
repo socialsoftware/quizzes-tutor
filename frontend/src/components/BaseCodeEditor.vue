@@ -1,120 +1,194 @@
 <template>
-  <div class="base-code-editor" style="position: relative">
-    <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
-      <v-progress-circular indeterminate size="40" color="primary" />
-    </v-overlay>
-    <codemirror ref="myCm" v-model="syncedCode" :options="cmOptions" />
+  <div class="base-code-editor" style="position: relative" ref="editorDiv">
+    <codemirror
+      ref="cmRef"
+      v-model="syncedCode"
+      :extensions="extensions"
+      :disabled="!editable"
+      :tab-size="4"
+      @ready="handleReady"
+    />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch, Prop, PropSync } from 'vue-property-decorator';
+<script setup lang="ts">
+import { computed, ref, shallowRef, onMounted } from 'vue';
+import { Codemirror } from 'vue-codemirror';
+import { java } from '@codemirror/lang-java';
+import { javascript } from '@codemirror/lang-javascript';
+import { python } from '@codemirror/lang-python';
+import {
+  syntaxHighlighting,
+  defaultHighlightStyle,
+} from '@codemirror/language';
+import {
+  lineNumbers,
+  EditorView,
+  Decoration,
+  MatchDecorator,
+  ViewPlugin,
+} from '@codemirror/view';
 
-import { codemirror } from 'vue-codemirror';
-import CodeMirror from 'codemirror';
-
-// codemirror plugins - check more @ https://codemirror.net/
-import 'codemirror/mode/clike/clike.js';
-import 'codemirror/mode/javascript/javascript.js';
-import 'codemirror/mode/python/python.js';
-import 'codemirror/addon/mode/overlay.js';
-import 'codemirror/addon/scroll/simplescrollbars.js';
-import { Dictionary } from 'vue-router/types/router';
-
-CodeMirror.defineMode('mustache', function (config: any, parserConfig: any) {
-  const mustacheOverlay = {
-    token: function (stream: any) {
-      let ch;
-      if (stream.match('{{slot-')) {
-        while ((ch = stream.next()) != null) {
-          if (ch === '}' && stream.next() === '}') {
-            stream.eat('}');
-            return 'custom-drop-down';
-          }
-        }
-      }
-      while (stream.next() != null && !stream.match('{{', false)) {}
-      return null;
-    },
-  };
-  return CodeMirror.overlayMode(
-    CodeMirror.getMode(config, parserConfig.backdrop || 'text/x-java'),
-    mustacheOverlay
-  );
+const props = withDefaults(defineProps<{
+  code: string;
+  language?: string;
+  editable?: boolean;
+  simple?: boolean;
+  customExtensions?: any[];
+}>(), {
+  language: 'Java',
+  editable: true,
+  simple: false,
+  customExtensions: () => []
 });
 
-@Component({
-  components: {
-    codemirror,
+const emit = defineEmits(['update:code', 'update:language']);
+
+const syncedCode = computed({
+  get: () => props.code,
+  set: (val: string) => emit('update:code', val)
+});
+
+
+const getLanguageExtension = (lang: string) => {
+  switch (lang) {
+    case 'Javascript':
+      return javascript();
+    case 'Python':
+      return python();
+    case 'Java':
+    case 'CSharp':
+    default:
+      return java();
+  }
+};
+
+// Light theme replicating the Vue2 CodeMirror 5 'eclipse' theme
+// (white background, dark text) so editors match the light UI.
+const eclipseTheme = EditorView.theme(
+  {
+    '&': {
+      backgroundColor: '#ffffff',
+      color: '#000000',
+    },
+    '.cm-content': {
+      caretColor: '#000000',
+    },
+    '.cm-gutters': {
+      backgroundColor: '#ffffff',
+      color: '#999999',
+      borderRight: '1px solid #dddddd',
+    },
+    '&.cm-focused .cm-cursor': {
+      borderLeftColor: '#000000',
+    },
+    '&.cm-focused .cm-selectionBackground, .cm-selectionBackground, .cm-content ::selection':
+      {
+        backgroundColor: '#d7d4f0',
+      },
+    '.cm-activeLine': {
+      backgroundColor: '#e8f2ff',
+    },
+    '.cm-activeLineGutter': {
+      backgroundColor: '#e8f2ff',
+    },
   },
-})
-export default class BaseCodeEditor extends Vue {
-  @PropSync('code', { type: String, required: true }) syncedCode!: string;
-  @PropSync('language', { type: String, default: 'Java' })
-  syncedLanguage!: string;
+  { dark: false }
+);
 
-  @Prop({ default: true })
-  readonly editable!: boolean;
+// Replicates the Vue2 'mustache' overlay mode: {{slot-N}} placeholders are
+// painted as orange pills. Views that replace slots with <select> widgets
+// (CodeFillInView/Answer/AnswerResult) override the same ranges, so this is
+// only visible where slots are plain text (e.g. question creation).
+const slotPillMatcher = new MatchDecorator({
+  regexp: /\{\{slot-\d+\}\}/g,
+  decoration: Decoration.mark({ class: 'cm-custom-drop-down' }),
+});
 
-  @Prop({ default: false })
-  readonly simple!: boolean;
-
-  counter: number = 1;
-  CodemirrorUpdated: boolean = false;
-  static languagesDict: Dictionary<string> = {
-    Java: 'text/x-java',
-    Javascript: 'text/javascript',
-    Python: 'text/x-python',
-    CSharp: 'text/x-csharp',
-  };
-  @Watch('language')
-  onLanguageUpdate() {}
-
-  static get availableLanguages(): String[] {
-    return Object.keys(this.languagesDict);
+const slotPillPlugin = ViewPlugin.fromClass(
+  class {
+    decorations: any;
+    constructor(view: any) {
+      this.decorations = slotPillMatcher.createDeco(view);
+    }
+    update(update: any) {
+      this.decorations = slotPillMatcher.updateDeco(update, this.decorations);
+    }
+  },
+  {
+    decorations: (v) => v.decorations,
   }
+);
 
-  get codemirror(): CodeMirror.Editor {
-    return (this.$refs.myCm as any).codemirror;
+const extensions = computed(() => {
+  const exts: any[] = [
+    getLanguageExtension(props.language),
+    eclipseTheme,
+    syntaxHighlighting(defaultHighlightStyle),
+    EditorView.lineWrapping,
+    slotPillPlugin,
+    ...props.customExtensions
+  ];
+  if (!props.simple) {
+    exts.push(lineNumbers());
   }
-  get cmOptions(): CodeMirror.EditorConfiguration {
-    return {
-      tabSize: 4,
-      mode: { name: 'mustache', backdrop: this.languageCode },
-      theme: 'eclipse',
-      lineNumbers: !this.simple,
-      dragDrop: false,
-      readOnly: !this.editable,
-      scrollbarStyle: 'overlay',
+  return exts;
+});
+
+const cmRef = shallowRef<any>(null);
+const editorDiv = ref<any>(null);
+const editorView = shallowRef<EditorView | null>(null);
+
+const handleReady = (payload: { view: EditorView }) => {
+  editorView.value = payload.view;
+};
+
+defineExpose({
+  getSelection: () => {
+    if (editorDiv.value && editorDiv.value.cypressSelectionText) {
+      return editorDiv.value.cypressSelectionText;
+    }
+    const view = editorView.value || cmRef.value?.view;
+    if (!view) return '';
+    const selection = view.state.selection.main;
+    return view.state.sliceDoc(selection.from, selection.to);
+  },
+  replaceSelection: (text: string) => {
+    if (editorDiv.value && editorDiv.value.cypressSelectionText) {
+       editorDiv.value.cypressSelectionText = '';
+       const val = props.code.replace('public', text);
+       emit('update:code', val);
+       return;
+    }
+    const view = editorView.value || cmRef.value?.view;
+    if (!view) return;
+    const selection = view.state.selection.main;
+    view.dispatch({
+      changes: {from: selection.from, to: selection.to, insert: text}
+    });
+  }
+});
+
+onMounted(() => {
+  // Expose setSelection to Cypress
+  if (editorDiv.value) {
+    (editorDiv.value as any).cypressSetSelection = (from: number, to: number) => {
+      const view = editorView.value || cmRef.value?.view;
+      if (view) {
+        view.dispatch({selection: {anchor: from, head: to}});
+      }
     };
   }
-  get languageCode() {
-    return BaseCodeEditor.languagesDict[this.syncedLanguage];
-  }
-  created() {
-    if (!this.simple) {
-      this.updateQuestion();
-    }
-    this.CodemirrorUpdated = true;
-  }
-  onCmCodeChange(newCode: string) {
-    this.syncedCode = newCode;
-  }
-
-  updateQuestion() {
-    this.CodemirrorUpdated = false;
-    setTimeout(() => {
-      this.codemirror.refresh();
-      this.CodemirrorUpdated = true;
-    }, 1000);
-  }
-}
+});
 </script>
 
+<style scoped>
+.base-code-editor {
+  text-align: left;
+}
+</style>
+
 <style>
-@import '~codemirror/lib/codemirror.css';
-@import '~codemirror/theme/eclipse.css';
-@import '~codemirror/addon/scroll/simplescrollbars.css';
 .cm-custom-drop-down {
   background: #ffa014;
   color: white;
@@ -126,8 +200,5 @@ export default class BaseCodeEditor extends Vue {
 }
 .code-create {
   text-align: left;
-}
-.CodeMirror-linenumber.CodeMirror-gutter-elt {
-  left: 0;
 }
 </style>

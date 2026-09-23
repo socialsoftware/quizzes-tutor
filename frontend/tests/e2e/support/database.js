@@ -1,25 +1,13 @@
-function dbPasswordCommand(password) {
-  if (Cypress.platform === 'win32') {
-    return `set PGPASSWORD=${password}&& `;
-  } else {
-    return `PGPASSWORD=${password} `;
-  }
-}
-
+// Cypress 16 removed `Cypress.env()`. The psql invocation moved to the
+// `execSql` node task, which reads the credentials from the config itself, so
+// they are never exposed to the browser process.
 function dbCommand(command) {
-  return cy.exec(
-    dbPasswordCommand(Cypress.env('psql_db_password')) +
-      `psql -d ${Cypress.env('psql_db_name')} ` +
-      `-U ${Cypress.env('psql_db_username')} ` +
-      `-h ${Cypress.env('psql_db_host')} ` +
-      `-p ${Cypress.env('psql_db_port')} ` +
-      `-c "${command.replace(/\r?\n/g, ' ')}"`
-  );
+  return cy.task('execSql', command);
 }
 
 Cypress.Commands.add('beforeEachTournament', () => {
   dbCommand(`
-      WITH tmpCourse as (SELECT ce.course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course')      
+      WITH tmpCourse as (SELECT ce.course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course' LIMIT 1)      
         ,insert1 as (INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (1, 0, 'AVAILABLE', 'test1', (select course_execution_id from tmpCourse)))
         ,insert2 as (INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (2, 0, 'AVAILABLE', 'test2', (select course_execution_id from tmpCourse)))
         ,insert3 as (INSERT INTO topic_conjunctions (id, assessment_id) VALUES (100, 1))
@@ -88,7 +76,7 @@ Cypress.Commands.add('afterEachTournament', () => {
 
 Cypress.Commands.add('addQuestionSubmission', (title, submissionStatus) => {
   dbCommand(`
-    WITH course as (SELECT ce.course_id as course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course')     
+    WITH course as (SELECT ce.course_id as course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course' LIMIT 1)     
     , quest AS (
       INSERT INTO questions (title, content, status, course_id, creation_date) 
       VALUES ('${title}', 'Question?', 'SUBMITTED', (select course_id from course), current_timestamp) RETURNING id
@@ -168,7 +156,7 @@ Cypress.Commands.add('deleteFailedAnswers', () => {
 
 Cypress.Commands.add('addTopicAndAssessment', () => {
   dbCommand(`
-      WITH tmpCourse as (SELECT ce.course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course')      
+      WITH tmpCourse as (SELECT ce.course_id, ce.id as course_execution_id FROM courses c JOIN course_executions ce on ce.course_id = c.id WHERE name = 'Demo Course' LIMIT 1)      
         ,insert1 as (INSERT INTO assessments (id, sequence, status, title, course_execution_id) VALUES (1, 0, 'AVAILABLE', 'assessment one', (select course_execution_id from tmpCourse)))
         ,insert2 as (INSERT INTO topic_conjunctions (id, assessment_id) VALUES (100, 1))
         ,insert3 as (INSERT INTO topics (id, name, course_id) VALUES (82, 'Software Architecture', (select course_id from tmpCourse)))
@@ -184,6 +172,8 @@ Cypress.Commands.add('deleteDifficultQuestions', () => {
 
 Cypress.Commands.add('deleteQuestionsAndAnswers', () => {
   dbCommand(`
+         DELETE FROM code_order_answer_slot;
+         DELETE FROM code_order_slot;
          DELETE FROM replies;
          DELETE FROM discussions;
          DELETE FROM answer_details;
@@ -195,6 +185,8 @@ Cypress.Commands.add('deleteQuestionsAndAnswers', () => {
          DELETE FROM topic_conjunctions;
          DELETE FROM topics_questions;
          DELETE FROM assessments;
+         DELETE FROM reviews;
+         DELETE FROM question_submissions;
          DELETE FROM options;
          DELETE FROM question_details;
          DELETE FROM questions;
@@ -202,17 +194,8 @@ Cypress.Commands.add('deleteQuestionsAndAnswers', () => {
     `);
 });
 
-const credentials = {
-  user: Cypress.env('psql_db_username'),
-  host: Cypress.env('psql_db_host'),
-  database: Cypress.env('psql_db_name'),
-  password: Cypress.env('psql_db_password'),
-  port: Cypress.env('psql_db_port'),
-};
-
 Cypress.Commands.add('getDemoCourseExecutionId', () => {
   cy.task('queryDatabase', {
     query: "SELECT id FROM course_executions WHERE acronym = 'DemoCourse'",
-    credentials: credentials,
   });
 });

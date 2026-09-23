@@ -2,34 +2,42 @@
   <span>{{ displayNumber }}<slot /></span>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, watch, onMounted } from 'vue';
 
-@Component
-export default class AnimatedNumber extends Vue {
-  @Prop({ default: 0 }) readonly number!: number;
-  displayNumber: number = 0;
-  interval: number = 0;
-
-  created() {
-    this.updateNumber();
+const props = defineProps({
+  number: {
+    type: Number,
+    default: 0
   }
+});
 
-  @Watch('number')
-  updateNumber() {
-    clearInterval(0);
-    if (this.number == this.displayNumber) {
-      return;
+const displayNumber = ref<number>(0);
+let interval: number = 0;
+
+const updateNumber = () => {
+  window.clearInterval(interval);
+  if (props.number == displayNumber.value) {
+    return;
+  }
+  interval = window.setInterval(() => {
+    if (displayNumber.value < props.number) {
+      let change = (props.number - displayNumber.value) / 10;
+      change = change >= 0 ? Math.ceil(change) : Math.floor(change);
+      displayNumber.value = displayNumber.value + change;
+    } else {
+      window.clearInterval(interval);
     }
-    this.interval = window.setInterval(() => {
-      if (this.displayNumber < this.number) {
-        let change = (this.number - this.displayNumber) / 10;
-        change = change >= 0 ? Math.ceil(change) : Math.floor(change);
-        this.displayNumber = this.displayNumber + change;
-      }
-    }, 20);
-  }
-}
+  }, 20);
+};
+
+onMounted(() => {
+  updateNumber();
+});
+
+watch(() => props.number, () => {
+  updateNumber();
+});
 </script>
 
 <style scoped lang="scss" />

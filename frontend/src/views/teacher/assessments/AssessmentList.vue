@@ -4,7 +4,7 @@
       :headers="headers"
       :items="assessments"
       :search="search"
-      :sort-by="['sequence']"
+      :sort-by="[{ key: 'sequence' }]"
       :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
@@ -19,7 +19,7 @@
           />
 
           <v-spacer />
-          <v-btn color="primary" dark @click="$emit('newAssessment')"
+          <v-btn color="primary" class="text-white" @click="$emit('newAssessment')"
             >New Assessment</v-btn
           >
         </v-card-title>
@@ -28,56 +28,48 @@
         <v-select
           v-model="item.status"
           :items="statusList"
-          dense
-          @change="setStatus(item.id, item.status)"
+          density="compact"
+          hide-details
+          variant="outlined"
+          @update:model-value="setStatus(item.id as number, item.status)"
         >
-          <template v-slot:selection="{ item }">
-            <v-chip :color="getStatusColor(item)" small>
-              <span>{{ item }}</span>
+          <template v-slot:selection="{ item: selectionItem }">
+            <v-chip :color="getStatusColor((selectionItem as any).title || selectionItem)" size="small">
+              <span>{{ (selectionItem as any).title || selectionItem }}</span>
             </v-chip>
           </template>
         </v-select>
       </template>
       <template v-slot:[`item.action`]="{ item }">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2 action-button"
-              v-on="on"
-              @click="showQuestionsDialog(item.id)"
-              >visibility</v-icon
-            >
-          </template>
-          <span>Show Questions</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2 action-button"
-              v-on="on"
-              @click="editAssessment(item.id)"
-              >edit</v-icon
-            >
-          </template>
-          <span>Edit Assessment</span>
-        </v-tooltip>
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              class="mr-2 action-button"
-              v-on="on"
-              @click="deleteAssessment(item.id)"
-              color="red"
-              >delete</v-icon
-            >
-          </template>
-          <span>Delete Assessment</span>
-        </v-tooltip>
+        <div class="d-flex flex-column align-center" style="gap: 4px;">
+          <v-icon
+            icon="mdi-eye"
+            class="action-button"
+            @click="showQuestionsDialog(item.id as number)"
+          >
+            <v-tooltip activator="parent" location="bottom">Show Questions</v-tooltip>
+          </v-icon>
+          <v-icon
+            icon="mdi-pencil"
+            class="action-button"
+            @click="editAssessment(item.id as number)"
+          >
+            <v-tooltip activator="parent" location="bottom">Edit Assessment</v-tooltip>
+          </v-icon>
+          <v-icon
+            icon="mdi-delete"
+            class="action-button"
+            @click="deleteAssessment(item.id as number)"
+            color="red"
+          >
+            <v-tooltip activator="parent" location="bottom">Delete Assessment</v-tooltip>
+          </v-icon>
+        </div>
       </template>
       <template v-slot:[`item.title`]="{ item }">
         <div
-          @click="showQuestionsDialog(item.id)"
-          @contextmenu="editAssessment(item.id, $event)"
+          @click="showQuestionsDialog(item.id as number)"
+          @contextmenu="editAssessment(item.id as number, $event)"
           class="clickableTitle"
         >
           {{ item.title }}
@@ -85,7 +77,7 @@
       </template>
     </v-data-table>
     <footer>
-      <v-icon class="mr-2 action-button">mouse</v-icon>Right-click on
+      <v-icon icon="mdi-mouse" class="mr-2 action-button" />Right-click on
       assessment's title to edit it.
     </footer>
 
@@ -97,102 +89,100 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
 import Image from '@/models/management/Image';
 import Assessment from '@/models/management/Assessment';
 import Question from '@/models/management/Question';
 import ShowQuestionListDialog from '@/views/teacher/questions/ShowQuestionListDialog.vue';
 
-@Component({
-  components: { ShowQuestionListDialog },
-})
-export default class AssessmentList extends Vue {
-  @Prop({ type: Array, required: true }) readonly assessments!: Assessment[];
-  assessment: Assessment | null = null;
-  search: string = '';
-  statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
-  questionsDialog: boolean = false;
-  questionsToShow: Question[] = [];
-  headers: object = [
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'left',
-      sortable: false,
-      width: '5px',
-    },
-    { text: 'Order', value: 'sequence', align: 'center', width: '5px' },
-    { text: 'Title', value: 'title', width: '80%', align: 'left' },
-    {
-      text: 'Number of questions',
-      value: 'numberOfQuestions',
-      align: 'center',
-      width: '5px',
-    },
-    { text: 'Status', value: 'status', align: 'center', width: '5px' },
-  ];
+const props = defineProps<{
+  assessments: Assessment[];
+}>();
 
-  async setStatus(assessmentId: number, status: string) {
+const emit = defineEmits(['editAssessment', 'deleteAssessment', 'newAssessment']);
+const store = useStore();
+
+const search = ref('');
+const statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
+const questionsDialog = ref(false);
+const questionsToShow = ref<Question[]>([]);
+
+const headers = [
+  {
+    title: 'Actions',
+    key: 'action',
+    align: 'start',
+    sortable: false,
+    width: '5px',
+  },
+  { title: 'Order', key: 'sequence', align: 'center', width: '5px' },
+  { title: 'Title', key: 'title', width: '80%', align: 'start' },
+  {
+    title: 'Number of questions',
+    key: 'numberOfQuestions',
+    align: 'center',
+    width: '5px',
+  },
+  { title: 'Status', key: 'status', align: 'center', width: '5px' },
+] as any;
+
+const setStatus = async (assessmentId: number, status: string) => {
+  try {
+    await RemoteServices.setAssessmentStatus(assessmentId, status);
+    let assessment = props.assessments.find(
+      (a) => a.id === assessmentId
+    );
+    if (assessment) {
+      assessment.status = status;
+    }
+  } catch (error) {
+    store.setError(error as string);
+  }
+};
+
+const editAssessment = (assessmentId: number, e?: Event) => {
+  if (e) e.preventDefault();
+  emit('editAssessment', assessmentId);
+};
+
+const deleteAssessment = async (assessmentId: number) => {
+  if (confirm('Are you sure you want to delete this assessment?')) {
     try {
-      await RemoteServices.setAssessmentStatus(assessmentId, status);
-      let assessment = this.assessments.find(
-        (assessment) => assessment.id === assessmentId
-      );
-      if (assessment) {
-        assessment.status = status;
-      }
+      await RemoteServices.deleteAssessment(assessmentId);
+      emit('deleteAssessment', assessmentId);
     } catch (error) {
-      await this.$store.dispatch('error', error);
+      store.setError(error as string);
     }
   }
+};
 
-  editAssessment(assessmentId: number, e?: Event) {
-    if (e) e.preventDefault();
-    this.$emit('editAssessment', assessmentId);
-  }
+const getStatusColor = (status: string) => {
+  if (status === 'REMOVED') return 'red';
+  else if (status === 'DISABLED') return 'orange';
+  else return 'green';
+};
 
-  async deleteAssessment(assessmentId: number) {
-    if (confirm('Are you sure you want to delete this assessment?')) {
-      try {
-        await RemoteServices.deleteAssessment(assessmentId);
-        this.$emit('deleteAssessment', assessmentId);
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-      }
-    }
-  }
 
-  getStatusColor(status: string) {
-    if (status === 'REMOVED') return 'red';
-    else if (status === 'DISABLED') return 'orange';
-    else return 'green';
+const showQuestionsDialog = async (assessmentId: number) => {
+  store.setLoading();
+  try {
+    questionsToShow.value = await RemoteServices.getAssessmentQuestions(
+      assessmentId
+    );
+  } catch (error) {
+    store.setError(error as string);
   }
+  store.clearLoading();
+  questionsDialog.value = true;
+};
 
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
-  }
-
-  async showQuestionsDialog(assessmentId: number) {
-    await this.$store.dispatch('loading');
-    try {
-      this.questionsToShow = await RemoteServices.getAssessmentQuestions(
-        assessmentId
-      );
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
-    this.questionsDialog = true;
-  }
-
-  onCloseQuestionsDialog() {
-    this.questionsDialog = false;
-    this.questionsToShow = [];
-  }
-}
+const onCloseQuestionsDialog = () => {
+  questionsDialog.value = false;
+  questionsToShow.value = [];
+};
 </script>
 
 <style lang="scss" scoped />

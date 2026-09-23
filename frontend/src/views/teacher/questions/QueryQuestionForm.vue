@@ -11,20 +11,20 @@
             <v-text-field v-model="query.content" label="Content"
           /></v-col>
           <v-col>
-            <VueCtkDateTimePicker
-              label="Begin Creation Date"
-              id="beginCreationDate"
+            <DateTimeSideBySidePicker
+              id="beginCreationDateInput"
               v-model="query.beginCreationDate"
-              format="YYYY-MM-DDTHH:mm:ssZ"
-            ></VueCtkDateTimePicker>
+              :locale="datePickerLocale"
+              placeholder="Begin Creation Date"
+            />
           </v-col>
           <v-col>
-            <VueCtkDateTimePicker
-              label="End Creation Date"
-              id="endCreationDate"
+            <DateTimeSideBySidePicker
+              id="endCreationDateInput"
               v-model="query.endCreationDate"
-              format="YYYY-MM-DDTHH:mm:ssZ"
-            ></VueCtkDateTimePicker>
+              :locale="datePickerLocale"
+              placeholder="End Creation Date"
+            />
           </v-col>
         </v-row>
         <v-row>
@@ -34,7 +34,7 @@
               :items="topics"
               attach
               chips
-              item-text="name"
+              item-title="name"
               item-value="id"
               label="Topics"
               multiple
@@ -57,41 +57,46 @@
               v-model="query.clarificationsOnly"
               label="Clarifications Only"
               hide-details
+              color="primary"
             ></v-checkbox>
             <v-checkbox
               v-model="query.noAnswersOnly"
               label="No Answers Only"
               hide-details
+              color="primary"
             ></v-checkbox>
           </v-col>
           <v-col>
+            <!-- O "0" vem antes do label, depois o slider, depois o "100" -->
             <v-range-slider
               v-model="query.difficulty"
               :max="100"
               :min="0"
               step="10"
               hide-details
-              label="Percentage of Correct Answers"
+              color="primary"
+              track-color="#bdbdbd"
               ><template v-slot:prepend>
                 <v-text-field
-                  :value="query.difficulty[0]"
+                  :model-value="query.difficulty[0]"
                   class="mt-0 pt-0"
                   hide-details
                   single-line
                   type="number"
                   style="width: 40px"
-                  @change="$set(query.difficulty, 0, $event)"
+                  @update:model-value="query.difficulty[0] = $event as any"
                 ></v-text-field>
+                <span class="slider-label">Percentage of Correct Answers</span>
               </template>
               <template v-slot:append>
                 <v-text-field
-                  :value="query.difficulty[1]"
+                  :model-value="query.difficulty[1]"
                   class="mt-0 pt-0"
                   hide-details
                   single-line
                   type="number"
                   style="width: 50px"
-                  @change="$set(query.difficulty, 1, $event)"
+                  @update:model-value="query.difficulty[1] = $event as any"
                 ></v-text-field> </template
             ></v-range-slider>
           </v-col>
@@ -102,7 +107,8 @@
     <v-card-actions>
       <v-spacer />
       <v-btn
-        color="green darken-1"
+        class="text-white"
+        color="green-darken-1"
         @click="queryQuestions"
         data-cy="submitQueryButton"
         >Submit Query</v-btn
@@ -111,42 +117,76 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Topic from '@/models/management/Topic';
 import QuestionQuery from '@/models/management/QuestionQuery';
+import { pt } from 'date-fns/locale';
+import DateTimeSideBySidePicker from '@/components/DateTimeSideBySidePicker.vue';
 
-@Component
-export default class QueryQuestionForm extends Vue {
-  @Prop() readonly availableOnly!: boolean;
-  topics: Topic[] = [];
-  status: string[] = ['AVAILABLE', 'DISABLED', 'REMOVED'];
-  query: QuestionQuery = new QuestionQuery();
+const props = defineProps<{
+  availableOnly: boolean;
+}>();
 
-  async created() {
-    if (this.availableOnly) {
-      this.query.status = ['AVAILABLE'];
-    }
+const emit = defineEmits(['query-questions']);
+const store = useStore();
+const datePickerLocale = pt;
 
-    await this.$store.dispatch('loading');
-    try {
-      this.topics = await RemoteServices.getTopics();
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+const topics = ref<Topic[]>([]);
+const status = ref<string[]>(['AVAILABLE', 'DISABLED', 'REMOVED']);
+const query = ref<QuestionQuery>(new QuestionQuery());
+
+onMounted(async () => {
+  if (props.availableOnly) {
+    query.value.status = ['AVAILABLE'];
   }
 
-  async queryQuestions() {
-    await this.$store.dispatch('loading');
-    try {
-      let questions = await RemoteServices.getQuestionsByQuery(this.query);
-      this.$emit('query-questions', questions);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+  store.setLoading();
+  try {
+    topics.value = await RemoteServices.getTopics();
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+});
+
+const queryQuestions = async () => {
+  store.setLoading();
+  try {
+    let questions = await RemoteServices.getQuestionsByQuery(query.value);
+    emit('query-questions', questions);
+  } catch (error) {
+    store.setError(error as string);
+  }
+  store.clearLoading();
+};
 </script>
+
+<style lang="scss" scoped>
+// Afinar a track do slider para corresponder ao exemplo de referência
+:deep(.v-slider-track__background),
+:deep(.v-slider-track__fill) {
+  height: 2px !important;
+  border-radius: 1px !important;
+}
+
+:deep(.v-slider-thumb) {
+  width: 14px !important;
+  height: 14px !important;
+}
+
+// Label "Percentage of Correct Answers" alinhado verticalmente dentro do prepend
+.slider-label {
+  font-size: 0.875rem;
+  color: rgba(0, 0, 0, 0.6);
+  white-space: nowrap;
+  align-self: center;
+  margin: 0 8px;
+}
+
+:deep(.dp--main) {
+  width: 100%;
+}
+</style>

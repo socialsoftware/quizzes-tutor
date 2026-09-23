@@ -69,31 +69,31 @@
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import StudentStats from '@/models/dashboard/StudentStats';
 import RemoteServices from '@/services/RemoteServices';
 import AnimatedNumber from '@/components/AnimatedNumber.vue';
 
-@Component({
-  components: { AnimatedNumber },
-})
-export default class GlobalStatsView extends Vue {
-  @Prop() readonly dashboardId!: number;
-  stats: StudentStats | null = null;
+const props = defineProps<{
+  dashboardId: number;
+}>();
 
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      this.stats = await RemoteServices.getUserCourseExecutionStats(
-        this.dashboardId
-      );
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+const store = useStore();
+const stats = ref<StudentStats | null>(null);
+
+onMounted(async () => {
+  store.setLoading();
+  try {
+    stats.value = await RemoteServices.getUserCourseExecutionStats(
+      props.dashboardId
+    );
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+});
 </script>
 
 <style lang="scss" scoped>

@@ -17,8 +17,8 @@
           @click:append="showPassword = !showPassword"
         ></v-text-field>
         <v-btn
-          color="blue darken-1"
-          class="white--text"
+          color="blue-darken-1"
+          class="text-white"
           :disabled="!(username !== '' && password !== '')"
           @click="submit"
           >login</v-btn
@@ -28,19 +28,18 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref } from 'vue';
 
-@Component
-export default class LoginCard extends Vue {
-  username: string = '';
-  password: string = '';
-  showPassword: boolean = false;
+const emit = defineEmits(['onSubmit']);
 
-  submit() {
-    this.$emit('onSubmit', this.username, this.password);
-  }
-}
+const username = ref('');
+const password = ref('');
+const showPassword = ref(false);
+
+const submit = () => {
+  emit('onSubmit', username.value, password.value);
+};
 </script>
 
 <style scoped lang="scss">

@@ -1,6 +1,5 @@
-import Vue from 'vue';
-import Router from 'vue-router';
-import Store from '@/store';
+import { createRouter, createWebHistory } from 'vue-router';
+import { useStore } from '@/store';
 
 import LoginView from '@/views/user/LoginView.vue';
 import ExternalLoginView from '@/views/user/ExternalLoginView.vue';
@@ -40,13 +39,10 @@ import ExportAllView from '@/views/admin/ExportAllView.vue';
 import CoursesView from '@/views/admin/courses/CoursesView.vue';
 import UsersView from '@/views/admin/UsersView.vue';
 
-Vue.use(Router);
+const APP_NAME = import.meta.env.VUE_APP_NAME || 'Quizzes Tutor';
 
-const APP_NAME = process.env.VUE_APP_NAME || '';
-
-const router = new Router({
-  mode: 'history',
-  base: process.env.BASE_URL,
+const router = createRouter({
+  history: createWebHistory(import.meta.env.BASE_URL),
   routes: [
     {
       path: '/',
@@ -359,7 +355,7 @@ const router = new Router({
       ],
     },
     {
-      path: '**',
+      path: '/:pathMatch(.*)*',
       name: 'not-found',
       component: NotFoundView,
       meta: { title: 'Page Not Found', requiredAuth: 'None' },
@@ -367,23 +363,25 @@ const router = new Router({
   ],
 });
 
-router.beforeEach(async (to, from, next) => {
+router.beforeEach(async (to) => {
+  const store = useStore();
   if (to.meta?.requiredAuth == 'None') {
-    next();
-  } else if (to.meta?.requiredAuth == 'Admin' && Store.getters.isAdmin) {
-    next();
-  } else if (to.meta?.requiredAuth == 'Teacher' && Store.getters.isTeacher) {
-    next();
-  } else if (to.meta?.requiredAuth == 'Student' && Store.getters.isStudent) {
-    next();
+    return true;
+  } else if (to.meta?.requiredAuth == 'Admin' && store.isAdmin) {
+    return true;
+  } else if (to.meta?.requiredAuth == 'Teacher' && store.isTeacher) {
+    return true;
+  } else if (to.meta?.requiredAuth == 'Student' && store.isStudent) {
+    return true;
   } else {
-    next('/');
+    return '/';
   }
 });
 
 router.afterEach(async (to) => {
-  document.title = to.meta?.title;
-  await Store.dispatch('clearLoading');
+  const store = useStore();
+  document.title = (to.meta?.title as string) || '';
+  store.clearLoading();
 });
 
 export default router;

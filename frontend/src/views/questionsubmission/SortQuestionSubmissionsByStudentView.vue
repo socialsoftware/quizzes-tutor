@@ -10,12 +10,18 @@
       />
 
       <v-spacer />
-      <v-btn color="primary" dark @click="getUserQuestionSubmissionsInfo"
-        >Refresh List</v-btn
-      ><v-btn
-        v-if="$store.getters.isTeacher"
+      <v-btn
         color="primary"
-        dark
+        class="mr-2"
+       
+        @click="getUserQuestionSubmissionsInfo"
+        >Refresh List</v-btn
+      >
+      <v-btn
+        v-if="store.isTeacher"
+        color="primary"
+        class="mr-2"
+       
         to="/management/submissions"
         >Sort by Date</v-btn
       >
@@ -24,105 +30,104 @@
       :headers="headers"
       :items="userQuestionSubmissionsInfo"
       :search="search"
-      item-key="name"
+      item-value="name"
       show-expand
       multi-sort
-      single-expand
       :mobile-breakpoint="0"
-      :items-per-page="15"
-      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      v-model:items-per-page="itemsPerPage"
+      :items-per-page-options="[
+        { value: 15, title: '15' },
+        { value: 30, title: '30' },
+        { value: 50, title: '50' },
+        { value: 100, title: '100' },
+        { value: -1, title: 'All' }
+      ]"
     >
-      <template v-slot:item="{ item, expand, isExpanded }">
+      <template v-slot:item="{ item: displayItem, internalItem, toggleExpand, isExpanded }">
         <tr
-          v-bind:class="{ clickableRow: item.totalQuestionSubmissions > 0 }"
-          @click="expand(!isExpanded && item.totalQuestionSubmissions > 0)"
+          v-bind:class="{ clickableRow: hasSubmissions(displayItem) }"
+          @click="() => { if (hasSubmissions(displayItem)) toggleExpand(internalItem) }"
         >
-          <td>
-            <v-icon v-if="!isExpanded">fa-angle-down</v-icon>
+          <td style="width: 48px; padding: 0 4px;">
+            <v-icon v-if="!isExpanded(internalItem)">fa-angle-down</v-icon>
             <v-icon v-else>fa-angle-up</v-icon>
           </td>
-          <td>{{ item.name }}</td>
-          <td>
-            <v-chip :color="item.numQuestionSubmissions.approved.color">{{
-              item.numQuestionSubmissions.approved.num
-            }}</v-chip>
+          <td style="width: 50%;">{{ getRaw(displayItem)?.name }}</td>
+          <td style="width: 10%; text-align: center;">
+            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.approved?.color">{{ getRaw(displayItem)?.numQuestionSubmissions?.approved?.num }}</v-chip>
           </td>
-          <td>
-            <v-chip :color="item.numQuestionSubmissions.rejected.color">{{
-              item.numQuestionSubmissions.rejected.num
-            }}</v-chip>
+          <td style="width: 10%; text-align: center;">
+            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.rejected?.color">{{ getRaw(displayItem)?.numQuestionSubmissions?.rejected?.num }}</v-chip>
           </td>
-          <td>
-            <v-chip :color="item.numQuestionSubmissions.in_review.color">{{
-              item.numQuestionSubmissions.in_review.num
-            }}</v-chip>
+          <td style="width: 10%; text-align: center;">
+            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.in_review?.color">{{ getRaw(displayItem)?.numQuestionSubmissions?.in_review?.num }}</v-chip>
           </td>
-          <td>
-            <v-chip :color="item.numQuestionSubmissions.in_revision.color">{{
-              item.numQuestionSubmissions.in_revision.num
-            }}</v-chip>
+          <td style="width: 10%; text-align: center;">
+            <v-chip :color="getRaw(displayItem)?.numQuestionSubmissions?.in_revision?.color">{{ getRaw(displayItem)?.numQuestionSubmissions?.in_revision?.num }}</v-chip>
           </td>
-          <td>
-            <v-chip>{{ item.totalQuestionSubmissions }}</v-chip>
+          <td style="width: 10%; text-align: center;">
+            <v-chip>{{ getRaw(displayItem)?.totalQuestionSubmissions }}</v-chip>
           </td>
         </tr>
       </template>
-      <template v-slot:expanded-item="{ headers, item }">
-        <td :colspan="headers.length">
-          <v-data-table
-            :headers="studentHeaders"
-            :items="item.questionSubmissions"
-            :sort-by="['question.creationDate']"
-            sort-desc
-            hide-default-footer
-            class="studentSubmissions"
-          >
-            <template #item="{ item }">
-              <tr>
-                <td>
-                  <v-tooltip bottom>
-                    <template v-slot:activator="{ on }"
-                      ><v-icon
-                        class="mr-2 action-button"
-                        v-on="on"
-                        @click="showQuestionSubmissionDialog(item)"
-                        data-cy="ViewSubmission"
-                        >fa-comments</v-icon
-                      >
-                    </template>
-                    <span>View Submission</span>
-                  </v-tooltip>
-                </td>
-                <td>
-                  <div
-                    @click="showQuestionSubmissionDialog(item)"
-                    class="clickableTitle"
-                  >
-                    {{ item.question.title }}
-                  </div>
-                </td>
-                <td>
-                  <v-chip :color="item.getStatusColor()" small>
-                    <span>{{ item.getStatus() }}</span>
-                  </v-chip>
-                </td>
-                <td>
-                  <edit-question-submission-topics
-                    :questionSubmission="item"
-                    :topics="topics"
-                    :readOnly="true"
-                  />
-                </td>
-                <td>{{ item.question.creationDate }}</td>
-              </tr>
-            </template>
-          </v-data-table>
-        </td>
+      <template v-slot:expanded-row="{ columns, item: displayItem }">
+        <tr>
+          <td :colspan="columns.length">
+            <v-data-table
+              :headers="studentHeaders"
+              :items="getRaw(displayItem).questionSubmissions"
+              :sort-by="[{ key: 'question.creationDate', order: 'desc' }]"
+              class="studentSubmissions"
+            >
+              <template #bottom></template>
+              <template v-slot:item="{ item: subItem }">
+                <tr>
+                  <td>
+                    <v-tooltip location="bottom">
+                      <template v-slot:activator="{ props }">
+                        <v-icon
+                          class="mr-2 action-button"
+                          v-bind="props"
+                          @click="showQuestionSubmissionDialogAction(getSubRaw(subItem))"
+                          data-cy="ViewSubmission"
+                          >fa-comments</v-icon
+                        >
+                      </template>
+                      <span>View Submission</span>
+                    </v-tooltip>
+                  </td>
+                  <td>
+                    <div
+                      @click="showQuestionSubmissionDialogAction(getSubRaw(subItem))"
+                      class="clickableTitle"
+                    >
+                      {{ getSubRaw(subItem).question.title }}
+                    </div>
+                  </td>
+                  <td>
+                    <v-chip :color="getSubRaw(subItem).getStatusColor()" size="small">
+                      <span>{{ getSubRaw(subItem).getStatus() }}</span>
+                    </v-chip>
+                  </td>
+                  <td>
+                    <edit-question-submission-topics
+                      :questionSubmission="getSubRaw(subItem)"
+                      :topics="topics"
+                      :readOnly="true"
+                    />
+                  </td>
+                  <td>{{ getSubRaw(subItem).question.creationDate }}</td>
+                </tr>
+              </template>
+            </v-data-table>
+          </td>
+        </tr>
       </template>
     </v-data-table>
     <show-question-submission-dialog
-      v-if="currentQuestionSubmission"
-      v-model="questionSubmissionDialog"
+      v-if="currentQuestionSubmission && questionSubmissionDialog"
+      :dialog="questionSubmissionDialog"
+      @update:dialog="questionSubmissionDialog = $event"
       :questionSubmission="currentQuestionSubmission"
     />
     <footer>
@@ -132,8 +137,9 @@
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Watch } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, watch, onMounted } from 'vue';
+import { useStore } from '@/store';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
 import RemoteServices from '@/services/RemoteServices';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
@@ -141,93 +147,125 @@ import ShowQuestionSubmissionDialog from '@/views/questionsubmission/ShowQuestio
 import Topic from '@/models/management/Topic';
 import EditQuestionSubmissionTopics from '@/views/questionsubmission/EditQuestionSubmissionTopics.vue';
 
-@Component({
-  components: {
-    'show-question-submission-dialog': ShowQuestionSubmissionDialog,
-    'edit-question-submission-topics': EditQuestionSubmissionTopics,
+const store = useStore();
+
+const userQuestionSubmissionsInfo = ref<UserQuestionSubmissionInfo[]>([]);
+const topics = ref<Topic[]>([]);
+const currentQuestionSubmission = ref<QuestionSubmission | null>(null);
+const questionSubmissionDialog = ref<boolean>(false);
+const search = ref<string>('');
+
+const getRaw = (item: any): UserQuestionSubmissionInfo => {
+  return (item as any).raw || item;
+};
+
+const hasSubmissions = (item: any): boolean => {
+  return (getRaw(item)?.totalQuestionSubmissions || 0) > 0;
+};
+
+const getSubRaw = (item: any): QuestionSubmission => {
+  return (item as any).raw || item;
+};
+
+const processHeaders = (arr: any[]) => {
+  return arr.map((h: any) => ({
+    ...h,
+    title: h.text || h.title,
+    key: h.value || h.key,
+    align: h.align === 'left' ? 'start' : h.align === 'right' ? 'end' : h.align
+  }));
+};
+
+const studentHeaders = ref<any[]>(processHeaders(QuestionSubmission.questionSubmissionHeader.slice()));
+const itemsPerPage = ref<number>(15);
+
+const headers = ref<any[]>([
+  {
+    key: 'data-table-expand',
+    title: '',
+    width: '48px',
+    sortable: false,
   },
-})
-export default class SortQuestionSubmissionsByStudentView extends Vue {
-  userQuestionSubmissionsInfo: UserQuestionSubmissionInfo[] = [];
-  topics: Topic[] = [];
-  currentQuestionSubmission: QuestionSubmission | null = null;
-  questionSubmissionDialog: boolean = false;
-  search: string = '';
-  studentHeaders = QuestionSubmission.questionSubmissionHeader.slice();
-  headers = [
-    {
-      text: 'Student',
-      value: 'name',
-      align: 'center',
-      width: '50%',
-    },
-    {
-      text: 'Approved',
-      value: 'numApprovedQuestionSubmissions',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'Rejected',
-      value: 'numRejectedQuestionSubmissions',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'In Review',
-      value: 'numInReviewQuestionSubmissions',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'In Revision',
-      value: 'numInRevisionQuestionSubmissions',
-      align: 'center',
-      width: '10%',
-    },
-    {
-      text: 'Total',
-      value: 'totalQuestionSubmissions',
-      align: 'center',
-      width: '10%',
-    },
-  ];
+  {
+    title: 'Student',
+    key: 'name',
+    align: 'center',
+    width: '50%',
+  },
+  {
+    title: 'Approved',
+    key: 'numApprovedQuestionSubmissions',
+    align: 'center',
+    width: '10%',
+  },
+  {
+    title: 'Rejected',
+    key: 'numRejectedQuestionSubmissions',
+    align: 'center',
+    width: '10%',
+  },
+  {
+    title: 'In Review',
+    key: 'numInReviewQuestionSubmissions',
+    align: 'center',
+    width: '10%',
+  },
+  {
+    title: 'In Revision',
+    key: 'numInRevisionQuestionSubmissions',
+    align: 'center',
+    width: '10%',
+  },
+  {
+    title: 'Total',
+    key: 'totalQuestionSubmissions',
+    align: 'center',
+    width: '10%',
+  },
+]);
 
-  async created() {
-    await this.getUserQuestionSubmissionsInfo();
-  }
+onMounted(async () => {
+  await getUserQuestionSubmissionsInfo();
+});
 
-  async getUserQuestionSubmissionsInfo() {
-    await this.$store.dispatch('loading');
-    try {
-      [this.userQuestionSubmissionsInfo, this.topics] = await Promise.all([
-        RemoteServices.getAllStudentsSubmissionsInfo(),
-        RemoteServices.getTopics(),
-      ]);
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+watch(questionSubmissionDialog, async (newVal) => {
+  if (!newVal) {
+    await getUserQuestionSubmissionsInfo();
   }
+});
 
-  async showQuestionSubmissionDialog(questionSubmission: QuestionSubmission) {
-    this.currentQuestionSubmission = questionSubmission;
-    this.questionSubmissionDialog = true;
+const getUserQuestionSubmissionsInfo = async () => {
+  store.setLoading();
+  try {
+    const res = await Promise.all([
+      RemoteServices.getAllStudentsSubmissionsInfo(),
+      RemoteServices.getTopics(),
+    ]);
+    userQuestionSubmissionsInfo.value = res[0];
+    topics.value = res[1];
+  } catch (error) {
+    store.setError(error as string);
   }
+  store.clearLoading();
+};
 
-  @Watch('questionSubmissionDialog')
-  async onCloseShowQuestionSubmissionDialog() {
-    if (!this.questionSubmissionDialog) {
-      await this.getUserQuestionSubmissionsInfo();
-    }
-  }
-}
+const showQuestionSubmissionDialogAction = async (questionSubmission: QuestionSubmission) => {
+  currentQuestionSubmission.value = questionSubmission;
+  questionSubmissionDialog.value = true;
+};
+
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 .clickableRow {
   cursor: pointer;
 }
 .studentSubmissions {
   border: 1px lightgrey solid;
+}
+
+// Evita deslocamento da tabela ao ordenar — fixa o layout das colunas
+:deep(.v-data-table table) {
+  table-layout: fixed !important;
+  width: 100% !important;
 }
 </style>

@@ -46,7 +46,7 @@ public class Question implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "`KEY`")
+    @Column(name = "\"key\"")
     private Integer key;
 
     @Column(columnDefinition = "TEXT")
@@ -76,7 +76,6 @@ public class Question implements DomainEntity {
 
     @OneToOne(cascade = CascadeType.ALL, fetch = FetchType.EAGER, mappedBy = "question", orphanRemoval = true)
     private QuestionDetails questionDetails;
-
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<QuizQuestion> quizQuestions = new HashSet<>();
@@ -260,7 +259,8 @@ public class Question implements DomainEntity {
     }
 
     public void update(QuestionDto questionDto) {
-        if (getQuizQuestions().stream().flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream()).findAny().isPresent()) {
+        if (getQuizQuestions().stream().flatMap(quizQuestion -> quizQuestion.getQuestionAnswers().stream()).findAny()
+                .isPresent()) {
             throw new TutorException(CANNOT_CHANGE_ANSWERED_QUESTION);
         }
 
@@ -271,7 +271,8 @@ public class Question implements DomainEntity {
     }
 
     public void updateTopics(Set<Topic> newTopics) {
-        Set<Topic> toRemove = this.topics.stream().filter(topic -> !newTopics.contains(topic)).collect(Collectors.toSet());
+        Set<Topic> toRemove = this.topics.stream().filter(topic -> !newTopics.contains(topic))
+                .collect(Collectors.toSet());
 
         toRemove.forEach(topic -> {
             this.topics.remove(topic);
@@ -283,7 +284,8 @@ public class Question implements DomainEntity {
 
     public void remove() {
         if (!getQuizQuestions().isEmpty()) {
-            throw new TutorException(QUESTION_IS_USED_IN_QUIZ, getQuizQuestions().iterator().next().getQuiz().getTitle());
+            throw new TutorException(QUESTION_IS_USED_IN_QUIZ,
+                    getQuizQuestions().iterator().next().getQuiz().getTitle());
         }
 
         this.course.getQuestions().remove(this);

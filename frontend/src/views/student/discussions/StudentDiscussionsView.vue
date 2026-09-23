@@ -2,26 +2,21 @@
   <discussion-list-component :discussions="discussions" />
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Discussion from '@/models/management/Discussion';
 import DiscussionListComponent from '@/views/student/discussions/DiscussionListComponent.vue';
 
-@Component({
-  components: {
-    'discussion-list-component': DiscussionListComponent,
-  },
-})
-export default class StudentDiscussionsView extends Vue {
-  discussions: Discussion[] = [];
+const store = useStore();
+const discussions = ref<Discussion[]>([]);
 
-  async created() {
-    await this.$store.dispatch('loading');
-    this.discussions = await RemoteServices.getUserDiscussions();
-    await this.$store.dispatch('clearLoading');
-  }
-}
+onMounted(async () => {
+  store.setLoading();
+  discussions.value = await RemoteServices.getUserDiscussions();
+  store.clearLoading();
+});
 </script>
 
 <style scoped></style>

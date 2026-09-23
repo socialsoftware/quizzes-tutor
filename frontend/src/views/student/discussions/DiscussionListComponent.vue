@@ -1,15 +1,18 @@
 <template>
-  <v-card max-width="1200" class="mx-auto my-7">
+  <v-card max-width="1200" class="mx-auto my-7 table">
     <v-data-table
       :headers="headers"
       :items="discussions"
-      :sort-by="'lastReplyDate'"
-      :sort-desc="true"
+      :sort-by="[{ key: 'lastReplyDate', order: 'desc' }]"
       :search="search"
       multi-sort
       :mobile-breakpoint="0"
       :items-per-page="15"
       :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      :row-props="({ item }: any) => ({
+        class: selectedDiscussionId === ((item as any).raw || item).id ? 'active-green-selection' : 'discussion-row',
+      })"
+      @click:row="(_event: any, row: any) => selectRow(row)"
     >
       <template v-slot:top>
         <v-card-title style="width: 50%">
@@ -23,24 +26,20 @@
         </v-card-title>
       </template>
       <template v-slot:[`item.closed`]="{ item }">
-        <v-chip v-if="item.closed === true" :color="'green'" dark>Yes</v-chip>
-        <v-chip v-else :color="'red'" dark>No</v-chip>
+        <v-chip v-if="item.closed === true" :color="'green'">Yes</v-chip>
+        <v-chip v-else :color="'red'">No</v-chip>
       </template>
       <template v-slot:[`item.replies.length`]="{ item }">
-        <v-chip v-if="item.replies === null" :color="'grey'" dark>0</v-chip>
-        <v-chip v-else :color="'grey'" dark>{{ item.replies.length }}</v-chip>
+        <v-chip v-if="item.replies === null" :color="'grey'">0</v-chip>
+        <v-chip v-else :color="'grey'">{{ item.replies.length }}</v-chip>
       </template>
 
       <template v-slot:[`item.action`]="{ item }">
-        <v-tooltip bottom>
-          <template v-slot:activator="{ on }">
-            <v-icon
-              data-cy="showDiscussionButton"
-              class="mr-2 action-button"
-              v-on="on"
-              @click="showDiscussionDialog(item)"
-              >fas fa-comment-dots</v-icon
-            >
+        <v-tooltip location="bottom">
+          <template v-slot:activator="{ props: activatorProps }">
+            <span data-cy="showDiscussionButton" v-bind="activatorProps" @click="showDiscussionDialogAction(item)">
+              <v-icon class="mr-2 action-button">fas fa-comment-dots</v-icon>
+            </span>
           </template>
           <span>Show Discussion</span>
         </v-tooltip>
@@ -48,62 +47,64 @@
     </v-data-table>
     <show-discussion-dialog
       v-if="currentDiscussion"
-      v-model="discussionDialog"
+      v-model:dialog="discussionDialog"
       :discussion="currentDiscussion"
       v-on:close-show-question-dialog="onCloseShowDiscussionDialog"
     />
   </v-card>
 </template>
 
-<script lang="ts">
-import { Component, Prop, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref } from 'vue';
 import Discussion from '@/models/management/Discussion';
 import ShowDiscussionDialog from '@/views/student/discussions/ShowDiscussionDialog.vue';
 
-@Component({
-  components: {
-    'show-discussion-dialog': ShowDiscussionDialog,
-  },
-})
-export default class DiscussionListComponent extends Vue {
-  @Prop({ type: Array, required: true }) readonly discussions!: Discussion[];
-  search: string = '';
-  currentDiscussion: Discussion | null = null;
-  discussionDialog: boolean = false;
+defineProps<{
+  discussions: Discussion[];
+}>();
 
-  headers: object = [
-    {
-      text: 'Actions',
-      value: 'action',
-      align: 'left',
-      width: '5px',
-      sortable: false,
-    },
-    {
-      text: 'Discussion Number',
-      value: 'id',
-    },
-    {
-      text: 'Question Title',
-      value: 'question.title',
-    },
-    { text: 'Question Content', value: 'question.content' },
-    { text: 'Message', value: 'message' },
-    { text: 'Last Reply Date', value: 'lastReplyDate' },
-    { text: 'Closed', value: 'closed' },
-    { text: 'Replies', value: 'replies.length' },
-  ];
+const search = ref('');
+const currentDiscussion = ref<Discussion | null>(null);
+const discussionDialog = ref(false);
+const selectedDiscussionId = ref<number | null>(null);
 
-  showDiscussionDialog(discussion: Discussion) {
-    this.currentDiscussion = discussion;
-    this.discussionDialog = true;
+const selectRow = (row: any) => {
+  const discussion = row?.item?.raw || row?.item || row;
+  if (selectedDiscussionId.value === discussion.id) {
+    selectedDiscussionId.value = null;
+  } else {
+    selectedDiscussionId.value = discussion.id;
   }
+};
 
-  onCloseShowDiscussionDialog() {
-    this.currentDiscussion = null;
-    this.discussionDialog = false;
-  }
-}
+const headers = [
+  { title: 'Actions', key: 'action', align: 'start', width: '5px', sortable: false },
+  { title: 'Discussion Number', key: 'id' },
+  { title: 'Question Title', key: 'question.title' },
+  { title: 'Question Content', key: 'question.content' },
+  { title: 'Message', key: 'message' },
+  { title: 'Last Reply Date', key: 'lastReplyDate' },
+  { title: 'Closed', key: 'closed' },
+  { title: 'Replies', key: 'replies.length' },
+] as const;
+
+const showDiscussionDialogAction = (discussion: Discussion) => {
+  currentDiscussion.value = discussion;
+  discussionDialog.value = true;
+};
+
+const onCloseShowDiscussionDialog = () => {
+  currentDiscussion.value = null;
+  discussionDialog.value = false;
+};
 </script>
 
-<style scoped></style>
+<style scoped>
+.discussion-row {
+  cursor: pointer;
+}
+.table {
+  margin-left: auto !important;
+  margin-right: auto !important;
+}
+</style>

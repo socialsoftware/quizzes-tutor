@@ -13,14 +13,14 @@
             <v-list-item-group color="primary">
               <v-tooltip
                 v-for="course in courseExecutions[term]"
-                :key="course.acronym + course.academicTerm"
-                bottom
+                :key="(course.acronym || '') + (course.academicTerm || '')"
+                location="bottom"
               >
-                <template v-slot:activator="{ on }">
+                <template v-slot:activator="{ props }">
                   <v-list-item
-                    v-on="on"
+                    v-bind="props"
                     @click="selectCourse(course)"
-                    :class="course.status.toLowerCase()"
+                    :class="course.status?.toLowerCase() || ''"
                   >
                     <v-list-item-content>
                       <v-list-item-title>
@@ -32,15 +32,15 @@
                       <v-btn icon>
                         <v-icon
                           v-if="course.status === 'INACTIVE'"
-                          color="grey lighten-1"
+                          color="grey-lighten-1"
                           >mdi-key</v-icon
                         >
                         <v-icon
                           v-else-if="course.status === 'HISTORIC'"
-                          color="grey lighten-1"
+                          color="grey-lighten-1"
                           >mdi-book-open-variant</v-icon
                         >
-                        <v-icon v-else color="grey lighten-1"
+                        <v-icon v-else color="grey-lighten-1"
                           >mdi-location-enter</v-icon
                         >
                       </v-btn>
@@ -65,37 +65,38 @@
 
     <v-dialog v-model="confirmationDialog" v-if="selectedCourse" width="50%">
       <v-card>
-        <v-card-title primary-title class="secondary white--text headline">
+        <v-card-title class="bg-secondary text-white text-h5">
           Confirmation
         </v-card-title>
 
-        <v-card-text class="text--black title">
-          <br />
+        <v-card-text class="text-h6 text-center mt-4 mb-4">
           Are you sure you want to activate
           <span class="bold">{{ selectedCourse.name }}</span>
           for
           <span class="bold">{{ selectedCourse.academicTerm }}</span
           >?
+          <br /><br />
+          <span class="text-caption">(Once activated students will be able to login and use this platform)</span>
           <br />
-          (Once activated students will be able to login and use this platform)
-          <br />
-          (You have to logout and login to start managing it)
+          <span class="text-caption">(You have to logout and login to start managing it)</span>
         </v-card-text>
 
         <v-divider />
 
         <v-card-actions>
           <v-spacer />
-          <v-btn color="secondary" text @click="unselectCourse"> Cancel </v-btn>
-          <v-btn color="primary" text @click="activateCourse"> I'm sure </v-btn>
+          <v-btn color="secondary" variant="text" @click="unselectCourse"> Cancel </v-btn>
+          <v-btn color="primary" variant="text" @click="activateCourse"> I'm sure </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, onMounted } from 'vue';
+import { useStore } from '@/store';
+import { useRouter } from 'vue-router';
 import Course from '@/models/user/Course';
 import RemoteServices from '@/services/RemoteServices';
 
@@ -103,60 +104,64 @@ interface CourseMap {
   [key: string]: Course[];
 }
 
-@Component
-export default class CourseSelectionView extends Vue {
-  courseExecutions: CourseMap | null = null;
-  confirmationDialog: Boolean = false;
-  selectedCourse: Course | null = null;
+const store = useStore();
+const router = useRouter();
 
-  async created() {
-    this.courseExecutions = await this.$store.getters.getUser.courses;
+const courseExecutions = ref<CourseMap | null>(null);
+const confirmationDialog = ref(false);
+const selectedCourse = ref<Course | null>(null);
+
+onMounted(async () => {
+  const user = store.user;
+  if (user && user.courses) {
+    courseExecutions.value = user.courses;
   }
+});
 
-  async selectCourse(course: Course) {
-    if (course.status !== 'INACTIVE') {
-      await this.$store.dispatch('currentCourse', course);
-      await this.$router.push({ name: 'home' });
-    } else {
-      this.selectedCourse = course;
-      this.confirmationDialog = true;
+const selectCourse = async (course: Course) => {
+  if (course.status !== 'INACTIVE') {
+    store.setCurrentCourse(course);
+    await router.push({ name: 'home' });
+  } else {
+    selectedCourse.value = course;
+    confirmationDialog.value = true;
+  }
+};
+
+const activateCourse = async () => {
+  confirmationDialog.value = false;
+  try {
+    if (selectedCourse.value) {
+      selectedCourse.value.status = 'ACTIVE';
+      selectedCourse.value = await RemoteServices.activateCourseExecution(
+        selectedCourse.value
+      );
+      store.setCurrentCourse(selectedCourse.value);
+      await router.push({ name: 'home' });
     }
+  } catch (error) {
+    store.setError(error as string);
   }
+};
 
-  async activateCourse() {
-    this.confirmationDialog = false;
-    try {
-      if (this.selectedCourse) {
-        this.selectedCourse.status = 'ACTIVE';
-        this.selectedCourse = await RemoteServices.activateCourseExecution(
-          this.selectedCourse
-        );
-        await this.$store.dispatch('currentCourse', this.selectedCourse);
-        await this.$router.push({ name: 'home' });
-      }
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-  }
+const unselectCourse = () => {
+  selectedCourse.value = null;
+  confirmationDialog.value = false;
+};
 
-  unselectCourse() {
-    this.selectedCourse = null;
-    this.confirmationDialog = false;
-  }
+const compareTerm = (term1: string, term2: string) => {
+  if (!term1 || !term2) return 0;
+  let yearCompare = term2
+    .substr(term2.length - 9)
+    .localeCompare(term1.substr(term1.length - 9));
 
-  compareTerm(term1: string, term2: string) {
-    let yearCompare = term2
-      .substr(term2.length - 9)
-      .localeCompare(term1.substr(term1.length - 9));
+  if (yearCompare !== 0) return yearCompare;
 
-    if (yearCompare !== 0) return yearCompare;
-
-    return term2.localeCompare(term1);
-  }
-}
+  return term2.localeCompare(term1);
+};
 </script>
 
-<style lang="scss">
+<style lang="scss" scoped>
 .title {
   text-align: center;
   font-family: 'Baloo Tamma', cursive;

@@ -1,201 +1,191 @@
 <template>
   <div class="questionDetails-container" v-if="questionDetails">
     <div class="code-container" style="position: relative; text-align: left">
-      <v-overlay :value="!CodemirrorUpdated" absolute color="white" opacity="1">
+      <v-overlay :model-value="!CodemirrorUpdated" contained color="white" opacity="1">
         <v-progress-circular indeterminate size="40" color="primary" />
       </v-overlay>
-      <codemirror
-        ref="myCmStudent"
-        :value="questionDetails.code"
-        :options="cmOptions"
-      >
-      </codemirror>
+      <BaseCodeEditor
+        v-model:code="questionDetails.code"
+        v-model:language="questionDetails.language"
+        :editable="false"
+        :customExtensions="customExtensions"
+      />
     </div>
   </div>
 </template>
 
-<script lang="ts">
-import {
-  Component,
-  Vue,
-  Prop,
-  Model,
-  Emit,
-  Watch,
-  PropSync,
-} from 'vue-property-decorator';
+<script setup lang="ts">
+import { ref, computed, watch } from 'vue';
 import CodeFillInStatementQuestionDetails from '@/models/statement/questions/CodeFillInStatementQuestionDetails';
-import CodeFillInSpotStatement from '@/models/statement/questions/CodeFillInSpotStatement';
 import CodeFillInStatementAnswerDetails from '@/models/statement/questions/CodeFillInStatementAnswerDetails';
-import 'codemirror/lib/codemirror.css';
-import 'codemirror/mode/clike/clike.js';
-import 'codemirror/theme/eclipse.css';
-import 'codemirror/theme/monokai.css';
-import 'codemirror/addon/mode/overlay.js';
-import CodeMirror from 'codemirror';
-import { codemirror } from 'vue-codemirror';
 import CodeFillInStatementCorrectAnswerDetails from '@/models/statement/questions/CodeFillInStatementCorrectAnswerDetails';
 import StatementFillInSpot from '@/models/statement/questions/CodeFillInSpotStatement';
+import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
+import {
+  WidgetType,
+  Decoration,
+  MatchDecorator,
+  ViewPlugin,
+} from '@codemirror/view';
 
-CodeMirror.defineMode('mustache', function (config: any, parserConfig: any) {
-  const mustacheOverlay = {
-    token: function (stream: any) {
-      let ch;
-      if (stream.match('{{slot-')) {
-        while ((ch = stream.next()) != null) {
-          if (ch === '}' && stream.next() === '}') {
-            stream.eat('}');
-            return 'custom-drop-down';
-          }
-        }
-      }
-      while (stream.next() != null && !stream.match('{{', false)) {
-        // empty
-      }
-      return null;
-    },
-  };
-  return CodeMirror.overlayMode(
-    CodeMirror.getMode(config, parserConfig.backdrop || 'text/x-java'),
-    mustacheOverlay
-  );
-});
+const props = defineProps<{
+  questionOrder?: number;
+  questionDetails: CodeFillInStatementQuestionDetails;
+  answerDetails: CodeFillInStatementAnswerDetails;
+  correctAnswerDetails: CodeFillInStatementCorrectAnswerDetails;
+}>();
 
-@Component({
-  components: {
-    codemirror,
-  },
-})
-export default class CodeFillInAnswer extends Vue {
-  @Model('questionOrder', Number) questionOrder: number | undefined;
-  @Prop(CodeFillInStatementQuestionDetails)
-  readonly questionDetails!: CodeFillInStatementQuestionDetails;
-  @PropSync('answerDetails', CodeFillInStatementAnswerDetails)
-  answerDetailsSynced!: CodeFillInStatementAnswerDetails;
-  @Prop(CodeFillInStatementCorrectAnswerDetails)
-  readonly correctAnswerDetails!: CodeFillInStatementCorrectAnswerDetails;
+defineEmits([
+  'update:questionOrder',
+  'update:answerDetails',
+  'increaseOrder',
+  'decreaseOrder'
+]);
 
-  hover: boolean = false;
-  cmOptions: any = {
-    // codemirror options
-    tabSize: 4,
-    mode: 'mustache',
-    theme: 'eclipse',
-    lineNumbers: true,
-    line: true,
-    readOnly: true,
-  };
-  CodemirrorUpdated: boolean = false;
-  @Emit()
-  increaseOrder() {
-    return 1;
-  }
-  @Emit()
-  decreaseOrder() {
-    return 1;
-  }
 
-  @Watch('questionDetails', { immediate: true, deep: true })
-  updateQuestion() {
-    this.CodemirrorUpdated = false;
+const CodemirrorUpdated = ref(false);
+
+// Loading overlay timing (decorations themselves apply instantly via the
+// editor); mirrors the Vue2 refresh delay.
+watch(
+  () => props.questionDetails,
+  () => {
+    CodemirrorUpdated.value = false;
     setTimeout(() => {
-      (this.$refs.myCmStudent as any).codemirror.refresh();
-      this.replaceDropdowns();
-      document.body.addEventListener(
-        'mousedown',
-        function (evt: Event) {
-          if (
-            evt &&
-            evt.target &&
-            (evt.target as any).className === 'code-dropdown'
-          ) {
-            evt.stopPropagation();
-          }
-        },
-        true
-      );
-      this.CodemirrorUpdated = true;
-    }, 100);
+      CodemirrorUpdated.value = true;
+    }, 500);
+  },
+  { immediate: true, deep: true }
+);
+
+
+// Replaces {{slot-N}} placeholders with result <select> widgets managed by
+// the editor itself. The previous implementation walked the rendered DOM and
+// spliced nodes by hand, which breaks under CodeMirror 6: syntax
+// highlighting splits slot text across text nodes and the editor wipes
+// hand-inserted DOM on re-render, so options never appeared in the solution.
+class ResultSelectWidget extends WidgetType {
+  constructor(
+    public slotNumber: number,
+    public questionDetailsRef: any,
+    public answerDetailsRef: any,
+    public correctAnswerDetailsRef: any
+  ) {
+    super();
   }
 
-  replaceDropdowns() {
-    function getOptions(
-      name: number,
-      options: CodeFillInSpotStatement[]
-    ): StatementFillInSpot {
-      const result = options.find((el) => el.sequence === name);
-      return result || new StatementFillInSpot();
+  eq(other: ResultSelectWidget) {
+    return this.slotNumber === other.slotNumber;
+  }
+
+  toDOM() {
+    const num = this.slotNumber;
+    const d = document.createElement('select');
+    d.className = 'code-dropdown';
+    d.name = 'slot-' + num;
+
+    const something: StatementFillInSpot =
+      this.questionDetailsRef.fillInSpots.find(
+        (el: any) => el.sequence === num
+      ) || new StatementFillInSpot();
+    const optionAnswered = this.answerDetailsRef.selectedOptions?.find(
+      (el: any) => el.sequence === num
+    );
+    const optionAnsweredQuestion =
+      optionAnswered &&
+      something.options.find(
+        (el: any) => el.optionId === optionAnswered?.optionId
+      );
+    const correctOption =
+      this.correctAnswerDetailsRef.correctOptions.find(
+        (el: any) => el.sequence === num
+      );
+    const correctOptionQuestion = something.options.find(
+      (el: any) => el.optionId === correctOption?.optionId
+    );
+
+    const answeredCorrectly =
+      !!optionAnswered &&
+      optionAnswered.optionId === correctOption?.optionId;
+
+    if (!answeredCorrectly) {
+      const correctOptEl = document.createElement('option');
+      correctOptEl.innerHTML =
+        ' ✔: ' + (correctOptionQuestion?.content || '');
+      correctOptEl.classList.add('answerDetailsSynced-spot', 'correct');
+      d.appendChild(correctOptEl);
     }
-    document.querySelectorAll('.cm-custom-drop-down').forEach((e) => {
-      const d = document.createElement('select');
-      d.className = 'code-dropdown';
-      d.name = e.innerHTML;
-      e.parentNode?.replaceChild(d, e);
-      const match = e.innerHTML.match(/\d+/);
-      const num = Number(match ? match[0] : 0);
-      const option = document.createElement('option');
-      const something = getOptions(
-        Number(num),
-        this.questionDetails.fillInSpots
-      );
-      const optionAnswered = this.answerDetailsSynced.selectedOptions.find(
-        (el) => el.sequence === num
-      );
-      const optionAnsweredQuestion =
-        optionAnswered &&
-        something.options.find(
-          (el) => el.optionId === optionAnswered?.optionId
-        );
-      const correctOption = this.correctAnswerDetails.correctOptions.find(
-        (el) => el.sequence === num
-      );
-      const correctOptionQuestion = something.options.find(
-        (el) => el.optionId === correctOption?.optionId
-      );
-      let text;
+
+    something.options.forEach((element: any) => {
       if (
-        optionAnswered &&
-        optionAnswered.optionId === correctOption?.optionId
+        !(
+          element.optionId === optionAnswered?.optionId ||
+          element.optionId === correctOption?.optionId
+        )
       ) {
-        text = ' ✔: ';
-      } else {
-        text = ' ✖: ';
-        const correctOption = document.createElement('option');
-        correctOption.innerHTML = ' ✔: ' + correctOptionQuestion?.content;
-        correctOption.classList.add('answerDetailsSynced-spot', 'correct');
-        d.appendChild(correctOption);
+        const newOption = document.createElement('option');
+        newOption.innerHTML = element?.content || '';
+        newOption.classList.add('answerDetailsSynced-spot');
+        d.appendChild(newOption);
       }
-
-      something.options.forEach((element) => {
-        if (
-          !(
-            element.optionId === optionAnswered?.optionId ||
-            element.optionId === correctOption?.optionId
-          )
-        ) {
-          const newOption = document.createElement('option');
-          newOption.innerHTML = element?.content;
-          newOption.classList.add('answerDetailsSynced-spot');
-          d.appendChild(newOption);
-        }
-      });
-
-      option.innerHTML =
-        text +
-        (optionAnsweredQuestion
-          ? optionAnsweredQuestion.content
-          : 'Not Answered');
-      option.classList.add(
-        'answerDetailsSynced-spot',
-        optionAnswered && optionAnswered.optionId === correctOption?.optionId
-          ? 'correct'
-          : 'incorrect'
-      );
-      d.prepend(option);
-      d.selectedIndex = 0;
     });
+
+    const option = document.createElement('option');
+    option.innerHTML =
+      (answeredCorrectly ? ' ✔: ' : ' ✖: ') +
+      (optionAnsweredQuestion
+        ? optionAnsweredQuestion.content
+        : 'Not Answered');
+    option.classList.add(
+      'answerDetailsSynced-spot',
+      answeredCorrectly ? 'correct' : 'incorrect'
+    );
+    d.prepend(option);
+    d.selectedIndex = 0;
+
+    // Prevent mousedown from blurring the editor and intercepting click
+    d.onmousedown = (e) => e.stopPropagation();
+
+    return d;
   }
 }
+
+const customExtensions = computed(() => {
+  // Read lengths so decorations recompute when data arrives/changes
+  const _selected = props.answerDetails?.selectedOptions?.length;
+  const _spots = props.questionDetails?.fillInSpots?.length;
+  const _correct = props.correctAnswerDetails?.correctOptions?.length;
+
+  const slotMatcher = new MatchDecorator({
+    regexp: /\{\{slot-(\d+)\}\}/g,
+    decoration: (match) =>
+      Decoration.replace({
+        widget: new ResultSelectWidget(
+          Number(match[1]),
+          props.questionDetails,
+          props.answerDetails,
+          props.correctAnswerDetails
+        ),
+      }),
+  });
+
+  const slotPlugin = ViewPlugin.fromClass(
+    class {
+      decorations: any;
+      constructor(view: any) {
+        this.decorations = slotMatcher.createDeco(view);
+      }
+      update(update: any) {
+        this.decorations = slotMatcher.updateDeco(update, this.decorations);
+      }
+    },
+    {
+      decorations: (v) => v.decorations,
+    }
+  );
+
+  return [slotPlugin];
+});
 </script>
 
 <style lang="scss">

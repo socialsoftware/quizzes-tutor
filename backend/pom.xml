@@ -5,7 +5,7 @@
     <parent>
         <groupId>org.springframework.boot</groupId>
         <artifactId>spring-boot-starter-parent</artifactId>
-        <version>3.3.9</version>
+        <version>4.1.1</version>
         <relativePath/>
     </parent>
     <groupId>pt.ulisboa.tecnico.socialsoftware</groupId>
@@ -24,9 +24,9 @@
     </repositories>
 
     <properties>
-        <java.version>21</java.version>
-        <maven.compiler.source>21</maven.compiler.source>
-        <maven.compiler.target>21</maven.compiler.target>
+        <java.version>25</java.version>
+        <maven.compiler.source>25</maven.compiler.source>
+        <maven.compiler.target>25</maven.compiler.target>
     </properties>
 
     <!-- Allows multiple properties files-->
@@ -58,7 +58,7 @@
                             more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
                         <groupId>org.codehaus.gmavenplus</groupId>
                         <artifactId>gmavenplus-plugin</artifactId>
-                        <version>4.1.1</version>
+                        <version>5.1.0</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -71,7 +71,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.5.2</version>
+                        <version>3.6.0</version>
                         <configuration>
                             <excludes>
                                 <exclude>**/*IT</exclude>
@@ -81,7 +81,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.12</version>
+                        <version>0.8.15</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -112,7 +112,7 @@
                             more about this plugin, visit https://github.com/groovy/GMavenPlus/wiki -->
                         <groupId>org.codehaus.gmavenplus</groupId>
                         <artifactId>gmavenplus-plugin</artifactId>
-                        <version>4.1.1</version>
+                        <version>5.1.0</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -125,7 +125,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-surefire-plugin</artifactId>
-                        <version>3.5.2</version>
+                        <version>3.6.0</version>
                         <configuration>
                             <excludes>
                                 <exclude>**/*Test</exclude>
@@ -136,7 +136,7 @@
                     <plugin>
                         <groupId>org.apache.maven.plugins</groupId>
                         <artifactId>maven-failsafe-plugin</artifactId>
-                        <version>3.5.2</version>
+                        <version>3.6.0</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -158,7 +158,7 @@
                     <plugin>
                         <groupId>org.jacoco</groupId>
                         <artifactId>jacoco-maven-plugin</artifactId>
-                        <version>0.8.12</version>
+                        <version>0.8.15</version>
                         <executions>
                             <execution>
                                 <goals>
@@ -195,6 +195,11 @@
         <dependency>
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.springframework.boot</groupId>
+            <artifactId>spring-boot-starter-data-jpa-test</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -245,6 +250,7 @@
         <dependency>
             <groupId>com.h2database</groupId>
             <artifactId>h2</artifactId>
+            <version>2.5.250</version>
             <scope>test</scope>
         </dependency>
 
@@ -252,12 +258,12 @@
         <dependency>
             <groupId>org.springdoc</groupId>
             <artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
-            <version>2.6.0</version>
+            <version>3.1.1</version>
         </dependency>
         <dependency>
             <groupId>org.webjars</groupId>
             <artifactId>swagger-ui</artifactId>
-            <version>5.20.0</version>
+            <version>5.31.2</version>
         </dependency>
 
         <!-- Fenix -->
@@ -276,6 +282,7 @@
         <dependency>
             <groupId>org.springframework.retry</groupId>
             <artifactId>spring-retry</artifactId>
+            <version>2.0.13</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
@@ -286,18 +293,18 @@
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-api</artifactId>
-            <version>0.11.5</version>
+            <version>0.13.0</version>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-impl</artifactId>
-            <version>0.11.5</version>
+            <version>0.13.0</version>
             <scope>runtime</scope>
         </dependency>
         <dependency>
             <groupId>io.jsonwebtoken</groupId>
             <artifactId>jjwt-jackson</artifactId>
-            <version>0.11.5</version>
+            <version>0.13.0</version>
             <scope>runtime</scope>
         </dependency>
 
@@ -313,25 +320,25 @@
         <dependency>
             <groupId>commons-io</groupId>
             <artifactId>commons-io</artifactId>
-            <version>2.18.0</version>
+            <version>2.22.0</version>
         </dependency>
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-compress</artifactId>
-            <version>1.27.1</version>
+            <version>1.28.0</version>
         </dependency>
 
         <!-- Spock testing framework -->
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-spring</artifactId>
-            <version>2.4-M5-groovy-4.0</version>
+            <version>2.4-groovy-5.0</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.spockframework</groupId>
             <artifactId>spock-core</artifactId>
-            <version>2.4-M5-groovy-4.0</version>
+            <version>2.4-groovy-5.0</version>
             <scope>test</scope>
         </dependency>
 
@@ -339,12 +346,12 @@
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy</artifactId>
-            <version>4.0.26</version>
+            <version>5.1.2</version>
         </dependency>
         <dependency>
             <groupId>org.apache.groovy</groupId>
             <artifactId>groovy-all</artifactId>
-            <version>4.0.26</version>
+            <version>5.1.2</version>
             <type>pom</type>
         </dependency>
 
@@ -352,7 +359,7 @@
         <dependency>
             <groupId>org.objenesis</groupId>
             <artifactId>objenesis</artifactId>
-            <version>3.4</version>
+            <version>3.6</version>
             <scope>test</scope>
         </dependency>
     </dependencies>

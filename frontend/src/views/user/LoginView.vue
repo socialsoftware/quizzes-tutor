@@ -2,28 +2,33 @@
   <div class="container"></div>
 </template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { useStore } from '@/store';
+import { useRoute, useRouter } from 'vue-router';
 
-@Component
-export default class LoginView extends Vue {
-  async created() {
-    await this.$store.dispatch('loading');
-    if (this.$route.query.error) {
-      await this.$store.dispatch('error', 'Fenix authentication error');
-      await this.$router.push({ name: 'home' });
-    } else {
-      try {
-        await this.$store.dispatch('fenixLogin', this.$route.query.code);
-        await this.$router.push({ name: 'courses' });
-      } catch (error) {
-        await this.$store.dispatch('error', error);
-        await this.$router.push({ name: 'home' });
+const store = useStore();
+const route = useRoute();
+const router = useRouter();
+
+onMounted(async () => {
+  store.setLoading();
+  if (route.query.error) {
+    store.setError('Fenix authentication error');
+    await router.push({ name: 'home' });
+  } else {
+    try {
+      if (route.query.code) {
+        await store.fenixLogin(route.query.code as string);
+        await router.push({ name: 'courses' });
       }
+    } catch (error) {
+      store.setError(error as string);
+      await router.push({ name: 'home' });
     }
-    await this.$store.dispatch('clearLoading');
   }
-}
+  store.clearLoading();
+});
 </script>
 
 <style lang="scss" scoped>

@@ -19,10 +19,11 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 @Entity
 @Table(name = "users")
 @Inheritance(strategy = InheritanceType.SINGLE_TABLE)
-@DiscriminatorColumn(name = "user_type",
-        discriminatorType = DiscriminatorType.STRING)
+@DiscriminatorColumn(name = "user_type", discriminatorType = DiscriminatorType.STRING)
 public abstract class User implements DomainEntity {
-    public enum Role {STUDENT, TEACHER, ADMIN, DEMO_ADMIN}
+    public enum Role {
+        STUDENT, TEACHER, ADMIN, DEMO_ADMIN
+    }
 
     public static class UserTypes {
         public static final String STUDENT = "student";
@@ -40,7 +41,7 @@ public abstract class User implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "`KEY`", unique = true)
+    @Column(name = "\"key\"", unique = true)
     private Integer key;
 
     @Enumerated(EnumType.STRING)

@@ -4,20 +4,29 @@ import org.apache.catalina.connector.ClientAbortException;
 import org.hibernate.exception.LockAcquisitionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.HttpStatusCode;
+import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
+import org.springframework.web.context.request.WebRequest;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.ACCESS_DENIED;
 
-// https://www.toptal.com/java/spring-boot-rest-api-error-handling
-
 @RestControllerAdvice
 public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     private static Logger myLogger = LoggerFactory.getLogger(CustomExceptionHandler.class);
+
+    @Override
+    protected ResponseEntity<Object> handleHttpMessageNotReadable(HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatusCode status, WebRequest request) {
+        myLogger.error("HTTP MESSAGE NOT READABLE: " + ex.getMessage(), ex);
+        return super.handleHttpMessageNotReadable(ex, headers, status, request);
+    }
 
     @ExceptionHandler(TutorException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
@@ -42,7 +51,6 @@ public class CustomExceptionHandler extends ResponseEntityExceptionHandler {
     @ExceptionHandler(ClientAbortException.class)
     @ResponseStatus(HttpStatus.OK)
     public void clientAbortException(ClientAbortException e) {
-        // Ignore my broken pipe. It still works
     }
 
     @ExceptionHandler(Exception.class)

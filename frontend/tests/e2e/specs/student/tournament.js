@@ -71,6 +71,7 @@ describe('Student walkthrough', () => {
     cy.cancelTournament('1');
   });
 
+
   it('login creates and remove tournament', () => {
     cy.seeTournamentsLists('Open');
     cy.createTournament('1');

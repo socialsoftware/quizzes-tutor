@@ -20,11 +20,9 @@ import java.util.stream.IntStream;
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Entity
-@Table(
-        name = "quizzes",
-        indexes = {
-                @Index(name = "quizzes_indx_0", columnList = "course_execution_id")
-        })
+@Table(name = "quizzes", indexes = {
+        @Index(name = "quizzes_indx_0", columnList = "course_execution_id")
+})
 public class Quiz implements DomainEntity {
     public enum QuizType {
         EXAM, TEST, GENERATED, PROPOSED, IN_CLASS, TOURNAMENT
@@ -34,7 +32,7 @@ public class Quiz implements DomainEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer id;
 
-    @Column(name = "`KEY`")
+    @Column(name = "\"key\"")
     private Integer key;
 
     @Column(name = "creation_date")
@@ -129,7 +127,8 @@ public class Quiz implements DomainEntity {
         quiz.getQuizQuestions().stream()
                 .sorted(Comparator.comparing(QuizQuestion::getSequence))
                 .forEach(quizQuestion -> {
-                    QuizQuestion newQuizQuestion = new QuizQuestion(this, quizQuestion.getQuestion(), this.getQuizQuestionsNumber());
+                    QuizQuestion newQuizQuestion = new QuizQuestion(this, quizQuestion.getQuestion(),
+                            this.getQuizQuestionsNumber());
 
                 });
     }
@@ -317,7 +316,8 @@ public class Quiz implements DomainEntity {
     }
 
     public List<QuizQuestion> getQuizQuestions() {
-        return this.quizQuestions.stream().sorted(Comparator.comparing(QuizQuestion::getSequence)).collect(Collectors.toList());
+        return this.quizQuestions.stream().sorted(Comparator.comparing(QuizQuestion::getSequence))
+                .collect(Collectors.toList());
     }
 
     public int getQuizQuestionsNumber() {

@@ -2,134 +2,126 @@
   <div id="ViewCodeMirror">
     <BaseCodeEditor
       ref="myCmView"
-      :code.sync="questionDetails.code"
-      :language.sync="questionDetails.language"
+      v-model:code="questionDetails.code"
+      v-model:language="questionDetails.language"
       :editable="false"
+      :customExtensions="customExtensions"
     />
   </div>
 </template>
 
-<script lang="ts">
-import { Component, Vue, Prop, Watch } from 'vue-property-decorator';
-import { convertMarkDown } from '@/services/ConvertMarkdownService';
+<script setup lang="ts">
+import { computed } from 'vue';
 import Image from '@/models/management/Image';
 import CodeFillInQuestionDetails from '@/models/management/questions/CodeFillInQuestionDetails';
 import CodeFillInAnswerDetails from '@/models/management/questions/CodeFillInAnswerDetails';
 import BaseCodeEditor from '@/components/BaseCodeEditor.vue';
 import CodeFillInSpot from '@/models/management/questions/CodeFillInSpot';
 import Option from '@/models/management/Option';
+import { WidgetType, Decoration, MatchDecorator, ViewPlugin } from '@codemirror/view';
 
-@Component({
-  components: {
-    BaseCodeEditor,
-  },
-})
-export default class ShowCodeFillInQuestion extends Vue {
-  @Prop({ type: CodeFillInQuestionDetails, required: true })
-  readonly questionDetails!: CodeFillInQuestionDetails;
-  @Prop() readonly answerDetails?: CodeFillInAnswerDetails;
+const props = defineProps<{
+  questionDetails: CodeFillInQuestionDetails;
+  answerDetails?: CodeFillInAnswerDetails;
+}>();
 
-  convertMarkDown(text: string, image: Image | null = null): string {
-    return convertMarkDown(text, image);
+
+class SelectWidget extends WidgetType {
+  constructor(public slotNumber: number, public propsRef: any) {
+    super();
   }
 
-  get baseCodeEditorInstance(): BaseCodeEditor {
-    return this.$refs.myCmView as BaseCodeEditor;
+  eq(other: SelectWidget) {
+    return this.slotNumber === other.slotNumber;
   }
 
-  studentAnswered(option: Option): boolean {
-    return (
-      (this.answerDetails &&
-        this.answerDetails.options.some((x) => x.id === option.id)) ||
-      false
-    );
-  }
+  toDOM() {
+    const d = document.createElement('select');
+    d.className = 'code-dropdown';
+    d.name = 'slot-' + this.slotNumber;
+    
+    const studentAnsweredLocal = (option: Option): boolean => {
+      return (
+        (this.propsRef.answerDetails &&
+          this.propsRef.answerDetails.options.some((x: any) => x.id === option.id)) ||
+        false
+      );
+    };
 
-  createOptionChild(option: Option, index: number) {
-    const o = document.createElement('option');
-    o.appendChild(
-      document.createTextNode(
-        (this.studentAnswered(option) ? ' S - ' : '') +
-          (option.correct ? ' ✔: ' : ' ✖: ') +
-          option.content
-      )
-    );
-    o.value = option.id?.toString() || index.toString();
-    return o;
-  }
-
-  addOptions(select: HTMLSelectElement, options: Option[]) {
-    options.forEach((opt: Option, i: number) => {
-      let option = this.createOptionChild(opt, i);
-      if (this.studentAnswered(opt)) {
-        select.prepend(option);
-      } else {
-        select.appendChild(option);
-      }
-    });
-  }
-
-  getOptions(name: number, options: CodeFillInSpot[]): Option[] {
-    const result = options.find((el) => el.sequence === name);
-    return result?.options || [];
-  }
-
-  getSlotNumber(html: string): number {
-    const num = html.match(/\d+/);
-    return Number(num);
-  }
-
-  replaceDropdowns() {
-    document.querySelectorAll('.cm-custom-drop-down').forEach((e) => {
-      const d = document.createElement('select');
-      d.className = 'code-dropdown';
-      d.name = e.innerHTML;
-      e.parentNode?.replaceChild(d, e);
-      this.addOptions(
-        d,
-        this.getOptions(
-          this.getSlotNumber(e.innerHTML),
-          this.questionDetails.fillInSpots
+    const createOptionChildLocal = (option: Option, index: number) => {
+      const o = document.createElement('option');
+      o.appendChild(
+        document.createTextNode(
+          (studentAnsweredLocal(option) ? ' S - ' : '') +
+            (option.correct ? ' ✔: ' : ' ✖: ') +
+            option.content
         )
       );
-      d.selectedIndex = 0;
-    });
-  }
+      o.value = option.id?.toString() || index.toString();
+      return o;
+    };
 
-  updateQuestion() {
-    this.baseCodeEditorInstance.codemirror.refresh();
-    this.replaceDropdowns();
-    this.baseCodeEditorInstance.CodemirrorUpdated = true;
-    document.body.addEventListener(
-      'mousedown',
-      function (evt: Event) {
-        let htmlTarget = evt?.target as HTMLElement;
-        if (htmlTarget?.className === 'code-dropdown') {
-          evt.stopPropagation();
+    const addOptionsLocal = (select: HTMLSelectElement, options: Option[]) => {
+      options.forEach((opt: Option, i: number) => {
+        const optionEl = createOptionChildLocal(opt, i);
+        if (studentAnsweredLocal(opt)) {
+          select.prepend(optionEl);
+        } else {
+          select.appendChild(optionEl);
         }
-      },
-      true
+      });
+    };
+
+    const getOptionsLocal = (name: number, options: CodeFillInSpot[]): Option[] => {
+      const result = options.find((el: any) => el.sequence === name);
+      return result?.options || [];
+    };
+
+    addOptionsLocal(
+      d,
+      getOptionsLocal(this.slotNumber, this.propsRef.questionDetails.fillInSpots)
     );
-  }
+    d.selectedIndex = 0;
 
-  @Watch('questionDetails', { immediate: false, deep: true })
-  updateOnQuestionChange() {
-    if (this.baseCodeEditorInstance.CodemirrorUpdated) {
-      this.refreshQuestion();
+    let isCorrect = false;
+    let isAnswered = false;
+    const opts = getOptionsLocal(this.slotNumber, this.propsRef.questionDetails.fillInSpots);
+    for (const opt of opts) {
+      if (studentAnsweredLocal(opt)) {
+        isAnswered = true;
+        if (opt.correct) isCorrect = true;
+      }
     }
-  }
+    if (isAnswered) {
+      d.classList.add(isCorrect ? 'correct' : 'incorrect');
+    }
 
-  refreshQuestion() {
-    this.baseCodeEditorInstance.CodemirrorUpdated = false;
-    setTimeout(() => {
-      this.updateQuestion();
-    }, 1000);
-  }
-
-  mounted() {
-    this.refreshQuestion();
+    return d;
   }
 }
+
+const customExtensions = computed(() => {
+  const slotMatcher = new MatchDecorator({
+    regexp: /\{\{slot-(\d+)\}\}/g,
+    decoration: (match) => Decoration.replace({
+      widget: new SelectWidget(Number(match[1]), props)
+    })
+  });
+
+  const slotPlugin = ViewPlugin.fromClass(class {
+    decorations: any;
+    constructor(view: any) {
+      this.decorations = slotMatcher.createDeco(view);
+    }
+    update(update: any) {
+      this.decorations = slotMatcher.updateDeco(update, this.decorations);
+    }
+  }, {
+    decorations: v => v.decorations
+  });
+
+  return [slotPlugin];
+});
 </script>
 
 <style>
@@ -151,7 +143,7 @@ export default class ShowCodeFillInQuestion extends Vue {
 #ViewCodeMirror select.code-dropdown option {
   color: #272822;
 }
-#ViewCodeMirror .CodeMirror {
+#ViewCodeMirror .cm-editor {
   border: 1px solid #eee;
   height: auto;
 }

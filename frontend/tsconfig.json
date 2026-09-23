@@ -2,6 +2,7 @@
   "compilerOptions": {
     "target": "esnext",
     "module": "esnext",
+    "skipLibCheck": true,
     "strict": true,
     "jsx": "preserve",
     "importHelpers": true,
@@ -12,15 +13,14 @@
     "sourceMap": true,
     "baseUrl": ".",
     "types": [
-      "webpack-env",
-      "vuetify",
-      "jest"
+      "vite/client",
+      "vuetify"
     ],
     "paths": {
       "@/*": [
         "src/*"
       ],
-      "plotly.js-cartesian-dist-min":[
+      "plotly.js-cartesian-dist-min": [
         "node_modules/@types/plotly.js"
       ]
     },

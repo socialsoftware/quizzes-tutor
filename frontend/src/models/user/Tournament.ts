@@ -2,7 +2,7 @@ import User from '@/models/user/User';
 import Topic from '@/models/management/Topic';
 import { ISOtoString } from '@/services/ConvertDateService';
 import TournamentParticipant from '@/models/user/TournamentParticipant';
-import Store from '@/store';
+import { useStore } from '@/store';
 
 export default class Tournament {
   id!: number;
@@ -95,12 +95,12 @@ export default class Tournament {
 
   isAnswered() {
     return this.participants.find(
-      (participant) => participant.userId === Store.getters.getUser.id
+      (participant) => participant.userId === useStore().getUser?.id
     )?.answered;
   }
 
   isOwner() {
-    return this.creator.id === Store.getters.getUser.id;
+    return this.creator.id === useStore().getUser?.id;
   }
 
   canJoinPublic() {

@@ -2,7 +2,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
   function validateQuestion(title, content) {
     cy.get('[data-cy="showQuestionDialog"]')
       .should('be.visible')
-      .within(($ls) => {
+      .within((_$ls) => {
         cy.get('.headline').should('contain', title);
         cy.get('span > p').should('contain', content);
       });
@@ -15,9 +15,9 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
     validateQuestion(title, content);
 
-    cy.get('button').contains('close').should('be.visible').click();
+    cy.get('body').type('{esc}');
 
-    Cypress.on('uncaught:exception', (err, runnable) => {
+    Cypress.on('uncaught:exception', (err, _runnable) => {
       console.log(err);
       // returning false here prevents Cypress from
       // failing the test
@@ -37,8 +37,8 @@ describe('Manage Code Fill In Questions Walk-through', () => {
     cy.demoTeacherLogin();
     cy.intercept('PUT', '/questions/courses/*').as('putQuestions');
     cy.intercept('GET', '/topics/courses/*').as('getTopics');
-    cy.get('[data-cy="managementMenuButton"]').click();
-    cy.get('[data-cy="questionsTeacherMenuButton"]').click();
+    cy.get('[data-cy="managementMenuButton"]').click({ force: true });
+    cy.get('[data-cy="questionsTeacherMenuButton"]').click({ force: true });
     cy.get('[data-cy="submitQueryButton"]').click();
 
     cy.wait('@putQuestions').its('response.statusCode').should('eq', 200);
@@ -51,7 +51,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
   });
 
   it('Creates a new code fill in question', function () {
-    cy.get('button').contains('New Question').click();
+    cy.get('button').contains('New Question').click({ force: true });
 
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
@@ -60,40 +60,41 @@ describe('Manage Code Fill In Questions Walk-through', () => {
     cy.get('span.headline').should('contain', 'New Question');
 
     cy.get(
-      '[data-cy="questionTitleTextArea"]'
-    ).type('Cypress Question Example - 01', { force: true });
-    cy.get('[data-cy="questionQuestionTextArea"]').type(
+      '[data-cy="questionTitleTextArea"] input'
+    ).first().type('Cypress Question Example - 01', { force: true });
+    cy.get('[data-cy="questionQuestionTextArea"] textarea').first().type(
       'Cypress Question Example - Content - 01',
       {
         force: true,
       }
     );
 
-    cy.get('[data-cy="questionTypeInput"]')
-      .type('code_fill_in', { force: true })
-      .click({ force: true });
+    cy.get('[data-cy="questionTypeInput"]').find('.v-field').click({ force: true });
+    cy.wait(500);
+    cy.get('.v-list-item-title').contains('code fill in', { matchCase: false }).click({ force: true });
 
     cy.wait(1000);
 
-    cy.get('.CodeMirror textarea').type('public class TestCypress {}', {
+    cy.get('.cm-content').type('public class TestCypress {}', {
       force: true,
     });
 
-    cy.get('.CodeMirror textarea').type('{home}{selectall}', {
+    cy.get('.cm-content').type('{home}{selectall}', {
       force: true,
     });
 
     // required because the select above is not working properly
-    cy.get('.CodeMirror')
+    cy.get('.base-code-editor')
       .first()
       .then((editor) => {
-        const codeMirror = editor[0].CodeMirror;
-        cy.stub(codeMirror, 'getSelection').returns('public');
+        editor[0].cypressSelectionText = 'public';
       });
 
     cy.get('button')
       .contains('answer slot', { matchCase: false })
       .click({ force: true });
+
+    cy.get('.v-card-title').should('contain', 'Answer Slot #1');
 
     cy.intercept('POST', '/questions/courses/*').as('postQuestion');
 
@@ -112,11 +113,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
   });
 
   it('Can view question (with button)', function () {
-    cy.get('tbody tr')
-      .first()
-      .within(($list) => {
-        cy.get('button').contains('visibility').click();
-      });
+    cy.get('[data-cy="showQuestionDialogButton"]').first().click({ force: true });
 
     cy.wait(1000);
 
@@ -125,7 +122,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
       'Cypress Question Example - Content - 01'
     );
 
-    cy.get('button').contains('close').click();
+    cy.get('body').type('{esc}');
   });
 
   it('Can view question (with click)', function () {
@@ -138,7 +135,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
       'Cypress Question Example - Content - 01'
     );
 
-    cy.get('button').contains('close').click();
+    cy.get('body').type('{esc}');
   });
 
   it('Can update title (with right-click)', function () {
@@ -146,8 +143,8 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
     cy.get('tbody tr')
       .first()
-      .within(($list) => {
-        cy.get('button').contains('edit').click();
+      .within((_$list) => {
+        cy.get('[data-cy="editQuestionButton"]').first().click({ force: true });
       });
 
     cy.wait(1000); //making sure codemirror loaded
@@ -155,10 +152,10 @@ describe('Manage Code Fill In Questions Walk-through', () => {
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
       .should('be.visible')
-      .within(($list) => {
+      .within((_$list) => {
         cy.get('span.headline').should('contain', 'Edit Question');
 
-        cy.get('[data-cy="questionTitleTextArea"]')
+        cy.get('[data-cy="questionTitleTextArea"] input').first()
           .clear({ force: true })
           .type('Cypress Question Example - 01 - Edited', { force: true });
 
@@ -178,8 +175,8 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
     cy.get('tbody tr')
       .first()
-      .within(($list) => {
-        cy.get('button').contains('edit').click();
+      .within((_$list) => {
+        cy.get('[data-cy="editQuestionButton"]').first().click({ force: true });
       });
 
     cy.wait(1000); //making sure codemirror loaded
@@ -187,10 +184,10 @@ describe('Manage Code Fill In Questions Walk-through', () => {
     cy.get('[data-cy="createOrEditQuestionDialog"]')
       .parent()
       .should('be.visible')
-      .within(($list) => {
+      .within((_$list) => {
         cy.get('span.headline').should('contain', 'Edit Question');
 
-        cy.get('[data-cy="questionQuestionTextArea"]')
+        cy.get('[data-cy="questionQuestionTextArea"] textarea').first()
           .clear({ force: true })
           .type('Cypress New Content For Question!', { force: true });
 
@@ -208,11 +205,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
   // missing update all with questions as well and change data. Should also be tested for errors :D
 
   it('Can duplicate question', function () {
-    cy.get('tbody tr')
-      .first()
-      .within(($list) => {
-        cy.get('button').contains('cached').click();
-      });
+    cy.get('[data-cy="duplicateQuestionButton"]').first().click({ force: true });
 
     cy.wait(1000); //making sure codemirror loaded
 
@@ -222,10 +215,10 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
     cy.get('span.headline').should('contain', 'New Question');
 
-    cy.get('[data-cy="questionTitleTextArea"]')
+    cy.get('[data-cy="questionTitleTextArea"] input').first()
       .should('have.value', 'Cypress Question Example - 01 - Edited')
       .type('{end} - DUP', { force: true });
-    cy.get('[data-cy="questionQuestionTextArea"]').should(
+    cy.get('[data-cy="questionQuestionTextArea"] textarea').first().should(
       'have.value',
       'Cypress New Content For Question!'
     );
@@ -250,11 +243,7 @@ describe('Manage Code Fill In Questions Walk-through', () => {
 
   it('Can delete created question', function () {
     cy.intercept('DELETE', '/questions/*').as('deleteQuestion');
-    cy.get('tbody tr')
-      .first()
-      .within(($list) => {
-        cy.get('button').contains('delete').click();
-      });
+    cy.get('[data-cy="deleteQuestionButton"]').first().click({ force: true });
 
     cy.wait('@deleteQuestion').its('response.statusCode').should('eq', 200);
   });

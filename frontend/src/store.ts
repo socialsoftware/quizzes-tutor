@@ -1,5 +1,4 @@
-import Vue from 'vue';
-import Vuex from 'vuex';
+import { defineStore } from 'pinia';
 import RemoteServices from '@/services/RemoteServices';
 import AuthDto from '@/models/user/AuthDto';
 import Course from '@/models/user/Course';
@@ -21,220 +20,144 @@ interface State {
   loading: boolean;
 }
 
-const state: State = {
-  token: '',
-  user: null,
-  currentCourse: null,
-  statementQuiz: null,
-  correctAnswers: [],
-  error: false,
-  errorMessage: '',
-  notification: false,
-  notificationMessageList: [],
-  loading: false,
-};
-
-Vue.use(Vuex);
-Vue.config.devtools = true;
-
-export default new Vuex.Store({
-  state: state,
-  mutations: {
-    initialiseStore(state) {
+export const useStore = defineStore('main', {
+  state: (): State => ({
+    token: '',
+    user: null,
+    currentCourse: null,
+    statementQuiz: null,
+    correctAnswers: [],
+    error: false,
+    errorMessage: '',
+    notification: false,
+    notificationMessageList: [],
+    loading: false,
+  }),
+  getters: {
+    isLoggedIn(state): boolean { return !!state.token; },
+    isAdmin(state): boolean {
+      return !!state.token && state.user !== null && (state.user.admin || state.user.role == 'DEMO_ADMIN');
+    },
+    isTeacher(state): boolean {
+      return !!state.token && state.user !== null && state.user.role == 'TEACHER';
+    },
+    isStudent(state): boolean {
+      return !!state.token && state.user !== null && state.user.role == 'STUDENT';
+    },
+    getToken(state): string { return state.token; },
+    getUser(state): AuthUser | null { return state.user; },
+    getCurrentCourse(state): Course | null { return state.currentCourse; },
+    getStatementQuiz(state): StatementQuiz | null { return state.statementQuiz; },
+    getCorrectAnswers(state): StatementCorrectAnswer[] { return state.correctAnswers; },
+    getError(state): boolean { return state.error; },
+    getErrorMessage(state): string { return state.errorMessage; },
+    getNotification(state): boolean { return state.notification; },
+    getNotificationMessageList(state): string[] { return state.notificationMessageList; },
+    getLoading(state): boolean { return state.loading; },
+  },
+  actions: {
+    initialiseStore() {
       const token = localStorage.getItem('token');
-      if (token) {
-        state.token = token;
-      }
+      if (token) this.token = token;
       const user = localStorage.getItem('user');
       if (user) {
-        state.user = JSON.parse(user);
+        try {
+          this.user = JSON.parse(user);
+        } catch {
+          // stored value is not valid JSON; keep the default
+        }
       }
       const currentCourse = localStorage.getItem('currentCourse');
       if (currentCourse) {
-        state.currentCourse = JSON.parse(currentCourse);
+        try {
+          this.currentCourse = JSON.parse(currentCourse);
+        } catch {
+          // stored value is not valid JSON; keep the default
+        }
       }
     },
-    login(state, authResponse: AuthDto) {
+    loginMut(authResponse: AuthDto) {
       localStorage.setItem('token', authResponse.token);
-      state.token = authResponse.token;
+      this.token = authResponse.token;
       localStorage.setItem('user', JSON.stringify(authResponse.user));
-      state.user = authResponse.user;
+      this.user = authResponse.user;
       localStorage.setItem('currentCourse', '');
-      state.currentCourse = null;
+      this.currentCourse = null;
       localStorage.setItem('statementQuiz', '');
-      state.statementQuiz = null;
+      this.statementQuiz = null;
       localStorage.setItem('correctAnswers', '');
-      state.correctAnswers = [];
+      this.correctAnswers = [];
     },
-    logout(state) {
+    logoutMut() {
       localStorage.setItem('token', '');
-      state.token = '';
+      this.token = '';
       localStorage.setItem('user', '');
-      state.user = null;
+      this.user = null;
       localStorage.setItem('currentCourse', '');
-      state.currentCourse = null;
+      this.currentCourse = null;
       localStorage.setItem('statementQuiz', '');
-      state.statementQuiz = null;
+      this.statementQuiz = null;
       localStorage.setItem('correctAnswers', '');
-      state.correctAnswers = [];
+      this.correctAnswers = [];
     },
-    error(state, errorMessage: string) {
-      state.error = true;
-      state.errorMessage = errorMessage;
+    setError(errorMessage: string) {
+      this.error = true;
+      this.errorMessage = errorMessage;
     },
-    clearError(state) {
-      state.error = false;
-      state.errorMessage = '';
+    clearError() {
+      this.error = false;
+      this.errorMessage = '';
     },
-    notification(state, notificationMessageList: string[]) {
-      state.notification = true;
-      state.notificationMessageList = notificationMessageList;
+    setNotification(notificationMessageList: string[]) {
+      this.notification = true;
+      this.notificationMessageList = notificationMessageList;
     },
-    clearNotification(state) {
-      state.notification = false;
-      state.notificationMessageList = [];
+    clearNotification() {
+      this.notification = false;
+      this.notificationMessageList = [];
     },
-    loading(state) {
-      state.loading = true;
-    },
-    clearLoading(state) {
-      state.loading = false;
-    },
-    currentCourse(state, currentCourse: Course) {
+    setLoading() { this.loading = true; },
+    clearLoading() { this.loading = false; },
+    setCurrentCourse(currentCourse: Course) {
       localStorage.setItem('currentCourse', JSON.stringify(currentCourse));
-      state.currentCourse = currentCourse;
+      this.currentCourse = currentCourse;
     },
-    statementQuiz(state, statementQuiz: StatementQuiz) {
-      state.statementQuiz = statementQuiz;
-    },
-    correctAnswers(state, correctAnswers: StatementCorrectAnswer[]) {
-      state.correctAnswers = correctAnswers;
-    },
-  },
-  actions: {
-    error({ commit }, errorMessage) {
-      commit('error', errorMessage);
-    },
-    clearError({ commit }) {
-      commit('clearError');
-    },
-    notification({ commit }, message) {
-      commit('notification', message);
-    },
-    clearNotification({ commit }) {
-      commit('clearNotification');
-    },
-    loading({ commit }) {
-      commit('loading');
-    },
-    clearLoading({ commit }) {
-      commit('clearLoading');
-    },
-    async fenixLogin({ commit }, code) {
+    setStatementQuiz(statementQuiz: StatementQuiz) { this.statementQuiz = statementQuiz; },
+    setCorrectAnswers(correctAnswers: StatementCorrectAnswer[]) { this.correctAnswers = correctAnswers; },
+
+    // Async actions
+    async fenixLogin(code: string) {
       const authResponse = await RemoteServices.fenixLogin(code);
-      commit('login', authResponse);
+      this.loginMut(authResponse);
     },
-    async externalLogin({ commit }, user: ExternalUser) {
-      const authResponse = await RemoteServices.externalLogin(
-        user.username,
-        user.password
-      );
-      commit('login', authResponse);
+    async externalLogin(user: ExternalUser) {
+      const authResponse = await RemoteServices.externalLogin(user.username, user.password);
+      this.loginMut(authResponse);
     },
-    async demoStudentLogin({ commit }) {
+    async demoStudentLogin() {
       const authResponse = await RemoteServices.demoStudentLogin(false);
-      commit('login', authResponse);
-      commit(
-        'currentCourse',
-        (Object.values(authResponse.user.courses)[0] as Course[])[0]
-      );
+      this.loginMut(authResponse);
+      const courses = Object.values(authResponse.user.courses)[0] as Course[];
+      if (courses && courses.length > 0) this.setCurrentCourse(courses[0]);
     },
-    async demoNewStudentLogin({ commit }) {
+    async demoNewStudentLogin() {
       const authResponse = await RemoteServices.demoStudentLogin(true);
-      commit('login', authResponse);
-      commit(
-        'currentCourse',
-        (Object.values(authResponse.user.courses)[0] as Course[])[0]
-      );
+      this.loginMut(authResponse);
+      const courses = Object.values(authResponse.user.courses)[0] as Course[];
+      if (courses && courses.length > 0) this.setCurrentCourse(courses[0]);
     },
-    async demoTeacherLogin({ commit }) {
+    async demoTeacherLogin() {
       const authResponse = await RemoteServices.demoTeacherLogin();
-      commit('login', authResponse);
-      commit(
-        'currentCourse',
-        (Object.values(authResponse.user.courses)[0] as Course[])[0]
-      );
+      this.loginMut(authResponse);
+      const courses = Object.values(authResponse.user.courses)[0] as Course[];
+      if (courses && courses.length > 0) this.setCurrentCourse(courses[0]);
     },
-    async demoAdminLogin({ commit }) {
+    async demoAdminLogin() {
       const authResponse = await RemoteServices.demoAdminLogin();
-      commit('login', authResponse);
+      this.loginMut(authResponse);
     },
-    logout({ commit }) {
-      return new Promise<void>((resolve) => {
-        commit('logout');
-        resolve();
-      });
-    },
-    currentCourse({ commit }, currentCourse) {
-      commit('currentCourse', currentCourse);
-    },
-    statementQuiz({ commit }, statementQuiz) {
-      commit('statementQuiz', statementQuiz);
-    },
-    correctAnswers({ commit }, correctAnswers) {
-      commit('correctAnswers', correctAnswers);
-    },
-  },
-  getters: {
-    isLoggedIn(state): boolean {
-      return !!state.token;
-    },
-    isAdmin(state): boolean {
-      return (
-        !!state.token &&
-        state.user !== null &&
-        (state.user.admin || state.user.role == 'DEMO_ADMIN')
-      );
-    },
-    isTeacher(state): boolean {
-      return (
-        !!state.token && state.user !== null && state.user.role == 'TEACHER'
-      );
-    },
-    isStudent(state): boolean {
-      return (
-        !!state.token && state.user !== null && state.user.role == 'STUDENT'
-      );
-    },
-    getToken(state): string {
-      return state.token;
-    },
-    getUser(state): AuthUser | null {
-      return state.user;
-    },
-    getCurrentCourse(state): Course | null {
-      return state.currentCourse;
-    },
-    getStatementQuiz(state): StatementQuiz | null {
-      return state.statementQuiz;
-    },
-    getCorrectAnswers(state): StatementCorrectAnswer[] | null {
-      return state.correctAnswers;
-    },
-    getError(state): boolean {
-      return state.error;
-    },
-    getErrorMessage(state): string {
-      return state.errorMessage;
-    },
-    getNotification(state): boolean {
-      return state.notification;
-    },
-    getNotificationMessageList(state): string[] {
-      return state.notificationMessageList;
-    },
-    getLoading(state): boolean {
-      return state.loading;
-    },
+    async logout() {
+      this.logoutMut();
+    }
   },
 });

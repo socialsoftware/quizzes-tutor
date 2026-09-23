@@ -1,27 +1,106 @@
-import Vue from 'vue';
-import Vuetify from 'vuetify/lib';
-import 'vuetify/dist/vuetify.min.css';
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@mdi/font/css/materialdesignicons.css';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
+import 'vuetify/styles';
+import { createVuetify } from 'vuetify';
+import * as components from 'vuetify/components';
+import * as directives from 'vuetify/directives';
+import { aliases } from 'vuetify/iconsets/mdi';
 
-Vue.use(Vuetify);
+import { h } from 'vue';
+import type { IconSet, IconProps } from 'vuetify';
 
-const vuetify = new Vuetify({
-  icons: {
-    iconfont: 'mdi',
+const custom: IconSet = {
+  component: (props: IconProps) => {
+    const icon = props.icon as string;
+    if (typeof icon !== 'string') return h(props.tag);
+
+    if (icon.startsWith('fa') && icon.includes('-')) {
+      return h(props.tag, { class: [icon] });
+    } else if (icon.startsWith('mdi-')) {
+      return h(props.tag, { class: ['mdi', icon] });
+    } else {
+      return h(props.tag, { class: ['material-icons'] }, icon);
+    }
   },
-  iconfont: 'fa',
+};
+
+export default createVuetify({
+  components,
+  directives,
+  defaults: {
+    VAppBar: {
+      height: 64,
+      elevation: 4,
+    },
+    VBtn: {
+      variant: 'elevated',
+      style: 'text-transform: uppercase; letter-spacing: 0.0892857143em;',
+    },
+    VCardActions: {
+      VBtn: {
+        variant: 'elevated',
+      },
+    },
+    VTextField: {
+      variant: 'underlined',
+    },
+    VTextarea: {
+      variant: 'underlined',
+    },
+    VAutocomplete: {
+      variant: 'underlined',
+    },
+    VCombobox: {
+      variant: 'underlined',
+    },
+    VSelect: {
+      variant: 'underlined',
+    },
+    VDialog: {
+      width: 'auto',
+    },
+    VMenu: {
+      offset: 8,
+    },
+    VList: {
+      density: 'compact',
+    },
+    VDataTable: {
+      itemsPerPageText: 'Rows per page:',
+      density: 'comfortable',
+    },
+    VDataTableServer: {
+      itemsPerPageText: 'Rows per page:',
+      density: 'comfortable',
+    },
+  },
+  icons: {
+    defaultSet: 'custom',
+    aliases,
+    sets: {
+      custom,
+    },
+  },
   theme: {
+    defaultTheme: 'light',
     themes: {
+      light: {
+        colors: {
+          primary: '#1976D2',
+          secondary: '#424242',
+          accent: '#8c9eff',
+          error: '#7f0000',   // vermelho mais escuro e carregado
+        }
+      },
       dark: {
-        primary: 'blue',
-        secondary: '#b0bec5',
-        accent: '#8c9eff',
-        error: '#b71c1c',
+        colors: {
+          primary: '#1976D2',
+          secondary: '#424242',
+          accent: '#8c9eff',
+          error: '#7f0000',   // vermelho mais escuro e carregado
+        }
       },
     },
   },
 });
-
-export default vuetify;

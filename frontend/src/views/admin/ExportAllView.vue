@@ -1,21 +1,21 @@
 <template><div></div></template>
 
-<script lang="ts">
-import { Component, Vue } from 'vue-property-decorator';
+<script setup lang="ts">
+import { onMounted } from 'vue';
+import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 
-@Component
-export default class ExportAllView extends Vue {
-  async created() {
-    await this.$store.dispatch('loading');
-    try {
-      await RemoteServices.exportAll();
-    } catch (error) {
-      await this.$store.dispatch('error', error);
-    }
-    await this.$store.dispatch('clearLoading');
+const store = useStore();
+
+onMounted(async () => {
+  store.setLoading();
+  try {
+    await RemoteServices.exportAll();
+  } catch (error) {
+    store.setError(error as string);
   }
-}
+  store.clearLoading();
+});
 </script>
 
 <style lang="scss" scoped></style>
