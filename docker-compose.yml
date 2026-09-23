@@ -1,6 +1,6 @@
 services:
   postgres:
-    image: postgres:18-alpine
+    image: postgres:alpine
     container_name: postgres
     command: postgres -c 'max_connections=50'
     ports:
