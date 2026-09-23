@@ -150,11 +150,9 @@ npm run cypress                                                    # interactive
 
 > **Use Firefox, not the bundled Electron.** Cypress 16 deprecates Electron, and its renderer
 > dies partway through the longer specs: the page goes blank and the next selector times out.
-> The same suite scores **34/55 on Electron and 54/55 on Firefox**, so `test:e2e` and CI both
+> The same suite scores **34/55 on Electron and 55/55 on Firefox**, so `test:e2e` and CI both
 > pass `--browser firefox`. Run it on an otherwise idle machine either way — running the suite
 > alongside a Maven build took it from 2 failing specs to 8.
->
-> The one remaining failure, `student/createRandomQuiz.js`, predates this and is unrelated.
 
 > **The suite is destructive.** `cy.deleteQuestionsAndAnswers()` in
 > `tests/e2e/support/database.js` issues `DELETE FROM` with no `WHERE` clause against

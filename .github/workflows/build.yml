@@ -28,16 +28,16 @@ jobs:
         options: --health-cmd pg_isready --health-interval 10s --health-timeout 5s --health-retries 5
 
     steps:
-    - uses: actions/checkout@v4
+    - uses: actions/checkout@v7
 
     - name: Set up JDK 25
-      uses: actions/setup-java@v4
+      uses: actions/setup-java@v6
       with:
         distribution: 'zulu'
         java-version: 25
 
     - name: Cache Maven dependencies
-      uses: actions/cache@v4
+      uses: actions/cache@v6
       with:
         path: ~/.m2/repository
         key: ${{ runner.os }}-maven-${{ hashFiles('**/pom.xml') }}
@@ -49,20 +49,21 @@ jobs:
       run: ./mvnw clean -Ptest test
         
     - name: Register backend code coverage
-      uses: codecov/codecov-action@v4
+      uses: codecov/codecov-action@v7
       with:
         token: ${{secrets.CODECOV_TOKEN}}
-        file: ./backend/target/site/jacoco/jacoco.xml
-        yml: ./backend/codecov.yml
+        files: ./backend/target/site/jacoco/jacoco.xml
+        # `yml` was never a valid input, so this config was silently ignored
+        codecov_yml_path: ./backend/codecov.yml
         
     - name: Publish backend unit tests Report
-      uses: scacap/action-surefire-report@v1
+      uses: ScalableCapital/action-surefire-report@v2
       with:
         check_name: Backend Unit Tests Report
         github_token: ${{ secrets.GITHUB_TOKEN }}
 
     - name: Use Node.js
-      uses: actions/setup-node@v4
+      uses: actions/setup-node@v7
       with:
         node-version: '24.x'
 
@@ -82,7 +83,7 @@ jobs:
         PSQL_INT_TEST_DB_PASSWORD: "postgres"
       
     - name: Publish integration tests Report
-      uses: scacap/action-surefire-report@v1
+      uses: ScalableCapital/action-surefire-report@v2
       with:
         check_name: Integration Tests Report
         github_token: ${{ secrets.GITHUB_TOKEN }}
@@ -100,11 +101,11 @@ jobs:
         PSQL_INT_TEST_DB_PASSWORD: "postgres"
              
     - name: Run Cypress tests
-      uses: cypress-io/github-action@v6
+      uses: cypress-io/github-action@v7
       with:
         record: true
         # Electron is deprecated in Cypress 16 and its renderer dies partway
-        # through the longer specs (34/55 passing, against 54/55 on Firefox).
+        # through the longer specs (34/55 passing, against 55/55 on Firefox).
         browser: firefox
         working-directory: frontend
         start: npm start

@@ -31,8 +31,16 @@ describe('Create Random Quiz', () => {
           'Option 3',
           'Option 4'
         );
+        cy.intercept('PUT', '/questions/*/topics').as('saveTopics');
         cy.get('[data-cy="Topics"]').eq(0).click();
-        cy.contains('Software Architecture').click();
+        // The option lives in the menu Vuetify teleports to the end of <body>.
+        // A bare `cy.contains` finds the chip of a question tagged in an
+        // earlier iteration first, and that chip is collapsed to zero width.
+        cy.get('.v-overlay-container .v-list-item')
+          .contains('Software Architecture')
+          .click();
+        cy.wait('@saveTopics').its('response.statusCode').should('eq', 200);
+        cy.get('body').type('{esc}');
     }
     
     cy.contains('Logout').click();
