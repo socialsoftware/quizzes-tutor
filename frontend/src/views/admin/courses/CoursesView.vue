@@ -163,6 +163,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, onMounted } from 'vue';
 import { useStore } from '@/store';
 import Course from '@/models/user/Course';
@@ -187,7 +188,7 @@ const search = ref('');
 
 const getRaw = (item: any): Course => (item as any).raw || item;
 
-const headers = [
+const headers = withV2ColumnWidths([
   { title: 'Actions', key: 'action', align: 'start', sortable: false, width: '25%' },
   { title: 'Course Type', key: 'courseType', align: 'center', width: '10%' },
   { title: 'Name', key: 'name', align: 'start', width: '25%' },
@@ -201,7 +202,7 @@ const headers = [
   { title: 'Number of Questions', key: 'numberOfQuestions', align: 'center', width: '5%' },
   { title: 'Number of Quizzes', key: 'numberOfQuizzes', align: 'center', width: '5%' },
   { title: 'Status', key: 'status', align: 'center', width: '5%' }
-] as any;
+] as any);
 
 onMounted(async () => {
   store.setLoading();

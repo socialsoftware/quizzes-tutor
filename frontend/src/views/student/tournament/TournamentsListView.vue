@@ -34,7 +34,7 @@
           <template v-slot:activator="{ props: activatorProps }">
             <span data-cy="EditTournament" v-bind="activatorProps" @click="editTournament((item as any).raw || item)">
               <v-icon
-                large
+                size="large"
                 class="mr-2"
                 >create</v-icon
               >
@@ -47,7 +47,7 @@
           <template v-slot:activator="{ props: activatorProps }">
             <span data-cy="JoinTournament" v-bind="activatorProps" @click="joinPublicTournament((item as any).raw || item)">
               <v-icon
-                large
+                size="large"
                 class="mr-2"
                 >fa-sign-in-alt</v-icon
               >
@@ -59,7 +59,7 @@
           <template v-slot:activator="{ props: activatorProps }">
             <span data-cy="JoinTournament" v-bind="activatorProps" @click="openPasswordDialog((item as any).raw || item)">
               <v-icon
-                large
+                size="large"
                 class="mr-2"
                 >fa-sign-in-alt</v-icon
               >
@@ -71,7 +71,7 @@
           <template v-slot:activator="{ props: activatorProps }">
             <span data-cy="LeaveTournament" v-bind="activatorProps" @click="leaveTournament((item as any).raw || item)">
               <v-icon
-                large
+                size="large"
                 class="mr-2"
                 >fas fa-sign-out-alt</v-icon
               >
@@ -83,7 +83,7 @@
           <template v-slot:activator="{ props: activatorProps }">
             <span data-cy="SolveQuiz" v-bind="activatorProps" @click="solveQuiz((item as any).raw || item)">
               <v-icon
-                large
+                size="large"
                 class="mr-2"
                 >fa-file-signature</v-icon
               >
@@ -95,7 +95,7 @@
           <template v-slot:activator="{ props: activatorProps }">
             <span data-cy="SeeSolvedQuiz" v-bind="activatorProps" @click="openSolvedQuiz()">
               <v-icon
-                large
+                size="large"
                 class="mr-2"
                 >fas fa-file-alt</v-icon
               >
@@ -108,7 +108,7 @@
           <template v-slot:activator="{ props: activatorProps }">
             <span data-cy="CancelTournament" v-bind="activatorProps" @click="cancelTournament((item as any).raw || item)">
               <v-icon
-                large
+                size="large"
                 class="mr-2"
                 >cancel</v-icon
               >
@@ -120,7 +120,7 @@
           <template v-slot:activator="{ props: activatorProps }">
             <span data-cy="RemoveTournament" v-bind="activatorProps" @click="removeTournament((item as any).raw || item)">
               <v-icon
-                large
+                size="large"
                 class="mr-2"
                 color="red"
                 >delete</v-icon
@@ -148,13 +148,13 @@
       </template>
 
       <template v-slot:[`item.state`]="{ item }">
-        <v-chip :color="((item as any).raw || item).getStateColor()" class="text-white">
+        <v-chip :color="((item as any).raw || item).getStateColor()">
           {{ ((item as any).raw || item).getStateName() }}
         </v-chip>
       </template>
 
       <template v-slot:[`item.privateTournament`]="{ item }">
-        <v-chip :color="((item as any).raw || item).getPrivateColor()" class="text-white">
+        <v-chip :color="((item as any).raw || item).getPrivateColor()">
           {{ ((item as any).raw || item).getPrivateName() }}
         </v-chip>
       </template>
@@ -169,7 +169,7 @@
       </template>
 
       <template v-slot:[`item.enrolled`]="{ item }">
-        <v-chip :color="((item as any).raw || item).getEnrolledColor()" class="text-white">
+        <v-chip :color="((item as any).raw || item).getEnrolledColor()">
           {{ ((item as any).raw || item).getEnrolledName() }}
         </v-chip>
       </template>
@@ -206,6 +206,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, watch, onMounted } from 'vue';
 import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
@@ -230,7 +231,7 @@ const editPasswordDialog = ref(false);
 const editTournamentDialog = ref(false);
 const search = ref('');
 const password = ref('');
-const headers: any = [
+const headers: any = withV2ColumnWidths([
   {
     title: 'Actions',
     key: 'actions',
@@ -286,7 +287,7 @@ const headers: any = [
     align: 'center',
     width: '10%',
   },
-];
+]);
 
 const getTournamentsList = async () => {
   store.setLoading();

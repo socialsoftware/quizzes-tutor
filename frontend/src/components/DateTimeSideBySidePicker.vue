@@ -1,5 +1,6 @@
 <template>
-  <div :id="id" class="dtp-side-by-side" ref="rootEl">
+  <!-- dp--theme-light defines the --dp-* variables the input's border and colours use -->
+  <div :id="id" class="dtp-side-by-side dp--theme-light" ref="rootEl">
     <div class="dp--input-wrap">
       <span class="dp--input-icon dp--input-icons">
         <i class="mdi mdi-calendar"></i>

@@ -54,6 +54,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, onMounted } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
@@ -71,7 +72,7 @@ const difficultQuestions = ref<DifficultQuestion[]>([]);
 const statementQuestion = ref<StatementQuestion | null>(null);
 const studentViewDialog = ref(false);
 
-const headers: any = [
+const headers: any = withV2ColumnWidths([
   {
     title: 'Actions',
     key: 'action',
@@ -87,7 +88,7 @@ const headers: any = [
     sortable: false,
   },
   { title: 'Percentage', key: 'percentage', align: 'center', width: '5px' },
-];
+]);
 
 onMounted(async () => {
   store.setLoading();

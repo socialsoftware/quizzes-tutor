@@ -8,56 +8,52 @@
         :key="term"
       >
         <v-card class="mx-auto" elevation="10">
-          <v-list rounded>
-            <v-subheader class="title">{{ term }}</v-subheader>
-            <v-list-item-group color="primary">
-              <v-tooltip
-                v-for="course in courseExecutions[term]"
-                :key="(course.acronym || '') + (course.academicTerm || '')"
-                location="bottom"
-              >
-                <template v-slot:activator="{ props }">
-                  <v-list-item
-                    v-bind="props"
-                    @click="selectCourse(course)"
-                    :class="course.status?.toLowerCase() || ''"
-                  >
-                    <v-list-item-content>
-                      <v-list-item-title>
-                        {{ course.name }} ({{ course.acronym }})
-                      </v-list-item-title>
-                    </v-list-item-content>
+          <v-list class="course-list">
+            <v-list-subheader class="term-header">{{ term }}</v-list-subheader>
+            <v-tooltip
+              v-for="course in courseExecutions[term]"
+              :key="(course.acronym || '') + (course.academicTerm || '')"
+              location="bottom"
+            >
+              <template v-slot:activator="{ props }">
+                <v-list-item
+                  v-bind="props"
+                  @click="selectCourse(course)"
+                  :class="['course-item', course.status?.toLowerCase() || '']"
+                >
+                  <v-list-item-title class="course-title">
+                    {{ course.name }} ({{ course.acronym }})
+                  </v-list-item-title>
 
-                    <v-list-item-action>
-                      <v-btn icon>
-                        <v-icon
-                          v-if="course.status === 'INACTIVE'"
-                          color="grey-lighten-1"
-                          >mdi-key</v-icon
-                        >
-                        <v-icon
-                          v-else-if="course.status === 'HISTORIC'"
-                          color="grey-lighten-1"
-                          >mdi-book-open-variant</v-icon
-                        >
-                        <v-icon v-else color="grey-lighten-1"
-                          >mdi-location-enter</v-icon
-                        >
-                      </v-btn>
-                    </v-list-item-action>
-                  </v-list-item>
-                </template>
-                <span v-if="course.status === 'INACTIVE'"
-                  >Activate course for students</span
-                >
-                <span v-else-if="course.status === 'HISTORIC'"
-                  >View Historic Records</span
-                >
-                <span v-else
-                  >Enter {{ course.name }} {{ course.academicTerm }}
-                </span>
-              </v-tooltip>
-            </v-list-item-group>
+                  <template v-slot:append>
+                    <v-btn icon variant="text" size="36" class="course-action">
+                      <v-icon
+                        v-if="course.status === 'INACTIVE'"
+                        color="grey-lighten-1"
+                        >mdi-key</v-icon
+                      >
+                      <v-icon
+                        v-else-if="course.status === 'HISTORIC'"
+                        color="grey-lighten-1"
+                        >mdi-book-open-variant</v-icon
+                      >
+                      <v-icon v-else color="grey-lighten-1"
+                        >mdi-location-enter</v-icon
+                      >
+                    </v-btn>
+                  </template>
+                </v-list-item>
+              </template>
+              <span v-if="course.status === 'INACTIVE'"
+                >Activate course for students</span
+              >
+              <span v-else-if="course.status === 'HISTORIC'"
+                >View Historic Records</span
+              >
+              <span v-else
+                >Enter {{ course.name }} {{ course.academicTerm }}
+              </span>
+            </v-tooltip>
           </v-list>
         </v-card>
       </div>
@@ -69,16 +65,17 @@
           Confirmation
         </v-card-title>
 
-        <v-card-text class="text-h6 text-center mt-4 mb-4">
+        <v-card-text class="text--black title">
+          <br />
           Are you sure you want to activate
           <span class="bold">{{ selectedCourse.name }}</span>
           for
           <span class="bold">{{ selectedCourse.academicTerm }}</span
           >?
-          <br /><br />
-          <span class="text-caption">(Once activated students will be able to login and use this platform)</span>
           <br />
-          <span class="text-caption">(You have to logout and login to start managing it)</span>
+          (Once activated students will be able to login and use this platform)
+          <br />
+          (You have to logout and login to start managing it)
         </v-card-text>
 
         <v-divider />
@@ -162,34 +159,62 @@ const compareTerm = (term1: string, term2: string) => {
 </script>
 
 <style lang="scss" scoped>
-.title {
-  text-align: center;
-  font-family: 'Baloo Tamma', cursive;
-}
-
 .bold {
   font-weight: bolder;
   text-decoration: underline;
 }
 
-.active {
-  background-color: #42b983;
+// Vuetify 2 `v-list rounded` look: pill-shaped items separated by 8px
+.course-list {
+  padding: 8px;
+}
+
+.term-header {
+  min-height: 48px;
+  padding: 0 16px;
+  font-size: 1.25rem;
+  font-weight: 500;
+  line-height: 2rem;
+  letter-spacing: 0.0125em;
+  color: rgba(0, 0, 0, 0.6);
+}
+
+.course-item {
+  min-height: 48px;
+  padding: 0 16px;
+  margin-bottom: 8px;
+  border-radius: 32px;
+
+  // V2 dropped the gap after the last item, unless it was the term's only one
+  &:last-child:not(:nth-child(2)) {
+    margin-bottom: 0;
+  }
+}
+
+.course-title {
+  font-size: 1rem;
+  line-height: 1.2;
+  text-align: center;
+  white-space: normal;
+}
+
+.course-action {
+  margin: 12px 0 12px 16px;
+
   .v-icon {
     padding: 0;
   }
+}
+
+.active {
+  background-color: #42b983;
 }
 
 .inactive {
   background-color: #7f7f7f;
-  .v-icon {
-    padding: 0;
-  }
 }
 
 .historic {
   background-color: cornflowerblue;
-  .v-icon {
-    padding: 0;
-  }
 }
 </style>

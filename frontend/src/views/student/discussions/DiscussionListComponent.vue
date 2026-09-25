@@ -8,7 +8,7 @@
       multi-sort
       :mobile-breakpoint="0"
       :items-per-page="15"
-      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      :items-per-page-options="[15, 30, 50, 100]"
       :row-props="({ item }: any) => ({
         class: selectedDiscussionId === ((item as any).raw || item).id ? 'active-green-selection' : 'discussion-row',
       })"
@@ -26,12 +26,12 @@
         </v-card-title>
       </template>
       <template v-slot:[`item.closed`]="{ item }">
-        <v-chip v-if="item.closed === true" :color="'green'">Yes</v-chip>
-        <v-chip v-else :color="'red'">No</v-chip>
+        <v-chip v-if="item.closed === true" :color="'green'" class="text-white">Yes</v-chip>
+        <v-chip v-else :color="'red'" class="text-white">No</v-chip>
       </template>
       <template v-slot:[`item.replies.length`]="{ item }">
-        <v-chip v-if="item.replies === null" :color="'grey'">0</v-chip>
-        <v-chip v-else :color="'grey'">{{ item.replies.length }}</v-chip>
+        <v-chip v-if="item.replies === null" :color="'grey'" class="text-white">0</v-chip>
+        <v-chip v-else :color="'grey'" class="text-white">{{ item.replies.length }}</v-chip>
       </template>
 
       <template v-slot:[`item.action`]="{ item }">
@@ -55,6 +55,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref } from 'vue';
 import Discussion from '@/models/management/Discussion';
 import ShowDiscussionDialog from '@/views/student/discussions/ShowDiscussionDialog.vue';
@@ -77,7 +78,7 @@ const selectRow = (row: any) => {
   }
 };
 
-const headers = [
+const headers = withV2ColumnWidths([
   { title: 'Actions', key: 'action', align: 'start', width: '5px', sortable: false },
   { title: 'Discussion Number', key: 'id' },
   { title: 'Question Title', key: 'question.title' },
@@ -86,7 +87,7 @@ const headers = [
   { title: 'Last Reply Date', key: 'lastReplyDate' },
   { title: 'Closed', key: 'closed' },
   { title: 'Replies', key: 'replies.length' },
-] as const;
+] as const);
 
 const showDiscussionDialogAction = (discussion: Discussion) => {
   currentDiscussion.value = discussion;

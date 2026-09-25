@@ -7,7 +7,7 @@
       :sort-by="[{ key: 'sequence' }]"
       :mobile-breakpoint="0"
       :items-per-page="15"
-      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      :items-per-page-options="[15, 30, 50, 100]"
     >
       <template v-slot:top>
         <v-card-title>
@@ -29,8 +29,6 @@
           v-model="item.status"
           :items="statusList"
           density="compact"
-          hide-details
-          variant="outlined"
           @update:model-value="setStatus(item.id as number, item.status)"
         >
           <template v-slot:selection="{ item: selectionItem }">
@@ -90,6 +88,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
@@ -110,7 +109,7 @@ const statusList = ['DISABLED', 'AVAILABLE', 'REMOVED'];
 const questionsDialog = ref(false);
 const questionsToShow = ref<Question[]>([]);
 
-const headers = [
+const headers = withV2ColumnWidths([
   {
     title: 'Actions',
     key: 'action',
@@ -127,7 +126,7 @@ const headers = [
     width: '5px',
   },
   { title: 'Status', key: 'status', align: 'center', width: '5px' },
-] as any;
+] as any);
 
 const setStatus = async (assessmentId: number, status: string) => {
   try {

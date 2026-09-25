@@ -25,7 +25,7 @@
         </v-card-title>
         <div v-if="userDiscussion == null" class="discussion-message">
           <v-textarea
-            solo
+            variant="solo"
             data-cy="discussionTextArea"
             v-model="discussionMessage"
             @update:modelValue="onInput"

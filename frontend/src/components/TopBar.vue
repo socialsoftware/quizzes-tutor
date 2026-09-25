@@ -33,7 +33,7 @@
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
             </template>
-            <v-list density="compact">
+            <v-list density="compact" class="v2-dense-list">
               <v-list-item
                 data-cy="questionsTeacherMenuButton"
                 to="/management/questions"
@@ -68,7 +68,7 @@
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
             </template>
-            <v-list density="compact">
+            <v-list density="compact" class="v2-dense-list">
               <v-list-item to="/student/available" prepend-icon="assignment" title="Available"></v-list-item>
               <v-list-item to="/student/create" prepend-icon="create" title="Create"></v-list-item>
               <v-list-item to="/student/scan" prepend-icon="fas fa-qrcode" title="Scan"></v-list-item>
@@ -88,7 +88,7 @@
                 <v-icon>fas fa-trophy</v-icon>
               </v-btn>
             </template>
-            <v-list density="compact">
+            <v-list density="compact" class="v2-dense-list">
               <v-list-item data-cy="Open" to="/student/tournaments/open" prepend-icon="fas fa-medal" title="Open Tournaments"></v-list-item>
               <v-list-item data-cy="Closed" to="/student/tournaments/closed" prepend-icon="fas fa-award" title="Closed Tournaments"></v-list-item>
             </v-list>
@@ -131,7 +131,7 @@
                 <v-icon>fas fa-file-alt</v-icon>
               </v-btn>
             </template>
-            <v-list density="compact">
+            <v-list density="compact" class="v2-dense-list">
               <v-list-item to="/admin/users" prepend-icon="fas fa-users" title="Manage Users"></v-list-item>
               <v-list-item
                 data-cy="manageCoursesMenuButton"
@@ -178,7 +178,7 @@
           </v-list>
         </v-toolbar>
 
-        <v-list class="pt-0" density="compact">
+        <v-list class="pt-0 v2-dense-list" density="compact">
           <!-- Management Group-->
           <v-list-group
             v-if="isTeacher && currentCourse"
@@ -217,7 +217,7 @@
 
             <v-list-item to="/student/scan" prepend-icon="fas fa-qrcode" title="Scan"></v-list-item>
 
-            <v-list-item to="/student/code" prepend-icon="fas fa-hashtag" title="Code"></v-list-item>
+            <v-list-item class="v2-content-item" to="/student/code" prepend-icon="fas fa-hashtag" title="Code"></v-list-item>
 
             <v-list-item to="/student/solved" prepend-icon="done" title="Solved Quizzes"></v-list-item>
 
@@ -245,9 +245,9 @@
             <v-list-item to="/admin/export" prepend-icon="fas fa-download" title="Export"></v-list-item>
           </v-list-group>
 
-          <v-list-item v-if="isLoggedIn && moreThanOneCourse" to="/courses" prepend-icon="fas fa-book" title="Change course"></v-list-item>
-          <v-list-item v-if="isLoggedIn" @click="logout" prepend-icon="fas fa-sign-out-alt" title="Logout"></v-list-item>
-          <v-list-item v-else :href="fenixUrl" prepend-icon="fas fa-sign-in-alt" title="Login"></v-list-item>
+          <v-list-item class="v2-content-item" v-if="isLoggedIn && moreThanOneCourse" to="/courses" prepend-icon="fas fa-book" title="Change course"></v-list-item>
+          <v-list-item class="v2-content-item" v-if="isLoggedIn" @click="logout" prepend-icon="fas fa-sign-out-alt" title="Logout"></v-list-item>
+          <v-list-item class="v2-content-item" v-else :href="fenixUrl" prepend-icon="fas fa-sign-in-alt" title="Login"></v-list-item>
         </v-list>
       </v-navigation-drawer>
       <!-- End of mobile side menu -->
@@ -259,8 +259,10 @@
           Confirmation
         </v-card-title>
 
-        <v-card-text class="text-h6 text-center mt-4 mb-4">
+        <v-card-text class="text--black title">
+          <br />
           Are you sure you want to logout?
+          <br />
         </v-card-text>
 
         <v-divider />

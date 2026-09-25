@@ -58,6 +58,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, onMounted, watch } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
@@ -69,7 +70,7 @@ const course = ref<Course | null>(null);
 const students = ref<Student[]>([]);
 const search = ref('');
 
-const headers: any[] = [
+const headers: any[] = withV2ColumnWidths([
   { title: 'Username', key: 'username', align: 'start', width: '10%' },
   { title: 'Name', key: 'name', align: 'start', width: '40%' },
   { title: 'Proposed Quizzes', key: 'numberOfTeacherQuizzes', align: 'center', width: '10%' },
@@ -83,7 +84,7 @@ const headers: any[] = [
   { title: 'Correct Answers InClass Quizzes', key: 'percentageOfCorrectInClassAnswers', align: 'center', width: '10%' },
   { title: 'Total Answers', key: 'numberOfAnswers', align: 'center', width: '10%' },
   { title: 'Correct Answers', key: 'percentageOfCorrectAnswers', align: 'center', width: '10%' },
-];
+]);
 
 onMounted(async () => {
   store.setLoading();

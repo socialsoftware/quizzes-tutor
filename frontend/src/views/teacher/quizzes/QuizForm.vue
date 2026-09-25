@@ -110,7 +110,7 @@
         <v-data-table
           :custom-filter="customFilter"
           :custom-sort="customSort"
-          :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+          :items-per-page-options="[15, 30, 50, 100]"
           :headers="headers"
           :items="quizQuestions"
           :items-per-page="15"
@@ -160,7 +160,7 @@
                 </template>
                 <span>Remove from Quiz</span>
               </v-tooltip>
-              <v-tooltip v-if="item.sequence !== 1" bottom>
+              <v-tooltip v-if="item.sequence !== 1" location="bottom">
                 <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
@@ -172,7 +172,7 @@
                 </template>
                 <span>Move to first</span>
               </v-tooltip>
-              <v-tooltip v-if="item.sequence !== 1" bottom>
+              <v-tooltip v-if="item.sequence !== 1" location="bottom">
                 <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
@@ -201,7 +201,7 @@
                 </template>
                 <span>Set Position</span>
               </v-tooltip>
-              <v-tooltip v-if="item.sequence !== quizQuestions.length" bottom>
+              <v-tooltip v-if="item.sequence !== quizQuestions.length" location="bottom">
                 <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
@@ -218,7 +218,7 @@
                 </template>
                 <span>Move down</span>
               </v-tooltip>
-              <v-tooltip v-if="item.sequence !== quizQuestions.length" bottom>
+              <v-tooltip v-if="item.sequence !== quizQuestions.length" location="bottom">
                 <template v-slot:activator="{ props }">
                   <v-icon
                     class="mr-2 action-button"
@@ -267,7 +267,7 @@
         <v-data-table
           v-show="questions.length != 0"
           :custom-filter="customFilter"
-          :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+          :items-per-page-options="[15, 30, 50, 100]"
           :headers="
             headers.filter((v, i) => i !== 0 && i !== headers.length - 1)
           "
@@ -305,7 +305,7 @@
               </template>
               <span>Show Question</span>
             </v-tooltip>
-            <v-tooltip v-if="!item.sequence" bottom>
+            <v-tooltip v-if="!item.sequence" location="bottom">
               <template v-slot:activator="{ props }">
                 <span
                   id="addToQuizButton1"
@@ -365,6 +365,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, watch, computed } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
@@ -400,13 +401,13 @@ const quizDialog = ref(false);
 
 const showQueryForm = ref<boolean>(true);
 
-const headers = ref<any[]>([
+const headers = ref<any[]>(withV2ColumnWidths([
   { title: 'Sequence', key: 'sequence', align: 'center', width: '5px' },
   { title: 'Actions', key: 'action', align: 'start', width: '250px', sortable: false },
   { title: 'Title', key: 'title', align: 'start', width: '60%', sortable: false },
   { title: 'Topics', key: 'topics', align: 'start', width: '40%' },
   { title: 'Answers', key: 'numberOfAnswers', align: 'center', width: '5px' },
-]);
+]));
 
 const canSave = computed(() => {
   return (

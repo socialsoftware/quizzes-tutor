@@ -22,6 +22,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, onMounted } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
@@ -35,7 +36,7 @@ const store = useStore();
 
 const weeklyScores = ref<WeeklyScore[]>([]);
 
-const headers: any = [
+const headers: any = withV2ColumnWidths([
   {
     title: 'Week',
     key: 'week',
@@ -72,7 +73,7 @@ const headers: any = [
     align: 'center',
     width: '5px',
   },
-];
+]);
 
 onMounted(async () => {
   store.setLoading();

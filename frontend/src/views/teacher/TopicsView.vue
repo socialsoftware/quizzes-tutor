@@ -7,7 +7,7 @@
       :search="search"
       :mobile-breakpoint="0"
       :items-per-page="50"
-      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      :items-per-page-options="[15, 30, 50, 100]"
       data-cy="topicsGrid"
     >
       <template v-slot:top>
@@ -116,6 +116,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, onMounted } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
@@ -132,7 +133,7 @@ const search = ref('');
 const questionsDialog = ref(false);
 const questionsToShow = ref<Question[]>([]);
 
-const headers: any = [
+const headers: any = withV2ColumnWidths([
   {
     title: 'Actions',
     key: 'action',
@@ -147,7 +148,7 @@ const headers: any = [
     align: 'center',
     width: '115px',
   },
-];
+]);
 
 onMounted(async () => {
   store.setLoading();

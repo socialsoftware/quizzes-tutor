@@ -88,7 +88,7 @@
         :sort-by="[{ key: 'scoreTime', order: 'desc' }]"
         :mobile-breakpoint="0"
         :items-per-page="15"
-        :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+        :items-per-page-options="[15, 30, 50, 100]"
       />
     </v-card>
   </v-dialog>

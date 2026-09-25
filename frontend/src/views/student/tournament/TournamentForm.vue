@@ -118,7 +118,7 @@
                 :search="JSON.stringify(currentTopicsSearch)"
                 :mobile-breakpoint="0"
                 :items-per-page="5"
-                :footer-props="{ itemsPerPageOptions: [5, 10, 15] }"
+                :items-per-page-options="[5, 10, 15]"
               >
                 <template v-slot:top>
                   <h2 class="text-center w-100">Currently selected</h2>
@@ -128,8 +128,8 @@
                     :items="allTopics"
                     :filter="topicSearch"
                     v-model:search="currentTopicsSearchText"
-                    @change="currentTopicsSearchText = ''"
-                    item-text="name"
+                    @update:model-value="currentTopicsSearchText = ''"
+                    item-title="name"
                     return-object
                     chips
                    
@@ -166,7 +166,7 @@
                 :search="JSON.stringify(allTopicsSearch)"
                 :mobile-breakpoint="0"
                 :items-per-page="5"
-                :footer-props="{ itemsPerPageOptions: [5, 10, 15] }"
+                :items-per-page-options="[5, 10, 15]"
                 data-cy="Topics"
               >
                 <template v-slot:top>
@@ -177,8 +177,8 @@
                     :items="allTopics"
                     :filter="topicSearch"
                     v-model:search="allTopicsSearchText"
-                    @change="allTopicsSearchText = ''"
-                    item-text="name"
+                    @update:model-value="allTopicsSearchText = ''"
+                    item-title="name"
                     return-object
                     chips
                    
@@ -223,6 +223,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, onMounted } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
@@ -272,7 +273,7 @@ const password = ref('');
 
 const topicsId = ref<Number[]>([]);
 
-const topicHeaders: any = [
+const topicHeaders: any = withV2ColumnWidths([
   {
     title: 'Topics',
     key: 'topicsCreate',
@@ -286,7 +287,7 @@ const topicHeaders: any = [
     width: '150px',
     sortable: false,
   },
-];
+]);
 
 const storeOldValues = () => {
   if (editTournament.value.startTime) {

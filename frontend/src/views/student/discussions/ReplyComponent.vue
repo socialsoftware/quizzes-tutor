@@ -1,10 +1,10 @@
 <template>
-  <v-expansion-panels v-if="discussion.replies.length > 0" :inset="true">
+  <v-expansion-panels v-if="discussion.replies.length > 0" variant="inset">
     <v-expansion-panel>
-      <v-expansion-panel-header style="background-color: #d5d5d5"
+      <v-expansion-panel-title style="background-color: #d5d5d5"
         >Show replies
-      </v-expansion-panel-header>
-      <v-expansion-panel-content>
+      </v-expansion-panel-title>
+      <v-expansion-panel-text>
         <div
           v-for="reply in discussion.replies"
           :key="reply.id"
@@ -41,10 +41,10 @@
           <v-textarea
             data-cy="replyTextArea"
             class="textarea-reply"
-            solo
+            variant="solo"
             :id="'reply' + discussion.id"
             label="Type a reply..."
-            @input="setReplyMessage"
+            @update:model-value="setReplyMessage"
           ></v-textarea>
           <v-card-actions>
             <v-btn
@@ -58,17 +58,17 @@
             >
           </v-card-actions>
         </div>
-      </v-expansion-panel-content>
+      </v-expansion-panel-text>
     </v-expansion-panel>
   </v-expansion-panels>
   <div v-else class="reply-message">
     <v-textarea
       data-cy="replyTextArea"
       class="textarea-reply"
-      solo
+      variant="solo"
       :id="'reply' + discussion.id"
       label="Type a reply..."
-      @input="setReplyMessage"
+      @update:model-value="setReplyMessage"
     ></v-textarea>
     <v-card-actions>
       <v-btn

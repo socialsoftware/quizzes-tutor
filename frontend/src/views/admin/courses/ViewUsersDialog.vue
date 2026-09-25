@@ -56,6 +56,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref } from 'vue';
 import Course from '@/models/user/Course';
 import User from '@/models/user/User';
@@ -70,9 +71,9 @@ defineEmits(['close-dialog', 'delete-users', 'update:dialog']);
 const selectedUsers = ref<User[]>([]);
 const search = ref('');
 
-const headers = [
+const headers = withV2ColumnWidths([
   { title: 'Username', key: 'username', align: 'start', width: '65%' },
   { title: 'Role', key: 'role', align: 'start', width: '15%' },
   { title: 'Active', key: 'active', align: 'start', width: '15%' },
-] as const;
+] as const);
 </script>

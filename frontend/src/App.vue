@@ -69,6 +69,12 @@ axios.interceptors.response.use(undefined, (err) => {
   overflow: hidden;
   display: flex;
   flex-direction: column;
+
+  // V2's app bar is 56px tall below the md breakpoint (see _global.scss)
+  @media (max-width: 959.98px) {
+    --v-layout-top: 56px;
+    padding-top: 56px !important;
+  }
 }
 
 /*noinspection CssUnusedSymbol*/

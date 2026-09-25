@@ -1,3 +1,5 @@
+// Layer order is fixed in index.html, so this import can live anywhere
+import '@/assets/css/_v2-reset.scss';
 import '@fortawesome/fontawesome-free/css/all.css';
 import '@mdi/font/css/materialdesignicons.css';
 import 'material-design-icons-iconfont/dist/material-design-icons.css';
@@ -42,11 +44,14 @@ export default createVuetify({
         variant: 'elevated',
       },
     },
+    // persistentCounter: V2 showed a `counter` even when the field was not focused
     VTextField: {
       variant: 'underlined',
+      persistentCounter: true,
     },
     VTextarea: {
       variant: 'underlined',
+      persistentCounter: true,
     },
     VAutocomplete: {
       variant: 'underlined',
@@ -57,14 +62,12 @@ export default createVuetify({
     VSelect: {
       variant: 'underlined',
     },
-    VDialog: {
-      width: 'auto',
-    },
-    VMenu: {
-      offset: 8,
-    },
     VList: {
       density: 'compact',
+    },
+    // V2 chips were filled with their colour; V4 defaults to a light tonal tint
+    VChip: {
+      variant: 'flat',
     },
     VDataTable: {
       itemsPerPageText: 'Rows per page:',

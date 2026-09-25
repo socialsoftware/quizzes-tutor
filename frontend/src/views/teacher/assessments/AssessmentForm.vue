@@ -39,7 +39,7 @@
               :search="JSON.stringify(currentTopicsSearch) || ''"
               :mobile-breakpoint="0"
               :items-per-page="15"
-              :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+              :items-per-page-options="[15, 30, 50, 100]"
             >
               <template v-slot:top>
                 <h2 class="text-center w-100">Currently selected</h2>
@@ -105,7 +105,7 @@
               :search="JSON.stringify(allTopicsSearch) || ''"
               :mobile-breakpoint="0"
               :items-per-page="15"
-              :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+              :items-per-page-options="[15, 30, 50, 100]"
               data-cy="Topics"
             >
               <template v-slot:top>
@@ -177,6 +177,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, onMounted } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
@@ -205,7 +206,7 @@ const allTopics = ref<Topic[]>([]);
 const topicConjunctions = ref<TopicConjunction[]>([]);
 const questionsToShow = ref<Question[]>([]);
 
-const topicHeaders = [
+const topicHeaders = withV2ColumnWidths([
   {
     title: 'Actions',
     key: 'action',
@@ -219,7 +220,7 @@ const topicHeaders = [
     align: 'start',
     sortable: false,
   },
-] as any;
+] as any);
 
 onMounted(async () => {
   store.setLoading();

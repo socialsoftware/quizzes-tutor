@@ -104,6 +104,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref } from 'vue';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
@@ -123,13 +124,13 @@ const quizAnswerDetails = ref<QuizAnswer | undefined>(undefined);
 const quizAnswerDetailCurrentQuestion = ref<number | undefined>(undefined);
 const search = ref('');
 
-const headers = ref<any[]>([
+const headers = ref<any[]>(withV2ColumnWidths([
   { title: 'Name', key: 'name', align: 'start', width: '5%' },
   { title: 'Username', key: 'username', align: 'center', width: '5%' },
   { title: 'Start Date', key: 'creationDate', align: 'center', width: '5%' },
   { title: 'Submission Lag', key: 'submissionLag', align: 'center', width: '5%' },
   { title: 'Answers', key: 'answers', align: 'center', width: '15%' },
-]);
+]));
 
 const convertToHHMMSS = (time: number | undefined | null): string => {
   return milisecondsToHHMMSS(time);

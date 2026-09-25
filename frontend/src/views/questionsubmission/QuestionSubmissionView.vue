@@ -8,7 +8,7 @@
       :sort-by="[{ key: 'question.creationDate', order: 'desc' }]"
       :mobile-breakpoint="0"
       :items-per-page="15"
-      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      :items-per-page-options="[15, 30, 50, 100]"
     >
       <template v-slot:top>
         <v-card-title>
@@ -72,7 +72,7 @@
               <span>View Submission</span>
             </v-tooltip>
             <v-tooltip
-              bottom
+              location="bottom"
               v-if="store.isStudent && getRaw(displayItem).isInRevision()"
             >
               <template v-slot:activator="{ props }">
@@ -91,7 +91,7 @@
               <span>Edit Submission</span>
             </v-tooltip>
             <v-tooltip
-              bottom
+              location="bottom"
               v-if="store.isStudent && getRaw(displayItem).isInRevision()"
             >
               <template v-slot:activator="{ props }">
@@ -173,6 +173,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, watch, onMounted } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
@@ -215,7 +216,7 @@ const processHeaders = () => {
       sortable: true
     });
   }
-  return mapped;
+  return withV2ColumnWidths(mapped);
 };
 
 const headers = ref<any[]>(processHeaders());

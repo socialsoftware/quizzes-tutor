@@ -138,6 +138,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, watch, onMounted } from 'vue';
 import { useStore } from '@/store';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
@@ -168,18 +169,18 @@ const getSubRaw = (item: any): QuestionSubmission => {
 };
 
 const processHeaders = (arr: any[]) => {
-  return arr.map((h: any) => ({
+  return withV2ColumnWidths(arr.map((h: any) => ({
     ...h,
     title: h.text || h.title,
     key: h.value || h.key,
     align: h.align === 'left' ? 'start' : h.align === 'right' ? 'end' : h.align
-  }));
+  })));
 };
 
 const studentHeaders = ref<any[]>(processHeaders(QuestionSubmission.questionSubmissionHeader.slice()));
 const itemsPerPage = ref<number>(15);
 
-const headers = ref<any[]>([
+const headers = ref<any[]>(withV2ColumnWidths([
   {
     key: 'data-table-expand',
     title: '',
@@ -222,7 +223,7 @@ const headers = ref<any[]>([
     align: 'center',
     width: '10%',
   },
-]);
+]));
 
 onMounted(async () => {
   await getUserQuestionSubmissionsInfo();

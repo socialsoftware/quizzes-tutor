@@ -3,7 +3,7 @@
     <h2>Create Random Quiz</h2>
     <v-container class="create-buttons">
       <p>Assessment</p>
-      <v-btn-toggle v-model="assessmentId" mandatory class="button-group">
+      <v-btn-toggle v-model="assessmentId" mandatory="force" class="button-group">
         <v-btn
           v-for="assessment in availableAssessments"
           variant="text"
@@ -18,7 +18,7 @@
         <p class="pl-0">Number of Questions</p>
         <v-btn-toggle
           v-model="numberOfQuestions"
-          mandatory
+          mandatory="force"
           class="button-group"
         >
           <v-btn variant="text" value="5">5</v-btn>
@@ -98,5 +98,23 @@ const createQuiz = async () => {
   padding: 20px;
   flex-wrap: wrap;
   justify-content: center;
+  // V4 fixes the group at 48px, which the padding above squeezed the buttons into
+  height: auto;
+  background-color: white;
+
+  // V2 v-btn-toggle look: thin-bordered 48px buttons, the selected one greyed
+  // !important: the toggle sets `height: auto` inline on its buttons
+  :deep(.v-btn) {
+    height: 48px !important;
+    border: thin solid rgba(0, 0, 0, 0.12);
+  }
+
+  :deep(.v-btn + .v-btn) {
+    border-left-width: 0;
+  }
+
+  :deep(.v-btn--active > .v-btn__overlay) {
+    opacity: 0.18;
+  }
 }
 </style>

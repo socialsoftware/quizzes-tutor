@@ -41,7 +41,7 @@
     <v-card class="table">
       <v-data-table
         :custom-filter="customFilter"
-        :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+        :items-per-page-options="[15, 30, 50, 100]"
         :headers="headers"
         :items="questions"
         :items-per-page="15"
@@ -140,7 +140,7 @@
               </template>
               <span>Duplicate Question</span>
             </v-tooltip>
-            <v-tooltip v-if="((item as any).raw || item).numberOfAnswers === 0" bottom>
+            <v-tooltip v-if="((item as any).raw || item).numberOfAnswers === 0" location="bottom">
               <template v-slot:activator="{ props }">
                 <span data-cy="editQuestionButton" v-bind="props" @click="editQuestion((item as any).raw || item)">
                   <v-icon class="action-button">edit</v-icon>
@@ -156,7 +156,7 @@
               </template>
               <span>Show Clarifications</span>
             </v-tooltip>
-            <v-tooltip v-if="((item as any).raw || item).numberOfAnswers === 0" bottom>
+            <v-tooltip v-if="((item as any).raw || item).numberOfAnswers === 0" location="bottom">
               <template v-slot:activator="{ props }">
                 <span data-cy="deleteQuestionButton" v-bind="props" @click="deleteQuestion((item as any).raw || item)">
                   <v-icon class="action-button" color="red">delete</v-icon>
@@ -214,6 +214,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, onMounted, watch } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
@@ -245,7 +246,7 @@ const search = ref('');
 const statusList = ref(['DISABLED', 'AVAILABLE', 'REMOVED']);
 const showQueryForm = ref(true);
 
-const headers = ref<any[]>([
+const headers = ref<any[]>(withV2ColumnWidths([
   { title: 'Actions', key: 'action', align: 'start', width: '5px', sortable: false },
   { title: 'Title', key: 'title', align: 'start', width: '50%' },
   { title: 'Topics', key: 'topics', align: 'center', width: '30%', sortable: false },
@@ -257,7 +258,7 @@ const headers = ref<any[]>([
   { title: 'Generated quizzes', key: 'numberOfGeneratedQuizzes', align: 'center', width: '5px' },
   { title: 'Non generated quizzes', key: 'numberOfNonGeneratedQuizzes', align: 'center', width: '5px' },
   { title: 'Creation Date', key: 'creationDate', width: '150px', align: 'center' },
-]);
+]));
 
 watch(editQuestionDialog, (newVal) => {
   if (!newVal) {

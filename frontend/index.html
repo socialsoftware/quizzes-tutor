@@ -2,6 +2,10 @@
 <html lang="en">
   <head>
     <meta charset="utf-8">
+    <!-- Cascade layer order; must precede every stylesheet. v2-reset (the Vuetify 2
+         reset) is the lowest priority, and Vuetify's own layers keep their intended
+         order even though component CSS is imported before vuetify/styles. -->
+    <style>@layer v2-reset, vuetify-core, vuetify-components, vuetify-overrides, vuetify-utilities, vuetify-final;</style>
     <title>Quizzes Tutor</title>
     <base href="/">
 

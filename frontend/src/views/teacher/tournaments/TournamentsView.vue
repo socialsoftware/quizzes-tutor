@@ -8,7 +8,7 @@
       :mobile-breakpoint="0"
       multi-sort
       :items-per-page="15"
-      :footer-props="{ itemsPerPageOptions: [15, 30, 50, 100] }"
+      :items-per-page-options="[15, 30, 50, 100]"
       data-cy="allTournaments"
     >
       <template v-slot:top>
@@ -31,10 +31,10 @@
         <view-tournament-topics :tournament="item" />
       </template>
       <template v-slot:[`item.times`]="{ item }">
-        <v-chip x-small>
+        <v-chip size="x-small">
           {{ item.startTime }}
         </v-chip>
-        <v-chip x-small>
+        <v-chip size="x-small">
           {{ item.endTime }}
         </v-chip>
       </template>
@@ -57,6 +57,7 @@
 </template>
 
 <script setup lang="ts">
+import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref, onMounted } from 'vue';
 import { useStore } from '@/store';
 import { useRouter } from 'vue-router';
@@ -72,7 +73,7 @@ const emit = defineEmits(['close-show-dashboard-dialog']);
 const tournaments = ref<Tournament[]>([]);
 const search = ref('');
 
-const headers: any[] = [
+const headers: any[] = withV2ColumnWidths([
   { title: 'Course Acronym', key: 'courseAcronym', align: 'center', width: '10%' },
   { title: 'Tournament Number', key: 'id', align: 'center', width: '10%' },
   { title: 'Topics', key: 'topics', align: 'center', width: '10%' },
@@ -80,7 +81,7 @@ const headers: any[] = [
   { title: 'Privacy', key: 'privateTournament', align: 'center', width: '10%' },
   { title: 'Start/End Time', key: 'times', align: 'center', width: '10%' },
   { title: 'Number of Questions', key: 'numberOfQuestions', align: 'center', width: '10%' },
-];
+]);
 
 const sortById = (a: Tournament, b: Tournament) => {
   if (a.id && b.id) return a.id > b.id ? 1 : -1;

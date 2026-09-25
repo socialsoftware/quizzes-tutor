@@ -75,7 +75,8 @@
           Confirmation
         </v-card-title>
 
-        <v-card-text class="text-h6 text-center mt-4 mb-4">
+        <v-card-text class="text--black title">
+          <br />
           Are you sure you want to finish?
           <br />
           <span v-if="statementQuiz.unansweredQuestions()">
@@ -110,8 +111,10 @@
           Confirmation
         </v-card-title>
 
-        <v-card-text class="text-h6 text-center mt-4 mb-4">
+        <v-card-text class="text--black title">
+          <br />
           Are you sure you want to go to the next question?
+          <br />
         </v-card-text>
 
         <v-divider />

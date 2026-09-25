@@ -1,0 +1,68 @@
+// Vuetify 2 shipped a full CSS reset (ress.css) plus a few element rules;
+// Vuetify 4 only keeps a minimal one, so headings, paragraphs, lists, native
+// buttons/inputs, etc. fell back to the browser defaults (e.g. 20px margins
+// around every <h2>).
+//
+// Vuetify 4 puts all of its CSS in cascade layers, and unlayered CSS always
+// beats layered CSS, so a plain `* { margin: 0 }` here would override every
+// Vuetify component. Instead the reset lives in its own layer, declared before
+// Vuetify's (the order is fixed by `@layer v2-reset;` at the top of
+// index.html): it only beats the browser defaults, as it did in Vuetify 2.
+@layer v2-reset {
+  * {
+    padding: 0;
+    margin: 0;
+  }
+
+  small {
+    font-size: 80%;
+  }
+
+  code,
+  kbd,
+  pre,
+  samp {
+    font-family: monospace, monospace;
+  }
+
+  button,
+  input,
+  select,
+  textarea {
+    background-color: transparent;
+    border-style: none;
+  }
+
+  button,
+  select {
+    text-transform: none;
+  }
+
+  textarea {
+    overflow: auto;
+    resize: vertical;
+  }
+
+  select {
+    appearance: none;
+  }
+
+  img {
+    border-style: none;
+  }
+
+  .v-application {
+    p {
+      margin-bottom: 16px;
+    }
+
+    ul,
+    ol {
+      padding-left: 24px;
+    }
+
+    a {
+      color: rgb(var(--v-theme-primary));
+    }
+  }
+}

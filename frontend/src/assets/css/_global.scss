@@ -20,7 +20,9 @@ body {
     flex-wrap: wrap;
     row-gap: 15px;
 
-    .v-text-field {
+    // A search field next to a <v-spacer> shared the row with it in V2; alone
+    // it took the full width
+    &:has(> .v-spacer) .v-text-field {
       max-width: 50%;
     }
 
@@ -75,14 +77,13 @@ i {
   padding: 0;
 }
 
-// icons of actions in v-data-table
+// icons of actions in v-data-table (V2: 24px icon + 8px padding + border)
 .action-button {
   padding: 0 !important;
-  width: 34px !important;
-  height: 34px !important;
+  width: 42px !important;
+  height: 42px !important;
   background: #d9d9d9;
-  margin: 4px;
-  border-radius: 50% !important;
+  border-radius: 20px !important;
   border: 1px solid #878787 !important;
   display: inline-flex !important;
   align-items: center;
@@ -100,6 +101,14 @@ i {
   background: #878787;
 }
 
+// Layered so that template utilities (mr-2, text-red from color="red") win
+@layer vuetify-overrides {
+  .action-button {
+    margin: 4px;
+    color: rgba(0, 0, 0, 0.54);
+  }
+}
+
 .clickableTitle {
   cursor: pointer;
   height: 100%;
@@ -107,7 +116,9 @@ i {
   align-items: center;
 }
 
-.v-dialog {
+// V2's .v-dialog was the dialog box itself; in V4 it is the full-screen
+// overlay, so the gap below the app bar goes on its content box
+.v-dialog > .v-overlay__content {
   margin-top: 70px !important;
 }
 
@@ -247,6 +258,11 @@ footer {
   overflow-wrap: normal !important; // só quebra em espaços
   line-height: 1.3 !important;
   vertical-align: middle !important;
+}
+
+// Largura mínima de 60px, exceto nas colunas que já definem a sua
+// (withV2ColumnWidths em services/DataTableHeaders.ts)
+.table .v-data-table th:not([style*="min-width"]) {
   min-width: 60px !important;
 }
 
@@ -286,6 +302,35 @@ body {
   overflow: hidden !important;
 }
 
+// V2 detached dialogs/menus/tooltips inside the v-app element, so they
+// inherited #app's centred text and colour; V4 teleports them to <body>.
+.v-overlay-container {
+  color: #2c3e50;
+  text-align: center;
+}
+
+// --- Vuetify2 `.container` grid class (V3/4 only ships `.v-container`) ---
+// Views wrap their content in <div class="container">; without this they
+// stretch edge to edge instead of being centred with V2's max-widths.
+.container {
+  width: 100%;
+  padding: 12px;
+  margin-right: auto;
+  margin-left: auto;
+
+  @media (min-width: 960px) {
+    max-width: 900px;
+  }
+
+  @media (min-width: 1264px) {
+    max-width: 1185px;
+  }
+
+  @media (min-width: 1904px) {
+    max-width: 1785px;
+  }
+}
+
 // --- Vuetify2 typography removed in V3/4 ---
 .display-2 {
   font-size: 45px !important;
@@ -306,9 +351,34 @@ body {
 }
 .title {
   font-size: 20px !important;
-  line-height: 28px !important;
+  line-height: 32px !important;
   font-weight: 500 !important;
   letter-spacing: 0.0125em !important;
+}
+// V3-era names (text-h5 = headline, text-h6 = title, ...) are gone in V4 too
+.text-h5 {
+  font-size: 24px !important;
+  line-height: 32px !important;
+  font-weight: 400 !important;
+  letter-spacing: normal !important;
+}
+.text-h6 {
+  font-size: 20px !important;
+  line-height: 32px !important;
+  font-weight: 500 !important;
+  letter-spacing: 0.0125em !important;
+}
+.text-subtitle-1 {
+  font-size: 16px !important;
+  line-height: 28px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.009375em !important;
+}
+.text-caption {
+  font-size: 12px !important;
+  line-height: 20px !important;
+  font-weight: 400 !important;
+  letter-spacing: 0.0333333333em !important;
 }
 .text--black {
   color: rgba(0, 0, 0, 0.87) !important;
@@ -349,6 +419,28 @@ body {
   }
 }
 
+// Below the md breakpoint V2 app bars were 56px: a round 48px menu icon and
+// regular 36px buttons (App.vue offsets the content to match)
+@media (max-width: 959.98px) {
+  .v-app-bar,
+  .v-app-bar .v-toolbar__content {
+    height: 56px !important;
+  }
+
+  .v-app-bar .v-btn {
+    height: 36px !important;
+  }
+
+  .v-app-bar .v-app-bar-nav-icon {
+    width: 48px !important;
+    height: 48px !important;
+    min-width: 48px !important;
+    padding: 0 !important;
+    margin: 4px 20px 4px 4px !important;
+    border-radius: 50% !important;
+  }
+}
+
 // V2 temporary drawers overlaid the whole viewport (covering the app bar),
 // instead of V4's default of starting below it
 .v-navigation-drawer--temporary {
@@ -370,9 +462,53 @@ body {
   margin-inline-end: 16px !important;
 }
 
-// v-menu offset-y / open-on-hover are dead props — emulate V2 8px dropdown gap
-.v-menu > .v-overlay__content {
-  margin-top: 8px !important;
+// V2 `<v-list dense>` with <v-list-item-action> icons (top bar menus and the
+// navigation drawer): 48px rows, grey 24px icon + 32px gap, 13px/500 titles
+.v-list.v2-dense-list .v-list-item {
+  min-height: 48px !important;
+  padding: 0 16px !important;
+
+  // V2's global 10px left padding on icons; V4's prepend spacer is the 32px gap
+  .v-list-item__prepend > .v-icon,
+  .v-list-item__prepend > i {
+    box-sizing: content-box !important;
+    padding: 0 0 0 10px !important;
+    margin-right: 0 !important;
+  }
+
+  .v-list-item-title {
+    font-size: 0.8125rem !important;
+    font-weight: 500 !important;
+    line-height: 1rem !important;
+  }
+}
+
+// Group activators (drawer "Management", "Student"...) were 40px with an
+// unpadded icon; items written with <v-list-item-content> (Logout, Code...)
+// kept the regular 16px/400 text
+.v-list.v2-dense-list .v-list-group__header.v-list-item {
+  min-height: 40px !important;
+
+  .v-list-item__prepend > .v-icon,
+  .v-list-item__prepend > i {
+    padding: 0 !important;
+  }
+}
+
+.v-list.v2-dense-list .v2-content-item .v-list-item-title {
+  font-size: 1rem !important;
+  font-weight: 400 !important;
+  line-height: 1.5 !important;
+}
+
+// Drawer "Menu" header: V2 `title` typography inside a list item
+.v-list-item-title.title {
+  font-size: 20px !important;
+  font-weight: 500 !important;
+}
+
+.v-list.v2-dense-list.v-theme--light .v-list-item__prepend > .v-icon {
+  color: rgba(0, 0, 0, 0.54);
 }
 
 // V2 dense lists with action/content slots vs V4 prepend-icon/title
@@ -396,16 +532,82 @@ body {
   min-width: 24px !important;
 }
 
+// --- Selects inside data-table cells (status columns) ---
+// A V4 v-input is a grid whose field track is minmax(0, 1fr), so it reports
+// no minimum width and the table squeezes the column until the selected chip
+// is clipped to a dot. V2 columns grew to fit the selection instead.
+.v-data-table td .v-select.v-input {
+  min-width: max-content;
+}
+
+// V2 header text and sort arrow were inline, so in narrow columns the arrow
+// wrapped below the text; V4 keeps them on one flex row, widening the column
+.v-data-table-header__content {
+  flex-wrap: wrap;
+}
+
+// V2 dropped a disabled button's colour (grey fill, faded text); V4 keeps
+// e.g. bg-primary under a translucent overlay, so it looks washed-out blue
+.v-btn--disabled.v-btn--variant-elevated,
+.v-btn--disabled.v-btn--variant-flat {
+  background-color: rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.26);
+
+  .v-btn__overlay {
+    opacity: 0;
+  }
+}
+
+// --- Chips (default variant is 'flat', see vuetify.ts) ---
+// V2 only gave theme-coloured chips (primary, error...) white text; chips in
+// plain colours (green, red...) kept dark text, and uncoloured ones were light
+// grey. V4 flat chips turn every colour's text white and uncoloured ones dark
+// grey. `text-white` (V2 `dark`) still opts in to white text.
+.v-chip--variant-flat[class*='bg-']:not(.bg-primary):not(.bg-secondary):not(.bg-accent):not(.bg-success):not(.bg-error):not(.bg-warning):not(.bg-info):not(.text-white) {
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.v-chip--variant-flat:not([class*='bg-']):not([style*='background']) {
+  background-color: #e0e0e0;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+// --- Cards: V2 v-card__title was a wrapping flex row (so <v-spacer> pushed
+// buttons right and long titles wrapped); V4's is a nowrap, ellipsised block.
+// Kept in Vuetify's overrides layer so utility classes (pa-*, justify-*)
+// used in templates still win, as they did in V2.
+@layer vuetify-overrides {
+  .v-card-title {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    padding: 16px;
+    line-height: 2rem;
+    white-space: normal;
+    overflow: visible;
+    word-break: break-all;
+  }
+
+  .v-card-title + .v-card-text,
+  .v-card-title + .v-card-subtitle {
+    padding-top: 0;
+  }
+}
+
 // --- Dialogs / cards (V2 title bar look) ---
 .v-dialog .v-card-title {
-  font-size: 20px !important;
-  line-height: 28px !important;
-  font-weight: 500 !important;
   padding: 16px 24px 10px !important;
 }
 
+// In V2 `headline` (!important) won over the dialog title size; keep that
+.v-dialog .v-card-title:not(.headline):not(.text-h5) {
+  font-size: 20px !important;
+  line-height: 28px !important;
+  font-weight: 500 !important;
+}
+
 .v-dialog .v-card-text {
-  padding: 10px 24px 20px !important;
+  padding: 0 24px 20px !important;
 }
 
 // V2 text buttons inside dialogs/cards were flat with no bg
