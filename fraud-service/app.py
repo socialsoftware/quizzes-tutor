@@ -16,7 +16,7 @@ load_dotenv()
 app = flask.Flask(__name__)
 
 
-@app.route('/time/quiz/<quizId>')
+@app.route('/time/quiz/<int:quizId>')
 def quizFraudScores(quizId):
     db = quiz_orm.QuizzesDBConnector()
     quiz = db.get_quiz(quizId)
@@ -29,7 +29,7 @@ def quizFraudScores(quizId):
     return flask.jsonify(result)
 
 
-@app.route('/communication/quiz/<quizId>')
+@app.route('/communication/quiz/<int:quizId>')
 def quizFraudScoresGraph(quizId):
     data = create_dataset.create_dataset(quizId, "*")
     scores_in, scores_out = get_scores.create_network(

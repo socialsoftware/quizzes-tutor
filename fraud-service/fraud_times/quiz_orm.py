@@ -1,11 +1,8 @@
 from sqlalchemy import create_engine
-from sqlalchemy.ext.declarative import declarative_base
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey
-from sqlalchemy.orm import sessionmaker, relationship
-from sqlalchemy.orm import column_property
+from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 import pandas as pd
 import numpy as np
-from sqlalchemy.orm.base import state_attribute_str
 from sqlalchemy.sql.schema import Table
 from datetime import timedelta
 import urllib.parse
@@ -444,9 +441,9 @@ class QuizzesDBConnector():
         host = urllib.parse.quote_plus(os.getenv('POSTGRES_HOST', 'localhost'))
         port = urllib.parse.quote_plus(os.getenv("POSTGRES_PORT", "5432"))
         database = urllib.parse.quote_plus(os.getenv("POSTGRES_DB", "tutordb"))
-        engine = create_engine(
-            f'postgresql://{user}:{password}@{host}:{port}/{database}')
-        Session = sessionmaker(bind=engine)
+        self.engine = create_engine(
+            f'postgresql+psycopg://{user}:{password}@{host}:{port}/{database}')
+        Session = sessionmaker(bind=self.engine)
         self.session = Session()
 
     def __end__(self):
@@ -455,6 +452,8 @@ class QuizzesDBConnector():
 
     def close(self):
         self.session.close()
+        # A fresh engine (and pool) is created per request; release its connections
+        self.engine.dispose()
 
     def get_quiz(self, quiz_id):
         return self.session.query(Quiz).filter(Quiz.id == quiz_id).one()

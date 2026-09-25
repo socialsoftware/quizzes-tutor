@@ -1,18 +1,13 @@
-FROM python:3.8-slim-bookworm
+FROM python:3.14-slim-trixie
 
 WORKDIR /app
 
-COPY requirements.txt requirements.txt
-#RUN apt-get update \
-#     && apt-get -y install libpq-dev musl-dev python3-dev libffi-dev cargo
-# RUN apt-get install -y build-essential
+# Headless container: render matplotlib with Agg instead of probing for a GUI toolkit
+ENV MPLBACKEND=Agg
 
-RUN apt-get update && \
-    apt-get install -y gcc && \
-    pip3 install -r requirements.txt && \
-    apt-get purge -y gcc && \
-    apt-get clean && \
-    rm -rf /var/lib/apt/lists/*
+COPY requirements.txt requirements.txt
+# Every dependency ships binary wheels for this Python, so no compiler is needed
+RUN pip3 install --no-cache-dir -r requirements.txt
 COPY . .
 
 CMD [ "python3", "-m" , "flask", "run", "--host=0.0.0.0"]
