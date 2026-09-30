@@ -20,6 +20,9 @@ import Reply from '@/models/management/Reply';
 import Tournament from '@/models/user/Tournament';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
+import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
+import GenerationJob, { GenerationRequest } from '@/models/management/generation/GenerationJob';
+import QuestionGeneration from '@/models/management/generation/QuestionGeneration';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import router from '@/router';
@@ -1094,6 +1097,91 @@ export default class RemoteServices {
       .then((response) => {
         return new Review(response.data);
       })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Question generation
+
+  static async uploadGenerationMaterial(file: File): Promise<GenerationMaterial> {
+    const formData = new FormData();
+    formData.append('file', file);
+    return httpClient
+      .post(
+        `/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials`,
+        formData,
+        { headers: { 'Content-Type': 'multipart/form-data' } }
+      )
+      .then((response) => new GenerationMaterial(response.data))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getGenerationMaterials(): Promise<GenerationMaterial[]> {
+    return httpClient
+      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials`)
+      .then((response) =>
+        response.data.map((material: any) => new GenerationMaterial(material))
+      )
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async requestGeneration(request: GenerationRequest): Promise<GenerationJob> {
+    return httpClient
+      .post(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/jobs`, request)
+      .then((response) => new GenerationJob(response.data))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getGenerationJobs(): Promise<GenerationJob[]> {
+    return httpClient
+      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/jobs`)
+      .then((response) => response.data.map((job: any) => new GenerationJob(job)))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Asking for a job also imports its drafts the first time it is finished
+  static async getGenerationJob(jobId: number): Promise<GenerationJob> {
+    return httpClient
+      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/jobs/${jobId}`)
+      .then((response) => new GenerationJob(response.data))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getQuestionGenerations(): Promise<QuestionGeneration[]> {
+    return httpClient
+      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/questions`)
+      .then((response) =>
+        response.data.map((generation: any) => new QuestionGeneration(generation))
+      )
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async createGenerationReview(review: Review): Promise<Review> {
+    return httpClient
+      .post(`/generation/questions/${review.questionGenerationId}/reviews`, review)
+      .then((response) => new Review(response.data))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getQuestionGenerationReviews(questionGenerationId: number): Promise<Review[]> {
+    return httpClient
+      .get(`/generation/questions/${questionGenerationId}/reviews`)
+      .then((response) => response.data.map((review: any) => new Review(review)))
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });

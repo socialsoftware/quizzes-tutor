@@ -56,6 +56,10 @@
                 data-cy="submissionTeacherMenuButton"
                 to="/management/submissions"
                prepend-icon="fas fa-user-edit" title="Submissions"></v-list-item>
+              <v-list-item
+                data-cy="generationTeacherMenuButton"
+                to="/management/generation"
+               prepend-icon="fas fa-robot" title="Generate"></v-list-item>
               <v-list-item to="/management/tournaments" prepend-icon="fas fa-trophy" title="Tournaments"></v-list-item>
               <v-list-item to="/management/export" prepend-icon="fas fa-download" title="Export"></v-list-item>
             </v-list>
@@ -194,6 +198,7 @@
             <v-list-item to="/management/students" prepend-icon="school" title="Students"></v-list-item>
             <v-list-item to="/management/discussions" prepend-icon="fas fa-comment-dots" title="Discussions"></v-list-item>
             <v-list-item to="/management/submissions" prepend-icon="fas fa-user-edit" title="Submissions"></v-list-item>
+            <v-list-item to="/management/generation" prepend-icon="fas fa-robot" title="Generate"></v-list-item>
             <v-list-item to="/management/tournaments" prepend-icon="fas fa-trophy" title="Tournaments"></v-list-item>
 
             <v-list-item to="/management/export" prepend-icon="fas fa-download" title="Export"></v-list-item>

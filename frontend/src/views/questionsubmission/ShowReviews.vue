@@ -30,10 +30,13 @@ import { ref, onMounted } from 'vue';
 import { useStore } from '@/store';
 import Review from '@/models/management/Review';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
+import QuestionGeneration from '@/models/management/generation/QuestionGeneration';
 import RemoteServices from '@/services/RemoteServices';
 
+// The log of a student submission or of a generated question: both use the same Review
 const props = defineProps<{
-  questionSubmission: QuestionSubmission;
+  questionSubmission?: QuestionSubmission;
+  questionGeneration?: QuestionGeneration;
 }>();
 
 const store = useStore();
@@ -46,9 +49,9 @@ onMounted(async () => {
 const getReviews = async () => {
   store.setLoading();
   try {
-    const rawReviews = await RemoteServices.getQuestionSubmissionReviews(
-      props.questionSubmission.id!
-    );
+    const rawReviews = props.questionGeneration
+      ? await RemoteServices.getQuestionGenerationReviews(props.questionGeneration.id)
+      : await RemoteServices.getQuestionSubmissionReviews(props.questionSubmission!.id!);
     reviews.value = rawReviews.sort((a, b) => sortNewestFirst(a, b));
   } catch (error) {
     store.setError(error as string);

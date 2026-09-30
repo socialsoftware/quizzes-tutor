@@ -75,13 +75,16 @@ public class QuestionGenerationService {
     private ReviewRepository reviewRepository;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AqgMaterialDto uploadMaterial(Integer executionId, String filename, byte[] content) {
-        return aqgClient.uploadMaterial(getCourseExecution(executionId).getCourse().getId(), filename, content);
+    public GenerationMaterialDto uploadMaterial(Integer executionId, String filename, byte[] content) {
+        return new GenerationMaterialDto(
+                aqgClient.uploadMaterial(getCourseExecution(executionId).getCourse().getId(), filename, content));
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<AqgMaterialDto> getMaterials(Integer executionId) {
-        return aqgClient.listMaterials(getCourseExecution(executionId).getCourse().getId());
+    public List<GenerationMaterialDto> getMaterials(Integer executionId) {
+        return aqgClient.listMaterials(getCourseExecution(executionId).getCourse().getId()).stream()
+                .map(GenerationMaterialDto::new)
+                .collect(Collectors.toList());
     }
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
@@ -116,6 +119,13 @@ public class QuestionGenerationService {
                 count, difficulty, groundingMode, aqgJob.status());
         generationJobRepository.save(job);
         return new GenerationJobDto(job);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<GenerationJobDto> getGenerationJobs(Integer executionId) {
+        return generationJobRepository.findByCourseExecutionIdOrderByIdDesc(executionId).stream()
+                .map(GenerationJobDto::new)
+                .collect(Collectors.toList());
     }
 
     /**

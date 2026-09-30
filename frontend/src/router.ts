@@ -11,6 +11,7 @@ import ManagementView from '@/views/teacher/ManagementView.vue';
 import QuestionsView from '@/views/teacher/questions/QuestionsView.vue';
 import TopicsView from '@/views/teacher/TopicsView.vue';
 import TournamentsView from '@/views/teacher/tournaments/TournamentsView.vue';
+import GenerationView from '@/views/teacher/generation/GenerationView.vue';
 import QuizzesView from '@/views/teacher/quizzes/QuizzesView.vue';
 import StudentsView from '@/views/teacher/students/StudentsView.vue';
 import StudentView from '@/views/student/StudentView.vue';
@@ -169,6 +170,15 @@ const router = createRouter({
           component: QuestionSubmissionView,
           meta: {
             title: APP_NAME + ' - Submissions',
+            requiredAuth: 'Teacher',
+          },
+        },
+        {
+          path: 'generation',
+          name: 'generation-management',
+          component: GenerationView,
+          meta: {
+            title: APP_NAME + ' - Generate Questions',
             requiredAuth: 'Teacher',
           },
         },

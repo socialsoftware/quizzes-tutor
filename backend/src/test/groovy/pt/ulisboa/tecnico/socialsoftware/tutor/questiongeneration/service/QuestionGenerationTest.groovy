@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.GenerationJob
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationRequestDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
@@ -171,6 +172,36 @@ class QuestionGenerationTest extends SpockTest {
         result.getStatus() == 'FAILED'
         result.getError() == 'ConnectionError: ollama unreachable'
         questionGenerationRepository.findAll().isEmpty()
+    }
+
+    def "jobs are listed newest first and only for their own course execution"() {
+        given:
+        requestedJob()
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v1', 'm', 'STRICT', [], null)
+        questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(), request())
+
+        when:
+        def result = questionGenerationService.getGenerationJobs(externalCourseExecution.getId())
+        def other = questionGenerationService.getGenerationJobs(externalCourseExecution.getId() + 1)
+
+        then:
+        result.size() == 2
+        result.get(0).getId() > result.get(1).getId()
+        other.isEmpty()
+    }
+
+    def "materials are shown with the teacher facing field names"() {
+        given:
+        aqgClient.materials = [new AqgMaterialDto('m1', externalCourse.getId(), 'lecture.pdf', 'READY', 7, 'pymupdf4llm', 1.5, null)]
+
+        when:
+        def result = questionGenerationService.getMaterials(externalCourseExecution.getId())
+
+        then:
+        result.size() == 1
+        result.get(0).getFilename() == 'lecture.pdf'
+        result.get(0).getChunkCount() == 7
+        result.get(0).getParser() == 'pymupdf4llm'
     }
 
     def "a job of another course execution is not found"() {

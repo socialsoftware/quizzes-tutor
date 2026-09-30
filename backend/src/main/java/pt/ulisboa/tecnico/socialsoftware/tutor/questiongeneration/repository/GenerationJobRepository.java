@@ -9,6 +9,7 @@ import org.springframework.stereotype.Repository;
 import org.springframework.transaction.annotation.Transactional;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.GenerationJob;
 
+import java.util.List;
 import java.util.Optional;
 
 @Repository
@@ -18,4 +19,6 @@ public interface GenerationJobRepository extends JpaRepository<GenerationJob, In
     @Lock(LockModeType.PESSIMISTIC_WRITE)
     @Query("select j from GenerationJob j where j.id = :id")
     Optional<GenerationJob> findByIdForUpdate(@Param("id") Integer id);
+
+    List<GenerationJob> findByCourseExecutionIdOrderByIdDesc(Integer courseExecutionId);
 }

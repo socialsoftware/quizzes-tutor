@@ -4,6 +4,7 @@ export default class Review {
   id!: number;
   userId: number | null = null;
   questionSubmissionId: number | null = null;
+  questionGenerationId: number | null = null;
   comment!: string;
   type!: string;
   creationDate!: string;
@@ -22,6 +23,7 @@ export default class Review {
       this.id = jsonObj.id;
       this.userId = jsonObj.userId;
       this.questionSubmissionId = jsonObj.questionSubmissionId;
+      this.questionGenerationId = jsonObj.questionGenerationId;
       this.comment = jsonObj.comment;
       this.type = jsonObj.type;
       this.creationDate = ISOtoString(jsonObj.creationDate);
@@ -37,6 +39,18 @@ export default class Review {
     userId: number
   ) {
     this.questionSubmissionId = questionSubmissionId;
+    this.type = type;
+    this.userId = userId;
+    this.comment = comment;
+  }
+
+  prepareGenerationReview(
+    questionGenerationId: number,
+    type: string,
+    comment: string,
+    userId: number
+  ) {
+    this.questionGenerationId = questionGenerationId;
     this.type = type;
     this.userId = userId;
     this.comment = comment;

@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationMaterialDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationJobDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationRequestDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.QuestionGenerationDto;
@@ -31,7 +31,7 @@ public class QuestionGenerationController {
 
     @PostMapping(value = "/generation/{executionId}/materials", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public AqgMaterialDto uploadMaterial(@PathVariable int executionId, @RequestParam("file") MultipartFile file) {
+    public GenerationMaterialDto uploadMaterial(@PathVariable int executionId, @RequestParam("file") MultipartFile file) {
         try {
             String filename = file.getOriginalFilename() == null ? "material" : file.getOriginalFilename();
             return questionGenerationService.uploadMaterial(executionId, filename, file.getBytes());
@@ -42,7 +42,7 @@ public class QuestionGenerationController {
 
     @GetMapping("/generation/{executionId}/materials")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<AqgMaterialDto> getMaterials(@PathVariable int executionId) {
+    public List<GenerationMaterialDto> getMaterials(@PathVariable int executionId) {
         return questionGenerationService.getMaterials(executionId);
     }
 
@@ -53,6 +53,12 @@ public class QuestionGenerationController {
         AuthUser authUser = (AuthUser) authentication.getPrincipal();
 
         return questionGenerationService.requestGeneration(executionId, authUser.getUser().getId(), request);
+    }
+
+    @GetMapping("/generation/{executionId}/jobs")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<GenerationJobDto> getGenerationJobs(@PathVariable int executionId) {
+        return questionGenerationService.getGenerationJobs(executionId);
     }
 
     @GetMapping("/generation/{executionId}/jobs/{jobId}")
