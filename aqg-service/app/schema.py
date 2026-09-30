@@ -102,4 +102,6 @@ class Material(BaseModel):
     filename: str
     status: MaterialStatus = MaterialStatus.PROCESSING
     chunk_count: int = 0
+    parser: str | None = None
+    parse_seconds: float | None = None
     error: str | None = None

@@ -6,7 +6,16 @@ from fastapi.testclient import TestClient
 from app.api.main import create_app
 from app.chunking.splitter import split_markdown
 from app.config import Settings
-from app.ingestion.adapters import MarkdownAdapter, UnsupportedFormat, adapter_for
+from app.ingestion.adapters import (
+    FallbackAdapter,
+    MarkdownAdapter,
+    MarkItDownAdapter,
+    ParsedDocument,
+    Parsers,
+    PymupdfAdapter,
+    UnsupportedFormat,
+    adapter_for,
+)
 from app.retrieval.retriever import LexicalRetriever
 from app.schema import Chunk
 from app.storage.material_storage import LocalMaterialStorage
@@ -26,9 +35,12 @@ DNS translates host names into IP addresses using a hierarchy of name servers.
 """
 
 
-class FakeMarker:
+class FakeParser:
     def extract(self, path):
-        return LECTURE
+        return ParsedDocument(LECTURE, "fake")
+
+
+FAKE_PARSERS = Parsers(pdf=FakeParser(), office=FakeParser())
 
 
 def test_splitter_keeps_sections_apart_and_records_the_heading_path():
@@ -72,11 +84,12 @@ def test_retriever_ranks_the_relevant_chunk_first_and_drops_unrelated_ones():
 
 
 def test_adapters_are_chosen_by_file_type():
-    marker = FakeMarker()
-    assert isinstance(adapter_for("notes.MD", marker), MarkdownAdapter)
-    assert adapter_for("slides.pptx", marker) is marker
+    parsers = Parsers(pdf=PymupdfAdapter(), office=MarkItDownAdapter())
+    assert isinstance(adapter_for("notes.MD", parsers), MarkdownAdapter)
+    assert adapter_for("slides.pptx", parsers) is parsers.office
+    assert adapter_for("paper.PDF", parsers) is parsers.pdf
     with pytest.raises(UnsupportedFormat):
-        adapter_for("movie.mp4", marker)
+        adapter_for("movie.mp4", parsers)
 
 
 def test_storage_cannot_be_escaped_with_a_crafted_filename(tmp_path):
@@ -86,9 +99,11 @@ def test_storage_cannot_be_escaped_with_a_crafted_filename(tmp_path):
     assert not (tmp_path.parent / "evil.md").exists()
 
 
-def make_client(tmp_path, llm):
-    settings = Settings(provider="ollama", model="m", ollama_base_url="http://x", max_retries=1, materials_dir=tmp_path)
-    return TestClient(create_app(settings, provider_factory=lambda config: llm, marker=FakeMarker()))
+def make_client(tmp_path, llm, **settings_overrides):
+    settings = Settings(
+        provider="ollama", model="m", ollama_base_url="http://x", max_retries=1, materials_dir=tmp_path, **settings_overrides
+    )
+    return TestClient(create_app(settings, provider_factory=lambda config: llm, parsers=FAKE_PARSERS))
 
 
 def upload(client, course_id=1, name="lecture.pdf"):
@@ -111,7 +126,10 @@ def test_uploaded_material_is_parsed_chunked_and_stored(tmp_path):
 
     material = wait_for(client, accepted.json()["id"])
     assert material["status"] == "READY" and material["chunk_count"] >= 1
-    assert (tmp_path / "1" / material["id"] / "lecture.pdf").read_bytes() == b"%PDF fake"
+    assert material["parser"] == "fake" and material["parse_seconds"] is not None
+    folder = tmp_path / "1" / material["id"]
+    assert (folder / "lecture.pdf").read_bytes() == b"%PDF fake"
+    assert "DNS translates" in (folder / "parsed.md").read_text(encoding="utf-8")
     assert client.get("/courses/1/materials").json()[0]["id"] == material["id"]
     assert client.get("/courses/2/materials").json() == []
 
@@ -158,3 +176,68 @@ def test_generation_refuses_when_nothing_in_the_material_matches_the_topic(tmp_p
     response = client.post("/generate", json={"course_id": 1, "topic": "quantum chromodynamics", "material_ids": [material_id]})
     assert response.status_code == 422
     assert "nothing relevant" in response.json()["detail"]
+
+
+def test_original_is_deleted_when_not_kept_but_the_markdown_stays(tmp_path):
+    client = make_client(tmp_path, FakeLLM([]), keep_originals=False)
+    material = wait_for(client, upload(client).json()["id"])
+    folder = tmp_path / "1" / material["id"]
+    assert material["status"] == "READY"
+    assert not (folder / "lecture.pdf").exists()
+    assert (folder / "parsed.md").exists()
+
+
+def test_a_parser_failure_is_reported_on_the_material(tmp_path):
+    class Broken:
+        def extract(self, path):
+            raise RuntimeError("corrupt file")
+
+    settings = Settings(provider="ollama", model="m", ollama_base_url="http://x", max_retries=1, materials_dir=tmp_path)
+    client = TestClient(create_app(settings, parsers=Parsers(pdf=Broken(), office=Broken())))
+    material = wait_for(client, upload(client).json()["id"])
+    assert material["status"] == "FAILED" and "corrupt file" in material["error"]
+
+
+def test_fallback_parser_takes_over_only_when_the_fast_one_finds_no_text(tmp_path):
+    class Fast:
+        def __init__(self, text):
+            self.text = text
+
+        def extract(self, path):
+            return ParsedDocument(self.text, "fast")
+
+    class Heavy:
+        def extract(self, path):
+            return ParsedDocument("recovered by ocr " * 10, "heavy")
+
+    assert FallbackAdapter(Fast("x" * 100), Heavy()).extract(tmp_path).parser == "fast"
+    assert FallbackAdapter(Fast("   "), Heavy()).extract(tmp_path).parser == "heavy"
+
+
+def test_markitdown_reads_a_real_pptx(tmp_path):
+    from pptx import Presentation
+
+    deck = Presentation()
+    slide = deck.slides.add_slide(deck.slide_layouts[1])
+    slide.shapes.title.text = "HTTP status codes"
+    slide.placeholders[1].text = "404 means the server cannot find the resource"
+    path = tmp_path / "lecture.pptx"
+    deck.save(path)
+
+    document = MarkItDownAdapter().extract(path)
+    assert document.parser == "markitdown"
+    assert "HTTP status codes" in document.markdown and "404 means" in document.markdown
+
+
+def test_pymupdf_reads_a_real_pdf_and_finds_nothing_in_a_blank_one(tmp_path):
+    import pymupdf
+
+    with_text = pymupdf.open()
+    with_text.new_page().insert_text((72, 72), "DNS translates host names into IP addresses")
+    with_text.save(tmp_path / "text.pdf")
+    blank = pymupdf.open()
+    blank.new_page()
+    blank.save(tmp_path / "blank.pdf")
+
+    assert "DNS translates host names" in PymupdfAdapter().extract(tmp_path / "text.pdf").markdown
+    assert PymupdfAdapter().extract(tmp_path / "blank.pdf").markdown.strip() == ""

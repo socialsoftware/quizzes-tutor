@@ -7,7 +7,7 @@ from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadF
 from app.config import Settings, default_model_config
 from app.evaluation.pipeline import generate_verified_question
 from app.generation.prompts import PROMPT_VERSION
-from app.ingestion.adapters import ContentAdapter, MarkerAdapter, UnsupportedFormat, adapter_for
+from app.ingestion.adapters import Parsers, UnsupportedFormat, adapter_for, build_parsers
 from app.llm.provider import LiteLLMProvider, LLMProvider
 from app.materials import MaterialStore, process_material
 from app.retrieval.retriever import LexicalRetriever, Retriever
@@ -22,12 +22,12 @@ MAX_UPLOAD_BYTES = 100 * 1024 * 1024
 def create_app(
     settings: Settings | None = None,
     provider_factory: ProviderFactory = LiteLLMProvider,
-    marker: ContentAdapter | None = None,
+    parsers: Parsers | None = None,
     retriever: Retriever | None = None,
     storage: MaterialStorage | None = None,
 ) -> FastAPI:
     settings = settings or Settings.from_env()
-    marker = marker or MarkerAdapter()
+    parsers = parsers or build_parsers(settings.pdf_parser, settings.office_parser)
     retriever = retriever or LexicalRetriever()
     storage = storage or LocalMaterialStorage(settings.materials_dir)
     materials = MaterialStore()
@@ -62,7 +62,7 @@ def create_app(
     ) -> Material:
         filename = file.filename or ""
         try:
-            adapter_for(filename, marker)
+            adapter_for(filename, parsers)
         except UnsupportedFormat as error:
             raise HTTPException(status_code=415, detail=str(error)) from error
         content = file.file.read(MAX_UPLOAD_BYTES + 1)
@@ -72,7 +72,9 @@ def create_app(
         material = Material(id=uuid.uuid4().hex, course_id=course_id, filename=filename)
         path = storage.save(course_id, material.id, filename, content)
         materials.add(material)
-        background.add_task(process_material, materials, material.id, path, marker)
+        background.add_task(
+            process_material, materials, material.id, path, parsers, storage, settings.keep_originals
+        )
         return material
 
     @app.get("/materials/{material_id}")

@@ -1,9 +1,11 @@
 import threading
+import time
 from pathlib import Path
 
 from app.chunking.splitter import split_markdown
-from app.ingestion.adapters import ContentAdapter, adapter_for
+from app.ingestion.adapters import Parsers, adapter_for
 from app.schema import Chunk, Material, MaterialStatus
+from app.storage.material_storage import MaterialStorage
 
 
 class MaterialStore:
@@ -27,12 +29,14 @@ class MaterialStore:
         with self._lock:
             return [m.model_copy() for m in self._materials.values() if m.course_id == course_id]
 
-    def set_ready(self, material_id: str, chunks: list[Chunk]) -> None:
+    def set_ready(self, material_id: str, chunks: list[Chunk], parser: str, parse_seconds: float) -> None:
         with self._lock:
             self._chunks[material_id] = chunks
             material = self._materials[material_id]
             material.status = MaterialStatus.READY
             material.chunk_count = len(chunks)
+            material.parser = parser
+            material.parse_seconds = round(parse_seconds, 3)
 
     def set_failed(self, material_id: str, error: str) -> None:
         with self._lock:
@@ -55,12 +59,25 @@ class MaterialStore:
         return chunks
 
 
-def process_material(store: MaterialStore, material_id: str, path: Path, marker: ContentAdapter) -> None:
+def process_material(
+    store: MaterialStore,
+    material_id: str,
+    path: Path,
+    parsers: Parsers,
+    storage: MaterialStorage,
+    keep_original: bool = True,
+) -> None:
     try:
-        markdown = adapter_for(path.name, marker).extract(path)
-        chunks = split_markdown(markdown, material_id)
+        started = time.perf_counter()
+        document = adapter_for(path.name, parsers).extract(path)
+        parse_seconds = time.perf_counter() - started
+        chunks = split_markdown(document.markdown, material_id)
         if not chunks:
             raise ValueError("no text could be extracted from the file")
-        store.set_ready(material_id, chunks)
+        material = store.get(material_id)
+        storage.save_markdown(material.course_id, material_id, document.markdown)
+        store.set_ready(material_id, chunks, document.parser, parse_seconds)
+        if not keep_original:
+            path.unlink(missing_ok=True)
     except Exception as error:  # any extraction failure must be visible on the material
         store.set_failed(material_id, f"{type(error).__name__}: {error}")
