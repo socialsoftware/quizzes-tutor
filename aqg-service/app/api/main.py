@@ -1,17 +1,18 @@
-import threading
 import uuid
 from typing import Callable
 
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadFile
 
 from app.config import Settings, default_model_config
+from app.db import create_session_factory
 from app.evaluation.pipeline import generate_verified_question
 from app.generation.prompts import PROMPT_VERSION
 from app.ingestion.adapters import Parsers, UnsupportedFormat, adapter_for, build_parsers
 from app.llm.provider import LiteLLMProvider, LLMProvider
+from app.jobs import JobStore
 from app.materials import MaterialStore, process_material
 from app.retrieval.retriever import LexicalRetriever, Retriever
-from app.schema import GenerationRequest, Job, JobStatus, Material, ModelConfig
+from app.schema import GenerationRequest, Job, Material, ModelConfig
 from app.storage.material_storage import LocalMaterialStorage, MaterialStorage
 
 ProviderFactory = Callable[[ModelConfig], LLMProvider]
@@ -30,27 +31,22 @@ def create_app(
     parsers = parsers or build_parsers(settings.pdf_parser, settings.office_parser)
     retriever = retriever or LexicalRetriever()
     storage = storage or LocalMaterialStorage(settings.materials_dir)
-    materials = MaterialStore()
+    session_factory = create_session_factory(settings.database_url)
+    materials = MaterialStore(session_factory)
+    jobs = JobStore(session_factory)
     app = FastAPI(title="Quizzes Tutor AQG service")
-    jobs: dict[str, Job] = {}
-    lock = threading.Lock()
 
     def run_job(job_id: str, request: GenerationRequest, provider: LLMProvider) -> None:
-        with lock:
-            jobs[job_id].status = JobStatus.RUNNING
+        jobs.set_running(job_id)
         try:
             outcomes = [
                 generate_verified_question(request, provider, settings.max_retries)
                 for _ in range(request.count)
             ]
         except Exception as error:  # provider outages must fail the job, not the worker
-            with lock:
-                jobs[job_id].status = JobStatus.FAILED
-                jobs[job_id].error = f"{type(error).__name__}: {error}"
+            jobs.set_failed(job_id, f"{type(error).__name__}: {error}")
             return
-        with lock:
-            jobs[job_id].outcomes = outcomes
-            jobs[job_id].status = JobStatus.DONE
+        jobs.set_done(job_id, outcomes)
 
     @app.get("/health")
     def health() -> dict:
@@ -108,17 +104,15 @@ def create_app(
             model_id=model_config.model,
             grounding_mode=request.grounding_mode,
         )
-        with lock:
-            jobs[job.id] = job
+        jobs.add(job)
         background.add_task(run_job, job.id, request, provider)
         return job
 
     @app.get("/jobs/{job_id}")
     def get_job(job_id: str) -> Job:
-        with lock:
-            job = jobs.get(job_id)
-            if job is None:
-                raise HTTPException(status_code=404, detail="job not found")
-            return job.model_copy(deep=True)
+        job = jobs.get(job_id)
+        if job is None:
+            raise HTTPException(status_code=404, detail="job not found")
+        return job
 
     return app

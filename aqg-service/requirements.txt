@@ -7,3 +7,5 @@ pymupdf4llm
 markitdown[pptx,docx]
 # Fallback for scanned PDFs (pulls in torch; imported lazily)
 marker-pdf
+sqlalchemy>=2
+psycopg[binary]

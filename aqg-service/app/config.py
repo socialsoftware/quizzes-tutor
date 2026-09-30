@@ -31,6 +31,7 @@ class Settings:
     pdf_parser: str = "pymupdf"
     office_parser: str = "markitdown"
     keep_originals: bool = True
+    database_url: str = "sqlite://"
 
     @staticmethod
     def from_env() -> "Settings":
@@ -46,6 +47,7 @@ class Settings:
             pdf_parser=_choice("PDF_PARSER", "pymupdf", ("pymupdf", "marker")),
             office_parser=_choice("OFFICE_PARSER", "markitdown", ("markitdown", "marker")),
             keep_originals=os.getenv("KEEP_ORIGINALS", "true").lower() != "false",
+            database_url=os.getenv("DATABASE_URL", "sqlite:///aqg.db"),
         )
 
 

@@ -241,3 +241,28 @@ def test_pymupdf_reads_a_real_pdf_and_finds_nothing_in_a_blank_one(tmp_path):
 
     assert "DNS translates host names" in PymupdfAdapter().extract(tmp_path / "text.pdf").markdown
     assert PymupdfAdapter().extract(tmp_path / "blank.pdf").markdown.strip() == ""
+
+
+def test_materials_and_jobs_survive_a_service_restart(tmp_path):
+    database = f"sqlite:///{tmp_path / 'aqg.db'}"
+
+    def start(llm):
+        settings = Settings(
+            provider="ollama", model="m", ollama_base_url="http://x", max_retries=1,
+            materials_dir=tmp_path, database_url=database,
+        )
+        return TestClient(create_app(settings, provider_factory=lambda config: llm, parsers=FAKE_PARSERS))
+
+    first = start(FakeLLM([good_question(), {"correct_supported": True, "correct_chunk_ids": [], "distractors_anchored": 3}, CLEAN_DISTRACTORS]))
+    material_id = upload(first).json()["id"]
+    wait_for(first, material_id)
+    job_id = first.post(
+        "/generate", json={"course_id": 1, "topic": "HTTP status 404", "chunks": [{"id": "c1", "text": "404 means not found"}]}
+    ).json()["id"]
+
+    second = start(FakeLLM([]))
+    assert second.get(f"/materials/{material_id}").json()["status"] == "READY"
+    assert second.get(f"/jobs/{job_id}").json()["status"] in ("DONE", "FAILED")
+    # the chunks came back too: generation from the stored material still works
+    response = second.post("/generate", json={"course_id": 1, "topic": "HTTP status 404", "material_ids": [material_id]})
+    assert response.status_code == 202

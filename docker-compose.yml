@@ -28,6 +28,24 @@ services:
     env_file:
       - ./data/env/fraud-service.dev.env
 
+  aqg-service:
+    build:
+      context: ./aqg-service/
+    image: aqg-service:latest
+    container_name: aqg-service
+    depends_on:
+      - postgres
+    links:
+      - postgres
+    # Not published: only the backend reaches it, on the compose network
+    expose:
+      - 8000
+    restart: unless-stopped
+    volumes:
+      - aqg-materials:/data/materials
+    env_file:
+      - ./data/env/aqg-service.dev.env
+
   backend:
     build:
       context: ./backend/
@@ -114,3 +132,5 @@ services:
       - $PWD:$PWD
     command: /bin/sh -c "npm install && npm run test:unit"
 
+volumes:
+  aqg-materials:
