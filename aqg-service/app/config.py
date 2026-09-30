@@ -1,5 +1,6 @@
 import os
 from dataclasses import dataclass
+from pathlib import Path
 
 from app.schema import ModelConfig
 
@@ -19,6 +20,7 @@ class Settings:
     model: str
     ollama_base_url: str
     max_retries: int
+    materials_dir: Path = Path("/data/materials")
 
     @staticmethod
     def from_env() -> "Settings":
@@ -30,6 +32,7 @@ class Settings:
             model=os.getenv("LLM_MODEL") or DEFAULT_MODELS[provider],
             ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://ollama:11434"),
             max_retries=int(os.getenv("VERIFICATION_MAX_RETRIES", "2")),
+            materials_dir=Path(os.getenv("MATERIALS_DIR", "/data/materials")),
         )
 
 

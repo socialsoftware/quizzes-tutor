@@ -1,6 +1,6 @@
 from enum import Enum
 
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, model_validator
 
 
 class Difficulty(str, Enum):
@@ -46,9 +46,17 @@ class GenerationRequest(BaseModel):
     difficulty: Difficulty = Difficulty.MEDIUM
     count: int = Field(default=1, ge=1, le=20)
     grounding_mode: GroundingMode = GroundingMode.STRICT
-    chunks: list[Chunk] = Field(min_length=1)
+    chunks: list[Chunk] = Field(default_factory=list)
+    material_ids: list[str] = Field(default_factory=list)
+    top_k: int = Field(default=5, ge=1, le=20)
     style_examples: list[str] = Field(default_factory=list, max_length=3)
     model: ModelConfig | None = None
+
+    @model_validator(mode="after")
+    def needs_context(self) -> "GenerationRequest":
+        if not self.chunks and not self.material_ids:
+            raise ValueError("provide chunks or material_ids")
+        return self
 
 
 class OutcomeStatus(str, Enum):
@@ -79,4 +87,19 @@ class Job(BaseModel):
     model_id: str
     grounding_mode: GroundingMode
     outcomes: list[GenerationOutcome] = Field(default_factory=list)
+    error: str | None = None
+
+
+class MaterialStatus(str, Enum):
+    PROCESSING = "PROCESSING"
+    READY = "READY"
+    FAILED = "FAILED"
+
+
+class Material(BaseModel):
+    id: str
+    course_id: int
+    filename: str
+    status: MaterialStatus = MaterialStatus.PROCESSING
+    chunk_count: int = 0
     error: str | None = None

@@ -2,3 +2,6 @@ fastapi
 uvicorn
 pydantic
 litellm
+python-multipart
+# PDF/PPTX/DOCX to Markdown (pulls in torch; imported lazily)
+marker-pdf
