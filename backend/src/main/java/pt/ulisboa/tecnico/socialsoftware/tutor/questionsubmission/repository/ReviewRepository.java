@@ -13,4 +13,7 @@ import java.util.List;
 public interface ReviewRepository extends JpaRepository<Review, Integer> {
     @Query(value = "SELECT r.* FROM reviews r WHERE r.question_submission_id = :questionSubmissionId", nativeQuery = true)
     List<Review> findReviewsBySubmissionId(int questionSubmissionId);
+
+    @Query(value = "SELECT r.* FROM reviews r WHERE r.question_generation_id = :questionGenerationId", nativeQuery = true)
+    List<Review> findReviewsByGenerationId(int questionGenerationId);
 }

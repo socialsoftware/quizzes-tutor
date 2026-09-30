@@ -24,6 +24,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.QuestionGenerationService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.StubAqgClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.TournamentService
@@ -137,6 +139,16 @@ class BeanConfiguration {
     @Bean
     QuestionSubmissionService questionSubmissionService() {
         return new QuestionSubmissionService()
+    }
+
+    @Bean
+    StubAqgClient aqgClient() {
+        return new StubAqgClient()
+    }
+
+    @Bean
+    QuestionGenerationService questionGenerationService() {
+        return new QuestionGenerationService()
     }
 
     @Bean

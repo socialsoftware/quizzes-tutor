@@ -235,7 +235,9 @@ public class QuestionSubmissionService {
     private Question createQuestion(Course course, QuestionDto questionDto) {
         QuestionDto newQuestionDto = questionService.createQuestion(course.getId(), questionDto);
 
-        return questionRepository.findById(newQuestionDto.getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, newQuestionDto.getId()));
+        Question question = questionRepository.findById(newQuestionDto.getId()).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, newQuestionDto.getId()));
+        question.setOrigin(Question.Origin.STUDENT_SUBMITTED);
+        return question;
     }
 
     private void updateQuestionSubmissionStatus(String reviewType, QuestionSubmission questionSubmission) {

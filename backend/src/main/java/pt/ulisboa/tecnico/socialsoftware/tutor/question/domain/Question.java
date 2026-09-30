@@ -31,6 +31,10 @@ public class Question implements DomainEntity {
         DISABLED, REMOVED, AVAILABLE, SUBMITTED
     }
 
+    public enum Origin {
+        MANUAL, STUDENT_SUBMITTED, GENERATED
+    }
+
     public static class QuestionTypes {
         public static final String MULTIPLE_CHOICE_QUESTION = "multiple_choice";
 
@@ -66,6 +70,10 @@ public class Question implements DomainEntity {
 
     @Column(name = "creation_date")
     private LocalDateTime creationDate;
+
+    // Nullable on purpose: rows created before this column existed count as MANUAL
+    @Enumerated(EnumType.STRING)
+    private Origin origin;
 
     @OneToOne(cascade = CascadeType.ALL, mappedBy = "question", fetch = FetchType.EAGER, orphanRemoval = true)
     private Image image;
@@ -135,6 +143,14 @@ public class Question implements DomainEntity {
 
     public void setStatus(Status status) {
         this.status = status;
+    }
+
+    public Origin getOrigin() {
+        return origin == null ? Origin.MANUAL : origin;
+    }
+
+    public void setOrigin(Origin origin) {
+        this.origin = origin;
     }
 
     public Image getImage() {

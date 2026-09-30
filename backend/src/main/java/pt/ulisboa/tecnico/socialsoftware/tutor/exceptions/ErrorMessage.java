@@ -168,6 +168,16 @@ public enum ErrorMessage {
     CANNOT_CREATE_DIFFICULT_QUESTION("Cannot create difficult question"),
     CANNOT_REMOVE_DIFFICULT_QUESTION("Cannot remove difficult question"),
 
+    QUESTION_GENERATION_NOT_FOUND("Question generation not found with id %d"),
+    GENERATION_JOB_NOT_FOUND("Generation job not found with id %d"),
+    GENERATION_MISSING_TOPIC("A topic or a topic name is needed to generate questions"),
+    GENERATION_MISSING_MATERIALS("Select at least one material to generate questions from"),
+    GENERATION_INVALID_COUNT("The number of questions to generate must be between 1 and 20"),
+    REVIEW_MISSING_QUESTION_GENERATION("Review is missing associated question generation"),
+    CANNOT_REVIEW_QUESTION_GENERATION("Generated question already approved or rejected cannot be reviewed again"),
+    AQG_SERVICE_UNAVAILABLE("The question generation service is not available"),
+    AQG_SERVICE_ERROR("The question generation service refused the request: %s"),
+
     FAILED_ANSWER_NOT_FOUND("Failed answer not found"),
     FAILED_ANSWER_ALREADY_CREATED("Failed answer already created"),
     CANNOT_CREATE_FAILED_ANSWER("Cannot create failed answer"),

@@ -21,6 +21,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionQuery;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.QuestionGenerationRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -76,6 +77,9 @@ public class QuestionService {
 
     @Autowired
     private QuestionSubmissionRepository questionSubmissionRepository;
+
+    @Autowired
+    private QuestionGenerationRepository questionGenerationRepository;
 
     @Retryable(
             value = {SQLException.class},
@@ -194,7 +198,7 @@ public class QuestionService {
         Question question = questionRepository.findById(questionId).orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, questionId));
         QuestionSubmission questionSubmission = questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId());
 
-        if (questionSubmission != null) {
+        if (questionSubmission != null || questionGenerationRepository.findByQuestionId(question.getId()) != null) {
             throw new TutorException(CANNOT_DELETE_SUBMITTED_QUESTION);
         }
 

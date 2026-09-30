@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain;
 
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
@@ -36,10 +37,22 @@ public class Review {
     @JoinColumn(name = "question_submission_id")
     private QuestionSubmission questionSubmission;
 
+    @ManyToOne
+    @JoinColumn(name = "question_generation_id")
+    private QuestionGeneration questionGeneration;
+
     @Enumerated(EnumType.STRING)
     private Review.Type type;
 
     public Review() {
+    }
+
+    public Review(User user, QuestionGeneration questionGeneration, ReviewDto reviewDto) {
+        setComment(reviewDto.getComment());
+        setUser(user);
+        setQuestionGeneration(questionGeneration);
+        setCreationDate(DateHandler.toLocalDateTime(reviewDto.getCreationDate()));
+        setType(reviewDto.getType());
     }
 
     public Review(User user, QuestionSubmission questionSubmission, ReviewDto reviewDto) {
@@ -52,7 +65,7 @@ public class Review {
 
     @Override
     public String toString() {
-        return "Review{" + "id=" + id + "', user=" + user + ", comment='" + comment + ", type='" + type.name() + ", questionSubmission=" + questionSubmission.getQuestion() + "}";
+        return "Review{" + "id=" + id + "', user=" + user + ", comment='" + comment + ", type='" + type.name() + ", questionSubmission=" + (questionSubmission == null ? null : questionSubmission.getQuestion()) + "}";
     }
 
     public Integer getId() {
@@ -96,6 +109,14 @@ public class Review {
 
     public void setQuestionSubmission(QuestionSubmission questionSubmission) {
         this.questionSubmission = questionSubmission;
+    }
+
+    public QuestionGeneration getQuestionGeneration() {
+        return questionGeneration;
+    }
+
+    public void setQuestionGeneration(QuestionGeneration questionGeneration) {
+        this.questionGeneration = questionGeneration;
     }
 
     public Type getType() {

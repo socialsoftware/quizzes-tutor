@@ -9,6 +9,7 @@ public class ReviewDto implements Serializable {
     private Integer id;
     private Integer userId;
     private Integer questionSubmissionId;
+    private Integer questionGenerationId;
     private String comment;
     private String creationDate;
     private String name;
@@ -20,7 +21,10 @@ public class ReviewDto implements Serializable {
     public ReviewDto(Review review){
         setId(review.getId());
         setUserId(review.getUser().getId());
-        setQuestionSubmissionId(review.getQuestionSubmission().getId());
+        if (review.getQuestionSubmission() != null)
+            setQuestionSubmissionId(review.getQuestionSubmission().getId());
+        if (review.getQuestionGeneration() != null)
+            setQuestionGenerationId(review.getQuestionGeneration().getId());
         setComment(review.getComment());
         if (review.getCreationDate() != null)
             setCreationDate(DateHandler.toISOString(review.getCreationDate()));
@@ -40,6 +44,10 @@ public class ReviewDto implements Serializable {
     public Integer getQuestionSubmissionId() { return questionSubmissionId; }
 
     public void setQuestionSubmissionId(Integer questionSubmissionId) { this.questionSubmissionId = questionSubmissionId; }
+
+    public Integer getQuestionGenerationId() { return questionGenerationId; }
+
+    public void setQuestionGenerationId(Integer questionGenerationId) { this.questionGenerationId = questionGenerationId; }
 
     public String getComment() { return comment; }
 

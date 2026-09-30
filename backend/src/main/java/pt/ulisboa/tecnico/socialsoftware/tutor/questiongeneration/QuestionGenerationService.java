@@ -1,0 +1,258 @@
+package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.retry.annotation.Backoff;
+import org.springframework.retry.annotation.Retryable;
+import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Isolation;
+import org.springframework.transaction.annotation.Transactional;
+import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
+import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.GenerationJob;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.GenerationJobRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.QuestionGenerationRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
+
+import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+
+import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
+
+/**
+ * Teachers ask the generation service for questions; the drafts come back as Questions in
+ * status SUBMITTED, tied to a QuestionGeneration that a teacher reviews like a student
+ * submission. Nothing reaches quizzes before an APPROVE review.
+ */
+@Service
+public class QuestionGenerationService {
+    private static final int MAX_QUESTIONS_PER_JOB = 20;
+    private static final int DEFAULT_QUESTIONS_PER_JOB = 5;
+    private static final int MAX_TITLE_LENGTH = 100;
+
+    @Autowired
+    private AqgClient aqgClient;
+
+    @Autowired
+    private CourseExecutionRepository courseExecutionRepository;
+
+    @Autowired
+    private UserRepository userRepository;
+
+    @Autowired
+    private QuestionRepository questionRepository;
+
+    @Autowired
+    private TopicRepository topicRepository;
+
+    @Autowired
+    private QuestionService questionService;
+
+    @Autowired
+    private QuestionGenerationRepository questionGenerationRepository;
+
+    @Autowired
+    private GenerationJobRepository generationJobRepository;
+
+    @Autowired
+    private ReviewRepository reviewRepository;
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public AqgMaterialDto uploadMaterial(Integer executionId, String filename, byte[] content) {
+        return aqgClient.uploadMaterial(getCourseExecution(executionId).getCourse().getId(), filename, content);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<AqgMaterialDto> getMaterials(Integer executionId) {
+        return aqgClient.listMaterials(getCourseExecution(executionId).getCourse().getId());
+    }
+
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public GenerationJobDto requestGeneration(Integer executionId, Integer requesterId, GenerationRequestDto request) {
+        CourseExecution courseExecution = getCourseExecution(executionId);
+        Integer courseId = courseExecution.getCourse().getId();
+
+        int count = request.getCount() == null ? DEFAULT_QUESTIONS_PER_JOB : request.getCount();
+        if (count < 1 || count > MAX_QUESTIONS_PER_JOB)
+            throw new TutorException(GENERATION_INVALID_COUNT);
+        if (request.getMaterialIds() == null || request.getMaterialIds().isEmpty())
+            throw new TutorException(GENERATION_MISSING_MATERIALS);
+
+        String topicName = request.getTopic();
+        if (request.getTopicId() != null) {
+            Topic topic = topicRepository.findTopicWithCourseById(request.getTopicId())
+                    .filter(found -> found.getCourse().getId().equals(courseId))
+                    .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, request.getTopicId()));
+            topicName = topic.getName();
+        }
+        if (topicName == null || topicName.isBlank())
+            throw new TutorException(GENERATION_MISSING_TOPIC);
+
+        String difficulty = request.getDifficulty() == null ? "MEDIUM" : request.getDifficulty();
+        String groundingMode = request.getGroundingMode() == null ? "STRICT" : request.getGroundingMode();
+
+        AqgJobDto aqgJob = aqgClient.generate(new AqgGenerateRequest(
+                courseId, topicName, difficulty, count, groundingMode, request.getMaterialIds()));
+
+        GenerationJob job = new GenerationJob(aqgJob.id(), executionId, requesterId, topicName, request.getTopicId(),
+                count, difficulty, groundingMode, aqgJob.status());
+        generationJobRepository.save(job);
+        return new GenerationJobDto(job);
+    }
+
+    /**
+     * Asks the generation service how the job is going and, the first time it is done,
+     * turns its drafts into questions waiting for review. Polling is enough here: the
+     * service never needs credentials to call back into the Tutor.
+     */
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public GenerationJobDto getGenerationJob(Integer executionId, Integer jobId) {
+        GenerationJob job = generationJobRepository.findByIdForUpdate(jobId)
+                .filter(found -> found.getCourseExecutionId().equals(executionId))
+                .orElseThrow(() -> new TutorException(GENERATION_JOB_NOT_FOUND, jobId));
+
+        if (job.getStatus() == GenerationJob.Status.REQUESTED) {
+            AqgJobDto aqgJob = aqgClient.getJob(job.getAqgJobId());
+            job.setAqgStatus(aqgJob.status());
+
+            if ("DONE".equals(aqgJob.status())) {
+                importQuestions(job, aqgJob);
+            } else if ("FAILED".equals(aqgJob.status())) {
+                job.markFailed(aqgJob.error());
+            }
+        }
+
+        return new GenerationJobDto(job);
+    }
+
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuestionGenerationDto> getCourseExecutionQuestionGenerations(Integer executionId) {
+        return questionGenerationRepository.findByCourseExecution(executionId).stream()
+                .map(QuestionGenerationDto::new)
+                .collect(Collectors.toList());
+    }
+
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public ReviewDto createReview(ReviewDto reviewDto) {
+        if (reviewDto.getQuestionGenerationId() == null)
+            throw new TutorException(REVIEW_MISSING_QUESTION_GENERATION);
+        if (reviewDto.getUserId() == null)
+            throw new TutorException(REVIEW_MISSING_USER);
+
+        QuestionGeneration questionGeneration = getQuestionGeneration(reviewDto.getQuestionGenerationId());
+        User user = userRepository.findById(reviewDto.getUserId())
+                .orElseThrow(() -> new TutorException(USER_NOT_FOUND, reviewDto.getUserId()));
+
+        Review review = new Review(user, questionGeneration, reviewDto);
+
+        if (questionGeneration.getStatus() != QuestionGeneration.Status.IN_REVIEW
+                && questionGeneration.getStatus() != QuestionGeneration.Status.IN_REVISION)
+            throw new TutorException(CANNOT_REVIEW_QUESTION_GENERATION);
+        questionGeneration.setStatus(reviewDto.getType());
+
+        questionGeneration.addReview(review);
+        reviewRepository.save(review);
+        return new ReviewDto(review);
+    }
+
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<ReviewDto> getQuestionGenerationReviews(Integer questionGenerationId) {
+        return reviewRepository.findReviewsByGenerationId(questionGenerationId).stream()
+                .map(ReviewDto::new)
+                .collect(Collectors.toList());
+    }
+
+    private void importQuestions(GenerationJob job, AqgJobDto aqgJob) {
+        CourseExecution courseExecution = getCourseExecution(job.getCourseExecutionId());
+        Integer courseId = courseExecution.getCourse().getId();
+        Topic topic = job.getTopicId() == null ? null : topicRepository.findById(job.getTopicId()).orElse(null);
+
+        int imported = 0;
+        int skipped = 0;
+        for (AqgJobDto.Outcome outcome : aqgJob.outcomes() == null ? List.<AqgJobDto.Outcome>of() : aqgJob.outcomes()) {
+            if (outcome.question() == null) {
+                skipped++;
+                continue;
+            }
+
+            Question question = createDraftQuestion(courseId, outcome.question());
+            if (topic != null)
+                question.updateTopics(Set.of(topic));
+
+            QuestionGeneration questionGeneration = new QuestionGeneration(courseExecution, question, job);
+            questionGeneration.setGenerationDetails(
+                    aqgJob.modelId(),
+                    aqgJob.promptVersion(),
+                    aqgJob.groundingMode(),
+                    outcome.retries() == null ? 0 : outcome.retries(),
+                    "NEEDS_HUMAN_ATTENTION".equals(outcome.status()),
+                    outcome.question().explanation(),
+                    outcome.sourceChunkIds() == null ? new ArrayList<>() : outcome.sourceChunkIds());
+            questionGenerationRepository.save(questionGeneration);
+            imported++;
+        }
+
+        job.markImported(imported, skipped);
+    }
+
+    private Question createDraftQuestion(Integer courseId, AqgJobDto.Question draft) {
+        List<OptionDto> options = new ArrayList<>();
+        for (AqgJobDto.Option draftOption : draft.options()) {
+            OptionDto option = new OptionDto();
+            option.setContent(draftOption.content());
+            option.setCorrect(draftOption.correct());
+            options.add(option);
+        }
+        MultipleChoiceQuestionDto details = new MultipleChoiceQuestionDto();
+        details.setOptions(options);
+
+        QuestionDto questionDto = new QuestionDto();
+        questionDto.setTitle(titleFor(draft.stem()));
+        questionDto.setContent(draft.stem());
+        questionDto.setStatus(Question.Status.SUBMITTED.name());
+        questionDto.setQuestionDetailsDto(details);
+
+        QuestionDto created = questionService.createQuestion(courseId, questionDto);
+        Question question = questionRepository.findById(created.getId())
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, created.getId()));
+        question.setOrigin(Question.Origin.GENERATED);
+        return question;
+    }
+
+    private String titleFor(String stem) {
+        String oneLine = stem.replaceAll("\\s+", " ").trim();
+        return oneLine.length() <= MAX_TITLE_LENGTH ? oneLine : oneLine.substring(0, MAX_TITLE_LENGTH - 3) + "...";
+    }
+
+    private CourseExecution getCourseExecution(Integer executionId) {
+        return courseExecutionRepository.findById(executionId)
+                .orElseThrow(() -> new TutorException(COURSE_EXECUTION_NOT_FOUND, executionId));
+    }
+
+    private QuestionGeneration getQuestionGeneration(Integer questionGenerationId) {
+        return questionGenerationRepository.findById(questionGenerationId)
+                .orElseThrow(() -> new TutorException(QUESTION_GENERATION_NOT_FOUND, questionGenerationId));
+    }
+}

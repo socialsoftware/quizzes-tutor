@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Student;
@@ -44,6 +45,9 @@ public class CourseExecution implements DomainEntity {
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<QuestionSubmission> questionSubmissions = new HashSet<>();
+
+    @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
+    private final Set<QuestionGeneration> questionGenerations = new HashSet<>();
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "courseExecution", fetch = FetchType.LAZY, orphanRemoval = true)
     private final Set<Discussion> discussions = new HashSet<>();
@@ -194,6 +198,14 @@ public class CourseExecution implements DomainEntity {
         return questionSubmissions;
     }
 
+    public void addQuestionGeneration(QuestionGeneration questionGeneration) {
+        questionGenerations.add(questionGeneration);
+    }
+
+    public Set<QuestionGeneration> getQuestionGenerations() {
+        return questionGenerations;
+    }
+
     public Set<Discussion> getDiscussions() {
         return discussions;
     }
@@ -237,6 +249,8 @@ public class CourseExecution implements DomainEntity {
         course.getCourseExecutions().remove(this);
         users.forEach(user -> user.getCourseExecutions().remove(this));
         questionSubmissions.forEach(QuestionSubmission::remove);
+        // Each remove() takes the generation out of this set, so iterate over a copy
+        new java.util.ArrayList<>(questionGenerations).forEach(QuestionGeneration::remove);
         difficultQuestions.forEach(DifficultQuestion::remove);
     }
 

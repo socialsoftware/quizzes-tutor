@@ -28,6 +28,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.QuestionGenerationRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.QuestionSubmission;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
@@ -48,6 +50,9 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
 
     @Autowired
     private QuestionSubmissionRepository questionSubmissionRepository;
+
+    @Autowired
+    private QuestionGenerationRepository questionGenerationRepository;
 
     @Autowired
     private TopicRepository topicRepository;
@@ -166,6 +171,11 @@ public class TutorPermissionEvaluator implements PermissionEvaluator {
                         }
                     }
                     return false;
+                case "GENERATION.ACCESS":
+                    QuestionGeneration questionGeneration = questionGenerationRepository.findById(id).orElse(null);
+                    return questionGeneration != null
+                            && authUser.getUser().isTeacher()
+                            && userHasThisExecution(authUser, questionGeneration.getCourseExecution().getId());
                 case "QUESTION_ANSWER.ACCESS":
                     QuestionAnswer questionAnswer = questionAnswerRepository.findById(id).orElse(null);
                     return questionAnswer != null && questionAnswer.getQuizAnswer().getStudent().getId().equals(userId);

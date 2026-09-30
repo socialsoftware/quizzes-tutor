@@ -36,6 +36,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Languages
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.AqgClient
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.QuestionGenerationService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.GenerationJobRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.QuestionGenerationRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.ReviewRepository
@@ -268,6 +272,19 @@ class SpockTest extends Specification {
 
     @Autowired
     ReviewRepository reviewRepository
+
+    @Autowired
+    QuestionGenerationService questionGenerationService
+
+    @Autowired
+    QuestionGenerationRepository questionGenerationRepository
+
+    @Autowired
+    GenerationJobRepository generationJobRepository
+
+    // A StubAqgClient in the DataJpaTest contexts, the real client in the integration tests
+    @Autowired
+    AqgClient aqgClient
 
     @Autowired
     UserApplicationalService userServiceApplicational

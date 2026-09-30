@@ -26,6 +26,7 @@ public class QuestionDto implements Serializable {
     private int numberOfCorrect;
     private String creationDate;
     private String status;
+    private String origin;
     private ImageDto image;
     private List<TopicDto> topics = new ArrayList<>();
     private Integer sequence;
@@ -44,6 +45,7 @@ public class QuestionDto implements Serializable {
         this.numberOfNonGeneratedQuizzes = question.getQuizQuestions().size() - this.numberOfGeneratedQuizzes;
         this.numberOfCorrect = question.getNumberOfCorrect();
         this.status = question.getStatus().name();
+        this.origin = question.getOrigin().name();
         this.topics = question.getTopics().stream().sorted(Comparator.comparing(Topic::getName)).map(TopicDto::new).collect(Collectors.toList());
         this.creationDate = DateHandler.toISOString(question.getCreationDate());
 
@@ -146,6 +148,14 @@ public class QuestionDto implements Serializable {
 
     public String getStatus() {
         return status;
+    }
+
+    public String getOrigin() {
+        return origin;
+    }
+
+    public void setOrigin(String origin) {
+        this.origin = origin;
     }
 
     public void setStatus(String status) {
