@@ -1,28 +1,25 @@
 <template>
-  <v-form>
-    <v-select
-      v-model="tournamentTopics"
-      :items="tournament.topics"
-      multiple
-      chips
-      disabled
-      append-icon="false"
-    ></v-select>
-  </v-form>
+  <div class="tournament-topics">
+    <v-chip v-for="topic in tournament.topics" :key="String(topic)" size="small">
+      {{ topic }}
+    </v-chip>
+  </div>
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue';
-import Topic from '@/models/management/Topic';
 import Tournament from '@/models/user/Tournament';
 
-const props = defineProps<{
+defineProps<{
   tournament: Tournament;
 }>();
-
-const tournamentTopics = ref<Topic[]>([]);
-
-onMounted(() => {
-  tournamentTopics.value = JSON.parse(JSON.stringify(props.tournament.topics));
-});
 </script>
+
+<style scoped>
+.tournament-topics {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 4px;
+  padding: 2px 0;
+}
+</style>

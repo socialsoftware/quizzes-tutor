@@ -4,8 +4,9 @@
       :headers="headers"
       :items="tournaments"
       :search="search"
-      disable-pagination
-      :hide-default-footer="true"
+      :custom-filter="tournamentFilter"
+      :items-per-page="-1"
+      hide-default-footer
       :mobile-breakpoint="0"
       multi-sort
       data-cy="TournamentsList"
@@ -30,6 +31,7 @@
       </template>
 
       <template v-slot:[`item.actions`]="{ item }">
+        <div class="tournament-actions">
         <v-tooltip location="bottom" v-if="((item as any).raw || item).canChange()">
           <template v-slot:activator="{ props: activatorProps }">
             <span data-cy="EditTournament" v-bind="activatorProps" @click="editTournament((item as any).raw || item)">
@@ -129,6 +131,7 @@
           </template>
           <span>Remove Tournament</span>
         </v-tooltip>
+        </div>
       </template>
 
       <template v-slot:[`item.id`]="{ item }">
@@ -160,12 +163,14 @@
       </template>
 
       <template v-slot:[`item.times`]="{ item }">
-        <v-chip size="x-small">
-          {{ ((item as any).raw || item).startTime }}
-        </v-chip>
-        <v-chip size="x-small">
-          {{ ((item as any).raw || item).endTime }}
-        </v-chip>
+        <div class="tournament-times">
+          <v-chip size="x-small">
+            {{ ((item as any).raw || item).startTime }}
+          </v-chip>
+          <v-chip size="x-small">
+            {{ ((item as any).raw || item).endTime }}
+          </v-chip>
+        </div>
       </template>
 
       <template v-slot:[`item.enrolled`]="{ item }">
@@ -231,13 +236,15 @@ const editPasswordDialog = ref(false);
 const editTournamentDialog = ref(false);
 const search = ref('');
 const password = ref('');
+const tournamentFilter = (_value: unknown, query: string, item?: unknown) =>
+  Tournament.matchesSearch(item, query);
 const headers: any = withV2ColumnWidths([
   {
     title: 'Actions',
     key: 'actions',
     align: 'center',
     sortable: false,
-    width: '40%',
+    minWidth: '200px',
   },
   {
     title: 'Tournament Number',
@@ -448,4 +455,23 @@ const removeTournament = async (tournamentToRemove: Tournament) => {
 };
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.tournament-actions {
+  display: flex;
+  flex-wrap: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+
+  span {
+    cursor: pointer;
+  }
+}
+
+.tournament-times {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 4px;
+}
+</style>

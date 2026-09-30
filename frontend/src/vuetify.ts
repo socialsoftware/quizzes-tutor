@@ -18,7 +18,9 @@ const custom: IconSet = {
     if (typeof icon !== 'string') return h(props.tag);
 
     if (icon.startsWith('fa') && icon.includes('-')) {
-      return h(props.tag, { class: [icon] });
+      // Font Awesome 6+ only draws the glyph when a style class (fas/far/fab) is present
+      const hasStyle = /^(fa[srbld]|fa-(solid|regular|brands|light|duotone))\b/.test(icon);
+      return h(props.tag, { class: hasStyle ? [icon] : ['fas', icon] });
     } else if (icon.startsWith('mdi-')) {
       return h(props.tag, { class: ['mdi', icon] });
     } else {

@@ -41,32 +41,32 @@
           </elementProp>
           <elementProp name="server" elementType="Argument">
             <stringProp name="Argument.name">server</stringProp>
-            <stringProp name="Argument.value">quizzes-tutor.tecnico.ulisboa.pt</stringProp>
+            <stringProp name="Argument.value">${__P(server,localhost)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="port" elementType="Argument">
             <stringProp name="Argument.name">port</stringProp>
-            <stringProp name="Argument.value">443</stringProp>
+            <stringProp name="Argument.value">${__P(port,8080)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="protocol" elementType="Argument">
             <stringProp name="Argument.name">protocol</stringProp>
-            <stringProp name="Argument.value">https</stringProp>
+            <stringProp name="Argument.value">${__P(protocol,http)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="prefix" elementType="Argument">
             <stringProp name="Argument.name">prefix</stringProp>
-            <stringProp name="Argument.value">/api</stringProp>
+            <stringProp name="Argument.value">${__P(prefix,)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="number_of_questions" elementType="Argument">
             <stringProp name="Argument.name">number_of_questions</stringProp>
-            <stringProp name="Argument.value">20</stringProp>
+            <stringProp name="Argument.value">${__P(number_of_questions,20)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
           <elementProp name="number_of_students" elementType="Argument">
             <stringProp name="Argument.name">number_of_students</stringProp>
-            <stringProp name="Argument.value">200</stringProp>
+            <stringProp name="Argument.value">${__P(number_of_students,200)}</stringProp>
             <stringProp name="Argument.metadata">=</stringProp>
           </elementProp>
         </collectionProp>
@@ -356,11 +356,7 @@
 	&quot;availableDate&quot;:&quot;2025-05-01T19:58:00+01:00&quot;,&#xd;
 	&quot;oneWay&quot;: true,&#xd;
 	&quot;timed&quot;:true,&#xd;
-<<<<<<< Updated upstream
-	&quot;conclusionDate&quot;:&quot;2028-08-29T22:59:00+01:00&quot;&#xd;
-=======
 	&quot;conclusionDate&quot;:&quot;2030-08-29T22:59:00+01:00&quot;&#xd;
->>>>>>> Stashed changes
 }</stringProp>
                   <stringProp name="Argument.metadata">=</stringProp>
                 </elementProp>

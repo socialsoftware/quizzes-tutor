@@ -93,6 +93,33 @@ export default class Tournament {
     else return 'PUBLIC';
   }
 
+  // Plain text a table search box should match against; the raw fields hold
+  // objects (creator) and arrays (topics) that stringify to "[object Object]"
+  getSearchText() {
+    return [
+      this.id,
+      this.courseAcronym,
+      this.creator?.name,
+      this.creator?.username,
+      (this.topics ?? []).join(' '),
+      this.getStateName(),
+      this.getPrivateName(),
+      this.startTime,
+      this.endTime,
+      this.numberOfQuestions,
+      this.enrolled !== undefined ? this.getEnrolledName() : undefined,
+    ]
+      .filter((part) => part !== undefined && part !== null)
+      .join(' ')
+      .toLowerCase();
+  }
+
+  static matchesSearch(item: any, query: string) {
+    const tournament: Tournament | undefined = item?.raw ?? item;
+    if (!query || !tournament?.getSearchText) return true;
+    return tournament.getSearchText().includes(query.toLowerCase());
+  }
+
   isAnswered() {
     return this.participants.find(
       (participant) => participant.userId === useStore().getUser?.id

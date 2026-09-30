@@ -4,7 +4,7 @@
       :headers="headers"
       :items="tournaments"
       :search="search"
-      disable-pagination
+      :custom-filter="tournamentFilter"
       :mobile-breakpoint="0"
       multi-sort
       :items-per-page="15"
@@ -72,6 +72,8 @@ const emit = defineEmits(['close-show-dashboard-dialog']);
 
 const tournaments = ref<Tournament[]>([]);
 const search = ref('');
+const tournamentFilter = (_value: unknown, query: string, item?: unknown) =>
+  Tournament.matchesSearch(item, query);
 
 const headers: any[] = withV2ColumnWidths([
   { title: 'Course Acronym', key: 'courseAcronym', align: 'center', width: '10%' },

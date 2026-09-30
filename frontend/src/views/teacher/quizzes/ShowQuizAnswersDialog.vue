@@ -10,8 +10,8 @@
         :headers="headers"
         :items="quizAnswers.quizAnswers"
         :search="search"
-        disable-pagination
-        :hide-default-footer="true"
+        :items-per-page="-1"
+        hide-default-footer
         :mobile-breakpoint="0"
         class="show-quiz-answer"
       >

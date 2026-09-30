@@ -16,8 +16,8 @@
           :headers="headers"
           :items="course?.courseExecutionUsers || []"
           :search="search"
-          disable-pagination
-          :hide-default-footer="true"
+          :items-per-page="-1"
+          hide-default-footer
           :mobile-breakpoint="0"
           show-select
           return-object

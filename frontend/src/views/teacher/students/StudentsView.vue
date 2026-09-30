@@ -5,9 +5,9 @@
       :headers="headers"
       hide-default-footer
       :items="students"
+      :items-per-page="-1"
       :mobile-breakpoint="0"
       :search="search"
-      disable-pagination
     >
       <template v-slot:top>
         <v-card-title>

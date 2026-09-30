@@ -123,7 +123,8 @@
               :headers="headers"
               :items="participants"
               :sort-by="[{ key: 'name', order: 'asc' }]"
-              :hide-default-footer="true"
+              :items-per-page="-1"
+              hide-default-footer
               :mobile-breakpoint="0"
               class="fill-height"
             >
