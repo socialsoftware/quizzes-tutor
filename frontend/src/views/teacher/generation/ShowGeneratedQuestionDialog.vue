@@ -16,6 +16,17 @@
         </v-card-title>
 
         <v-alert
+          v-if="questionGeneration.isRegenerating()"
+          type="info"
+          variant="tonal"
+          class="mb-3"
+          data-cy="RegeneratingAlert"
+        >
+          The model is rewriting this question from your review. The list refreshes by itself when
+          the new version is ready.
+        </v-alert>
+
+        <v-alert
           v-if="questionGeneration.needsHumanAttention"
           type="warning"
           variant="tonal"
@@ -66,13 +77,13 @@
                       data-cy="SelectMenu"
                     >
                       <template #selection="{ item: selectItem }">
-                        <v-chip size="small" :color="(selectItem as any).raw?.color">{{
-                          (selectItem as any).raw?.title
+                        <v-chip size="small" :color="Review.statusOptionFor(selectItem).color">{{
+                          Review.statusOptionFor(selectItem).title
                         }}</v-chip>
                       </template>
                     </v-select>
                   </v-col>
-                  <v-btn color="blue-darken-1" @click="review" data-cy="SubmitButton">submit</v-btn>
+                  <v-btn color="blue-darken-1" @click="review" data-cy="SubmitButton">{{ submitLabel }}</v-btn>
                 </v-row>
               </v-card-text>
             </v-card>
@@ -129,6 +140,10 @@ const selected = ref<string | null>(null);
 const reviewsComponentKey = ref(0);
 const statusOptions = [...Review.statusOptions];
 
+// Asking an AI question for changes has the model rewrite it from the comment
+const regenerates = computed(() => selected.value === 'REQUEST_CHANGES');
+const submitLabel = computed(() => (regenerates.value ? 'Regenerate with review' : 'submit'));
+
 const groundingLabel = computed(() =>
   props.questionGeneration.groundingMode === 'ENRICHED'
     ? 'materials plus general knowledge'
@@ -147,6 +162,14 @@ const review = async () => {
 
   store.setLoading();
   try {
+    if (regenerates.value) {
+      await RemoteServices.regenerateQuestion(props.questionGeneration.id, comment.value);
+      emit('reviewed');
+      emit('update:dialog', false);
+      store.clearLoading();
+      return;
+    }
+
     const newReview = new Review();
     newReview.prepareGenerationReview(
       props.questionGeneration.id,

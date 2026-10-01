@@ -11,5 +11,14 @@ public record AqgGenerateRequest(
         String difficulty,
         int count,
         @JsonProperty("grounding_mode") String groundingMode,
-        @JsonProperty("material_ids") List<String> materialIds) {
+        @JsonProperty("material_ids") List<String> materialIds,
+        // null keeps the language of the materials
+        String language,
+        // set when rewriting a question after a teacher's review
+        Revision revision,
+        // questions already in the course, so the service retries drafts that repeat one
+        @JsonProperty("existing_stems") List<String> existingStems) {
+
+    public record Revision(AqgJobDto.Question previous, String review) {
+    }
 }

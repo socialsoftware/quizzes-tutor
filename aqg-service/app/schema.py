@@ -38,6 +38,17 @@ class ModelConfig(BaseModel):
     api_base: str | None = None
     api_key: str | None = None
     temperature: float = 0.7
+    # Seconds before a call is abandoned, so a stalled provider fails the job
+    timeout: float = 120
+    # Provider-specific request fields (e.g. NIM's chat_template_kwargs)
+    extra_body: dict | None = None
+
+
+class Revision(BaseModel):
+    """A question to rewrite following a teacher's review ("Regenerate with review")."""
+
+    previous: GeneratedMCQ
+    review: str = Field(min_length=1, max_length=4000)
 
 
 class GenerationRequest(BaseModel):
@@ -50,6 +61,11 @@ class GenerationRequest(BaseModel):
     material_ids: list[str] = Field(default_factory=list)
     top_k: int = Field(default=5, ge=1, le=20)
     style_examples: list[str] = Field(default_factory=list, max_length=3)
+    # e.g. "Portuguese"; None keeps the language of the materials
+    language: str | None = Field(default=None, max_length=40)
+    revision: Revision | None = None
+    # Stems already in the course, so new drafts that repeat one are retried
+    existing_stems: list[str] = Field(default_factory=list, max_length=5000)
     model: ModelConfig | None = None
 
     @model_validator(mode="after")

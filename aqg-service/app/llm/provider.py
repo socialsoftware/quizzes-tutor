@@ -25,6 +25,8 @@ class LiteLLMProvider:
             api_base=self.config.api_base,
             api_key=self.config.api_key,
             temperature=self.config.temperature,
+            timeout=self.config.timeout,
+            extra_body=self.config.extra_body,
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},

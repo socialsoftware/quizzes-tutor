@@ -2,7 +2,7 @@ import json
 
 from app.schema import Chunk, Difficulty, GenerationRequest, GroundingMode
 
-PROMPT_VERSION = "mcq-v1"
+PROMPT_VERSION = "mcq-v2"
 
 DIFFICULTY_RUBRIC = {
     Difficulty.EASY: (
@@ -34,9 +34,20 @@ SYSTEM_PROMPT = (
     "You are an experienced university instructor writing multiple-choice exam questions. "
     "Each question is clear and unambiguous, has exactly four options and exactly one "
     "indisputably correct option. Distractors are plausible but clearly wrong. Never refer to "
-    "'the text' or 'the context' inside the question. Write in the language of the context. "
+    "'the text' or 'the context' inside the question, never use 'all/none of the above' "
+    "options and never letter or number the options. {language} "
     "Reply with a single JSON object and nothing else."
 )
+
+
+def system_prompt(language: str | None) -> str:
+    instruction = (
+        f"Write the question, the options and the explanation in {language}, even if the "
+        "context is in another language."
+        if language
+        else "Write in the language of the context."
+    )
+    return SYSTEM_PROMPT.format(language=instruction)
 
 OUTPUT_SCHEMA = {
     "stem": "question text",
@@ -63,6 +74,16 @@ def build_generation_prompt(request: GenerationRequest, feedback: str | None = N
         f"as JSON with this shape: {json.dumps(OUTPUT_SCHEMA)}\n"
         "</task>"
     )
+    if request.revision:
+        previous = request.revision.previous.model_dump(include={"stem", "options", "explanation"})
+        parts.append(
+            "<teacher_review>\n"
+            f"Previous version of the question: {json.dumps(previous, ensure_ascii=False)}\n"
+            f"Teacher's review: {request.revision.review}\n"
+            "Rewrite this question so that it addresses every point of the review. Keep what "
+            "the review does not ask to change.\n"
+            "</teacher_review>"
+        )
     if feedback:
         parts.append(
             "<previous_attempt_problems>\n"

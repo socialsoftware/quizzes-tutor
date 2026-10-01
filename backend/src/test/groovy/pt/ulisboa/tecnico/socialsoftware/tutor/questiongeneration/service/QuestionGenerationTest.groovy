@@ -1,10 +1,13 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.service
 
 import org.springframework.boot.data.jpa.test.autoconfigure.DataJpaTest
+import org.springframework.boot.test.context.TestConfiguration
+import pt.ulisboa.tecnico.socialsoftware.tutor.BeanConfiguration
 import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTest
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.GenerationJob
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto
@@ -22,6 +25,7 @@ class QuestionGenerationTest extends SpockTest {
     def teacher
 
     def setup() {
+        aqgClient.reset()
         createExternalCourseAndExecution()
 
         teacher = new Teacher(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, false, AuthUser.Type.TECNICO)
@@ -328,4 +332,158 @@ class QuestionGenerationTest extends SpockTest {
         def exception = thrown(TutorException)
         exception.getErrorMessage() == CANNOT_DELETE_SUBMITTED_QUESTION
     }
+
+    def "the language and the course's existing questions go with the request"() {
+        given:
+        importedGeneration()
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
+        def dto = request()
+        dto.setLanguage(' Portuguese ')
+
+        when:
+        questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(), dto)
+
+        then:
+        aqgClient.lastGenerateRequest.language() == 'Portuguese'
+        aqgClient.lastGenerateRequest.existingStems() == ['What does 404 mean?']
+        aqgClient.lastGenerateRequest.revision() == null
+        generationJobRepository.findAll().every { it.getMaterialIds() == ['material-1'] }
+    }
+
+    def rewrittenOutcome() {
+        def question = new AqgJobDto.Question('Which status code reports a missing resource?', [
+                new AqgJobDto.Option('404', true),
+                new AqgJobDto.Option('500', false),
+                new AqgJobDto.Option('401', false),
+                new AqgJobDto.Option('301', false)], 'A missing resource is 404')
+        return new AqgJobDto.Outcome('OK', question, 0, [], ['material-1:1'])
+    }
+
+    def "regenerating records the review and asks for a rewrite of the same question"() {
+        given:
+        def generation = importedGeneration()
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
+
+        when:
+        def result = questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Ask it the other way round')
+
+        then: "the review is a REQUEST_CHANGES with the teacher's comment"
+        def review = reviewRepository.findAll().get(0)
+        review.getType() == Review.Type.REQUEST_CHANGES
+        review.getComment() == 'Ask it the other way round'
+
+        and: "the service rewrites one question from the same materials, given the old one and the review"
+        def sent = aqgClient.lastGenerateRequest
+        sent.count() == 1
+        sent.materialIds() == ['material-1']
+        sent.topic() == 'HTTP'
+        sent.revision().review() == 'Ask it the other way round'
+        sent.revision().previous().stem() == 'What does 404 mean?'
+        sent.revision().previous().options().count { it.correct() } == 1
+
+        and: "the generation waits for the rewrite"
+        result.getStatus() == 'REGENERATING'
+        def job = generationJobRepository.findAll().find { it.getAqgJobId() == 'aqg-2' }
+        job.getRevisionOfId() == generation.getId()
+        result.getRegenerationJobId() == job.getId()
+    }
+
+    def "a finished rewrite replaces the question and puts it back up for review"() {
+        given: "a generated question filed under a topic"
+        def generation = importedGeneration()
+        def topic = new Topic()
+        topic.setName('HTTP')
+        topic.setCourse(externalCourse)
+        topicRepository.save(topic)
+        generation.getQuestion().addTopic(topic)
+        questionRepository.save(generation.getQuestion())
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
+        def regenerating = questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Ask it the other way round')
+        aqgClient.jobReply = new AqgJobDto('aqg-2', 'DONE', 'mcq-v2', 'nim', 'STRICT', [rewrittenOutcome()], null)
+
+        when:
+        questionGenerationService.getGenerationJob(externalCourseExecution.getId(), regenerating.getRegenerationJobId())
+
+        then: "still one generation, now with the rewritten question"
+        def generations = questionGenerationRepository.findAll()
+        generations.size() == 1
+        generations.get(0).getStatus() == QuestionGeneration.Status.IN_REVIEW
+        generations.get(0).getQuestion().getContent() == 'Which status code reports a missing resource?'
+        generations.get(0).getPromptVersion() == 'mcq-v2'
+        generations.get(0).getRegenerationJobId() == null
+
+        and: "the rewrite keeps the topic"
+        generations.get(0).getQuestion().getTopics()*.getName() == ['HTTP']
+
+        and: "the old question is gone and the review log is kept"
+        questionRepository.findAll().size() == 1
+        reviewRepository.findAll().size() == 1
+    }
+
+    @Unroll
+    def "a rewrite that #what gives the question back to the teacher"() {
+        given:
+        def generation = importedGeneration()
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
+        def regenerating = questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Ask it the other way round')
+        aqgClient.jobReply = reply
+
+        when:
+        questionGenerationService.getGenerationJob(externalCourseExecution.getId(), regenerating.getRegenerationJobId())
+
+        then:
+        def result = questionGenerationRepository.findAll().get(0)
+        result.getStatus() == QuestionGeneration.Status.IN_REVISION
+        result.getQuestion().getContent() == 'What does 404 mean?'
+
+        where:
+        what              | reply
+        'fails'           | new AqgJobDto('aqg-2', 'FAILED', 'mcq-v2', 'nim', 'STRICT', [], 'Timeout')
+        'returns nothing' | new AqgJobDto('aqg-2', 'DONE', 'mcq-v2', 'nim', 'STRICT', [new AqgJobDto.Outcome('INSUFFICIENT_CONTEXT', null, 0, [], [])], null)
+    }
+
+    def "a question from before the materials were recorded is regenerated from the course's ready materials"() {
+        given:
+        def generation = importedGeneration()
+        def job = generationJobRepository.findAll().get(0)
+        job.setSource([], null)
+        generationJobRepository.save(job)
+        aqgClient.materials = [new AqgMaterialDto('m-ready', externalCourse.getId(), 'a.pdf', 'READY', 3, 'pymupdf4llm', 1.0, null),
+                               new AqgMaterialDto('m-busy', externalCourse.getId(), 'b.pdf', 'PROCESSING', 0, null, null, null)]
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
+
+        when:
+        questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Clearer please')
+
+        then:
+        aqgClient.lastGenerateRequest.materialIds() == ['m-ready']
+    }
+
+    def "regenerating needs a comment"() {
+        given:
+        def generation = importedGeneration()
+
+        when:
+        questionGenerationService.regenerate(generation.getId(), teacher.getId(), ' ')
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == REVIEW_MISSING_COMMENT
+    }
+
+    def "an approved question cannot be regenerated"() {
+        given:
+        def generation = importedGeneration()
+        questionGenerationService.createReview(reviewOf(generation.getId(), Review.Type.APPROVE))
+
+        when:
+        questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Too late')
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == CANNOT_REVIEW_QUESTION_GENERATION
+    }
+
+    @TestConfiguration
+    static class LocalBeanConfiguration extends BeanConfiguration {}
 }

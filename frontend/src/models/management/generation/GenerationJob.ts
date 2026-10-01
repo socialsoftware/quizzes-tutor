@@ -7,6 +7,8 @@ export interface GenerationRequest {
   count: number;
   groundingMode: string;
   materialIds: string[];
+  // null keeps the language of the materials
+  language: string | null;
 }
 
 export default class GenerationJob {

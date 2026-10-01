@@ -26,6 +26,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.QuestionGenerationRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.QuizQuestion;
@@ -77,6 +78,9 @@ public class DemoService {
 
     @Autowired
     private QuestionSubmissionRepository questionSubmissionRepository;
+
+    @Autowired
+    private QuestionGenerationRepository questionGenerationRepository;
 
     @Autowired
     private QuizRepository quizRepository;
@@ -193,10 +197,13 @@ public class DemoService {
                     }
                 });
 
-        // remove questions except to keep and that are not submitted
+        // remove questions except to keep and those under review (student submissions and
+        // AI-generated drafts, which removeQuestion refuses to delete)
         for (Question question : questionRepository.findCourseQuestions(courseExecutionService.getDemoCourse().getCourseId())
                 .stream()
-                .filter(question -> !questions2Keep.contains(question.getId()) && questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId()) == null)
+                .filter(question -> !questions2Keep.contains(question.getId())
+                        && questionSubmissionRepository.findQuestionSubmissionByQuestionId(question.getId()) == null
+                        && questionGenerationRepository.findByQuestionId(question.getId()) == null)
                 .collect(Collectors.toList())) {
             questionService.removeQuestion(question.getId());
         }

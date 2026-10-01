@@ -21,7 +21,8 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 @Table(name = "question_generations")
 public class QuestionGeneration {
     public enum Status {
-        IN_REVIEW, IN_REVISION, APPROVED, REJECTED
+        // REGENERATING: the service is rewriting the question after a REQUEST_CHANGES review
+        IN_REVIEW, IN_REVISION, REGENERATING, APPROVED, REJECTED
     }
 
     @Id
@@ -60,6 +61,10 @@ public class QuestionGeneration {
 
     @Column(columnDefinition = "TEXT")
     private String explanation;
+
+    // The job rewriting this question while REGENERATING
+    @Column(name = "regeneration_job_id")
+    private Integer regenerationJobId;
 
     @ElementCollection
     @CollectionTable(name = "question_generation_chunks", joinColumns = @JoinColumn(name = "question_generation_id"))
@@ -165,6 +170,27 @@ public class QuestionGeneration {
 
     public List<String> getSourceChunkIds() {
         return sourceChunkIds;
+    }
+
+    public Integer getRegenerationJobId() {
+        return regenerationJobId;
+    }
+
+    public void startRegeneration(Integer jobId) {
+        this.regenerationJobId = jobId;
+        this.status = Status.REGENERATING;
+    }
+
+    /** The rewrite failed or produced nothing: the teacher gets the question back to decide. */
+    public void abandonRegeneration() {
+        this.regenerationJobId = null;
+        this.status = Status.IN_REVISION;
+    }
+
+    /** The question now holds the rewrite (same Question, new text and options): review it again. */
+    public void finishRegeneration() {
+        this.regenerationJobId = null;
+        this.status = Status.IN_REVIEW;
     }
 
     public void setGenerationDetails(String modelId, String promptVersion, String groundingMode, int verificationRetries,

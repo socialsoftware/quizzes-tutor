@@ -26,6 +26,10 @@ public interface QuestionRepository extends JpaRepository<Question, Integer> {
     @Query(value = "SELECT q.* FROM questions q WHERE q.course_id = :courseId AND q.status = 'AVAILABLE'", nativeQuery = true)
     List<Question> findAvailableQuestions(int courseId);
 
+    // Newest first, capped: only used to keep generated questions from repeating existing ones
+    @Query(value = "SELECT LEFT(q.content, 500) FROM questions q WHERE q.course_id = :courseId AND q.content IS NOT NULL ORDER BY q.id DESC LIMIT 5000", nativeQuery = true)
+    List<String> findRecentContents(int courseId);
+
     @Query(value = "SELECT count(*) FROM questions q WHERE q.course_id = :courseId AND q.status = 'AVAILABLE'", nativeQuery = true)
     Integer getAvailableQuestionsSize(Integer courseId);
 

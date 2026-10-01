@@ -3,7 +3,8 @@
     <v-data-table
       :headers="headers"
       :custom-filter="customFilter"
-      :items="questionSubmissions"
+      :items="rows"
+      :item-value="rowKey"
       :search="search"
       :sort-by="[{ key: 'question.creationDate', order: 'desc' }]"
       :mobile-breakpoint="0"
@@ -116,7 +117,7 @@
               class="clickableId"
             >
               <div class="d-flex justify-center">
-                {{ getRaw(displayItem).id }}
+                {{ getRaw(displayItem).isGenerated ? `AI-${getRaw(displayItem).id}` : getRaw(displayItem).id }}
               </div>
             </div>
           </td>
@@ -158,6 +159,13 @@
       v-on:save-submission="onSaveQuestionSubmission"
       v-on:submit-submission="onSubmitQuestionSubmission"
     />
+    <show-generated-question-dialog
+      v-if="currentQuestionGeneration && generatedQuestionDialog"
+      :dialog="generatedQuestionDialog"
+      @update:dialog="generatedQuestionDialog = $event"
+      :questionGeneration="currentQuestionGeneration"
+      @reviewed="getQuestionGenerations"
+    />
     <show-question-submission-dialog
       v-if="currentQuestionSubmission && questionSubmissionDialog"
       :dialog="questionSubmissionDialog"
@@ -174,7 +182,7 @@
 
 <script setup lang="ts">
 import { withV2ColumnWidths } from '@/services/DataTableHeaders';
-import { ref, watch, onMounted } from 'vue';
+import { computed, ref, watch, onMounted, onUnmounted } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import Question from '@/models/management/Question';
@@ -184,6 +192,11 @@ import ShowQuestionSubmissionDialog from '@/views/questionsubmission/ShowQuestio
 import EditQuestionSubmissionDialog from '@/views/questionsubmission/EditQuestionSubmissionDialog.vue';
 import EditQuestionSubmissionTopics from '@/views/questionsubmission/EditQuestionSubmissionTopics.vue';
 import Review from '@/models/management/Review';
+import QuestionGeneration from '@/models/management/generation/QuestionGeneration';
+import ShowGeneratedQuestionDialog from '@/views/teacher/generation/ShowGeneratedQuestionDialog.vue';
+import { createPoller } from '@/services/Polling';
+
+const REGENERATION_POLL_MS = 5000;
 
 const store = useStore();
 
@@ -195,7 +208,19 @@ const questionSubmissionDialog = ref<boolean>(false);
 const search = ref<string>('');
 const topicsComponentKey = ref<number>(0);
 
-const getRaw = (item: any): QuestionSubmission => {
+// Teachers see the questions written by the AI next to the students' submissions
+type Row = QuestionSubmission | QuestionGeneration;
+
+const questionGenerations = ref<QuestionGeneration[]>([]);
+const currentQuestionGeneration = ref<QuestionGeneration | null>(null);
+const generatedQuestionDialog = ref<boolean>(false);
+
+const rows = computed<Row[]>(() => [...questionSubmissions.value, ...questionGenerations.value]);
+
+// Submissions and generations have their own ids, which may coincide
+const rowKey = (row: Row) => `${row instanceof QuestionGeneration ? 'generation' : 'submission'}-${row.id}`;
+
+const getRaw = (item: any): any => {
   return (item as any).raw || item;
 };
 
@@ -227,6 +252,35 @@ watch(editQuestionSubmissionDialog, (newVal) => {
   }
 });
 
+// A regeneration only lands once its job is asked for, so keep asking while any is running
+const checkRegenerations = async (): Promise<boolean> => {
+  const running = questionGenerations.value.filter(
+    (generation) => generation.isRegenerating() && generation.regenerationJobId !== null
+  );
+  for (const generation of running) {
+    const job = await RemoteServices.getGenerationJob(generation.regenerationJobId!);
+    if (!job.isPending()) {
+      await getQuestionGenerations();
+      break;
+    }
+  }
+  return questionGenerations.value.some((generation) => generation.isRegenerating());
+};
+
+const regenerationPoller = createPoller(checkRegenerations, REGENERATION_POLL_MS);
+
+const getQuestionGenerations = async () => {
+  if (!store.isTeacher) return;
+  try {
+    questionGenerations.value = await RemoteServices.getQuestionGenerations();
+    if (questionGenerations.value.some((generation) => generation.isRegenerating())) regenerationPoller.start();
+  } catch (error) {
+    store.setError(error as string);
+  }
+};
+
+onUnmounted(() => regenerationPoller.stop());
+
 watch(questionSubmissionDialog, async (newVal) => {
   if (!newVal) {
     await getQuestionSubmissions();
@@ -250,6 +304,7 @@ const getQuestionSubmissions = async () => {
       ]);
       questionSubmissions.value = _submissions;
       topics.value = _topics;
+      await getQuestionGenerations();
     }
     topicsComponentKey.value += 1;
   } catch (error) {
@@ -337,7 +392,13 @@ const onQuestionSubmissionChangedTopics = (
   }
 };
 
-const showQuestionSubmissionDialogAction = async (questionSubmission: QuestionSubmission) => {
+const showQuestionSubmissionDialogAction = async (row: Row) => {
+  if (row instanceof QuestionGeneration) {
+    currentQuestionGeneration.value = row;
+    generatedQuestionDialog.value = true;
+    return;
+  }
+  const questionSubmission = row;
   currentQuestionSubmission.value = questionSubmission;
   questionSubmissionDialog.value = true;
 

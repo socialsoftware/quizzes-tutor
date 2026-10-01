@@ -85,6 +85,17 @@ public class QuestionGenerationController {
         return questionGenerationService.createReview(reviewDto);
     }
 
+    /** "Regenerate with review": a REQUEST_CHANGES review whose comment the model rewrites the question from. */
+    @PostMapping("/generation/questions/{questionGenerationId}/regenerate")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionGenerationId, 'GENERATION.ACCESS')")
+    public QuestionGenerationDto regenerate(Authentication authentication, @PathVariable int questionGenerationId,
+                                            @RequestBody ReviewDto reviewDto) {
+        AuthUser authUser = (AuthUser) authentication.getPrincipal();
+
+        return questionGenerationService.regenerate(questionGenerationId, authUser.getUser().getId(),
+                reviewDto.getComment());
+    }
+
     @GetMapping("/generation/questions/{questionGenerationId}/reviews")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#questionGenerationId, 'GENERATION.ACCESS')")
     public List<ReviewDto> getReviews(@PathVariable int questionGenerationId) {

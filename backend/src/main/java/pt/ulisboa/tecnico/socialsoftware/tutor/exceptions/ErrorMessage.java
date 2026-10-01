@@ -173,6 +173,8 @@ public enum ErrorMessage {
     GENERATION_MISSING_TOPIC("A topic or a topic name is needed to generate questions"),
     GENERATION_MISSING_MATERIALS("Select at least one material to generate questions from"),
     GENERATION_INVALID_COUNT("The number of questions to generate must be between 1 and 20"),
+    GENERATION_INVALID_LANGUAGE("The language name is too long"),
+    GENERATION_CANNOT_REGENERATE("There are no course materials to regenerate this question from"),
     REVIEW_MISSING_QUESTION_GENERATION("Review is missing associated question generation"),
     CANNOT_REVIEW_QUESTION_GENERATION("Generated question already approved or rejected cannot be reviewed again"),
     AQG_SERVICE_UNAVAILABLE("The question generation service is not available"),

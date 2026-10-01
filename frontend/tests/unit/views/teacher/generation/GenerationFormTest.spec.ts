@@ -103,8 +103,22 @@ describe('GenerationForm', () => {
       count: 3,
       groundingMode: 'ENRICHED',
       materialIds: ['m1'],
+      language: null,
     });
     expect(wrapper.emitted('requested')).toHaveLength(1);
+  });
+
+  test('sends the chosen language, or none to keep the language of the materials', async () => {
+    const request = vi.spyOn(RemoteServices, 'requestGeneration').mockResolvedValue(new GenerationJob());
+    const wrapper = await mountForm([material('m1', 'READY')]);
+    (wrapper.vm as any).selectedTopic = 'HTTP';
+    (wrapper.vm as any).language = 'Portuguese';
+    await flushPromises();
+
+    await generateButton(wrapper).trigger('click');
+    await flushPromises();
+
+    expect(request).toHaveBeenCalledWith(expect.objectContaining({ language: 'Portuguese' }));
   });
 
   test('links a topic picked from the course to its id', async () => {

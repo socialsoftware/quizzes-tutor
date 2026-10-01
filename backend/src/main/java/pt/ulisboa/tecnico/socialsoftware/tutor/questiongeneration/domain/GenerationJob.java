@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
  * A request sent to the question generation service. It keeps plain ids instead of entity
@@ -58,6 +60,17 @@ public class GenerationJob {
     @Column(columnDefinition = "TEXT")
     private String error;
 
+    @ElementCollection
+    @CollectionTable(name = "generation_job_materials", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(name = "material_id")
+    private List<String> materialIds = new ArrayList<>();
+
+    private String language;
+
+    // The QuestionGeneration this job rewrites ("Regenerate with review"), null for new questions
+    @Column(name = "revision_of_id")
+    private Integer revisionOfId;
+
     @Column(name = "creation_date")
     private LocalDateTime creationDate = DateHandler.now();
 
@@ -75,6 +88,27 @@ public class GenerationJob {
         this.difficulty = difficulty;
         this.groundingMode = groundingMode;
         this.aqgStatus = aqgStatus;
+    }
+
+    public void setSource(List<String> materialIds, String language) {
+        this.materialIds = new ArrayList<>(materialIds);
+        this.language = language;
+    }
+
+    public void setRevisionOfId(Integer revisionOfId) {
+        this.revisionOfId = revisionOfId;
+    }
+
+    public List<String> getMaterialIds() {
+        return materialIds;
+    }
+
+    public String getLanguage() {
+        return language;
+    }
+
+    public Integer getRevisionOfId() {
+        return revisionOfId;
     }
 
     public void markImported(int imported, int skipped) {

@@ -1178,6 +1178,16 @@ export default class RemoteServices {
       });
   }
 
+  // "Regenerate with review": records a REQUEST_CHANGES review and has the model rewrite the question
+  static async regenerateQuestion(questionGenerationId: number, comment: string): Promise<QuestionGeneration> {
+    return httpClient
+      .post(`/generation/questions/${questionGenerationId}/regenerate`, { comment })
+      .then((response) => new QuestionGeneration(response.data))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getQuestionGenerationReviews(questionGenerationId: number): Promise<Review[]> {
     return httpClient
       .get(`/generation/questions/${questionGenerationId}/reviews`)

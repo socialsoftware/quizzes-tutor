@@ -10,7 +10,7 @@ DEFAULT_MODELS = {
     "ollama": "llama3.1:8b",
     "openai": "gpt-4o-mini",
     "anthropic": "claude-sonnet-5",
-    "nvidia_nim": "meta/llama-3.1-70b-instruct",
+    "nvidia_nim": "nvidia/nemotron-3-super-120b-a12b",
 }
 
 
@@ -32,6 +32,8 @@ class Settings:
     office_parser: str = "markitdown"
     keep_originals: bool = True
     database_url: str = "sqlite://"
+    llm_timeout: float = 120
+    llm_thinking: bool = False
 
     @staticmethod
     def from_env() -> "Settings":
@@ -48,16 +50,25 @@ class Settings:
             office_parser=_choice("OFFICE_PARSER", "markitdown", ("markitdown", "marker")),
             keep_originals=os.getenv("KEEP_ORIGINALS", "true").lower() != "false",
             database_url=os.getenv("DATABASE_URL", "sqlite:///aqg.db"),
+            llm_timeout=float(os.getenv("LLM_TIMEOUT", "120")),
+            llm_thinking=os.getenv("LLM_THINKING", "false").lower() == "true",
         )
 
 
 def default_model_config(settings: Settings) -> ModelConfig:
     """Cloud API keys are left to LiteLLM, which reads OPENAI_API_KEY, ANTHROPIC_API_KEY
     and NVIDIA_NIM_API_KEY from the environment."""
+    timeout = settings.llm_timeout
     if settings.provider == "ollama":
-        return ModelConfig(model=f"ollama/{settings.model}", api_base=settings.ollama_base_url)
+        return ModelConfig(
+            model=f"ollama/{settings.model}", api_base=settings.ollama_base_url, timeout=timeout
+        )
     if settings.provider == "nvidia_nim":
-        return ModelConfig(model=f"nvidia_nim/{settings.model}")
+        # Reasoning models on NIM (GLM, Nemotron...) think before answering by default, which
+        # made each call take ~30-60 s instead of ~2 s; the JSON replies are just as valid
+        # without it. Models without the switch ignore the template argument.
+        extra_body = None if settings.llm_thinking else {"chat_template_kwargs": {"enable_thinking": False}}
+        return ModelConfig(model=f"nvidia_nim/{settings.model}", timeout=timeout, extra_body=extra_body)
     if settings.provider == "anthropic":
-        return ModelConfig(model=f"anthropic/{settings.model}")
-    return ModelConfig(model=settings.model)
+        return ModelConfig(model=f"anthropic/{settings.model}", timeout=timeout)
+    return ModelConfig(model=settings.model, timeout=timeout)

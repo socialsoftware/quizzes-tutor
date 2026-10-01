@@ -13,6 +13,11 @@ export default class QuestionGeneration {
   needsHumanAttention: boolean = false;
   explanation: string | null = null;
   sourceChunkIds: string[] = [];
+  // Job rewriting the question while REGENERATING ("Regenerate with review")
+  regenerationJobId: number | null = null;
+  // Lets the Submissions table list generated questions next to the students' ones
+  readonly isGenerated = true;
+  readonly teacherRead = true;
 
   constructor(jsonObj?: QuestionGeneration) {
     if (jsonObj) {
@@ -28,6 +33,7 @@ export default class QuestionGeneration {
       this.needsHumanAttention = jsonObj.needsHumanAttention;
       this.explanation = jsonObj.explanation;
       this.sourceChunkIds = jsonObj.sourceChunkIds ?? [];
+      this.regenerationJobId = jsonObj.regenerationJobId ?? null;
     }
   }
 
@@ -40,12 +46,34 @@ export default class QuestionGeneration {
     { title: 'Model', key: 'modelId', align: 'center', width: '200px' },
   ];
 
+  // Shown in the "Submitted by" column
+  get name() {
+    return `AI (${this.modelId ?? 'unknown model'})`;
+  }
+
+  isRegenerating() {
+    return this.status === 'REGENERATING';
+  }
+
+  // Only students edit their own questions; a teacher regenerates these instead
+  isInRevision() {
+    return false;
+  }
+
+  isRejected() {
+    return this.status === 'REJECTED';
+  }
+
+  getStatus() {
+    return this.getStatusName();
+  }
+
   isOpen() {
     return this.status === 'IN_REVIEW' || this.status === 'IN_REVISION';
   }
 
   getStatusName() {
-    return this.status.replace('_', ' ');
+    return this.status.replace(/_/g, ' ');
   }
 
   getStatusColor() {
@@ -56,6 +84,8 @@ export default class QuestionGeneration {
         return 'red';
       case 'IN_REVISION':
         return 'yellow';
+      case 'REGENERATING':
+        return 'purple';
       default:
         return 'blue';
     }

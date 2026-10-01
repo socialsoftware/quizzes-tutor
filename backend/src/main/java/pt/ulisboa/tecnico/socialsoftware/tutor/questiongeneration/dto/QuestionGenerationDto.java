@@ -20,6 +20,7 @@ public class QuestionGenerationDto implements Serializable {
     private boolean needsHumanAttention;
     private String explanation;
     private List<String> sourceChunkIds = new ArrayList<>();
+    private Integer regenerationJobId;
 
     public QuestionGenerationDto() {
     }
@@ -39,7 +40,12 @@ public class QuestionGenerationDto implements Serializable {
         this.needsHumanAttention = questionGeneration.needsHumanAttention();
         this.explanation = questionGeneration.getExplanation();
         this.sourceChunkIds = new ArrayList<>(questionGeneration.getSourceChunkIds());
+        this.regenerationJobId = questionGeneration.getRegenerationJobId();
     }
+
+    public Integer getRegenerationJobId() { return regenerationJobId; }
+
+    public void setRegenerationJobId(Integer regenerationJobId) { this.regenerationJobId = regenerationJobId; }
 
     public Integer getId() { return id; }
 

@@ -2,7 +2,7 @@
   <v-card class="table">
     <v-card-title>Generate questions</v-card-title>
     <v-card-subtitle>
-      The questions are drafts: nothing reaches the students until you approve it in the Review tab.
+      The questions are drafts: nothing reaches the students until you approve it in Submissions.
     </v-card-subtitle>
     <v-card-text>
       <v-row>
@@ -32,7 +32,17 @@
         </v-col>
       </v-row>
       <v-row>
-        <v-col cols="12" sm="4">
+        <v-col cols="12" sm="3">
+          <v-combobox
+            v-model="language"
+            :items="languageOptions"
+            label="Language"
+            hint="Pick one or type another"
+            persistent-hint
+            data-cy="GenerationLanguage"
+          />
+        </v-col>
+        <v-col cols="12" sm="3">
           <v-select
             v-model="difficulty"
             :items="difficultyOptions"
@@ -40,7 +50,7 @@
             data-cy="GenerationDifficulty"
           />
         </v-col>
-        <v-col cols="12" sm="4">
+        <v-col cols="12" sm="3">
           <v-text-field
             v-model.number="count"
             type="number"
@@ -51,7 +61,7 @@
             data-cy="GenerationCount"
           />
         </v-col>
-        <v-col cols="12" sm="4">
+        <v-col cols="12" sm="3">
           <v-select
             v-model="groundingMode"
             :items="groundingOptions"
@@ -86,6 +96,7 @@ import GenerationJob from '@/models/management/generation/GenerationJob';
 
 const MIN_COUNT = 1;
 const MAX_COUNT = 20;
+const SAME_AS_MATERIALS = 'Same as the materials';
 
 const props = defineProps<{ materials: GenerationMaterial[] }>();
 const emit = defineEmits<{ (e: 'requested', job: GenerationJob): void }>();
@@ -98,6 +109,8 @@ const selectedMaterialIds = ref<string[]>([]);
 const difficulty = ref('MEDIUM');
 const count = ref(5);
 const groundingMode = ref('STRICT');
+const language = ref<string | null>(SAME_AS_MATERIALS);
+const languageOptions = [SAME_AS_MATERIALS, 'Portuguese', 'English', 'Spanish', 'French'];
 const requesting = ref(false);
 
 const difficultyOptions = [
@@ -155,6 +168,10 @@ const request = async () => {
       count: count.value,
       groundingMode: groundingMode.value,
       materialIds: selectedMaterialIds.value,
+      language:
+        !language.value || language.value.trim() === '' || language.value === SAME_AS_MATERIALS
+          ? null
+          : language.value.trim(),
     });
     emit('requested', job);
   } catch (error) {

@@ -3,7 +3,7 @@ import re
 
 from pydantic import ValidationError
 
-from app.generation.prompts import SYSTEM_PROMPT, build_generation_prompt
+from app.generation.prompts import build_generation_prompt, system_prompt
 from app.llm.provider import LLMProvider
 from app.schema import GeneratedMCQ, GenerationRequest
 
@@ -38,7 +38,7 @@ def parse_json_reply(raw: str) -> dict:
 def synthesize(
     request: GenerationRequest, provider: LLMProvider, feedback: str | None = None
 ) -> GeneratedMCQ:
-    raw = provider.complete(SYSTEM_PROMPT, build_generation_prompt(request, feedback))
+    raw = provider.complete(system_prompt(request.language), build_generation_prompt(request, feedback))
     data = parse_json_reply(raw)
     if data.get("insufficient_context"):
         raise InsufficientContext(str(data.get("reason", "")))

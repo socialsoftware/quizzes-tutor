@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
@@ -46,6 +47,7 @@ public class QuestionGenerationService {
     private static final int MAX_QUESTIONS_PER_JOB = 20;
     private static final int DEFAULT_QUESTIONS_PER_JOB = 5;
     private static final int MAX_TITLE_LENGTH = 100;
+    private static final int MAX_LANGUAGE_LENGTH = 40;
 
     @Autowired
     private AqgClient aqgClient;
@@ -111,14 +113,63 @@ public class QuestionGenerationService {
 
         String difficulty = request.getDifficulty() == null ? "MEDIUM" : request.getDifficulty();
         String groundingMode = request.getGroundingMode() == null ? "STRICT" : request.getGroundingMode();
+        String language = normaliseLanguage(request.getLanguage());
 
         AqgJobDto aqgJob = aqgClient.generate(new AqgGenerateRequest(
-                courseId, topicName, difficulty, count, groundingMode, request.getMaterialIds()));
+                courseId, topicName, difficulty, count, groundingMode, request.getMaterialIds(),
+                language, null, questionRepository.findRecentContents(courseId)));
 
         GenerationJob job = new GenerationJob(aqgJob.id(), executionId, requesterId, topicName, request.getTopicId(),
                 count, difficulty, groundingMode, aqgJob.status());
+        job.setSource(request.getMaterialIds(), language);
         generationJobRepository.save(job);
         return new GenerationJobDto(job);
+    }
+
+    /**
+     * "Regenerate with review": records the teacher's REQUEST_CHANGES review and asks the
+     * service to rewrite the question from the same materials, following the review. The
+     * rewrite replaces the question once the job is done (see getGenerationJob).
+     */
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public QuestionGenerationDto regenerate(Integer questionGenerationId, Integer userId, String comment) {
+        if (comment == null || comment.isBlank())
+            throw new TutorException(REVIEW_MISSING_COMMENT);
+
+        QuestionGeneration questionGeneration = getQuestionGeneration(questionGenerationId);
+        if (questionGeneration.getStatus() != QuestionGeneration.Status.IN_REVIEW
+                && questionGeneration.getStatus() != QuestionGeneration.Status.IN_REVISION)
+            throw new TutorException(CANNOT_REVIEW_QUESTION_GENERATION);
+
+        GenerationJob original = questionGeneration.getJob();
+        if (original == null)
+            throw new TutorException(GENERATION_CANNOT_REGENERATE);
+        Integer courseId = questionGeneration.getCourseExecution().getCourse().getId();
+        List<String> materialIds = sourceMaterials(original, courseId);
+
+        ReviewDto reviewDto = new ReviewDto();
+        reviewDto.setQuestionGenerationId(questionGenerationId);
+        reviewDto.setUserId(userId);
+        reviewDto.setComment(comment);
+        reviewDto.setType(Review.Type.REQUEST_CHANGES.name());
+        createReview(reviewDto);
+
+        AqgJobDto aqgJob = aqgClient.generate(new AqgGenerateRequest(
+                courseId, original.getTopic(), original.getDifficulty(), 1, original.getGroundingMode(),
+                materialIds, original.getLanguage(),
+                new AqgGenerateRequest.Revision(currentDraft(questionGeneration), comment),
+                questionRepository.findRecentContents(courseId)));
+
+        GenerationJob job = new GenerationJob(aqgJob.id(), original.getCourseExecutionId(), userId,
+                original.getTopic(), original.getTopicId(), 1, original.getDifficulty(), original.getGroundingMode(),
+                aqgJob.status());
+        job.setSource(materialIds, original.getLanguage());
+        job.setRevisionOfId(questionGenerationId);
+        generationJobRepository.save(job);
+
+        questionGeneration.startRegeneration(job.getId());
+        return new QuestionGenerationDto(questionGeneration);
     }
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
@@ -145,9 +196,14 @@ public class QuestionGenerationService {
             job.setAqgStatus(aqgJob.status());
 
             if ("DONE".equals(aqgJob.status())) {
-                importQuestions(job, aqgJob);
+                if (job.getRevisionOfId() != null)
+                    importRevision(job, aqgJob);
+                else
+                    importQuestions(job, aqgJob);
             } else if ("FAILED".equals(aqgJob.status())) {
                 job.markFailed(aqgJob.error());
+                if (job.getRevisionOfId() != null)
+                    getQuestionGeneration(job.getRevisionOfId()).abandonRegeneration();
             }
         }
 
@@ -227,7 +283,75 @@ public class QuestionGenerationService {
         job.markImported(imported, skipped);
     }
 
+    private void importRevision(GenerationJob job, AqgJobDto aqgJob) {
+        QuestionGeneration questionGeneration = getQuestionGeneration(job.getRevisionOfId());
+        AqgJobDto.Outcome outcome = aqgJob.outcomes() == null || aqgJob.outcomes().isEmpty()
+                ? null : aqgJob.outcomes().get(0);
+
+        if (outcome == null || outcome.question() == null) {
+            questionGeneration.abandonRegeneration();
+            job.markImported(0, 1);
+            return;
+        }
+
+        // Rewritten in place: the Question keeps its id, topics and review log
+        questionGeneration.getQuestion().update(draftDto(outcome.question()));
+        questionGeneration.finishRegeneration();
+        questionGeneration.setGenerationDetails(
+                aqgJob.modelId(),
+                aqgJob.promptVersion(),
+                aqgJob.groundingMode(),
+                outcome.retries() == null ? 0 : outcome.retries(),
+                "NEEDS_HUMAN_ATTENTION".equals(outcome.status()),
+                outcome.question().explanation(),
+                outcome.sourceChunkIds() == null ? new ArrayList<>() : outcome.sourceChunkIds());
+        job.markImported(1, 0);
+    }
+
+    /**
+     * The materials the question came from. Jobs requested before they were recorded fall back
+     * to every material of the course the service has finished reading.
+     */
+    private List<String> sourceMaterials(GenerationJob job, Integer courseId) {
+        if (!job.getMaterialIds().isEmpty())
+            return job.getMaterialIds();
+        List<String> ready = aqgClient.listMaterials(courseId).stream()
+                .filter(material -> "READY".equals(material.status()))
+                .map(AqgMaterialDto::id)
+                .collect(Collectors.toList());
+        if (ready.isEmpty())
+            throw new TutorException(GENERATION_CANNOT_REGENERATE);
+        return ready;
+    }
+
+    /** The question as the service wrote it, to be rewritten following a review. */
+    private AqgJobDto.Question currentDraft(QuestionGeneration questionGeneration) {
+        Question question = questionGeneration.getQuestion();
+        List<AqgJobDto.Option> options = new ArrayList<>();
+        if (question.getQuestionDetails() instanceof MultipleChoiceQuestion details)
+            details.getOptions().forEach(option -> options.add(new AqgJobDto.Option(option.getContent(), option.isCorrect())));
+        String explanation = questionGeneration.getExplanation() == null ? "" : questionGeneration.getExplanation();
+        return new AqgJobDto.Question(question.getContent(), options, explanation);
+    }
+
+    private String normaliseLanguage(String language) {
+        if (language == null || language.isBlank())
+            return null;
+        String trimmed = language.trim();
+        if (trimmed.length() > MAX_LANGUAGE_LENGTH)
+            throw new TutorException(GENERATION_INVALID_LANGUAGE);
+        return trimmed;
+    }
+
     private Question createDraftQuestion(Integer courseId, AqgJobDto.Question draft) {
+        QuestionDto created = questionService.createQuestion(courseId, draftDto(draft));
+        Question question = questionRepository.findById(created.getId())
+                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, created.getId()));
+        question.setOrigin(Question.Origin.GENERATED);
+        return question;
+    }
+
+    private QuestionDto draftDto(AqgJobDto.Question draft) {
         List<OptionDto> options = new ArrayList<>();
         for (AqgJobDto.Option draftOption : draft.options()) {
             OptionDto option = new OptionDto();
@@ -243,12 +367,7 @@ public class QuestionGenerationService {
         questionDto.setContent(draft.stem());
         questionDto.setStatus(Question.Status.SUBMITTED.name());
         questionDto.setQuestionDetailsDto(details);
-
-        QuestionDto created = questionService.createQuestion(courseId, questionDto);
-        Question question = questionRepository.findById(created.getId())
-                .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, created.getId()));
-        question.setOrigin(Question.Origin.GENERATED);
-        return question;
+        return questionDto;
     }
 
     private String titleFor(String stem) {

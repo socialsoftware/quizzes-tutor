@@ -13,6 +13,15 @@ class StubAqgClient implements AqgClient {
     AqgGenerateRequest lastGenerateRequest
     int getJobCalls = 0
 
+    /** The bean outlives each test (the Spring context is cached), so tests start from a clean stub. */
+    void reset() {
+        generateReply = null
+        jobReply = null
+        materials = []
+        lastGenerateRequest = null
+        getJobCalls = 0
+    }
+
     @Override
     AqgMaterialDto uploadMaterial(int courseId, String filename, byte[] content) {
         return new AqgMaterialDto('material-1', courseId, filename, 'PROCESSING', 0, null, null, null)

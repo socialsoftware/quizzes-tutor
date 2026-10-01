@@ -5,6 +5,7 @@ from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadF
 
 from app.config import Settings, default_model_config
 from app.db import create_session_factory
+from app.evaluation.duplicate_check import normalise
 from app.evaluation.pipeline import generate_verified_question
 from app.generation.prompts import PROMPT_VERSION
 from app.ingestion.adapters import Parsers, UnsupportedFormat, adapter_for, build_parsers
@@ -39,10 +40,18 @@ def create_app(
     def run_job(job_id: str, request: GenerationRequest, provider: LLMProvider) -> None:
         jobs.set_running(job_id)
         try:
-            outcomes = [
-                generate_verified_question(request, provider, settings.max_retries)
-                for _ in range(request.count)
-            ]
+            # Drafts of this job count as existing too, so a job never repeats itself
+            seen = list(request.existing_stems)
+            if request.revision:
+                # The version being rewritten is not a question to keep away from
+                previous = normalise(request.revision.previous.stem)
+                seen = [stem for stem in seen if normalise(stem) != previous]
+            outcomes = []
+            for _ in range(request.count):
+                outcome = generate_verified_question(request, provider, settings.max_retries, seen)
+                if outcome.question:
+                    seen.append(outcome.question.stem)
+                outcomes.append(outcome)
         except Exception as error:  # provider outages must fail the job, not the worker
             jobs.set_failed(job_id, f"{type(error).__name__}: {error}")
             return

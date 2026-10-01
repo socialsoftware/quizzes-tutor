@@ -1,4 +1,6 @@
 from app.evaluation.distractor_check import check_distractors
+from app.evaluation.duplicate_check import find_duplicate
+from app.evaluation.format_check import check_format
 from app.evaluation.grounding_check import check_grounding
 from app.evaluation.structural_validator import validate_structure
 from app.generation.synthesizer import InsufficientContext, ModelReplyError, synthesize
@@ -7,10 +9,14 @@ from app.schema import GenerationOutcome, GenerationRequest, OutcomeStatus
 
 
 def generate_verified_question(
-    request: GenerationRequest, provider: LLMProvider, max_retries: int
+    request: GenerationRequest,
+    provider: LLMProvider,
+    max_retries: int,
+    seen_stems: list[str] | None = None,
 ) -> GenerationOutcome:
     """Generate one question and run it through the verification chain (structure, then
-    grounding, then distractors). A failed check sends its reasons back into the next
+    grounding, then distractors; structure covers the regex format checks and repeats of
+    `seen_stems`). A failed check sends its reasons back into the next
     attempt; once the retries are spent the draft is flagged for the teacher instead of
     looping or being silently dropped."""
     failures: list[str] = []
@@ -30,7 +36,10 @@ def generate_verified_question(
             problems = [str(error)]
         else:
             last_draft = draft
-            problems = validate_structure(draft)
+            problems = validate_structure(draft) + check_format(draft)
+            duplicate = find_duplicate(draft.stem, seen_stems or [])
+            if duplicate:
+                problems.append(f'the question repeats an existing one: "{duplicate[:200]}"')
             if not problems:
                 grounding = check_grounding(draft, request.chunks, request.grounding_mode, provider)
                 supporting = grounding.supporting_chunk_ids

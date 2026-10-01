@@ -13,9 +13,11 @@ class FakeLLM:
     def __init__(self, replies):
         self.replies = list(replies)
         self.prompts = []
+        self.systems = []
 
     def complete(self, system, user):
         self.prompts.append(user)
+        self.systems.append(system)
         reply = self.replies.pop(0)
         return reply if isinstance(reply, str) else json.dumps(reply)
 

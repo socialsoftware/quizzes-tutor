@@ -46,7 +46,7 @@ const describe = (job: GenerationJob): string => {
   if (job.status === 'FAILED') return job.error || 'The generation failed';
   if (job.status === 'IMPORTED') {
     const skipped = job.skippedCount > 0 ? `, ${job.skippedCount} skipped for lack of material` : '';
-    return `${job.importedCount} question(s) waiting in the Review tab${skipped}`;
+    return `${job.importedCount} question(s) waiting for review in Submissions${skipped}`;
   }
   return 'The questions are being written';
 };

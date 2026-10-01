@@ -52,8 +52,8 @@
                       label="Review Type"
                     >
                       <template #selection="{ item: selectItem }">
-                        <v-chip size="small" :color="(selectItem as any).raw.color">{{
-                          (selectItem as any).raw.title
+                        <v-chip size="small" :color="Review.statusOptionFor(selectItem).color">{{
+                          Review.statusOptionFor(selectItem).title
                         }}</v-chip>
                       </template>
                     </v-select>
