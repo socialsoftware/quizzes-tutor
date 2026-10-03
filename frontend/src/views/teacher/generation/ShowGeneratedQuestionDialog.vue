@@ -155,7 +155,8 @@ const review = async () => {
     store.setError('Error: Please select review type');
     return;
   }
-  if (comment.value.trim() === '') {
+  // Approving or rejecting may go without a comment; asking for changes or commenting may not
+  if (comment.value.trim() === '' && selected.value !== 'APPROVE' && selected.value !== 'REJECT') {
     store.setError('Error: Please write a comment');
     return;
   }

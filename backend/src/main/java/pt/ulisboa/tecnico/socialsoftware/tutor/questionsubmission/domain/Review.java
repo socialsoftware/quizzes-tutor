@@ -48,19 +48,21 @@ public class Review {
     }
 
     public Review(User user, QuestionGeneration questionGeneration, ReviewDto reviewDto) {
+        // The type first: whether a comment is required depends on it
+        setType(reviewDto.getType());
         setComment(reviewDto.getComment());
         setUser(user);
         setQuestionGeneration(questionGeneration);
         setCreationDate(DateHandler.toLocalDateTime(reviewDto.getCreationDate()));
-        setType(reviewDto.getType());
     }
 
     public Review(User user, QuestionSubmission questionSubmission, ReviewDto reviewDto) {
+        // The type first: whether a comment is required depends on it
+        setType(reviewDto.getType());
         setComment(reviewDto.getComment());
         setUser(user);
         setQuestionSubmission(questionSubmission);
         setCreationDate(DateHandler.toLocalDateTime(reviewDto.getCreationDate()));
-        setType(reviewDto.getType());
     }
 
     @Override
@@ -76,9 +78,14 @@ public class Review {
         return comment;
     }
 
+    /** Approving or rejecting may go without a comment; asking for changes or commenting may not. */
     public void setComment(String comment) {
         if (comment == null || comment.isBlank()) {
-            throw new TutorException(REVIEW_MISSING_COMMENT);
+            if (type != Type.APPROVE && type != Type.REJECT) {
+                throw new TutorException(REVIEW_MISSING_COMMENT);
+            }
+            this.comment = "";
+            return;
         }
         this.comment = comment;
     }

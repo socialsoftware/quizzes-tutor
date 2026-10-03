@@ -123,17 +123,31 @@ describe('ShowGeneratedQuestionDialog', () => {
     expect((wrapper.vm as any).comment).toBe('');
   });
 
-  test('a review needs a type and a comment', async () => {
+  test('a review needs a type, and asking for changes or commenting needs a comment', async () => {
     const create = vi.spyOn(RemoteServices, 'createGenerationReview').mockResolvedValue(new Review());
     const wrapper = await mountDialog(generation());
 
     await pick(wrapper, null as any, 'text');
     expect(store.setError).toHaveBeenLastCalledWith(expect.stringContaining('review type'));
 
-    await pick(wrapper, 'APPROVE', '   ');
+    await pick(wrapper, 'REQUEST_CHANGES', '   ');
+    expect(store.setError).toHaveBeenLastCalledWith(expect.stringContaining('comment'));
+
+    await pick(wrapper, 'COMMENT', '');
     expect(store.setError).toHaveBeenLastCalledWith(expect.stringContaining('comment'));
 
     expect(create).not.toHaveBeenCalled();
+  });
+
+  test.each(['APPROVE', 'REJECT'])('%s needs no comment', async (type) => {
+    const create = vi.spyOn(RemoteServices, 'createGenerationReview').mockResolvedValue(new Review());
+    const wrapper = await mountDialog(generation());
+
+    await pick(wrapper, type, '');
+
+    expect(store.setError).not.toHaveBeenCalled();
+    expect(create.mock.calls[0][0].type).toBe(type);
+    expect(wrapper.emitted('update:dialog')![0]).toEqual([false]);
   });
 
   test('a failed review is reported and the dialog stays open', async () => {

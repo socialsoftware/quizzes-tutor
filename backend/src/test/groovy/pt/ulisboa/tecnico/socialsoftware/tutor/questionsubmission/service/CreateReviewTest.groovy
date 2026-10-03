@@ -79,6 +79,30 @@ class CreateReviewTest extends SpockTest {
         Review.Type.COMMENT.name()         || QuestionSubmission.Status.IN_REVIEW   || Question.Status.SUBMITTED
     }
 
+    @Unroll
+    def "a submission can be #type without a comment (#comment)"() {
+        given:
+        def reviewDto = new ReviewDto()
+        reviewDto.setQuestionSubmissionId(questionSubmission.getId())
+        reviewDto.setUserId(teacher.getId())
+        reviewDto.setComment(comment)
+        reviewDto.setType(type)
+
+        when:
+        questionSubmissionService.createReview(reviewDto)
+
+        then:
+        reviewRepository.findAll().get(0).getComment() == ''
+        questionSubmissionRepository.findAll().get(0).getStatus() == status
+
+        where:
+        type                       | comment || status
+        Review.Type.APPROVE.name() | null    || QuestionSubmission.Status.APPROVED
+        Review.Type.APPROVE.name() | '  '    || QuestionSubmission.Status.APPROVED
+        Review.Type.REJECT.name()  | null    || QuestionSubmission.Status.REJECTED
+        Review.Type.REJECT.name()  | ''      || QuestionSubmission.Status.REJECTED
+    }
+
     def "create review for question submission that has already been reviewed"() {
         given: "a question submission that has already been reviewed"
         question.setStatus(Question.Status.AVAILABLE)
@@ -132,8 +156,8 @@ class CreateReviewTest extends SpockTest {
 
         where:
         comment          | hasQuestionSubmission | hasUser | type                       || errorMessage
-        null             | true                  | true    | Review.Type.APPROVE.name() || REVIEW_MISSING_COMMENT
-        ' '              | true                  | true    | Review.Type.APPROVE.name() || REVIEW_MISSING_COMMENT
+        null             | true                  | true    | Review.Type.REQUEST_CHANGES.name() || REVIEW_MISSING_COMMENT
+        ' '              | true                  | true    | Review.Type.COMMENT.name() || REVIEW_MISSING_COMMENT
         REVIEW_1_COMMENT | false                 | true    | Review.Type.APPROVE.name() || REVIEW_MISSING_QUESTION_SUBMISSION
         REVIEW_1_COMMENT | true                  | false   | Review.Type.APPROVE.name() || REVIEW_MISSING_USER
         REVIEW_1_COMMENT | true                  | true    | null                       || INVALID_TYPE_FOR_REVIEW
