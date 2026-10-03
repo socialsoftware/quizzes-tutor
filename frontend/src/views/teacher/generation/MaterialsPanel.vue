@@ -28,6 +28,21 @@
       :mobile-breakpoint="0"
       data-cy="Materials"
     >
+      <template v-slot:[`item.actions`]="{ item }">
+        <v-tooltip location="bottom">
+          <template v-slot:activator="{ props: activatorProps }">
+            <v-icon
+              v-if="!getRaw(item).isProcessing()"
+              class="action-button"
+              v-bind="activatorProps"
+              data-cy="ReprocessMaterial"
+              @click="reprocess(getRaw(item))"
+              >fas fa-sync</v-icon
+            >
+          </template>
+          <span>Read the file again to rebuild its sections</span>
+        </v-tooltip>
+      </template>
       <template v-slot:[`item.status`]="{ item }">
         <v-tooltip location="bottom" :disabled="!getRaw(item).error">
           <template v-slot:activator="{ props: activatorProps }">
@@ -116,6 +131,16 @@ const onFilesChosen = async (event: Event) => {
     await refresh().catch(() => undefined);
   }
   uploading.value = false;
+};
+
+const reprocess = async (material: GenerationMaterial) => {
+  try {
+    await RemoteServices.reprocessGenerationMaterial(material.id);
+    await refresh();
+    poller.start();
+  } catch (error) {
+    store.setError(error as string);
+  }
 };
 
 onMounted(load);

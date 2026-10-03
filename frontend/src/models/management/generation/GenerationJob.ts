@@ -9,6 +9,9 @@ export interface GenerationRequest {
   materialIds: string[];
   // null keeps the language of the materials
   language: string | null;
+  // Heading paths to draw from; empty uses the whole materials
+  sections: string[];
+  focus: string | null;
 }
 
 export default class GenerationJob {

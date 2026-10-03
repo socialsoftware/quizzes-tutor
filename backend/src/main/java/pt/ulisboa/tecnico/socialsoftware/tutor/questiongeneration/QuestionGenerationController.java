@@ -9,8 +9,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationMaterialDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgSectionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationJobDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationMaterialDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationRequestDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.QuestionGenerationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
@@ -44,6 +45,18 @@ public class QuestionGenerationController {
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public List<GenerationMaterialDto> getMaterials(@PathVariable int executionId) {
         return questionGenerationService.getMaterials(executionId);
+    }
+
+    @GetMapping("/generation/{executionId}/materials/{materialId}/sections")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public List<AqgSectionDto> getSections(@PathVariable int executionId, @PathVariable String materialId) {
+        return questionGenerationService.getSections(executionId, materialId);
+    }
+
+    @PostMapping("/generation/{executionId}/materials/{materialId}/reprocess")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public GenerationMaterialDto reprocessMaterial(@PathVariable int executionId, @PathVariable String materialId) {
+        return questionGenerationService.reprocessMaterial(executionId, materialId);
     }
 
     @PostMapping("/generation/{executionId}/jobs")

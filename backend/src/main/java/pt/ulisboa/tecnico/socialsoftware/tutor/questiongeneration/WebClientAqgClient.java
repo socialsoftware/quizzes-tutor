@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgSectionDto;
 
 import java.time.Duration;
 import java.util.List;
@@ -60,6 +61,20 @@ public class WebClientAqgClient implements AqgClient {
         return read(call(() -> client.get().uri("/courses/{courseId}/materials", courseId)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<List<AqgMaterialDto>>() {});
+    }
+
+    @Override
+    public List<AqgSectionDto> getSections(String materialId) {
+        return read(call(() -> client.get().uri("/materials/{materialId}/sections", materialId)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<List<AqgSectionDto>>() {});
+    }
+
+    @Override
+    public AqgMaterialDto reprocessMaterial(String materialId) {
+        return read(call(() -> client.post().uri("/materials/{materialId}/reprocess", materialId)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<AqgMaterialDto>() {});
     }
 
     @Override

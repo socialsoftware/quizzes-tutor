@@ -48,6 +48,7 @@ public class QuestionGenerationService {
     private static final int DEFAULT_QUESTIONS_PER_JOB = 5;
     private static final int MAX_TITLE_LENGTH = 100;
     private static final int MAX_LANGUAGE_LENGTH = 40;
+    private static final int MAX_FOCUS_LENGTH = 500;
 
     @Autowired
     private AqgClient aqgClient;
@@ -89,6 +90,26 @@ public class QuestionGenerationService {
                 .collect(Collectors.toList());
     }
 
+    /** The headings of a course material, to ask for questions about part of it. */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<AqgSectionDto> getSections(Integer executionId, String materialId) {
+        checkMaterialOfCourse(executionId, materialId);
+        return aqgClient.getSections(materialId);
+    }
+
+    /** Rebuilds a material's sections with the service's current parsers and heading cleanup. */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public GenerationMaterialDto reprocessMaterial(Integer executionId, String materialId) {
+        checkMaterialOfCourse(executionId, materialId);
+        return new GenerationMaterialDto(aqgClient.reprocessMaterial(materialId));
+    }
+
+    private void checkMaterialOfCourse(Integer executionId, String materialId) {
+        Integer courseId = getCourseExecution(executionId).getCourse().getId();
+        if (aqgClient.listMaterials(courseId).stream().noneMatch(material -> material.id().equals(materialId)))
+            throw new TutorException(GENERATION_MATERIAL_NOT_FOUND, materialId);
+    }
+
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public GenerationJobDto requestGeneration(Integer executionId, Integer requesterId, GenerationRequestDto request) {
@@ -114,14 +135,19 @@ public class QuestionGenerationService {
         String difficulty = request.getDifficulty() == null ? "MEDIUM" : request.getDifficulty();
         String groundingMode = request.getGroundingMode() == null ? "STRICT" : request.getGroundingMode();
         String language = normaliseLanguage(request.getLanguage());
+        String focus = request.getFocus() == null || request.getFocus().isBlank() ? null : request.getFocus().trim();
+        if (focus != null && focus.length() > MAX_FOCUS_LENGTH)
+            throw new TutorException(GENERATION_INVALID_FOCUS);
+        List<String> sections = request.getSections() == null ? List.of() : request.getSections();
 
         AqgJobDto aqgJob = aqgClient.generate(new AqgGenerateRequest(
                 courseId, topicName, difficulty, count, groundingMode, request.getMaterialIds(),
-                language, null, questionRepository.findRecentContents(courseId)));
+                language, null, questionRepository.findRecentContents(courseId), sections, focus));
 
         GenerationJob job = new GenerationJob(aqgJob.id(), executionId, requesterId, topicName, request.getTopicId(),
                 count, difficulty, groundingMode, aqgJob.status());
         job.setSource(request.getMaterialIds(), language);
+        job.setScope(sections, focus);
         generationJobRepository.save(job);
         return new GenerationJobDto(job);
     }
@@ -159,12 +185,13 @@ public class QuestionGenerationService {
                 courseId, original.getTopic(), original.getDifficulty(), 1, original.getGroundingMode(),
                 materialIds, original.getLanguage(),
                 new AqgGenerateRequest.Revision(currentDraft(questionGeneration), comment),
-                questionRepository.findRecentContents(courseId)));
+                questionRepository.findRecentContents(courseId), original.getSections(), original.getFocus()));
 
         GenerationJob job = new GenerationJob(aqgJob.id(), original.getCourseExecutionId(), userId,
                 original.getTopic(), original.getTopicId(), 1, original.getDifficulty(), original.getGroundingMode(),
                 aqgJob.status());
         job.setSource(materialIds, original.getLanguage());
+        job.setScope(original.getSections(), original.getFocus());
         job.setRevisionOfId(questionGenerationId);
         generationJobRepository.save(job);
 

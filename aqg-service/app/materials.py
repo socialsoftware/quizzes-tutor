@@ -1,13 +1,14 @@
 import time
 from pathlib import Path
 
-from sqlalchemy import select
+from sqlalchemy import delete, select
 from sqlalchemy.orm import sessionmaker
 
+from app.chunking.outline import clean_headings
 from app.chunking.splitter import split_markdown
 from app.db import ChunkRow, MaterialRow
 from app.ingestion.adapters import Parsers, adapter_for
-from app.schema import Chunk, Material, MaterialStatus
+from app.schema import Chunk, Material, MaterialStatus, Section
 from app.storage.material_storage import MaterialStorage
 
 
@@ -31,8 +32,18 @@ class MaterialStore:
             rows = session.scalars(select(MaterialRow).where(MaterialRow.course_id == course_id).order_by(MaterialRow.id))
             return [_to_material(row) for row in rows]
 
-    def set_ready(self, material_id: str, chunks: list[Chunk], parser: str, parse_seconds: float) -> None:
+    def set_processing(self, material_id: str) -> None:
         with self._session.begin() as session:
+            row = session.get(MaterialRow, material_id)
+            row.status = MaterialStatus.PROCESSING.value
+            row.error = None
+
+    def set_ready(
+        self, material_id: str, chunks: list[Chunk], parser: str, parse_seconds: float, markdown: str
+    ) -> None:
+        with self._session.begin() as session:
+            # A reprocessed material replaces its previous chunks
+            session.execute(delete(ChunkRow).where(ChunkRow.material_id == material_id))
             session.add_all(
                 ChunkRow(id=chunk.id, material_id=material_id, position=position, text=chunk.text, source=chunk.source)
                 for position, chunk in enumerate(chunks)
@@ -42,6 +53,28 @@ class MaterialStore:
             row.chunk_count = len(chunks)
             row.parser = parser
             row.parse_seconds = round(parse_seconds, 3)
+            row.markdown = markdown
+            row.error = None
+
+    def markdown(self, material_id: str) -> str | None:
+        with self._session() as session:
+            row = session.get(MaterialRow, material_id)
+            return row.markdown if row else None
+
+    def sections(self, material_id: str) -> list[Section]:
+        """Heading paths in reading order, with how many chunks each one holds."""
+        sections: dict[str, int] = {}
+        with self._session() as session:
+            rows = session.scalars(
+                select(ChunkRow).where(ChunkRow.material_id == material_id).order_by(ChunkRow.position)
+            )
+            for row in rows:
+                if row.source:
+                    sections[row.source] = sections.get(row.source, 0) + 1
+        return [
+            Section(path=path, title=path.split(SECTION_SEPARATOR)[-1], chunk_count=count)
+            for path, count in sections.items()
+        ]
 
     def set_failed(self, material_id: str, error: str) -> None:
         with self._session.begin() as session:
@@ -49,9 +82,9 @@ class MaterialStore:
             row.status = MaterialStatus.FAILED.value
             row.error = error
 
-    def chunks_for(self, course_id: int, material_ids: list[str]) -> list[Chunk]:
-        """Chunks of the requested materials; ids of other courses or unfinished uploads are
-        rejected instead of silently ignored."""
+    def chunks_for(self, course_id: int, material_ids: list[str], sections: list[str] | None = None) -> list[Chunk]:
+        """Chunks of the requested materials, optionally only those under the given heading
+        paths; ids of other courses or unfinished uploads are rejected instead of silently ignored."""
         chunks: list[Chunk] = []
         with self._session() as session:
             for material_id in material_ids:
@@ -61,8 +94,22 @@ class MaterialStore:
                 if row.status != MaterialStatus.READY.value:
                     raise LookupError(f"material {material_id} is {row.status}")
                 rows = session.scalars(select(ChunkRow).where(ChunkRow.material_id == material_id).order_by(ChunkRow.position))
-                chunks.extend(Chunk(id=r.id, text=r.text, source=r.source) for r in rows)
+                chunks.extend(
+                    Chunk(id=r.id, text=r.text, source=r.source) for r in rows if in_sections(r.source, sections)
+                )
         return chunks
+
+
+SECTION_SEPARATOR = " > "
+
+
+def in_sections(source: str | None, sections: list[str] | None) -> bool:
+    """A chunk belongs to a selected section when its heading path is that path or below it."""
+    if not sections:
+        return True
+    if not source:
+        return False
+    return any(source == section or source.startswith(section + SECTION_SEPARATOR) for section in sections)
 
 
 def _to_material(row: MaterialRow) -> Material:
@@ -90,13 +137,40 @@ def process_material(
         started = time.perf_counter()
         document = adapter_for(path.name, parsers).extract(path)
         parse_seconds = time.perf_counter() - started
-        chunks = split_markdown(document.markdown, material_id)
-        if not chunks:
-            raise ValueError("no text could be extracted from the file")
-        material = store.get(material_id)
-        storage.save_markdown(material.course_id, material_id, document.markdown)
-        store.set_ready(material_id, chunks, document.parser, parse_seconds)
+        _store_chunks(store, material_id, document.markdown, document.parser, parse_seconds, document.toc)
         if not keep_original:
             path.unlink(missing_ok=True)
     except Exception as error:  # any extraction failure must be visible on the material
         store.set_failed(material_id, f"{type(error).__name__}: {error}")
+
+
+def reprocess_material(store: MaterialStore, material_id: str, parsers: Parsers, storage: MaterialStorage) -> None:
+    """Rebuild a material's chunks with the current parsers and heading cleanup: from the
+    kept original when there is one, otherwise from the Markdown saved earlier."""
+    material = store.get(material_id)
+    try:
+        original = storage.original(material.course_id, material_id)
+        if original is not None:
+            process_material(store, material_id, original, parsers, storage, keep_original=True)
+            return
+        markdown = store.markdown(material_id) or storage.legacy_markdown(material.course_id, material_id)
+        if markdown is None:
+            raise ValueError("neither the original file nor its text was kept")
+        _store_chunks(store, material_id, markdown, material.parser or "stored", material.parse_seconds or 0.0)
+    except Exception as error:
+        store.set_failed(material_id, f"{type(error).__name__}: {error}")
+
+
+def _store_chunks(
+    store: MaterialStore,
+    material_id: str,
+    markdown: str,
+    parser: str,
+    parse_seconds: float,
+    toc: tuple[tuple[int, str], ...] = (),
+) -> None:
+    markdown = clean_headings(markdown, list(toc))
+    chunks = split_markdown(markdown, material_id)
+    if not chunks:
+        raise ValueError("no text could be extracted from the file")
+    store.set_ready(material_id, chunks, parser, parse_seconds, markdown)

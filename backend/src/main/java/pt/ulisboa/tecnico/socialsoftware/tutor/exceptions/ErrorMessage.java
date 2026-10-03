@@ -174,6 +174,8 @@ public enum ErrorMessage {
     GENERATION_MISSING_MATERIALS("Select at least one material to generate questions from"),
     GENERATION_INVALID_COUNT("The number of questions to generate must be between 1 and 20"),
     GENERATION_INVALID_LANGUAGE("The language name is too long"),
+    GENERATION_INVALID_FOCUS("The focus can have at most 500 characters"),
+    GENERATION_MATERIAL_NOT_FOUND("Material %s not found in this course"),
     GENERATION_CANNOT_REGENERATE("There are no course materials to regenerate this question from"),
     REVIEW_MISSING_QUESTION_GENERATION("Review is missing associated question generation"),
     CANNOT_REVIEW_QUESTION_GENERATION("Generated question already approved or rejected cannot be reviewed again"),

@@ -90,7 +90,7 @@ def test_request_without_context_is_rejected():
     "provider, expected_model, expected_base",
     [
         ("ollama", "ollama/llama3.1:8b", "http://ollama:11434"),
-        ("nvidia_nim", "nvidia_nim/nvidia/nemotron-3-super-120b-a12b", None),
+        ("nvidia_nim", "nvidia_nim/nvidia/nemotron-3-ultra-550b-a55b", None),
         ("anthropic", "anthropic/claude-sonnet-5", None),
         ("openai", "gpt-4o-mini", None),
     ],

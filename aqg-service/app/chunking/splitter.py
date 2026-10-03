@@ -80,14 +80,18 @@ def split_markdown(
     markdown: str, material_id: str, max_chars: int = MAX_CHUNK_CHARS, min_chars: int = MIN_CHUNK_CHARS
 ) -> list[Chunk]:
     """Cut by section first so a concept is not split across chunks, then by size inside long
-    sections. Tiny sections are merged into the previous chunk of the same document."""
+    sections. A tiny leftover piece is merged into the previous chunk of the same section; a
+    tiny section keeps its own chunk, so it can still be picked by its heading path."""
     pieces: list[tuple[str, str]] = []
     for heading_path, text in _sections(markdown):
         for piece in _pack(text, max_chars):
-            if pieces and len(piece) < min_chars and len(pieces[-1][1]) + len(piece) + 2 <= max_chars:
-                previous_path, previous_text = pieces[-1]
-                label = f"{heading_path}\n" if heading_path and heading_path != previous_path else ""
-                pieces[-1] = (previous_path, f"{previous_text}\n\n{label}{piece}")
+            if (
+                pieces
+                and pieces[-1][0] == heading_path
+                and len(piece) < min_chars
+                and len(pieces[-1][1]) + len(piece) + 2 <= max_chars
+            ):
+                pieces[-1] = (heading_path, f"{pieces[-1][1]}\n\n{piece}")
             else:
                 pieces.append((heading_path, piece))
 

@@ -12,6 +12,8 @@ public class GenerationRequestDto implements Serializable {
     private String groundingMode;
     private List<String> materialIds = new ArrayList<>();
     private String language;
+    private List<String> sections = new ArrayList<>();
+    private String focus;
 
     public GenerationRequestDto() {
     }
@@ -43,4 +45,12 @@ public class GenerationRequestDto implements Serializable {
     public String getLanguage() { return language; }
 
     public void setLanguage(String language) { this.language = language; }
+
+    public List<String> getSections() { return sections; }
+
+    public void setSections(List<String> sections) { this.sections = sections; }
+
+    public String getFocus() { return focus; }
+
+    public void setFocus(String focus) { this.focus = focus; }
 }

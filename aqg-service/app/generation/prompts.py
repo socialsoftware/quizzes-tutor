@@ -65,9 +65,11 @@ def build_generation_prompt(request: GenerationRequest, feedback: str | None = N
     if request.style_examples:
         examples = "\n\n".join(request.style_examples)
         parts.append(f"<style_examples>\n{examples}\n</style_examples>")
+    focus = f"Focus inside the topic: {request.focus}\n" if request.focus else ""
     parts.append(
         "<task>\n"
         f"Topic: {request.topic}\n"
+        f"{focus}"
         f"Difficulty: {request.difficulty.value} - {DIFFICULTY_RUBRIC[request.difficulty]}\n"
         f"Grounding: {GROUNDING_INSTRUCTION[request.grounding_mode]}\n\n"
         "Write exactly one multiple-choice question with 4 options (1 correct, 3 distractors) "

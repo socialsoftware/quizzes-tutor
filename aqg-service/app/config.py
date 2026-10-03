@@ -10,7 +10,7 @@ DEFAULT_MODELS = {
     "ollama": "llama3.1:8b",
     "openai": "gpt-4o-mini",
     "anthropic": "claude-sonnet-5",
-    "nvidia_nim": "nvidia/nemotron-3-super-120b-a12b",
+    "nvidia_nim": "nvidia/nemotron-3-ultra-550b-a55b",
 }
 
 

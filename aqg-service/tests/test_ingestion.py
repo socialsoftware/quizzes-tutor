@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from app.api.main import create_app
 from app.chunking.splitter import split_markdown
 from app.config import Settings
+from app.db import MaterialRow
 from app.ingestion.adapters import (
     FallbackAdapter,
     MarkdownAdapter,
@@ -50,10 +51,15 @@ def test_splitter_keeps_sections_apart_and_records_the_heading_path():
     assert "404" in chunks[1].text and "404" not in chunks[2].text
 
 
-def test_splitter_merges_tiny_sections_into_the_previous_chunk():
+def test_splitter_keeps_tiny_sections_selectable():
     chunks = split_markdown(LECTURE, "m1")
-    assert len(chunks) == 1
-    assert "DNS translates" in chunks[0].text
+    assert [c.source for c in chunks] == ["Networks", "Networks > HTTP", "Networks > DNS"]
+
+
+def test_splitter_merges_a_tiny_leftover_into_its_own_section():
+    long_paragraph = "word " * 150
+    chunks = split_markdown(f"# A\n\n{long_paragraph}\n\nshort tail", "m1", max_chars=800, min_chars=200)
+    assert len(chunks) == 1 and chunks[0].text.endswith("short tail")
 
 
 def test_splitter_cuts_long_sections_by_size_without_losing_text():
@@ -129,7 +135,8 @@ def test_uploaded_material_is_parsed_chunked_and_stored(tmp_path):
     assert material["parser"] == "fake" and material["parse_seconds"] is not None
     folder = tmp_path / "1" / material["id"]
     assert (folder / "lecture.pdf").read_bytes() == b"%PDF fake"
-    assert "DNS translates" in (folder / "parsed.md").read_text(encoding="utf-8")
+    # the text lives in the database, not as loose files next to the original
+    assert not (folder / "parsed.md").exists()
     assert client.get("/courses/1/materials").json()[0]["id"] == material["id"]
     assert client.get("/courses/2/materials").json() == []
 
@@ -143,7 +150,7 @@ def test_generation_retrieves_context_from_the_uploaded_material(tmp_path):
     client = make_client(tmp_path, llm)
     material_id = upload(client).json()["id"]
     wait_for(client, material_id)
-    llm.replies[1]["correct_chunk_ids"] = [f"{material_id}:0"]
+    llm.replies[1]["correct_chunk_ids"] = [f"{material_id}:1"]
 
     job_id = client.post(
         "/generate", json={"course_id": 1, "topic": "HTTP status 404", "material_ids": [material_id]}
@@ -152,7 +159,7 @@ def test_generation_retrieves_context_from_the_uploaded_material(tmp_path):
 
     assert job["status"] == "DONE"
     assert job["outcomes"][0]["status"] == "OK"
-    assert job["outcomes"][0]["source_chunk_ids"] == [f"{material_id}:0"]
+    assert job["outcomes"][0]["source_chunk_ids"] == [f"{material_id}:1"]
     assert "404 means the server cannot find the resource" in llm.prompts[0]
 
 
@@ -178,13 +185,64 @@ def test_generation_refuses_when_nothing_in_the_material_matches_the_topic(tmp_p
     assert "nothing relevant" in response.json()["detail"]
 
 
-def test_original_is_deleted_when_not_kept_but_the_markdown_stays(tmp_path):
+def test_original_is_deleted_when_not_kept_and_the_stored_text_is_reprocessed(tmp_path):
     client = make_client(tmp_path, FakeLLM([]), keep_originals=False)
     material = wait_for(client, upload(client).json()["id"])
-    folder = tmp_path / "1" / material["id"]
     assert material["status"] == "READY"
-    assert not (folder / "lecture.pdf").exists()
-    assert (folder / "parsed.md").exists()
+    assert not (tmp_path / "1" / material["id"] / "lecture.pdf").exists()
+
+    assert client.post(f"/materials/{material['id']}/reprocess").status_code == 202
+    again = wait_for(client, material["id"])
+    assert again["status"] == "READY" and again["chunk_count"] == material["chunk_count"]
+
+
+def test_a_material_from_before_the_database_text_is_reprocessed_from_its_file(tmp_path):
+    client = make_client(tmp_path, FakeLLM([]), keep_originals=False)
+    material = wait_for(client, upload(client).json()["id"])
+    legacy = tmp_path / "1" / material["id"] / "parsed.md"
+    legacy.parent.mkdir(parents=True, exist_ok=True)
+    legacy.write_text("# Old\n\n## Only section\n\n" + "text " * 60, encoding="utf-8")
+    # drop the text the upload stored, as a material from the old version would be
+    with client.app.state.materials._session.begin() as session:
+        session.get(MaterialRow, material["id"]).markdown = None
+
+    client.post(f"/materials/{material['id']}/reprocess")
+    wait_for(client, material["id"])
+    assert [s["path"] for s in client.get(f"/materials/{material['id']}/sections").json()] == ["Old > Only section"]
+
+
+def test_sections_are_listed_in_reading_order(tmp_path):
+    client = make_client(tmp_path, FakeLLM([]))
+    material_id = wait_for(client, upload(client).json()["id"])["id"]
+    sections = client.get(f"/materials/{material_id}/sections").json()
+    assert [(s["path"], s["title"]) for s in sections] == [
+        ("Networks", "Networks"), ("Networks > HTTP", "HTTP"), ("Networks > DNS", "DNS")
+    ]
+    assert client.get("/materials/nope/sections").status_code == 404
+
+
+def test_generation_only_uses_the_selected_sections_and_the_focus(tmp_path):
+    llm = FakeLLM([good_question(), {"correct_supported": True, "correct_chunk_ids": [], "distractors_anchored": 3}, CLEAN_DISTRACTORS])
+    client = make_client(tmp_path, llm)
+    material_id = wait_for(client, upload(client).json()["id"])["id"]
+
+    client.post("/generate", json={
+        "course_id": 1, "topic": "Networks", "focus": "name resolution hierarchy",
+        "material_ids": [material_id], "sections": ["Networks > DNS"],
+    })
+
+    assert "DNS translates" in llm.prompts[0]
+    assert "404" not in llm.prompts[0]
+    assert "Focus inside the topic: name resolution hierarchy" in llm.prompts[0]
+
+
+def test_a_section_with_nothing_selected_is_refused(tmp_path):
+    client = make_client(tmp_path, FakeLLM([]))
+    material_id = wait_for(client, upload(client).json()["id"])["id"]
+    response = client.post("/generate", json={
+        "course_id": 1, "topic": "Networks", "material_ids": [material_id], "sections": ["Nowhere"],
+    })
+    assert response.status_code == 422
 
 
 def test_a_parser_failure_is_reported_on_the_material(tmp_path):

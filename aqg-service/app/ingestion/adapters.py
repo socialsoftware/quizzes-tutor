@@ -11,6 +11,8 @@ class UnsupportedFormat(Exception):
 class ParsedDocument:
     markdown: str
     parser: str
+    # The document's own table of contents as (level, title), when it has one (PDF bookmarks)
+    toc: tuple[tuple[int, str], ...] = ()
 
 
 class ContentAdapter(Protocol):
@@ -26,9 +28,12 @@ class PymupdfAdapter:
     """PDFs that carry a text layer. CPU only, no models."""
 
     def extract(self, path: Path) -> ParsedDocument:
+        import pymupdf
         import pymupdf4llm
 
-        return ParsedDocument(pymupdf4llm.to_markdown(str(path)), "pymupdf4llm")
+        with pymupdf.open(str(path)) as document:
+            toc = tuple((level, title) for level, title, _page in document.get_toc(simple=True))
+        return ParsedDocument(pymupdf4llm.to_markdown(str(path)), "pymupdf4llm", toc)
 
 
 class MarkItDownAdapter:

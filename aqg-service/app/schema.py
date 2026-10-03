@@ -64,6 +64,10 @@ class GenerationRequest(BaseModel):
     # e.g. "Portuguese"; None keeps the language of the materials
     language: str | None = Field(default=None, max_length=40)
     revision: Revision | None = None
+    # Heading paths to draw from (a path also covers its subsections); empty means everything
+    sections: list[str] = Field(default_factory=list, max_length=500)
+    # What to ask about inside the topic, e.g. "sign rules of the product"
+    focus: str | None = Field(default=None, max_length=500)
     # Stems already in the course, so new drafts that repeat one are retried
     existing_stems: list[str] = Field(default_factory=list, max_length=5000)
     model: ModelConfig | None = None
@@ -110,6 +114,14 @@ class MaterialStatus(str, Enum):
     PROCESSING = "PROCESSING"
     READY = "READY"
     FAILED = "FAILED"
+
+
+class Section(BaseModel):
+    """A heading path of a material (e.g. "Part I > 1 Numbers > §3. Rules for multiplication")."""
+
+    path: str
+    title: str
+    chunk_count: int
 
 
 class Material(BaseModel):

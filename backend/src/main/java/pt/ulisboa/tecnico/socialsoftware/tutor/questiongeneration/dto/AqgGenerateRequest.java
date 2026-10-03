@@ -17,7 +17,11 @@ public record AqgGenerateRequest(
         // set when rewriting a question after a teacher's review
         Revision revision,
         // questions already in the course, so the service retries drafts that repeat one
-        @JsonProperty("existing_stems") List<String> existingStems) {
+        @JsonProperty("existing_stems") List<String> existingStems,
+        // heading paths to draw from (empty: the whole materials)
+        List<String> sections,
+        // what to ask about inside the topic
+        String focus) {
 
     public record Revision(AqgJobDto.Question previous, String review) {
     }

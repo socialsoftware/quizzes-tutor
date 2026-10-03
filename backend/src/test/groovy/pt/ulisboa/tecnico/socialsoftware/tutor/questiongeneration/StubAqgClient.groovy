@@ -3,12 +3,15 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgSectionDto
 
 /** Stands in for the question generation service: tests set the replies and inspect the calls. */
 class StubAqgClient implements AqgClient {
     AqgJobDto generateReply
     AqgJobDto jobReply
     List<AqgMaterialDto> materials = []
+    List<AqgSectionDto> sections = []
+    String reprocessedMaterialId
 
     AqgGenerateRequest lastGenerateRequest
     int getJobCalls = 0
@@ -18,6 +21,8 @@ class StubAqgClient implements AqgClient {
         generateReply = null
         jobReply = null
         materials = []
+        sections = []
+        reprocessedMaterialId = null
         lastGenerateRequest = null
         getJobCalls = 0
     }
@@ -30,6 +35,17 @@ class StubAqgClient implements AqgClient {
     @Override
     List<AqgMaterialDto> listMaterials(int courseId) {
         return materials
+    }
+
+    @Override
+    List<AqgSectionDto> getSections(String materialId) {
+        return sections
+    }
+
+    @Override
+    AqgMaterialDto reprocessMaterial(String materialId) {
+        reprocessedMaterialId = materialId
+        return new AqgMaterialDto(materialId, 1, 'a.pdf', 'PROCESSING', 0, null, null, null)
     }
 
     @Override

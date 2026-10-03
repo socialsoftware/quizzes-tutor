@@ -1,6 +1,6 @@
 from datetime import datetime, timezone
 
-from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, MetaData, String, Text, create_engine, text
+from sqlalchemy import JSON, DateTime, Float, ForeignKey, Integer, MetaData, String, Text, create_engine, inspect, text
 from sqlalchemy.engine import Engine
 from sqlalchemy.orm import DeclarativeBase, Mapped, mapped_column, sessionmaker
 from sqlalchemy.pool import StaticPool
@@ -23,6 +23,8 @@ class MaterialRow(Base):
     parser: Mapped[str | None] = mapped_column(String(32), nullable=True)
     parse_seconds: Mapped[float | None] = mapped_column(Float, nullable=True)
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
+    # The parsed (and heading-cleaned) text: chunks can be rebuilt from it without the parsers
+    markdown: Mapped[str | None] = mapped_column(Text, nullable=True)
 
 
 class ChunkRow(Base):
@@ -72,7 +74,25 @@ def create_session_factory(url: str) -> sessionmaker:
         with engine.begin() as connection:
             connection.execute(text(f"CREATE SCHEMA IF NOT EXISTS {SCHEMA}"))
     Base.metadata.create_all(engine)
+    _add_missing_columns(engine)
     return sessionmaker(engine, expire_on_commit=False)
+
+
+def _add_missing_columns(engine: Engine) -> None:
+    """create_all only creates missing tables: columns added to a model later (all nullable)
+    are added here, so existing databases keep working without a migration tool."""
+    inspector = inspect(engine)
+    sqlite = engine.dialect.name == "sqlite"
+    for table in Base.metadata.sorted_tables:
+        schema = None if sqlite else table.schema
+        existing = {column["name"] for column in inspector.get_columns(table.name, schema=schema)}
+        for column in table.columns:
+            if column.name in existing or not column.nullable:
+                continue
+            qualified = table.name if sqlite else f"{table.schema}.{table.name}"
+            column_type = column.type.compile(dialect=engine.dialect)
+            with engine.begin() as connection:
+                connection.execute(text(f"ALTER TABLE {qualified} ADD COLUMN {column.name} {column_type}"))
 
 
 def _enable_sqlite_foreign_keys(engine: Engine) -> None:

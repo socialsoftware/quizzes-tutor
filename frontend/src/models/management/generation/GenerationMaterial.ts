@@ -22,9 +22,10 @@ export default class GenerationMaterial {
   static headers = [
     { title: 'File', key: 'filename', align: 'start' },
     { title: 'Status', key: 'status', align: 'center', width: '140px' },
-    { title: 'Sections', key: 'chunkCount', align: 'center', width: '110px' },
+    { title: 'Chunks', key: 'chunkCount', align: 'center', width: '110px' },
     { title: 'Read with', key: 'parser', align: 'center', width: '140px' },
     { title: 'Time (s)', key: 'parseSeconds', align: 'center', width: '110px' },
+    { title: 'Actions', key: 'actions', align: 'center', width: '90px', sortable: false },
   ];
 
   isReady() {

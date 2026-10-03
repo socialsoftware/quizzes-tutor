@@ -12,6 +12,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.Generat
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgSectionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationRequestDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
@@ -261,6 +262,40 @@ class QuestionGenerationTest extends SpockTest {
         Review.Type.COMMENT         || QuestionGeneration.Status.IN_REVIEW       || Question.Status.SUBMITTED
     }
 
+    @Unroll
+    def "a generated question can be #type without a comment"() {
+        given:
+        def generation = importedGeneration()
+        def review = reviewOf(generation.getId(), type)
+        review.setComment(null)
+
+        when:
+        questionGenerationService.createReview(review)
+
+        then:
+        questionGenerationRepository.findAll().get(0).getStatus() == status
+        reviewRepository.findAll().get(0).getComment() == ''
+
+        where:
+        type               || status
+        Review.Type.APPROVE || QuestionGeneration.Status.APPROVED
+        Review.Type.REJECT  || QuestionGeneration.Status.REJECTED
+    }
+
+    def "asking for changes needs a comment"() {
+        given:
+        def generation = importedGeneration()
+        def review = reviewOf(generation.getId(), Review.Type.REQUEST_CHANGES)
+        review.setComment(' ')
+
+        when:
+        questionGenerationService.createReview(review)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == REVIEW_MISSING_COMMENT
+    }
+
     def "an approved question reaches the pool quizzes draw from"() {
         given:
         def generation = importedGeneration()
@@ -457,6 +492,62 @@ class QuestionGenerationTest extends SpockTest {
 
         then:
         aqgClient.lastGenerateRequest.materialIds() == ['m-ready']
+    }
+
+    def "sections and focus go with the request and with a later regeneration"() {
+        given:
+        aqgClient.generateReply = aqgJob('PENDING')
+        def dto = request()
+        dto.setSections(['Part I > 1 Numbers'])
+        dto.setFocus(' sign rules ')
+
+        when:
+        def job = questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(), dto)
+
+        then:
+        aqgClient.lastGenerateRequest.sections() == ['Part I > 1 Numbers']
+        aqgClient.lastGenerateRequest.focus() == 'sign rules'
+
+        when: "a draft of that job is regenerated"
+        aqgClient.jobReply = aqgJob('DONE', [draftOutcome()])
+        questionGenerationService.getGenerationJob(externalCourseExecution.getId(), job.getId())
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
+        questionGenerationService.regenerate(questionGenerationRepository.findAll().get(0).getId(), teacher.getId(), 'Harder')
+
+        then: "the rewrite stays inside the same sections and focus"
+        aqgClient.lastGenerateRequest.sections() == ['Part I > 1 Numbers']
+        aqgClient.lastGenerateRequest.focus() == 'sign rules'
+    }
+
+    def "a focus longer than 500 characters is refused"() {
+        given:
+        def dto = request()
+        dto.setFocus('x' * 501)
+
+        when:
+        questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(), dto)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == GENERATION_INVALID_FOCUS
+    }
+
+    def "sections and reprocessing are only for materials of the course"() {
+        given:
+        aqgClient.materials = [new AqgMaterialDto('m1', externalCourse.getId(), 'a.pdf', 'READY', 3, 'pymupdf4llm', 1.0, null)]
+        aqgClient.sections = [new AqgSectionDto('Part I > 1 Numbers', '1 Numbers', 4)]
+
+        expect:
+        questionGenerationService.getSections(externalCourseExecution.getId(), 'm1')*.title() == ['1 Numbers']
+        questionGenerationService.reprocessMaterial(externalCourseExecution.getId(), 'm1').getId() == 'm1'
+        aqgClient.reprocessedMaterialId == 'm1'
+
+        when:
+        questionGenerationService.getSections(externalCourseExecution.getId(), 'other-course-material')
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == GENERATION_MATERIAL_NOT_FOUND
     }
 
     def "regenerating needs a comment"() {

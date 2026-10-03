@@ -11,9 +11,9 @@ from app.generation.prompts import PROMPT_VERSION
 from app.ingestion.adapters import Parsers, UnsupportedFormat, adapter_for, build_parsers
 from app.llm.provider import LiteLLMProvider, LLMProvider
 from app.jobs import JobStore
-from app.materials import MaterialStore, process_material
+from app.materials import MaterialStore, process_material, reprocess_material
 from app.retrieval.retriever import LexicalRetriever, Retriever
-from app.schema import GenerationRequest, Job, Material, ModelConfig
+from app.schema import GenerationRequest, Job, Material, ModelConfig, Section
 from app.storage.material_storage import LocalMaterialStorage, MaterialStorage
 
 ProviderFactory = Callable[[ModelConfig], LLMProvider]
@@ -36,6 +36,7 @@ def create_app(
     materials = MaterialStore(session_factory)
     jobs = JobStore(session_factory)
     app = FastAPI(title="Quizzes Tutor AQG service")
+    app.state.materials = materials
 
     def run_job(job_id: str, request: GenerationRequest, provider: LLMProvider) -> None:
         jobs.set_running(job_id)
@@ -82,6 +83,22 @@ def create_app(
         )
         return material
 
+    @app.get("/materials/{material_id}/sections")
+    def get_sections(material_id: str) -> list[Section]:
+        if materials.get(material_id) is None:
+            raise HTTPException(status_code=404, detail="material not found")
+        return materials.sections(material_id)
+
+    @app.post("/materials/{material_id}/reprocess", status_code=202)
+    def reprocess(material_id: str, background: BackgroundTasks) -> Material:
+        """Rebuilds the chunks after a parser or heading-cleanup change."""
+        material = materials.get(material_id)
+        if material is None:
+            raise HTTPException(status_code=404, detail="material not found")
+        materials.set_processing(material_id)
+        background.add_task(reprocess_material, materials, material_id, parsers, storage)
+        return materials.get(material_id)
+
     @app.get("/materials/{material_id}")
     def get_material(material_id: str) -> Material:
         material = materials.get(material_id)
@@ -97,10 +114,13 @@ def create_app(
     def generate(request: GenerationRequest, background: BackgroundTasks) -> Job:
         if request.material_ids:
             try:
-                available = materials.chunks_for(request.course_id, request.material_ids)
+                available = materials.chunks_for(request.course_id, request.material_ids, request.sections)
             except LookupError as error:
                 raise HTTPException(status_code=422, detail=str(error)) from error
-            retrieved = retriever.top_k(request.topic, available, request.top_k)
+            if request.sections and not available:
+                raise HTTPException(status_code=422, detail="the selected sections have no text")
+            query = f"{request.topic} {request.focus}" if request.focus else request.topic
+            retrieved = retriever.top_k(query, available, request.top_k)
             if not retrieved and not request.chunks:
                 raise HTTPException(status_code=422, detail="the materials have nothing relevant to the topic")
             request = request.model_copy(update={"chunks": [*request.chunks, *retrieved]})

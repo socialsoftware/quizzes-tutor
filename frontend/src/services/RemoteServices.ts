@@ -21,6 +21,7 @@ import Tournament from '@/models/user/Tournament';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
+import GenerationSection from '@/models/management/generation/GenerationSection';
 import GenerationJob, { GenerationRequest } from '@/models/management/generation/GenerationJob';
 import QuestionGeneration from '@/models/management/generation/QuestionGeneration';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
@@ -1125,6 +1126,25 @@ export default class RemoteServices {
       .then((response) =>
         response.data.map((material: any) => new GenerationMaterial(material))
       )
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async getGenerationSections(materialId: string): Promise<GenerationSection[]> {
+    return httpClient
+      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/sections`)
+      .then((response) => response.data.map((section: any) => new GenerationSection(section)))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Rebuilds the material's sections with the service's current parsers and heading cleanup
+  static async reprocessGenerationMaterial(materialId: string): Promise<GenerationMaterial> {
+    return httpClient
+      .post(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/reprocess`)
+      .then((response) => new GenerationMaterial(response.data))
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });

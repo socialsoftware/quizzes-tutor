@@ -67,6 +67,14 @@ public class GenerationJob {
 
     private String language;
 
+    @ElementCollection
+    @CollectionTable(name = "generation_job_sections", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(name = "section_path", length = 1000)
+    private List<String> sections = new ArrayList<>();
+
+    @Column(columnDefinition = "TEXT")
+    private String focus;
+
     // The QuestionGeneration this job rewrites ("Regenerate with review"), null for new questions
     @Column(name = "revision_of_id")
     private Integer revisionOfId;
@@ -93,6 +101,19 @@ public class GenerationJob {
     public void setSource(List<String> materialIds, String language) {
         this.materialIds = new ArrayList<>(materialIds);
         this.language = language;
+    }
+
+    public void setScope(List<String> sections, String focus) {
+        this.sections = new ArrayList<>(sections);
+        this.focus = focus;
+    }
+
+    public List<String> getSections() {
+        return sections;
+    }
+
+    public String getFocus() {
+        return focus;
     }
 
     public void setRevisionOfId(Integer revisionOfId) {
