@@ -60,8 +60,9 @@ def default_model_config(settings: Settings) -> ModelConfig:
     and NVIDIA_NIM_API_KEY from the environment."""
     timeout = settings.llm_timeout
     if settings.provider == "ollama":
+        # ollama_chat/ uses Ollama's chat endpoint, so the system prompt stays a system message
         return ModelConfig(
-            model=f"ollama/{settings.model}", api_base=settings.ollama_base_url, timeout=timeout
+            model=f"ollama_chat/{settings.model}", api_base=settings.ollama_base_url, timeout=timeout
         )
     if settings.provider == "nvidia_nim":
         # Reasoning models on NIM (GLM, Nemotron...) think before answering by default, which

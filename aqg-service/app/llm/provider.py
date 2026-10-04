@@ -11,7 +11,7 @@ class LLMProvider(Protocol):
 
 class LiteLLMProvider:
     """One code path for cloud APIs and local servers: LiteLLM routes on the model prefix
-    (ollama/, nvidia_nim/, anthropic/, plain OpenAI names)."""
+    (ollama_chat/, nvidia_nim/, anthropic/, plain OpenAI names)."""
 
     def __init__(self, config: ModelConfig):
         self.config = config

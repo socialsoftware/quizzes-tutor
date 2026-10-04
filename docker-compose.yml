@@ -34,7 +34,12 @@ services:
     image: aqg-service:latest
     container_name: aqg-service
     depends_on:
-      - postgres
+      postgres:
+        condition: service_started
+      # Only with --profile local-llm: wait until the model is downloaded
+      ollama-pull:
+        condition: service_completed_successfully
+        required: false
     links:
       - postgres
     # Not published: only the backend reaches it, on the compose network
@@ -45,6 +50,45 @@ services:
       - aqg-materials:/data/materials
     env_file:
       - ./data/env/aqg-service.dev.env
+
+  # Local LLM for the aqg-service (LLM_PROVIDER=ollama): docker compose --profile local-llm up
+  # CPU by default; add docker-compose.gpu.yml to run it on an NVIDIA GPU
+  ollama:
+    image: ollama/ollama
+    container_name: ollama
+    profiles: ["local-llm"]
+    expose:
+      - 11434
+    restart: unless-stopped
+    volumes:
+      - ollama-models:/root/.ollama
+    environment:
+      # The generation prompts carry several material excerpts; Ollama's default window cuts them
+      - OLLAMA_CONTEXT_LENGTH=8192
+      # Keep the model loaded between the calls of a job instead of reloading it each time
+      - OLLAMA_KEEP_ALIVE=24h
+    healthcheck:
+      test: ["CMD", "ollama", "list"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+
+  # Downloads LLM_MODEL from aqg-service.dev.env into the ollama volume, then exits
+  ollama-pull:
+    image: ollama/ollama
+    container_name: ollama-pull
+    profiles: ["local-llm"]
+    depends_on:
+      ollama:
+        condition: service_healthy
+    env_file:
+      - ./data/env/aqg-service.dev.env
+    environment:
+      - OLLAMA_HOST=http://ollama:11434
+    entrypoint: ["/bin/sh", "-c"]
+    # Empty LLM_MODEL means the aqg-service default for Ollama (app/config.py)
+    command: ['ollama pull "$${LLM_MODEL:-llama3.1:8b}"']
+    restart: "no"
 
   backend:
     build:
@@ -134,3 +178,4 @@ services:
 
 volumes:
   aqg-materials:
+  ollama-models:

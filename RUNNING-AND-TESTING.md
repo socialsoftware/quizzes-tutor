@@ -230,8 +230,8 @@ Then open `http://localhost:8081` and use the *Demo as student* / *Demo as teach
 
 ### Docker Compose
 
-`docker-compose.yml` also defines `postgres`, `backend`, `frontend`, `fraud-service` and the
-`be-unit-tests` / `integration-tests` / `fe-unit-tests` one-shot services:
+`docker-compose.yml` also defines `postgres`, `backend`, `frontend`, `fraud-service`, `aqg-service`
+(question generation) and the `be-unit-tests` / `integration-tests` / `fe-unit-tests` one-shot services:
 
 ```bash
 docker compose up
@@ -246,7 +246,29 @@ Before that works you must copy the environment templates, which are only commit
 cp data/env/backend.dev.env.example       data/env/backend.dev.env
 cp data/env/database.dev.env.example      data/env/database.dev.env
 cp data/env/fraud-service.dev.env.example data/env/fraud-service.dev.env
+cp data/env/aqg-service.dev.env.example   data/env/aqg-service.dev.env
 ```
+
+#### Question generation with a local model (Ollama)
+
+The `aqg-service` calls an LLM chosen in `data/env/aqg-service.dev.env`. With the default
+`LLM_PROVIDER=ollama`, start the `local-llm` profile, which adds an `ollama` container and a one-shot
+`ollama-pull` that downloads `LLM_MODEL` (empty = `llama3.1:8b`) into the `ollama-models` volume
+before the `aqg-service` starts:
+
+```bash
+docker compose --profile local-llm up
+```
+
+- The first start downloads the model (several GB); later starts reuse the volume.
+- On CPU each question takes minutes: raise `LLM_TIMEOUT` (e.g. `600`) or pick a smaller model
+  (`qwen3:4b`, `llama3.2:3b`, `hf.co/openbmb/MiniCPM5-2B-GGUF:Q4_K_M`).
+- With an NVIDIA GPU and the NVIDIA Container Toolkit installed:
+  `docker compose -f docker-compose.yml -f docker-compose.gpu.yml --profile local-llm up`.
+- Optional dependencies (`required: false`) need Docker Compose 2.20 or newer.
+
+To use a cloud API instead, set `LLM_PROVIDER` (`nvidia_nim`, `openai` or `anthropic`), its key and
+`LLM_MODEL`, and run plain `docker compose up`: the Ollama containers are then left out.
 
 Note that Compose publishes PostgreSQL on host port **5433**, while `application-dev.properties`
 and `application-test-int.properties` expect **5432**. Running the backend build on the host against the
