@@ -34,6 +34,8 @@ class Settings:
     database_url: str = "sqlite://"
     llm_timeout: float = 120
     llm_thinking: bool = False
+    # Off keeps what students write in discussions from ever leaving for the model provider
+    discussion_suggestions: bool = True
 
     @staticmethod
     def from_env() -> "Settings":
@@ -52,6 +54,7 @@ class Settings:
             database_url=os.getenv("DATABASE_URL", "sqlite:///aqg.db"),
             llm_timeout=float(os.getenv("LLM_TIMEOUT", "120")),
             llm_thinking=os.getenv("LLM_THINKING", "false").lower() == "true",
+            discussion_suggestions=os.getenv("DISCUSSION_SUGGESTIONS", "true").lower() != "false",
         )
 
 

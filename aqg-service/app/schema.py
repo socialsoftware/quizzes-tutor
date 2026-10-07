@@ -166,6 +166,34 @@ class Paragraph(BaseModel):
     text: str
 
 
+class DiscussionTurn(BaseModel):
+    role: Literal["student", "teacher"]
+    message: str = Field(min_length=1, max_length=4000)
+
+
+class DiscussionSuggestRequest(BaseModel):
+    """A student's doubt about a question, to draft the teacher's reply. Names are never sent."""
+
+    course_id: int
+    question_stem: str = Field(min_length=1, max_length=4000)
+    options: list[MCQOption] = Field(default_factory=list, max_length=10)
+    explanation: str = Field(default="", max_length=4000)
+    student_choice: str | None = Field(default=None, max_length=1000)
+    student_message: str = Field(min_length=1, max_length=4000)
+    replies: list[DiscussionTurn] = Field(default_factory=list, max_length=20)
+    # Where the question's topics are taught (document -> sections); empty = no course material
+    material_sections: dict[str, list[str]] = Field(default_factory=dict, max_length=100)
+    top_k: int = Field(default=3, ge=1, le=10)
+    language: str | None = Field(default=None, max_length=40)
+    model: "ModelConfig | None" = None
+
+
+class DiscussionSuggestion(BaseModel):
+    reply: str
+    # Sections of the course material the draft was written with
+    sources: list[str] = Field(default_factory=list)
+
+
 class Material(BaseModel):
     id: str
     course_id: int

@@ -10,13 +10,17 @@ from app.config import Settings, default_model_config
 from app.db import create_session_factory
 from app.evaluation.duplicate_check import normalise
 from app.evaluation.pipeline import generate_verified_question
+from app.generation.discussion import suggest_reply
 from app.generation.prompts import PROMPT_VERSION
+from app.generation.synthesizer import ModelReplyError
 from app.ingestion.adapters import Parsers, UnsupportedFormat, adapter_for, build_parsers
 from app.llm.provider import LiteLLMProvider, LLMProvider
 from app.jobs import JobStore
 from app.materials import MaterialStore, process_material, reprocess_material
 from app.retrieval.retriever import LexicalRetriever, Retriever
 from app.schema import (
+    DiscussionSuggestion,
+    DiscussionSuggestRequest,
     GenerationRequest,
     Job,
     Material,
@@ -186,6 +190,29 @@ def create_app(
         jobs.add(job)
         background.add_task(run_job, job.id, request, provider)
         return job
+
+    @app.post("/discussion/suggest")
+    def suggest_discussion_reply(request: DiscussionSuggestRequest) -> DiscussionSuggestion:
+        if not settings.discussion_suggestions:
+            raise HTTPException(status_code=403, detail="reply suggestions are turned off in this service")
+
+        chunks = []
+        if request.material_sections:
+            try:
+                available = materials.chunks_for(request.course_id, list(request.material_sections), None, request.material_sections)
+            except LookupError as error:
+                raise HTTPException(status_code=422, detail=str(error)) from error
+            chunks = retriever.top_k(f"{request.question_stem} {request.student_message}", available, request.top_k)
+
+        provider = provider_factory(request.model or default_model_config(settings))
+        try:
+            reply = suggest_reply(request, chunks, provider)
+        except ModelReplyError as error:
+            raise HTTPException(status_code=502, detail=f"the model gave no usable reply ({error})") from error
+        except Exception as error:  # a provider outage must not look like a bug here
+            # what the student wrote must not end up in the logs through the message
+            raise HTTPException(status_code=502, detail=f"the model did not answer ({type(error).__name__})") from None
+        return DiscussionSuggestion(reply=reply, sources=list(dict.fromkeys(c.source for c in chunks if c.source)))
 
     @app.get("/jobs/{job_id}")
     def get_job(job_id: str) -> Job:
