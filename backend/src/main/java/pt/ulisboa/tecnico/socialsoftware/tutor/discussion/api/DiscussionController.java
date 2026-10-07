@@ -8,8 +8,10 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionApplicationalService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionSuggestionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionSuggestionDto;
 
 import java.security.Principal;
 import java.util.List;
@@ -21,6 +23,9 @@ public class DiscussionController {
 
     @Autowired
     private DiscussionService discussionService;
+
+    @Autowired
+    private DiscussionSuggestionService discussionSuggestionService;
 
     @GetMapping("/discussions/courseexecutions/{courseExecutionId}/users")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')")
@@ -63,6 +68,13 @@ public class DiscussionController {
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#replyId, 'REPLY.ACCESS')")
     public DiscussionDto changeReplyAvailability(@PathVariable int replyId) {
         return discussionService.changeReplyAvailability(replyId);
+    }
+
+    /** A draft for the teacher to edit: it is not saved, a reply only exists when the teacher sends it. */
+    @PostMapping(value = "/discussions/{discussionId}/replies/suggest")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#discussionId, 'DISCUSSION.ACCESS')")
+    public AqgDiscussionSuggestionDto suggestReply(@PathVariable int discussionId) {
+        return discussionSuggestionService.suggestReply(discussionId);
     }
 
     @PostMapping(value = "/discussions/{discussionId}/replies/add")

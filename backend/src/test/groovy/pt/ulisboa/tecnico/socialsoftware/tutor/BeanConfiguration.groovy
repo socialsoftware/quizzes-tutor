@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.dashboard.services.WeeklyScoreSer
 import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoService
 import pt.ulisboa.tecnico.socialsoftware.tutor.demo.DemoUtils
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService
+import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionSuggestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.AssessmentService
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
@@ -134,6 +135,11 @@ class BeanConfiguration {
     @Bean
     DiscussionService discussionService() {
         return new DiscussionService()
+    }
+
+    @Bean
+    DiscussionSuggestionService discussionSuggestionService() {
+        return new DiscussionSuggestionService()
     }
 
     @Bean

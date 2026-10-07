@@ -1,5 +1,7 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionRequest;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionSuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditDto;
@@ -33,6 +35,9 @@ public interface AqgClient {
 
     /** Changes the sections of a material; the reply says where the text of each changed section went. */
     AqgOutlineEditResultDto editOutline(String materialId, AqgOutlineEditDto edit);
+
+    /** A draft reply to a student's doubt, for a teacher to edit; nothing is saved or sent. */
+    AqgDiscussionSuggestionDto suggestReply(AqgDiscussionRequest request);
 
     AqgJobDto generate(AqgGenerateRequest request);
 

@@ -44,9 +44,18 @@
             variant="solo"
             :id="'reply' + discussion.id"
             label="Type a reply..."
+            :model-value="replyMessage"
             @update:model-value="setReplyMessage"
           ></v-textarea>
           <v-card-actions>
+            <v-btn
+              v-if="isTeacher"
+              data-cy="suggestReplyButton"
+              variant="text"
+              :loading="suggesting"
+              @click="suggestReply"
+              >Suggest reply</v-btn
+            >
             <v-btn
               data-cy="submitReplyButton"
               class="submit-button"
@@ -68,9 +77,18 @@
       variant="solo"
       :id="'reply' + discussion.id"
       label="Type a reply..."
+      :model-value="replyMessage"
       @update:model-value="setReplyMessage"
     ></v-textarea>
     <v-card-actions>
+      <v-btn
+        v-if="isTeacher"
+        data-cy="suggestReplyButton"
+        variant="text"
+        :loading="suggesting"
+        @click="suggestReply"
+        >Suggest reply</v-btn
+      >
       <v-btn
         data-cy="submitReplyButton"
         class="submit-button"
@@ -100,6 +118,21 @@ const props = defineProps<{
 const store = useStore();
 const replyMessage = ref('');
 const user = store.user as User | null;
+const isTeacher = user?.role === 'TEACHER';
+const suggesting = ref(false);
+
+// Fills the box with a draft for the teacher to read and fix; it is never sent by itself
+const suggestReply = async () => {
+  if (replyMessage.value.trim() !== '' && !confirm('Replace what you wrote with a suggested reply?')) return;
+  suggesting.value = true;
+  try {
+    const suggestion = await RemoteServices.suggestReply(props.discussion.id);
+    replyMessage.value = suggestion.reply;
+  } catch (error) {
+    store.setError(error as string);
+  }
+  suggesting.value = false;
+};
 
 const submitReply = async () => {
   if (replyMessage.value.trim() === '') {

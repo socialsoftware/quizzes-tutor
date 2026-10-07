@@ -13,6 +13,8 @@ import org.springframework.web.reactive.function.client.WebClient;
 import org.springframework.web.reactive.function.client.WebClientRequestException;
 import org.springframework.web.reactive.function.client.WebClientResponseException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionRequest;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionSuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditDto;
@@ -109,6 +111,22 @@ public class WebClientAqgClient implements AqgClient {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(json)
                 .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<AqgOutlineEditResultDto>() {});
+    }
+
+    @Override
+    public AqgDiscussionSuggestionDto suggestReply(AqgDiscussionRequest request) {
+        String json;
+        try {
+            json = objectMapper.writeValueAsString(request);
+        } catch (JsonProcessingException e) {
+            // the message could hold what the student wrote
+            throw new TutorException(AQG_SERVICE_ERROR, "unreadable request");
+        }
+
+        return read(call(() -> client.post().uri("/discussion/suggest")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(json)
+                .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<AqgDiscussionSuggestionDto>() {});
     }
 
     @Override

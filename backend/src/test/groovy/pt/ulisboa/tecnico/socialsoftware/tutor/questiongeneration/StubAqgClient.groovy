@@ -2,6 +2,8 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionRequest
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionSuggestionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditResultDto
@@ -20,6 +22,8 @@ class StubAqgClient implements AqgClient {
     List<AqgParagraphDto> paragraphs = []
     AqgOutlineEditResultDto editReply
     AqgOutlineEditDto lastEdit
+    AqgDiscussionSuggestionDto suggestionReply
+    AqgDiscussionRequest lastSuggestionRequest
 
     AqgGenerateRequest lastGenerateRequest
     int getJobCalls = 0
@@ -35,6 +39,8 @@ class StubAqgClient implements AqgClient {
         paragraphs = []
         editReply = null
         lastEdit = null
+        suggestionReply = null
+        lastSuggestionRequest = null
         lastGenerateRequest = null
         getJobCalls = 0
     }
@@ -74,6 +80,12 @@ class StubAqgClient implements AqgClient {
     AqgOutlineEditResultDto editOutline(String materialId, AqgOutlineEditDto edit) {
         lastEdit = edit
         return editReply
+    }
+
+    @Override
+    AqgDiscussionSuggestionDto suggestReply(AqgDiscussionRequest request) {
+        lastSuggestionRequest = request
+        return suggestionReply
     }
 
     @Override

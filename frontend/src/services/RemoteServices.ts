@@ -24,6 +24,7 @@ import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
 import GenerationSection from '@/models/management/generation/GenerationSection';
+import ReplySuggestion from '@/models/management/ReplySuggestion';
 import OutlineNode, { OutlineEdit, OutlineEditResult, Paragraph } from '@/models/management/generation/OutlineNode';
 import GenerationJob, { GenerationRequest } from '@/models/management/generation/GenerationJob';
 import QuestionGeneration from '@/models/management/generation/QuestionGeneration';
@@ -1634,6 +1635,16 @@ export default class RemoteServices {
       .then((response) => {
         return new Reply(response.data);
       })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // A draft for the teacher to edit; nothing is saved or sent until the teacher submits a reply
+  static async suggestReply(discussionId: number): Promise<ReplySuggestion> {
+    return httpClient
+      .post('/discussions/' + discussionId + '/replies/suggest')
+      .then((response) => new ReplySuggestion(response.data))
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
