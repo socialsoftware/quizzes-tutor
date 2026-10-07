@@ -159,4 +159,48 @@ describe('MaterialsPanel', () => {
     dialog.vm.$emit('saved');
     expect(wrapper.emitted('topics-changed')).toHaveLength(1);
   });
+
+  test('a finished document opens the section editor, and the page hears when sections change', async () => {
+    vi.spyOn(RemoteServices, 'getGenerationMaterials').mockResolvedValue([
+      material({ id: 'ready', filename: 'book.pdf' }),
+      material({ id: 'busy', filename: 'later.pdf', status: 'PROCESSING', chunkCount: 0, parser: null }),
+    ]);
+    const wrapper = mount(MaterialsPanel, {
+      global: {
+        plugins: [createVuetify({ components, directives })],
+        stubs: { OutlineEditorDialog: true },
+      },
+    });
+    await flushPromises();
+
+    expect(wrapper.findAll('[data-cy="EditSections"]')).toHaveLength(1);
+    expect(wrapper.findComponent({ name: 'OutlineEditorDialog' }).exists()).toBe(false);
+
+    await wrapper.find('[data-cy="EditSections"]').trigger('click');
+    const dialog = wrapper.findComponent({ name: 'OutlineEditorDialog' });
+
+    expect(dialog.props('materialId')).toBe('ready');
+    expect(dialog.props('materialName')).toBe('book.pdf');
+
+    dialog.vm.$emit('edited');
+    expect(wrapper.emitted('topics-changed')).toHaveLength(1);
+  });
+
+  test('reading a document again asks first, because the edits to its sections are lost', async () => {
+    vi.spyOn(RemoteServices, 'getGenerationMaterials').mockResolvedValue([material({})]);
+    const reprocess = vi.spyOn(RemoteServices, 'reprocessGenerationMaterial').mockResolvedValue(material({}));
+    const confirmation = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const wrapper = await mountPanel();
+
+    await wrapper.find('[data-cy="ReprocessMaterial"]').trigger('click');
+    await flushPromises();
+    expect(confirmation.mock.calls[0][0]).toContain('lecture.pdf');
+    expect(confirmation.mock.calls[0][0]).toContain('lost');
+    expect(reprocess).not.toHaveBeenCalled();
+
+    confirmation.mockReturnValue(true);
+    await wrapper.find('[data-cy="ReprocessMaterial"]').trigger('click');
+    await flushPromises();
+    expect(reprocess).toHaveBeenCalledWith('m1');
+  });
 });

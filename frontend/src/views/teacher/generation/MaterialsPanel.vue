@@ -45,6 +45,19 @@
         <v-tooltip location="bottom">
           <template v-slot:activator="{ props: activatorProps }">
             <v-icon
+              v-if="getRaw(item).isReady()"
+              class="mr-2 action-button"
+              v-bind="activatorProps"
+              data-cy="EditSections"
+              @click="editSections(getRaw(item))"
+              >fas fa-list-ol</v-icon
+            >
+          </template>
+          <span>Rename, join or cut the sections of this document</span>
+        </v-tooltip>
+        <v-tooltip location="bottom">
+          <template v-slot:activator="{ props: activatorProps }">
+            <v-icon
               v-if="!getRaw(item).isProcessing()"
               class="action-button"
               v-bind="activatorProps"
@@ -53,7 +66,7 @@
               >fas fa-sync</v-icon
             >
           </template>
-          <span>Read the file again to rebuild its sections</span>
+          <span>Read the file again to rebuild its sections (discards your edits to them)</span>
         </v-tooltip>
       </template>
       <template v-slot:[`item.status`]="{ item }">
@@ -75,6 +88,14 @@
       <template v-slot:no-data>No material yet. Upload the slides or notes of the course.</template>
     </v-data-table>
 
+    <outline-editor-dialog
+      v-if="editingFor"
+      v-model:dialog="editingOpen"
+      :material-id="editingFor.id"
+      :material-name="editingFor.filename"
+      @edited="emit('topics-changed')"
+    />
+
     <topic-suggestion-dialog
       v-if="suggestionFor"
       v-model:dialog="suggestionOpen"
@@ -93,6 +114,7 @@ import { createPoller } from '@/services/Polling';
 import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
 import TopicSuggestionDialog from '@/views/teacher/generation/TopicSuggestionDialog.vue';
+import OutlineEditorDialog from '@/views/teacher/generation/OutlineEditorDialog.vue';
 
 const ACCEPTED_TYPES = '.pdf,.pptx,.docx,.md,.markdown,.txt';
 const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
@@ -117,6 +139,14 @@ const suggestionOpen = ref(false);
 const suggestTopics = (material: GenerationMaterial) => {
   suggestionFor.value = material;
   suggestionOpen.value = true;
+};
+
+const editingFor = ref<GenerationMaterial | null>(null);
+const editingOpen = ref(false);
+
+const editSections = (material: GenerationMaterial) => {
+  editingFor.value = material;
+  editingOpen.value = true;
 };
 
 const refresh = async (): Promise<boolean> => {
@@ -167,6 +197,8 @@ const onFilesChosen = async (event: Event) => {
 };
 
 const reprocess = async (material: GenerationMaterial) => {
+  const note = 'Any change you made to its sections is lost, and topics linked to sections that no longer exist will point to nothing.';
+  if (!confirm(`Read "${material.filename}" again? ${note}`)) return;
   try {
     await RemoteServices.reprocessGenerationMaterial(material.id);
     await refresh();

@@ -24,6 +24,7 @@ import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
 import GenerationSection from '@/models/management/generation/GenerationSection';
+import OutlineNode, { OutlineEdit, OutlineEditResult, Paragraph } from '@/models/management/generation/OutlineNode';
 import GenerationJob, { GenerationRequest } from '@/models/management/generation/GenerationJob';
 import QuestionGeneration from '@/models/management/generation/QuestionGeneration';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
@@ -1185,6 +1186,38 @@ export default class RemoteServices {
     return httpClient
       .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/sections`)
       .then((response) => response.data.map((section: any) => new GenerationSection(section)))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // The headings of a material with the text under them, to edit its sections
+  static async getGenerationOutline(materialId: string): Promise<OutlineNode[]> {
+    return httpClient
+      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/outline`)
+      .then((response) => response.data.map((node: any) => new OutlineNode(node)))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // The paragraphs a section has of its own, to choose where to cut it
+  static async getGenerationSectionText(materialId: string, path: string): Promise<Paragraph[]> {
+    return httpClient
+      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/section-text`, {
+        params: { path },
+      })
+      .then((response) => response.data as Paragraph[])
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Topic links follow the sections that were renamed, merged or cut
+  static async editGenerationOutline(materialId: string, edit: OutlineEdit): Promise<OutlineEditResult> {
+    return httpClient
+      .post(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/outline/edit`, edit)
+      .then((response) => new OutlineEditResult(response.data))
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
