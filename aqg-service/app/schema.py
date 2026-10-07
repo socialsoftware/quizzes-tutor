@@ -1,4 +1,5 @@
 from enum import Enum
+from typing import Literal
 
 from pydantic import BaseModel, Field, model_validator
 
@@ -128,6 +129,41 @@ class Section(BaseModel):
     path: str
     title: str
     chunk_count: int
+
+
+class OutlineEdit(BaseModel):
+    """One change to the sections of a document."""
+
+    op: Literal["rename", "merge", "shift", "split"]
+    path: str = Field(min_length=1, max_length=1000)
+    # rename: the new name; split: the name of the new section
+    title: str | None = Field(default=None, max_length=200)
+    # shift: -1 moves the section up a level, +1 under the section above it
+    delta: int | None = None
+    # split: the new section starts at this paragraph (counting from 0) of the section
+    paragraph: int | None = Field(default=None, ge=0)
+
+
+class OutlineNode(BaseModel):
+    """A heading of a document, with the text under it, to edit the sections by hand."""
+
+    path: str
+    title: str
+    depth: int
+    has_text: bool
+    paragraph_count: int
+    preview: str
+
+
+class OutlineEditResult(BaseModel):
+    # old section path -> where its text is now; paths not listed did not change
+    path_map: dict[str, list[str]]
+    outline: list[OutlineNode]
+
+
+class Paragraph(BaseModel):
+    index: int
+    text: str
 
 
 class Material(BaseModel):

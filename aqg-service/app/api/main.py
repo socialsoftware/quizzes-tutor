@@ -3,6 +3,9 @@ from typing import Callable
 
 from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadFile
 
+from dataclasses import asdict
+
+from app.chunking.outline_edit import OutlineError, apply, outline_entries, paragraphs_of
 from app.config import Settings, default_model_config
 from app.db import create_session_factory
 from app.evaluation.duplicate_check import normalise
@@ -13,7 +16,18 @@ from app.llm.provider import LiteLLMProvider, LLMProvider
 from app.jobs import JobStore
 from app.materials import MaterialStore, process_material, reprocess_material
 from app.retrieval.retriever import LexicalRetriever, Retriever
-from app.schema import GenerationRequest, Job, Material, ModelConfig, Section
+from app.schema import (
+    GenerationRequest,
+    Job,
+    Material,
+    MaterialStatus,
+    ModelConfig,
+    OutlineEdit,
+    OutlineEditResult,
+    OutlineNode,
+    Paragraph,
+    Section,
+)
 from app.storage.material_storage import LocalMaterialStorage, MaterialStorage
 
 ProviderFactory = Callable[[ModelConfig], LLMProvider]
@@ -88,6 +102,39 @@ def create_app(
         if materials.get(material_id) is None:
             raise HTTPException(status_code=404, detail="material not found")
         return materials.sections(material_id)
+
+    @app.get("/materials/{material_id}/outline")
+    def get_outline(material_id: str) -> list[OutlineNode]:
+        if materials.get(material_id) is None:
+            raise HTTPException(status_code=404, detail="material not found")
+        return [OutlineNode(**asdict(entry)) for entry in outline_entries(materials.outline_sections(material_id))]
+
+    @app.get("/materials/{material_id}/section-text")
+    def get_section_text(material_id: str, path: str) -> list[Paragraph]:
+        if materials.get(material_id) is None:
+            raise HTTPException(status_code=404, detail="material not found")
+        paragraphs = paragraphs_of(materials.outline_sections(material_id), path)
+        if not paragraphs:
+            raise HTTPException(status_code=404, detail="that section has no text of its own")
+        return [Paragraph(index=index, text=text) for index, text in enumerate(paragraphs)]
+
+    @app.post("/materials/{material_id}/outline/edit")
+    def edit_outline(material_id: str, edit: OutlineEdit) -> OutlineEditResult:
+        material = materials.get(material_id)
+        if material is None:
+            raise HTTPException(status_code=404, detail="material not found")
+        if material.status is not MaterialStatus.READY:
+            raise HTTPException(status_code=409, detail="the material is not ready to be edited")
+        try:
+            sections, path_map = apply(
+                materials.outline_sections(material_id), edit.op, edit.path, edit.title, edit.delta, edit.paragraph
+            )
+            materials.save_sections(material_id, sections)
+        except OutlineError as error:
+            raise HTTPException(status_code=422, detail=str(error)) from error
+        return OutlineEditResult(
+            path_map=path_map, outline=[OutlineNode(**asdict(entry)) for entry in outline_entries(sections)]
+        )
 
     @app.post("/materials/{material_id}/reprocess", status_code=202)
     def reprocess(material_id: str, background: BackgroundTasks) -> Material:

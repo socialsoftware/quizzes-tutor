@@ -5,6 +5,7 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import sessionmaker
 
 from app.chunking.outline import clean_headings
+from app.chunking.outline_edit import OutlineError, OutlineSection, chunks_from_sections, sections_from_chunks, to_markdown
 from app.chunking.splitter import split_markdown
 from app.db import ChunkRow, MaterialRow
 from app.ingestion.adapters import Parsers, adapter_for
@@ -75,6 +76,30 @@ class MaterialStore:
             Section(path=path, title=path.split(SECTION_SEPARATOR)[-1], chunk_count=count)
             for path, count in sections.items()
         ]
+
+    def outline_sections(self, material_id: str) -> list[OutlineSection]:
+        """The document as sections of paragraphs, rebuilt from its chunks."""
+        with self._session() as session:
+            rows = session.scalars(
+                select(ChunkRow).where(ChunkRow.material_id == material_id).order_by(ChunkRow.position)
+            )
+            return sections_from_chunks([Chunk(id=r.id, text=r.text, source=r.source) for r in rows])
+
+    def save_sections(self, material_id: str, sections: list[OutlineSection]) -> None:
+        """Cuts edited sections into chunks again, replacing the old ones. The text itself is not
+        read from the original file again, so the edit survives; reading it again discards it."""
+        chunks = chunks_from_sections(sections, material_id)
+        if not chunks:
+            raise OutlineError("the document would be left without text")
+        with self._session.begin() as session:
+            session.execute(delete(ChunkRow).where(ChunkRow.material_id == material_id))
+            session.add_all(
+                ChunkRow(id=chunk.id, material_id=material_id, position=position, text=chunk.text, source=chunk.source)
+                for position, chunk in enumerate(chunks)
+            )
+            row = session.get(MaterialRow, material_id)
+            row.chunk_count = len(chunks)
+            row.markdown = to_markdown(sections)
 
     def set_failed(self, material_id: str, error: str) -> None:
         with self._session.begin() as session:
