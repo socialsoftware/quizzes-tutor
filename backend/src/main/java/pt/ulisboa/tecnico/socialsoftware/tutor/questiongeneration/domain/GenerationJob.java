@@ -1,11 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import jakarta.persistence.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 /**
  * A request sent to the question generation service. It keeps plain ids instead of entity
@@ -75,6 +80,10 @@ public class GenerationJob {
     @Column(columnDefinition = "TEXT")
     private String focus;
 
+    // JSON {materialId: [section paths]} when the sections came from a topic and must match exactly
+    @Column(name = "material_sections", columnDefinition = "TEXT")
+    private String materialSections;
+
     // The QuestionGeneration this job rewrites ("Regenerate with review"), null for new questions
     @Column(name = "revision_of_id")
     private Integer revisionOfId;
@@ -106,6 +115,25 @@ public class GenerationJob {
     public void setScope(List<String> sections, String focus) {
         this.sections = new ArrayList<>(sections);
         this.focus = focus;
+    }
+
+    public void setMaterialSections(Map<String, List<String>> materialSections) {
+        try {
+            this.materialSections = materialSections == null || materialSections.isEmpty()
+                    ? null : new ObjectMapper().writeValueAsString(materialSections);
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
+    }
+
+    public Map<String, List<String>> getMaterialSections() {
+        if (materialSections == null)
+            return new LinkedHashMap<>();
+        try {
+            return new ObjectMapper().readValue(materialSections, new TypeReference<LinkedHashMap<String, List<String>>>() {});
+        } catch (JsonProcessingException e) {
+            throw new IllegalStateException(e);
+        }
     }
 
     public List<String> getSections() {

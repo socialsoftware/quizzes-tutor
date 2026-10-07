@@ -10,12 +10,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicSourceDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicTreeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.GenerationJob;
@@ -31,7 +34,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -52,6 +57,9 @@ public class QuestionGenerationService {
 
     @Autowired
     private AqgClient aqgClient;
+
+    @Autowired
+    private TopicService topicService;
 
     @Autowired
     private CourseExecutionRepository courseExecutionRepository;
@@ -104,6 +112,17 @@ public class QuestionGenerationService {
         return new GenerationMaterialDto(aqgClient.reprocessMaterial(materialId));
     }
 
+    /** A proposal for the course's topic tree from the sections of a document; nothing is saved. */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public TopicTreeDto suggestTopicTree(Integer executionId, String materialId) {
+        checkMaterialOfCourse(executionId, materialId);
+        Integer courseId = getCourseExecution(executionId).getCourse().getId();
+
+        Map<String, Integer> existingTopicIds = new LinkedHashMap<>();
+        topicRepository.findTopics(courseId).forEach(topic -> existingTopicIds.putIfAbsent(topic.getName(), topic.getId()));
+        return TopicTreeSuggester.suggest(materialId, aqgClient.getSections(materialId), existingTopicIds);
+    }
+
     private void checkMaterialOfCourse(Integer executionId, String materialId) {
         Integer courseId = getCourseExecution(executionId).getCourse().getId();
         if (aqgClient.listMaterials(courseId).stream().noneMatch(material -> material.id().equals(materialId)))
@@ -119,8 +138,6 @@ public class QuestionGenerationService {
         int count = request.getCount() == null ? DEFAULT_QUESTIONS_PER_JOB : request.getCount();
         if (count < 1 || count > MAX_QUESTIONS_PER_JOB)
             throw new TutorException(GENERATION_INVALID_COUNT);
-        if (request.getMaterialIds() == null || request.getMaterialIds().isEmpty())
-            throw new TutorException(GENERATION_MISSING_MATERIALS);
 
         String topicName = request.getTopic();
         if (request.getTopicId() != null) {
@@ -132,22 +149,35 @@ public class QuestionGenerationService {
         if (topicName == null || topicName.isBlank())
             throw new TutorException(GENERATION_MISSING_TOPIC);
 
+        List<String> materialIds = request.getMaterialIds() == null ? List.of() : request.getMaterialIds();
+        List<String> sections = request.getSections() == null ? List.of() : request.getSections();
+        Map<String, List<String>> materialSections = new LinkedHashMap<>();
+        if (Boolean.TRUE.equals(request.getFromTopic())) {
+            if (request.getTopicId() == null)
+                throw new TutorException(GENERATION_MISSING_TOPIC);
+            materialSections = sectionsByMaterial(topicService.findSourcesOfSubtree(request.getTopicId()));
+            materialIds = new ArrayList<>(materialSections.keySet());
+            sections = List.of();
+        }
+        if (materialIds.isEmpty())
+            throw new TutorException(GENERATION_MISSING_MATERIALS);
+
         String difficulty = request.getDifficulty() == null ? "MEDIUM" : request.getDifficulty();
         String groundingMode = request.getGroundingMode() == null ? "STRICT" : request.getGroundingMode();
         String language = normaliseLanguage(request.getLanguage());
         String focus = request.getFocus() == null || request.getFocus().isBlank() ? null : request.getFocus().trim();
         if (focus != null && focus.length() > MAX_FOCUS_LENGTH)
             throw new TutorException(GENERATION_INVALID_FOCUS);
-        List<String> sections = request.getSections() == null ? List.of() : request.getSections();
 
         AqgJobDto aqgJob = aqgClient.generate(new AqgGenerateRequest(
-                courseId, topicName, difficulty, count, groundingMode, request.getMaterialIds(),
-                language, null, questionRepository.findRecentContents(courseId), sections, focus));
+                courseId, topicName, difficulty, count, groundingMode, materialIds,
+                language, null, questionRepository.findRecentContents(courseId), sections, focus, materialSections));
 
         GenerationJob job = new GenerationJob(aqgJob.id(), executionId, requesterId, topicName, request.getTopicId(),
                 count, difficulty, groundingMode, aqgJob.status());
-        job.setSource(request.getMaterialIds(), language);
+        job.setSource(materialIds, language);
         job.setScope(sections, focus);
+        job.setMaterialSections(materialSections);
         generationJobRepository.save(job);
         return new GenerationJobDto(job);
     }
@@ -185,13 +215,15 @@ public class QuestionGenerationService {
                 courseId, original.getTopic(), original.getDifficulty(), 1, original.getGroundingMode(),
                 materialIds, original.getLanguage(),
                 new AqgGenerateRequest.Revision(currentDraft(questionGeneration), comment),
-                questionRepository.findRecentContents(courseId), original.getSections(), original.getFocus()));
+                questionRepository.findRecentContents(courseId), original.getSections(), original.getFocus(),
+                original.getMaterialSections()));
 
         GenerationJob job = new GenerationJob(aqgJob.id(), original.getCourseExecutionId(), userId,
                 original.getTopic(), original.getTopicId(), 1, original.getDifficulty(), original.getGroundingMode(),
                 aqgJob.status());
         job.setSource(materialIds, original.getLanguage());
         job.setScope(original.getSections(), original.getFocus());
+        job.setMaterialSections(original.getMaterialSections());
         job.setRevisionOfId(questionGenerationId);
         generationJobRepository.save(job);
 
@@ -333,6 +365,15 @@ public class QuestionGenerationService {
                 outcome.question().explanation(),
                 outcome.sourceChunkIds() == null ? new ArrayList<>() : outcome.sourceChunkIds());
         job.markImported(1, 0);
+    }
+
+    private Map<String, List<String>> sectionsByMaterial(List<TopicSourceDto> sources) {
+        Map<String, List<String>> byMaterial = new LinkedHashMap<>();
+        for (TopicSourceDto source : sources)
+            byMaterial.computeIfAbsent(source.getMaterialId(), id -> new ArrayList<>()).add(source.getSectionPath());
+        if (byMaterial.isEmpty())
+            throw new TutorException(GENERATION_TOPIC_WITHOUT_SOURCES);
+        return byMaterial;
     }
 
     /**

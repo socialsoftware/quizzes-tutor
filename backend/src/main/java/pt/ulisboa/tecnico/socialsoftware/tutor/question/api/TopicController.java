@@ -9,6 +9,10 @@ import org.springframework.web.bind.annotation.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicMoveDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicNodeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicSourceDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicTreeDto;
 
 import java.util.List;
 
@@ -24,6 +28,30 @@ public class TopicController {
     public List<TopicDto> getCourseTopics(@PathVariable int courseId) {
         logger.debug("courseId {}", courseId);
         return this.topicService.findTopics(courseId);
+    }
+
+    @GetMapping("/topics/courses/{courseId}/tree")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public List<TopicNodeDto> getCourseTopicTree(@PathVariable int courseId) {
+        return this.topicService.findTopicTree(courseId);
+    }
+
+    @PutMapping("/topics/courses/{courseId}/tree")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
+    public List<TopicNodeDto> saveTopicTree(@PathVariable int courseId, @RequestBody TopicTreeDto tree) {
+        return this.topicService.saveTopicTree(courseId, tree);
+    }
+
+    @PutMapping("/topics/{topicId}/move")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#topicId, 'TOPIC.ACCESS')")
+    public TopicNodeDto moveTopic(@PathVariable Integer topicId, @RequestBody TopicMoveDto move) {
+        return this.topicService.moveTopic(topicId, move);
+    }
+
+    @PutMapping("/topics/{topicId}/sources")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#topicId, 'TOPIC.ACCESS')")
+    public TopicNodeDto updateTopicSources(@PathVariable Integer topicId, @RequestBody List<TopicSourceDto> sources) {
+        return this.topicService.updateTopicSources(topicId, sources);
     }
 
     @PostMapping(value = "/topics/courses/{courseId}")

@@ -71,6 +71,9 @@ public enum ErrorMessage {
     QUESTION_ORDER_SLOT_MISMATCH("Question does not have slot %d"),
 
     DUPLICATE_TOPIC("Duplicate topic: %s"),
+    INVALID_TOPIC_SOURCE("A topic can only be linked to a document section with an id and a path"),
+    TOPIC_PARENT_CYCLE("A topic cannot be moved under itself or under one of its own subtopics"),
+    TOPIC_TREE_INVALID("Invalid topic tree: %s"),
     DUPLICATE_USER("Duplicate user: %s"),
     DUPLICATE_COURSE_EXECUTION("Duplicate course execution: %s"),
 
@@ -176,6 +179,7 @@ public enum ErrorMessage {
     GENERATION_INVALID_LANGUAGE("The language name is too long"),
     GENERATION_INVALID_FOCUS("The focus can have at most 500 characters"),
     GENERATION_MATERIAL_NOT_FOUND("Material %s not found in this course"),
+    GENERATION_TOPIC_WITHOUT_SOURCES("This topic has no document sections linked to it yet"),
     GENERATION_CANNOT_REGENERATE("There are no course materials to regenerate this question from"),
     REVIEW_MISSING_QUESTION_GENERATION("Review is missing associated question generation"),
     CANNOT_REVIEW_QUESTION_GENERATION("Generated question already approved or rejected cannot be reviewed again"),

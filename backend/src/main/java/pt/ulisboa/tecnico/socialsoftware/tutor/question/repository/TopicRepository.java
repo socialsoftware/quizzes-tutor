@@ -22,4 +22,6 @@ public interface TopicRepository extends JpaRepository<Topic, Integer> {
 
     @Query(value = "SELECT t.* FROM topics t, courses c WHERE t.course_id = c.id AND c.id = :courseId AND t.name = :name", nativeQuery = true)
     Topic findTopicByName(int courseId, String name);
+
+    List<Topic> findByParentId(Integer parentId);
 }

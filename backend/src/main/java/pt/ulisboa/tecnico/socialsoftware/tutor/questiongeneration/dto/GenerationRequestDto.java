@@ -14,6 +14,9 @@ public class GenerationRequestDto implements Serializable {
     private String language;
     private List<String> sections = new ArrayList<>();
     private String focus;
+    // True: draw from the document sections linked to the topic (and its subtopics) instead of the
+    // materials and sections above
+    private Boolean fromTopic;
 
     public GenerationRequestDto() {
     }
@@ -49,6 +52,10 @@ public class GenerationRequestDto implements Serializable {
     public List<String> getSections() { return sections; }
 
     public void setSections(List<String> sections) { this.sections = sections; }
+
+    public Boolean getFromTopic() { return fromTopic; }
+
+    public void setFromTopic(Boolean fromTopic) { this.fromTopic = fromTopic; }
 
     public String getFocus() { return focus; }
 

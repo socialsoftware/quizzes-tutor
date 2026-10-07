@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
+import java.util.Map;
 
 /** Body of POST /generate on the question generation service. */
 public record AqgGenerateRequest(
@@ -21,7 +22,9 @@ public record AqgGenerateRequest(
         // heading paths to draw from (empty: the whole materials)
         List<String> sections,
         // what to ask about inside the topic
-        String focus) {
+        String focus,
+        // sections to read per material, matched exactly (when they come from a topic); never null
+        @JsonProperty("material_sections") Map<String, List<String>> materialSections) {
 
     public record Revision(AqgJobDto.Question previous, String review) {
     }

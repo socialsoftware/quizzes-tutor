@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.TopicConjunction
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.DomainEntity;
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.Visitor;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicSourceDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import java.util.*;
@@ -39,6 +40,17 @@ public class Topic implements DomainEntity {
     @ManyToMany(mappedBy = "topics")
     private Set<Tournament> tournaments = new HashSet<>();
 
+    // The topic above this one, as a plain id: it keeps topics cheap to turn into DTOs outside a
+    // transaction. Topics without one are at the top of the course's tree
+    @Column(name = "parent_id")
+    private Integer parentId;
+
+    // Position among the topics with the same parent; null for topics created before the tree existed
+    private Integer sequence;
+
+    @OneToMany(mappedBy = "topic", cascade = CascadeType.ALL, orphanRemoval = true)
+    private final List<TopicSource> sources = new ArrayList<>();
+
     public Topic() {
     }
 
@@ -69,6 +81,39 @@ public class Topic implements DomainEntity {
 
     public Set<Question> getQuestions() {
         return questions;
+    }
+
+    public Integer getParentId() {
+        return parentId;
+    }
+
+    public void setParentId(Integer parentId) {
+        this.parentId = parentId;
+    }
+
+    public Integer getSequence() {
+        return sequence;
+    }
+
+    public void setSequence(Integer sequence) {
+        this.sequence = sequence;
+    }
+
+    public List<TopicSource> getSources() {
+        return sources;
+    }
+
+    /** Adds a document section this topic is taught from; false if it was already there. */
+    public boolean addSource(String materialId, String sectionPath) {
+        if (sources.stream().anyMatch(source -> source.is(materialId, sectionPath)))
+            return false;
+        sources.add(new TopicSource(this, materialId, sectionPath));
+        return true;
+    }
+
+    public void replaceSources(List<TopicSourceDto> newSources) {
+        sources.clear();
+        newSources.forEach(source -> addSource(source.getMaterialId(), source.getSectionPath()));
     }
 
     public Set<Tournament> getTournaments() {
