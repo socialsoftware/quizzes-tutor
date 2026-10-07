@@ -15,6 +15,10 @@ import org.springframework.web.reactive.function.client.WebClientResponseExcepti
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditResultDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineNodeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgParagraphDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgSectionDto;
 
@@ -75,6 +79,36 @@ public class WebClientAqgClient implements AqgClient {
         return read(call(() -> client.post().uri("/materials/{materialId}/reprocess", materialId)
                 .accept(MediaType.APPLICATION_JSON)
                 .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<AqgMaterialDto>() {});
+    }
+
+    @Override
+    public List<AqgOutlineNodeDto> getOutline(String materialId) {
+        return read(call(() -> client.get().uri("/materials/{materialId}/outline", materialId)
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<List<AqgOutlineNodeDto>>() {});
+    }
+
+    @Override
+    public List<AqgParagraphDto> getSectionText(String materialId, String path) {
+        return read(call(() -> client.get()
+                .uri(uri -> uri.path("/materials/{materialId}/section-text").queryParam("path", "{path}").build(materialId, path))
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<List<AqgParagraphDto>>() {});
+    }
+
+    @Override
+    public AqgOutlineEditResultDto editOutline(String materialId, AqgOutlineEditDto edit) {
+        String json;
+        try {
+            json = objectMapper.writeValueAsString(edit);
+        } catch (JsonProcessingException e) {
+            throw new TutorException(AQG_SERVICE_ERROR, e.getMessage());
+        }
+
+        return read(call(() -> client.post().uri("/materials/{materialId}/outline/edit", materialId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(json)
+                .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<AqgOutlineEditResultDto>() {});
     }
 
     @Override

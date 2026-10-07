@@ -3,6 +3,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditResultDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineNodeDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgParagraphDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgSectionDto
 
 /** Stands in for the question generation service: tests set the replies and inspect the calls. */
@@ -12,6 +16,10 @@ class StubAqgClient implements AqgClient {
     List<AqgMaterialDto> materials = []
     List<AqgSectionDto> sections = []
     String reprocessedMaterialId
+    List<AqgOutlineNodeDto> outline = []
+    List<AqgParagraphDto> paragraphs = []
+    AqgOutlineEditResultDto editReply
+    AqgOutlineEditDto lastEdit
 
     AqgGenerateRequest lastGenerateRequest
     int getJobCalls = 0
@@ -23,6 +31,10 @@ class StubAqgClient implements AqgClient {
         materials = []
         sections = []
         reprocessedMaterialId = null
+        outline = []
+        paragraphs = []
+        editReply = null
+        lastEdit = null
         lastGenerateRequest = null
         getJobCalls = 0
     }
@@ -46,6 +58,22 @@ class StubAqgClient implements AqgClient {
     AqgMaterialDto reprocessMaterial(String materialId) {
         reprocessedMaterialId = materialId
         return new AqgMaterialDto(materialId, 1, 'a.pdf', 'PROCESSING', 0, null, null, null)
+    }
+
+    @Override
+    List<AqgOutlineNodeDto> getOutline(String materialId) {
+        return outline
+    }
+
+    @Override
+    List<AqgParagraphDto> getSectionText(String materialId, String path) {
+        return paragraphs
+    }
+
+    @Override
+    AqgOutlineEditResultDto editOutline(String materialId, AqgOutlineEditDto edit) {
+        lastEdit = edit
+        return editReply
     }
 
     @Override

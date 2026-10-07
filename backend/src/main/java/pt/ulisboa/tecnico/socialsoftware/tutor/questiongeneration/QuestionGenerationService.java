@@ -21,6 +21,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicSourceDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicTreeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicSourceRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.GenerationJob;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.*;
@@ -74,6 +75,9 @@ public class QuestionGenerationService {
     private TopicRepository topicRepository;
 
     @Autowired
+    private TopicSourceRepository topicSourceRepository;
+
+    @Autowired
     private QuestionService questionService;
 
     @Autowired
@@ -110,6 +114,40 @@ public class QuestionGenerationService {
     public GenerationMaterialDto reprocessMaterial(Integer executionId, String materialId) {
         checkMaterialOfCourse(executionId, materialId);
         return new GenerationMaterialDto(aqgClient.reprocessMaterial(materialId));
+    }
+
+    /** The headings of a course material with the text under them, to edit its sections. */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<AqgOutlineNodeDto> getOutline(Integer executionId, String materialId) {
+        checkMaterialOfCourse(executionId, materialId);
+        return aqgClient.getOutline(materialId);
+    }
+
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<AqgParagraphDto> getSectionText(Integer executionId, String materialId, String path) {
+        checkMaterialOfCourse(executionId, materialId);
+        return aqgClient.getSectionText(materialId, path);
+    }
+
+    /**
+     * Changes the sections of a material and moves the topic links with them: a renamed section
+     * keeps its topics, a merged one is now part of the section before it, and a section that was
+     * cut keeps both halves linked to the same topics (the teacher then moves one of them).
+     */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public AqgOutlineEditResultDto editOutline(Integer executionId, String materialId, AqgOutlineEditDto edit) {
+        checkMaterialOfCourse(executionId, materialId);
+        AqgOutlineEditResultDto result = aqgClient.editOutline(materialId, edit);
+
+        Map<String, List<String>> pathMap = result.pathMap() == null ? Map.of() : result.pathMap();
+        if (!pathMap.isEmpty()) {
+            topicSourceRepository.findByMaterialId(materialId).stream()
+                    .filter(source -> pathMap.containsKey(source.getSectionPath()))
+                    .collect(Collectors.toList())
+                    .forEach(source -> source.getTopic()
+                            .followSource(materialId, source.getSectionPath(), pathMap.get(source.getSectionPath())));
+        }
+        return result;
     }
 
     /** A proposal for the course's topic tree from the sections of a document; nothing is saved. */

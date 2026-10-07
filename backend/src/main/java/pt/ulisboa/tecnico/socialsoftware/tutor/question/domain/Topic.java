@@ -111,6 +111,20 @@ public class Topic implements DomainEntity {
         return true;
     }
 
+    /**
+     * A section of a document changed its path (or was cut in several): the link follows the text.
+     * Links already there are not repeated; false if this topic had no link to the old path.
+     */
+    public boolean followSource(String materialId, String oldPath, List<String> newPaths) {
+        TopicSource old = sources.stream().filter(source -> source.is(materialId, oldPath)).findFirst().orElse(null);
+        if (old == null)
+            return false;
+        if (!newPaths.contains(oldPath))
+            sources.remove(old);
+        newPaths.forEach(path -> addSource(materialId, path));
+        return true;
+    }
+
     public void replaceSources(List<TopicSourceDto> newSources) {
         sources.clear();
         newSources.forEach(source -> addSource(source.getMaterialId(), source.getSectionPath()));

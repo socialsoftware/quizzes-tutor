@@ -2,6 +2,10 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration;
 
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditResultDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineNodeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgParagraphDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgSectionDto;
 
@@ -20,6 +24,15 @@ public interface AqgClient {
 
     /** Rebuilds a material's chunks (and so its sections) with the service's current parsers. */
     AqgMaterialDto reprocessMaterial(String materialId);
+
+    /** The headings of a material, each with the text under it. */
+    List<AqgOutlineNodeDto> getOutline(String materialId);
+
+    /** The paragraphs a section has of its own. */
+    List<AqgParagraphDto> getSectionText(String materialId, String path);
+
+    /** Changes the sections of a material; the reply says where the text of each changed section went. */
+    AqgOutlineEditResultDto editOutline(String materialId, AqgOutlineEditDto edit);
 
     AqgJobDto generate(AqgGenerateRequest request);
 
