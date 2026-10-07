@@ -82,9 +82,17 @@ class MaterialStore:
             row.status = MaterialStatus.FAILED.value
             row.error = error
 
-    def chunks_for(self, course_id: int, material_ids: list[str], sections: list[str] | None = None) -> list[Chunk]:
+    def chunks_for(
+        self,
+        course_id: int,
+        material_ids: list[str],
+        sections: list[str] | None = None,
+        material_sections: dict[str, list[str]] | None = None,
+    ) -> list[Chunk]:
         """Chunks of the requested materials, optionally only those under the given heading
-        paths; ids of other courses or unfinished uploads are rejected instead of silently ignored."""
+        paths. A material with an entry in `material_sections` is read at exactly those paths
+        instead; ids of other courses or unfinished uploads are rejected instead of silently
+        ignored."""
         chunks: list[Chunk] = []
         with self._session() as session:
             for material_id in material_ids:
@@ -95,12 +103,20 @@ class MaterialStore:
                     raise LookupError(f"material {material_id} is {row.status}")
                 rows = session.scalars(select(ChunkRow).where(ChunkRow.material_id == material_id).order_by(ChunkRow.position))
                 chunks.extend(
-                    Chunk(id=r.id, text=r.text, source=r.source) for r in rows if in_sections(r.source, sections)
+                    Chunk(id=r.id, text=r.text, source=r.source) for r in rows if _wanted(r.source, material_id, sections, material_sections)
                 )
         return chunks
 
 
 SECTION_SEPARATOR = " > "
+
+
+def _wanted(
+    source: str | None, material_id: str, sections: list[str] | None, material_sections: dict[str, list[str]] | None
+) -> bool:
+    if material_sections and material_id in material_sections:
+        return source in material_sections[material_id]
+    return in_sections(source, sections)
 
 
 def in_sections(source: str | None, sections: list[str] | None) -> bool:

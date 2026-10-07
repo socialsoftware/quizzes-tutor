@@ -236,6 +236,96 @@ def test_generation_only_uses_the_selected_sections_and_the_focus(tmp_path):
     assert "Focus inside the topic: name resolution hierarchy" in llm.prompts[0]
 
 
+GOOD_GROUNDING = {"correct_supported": True, "correct_chunk_ids": [], "distractors_anchored": 3}
+
+
+def test_a_section_also_covers_the_ones_below_it_by_default(tmp_path):
+    llm = FakeLLM([good_question(), GOOD_GROUNDING, CLEAN_DISTRACTORS])
+    client = make_client(tmp_path, llm)
+    material_id = wait_for(client, upload(client).json()["id"])["id"]
+
+    client.post("/generate", json={"course_id": 1, "topic": "Networks", "material_ids": [material_id], "sections": ["Networks"]})
+
+    assert "DNS translates" in llm.prompts[0] and "404" in llm.prompts[0]
+
+
+def test_material_sections_leave_out_the_ones_below(tmp_path):
+    llm = FakeLLM([good_question(), GOOD_GROUNDING, CLEAN_DISTRACTORS])
+    client = make_client(tmp_path, llm)
+    material_id = wait_for(client, upload(client).json()["id"])["id"]
+
+    response = client.post("/generate", json={
+        "course_id": 1, "topic": "Networks", "material_ids": [material_id],
+        "material_sections": {material_id: ["Networks"]},
+    })
+
+    assert response.status_code == 202
+    assert "Intro to the course" in llm.prompts[0]
+    assert "DNS translates" not in llm.prompts[0] and "404" not in llm.prompts[0]
+
+
+def test_material_sections_can_pick_several_unrelated_paths(tmp_path):
+    llm = FakeLLM([good_question(), GOOD_GROUNDING, CLEAN_DISTRACTORS])
+    client = make_client(tmp_path, llm)
+    material_id = wait_for(client, upload(client).json()["id"])["id"]
+
+    client.post("/generate", json={
+        "course_id": 1, "topic": "Networks protocols",
+        "material_sections": {material_id: ["Networks > HTTP", "Networks > DNS"]},
+    })
+
+    assert "404" in llm.prompts[0] and "DNS translates" in llm.prompts[0]
+    assert "Intro to the course" not in llm.prompts[0]
+
+
+def test_a_material_listed_per_section_is_read_even_without_material_ids(tmp_path):
+    llm = FakeLLM([good_question(), GOOD_GROUNDING, CLEAN_DISTRACTORS])
+    client = make_client(tmp_path, llm)
+    material_id = wait_for(client, upload(client).json()["id"])["id"]
+
+    response = client.post("/generate", json={
+        "course_id": 1, "topic": "HTTP", "material_sections": {material_id: ["Networks > HTTP"]},
+    })
+
+    assert response.status_code == 202
+    assert "404" in llm.prompts[0]
+
+
+def test_material_sections_apply_only_to_their_own_material(tmp_path):
+    llm = FakeLLM([good_question(), GOOD_GROUNDING, CLEAN_DISTRACTORS])
+    client = make_client(tmp_path, llm)
+    first = wait_for(client, upload(client).json()["id"])["id"]
+    second = wait_for(client, upload(client).json()["id"])["id"]
+
+    # Both materials have a "Networks > DNS" section; only the first one's is asked for
+    client.post("/generate", json={
+        "course_id": 1, "topic": "DNS name servers, HTTP resource request", "material_ids": [first, second],
+        "material_sections": {first: ["Networks > DNS"]}, "sections": ["Networks > HTTP"],
+    })
+
+    prompt = llm.prompts[0]
+    assert prompt.count("DNS translates") == 1
+    assert prompt.count("404") == 1
+
+
+def test_material_sections_without_any_text_are_refused(tmp_path):
+    client = make_client(tmp_path, FakeLLM([]))
+    material_id = wait_for(client, upload(client).json()["id"])["id"]
+    response = client.post("/generate", json={
+        "course_id": 1, "topic": "x", "material_sections": {material_id: ["Nowhere"]},
+    })
+    assert response.status_code == 422
+
+
+def test_material_sections_of_another_course_are_refused(tmp_path):
+    client = make_client(tmp_path, FakeLLM([]))
+    material_id = wait_for(client, upload(client, course_id=1).json()["id"])["id"]
+    response = client.post("/generate", json={
+        "course_id": 2, "topic": "x", "material_sections": {material_id: ["Networks"]},
+    })
+    assert response.status_code == 422
+
+
 def test_a_section_with_nothing_selected_is_refused(tmp_path):
     client = make_client(tmp_path, FakeLLM([]))
     material_id = wait_for(client, upload(client).json()["id"])["id"]

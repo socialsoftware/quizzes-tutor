@@ -112,12 +112,15 @@ def create_app(
 
     @app.post("/generate", status_code=202)
     def generate(request: GenerationRequest, background: BackgroundTasks) -> Job:
-        if request.material_ids:
+        material_ids = list(dict.fromkeys([*request.material_ids, *request.material_sections]))
+        if material_ids:
             try:
-                available = materials.chunks_for(request.course_id, request.material_ids, request.sections)
+                available = materials.chunks_for(
+                    request.course_id, material_ids, request.sections, request.material_sections
+                )
             except LookupError as error:
                 raise HTTPException(status_code=422, detail=str(error)) from error
-            if request.sections and not available:
+            if (request.sections or request.material_sections) and not available:
                 raise HTTPException(status_code=422, detail="the selected sections have no text")
             query = f"{request.topic} {request.focus}" if request.focus else request.topic
             retrieved = retriever.top_k(query, available, request.top_k)

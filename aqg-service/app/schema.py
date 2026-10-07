@@ -66,6 +66,10 @@ class GenerationRequest(BaseModel):
     revision: Revision | None = None
     # Heading paths to draw from (a path also covers its subsections); empty means everything
     sections: list[str] = Field(default_factory=list, max_length=500)
+    # Sections to read per material, matched exactly: a path does not cover the ones below it.
+    # Used when the selection comes from a topic tree, where a subsection may belong to another
+    # topic. A material listed here is read even if it is not in material_ids.
+    material_sections: dict[str, list[str]] = Field(default_factory=dict, max_length=100)
     # What to ask about inside the topic, e.g. "sign rules of the product"
     focus: str | None = Field(default=None, max_length=500)
     # Stems already in the course, so new drafts that repeat one are retried
@@ -74,8 +78,10 @@ class GenerationRequest(BaseModel):
 
     @model_validator(mode="after")
     def needs_context(self) -> "GenerationRequest":
-        if not self.chunks and not self.material_ids:
+        if not self.chunks and not self.material_ids and not self.material_sections:
             raise ValueError("provide chunks or material_ids")
+        if any(len(paths) > 500 for paths in self.material_sections.values()):
+            raise ValueError("at most 500 sections per material")
         return self
 
 
