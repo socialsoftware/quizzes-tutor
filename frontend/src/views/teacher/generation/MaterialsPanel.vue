@@ -32,6 +32,19 @@
         <v-tooltip location="bottom">
           <template v-slot:activator="{ props: activatorProps }">
             <v-icon
+              v-if="getRaw(item).isReady()"
+              class="mr-2 action-button"
+              v-bind="activatorProps"
+              data-cy="SuggestTopics"
+              @click="suggestTopics(getRaw(item))"
+              >fas fa-sitemap</v-icon
+            >
+          </template>
+          <span>Suggest topics from this document's sections</span>
+        </v-tooltip>
+        <v-tooltip location="bottom">
+          <template v-slot:activator="{ props: activatorProps }">
+            <v-icon
               v-if="!getRaw(item).isProcessing()"
               class="action-button"
               v-bind="activatorProps"
@@ -61,6 +74,14 @@
       </template>
       <template v-slot:no-data>No material yet. Upload the slides or notes of the course.</template>
     </v-data-table>
+
+    <topic-suggestion-dialog
+      v-if="suggestionFor"
+      v-model:dialog="suggestionOpen"
+      :material-id="suggestionFor.id"
+      :material-name="suggestionFor.filename"
+      @saved="emit('topics-changed')"
+    />
   </v-card>
 </template>
 
@@ -71,12 +92,16 @@ import RemoteServices from '@/services/RemoteServices';
 import { createPoller } from '@/services/Polling';
 import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
+import TopicSuggestionDialog from '@/views/teacher/generation/TopicSuggestionDialog.vue';
 
 const ACCEPTED_TYPES = '.pdf,.pptx,.docx,.md,.markdown,.txt';
 const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
 const POLL_MS = 3000;
 
-const emit = defineEmits<{ (e: 'update:materials', materials: GenerationMaterial[]): void }>();
+const emit = defineEmits<{
+  (e: 'update:materials', materials: GenerationMaterial[]): void;
+  (e: 'topics-changed'): void;
+}>();
 
 const store = useStore();
 const materials = ref<GenerationMaterial[]>([]);
@@ -85,6 +110,14 @@ const fileInput = ref<HTMLInputElement | null>(null);
 const headers: any[] = withV2ColumnWidths(GenerationMaterial.headers);
 
 const getRaw = (item: any): GenerationMaterial => (item as any).raw || item;
+
+const suggestionFor = ref<GenerationMaterial | null>(null);
+const suggestionOpen = ref(false);
+
+const suggestTopics = (material: GenerationMaterial) => {
+  suggestionFor.value = material;
+  suggestionOpen.value = true;
+};
 
 const refresh = async (): Promise<boolean> => {
   materials.value = await RemoteServices.getGenerationMaterials();

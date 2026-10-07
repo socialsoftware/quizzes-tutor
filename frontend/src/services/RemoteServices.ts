@@ -9,6 +9,8 @@ import StudentStats from '@/models/dashboard/StudentStats';
 import StatementQuiz from '@/models/statement/StatementQuiz';
 import SolvedQuiz from '@/models/statement/SolvedQuiz';
 import Topic from '@/models/management/Topic';
+import TopicNode, { TopicSource } from '@/models/management/TopicNode';
+import TopicTreeNode from '@/models/management/TopicTreeNode';
 import { Student } from '@/models/user/Student';
 import Assessment from '@/models/management/Assessment';
 import AuthDto from '@/models/user/AuthDto';
@@ -437,6 +439,54 @@ export default class RemoteServices {
           return new Topic(topic);
         });
       })
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // The course's topics as a tree, with the document sections each one is taught from (teachers)
+  static async getTopicTree(): Promise<TopicNode[]> {
+    return httpClient
+      .get(`/topics/courses/${useStore().getCurrentCourse!.courseId}/tree`)
+      .then((response) => response.data.map((node: any) => new TopicNode(node)))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Creates the topics of an accepted (and maybe edited) proposal and links them to their sections
+  static async saveTopicTree(nodes: TopicTreeNode[]): Promise<TopicNode[]> {
+    return httpClient
+      .put(`/topics/courses/${useStore().getCurrentCourse!.courseId}/tree`, { nodes })
+      .then((response) => response.data.map((node: any) => new TopicNode(node)))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async moveTopic(topicId: number, parentId: number | null): Promise<TopicNode> {
+    return httpClient
+      .put(`/topics/${topicId}/move`, { parentId })
+      .then((response) => new TopicNode(response.data))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async updateTopicSources(topicId: number, sources: TopicSource[]): Promise<TopicNode> {
+    return httpClient
+      .put(`/topics/${topicId}/sources`, sources)
+      .then((response) => new TopicNode(response.data))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // A proposal of topics from the sections of a document; nothing is saved
+  static async getTopicSuggestion(materialId: string): Promise<TopicTreeNode[]> {
+    return httpClient
+      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/topic-suggestion`)
+      .then((response) => response.data.nodes.map((node: any) => new TopicTreeNode(node)))
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });

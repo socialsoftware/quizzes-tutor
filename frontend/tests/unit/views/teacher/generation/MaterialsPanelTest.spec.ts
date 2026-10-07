@@ -132,4 +132,31 @@ describe('MaterialsPanel', () => {
     expect(store.setError).toHaveBeenCalledWith('Unable to connect to server');
     expect(list.mock.calls.length).toBeGreaterThan(1);
   });
+
+  test('a finished document can be used to suggest topics, and the page hears when they are created', async () => {
+    vi.spyOn(RemoteServices, 'getGenerationMaterials').mockResolvedValue([
+      material({ id: 'ready', filename: 'book.pdf' }),
+      material({ id: 'busy', filename: 'later.pdf', status: 'PROCESSING', chunkCount: 0, parser: null }),
+    ]);
+    const wrapper = mount(MaterialsPanel, {
+      global: {
+        plugins: [createVuetify({ components, directives })],
+        stubs: { TopicSuggestionDialog: true },
+      },
+    });
+    await flushPromises();
+
+    expect(wrapper.findAll('[data-cy="SuggestTopics"]')).toHaveLength(1);
+    expect(wrapper.findComponent({ name: 'TopicSuggestionDialog' }).exists()).toBe(false);
+
+    await wrapper.find('[data-cy="SuggestTopics"]').trigger('click');
+    const dialog = wrapper.findComponent({ name: 'TopicSuggestionDialog' });
+
+    expect(dialog.exists()).toBe(true);
+    expect(dialog.props('materialId')).toBe('ready');
+    expect(dialog.props('materialName')).toBe('book.pdf');
+
+    dialog.vm.$emit('saved');
+    expect(wrapper.emitted('topics-changed')).toHaveLength(1);
+  });
 });

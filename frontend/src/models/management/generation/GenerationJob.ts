@@ -7,6 +7,8 @@ export interface GenerationRequest {
   count: number;
   groundingMode: string;
   materialIds: string[];
+  // true: read the document sections linked to the topic (and its subtopics) instead of materialIds/sections
+  fromTopic: boolean;
   // null keeps the language of the materials
   language: string | null;
   // Heading paths to draw from; empty uses the whole materials

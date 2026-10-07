@@ -1,6 +1,14 @@
 <template v-if="topics">
   <v-card class="table">
+    <div class="d-flex justify-end px-4 pt-2">
+      <v-btn-toggle v-model="view" mandatory density="compact" divided data-cy="TopicsViewToggle">
+        <v-btn value="table" data-cy="TopicsTableView">Table</v-btn>
+        <v-btn value="tree" data-cy="TopicsTreeView">Tree</v-btn>
+      </v-btn-toggle>
+    </div>
+    <topic-tree v-if="view === 'tree'" />
     <v-data-table
+      v-else
       :headers="headers"
       :custom-filter="customFilter"
       :items="topics"
@@ -123,9 +131,11 @@ import RemoteServices from '@/services/RemoteServices';
 import Topic from '@/models/management/Topic';
 import ShowQuestionListDialog from '@/views/teacher/questions/ShowQuestionListDialog.vue';
 import Question from '@/models/management/Question';
+import TopicTree from '@/views/teacher/topics/TopicTree.vue';
 
 const store = useStore();
 
+const view = ref<'table' | 'tree'>('table');
 const topics = ref<Topic[]>([]);
 const editedTopic = ref<Topic | null>(new Topic());
 const topicDialog = ref(false);

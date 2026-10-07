@@ -25,7 +25,7 @@ export default class GenerationMaterial {
     { title: 'Chunks', key: 'chunkCount', align: 'center', width: '110px' },
     { title: 'Read with', key: 'parser', align: 'center', width: '140px' },
     { title: 'Time (s)', key: 'parseSeconds', align: 'center', width: '110px' },
-    { title: 'Actions', key: 'actions', align: 'center', width: '90px', sortable: false },
+    { title: 'Actions', key: 'actions', align: 'center', width: '110px', sortable: false },
   ];
 
   isReady() {
