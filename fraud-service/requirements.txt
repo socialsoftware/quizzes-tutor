@@ -40,7 +40,7 @@ pandas==3.0.6
     # via -r requirements.in
 pillow==12.3.0
     # via matplotlib
-psycopg==3.3.6
+psycopg[binary]==3.3.6
     # via -r requirements.in
 psycopg-binary==3.3.6
     # via psycopg
@@ -60,5 +60,5 @@ sqlalchemy==2.1.0
     # via -r requirements.in
 typing-extensions==4.16.0
     # via sqlalchemy
-werkzeug==3.1.8
+werkzeug==3.1.9
     # via flask
