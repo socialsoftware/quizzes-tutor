@@ -80,8 +80,9 @@ public class DiscussionSuggestionService {
                     .forEach(option -> options.add(new AqgDiscussionRequest.Option(option.getContent(), option.isCorrect())));
         }
 
+        // The question's course, which owns the topics the material sections come from
         return new AqgDiscussionRequest(
-                discussion.getCourseExecution().getCourse().getId(),
+                question.getCourse().getId(),
                 question.getContent(),
                 options,
                 "",
