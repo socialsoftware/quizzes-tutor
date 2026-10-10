@@ -12,6 +12,10 @@ public record LlmSettingsDto(
         // tried in order when a call to the model before fails
         List<LlmModelChoiceDto> fallbacks,
         String ollamaBaseUrl,
+        // tokens an Ollama model reads at once (null: the server's default)
+        Integer ollamaContextLength,
+        // "default", "off", "low", "medium" or "high"
+        String ollamaThinking,
         Double timeout,
         Boolean thinking,
         Integer maxRetries,

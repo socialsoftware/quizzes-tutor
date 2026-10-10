@@ -43,6 +43,8 @@ class ModelConfig(BaseModel):
     timeout: float = 120
     # Provider-specific request fields (e.g. NIM's chat_template_kwargs)
     extra_body: dict | None = None
+    # Provider-specific LiteLLM arguments (e.g. Ollama's num_ctx and reasoning_effort)
+    options: dict | None = None
 
 
 class Revision(BaseModel):

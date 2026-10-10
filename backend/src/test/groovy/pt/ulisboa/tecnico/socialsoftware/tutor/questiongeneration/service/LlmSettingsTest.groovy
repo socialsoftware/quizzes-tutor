@@ -14,7 +14,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.LL
 @DataJpaTest
 class LlmSettingsTest extends SpockTest {
     def settings(LlmModelChoiceDto primary) {
-        return new LlmSettingsDto(primary, [new LlmModelChoiceDto('ollama', 'llama3.2:3b')], 'http://ollama:11434', 120d, false, 2, true, 12000)
+        return new LlmSettingsDto(primary, [new LlmModelChoiceDto('ollama', 'llama3.2:3b')], 'http://ollama:11434', 8192, 'off', 120d, false, 2, true, 12000)
     }
 
     def setup() {

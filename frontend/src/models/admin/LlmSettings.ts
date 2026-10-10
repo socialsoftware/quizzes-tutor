@@ -18,6 +18,10 @@ export interface LlmSettings {
   // Tried in order when a call to the model before fails (outage, overload, timeout, model withdrawn)
   fallbacks: LlmModelChoice[];
   ollamaBaseUrl: string;
+  // Tokens an Ollama model reads at once (its num_ctx); null keeps the server's default
+  ollamaContextLength: number | null;
+  // Ollama's "think": the model's default, off, or on with an effort
+  ollamaThinking: 'default' | 'off' | 'low' | 'medium' | 'high';
   timeout: number;
   thinking: boolean;
   maxRetries: number;

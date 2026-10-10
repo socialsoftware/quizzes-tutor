@@ -28,6 +28,7 @@ class LiteLLMProvider:
             temperature=self.config.temperature,
             timeout=self.config.timeout,
             extra_body=self.config.extra_body,
+            **(self.config.options or {}),
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},

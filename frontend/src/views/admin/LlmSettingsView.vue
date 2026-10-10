@@ -61,6 +61,39 @@
         :error-messages="urlError"
         data-cy="OllamaUrl"
       />
+      <v-row class="mt-1">
+        <v-col cols="12" sm="6">
+          <v-text-field
+            :model-value="draft.ollamaContextLength ?? ''"
+            type="number"
+            label="Context window (tokens)"
+            placeholder="The server's default"
+            persistent-placeholder
+            clearable
+            :hint="contextHint"
+            persistent-hint
+            :error-messages="contextWindowError"
+            data-cy="OllamaContext"
+            @update:model-value="setContextLength"
+          />
+        </v-col>
+        <v-col cols="12" sm="6">
+          <v-select
+            v-model="draft.ollamaThinking"
+            :items="THINKING_OPTIONS"
+            label="Thinking"
+            hint="Thinking writes better questions but takes several times longer. Effort levels only change models that have them (e.g. gpt-oss)"
+            persistent-hint
+            :menu-props="{ contentClass: 'text-left' }"
+            data-cy="OllamaThinking"
+          />
+        </v-col>
+      </v-row>
+      <v-alert v-if="contextTooSmall" type="warning" variant="tonal" density="compact" class="mt-3" data-cy="ContextTooSmall">
+        A prompt carries about {{ promptTokens }} tokens with {{ draft.contextChars }} characters of material, more than the
+        {{ draft.ollamaContextLength }} tokens of the window: Ollama would cut it. Raise the window or lower the characters
+        of material below.
+      </v-alert>
       <div class="d-flex align-center flex-wrap mt-3">
         <span class="mr-2">Installed models:</span>
         <v-chip v-for="model in ollama.models" :key="model" size="small" class="mr-1" data-cy="OllamaModel">{{ model }}</v-chip>
@@ -124,7 +157,7 @@
         v-model="draft.thinking"
         color="primary"
         hide-details
-        label="Let NIM reasoning models think before answering (better answers, much slower)"
+        label="Let NVIDIA NIM reasoning models think before answering (better answers, much slower; for Ollama see Thinking above)"
         data-cy="LlmThinking"
       />
       <v-switch
@@ -153,6 +186,16 @@ import { LlmSettings, LlmSettingsView, OllamaModels } from '@/models/admin/LlmSe
 import LlmModelRow from '@/views/admin/LlmModelRow.vue';
 
 const MAX_FALLBACKS = 5;
+const THINKING_OPTIONS = [
+  { title: "The model's default", value: 'default' },
+  { title: 'Off', value: 'off' },
+  { title: 'On, low effort', value: 'low' },
+  { title: 'On, medium effort', value: 'medium' },
+  { title: 'On, high effort', value: 'high' },
+];
+// Rough size of a prompt: about 3.5 characters of material per token, plus the instructions
+const CHARS_PER_TOKEN = 3.5;
+const INSTRUCTION_TOKENS = 1500;
 const POLL_MS = 5000;
 
 const store = useStore();
@@ -178,6 +221,30 @@ const urlError = computed(() =>
 const rangeError = (value: number, min: number, max: number) =>
   typeof value === 'number' && Number.isFinite(value) && value >= min && value <= max ? [] : [`Between ${min} and ${max}`];
 
+const setContextLength = (value: string | number | null) => {
+  const number = value === null || value === '' ? null : Number(value);
+  draft.value!.ollamaContextLength = number;
+};
+
+const contextWindowError = computed(() => {
+  const length = draft.value?.ollamaContextLength;
+  return length === null || length === undefined ? [] : rangeError(length, 1024, 262144);
+});
+
+const promptTokens = computed(() =>
+  draft.value ? Math.round(draft.value.contextChars / CHARS_PER_TOKEN + INSTRUCTION_TOKENS) : 0
+);
+
+const usesOllama = computed(
+  () => !!draft.value && [draft.value.primary, ...draft.value.fallbacks].some((choice) => choice.provider === 'ollama')
+);
+
+const contextTooSmall = computed(
+  () => usesOllama.value && !!draft.value?.ollamaContextLength && promptTokens.value > draft.value.ollamaContextLength
+);
+
+const contextHint = computed(() => `A prompt here takes about ${promptTokens.value} tokens; empty keeps the server's default`);
+
 const valid = computed(() => {
   const settings = draft.value;
   if (!settings || !view.value) return false;
@@ -185,6 +252,7 @@ const valid = computed(() => {
   return (
     choices.every((choice) => choice.model.trim() !== '' && view.value!.keys[choice.provider]) &&
     urlError.value.length === 0 &&
+    contextWindowError.value.length === 0 &&
     rangeError(settings.timeout, 5, 900).length === 0 &&
     rangeError(settings.maxRetries, 0, 5).length === 0 &&
     rangeError(settings.contextChars, 2000, 60000).length === 0 &&

@@ -19,6 +19,8 @@ const settingsView = (): LlmSettingsView => ({
     primary: { provider: 'nvidia_nim', model: 'nvidia/nemotron-3-ultra-550b-a55b' },
     fallbacks: [{ provider: 'ollama', model: 'llama3.1:8b' }],
     ollamaBaseUrl: 'http://ollama:11434',
+    ollamaContextLength: null,
+    ollamaThinking: 'default',
     timeout: 120,
     thinking: false,
     maxRetries: 2,
@@ -131,6 +133,37 @@ describe('LlmSettingsView', () => {
       await flushPromises();
       expect(saveButton(wrapper).attributes('disabled')).toBeDefined();
     }
+  });
+
+  test('the Ollama context window and thinking are sent, and a window too small for the prompt is pointed out', async () => {
+    const save = vi.spyOn(RemoteServices, 'saveLlmSettings').mockImplementation(async (settings) => ({ ...settingsView(), settings }));
+    const wrapper = await mountPage();
+
+    vm(wrapper).setContextLength('4096');
+    vm(wrapper).draft.ollamaThinking = 'off';
+    await flushPromises();
+    // 12000 characters of material ~ 4900 tokens with the instructions, and Ollama is a fallback
+    expect(wrapper.find('[data-cy="ContextTooSmall"]').exists()).toBe(true);
+
+    vm(wrapper).draft.contextChars = 6000;
+    await flushPromises();
+    expect(wrapper.find('[data-cy="ContextTooSmall"]').exists()).toBe(false);
+
+    await saveButton(wrapper).trigger('click');
+    await flushPromises();
+    expect(save.mock.calls[0][0]).toEqual(expect.objectContaining({ ollamaContextLength: 4096, ollamaThinking: 'off' }));
+  });
+
+  test('an empty context window keeps the server default and a window out of range cannot be saved', async () => {
+    const wrapper = await mountPage();
+
+    vm(wrapper).setContextLength('100');
+    await flushPromises();
+    expect(saveButton(wrapper).attributes('disabled')).toBeDefined();
+
+    vm(wrapper).setContextLength('');
+    await flushPromises();
+    expect(vm(wrapper).draft.ollamaContextLength).toBeNull();
   });
 
   test('fallbacks are added, reordered and removed', async () => {

@@ -83,6 +83,8 @@ Students can then answer those questions in sugested quizzes or generated quizze
   * [Postgres 18](https://www.postgresql.org/)
   * [Java 25](https://openjdk.org/projects/jdk/25/)
   * [Node 24](https://nodejs.org/en/) ([Node Version Manager](https://github.com/nvm-sh/nvm) recommended)
+  * [Python 3.14](https://www.python.org/) for the question generation and fraud services ([uv](https://docs.astral.sh/uv/) installs it if your system has an older one)
+  * [Ollama](https://ollama.com/) (optional) to generate questions with a model running on your machine
   * [Docker](https://www.docker.com/)
 * No download required
   * [Maven](https://maven.apache.org/) (`backend/mvnw` fetches the pinned version)
@@ -125,6 +127,34 @@ cd frontend
 npm install
 npm run dev
 ```
+* **Question generation service** (`aqg-service`, port 8000) — writes the generated questions and the reply drafts in discussions
+```
+cd aqg-service
+python3.14 -m venv .venv            # or: uv venv --python 3.14 .venv
+.venv/bin/pip install -r requirements.txt
+cp example.env .env
+```
+  Fill `.env` for a run without Docker:
+  * `DATABASE_URL=postgresql://your-username:yourpassword@localhost:5432/tutordb` (its tables go to a schema `aqg` of the same database)
+  * `MATERIALS_DIR=./materials` (where the uploaded files are kept)
+  * a model: `LLM_PROVIDER` and `LLM_MODEL`, and the key of that provider (`NVIDIA_NIM_API_KEY`, `OPENAI_API_KEY` or `ANTHROPIC_API_KEY`); for Ollama, `LLM_PROVIDER=ollama`, `OLLAMA_BASE_URL=http://localhost:11434` and a model you pulled (`ollama pull llama3.2:3b`)
+
+  These are only the starting values: an administrator can change the model, the fallbacks and the Ollama address later in *Administration › Question Generation Model*. API keys are only ever read from `.env`.
+```
+cd aqg-service
+set -a && . ./.env && set +a
+.venv/bin/uvicorn app.main:app --port 8000
+```
+  The backend finds it through `aqg.service.url` in `application-dev.properties` (`http://localhost:8000`).
+* **Fraud service** (`fraud-service`, port 5000, optional) — the fraud statistics of the teacher dashboard
+```
+cd fraud-service
+python3.14 -m venv .venv            # or: uv venv --python 3.14 .venv
+.venv/bin/pip install -r requirements.txt
+cp example.env .env                 # the same database user, password, port and name as the backend
+set -a && . ./.env && set +a
+.venv/bin/python -m flask run --port 5000
+```
 * **Access http://localhost:8081**
 
 # Testing
@@ -133,6 +163,10 @@ npm run dev
 cd backend  && ./mvnw clean -Ptest test   # unit tests (Spock, H2 in memory)
 cd frontend && npm run test:unit          # unit tests (vitest)
 cd frontend && npm run test:e2e           # end-to-end (Cypress, needs both servers)
+```
+
+```
+cd aqg-service && .venv/bin/pip install -r requirements-dev.txt && .venv/bin/python -m pytest
 ```
 
 See [RUNNING-AND-TESTING.md](RUNNING-AND-TESTING.md) for the integration and load tests, for

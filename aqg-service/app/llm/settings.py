@@ -27,6 +27,10 @@ API_KEY_VARIABLES = {
 }
 
 MAX_FALLBACKS = 5
+
+# Ollama's "think": the model's own default, off, or on with an effort (levels only change models
+# that have them, such as gpt-oss; the others just think or not)
+OllamaThinking = Literal["default", "off", "low", "medium", "high"]
 SETTING_KEY = "llm"
 
 
@@ -54,6 +58,10 @@ class LlmSettings(CamelModel):
     # Tried in order when a call to the model before fails (outage, overload, timeout, model withdrawn)
     fallbacks: list[ModelChoice] = Field(default_factory=list, max_length=MAX_FALLBACKS)
     ollama_base_url: str = Field(max_length=500)
+    # Tokens the Ollama model reads at once (its num_ctx); None keeps the server's default, which
+    # can be smaller than a prompt with several pieces of material
+    ollama_context_length: int | None = Field(default=None, ge=1024, le=262144)
+    ollama_thinking: OllamaThinking = "default"
     # Seconds before a call is abandoned
     timeout: float = Field(ge=5, le=900)
     # Keep the chain of thought of reasoning models on NIM (much slower)
@@ -133,8 +141,16 @@ def model_config_for(choice: ModelChoice, llm: LlmSettings) -> ModelConfig:
     """LiteLLM routes on the model prefix; cloud API keys are left to it, read from the environment."""
     timeout = llm.timeout
     if choice.provider == "ollama":
+        options: dict = {}
+        if llm.ollama_context_length:
+            options["num_ctx"] = llm.ollama_context_length
+        if llm.ollama_thinking != "default":
+            # LiteLLM turns reasoning_effort into Ollama's "think": a level turns it on, anything else off
+            options["reasoning_effort"] = "none" if llm.ollama_thinking == "off" else llm.ollama_thinking
         # ollama_chat/ uses Ollama's chat endpoint, so the system prompt stays a system message
-        return ModelConfig(model=f"ollama_chat/{choice.model}", api_base=llm.ollama_base_url, timeout=timeout)
+        return ModelConfig(
+            model=f"ollama_chat/{choice.model}", api_base=llm.ollama_base_url, timeout=timeout, options=options or None
+        )
     if choice.provider == "nvidia_nim":
         # Reasoning models on NIM (GLM, Nemotron...) think before answering by default, which
         # made each call take ~30-60 s instead of ~2 s; the JSON replies are just as valid

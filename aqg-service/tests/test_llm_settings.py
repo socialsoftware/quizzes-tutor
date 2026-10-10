@@ -224,3 +224,53 @@ def test_reply_suggestions_can_be_turned_off_from_the_settings():
     })
 
     assert response.status_code == 403
+
+
+@pytest.mark.parametrize(
+    "thinking, expected",
+    [("default", None), ("off", "none"), ("low", "low"), ("high", "high")],
+)
+def test_ollama_gets_its_context_window_and_thinking(thinking, expected):
+    factory = Recorder(default=FakeLLM([{"ok": True}]))
+    client = make_client(factory)
+    client.put("/settings/llm", json={**NEW_SETTINGS, "ollamaContextLength": 8192, "ollamaThinking": thinking})
+
+    client.post("/settings/llm/test", json={"provider": "ollama", "model": "qwen3:4b"})
+
+    options = factory.configs[-1].options
+    assert options["num_ctx"] == 8192
+    assert options.get("reasoning_effort") == expected
+
+
+def test_without_ollama_options_the_server_defaults_are_kept():
+    factory = Recorder(default=FakeLLM([{"ok": True}]))
+
+    make_client(factory).post("/settings/llm/test", json={"provider": "ollama", "model": "qwen3:4b"})
+
+    assert factory.configs[-1].options is None
+
+
+@pytest.mark.parametrize("change", [{"ollamaContextLength": 100}, {"ollamaContextLength": 10_000_000}, {"ollamaThinking": "maybe"}])
+def test_invalid_ollama_options_are_refused(change):
+    assert make_client().put("/settings/llm", json={**NEW_SETTINGS, **change}).status_code == 422
+
+
+def test_the_options_reach_litellm(monkeypatch):
+    import litellm
+
+    from app.llm.provider import LiteLLMProvider
+    from app.schema import ModelConfig
+
+    sent = {}
+
+    class Reply:
+        choices = [type("Choice", (), {"message": type("Message", (), {"content": "{}"})()})()]
+
+    def completion(**kwargs):
+        sent.update(kwargs)
+        return Reply()
+
+    monkeypatch.setattr(litellm, "completion", completion)
+    LiteLLMProvider(ModelConfig(model="ollama_chat/m", options={"num_ctx": 4096, "reasoning_effort": "none"})).complete("s", "u")
+
+    assert sent["num_ctx"] == 4096 and sent["reasoning_effort"] == "none"

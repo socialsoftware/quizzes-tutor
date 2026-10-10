@@ -33,3 +33,6 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 
 ## Fraud service
 fraud.service.url=http://localhost:5000/
+
+## Question generation service (aqg-service)
+aqg.service.url=http://localhost:8000
