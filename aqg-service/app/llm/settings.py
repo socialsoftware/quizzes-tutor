@@ -110,6 +110,14 @@ class ModelTestResult(CamelModel):
     error: str | None = None
 
 
+class ProviderModels(CamelModel):
+    """The models a provider offers for writing text; `error` says why the list could not be read."""
+
+    provider: str
+    models: list[str] = Field(default_factory=list)
+    error: str | None = None
+
+
 class OllamaModels(CamelModel):
     models: list[str] = Field(default_factory=list)
     # Model -> "downloading", "done" or the error of its last download

@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelTe
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsViewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.OllamaModelsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.ProviderModelsDto;
 
 /** Administrators only: which models the question generation service uses. */
 @RestController
@@ -31,6 +32,13 @@ public class LlmSettingsController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public LlmModelTestDto testModel(@RequestBody LlmModelChoiceDto model) {
         return llmSettingsService.testModel(model);
+    }
+
+    @GetMapping("/admin/llm-settings/models")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public ProviderModelsDto getProviderModels(@RequestParam String provider,
+                                               @RequestParam(defaultValue = "false") boolean refresh) {
+        return llmSettingsService.getProviderModels(provider, refresh);
     }
 
     @GetMapping("/admin/llm-settings/ollama")

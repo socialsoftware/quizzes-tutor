@@ -25,6 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelTe
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsViewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.OllamaModelsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.ProviderModelsDto;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -154,6 +155,15 @@ public class WebClientAqgClient implements AqgClient {
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(json)
                 .retrieve().bodyToMono(String.class).block(MODEL_TEST_TIMEOUT)), new TypeReference<LlmModelTestDto>() {});
+    }
+
+    @Override
+    public ProviderModelsDto getProviderModels(String provider, boolean refresh) {
+        return read(call(() -> client.get()
+                .uri(uri -> uri.path("/settings/llm/models").queryParam("provider", "{provider}")
+                        .queryParam("refresh", refresh).build(provider))
+                .accept(MediaType.APPLICATION_JSON)
+                .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<ProviderModelsDto>() {});
     }
 
     @Override

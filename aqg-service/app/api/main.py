@@ -13,6 +13,7 @@ from app.generation.discussion import suggest_reply
 from app.generation.prompts import PROMPT_VERSION
 from app.generation.synthesizer import ModelReplyError
 from app.ingestion.adapters import Parsers, UnsupportedFormat, adapter_for, build_parsers
+from app.llm.catalog import ModelCatalog
 from app.llm.ollama import OllamaClient
 from app.llm.provider import LiteLLMProvider, LLMProvider, build_provider
 from app.llm.settings import (
@@ -21,7 +22,9 @@ from app.llm.settings import (
     LlmSettingsView,
     ModelChoice,
     ModelTestResult,
+    Provider,
     OllamaModels,
+    ProviderModels,
     missing_keys,
     model_config_for,
 )
@@ -52,6 +55,7 @@ def create_app(
     retriever: Retriever | None = None,
     storage: MaterialStorage | None = None,
     ollama: OllamaClient | None = None,
+    catalog: ModelCatalog | None = None,
 ) -> FastAPI:
     settings = settings or Settings.from_env()
     parsers = parsers or build_parsers(settings.pdf_parser, settings.office_parser)
@@ -62,6 +66,7 @@ def create_app(
     jobs = JobStore(session_factory)
     llm_settings = LlmSettingsStore(session_factory, LlmSettings.from_env(settings))
     ollama = ollama or OllamaClient()
+    catalog = catalog or ModelCatalog(ollama)
     # Model -> state of its last download to the Ollama server ("downloading", "done" or the error)
     ollama_pulls: dict[str, str] = {}
     app = FastAPI(title="Quizzes Tutor AQG service")
@@ -232,6 +237,15 @@ def create_app(
         except Exception as error:  # the error is the answer to the test
             return ModelTestResult(ok=False, seconds=round(time.perf_counter() - started, 2), error=_short_error(error))
         return ModelTestResult(ok=True, seconds=round(time.perf_counter() - started, 2), reply=reply[:200])
+
+    @app.get("/settings/llm/models")
+    def provider_models(provider: Provider, refresh: bool = False) -> ProviderModels:
+        """The models of a provider that can write text; a list that cannot be read says why."""
+        try:
+            models = catalog.models(provider, llm_settings.get().ollama_base_url, refresh)
+        except Exception as error:  # an unreachable provider or a missing key are normal answers here
+            return ProviderModels(provider=provider, error=_short_error(error))
+        return ProviderModels(provider=provider, models=models)
 
     @app.get("/settings/llm/ollama")
     def ollama_models() -> OllamaModels:

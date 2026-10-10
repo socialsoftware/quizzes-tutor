@@ -18,10 +18,23 @@
       class="model"
       :hint="modelHint"
       persistent-hint
+      :loading="modelsLoading"
       :menu-props="{ contentClass: 'text-left' }"
       data-cy="LlmModel"
       @update:model-value="changeModel"
-    />
+    >
+      <template v-slot:append>
+        <v-btn
+          icon="fas fa-sync"
+          size="x-small"
+          variant="text"
+          :title="`Read the models of ${providerName} again`"
+          :disabled="modelsLoading"
+          data-cy="RefreshModels"
+          @click.stop="emit('refresh-models', modelValue.provider)"
+        />
+      </template>
+    </v-combobox>
     <v-btn
       variant="text"
       size="small"
@@ -59,11 +72,17 @@ const props = defineProps<{
   providers: string[];
   keys: Record<string, boolean>;
   defaultModels: Record<string, string>;
-  // The models the Ollama server has, offered for the Ollama provider
-  ollamaModels: string[];
+  // The models the provider offers (for Ollama, the ones its server has)
+  availableModels: string[];
+  // Why they could not be read, if so
+  modelsError: string | null;
+  modelsLoading: boolean;
 }>();
 
-const emit = defineEmits<{ (e: 'update:modelValue', value: LlmModelChoice): void }>();
+const emit = defineEmits<{
+  (e: 'update:modelValue', value: LlmModelChoice): void;
+  (e: 'refresh-models', provider: string): void;
+}>();
 
 const store = useStore();
 const testing = ref(false);
@@ -80,16 +99,21 @@ const providerItems = computed(() =>
 );
 
 const modelItems = computed(() => {
+  // Only when the list could not be read, the suggested default is offered instead
   const suggested = props.defaultModels[props.modelValue.provider];
-  const models = props.modelValue.provider === 'ollama' ? [...props.ollamaModels] : [];
-  if (suggested && !models.includes(suggested)) models.push(suggested);
-  return models;
+  if (props.availableModels.length > 0 || !suggested) return props.availableModels;
+  return [suggested];
 });
 
+const listed = computed(() => props.availableModels.includes(props.modelValue.model));
+
 const modelHint = computed(() => {
-  if (props.modelValue.provider !== 'ollama') return 'The name the provider gives the model';
-  if (props.ollamaModels.includes(props.modelValue.model)) return 'Installed on the Ollama server';
-  return 'Not on the Ollama server yet: download it below';
+  const ollama = props.modelValue.provider === 'ollama';
+  if (props.modelsLoading) return `Reading the models of ${providerName.value}…`;
+  if (props.modelsError) return `Could not read the models of ${providerName.value} (${props.modelsError}); type the name`;
+  if (ollama) return listed.value ? 'Installed on the Ollama server' : 'Not on the Ollama server yet: download it below';
+  if (props.modelValue.model && !listed.value) return `Not in ${providerName.value}'s list: it may have been withdrawn`;
+  return `${props.availableModels.length} models from ${providerName.value}: pick one or type to search`;
 });
 
 const changeProvider = (provider: string) => {

@@ -38,6 +38,11 @@ describe('LlmSettingsView', () => {
     (useStore as any).mockReturnValue(store);
     vi.spyOn(RemoteServices, 'getLlmSettings').mockResolvedValue(settingsView());
     vi.spyOn(RemoteServices, 'getOllamaModels').mockResolvedValue({ models: ['llama3.1:8b'], pulls: {}, error: null });
+    vi.spyOn(RemoteServices, 'getProviderModels').mockImplementation(async (provider: string) =>
+      provider === 'nvidia_nim'
+        ? { provider, models: ['meta/llama-3.3-70b-instruct', 'nvidia/nemotron-3-ultra-550b-a55b'], error: null }
+        : { provider, models: [], error: `NoApiKey: no API key for ${provider}` }
+    );
   });
 
   afterEach(() => {
@@ -61,6 +66,37 @@ describe('LlmSettingsView', () => {
     expect(wrapper.findAll('[data-cy="OllamaModel"]').map((chip) => chip.text())).toEqual(['llama3.1:8b']);
     expect(wrapper.text()).toContain('never shown');
     expect(saveButton(wrapper).attributes('disabled')).toBeDefined();
+  });
+
+  test('each provider in use offers the models it lists, read once', async () => {
+    const wrapper = await mountPage();
+
+    expect(RemoteServices.getProviderModels).toHaveBeenCalledTimes(1);
+    expect(RemoteServices.getProviderModels).toHaveBeenCalledWith('nvidia_nim', false);
+    expect(vm(wrapper).modelsOf('nvidia_nim')).toEqual(['meta/llama-3.3-70b-instruct', 'nvidia/nemotron-3-ultra-550b-a55b']);
+    expect(vm(wrapper).modelsOf('ollama')).toEqual(['llama3.1:8b']);
+    expect(wrapper.text()).toContain('2 models from NVIDIA NIM');
+  });
+
+  test('a provider whose list cannot be read says why, and the list can be read again', async () => {
+    const wrapper = await mountPage();
+
+    vm(wrapper).draft.fallbacks[0] = { provider: 'anthropic', model: 'claude-sonnet-5' };
+    await flushPromises();
+    expect(wrapper.text()).toContain('Could not read the models of Anthropic');
+
+    await wrapper.findAll('[data-cy="RefreshModels"]')[0].trigger('click');
+    await flushPromises();
+    expect(RemoteServices.getProviderModels).toHaveBeenLastCalledWith('nvidia_nim', true);
+  });
+
+  test('a model that is not in the provider\'s list is pointed out', async () => {
+    const wrapper = await mountPage();
+
+    vm(wrapper).draft.primary = { provider: 'nvidia_nim', model: 'nvidia/nemotron-3-super-120b-a12b' };
+    await flushPromises();
+
+    expect(wrapper.text()).toContain('may have been withdrawn');
   });
 
   test('saving sends the changed settings', async () => {

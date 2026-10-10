@@ -38,9 +38,10 @@ export const useStore = defineStore('main', {
     isAdmin(state): boolean {
       return !!state.token && state.user !== null && (state.user.admin || state.user.role == 'DEMO_ADMIN');
     },
-    // A real administrator: the demo one only manages the demo course, never settings of the whole Tutor
+    // An administrator of the whole Tutor (the backend's ROLE_ADMIN): the public demo administrator
+    // is not one, it only manages the demo course
     isSystemAdmin(state): boolean {
-      return !!state.token && state.user !== null && !!state.user.admin && state.user.role != 'DEMO_ADMIN';
+      return !!state.token && state.user !== null && !!state.user.admin;
     },
     isTeacher(state): boolean {
       return !!state.token && state.user !== null && state.user.role == 'TEACHER';

@@ -58,6 +58,18 @@ class LlmSettingsTest extends SpockTest {
         pulls.pulls() == ['qwen3:4b': 'downloading']
     }
 
+    def "the models of a provider come from the service, and a provider is needed"() {
+        expect:
+        llmSettingsService.getProviderModels('nvidia_nim', false).models() == ['model-of-nvidia_nim']
+
+        when:
+        llmSettingsService.getProviderModels(' ', false)
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == LLM_SETTINGS_MISSING
+    }
+
     @Unroll
     def "a model without a #what is refused"() {
         when:

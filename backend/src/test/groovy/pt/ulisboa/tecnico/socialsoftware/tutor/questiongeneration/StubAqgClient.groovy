@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelTe
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsViewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.OllamaModelsDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.ProviderModelsDto
 
 /** Stands in for the question generation service: tests set the replies and inspect the calls. */
 class StubAqgClient implements AqgClient {
@@ -108,6 +109,11 @@ class StubAqgClient implements AqgClient {
     LlmModelTestDto testModel(LlmModelChoiceDto model) {
         lastTestedModel = model
         return new LlmModelTestDto(true, 0.5d, '{"ok": true}', null)
+    }
+
+    @Override
+    ProviderModelsDto getProviderModels(String provider, boolean refresh) {
+        return new ProviderModelsDto(provider, ['model-of-' + provider], null)
     }
 
     @Override

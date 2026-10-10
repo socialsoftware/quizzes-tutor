@@ -8,6 +8,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelTe
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsViewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.OllamaModelsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.ProviderModelsDto;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.LLM_SETTINGS_MISSING;
 
@@ -33,6 +34,12 @@ public class LlmSettingsService {
     public LlmModelTestDto testModel(LlmModelChoiceDto model) {
         checkModel(model);
         return aqgClient.testModel(model);
+    }
+
+    public ProviderModelsDto getProviderModels(String provider, boolean refresh) {
+        if (provider == null || provider.isBlank())
+            throw new TutorException(LLM_SETTINGS_MISSING);
+        return aqgClient.getProviderModels(provider, refresh);
     }
 
     public OllamaModelsDto getOllamaModels() {

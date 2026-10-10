@@ -45,3 +45,11 @@ export interface OllamaModels {
   pulls: Record<string, string>;
   error: string | null;
 }
+
+export interface ProviderModels {
+  provider: string;
+  // The models that can write text, as the provider lists them
+  models: string[];
+  // Why the list could not be read (no key, provider down…)
+  error: string | null;
+}

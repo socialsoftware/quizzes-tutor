@@ -24,7 +24,7 @@ import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
 import MaterialChunk from '@/models/management/generation/MaterialChunk';
-import { LlmModelChoice, LlmModelTest, LlmSettings, LlmSettingsView, OllamaModels } from '@/models/admin/LlmSettings';
+import { LlmModelChoice, LlmModelTest, LlmSettings, LlmSettingsView, OllamaModels, ProviderModels } from '@/models/admin/LlmSettings';
 import ReplySuggestion from '@/models/management/ReplySuggestion';
 import GenerationJob, { GenerationRequest } from '@/models/management/generation/GenerationJob';
 import QuestionGeneration from '@/models/management/generation/QuestionGeneration';
@@ -1187,6 +1187,16 @@ export default class RemoteServices {
     return httpClient
       .post('/admin/llm-settings/test', model, { timeout: 120000 })
       .then((response) => response.data as LlmModelTest)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // The models a provider offers, read with the service's key; `refresh` skips the service's cache
+  static async getProviderModels(provider: string, refresh = false): Promise<ProviderModels> {
+    return httpClient
+      .get('/admin/llm-settings/models', { params: { provider, refresh } })
+      .then((response) => response.data as ProviderModels)
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });

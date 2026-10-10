@@ -13,7 +13,10 @@
         :providers="view.providers"
         :keys="view.keys"
         :default-models="view.defaultModels"
-        :ollama-models="ollama.models"
+        :available-models="modelsOf(draft.primary.provider)"
+        :models-error="catalog[draft.primary.provider]?.error ?? null"
+        :models-loading="catalog[draft.primary.provider]?.loading ?? false"
+        @refresh-models="loadModels($event, true)"
       />
 
       <h3 class="text-subtitle-1 font-weight-medium mt-6">Fallbacks</h3>
@@ -28,7 +31,10 @@
         :providers="view.providers"
         :keys="view.keys"
         :default-models="view.defaultModels"
-        :ollama-models="ollama.models"
+        :available-models="modelsOf(fallback.provider)"
+        :models-error="catalog[fallback.provider]?.error ?? null"
+        :models-loading="catalog[fallback.provider]?.loading ?? false"
+        @refresh-models="loadModels($event, true)"
       >
         <v-btn icon="fas fa-arrow-up" size="x-small" variant="text" title="Try earlier" :disabled="index === 0" data-cy="FallbackUp" @click="moveFallback(index, -1)" />
         <v-btn
@@ -139,7 +145,7 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onMounted, onUnmounted, ref } from 'vue';
+import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import { createPoller } from '@/services/Polling';
@@ -158,6 +164,8 @@ const loadingOllama = ref(false);
 const saving = ref(false);
 const pulling = ref(false);
 const modelToPull = ref('');
+// The models each cloud provider offers, read once per provider (Ollama's come from `ollama`)
+const catalog = ref<Record<string, { models: string[]; error: string | null; loading: boolean }>>({});
 
 const copy = (settings: LlmSettings): LlmSettings => JSON.parse(JSON.stringify(settings));
 
@@ -206,6 +214,33 @@ const poller = createPoller(async () => {
   await loadOllama();
   return Object.values(ollama.value.pulls).includes('downloading');
 }, POLL_MS);
+
+const modelsOf = (provider: string) => (provider === 'ollama' ? ollama.value.models : catalog.value[provider]?.models ?? []);
+
+const loadModels = async (provider: string, refresh = false) => {
+  if (provider === 'ollama') {
+    await loadOllama();
+    return;
+  }
+  catalog.value[provider] = { models: catalog.value[provider]?.models ?? [], error: null, loading: true };
+  try {
+    const listed = await RemoteServices.getProviderModels(provider, refresh);
+    catalog.value[provider] = { models: listed.models, error: listed.error, loading: false };
+  } catch (error) {
+    catalog.value[provider] = { models: [], error: error as string, loading: false };
+  }
+};
+
+// Each provider in use has its list read the first time it appears
+watch(
+  () => (draft.value ? [draft.value.primary, ...draft.value.fallbacks].map((choice) => choice.provider) : []),
+  (providers) => {
+    new Set(providers).forEach((provider) => {
+      if (provider !== 'ollama' && !catalog.value[provider]) loadModels(provider);
+    });
+  },
+  { deep: true }
+);
 
 const loadOllama = async () => {
   loadingOllama.value = true;

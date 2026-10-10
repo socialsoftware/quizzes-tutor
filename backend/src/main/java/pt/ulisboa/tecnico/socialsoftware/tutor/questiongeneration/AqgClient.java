@@ -11,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelTe
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsViewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.OllamaModelsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.ProviderModelsDto;
 
 import java.util.List;
 
@@ -43,6 +44,9 @@ public interface AqgClient {
 
     /** One tiny call to a model, to check its name and how fast it answers. */
     LlmModelTestDto testModel(LlmModelChoiceDto model);
+
+    /** The models a provider offers, read from the provider with the service's key; `refresh` skips its cache. */
+    ProviderModelsDto getProviderModels(String provider, boolean refresh);
 
     OllamaModelsDto getOllamaModels();
 
