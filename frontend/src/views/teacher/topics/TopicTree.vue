@@ -2,14 +2,14 @@
   <div class="topic-tree">
     <div class="d-flex align-center px-4 py-2">
       <span class="text-medium-emphasis">
-        Questions about a topic are written from the document sections linked to it and to its subtopics.
+        Questions about a topic are written from the pieces of documents under it and under its subtopics.
       </span>
       <v-spacer />
       <v-btn color="primary" data-cy="NewRootTopic" @click="askName('add', null)">New topic</v-btn>
     </div>
 
     <p v-if="nodes.length === 0 && !loading" class="px-4 text-medium-emphasis" data-cy="EmptyTree">
-      No topics yet. Create one, or upload a document in Generate and use "Suggest topics".
+      No topics yet. Create one, or upload a document in Generate questions and put it under topics.
     </p>
 
     <v-treeview
@@ -23,8 +23,8 @@
     >
       <template v-slot:title="{ item }">
         <span data-cy="TopicName">{{ item.title }}</span>
-        <v-chip size="x-small" class="ml-2" data-cy="TopicSectionsChip" :color="nodeOf(item).sources.length ? 'primary' : undefined">
-          {{ sectionsLabel(nodeOf(item)) }}
+        <v-chip size="x-small" class="ml-2" data-cy="TopicPiecesChip" :color="subtreePieces(nodeOf(item)) ? 'primary' : undefined">
+          {{ piecesLabel(nodeOf(item)) }}
         </v-chip>
         <v-chip v-if="nodeOf(item).numberOfQuestions" size="x-small" class="ml-1">
           {{ nodeOf(item).numberOfQuestions }} question(s)
@@ -34,7 +34,7 @@
         <v-icon size="small" class="mr-2 action-button" data-cy="AddSubtopic" title="Add a subtopic" @click.stop="askName('add', nodeOf(item))">fas fa-plus</v-icon>
         <v-icon size="small" class="mr-2 action-button" data-cy="RenameTopic" title="Rename" @click.stop="askName('rename', nodeOf(item))">edit</v-icon>
         <v-icon size="small" class="mr-2 action-button" data-cy="MoveTopic" title="Move under another topic" @click.stop="askParent(nodeOf(item))">fas fa-arrows-alt</v-icon>
-        <v-icon size="small" class="mr-2 action-button" data-cy="TopicSections" title="Document sections" @click.stop="editSources(nodeOf(item))">fas fa-file-alt</v-icon>
+        <v-icon size="small" class="mr-2 action-button" data-cy="TopicPieces" title="Pieces of documents" @click.stop="editSources(nodeOf(item))">fas fa-file-alt</v-icon>
         <v-icon size="small" class="action-button" color="red" data-cy="DeleteTopic" title="Delete" @click.stop="remove(nodeOf(item))">delete</v-icon>
       </template>
     </v-treeview>
@@ -111,9 +111,15 @@ const forest = computed(() =>
 
 const nodeOf = (item: TreeItem): TopicNode => nodes.value.find((node) => node.id === item.id)!;
 
-const sectionsLabel = (node: TopicNode) => {
+const subtreePieces = (node: TopicNode) => TopicNode.subtreeSources(nodes.value, node.id).length;
+
+// Its own pieces, and the total with its subtopics when they add some
+const piecesLabel = (node: TopicNode) => {
   const own = node.sources.length;
-  return own === 0 ? 'no sections' : `${own} section${own === 1 ? '' : 's'}`;
+  const total = subtreePieces(node);
+  if (total === 0) return 'no pieces';
+  const label = `${own} piece${own === 1 ? '' : 's'}`;
+  return total > own ? `${label}, ${total} with subtopics` : label;
 };
 
 const addTitle = computed(() => (target.value ? `New subtopic of "${target.value.name}"` : 'New topic'));

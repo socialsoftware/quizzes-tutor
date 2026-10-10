@@ -103,31 +103,22 @@ public class Topic implements DomainEntity {
         return sources;
     }
 
-    /** Adds a document section this topic is taught from; false if it was already there. */
-    public boolean addSource(String materialId, String sectionPath) {
-        if (sources.stream().anyMatch(source -> source.is(materialId, sectionPath)))
+    /** Adds a piece of a document this topic is taught from; false if it was already there. */
+    public boolean addSource(String materialId, String chunkId) {
+        if (sources.stream().anyMatch(source -> source.is(chunkId)))
             return false;
-        sources.add(new TopicSource(this, materialId, sectionPath));
+        sources.add(new TopicSource(this, materialId, chunkId));
         return true;
     }
 
-    /**
-     * A section of a document changed its path (or was cut in several): the link follows the text.
-     * Links already there are not repeated; false if this topic had no link to the old path.
-     */
-    public boolean followSource(String materialId, String oldPath, List<String> newPaths) {
-        TopicSource old = sources.stream().filter(source -> source.is(materialId, oldPath)).findFirst().orElse(null);
-        if (old == null)
-            return false;
-        if (!newPaths.contains(oldPath))
-            sources.remove(old);
-        newPaths.forEach(path -> addSource(materialId, path));
-        return true;
+    /** Drops the pieces of the given chunks; true if any was there. */
+    public boolean removeSources(Collection<String> chunkIds) {
+        return sources.removeIf(source -> chunkIds.contains(source.getChunkId()));
     }
 
     public void replaceSources(List<TopicSourceDto> newSources) {
         sources.clear();
-        newSources.forEach(source -> addSource(source.getMaterialId(), source.getSectionPath()));
+        newSources.forEach(source -> addSource(source.getMaterialId(), source.getChunkId()));
     }
 
     public Set<Tournament> getTournaments() {

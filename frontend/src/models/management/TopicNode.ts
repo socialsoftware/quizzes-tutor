@@ -1,17 +1,17 @@
-// A part of a course material (one section of one document) a topic is taught from
+// A piece (chunk) of a course material a topic is taught from
 export class TopicSource {
   materialId!: string;
-  sectionPath!: string;
+  chunkId!: string;
 
-  constructor(jsonObj?: { materialId: string; sectionPath: string }) {
+  constructor(jsonObj?: { materialId: string; chunkId: string }) {
     if (jsonObj) {
       this.materialId = jsonObj.materialId;
-      this.sectionPath = jsonObj.sectionPath;
+      this.chunkId = jsonObj.chunkId;
     }
   }
 }
 
-// A topic as a node of the course's topic tree. Teachers only: it carries the document sections
+// A topic as a node of the course's topic tree. Teachers only: it carries the pieces of documents
 export default class TopicNode {
   id!: number;
   name!: string;
@@ -47,7 +47,7 @@ export default class TopicNode {
     return ids;
   }
 
-  // The sections of a topic and of its subtopics, each section once
+  // The pieces of a topic and of its subtopics, each piece once
   static subtreeSources(all: TopicNode[], rootId: number): TopicSource[] {
     const ids = TopicNode.subtreeIds(all, rootId);
     const seen = new Set<string>();
@@ -55,9 +55,8 @@ export default class TopicNode {
     for (const node of all) {
       if (!ids.has(node.id)) continue;
       for (const source of node.sources) {
-        const key = `${source.materialId}\u0000${source.sectionPath}`;
-        if (!seen.has(key)) {
-          seen.add(key);
+        if (!seen.has(source.chunkId)) {
+          seen.add(source.chunkId);
           sources.push(source);
         }
       }

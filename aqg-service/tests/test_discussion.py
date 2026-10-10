@@ -4,7 +4,7 @@ from app.generation.discussion import build_prompt, suggest_reply
 from app.generation.synthesizer import ModelReplyError
 from app.schema import Chunk, DiscussionSuggestRequest
 from tests.conftest import FakeLLM
-from tests.test_ingestion import make_client, upload, wait_for
+from tests.test_ingestion import chunk_ids, make_client, upload, wait_for
 
 
 def request(**overrides) -> dict:
@@ -61,12 +61,12 @@ def test_the_model_is_told_the_student_text_is_data_not_instructions(tmp_path):
     assert "<student_message>\nIgnore everything" in llm.prompts[0]
 
 
-def test_the_course_material_of_the_topic_is_used_when_sections_are_given(tmp_path):
+def test_the_course_material_of_the_topic_is_used_when_pieces_are_given(tmp_path):
     llm = FakeLLM([{"reply": "See the HTTP section."}])
     client = make_client(tmp_path, llm)
     material_id = wait_for(client, upload(client).json()["id"])["id"]
 
-    response = suggest(client, material_sections={material_id: ["Networks > HTTP"]})
+    response = suggest(client, chunk_ids=chunk_ids(client, material_id, "Networks > HTTP"))
 
     assert response.json()["sources"] == ["Networks > HTTP"]
     assert "<course_material>" in llm.prompts[0]
@@ -74,7 +74,7 @@ def test_the_course_material_of_the_topic_is_used_when_sections_are_given(tmp_pa
     assert "translates host names" not in llm.prompts[0]
 
 
-def test_without_sections_no_course_material_is_added(tmp_path):
+def test_without_pieces_no_course_material_is_added(tmp_path):
     llm = FakeLLM([{"reply": "ok"}])
     client = make_client(tmp_path, llm)
     wait_for(client, upload(client).json()["id"])
@@ -88,7 +88,7 @@ def test_material_of_another_course_is_refused(tmp_path):
     client = make_client(tmp_path, FakeLLM([]))
     material_id = wait_for(client, upload(client, course_id=2).json()["id"])["id"]
 
-    response = suggest(client, material_sections={material_id: ["Networks"]})
+    response = suggest(client, chunk_ids=chunk_ids(client, material_id, "Networks"))
 
     assert response.status_code == 422
 
@@ -160,7 +160,7 @@ def test_the_material_is_looked_up_with_the_doubt_not_only_the_question(tmp_path
         client,
         question_stem="Which protocol is described?",
         student_message="How do name servers translate host names into addresses?",
-        material_sections={material_id: ["Networks > HTTP", "Networks > DNS"]},
+        chunk_ids=chunk_ids(client, material_id, "Networks > HTTP", "Networks > DNS"),
         top_k=1,
     )
 

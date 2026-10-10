@@ -25,6 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.LlmSettingsService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.QuestionGenerationService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.StubAqgClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
@@ -155,6 +156,11 @@ class BeanConfiguration {
     @Bean
     QuestionGenerationService questionGenerationService() {
         return new QuestionGenerationService()
+    }
+
+    @Bean
+    LlmSettingsService llmSettingsService() {
+        return new LlmSettingsService()
     }
 
     @Bean

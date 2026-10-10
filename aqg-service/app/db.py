@@ -12,6 +12,15 @@ class Base(DeclarativeBase):
     metadata = MetaData(schema=SCHEMA)
 
 
+class SettingRow(Base):
+    """Settings the administrator changes at run time (e.g. which models to use), as JSON by key."""
+
+    __tablename__ = "setting"
+
+    key: Mapped[str] = mapped_column(String(64), primary_key=True)
+    value: Mapped[dict] = mapped_column(JSON)
+
+
 class MaterialRow(Base):
     __tablename__ = "material"
 

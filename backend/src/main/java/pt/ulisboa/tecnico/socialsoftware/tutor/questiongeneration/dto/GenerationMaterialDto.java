@@ -11,8 +11,15 @@ public class GenerationMaterialDto implements Serializable {
     private String parser;
     private Double parseSeconds;
     private String error;
+    // How many of its pieces are under some topic; the others are left out of question generation
+    private Integer placedChunks = 0;
 
     public GenerationMaterialDto() {
+    }
+
+    public GenerationMaterialDto(AqgMaterialDto material, Integer placedChunks) {
+        this(material);
+        this.placedChunks = placedChunks == null ? 0 : placedChunks;
     }
 
     public GenerationMaterialDto(AqgMaterialDto material) {
@@ -52,4 +59,8 @@ public class GenerationMaterialDto implements Serializable {
     public String getError() { return error; }
 
     public void setError(String error) { this.error = error; }
+
+    public Integer getPlacedChunks() { return placedChunks; }
+
+    public void setPlacedChunks(Integer placedChunks) { this.placedChunks = placedChunks; }
 }

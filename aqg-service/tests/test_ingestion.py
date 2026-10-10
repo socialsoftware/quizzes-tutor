@@ -145,44 +145,46 @@ def test_unsupported_upload_is_refused(tmp_path):
     assert upload(make_client(tmp_path, FakeLLM([])), name="movie.mp4").status_code == 415
 
 
-def test_generation_retrieves_context_from_the_uploaded_material(tmp_path):
+def chunk_ids(client, material_id, *headings):
+    """Ids of the material's pieces under the given headings, in reading order."""
+    return [chunk["id"] for chunk in client.get(f"/materials/{material_id}/chunks").json() if chunk["heading"] in headings]
+
+
+def test_generation_reads_the_pieces_it_is_given(tmp_path):
     llm = FakeLLM([good_question(), {"correct_supported": True, "correct_chunk_ids": [], "distractors_anchored": 3}, CLEAN_DISTRACTORS])
     client = make_client(tmp_path, llm)
-    material_id = upload(client).json()["id"]
-    wait_for(client, material_id)
-    llm.replies[1]["correct_chunk_ids"] = [f"{material_id}:1"]
+    material_id = wait_for(client, upload(client).json()["id"])["id"]
+    http = chunk_ids(client, material_id, "Networks > HTTP")
+    llm.replies[1]["correct_chunk_ids"] = http
 
-    job_id = client.post(
-        "/generate", json={"course_id": 1, "topic": "HTTP status 404", "material_ids": [material_id]}
-    ).json()["id"]
+    job_id = client.post("/generate", json={"course_id": 1, "topic": "HTTP", "chunk_ids": http}).json()["id"]
     job = client.get(f"/jobs/{job_id}").json()
 
     assert job["status"] == "DONE"
     assert job["outcomes"][0]["status"] == "OK"
-    assert job["outcomes"][0]["source_chunk_ids"] == [f"{material_id}:1"]
+    assert job["outcomes"][0]["source_chunk_ids"] == http
     assert "404 means the server cannot find the resource" in llm.prompts[0]
+    assert "DNS translates" not in llm.prompts[0] and "Intro to the course" not in llm.prompts[0]
 
 
-def test_generation_rejects_materials_of_another_course(tmp_path):
+def test_generation_rejects_pieces_of_another_course(tmp_path):
     client = make_client(tmp_path, FakeLLM([]))
-    material_id = upload(client, course_id=1).json()["id"]
-    wait_for(client, material_id)
-    response = client.post("/generate", json={"course_id": 2, "topic": "HTTP", "material_ids": [material_id]})
+    material_id = wait_for(client, upload(client, course_id=1).json()["id"])["id"]
+    response = client.post("/generate", json={"course_id": 2, "topic": "HTTP", "chunk_ids": chunk_ids(client, material_id, "Networks > HTTP")})
     assert response.status_code == 422
+
+
+def test_generation_rejects_pieces_that_no_longer_exist(tmp_path):
+    client = make_client(tmp_path, FakeLLM([]))
+    wait_for(client, upload(client).json()["id"])
+    response = client.post("/generate", json={"course_id": 1, "topic": "HTTP", "chunk_ids": ["gone:7"]})
+    assert response.status_code == 422
+    assert "no longer exist" in response.json()["detail"]
 
 
 def test_generation_needs_some_context(tmp_path):
     client = make_client(tmp_path, FakeLLM([]))
     assert client.post("/generate", json={"course_id": 1, "topic": "HTTP"}).status_code == 422
-
-
-def test_generation_refuses_when_nothing_in_the_material_matches_the_topic(tmp_path):
-    client = make_client(tmp_path, FakeLLM([]))
-    material_id = upload(client).json()["id"]
-    wait_for(client, material_id)
-    response = client.post("/generate", json={"course_id": 1, "topic": "quantum chromodynamics", "material_ids": [material_id]})
-    assert response.status_code == 422
-    assert "nothing relevant" in response.json()["detail"]
 
 
 def test_original_is_deleted_when_not_kept_and_the_stored_text_is_reprocessed(tmp_path):
@@ -208,131 +210,72 @@ def test_a_material_from_before_the_database_text_is_reprocessed_from_its_file(t
 
     client.post(f"/materials/{material['id']}/reprocess")
     wait_for(client, material["id"])
-    assert [s["path"] for s in client.get(f"/materials/{material['id']}/sections").json()] == ["Old > Only section"]
+    assert [c["heading"] for c in client.get(f"/materials/{material['id']}/chunks").json()] == ["Old > Only section"]
 
 
-def test_sections_are_listed_in_reading_order(tmp_path):
+def test_the_pieces_of_a_material_are_listed_in_reading_order_with_their_headings(tmp_path):
     client = make_client(tmp_path, FakeLLM([]))
     material_id = wait_for(client, upload(client).json()["id"])["id"]
-    sections = client.get(f"/materials/{material_id}/sections").json()
-    assert [(s["path"], s["title"]) for s in sections] == [
-        ("Networks", "Networks"), ("Networks > HTTP", "HTTP"), ("Networks > DNS", "DNS")
+    chunks = client.get(f"/materials/{material_id}/chunks").json()
+    assert [(c["position"], c["heading"]) for c in chunks] == [
+        (0, "Networks"), (1, "Networks > HTTP"), (2, "Networks > DNS")
     ]
-    assert client.get("/materials/nope/sections").status_code == 404
-
-
-def test_generation_only_uses_the_selected_sections_and_the_focus(tmp_path):
-    llm = FakeLLM([good_question(), {"correct_supported": True, "correct_chunk_ids": [], "distractors_anchored": 3}, CLEAN_DISTRACTORS])
-    client = make_client(tmp_path, llm)
-    material_id = wait_for(client, upload(client).json()["id"])["id"]
-
-    client.post("/generate", json={
-        "course_id": 1, "topic": "Networks", "focus": "name resolution hierarchy",
-        "material_ids": [material_id], "sections": ["Networks > DNS"],
-    })
-
-    assert "DNS translates" in llm.prompts[0]
-    assert "404" not in llm.prompts[0]
-    assert "Focus inside the topic: name resolution hierarchy" in llm.prompts[0]
+    assert "404 means" in chunks[1]["text"]
+    assert client.get("/materials/nope/chunks").status_code == 404
 
 
 GOOD_GROUNDING = {"correct_supported": True, "correct_chunk_ids": [], "distractors_anchored": 3}
 
 
-def test_a_section_also_covers_the_ones_below_it_by_default(tmp_path):
-    llm = FakeLLM([good_question(), GOOD_GROUNDING, CLEAN_DISTRACTORS])
-    client = make_client(tmp_path, llm)
+def other_question(stem):
+    question = good_question()
+    question["stem"] = stem
+    return question
+
+
+def test_a_topic_with_more_text_than_fits_spreads_it_over_the_questions(tmp_path):
+    llm = FakeLLM([
+        other_question("Which protocol answers with status codes?"), GOOD_GROUNDING, CLEAN_DISTRACTORS,
+        other_question("What do name servers translate?"), GOOD_GROUNDING, CLEAN_DISTRACTORS,
+    ])
+    # Room for one piece per prompt
+    client = make_client(tmp_path, llm, context_chars=60)
     material_id = wait_for(client, upload(client).json()["id"])["id"]
 
-    client.post("/generate", json={"course_id": 1, "topic": "Networks", "material_ids": [material_id], "sections": ["Networks"]})
-
-    assert "DNS translates" in llm.prompts[0] and "404" in llm.prompts[0]
-
-
-def test_material_sections_leave_out_the_ones_below(tmp_path):
-    llm = FakeLLM([good_question(), GOOD_GROUNDING, CLEAN_DISTRACTORS])
-    client = make_client(tmp_path, llm)
-    material_id = wait_for(client, upload(client).json()["id"])["id"]
-
-    response = client.post("/generate", json={
-        "course_id": 1, "topic": "Networks", "material_ids": [material_id],
-        "material_sections": {material_id: ["Networks"]},
+    client.post("/generate", json={
+        "course_id": 1, "topic": "Networks", "count": 2,
+        "chunk_ids": chunk_ids(client, material_id, "Networks > HTTP", "Networks > DNS"),
     })
 
-    assert response.status_code == 202
-    assert "Intro to the course" in llm.prompts[0]
-    assert "DNS translates" not in llm.prompts[0] and "404" not in llm.prompts[0]
+    first, second = llm.prompts[0], llm.prompts[3]
+    assert "404" in first and "DNS translates" not in first
+    assert "DNS translates" in second and "404" not in second
 
 
-def test_material_sections_can_pick_several_unrelated_paths(tmp_path):
+def test_a_topic_that_fits_gives_every_question_all_its_text(tmp_path):
     llm = FakeLLM([good_question(), GOOD_GROUNDING, CLEAN_DISTRACTORS])
     client = make_client(tmp_path, llm)
     material_id = wait_for(client, upload(client).json()["id"])["id"]
 
     client.post("/generate", json={
-        "course_id": 1, "topic": "Networks protocols",
-        "material_sections": {material_id: ["Networks > HTTP", "Networks > DNS"]},
+        "course_id": 1, "topic": "Networks", "chunk_ids": chunk_ids(client, material_id, "Networks > HTTP", "Networks > DNS"),
     })
 
     assert "404" in llm.prompts[0] and "DNS translates" in llm.prompts[0]
-    assert "Intro to the course" not in llm.prompts[0]
 
 
-def test_a_material_listed_per_section_is_read_even_without_material_ids(tmp_path):
+def test_the_focus_picks_the_most_relevant_pieces_first(tmp_path):
     llm = FakeLLM([good_question(), GOOD_GROUNDING, CLEAN_DISTRACTORS])
-    client = make_client(tmp_path, llm)
+    client = make_client(tmp_path, llm, context_chars=60)
     material_id = wait_for(client, upload(client).json()["id"])["id"]
 
-    response = client.post("/generate", json={
-        "course_id": 1, "topic": "HTTP", "material_sections": {material_id: ["Networks > HTTP"]},
-    })
-
-    assert response.status_code == 202
-    assert "404" in llm.prompts[0]
-
-
-def test_material_sections_apply_only_to_their_own_material(tmp_path):
-    llm = FakeLLM([good_question(), GOOD_GROUNDING, CLEAN_DISTRACTORS])
-    client = make_client(tmp_path, llm)
-    first = wait_for(client, upload(client).json()["id"])["id"]
-    second = wait_for(client, upload(client).json()["id"])["id"]
-
-    # Both materials have a "Networks > DNS" section; only the first one's is asked for
     client.post("/generate", json={
-        "course_id": 1, "topic": "DNS name servers, HTTP resource request", "material_ids": [first, second],
-        "material_sections": {first: ["Networks > DNS"]}, "sections": ["Networks > HTTP"],
+        "course_id": 1, "topic": "Networks", "focus": "name servers hierarchy",
+        "chunk_ids": chunk_ids(client, material_id, "Networks > HTTP", "Networks > DNS"),
     })
 
-    prompt = llm.prompts[0]
-    assert prompt.count("DNS translates") == 1
-    assert prompt.count("404") == 1
-
-
-def test_material_sections_without_any_text_are_refused(tmp_path):
-    client = make_client(tmp_path, FakeLLM([]))
-    material_id = wait_for(client, upload(client).json()["id"])["id"]
-    response = client.post("/generate", json={
-        "course_id": 1, "topic": "x", "material_sections": {material_id: ["Nowhere"]},
-    })
-    assert response.status_code == 422
-
-
-def test_material_sections_of_another_course_are_refused(tmp_path):
-    client = make_client(tmp_path, FakeLLM([]))
-    material_id = wait_for(client, upload(client, course_id=1).json()["id"])["id"]
-    response = client.post("/generate", json={
-        "course_id": 2, "topic": "x", "material_sections": {material_id: ["Networks"]},
-    })
-    assert response.status_code == 422
-
-
-def test_a_section_with_nothing_selected_is_refused(tmp_path):
-    client = make_client(tmp_path, FakeLLM([]))
-    material_id = wait_for(client, upload(client).json()["id"])["id"]
-    response = client.post("/generate", json={
-        "course_id": 1, "topic": "Networks", "material_ids": [material_id], "sections": ["Nowhere"],
-    })
-    assert response.status_code == 422
+    assert "DNS translates" in llm.prompts[0] and "404" not in llm.prompts[0]
+    assert "Focus inside the topic: name servers hierarchy" in llm.prompts[0]
 
 
 def test_a_parser_failure_is_reported_on_the_material(tmp_path):
@@ -412,5 +355,5 @@ def test_materials_and_jobs_survive_a_service_restart(tmp_path):
     assert second.get(f"/materials/{material_id}").json()["status"] == "READY"
     assert second.get(f"/jobs/{job_id}").json()["status"] in ("DONE", "FAILED")
     # the chunks came back too: generation from the stored material still works
-    response = second.post("/generate", json={"course_id": 1, "topic": "HTTP status 404", "material_ids": [material_id]})
+    response = second.post("/generate", json={"course_id": 1, "topic": "HTTP status 404", "chunk_ids": [f"{material_id}:1"]})
     assert response.status_code == 202

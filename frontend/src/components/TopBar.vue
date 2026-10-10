@@ -141,6 +141,13 @@
                 data-cy="manageCoursesMenuButton"
                 to="/admin/courses"
                prepend-icon="fas fa-school" title="Manage Courses"></v-list-item>
+              <v-list-item
+                v-if="isSystemAdmin"
+                data-cy="llmSettingsMenuButton"
+                to="/admin/llm"
+                prepend-icon="fas fa-robot"
+                title="Question Generation Model"
+              ></v-list-item>
               <v-list-item to="/admin/export" prepend-icon="fas fa-download" title="Export"></v-list-item>
             </v-list>
           </v-menu>
@@ -247,6 +254,7 @@
             </template>
             <v-list-item to="/admin/users" prepend-icon="fas fa-users" title="Manage Users"></v-list-item>
             <v-list-item to="/admin/courses" prepend-icon="fas fa-school" title="Manage Courses"></v-list-item>
+            <v-list-item v-if="isSystemAdmin" to="/admin/llm" prepend-icon="fas fa-robot" title="Question Generation Model"></v-list-item>
             <v-list-item to="/admin/export" prepend-icon="fas fa-download" title="Export"></v-list-item>
           </v-list-group>
 
@@ -313,6 +321,7 @@ const moreThanOneCourse = computed(() => {
 const isLoggedIn = computed(() => store.isLoggedIn);
 const isTeacher = computed(() => store.isTeacher);
 const isAdmin = computed(() => store.isAdmin);
+const isSystemAdmin = computed(() => store.isSystemAdmin);
 const isStudent = computed(() => store.isStudent);
 
 const doLogout = () => {

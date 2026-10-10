@@ -26,10 +26,10 @@ class TopicTreeTest extends SpockTest {
         return topicService.createTopic(externalCourse.getId(), dto)
     }
 
-    def node(String key, String name, String parentKey = null, Integer existingTopicId = null, List<String> paths = []) {
+    def node(String key, String name, String parentKey = null, Integer existingTopicId = null, List<String> chunkIds = []) {
         def node = new TopicTreeDto.Node(key, name, parentKey)
         node.setExistingTopicId(existingTopicId)
-        node.setSources(paths.collect { new TopicSourceDto('m1', it) })
+        node.setSources(chunkIds.collect { new TopicSourceDto('m1', it) })
         return node
     }
 
@@ -137,12 +137,12 @@ class TopicTreeTest extends SpockTest {
         topicRepository.findById(section.getId()).isEmpty()
     }
 
-    def "a saved tree creates its topics under their parents, with their sections"() {
+    def "a saved tree creates its topics under their parents, with their pieces of documents"() {
         given:
         def tree = new TopicTreeDto([
-                node('a', 'Networks', null, null, ['Networks']),
-                node('b', 'HTTP', 'a', null, ['Networks > HTTP']),
-                node('c', 'DNS', 'a', null, ['Networks > DNS', 'Networks > DNS > Records']),
+                node('a', 'Networks', null, null, ['m1:0']),
+                node('b', 'HTTP', 'a', null, ['m1:1']),
+                node('c', 'DNS', 'a', null, ['m1:2', 'm1:3']),
         ])
 
         when:
@@ -157,7 +157,7 @@ class TopicTreeTest extends SpockTest {
         http.getParentId() == networks.getId()
         dns.getParentId() == networks.getId()
         [http.getSequence(), dns.getSequence()] == [0, 1]
-        dns.getSources()*.sectionPath == ['Networks > DNS', 'Networks > DNS > Records']
+        dns.getSources()*.chunkId == ['m1:2', 'm1:3']
         dns.getSources().every { it.getMaterialId() == 'm1' }
     }
 
@@ -172,10 +172,10 @@ class TopicTreeTest extends SpockTest {
         result.find { it.name == 'HTTP' }.getParentId() == result.find { it.name == 'Networks' }.getId()
     }
 
-    def "a node naming an existing topic only adds its sections to it"() {
+    def "a node standing for an existing topic only adds its pieces to it"() {
         given:
         def existing = create('Networks')
-        def tree = new TopicTreeDto([node('a', 'Anything', null, existing.getId(), ['Networks > HTTP'])])
+        def tree = new TopicTreeDto([node('a', 'Anything', null, existing.getId(), ['m1:1'])])
 
         when:
         topicService.saveTopicTree(externalCourse.getId(), tree)
@@ -183,7 +183,7 @@ class TopicTreeTest extends SpockTest {
         then:
         def saved = topicRepository.findById(existing.getId()).get()
         saved.getName() == 'Networks'
-        saved.getSources()*.sectionPath == ['Networks > HTTP']
+        saved.getSources()*.chunkId == ['m1:1']
         topicRepository.count() == 1L
     }
 
@@ -224,10 +224,10 @@ class TopicTreeTest extends SpockTest {
         ]
     }
 
-    def "the same section is not linked twice to a topic"() {
+    def "the same piece is not linked twice to a topic"() {
         given:
         def topic = create('Networks')
-        def sources = [new TopicSourceDto('m1', 'Networks'), new TopicSourceDto('m1', 'Networks')]
+        def sources = [new TopicSourceDto('m1', 'm1:0'), new TopicSourceDto('m1', 'm1:0')]
 
         when:
         def result = topicService.updateTopicSources(topic.getId(), sources)
@@ -236,52 +236,70 @@ class TopicTreeTest extends SpockTest {
         result.getSources().size() == 1
     }
 
-    def "updating the sections of a topic replaces them"() {
+    def "updating the pieces of a topic replaces them"() {
         given:
         def topic = create('Networks')
-        topicService.updateTopicSources(topic.getId(), [new TopicSourceDto('m1', 'Old')])
+        topicService.updateTopicSources(topic.getId(), [new TopicSourceDto('m1', 'm1:0')])
 
         when:
-        def result = topicService.updateTopicSources(topic.getId(), [new TopicSourceDto('m2', 'New')])
+        def result = topicService.updateTopicSources(topic.getId(), [new TopicSourceDto('m2', 'm2:4')])
 
         then:
         result.getSources()*.materialId == ['m2']
-        result.getSources()*.sectionPath == ['New']
+        result.getSources()*.chunkId == ['m2:4']
     }
 
-    def "a section needs a material and a path"() {
+    def "a piece put under a topic leaves the topic it was under"() {
+        given:
+        def first = create('First')
+        def second = create('Second')
+        topicService.updateTopicSources(first.getId(), [new TopicSourceDto('m1', 'm1:0'), new TopicSourceDto('m1', 'm1:1')])
+
+        when:
+        topicService.updateTopicSources(second.getId(), [new TopicSourceDto('m1', 'm1:1')])
+
+        then:
+        topicRepository.findById(first.getId()).get().getSources()*.chunkId == ['m1:0']
+        topicRepository.findById(second.getId()).get().getSources()*.chunkId == ['m1:1']
+    }
+
+    def "a piece needs a material and a chunk"() {
         given:
         def topic = create('Networks')
 
         when:
-        topicService.updateTopicSources(topic.getId(), [new TopicSourceDto(material, path)])
+        topicService.updateTopicSources(topic.getId(), [new TopicSourceDto(material, chunk)])
 
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == ErrorMessage.INVALID_TOPIC_SOURCE
 
         where:
-        material | path
-        null     | 'Networks'
-        ' '      | 'Networks'
+        material | chunk
+        null     | 'm1:0'
+        ' '      | 'm1:0'
         'm1'     | null
         'm1'     | ''
     }
 
-    def "the sections of a topic include those of its subtopics, without repeats"() {
+    def "the pieces of a topic include those of its subtopics, in tree order"() {
         given:
         def chapter = create('Chapter')
-        def section = create('Section', chapter.getId())
+        def second = create('Second', chapter.getId())
+        def first = create('First', chapter.getId())
+        move(first.getId(), chapter.getId(), 0)
+        move(second.getId(), chapter.getId(), 1)
         def unrelated = create('Unrelated')
-        topicService.updateTopicSources(chapter.getId(), [new TopicSourceDto('m1', 'A')])
-        topicService.updateTopicSources(section.getId(), [new TopicSourceDto('m1', 'A'), new TopicSourceDto('m1', 'A > B')])
-        topicService.updateTopicSources(unrelated.getId(), [new TopicSourceDto('m1', 'C')])
+        topicService.updateTopicSources(chapter.getId(), [new TopicSourceDto('m1', 'm1:0')])
+        topicService.updateTopicSources(second.getId(), [new TopicSourceDto('m1', 'm1:5')])
+        topicService.updateTopicSources(first.getId(), [new TopicSourceDto('m1', 'm1:3')])
+        topicService.updateTopicSources(unrelated.getId(), [new TopicSourceDto('m1', 'm1:9')])
 
         when:
         def result = topicService.findSourcesOfSubtree(chapter.getId())
 
         then:
-        result*.sectionPath == ['A', 'A > B']
+        result*.chunkId == ['m1:0', 'm1:3', 'm1:5']
     }
 
     @TestConfiguration

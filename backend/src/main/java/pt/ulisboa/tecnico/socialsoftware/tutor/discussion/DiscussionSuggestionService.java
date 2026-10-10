@@ -10,21 +10,20 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Discussion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.domain.Reply;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.repository.DiscussionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.MultipleChoiceQuestion;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.QuestionDetails;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.TopicSource;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicSourceDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.AqgClient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionSuggestionDto;
 
 import java.util.ArrayList;
 import java.util.Comparator;
-import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
-import java.util.Map;
 import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DISCUSSION_NOT_FOUND;
@@ -37,14 +36,17 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.DI
 public class DiscussionSuggestionService {
     // what the generation service accepts
     private static final int MAX_TURNS = 20;
-    private static final int MAX_MATERIALS = 100;
-    private static final int MAX_PATHS_PER_MATERIAL = 500;
+    // The service looks up the few most relevant pieces among these; more would only slow it down
+    private static final int MAX_CHUNKS = 2000;
 
     @Autowired
     private DiscussionRepository discussionRepository;
 
     @Autowired
     private AqgClient aqgClient;
+
+    @Autowired
+    private TopicService topicService;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AqgDiscussionSuggestionDto suggestReply(Integer discussionId) {
@@ -89,7 +91,7 @@ public class DiscussionSuggestionService {
                 chosenOption(discussion),
                 doubtMessage,
                 before,
-                materialSections(question));
+                chunkIds(question));
     }
 
     private String chosenOption(Discussion discussion) {
@@ -101,20 +103,16 @@ public class DiscussionSuggestionService {
         return null;
     }
 
-    /** The document sections of the topics the question belongs to, if the teacher linked any. */
-    private Map<String, List<String>> materialSections(Question question) {
-        Map<String, Set<String>> byMaterial = new LinkedHashMap<>();
+    /** The pieces of documents under the question's topics and their subtopics. */
+    private List<String> chunkIds(Question question) {
+        Set<String> chunkIds = new LinkedHashSet<>();
         for (Topic topic : question.getTopics()) {
-            for (TopicSource source : topic.getSources()) {
-                if (!byMaterial.containsKey(source.getMaterialId()) && byMaterial.size() >= MAX_MATERIALS)
-                    continue;
-                byMaterial.computeIfAbsent(source.getMaterialId(), id -> new LinkedHashSet<>()).add(source.getSectionPath());
+            for (TopicSourceDto source : topicService.findSourcesOfSubtree(topic.getId())) {
+                if (chunkIds.size() >= MAX_CHUNKS)
+                    return new ArrayList<>(chunkIds);
+                chunkIds.add(source.getChunkId());
             }
         }
-
-        Map<String, List<String>> result = new LinkedHashMap<>();
-        byMaterial.forEach((materialId, paths) ->
-                result.put(materialId, new ArrayList<>(paths).subList(0, Math.min(paths.size(), MAX_PATHS_PER_MATERIAL))));
-        return result;
+        return new ArrayList<>(chunkIds);
     }
 }

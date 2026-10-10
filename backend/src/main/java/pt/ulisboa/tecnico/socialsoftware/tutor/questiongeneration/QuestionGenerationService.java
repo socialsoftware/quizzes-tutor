@@ -17,11 +17,11 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.MultipleChoiceQuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.OptionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicNodeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicSourceDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicTreeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
-import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicSourceRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.GenerationJob;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.*;
@@ -35,7 +35,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -75,9 +74,6 @@ public class QuestionGenerationService {
     private TopicRepository topicRepository;
 
     @Autowired
-    private TopicSourceRepository topicSourceRepository;
-
-    @Autowired
     private QuestionService questionService;
 
     @Autowired
@@ -97,72 +93,54 @@ public class QuestionGenerationService {
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<GenerationMaterialDto> getMaterials(Integer executionId) {
-        return aqgClient.listMaterials(getCourseExecution(executionId).getCourse().getId()).stream()
-                .map(GenerationMaterialDto::new)
+        Integer courseId = getCourseExecution(executionId).getCourse().getId();
+        Map<String, Integer> placed = topicService.countPlacedChunks(courseId);
+        return aqgClient.listMaterials(courseId).stream()
+                .map(material -> new GenerationMaterialDto(material, placed.get(material.id())))
                 .collect(Collectors.toList());
     }
 
-    /** The headings of a course material, to ask for questions about part of it. */
+    /** The pieces of a material in reading order, each with the topic it is under, to distribute it over the topic tree. */
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<AqgSectionDto> getSections(Integer executionId, String materialId) {
+    public List<MaterialChunkDto> getMaterialChunks(Integer executionId, String materialId) {
         checkMaterialOfCourse(executionId, materialId);
-        return aqgClient.getSections(materialId);
-    }
-
-    /** Rebuilds a material's sections with the service's current parsers and heading cleanup. */
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public GenerationMaterialDto reprocessMaterial(Integer executionId, String materialId) {
-        checkMaterialOfCourse(executionId, materialId);
-        return new GenerationMaterialDto(aqgClient.reprocessMaterial(materialId));
-    }
-
-    /** The headings of a course material with the text under them, to edit its sections. */
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<AqgOutlineNodeDto> getOutline(Integer executionId, String materialId) {
-        checkMaterialOfCourse(executionId, materialId);
-        return aqgClient.getOutline(materialId);
-    }
-
-    @Transactional(isolation = Isolation.READ_COMMITTED)
-    public List<AqgParagraphDto> getSectionText(Integer executionId, String materialId, String path) {
-        checkMaterialOfCourse(executionId, materialId);
-        return aqgClient.getSectionText(materialId, path);
+        Map<String, Integer> topicOfChunk = topicService.findTopicsOfChunks(courseIdOf(executionId), materialId);
+        return aqgClient.getChunks(materialId).stream()
+                .map(chunk -> new MaterialChunkDto(chunk, topicOfChunk.get(chunk.id())))
+                .collect(Collectors.toList());
     }
 
     /**
-     * Changes the sections of a material and moves the topic links with them: a renamed section
-     * keeps its topics, a merged one is now part of the section before it, and a section that was
-     * cut keeps both halves linked to the same topics (the teacher then moves one of them).
+     * Puts the pieces of a material under topics, creating the new topics of `tree` on the way.
+     * The tree says where every piece of the material goes; pieces in no node are left out of
+     * question generation.
      */
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public AqgOutlineEditResultDto editOutline(Integer executionId, String materialId, AqgOutlineEditDto edit) {
+    public List<TopicNodeDto> distributeMaterial(Integer executionId, String materialId, TopicTreeDto tree) {
         checkMaterialOfCourse(executionId, materialId);
-        AqgOutlineEditResultDto result = aqgClient.editOutline(materialId, edit);
-
-        Map<String, List<String>> pathMap = result.pathMap() == null ? Map.of() : result.pathMap();
-        if (!pathMap.isEmpty()) {
-            topicSourceRepository.findByMaterialId(materialId).stream()
-                    .filter(source -> pathMap.containsKey(source.getSectionPath()))
-                    .collect(Collectors.toList())
-                    .forEach(source -> source.getTopic()
-                            .followSource(materialId, source.getSectionPath(), pathMap.get(source.getSectionPath())));
-        }
-        return result;
+        Set<String> documentChunkIds = aqgClient.getChunks(materialId).stream()
+                .map(AqgChunkDto::id)
+                .collect(Collectors.toSet());
+        return topicService.distributeMaterial(courseIdOf(executionId), materialId, documentChunkIds, tree);
     }
 
-    /** A proposal for the course's topic tree from the sections of a document; nothing is saved. */
+    /**
+     * Reads a material again with the service's current parsers. Its pieces are cut anew, so the
+     * old ones are taken from their topics and the teacher distributes the material again.
+     */
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public TopicTreeDto suggestTopicTree(Integer executionId, String materialId) {
+    public GenerationMaterialDto reprocessMaterial(Integer executionId, String materialId) {
         checkMaterialOfCourse(executionId, materialId);
-        Integer courseId = getCourseExecution(executionId).getCourse().getId();
+        topicService.detachMaterial(courseIdOf(executionId), materialId);
+        return new GenerationMaterialDto(aqgClient.reprocessMaterial(materialId));
+    }
 
-        Map<String, Integer> existingTopicIds = new LinkedHashMap<>();
-        topicRepository.findTopics(courseId).forEach(topic -> existingTopicIds.putIfAbsent(topic.getName(), topic.getId()));
-        return TopicTreeSuggester.suggest(materialId, aqgClient.getSections(materialId), existingTopicIds);
+    private Integer courseIdOf(Integer executionId) {
+        return getCourseExecution(executionId).getCourse().getId();
     }
 
     private void checkMaterialOfCourse(Integer executionId, String materialId) {
-        Integer courseId = getCourseExecution(executionId).getCourse().getId();
+        Integer courseId = courseIdOf(executionId);
         if (aqgClient.listMaterials(courseId).stream().noneMatch(material -> material.id().equals(materialId)))
             throw new TutorException(GENERATION_MATERIAL_NOT_FOUND, materialId);
     }
@@ -177,28 +155,15 @@ public class QuestionGenerationService {
         if (count < 1 || count > MAX_QUESTIONS_PER_JOB)
             throw new TutorException(GENERATION_INVALID_COUNT);
 
-        String topicName = request.getTopic();
-        if (request.getTopicId() != null) {
-            Topic topic = topicRepository.findTopicWithCourseById(request.getTopicId())
-                    .filter(found -> found.getCourse().getId().equals(courseId))
-                    .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, request.getTopicId()));
-            topicName = topic.getName();
-        }
-        if (topicName == null || topicName.isBlank())
+        if (request.getTopicId() == null)
             throw new TutorException(GENERATION_MISSING_TOPIC);
+        Topic topic = topicRepository.findTopicWithCourseById(request.getTopicId())
+                .filter(found -> found.getCourse().getId().equals(courseId))
+                .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, request.getTopicId()));
 
-        List<String> materialIds = request.getMaterialIds() == null ? List.of() : request.getMaterialIds();
-        List<String> sections = request.getSections() == null ? List.of() : request.getSections();
-        Map<String, List<String>> materialSections = new LinkedHashMap<>();
-        if (Boolean.TRUE.equals(request.getFromTopic())) {
-            if (request.getTopicId() == null)
-                throw new TutorException(GENERATION_MISSING_TOPIC);
-            materialSections = sectionsByMaterial(topicService.findSourcesOfSubtree(request.getTopicId()));
-            materialIds = new ArrayList<>(materialSections.keySet());
-            sections = List.of();
-        }
-        if (materialIds.isEmpty())
-            throw new TutorException(GENERATION_MISSING_MATERIALS);
+        List<TopicSourceDto> sources = topicService.findSourcesOfSubtree(topic.getId());
+        if (sources.isEmpty())
+            throw new TutorException(GENERATION_TOPIC_WITHOUT_SOURCES);
 
         String difficulty = request.getDifficulty() == null ? "MEDIUM" : request.getDifficulty();
         String groundingMode = request.getGroundingMode() == null ? "STRICT" : request.getGroundingMode();
@@ -208,14 +173,13 @@ public class QuestionGenerationService {
             throw new TutorException(GENERATION_INVALID_FOCUS);
 
         AqgJobDto aqgJob = aqgClient.generate(new AqgGenerateRequest(
-                courseId, topicName, difficulty, count, groundingMode, materialIds,
-                language, null, questionRepository.findRecentContents(courseId), sections, focus, materialSections));
+                courseId, topic.getName(), difficulty, count, groundingMode, language, null,
+                questionRepository.findRecentContents(courseId), chunkIdsOf(sources), focus));
 
-        GenerationJob job = new GenerationJob(aqgJob.id(), executionId, requesterId, topicName, request.getTopicId(),
+        GenerationJob job = new GenerationJob(aqgJob.id(), executionId, requesterId, topic.getName(), topic.getId(),
                 count, difficulty, groundingMode, aqgJob.status());
-        job.setSource(materialIds, language);
-        job.setScope(sections, focus);
-        job.setMaterialSections(materialSections);
+        job.setSource(materialIdsOf(sources), language);
+        job.setFocus(focus);
         generationJobRepository.save(job);
         return new GenerationJobDto(job);
     }
@@ -240,7 +204,7 @@ public class QuestionGenerationService {
         if (original == null)
             throw new TutorException(GENERATION_CANNOT_REGENERATE);
         Integer courseId = questionGeneration.getCourseExecution().getCourse().getId();
-        List<String> materialIds = sourceMaterials(original, courseId);
+        List<String> chunkIds = regenerationChunks(questionGeneration, original);
 
         ReviewDto reviewDto = new ReviewDto();
         reviewDto.setQuestionGenerationId(questionGenerationId);
@@ -251,17 +215,14 @@ public class QuestionGenerationService {
 
         AqgJobDto aqgJob = aqgClient.generate(new AqgGenerateRequest(
                 courseId, original.getTopic(), original.getDifficulty(), 1, original.getGroundingMode(),
-                materialIds, original.getLanguage(),
-                new AqgGenerateRequest.Revision(currentDraft(questionGeneration), comment),
-                questionRepository.findRecentContents(courseId), original.getSections(), original.getFocus(),
-                original.getMaterialSections()));
+                original.getLanguage(), new AqgGenerateRequest.Revision(currentDraft(questionGeneration), comment),
+                questionRepository.findRecentContents(courseId), chunkIds, original.getFocus()));
 
         GenerationJob job = new GenerationJob(aqgJob.id(), original.getCourseExecutionId(), userId,
                 original.getTopic(), original.getTopicId(), 1, original.getDifficulty(), original.getGroundingMode(),
                 aqgJob.status());
-        job.setSource(materialIds, original.getLanguage());
-        job.setScope(original.getSections(), original.getFocus());
-        job.setMaterialSections(original.getMaterialSections());
+        job.setSource(original.getMaterialIds(), original.getLanguage());
+        job.setFocus(original.getFocus());
         job.setRevisionOfId(questionGenerationId);
         generationJobRepository.save(job);
 
@@ -405,29 +366,27 @@ public class QuestionGenerationService {
         job.markImported(1, 0);
     }
 
-    private Map<String, List<String>> sectionsByMaterial(List<TopicSourceDto> sources) {
-        Map<String, List<String>> byMaterial = new LinkedHashMap<>();
-        for (TopicSourceDto source : sources)
-            byMaterial.computeIfAbsent(source.getMaterialId(), id -> new ArrayList<>()).add(source.getSectionPath());
-        if (byMaterial.isEmpty())
-            throw new TutorException(GENERATION_TOPIC_WITHOUT_SOURCES);
-        return byMaterial;
+    private List<String> chunkIdsOf(List<TopicSourceDto> sources) {
+        return sources.stream().map(TopicSourceDto::getChunkId).collect(Collectors.toList());
+    }
+
+    private List<String> materialIdsOf(List<TopicSourceDto> sources) {
+        return sources.stream().map(TopicSourceDto::getMaterialId).distinct().collect(Collectors.toList());
     }
 
     /**
-     * The materials the question came from. Jobs requested before they were recorded fall back
-     * to every material of the course the service has finished reading.
+     * The text to rewrite a question from: the pieces it was found to rest on, or else what is
+     * under its topic now.
      */
-    private List<String> sourceMaterials(GenerationJob job, Integer courseId) {
-        if (!job.getMaterialIds().isEmpty())
-            return job.getMaterialIds();
-        List<String> ready = aqgClient.listMaterials(courseId).stream()
-                .filter(material -> "READY".equals(material.status()))
-                .map(AqgMaterialDto::id)
-                .collect(Collectors.toList());
-        if (ready.isEmpty())
-            throw new TutorException(GENERATION_CANNOT_REGENERATE);
-        return ready;
+    private List<String> regenerationChunks(QuestionGeneration questionGeneration, GenerationJob original) {
+        if (!questionGeneration.getSourceChunkIds().isEmpty())
+            return new ArrayList<>(questionGeneration.getSourceChunkIds());
+        if (original.getTopicId() != null && topicRepository.existsById(original.getTopicId())) {
+            List<TopicSourceDto> sources = topicService.findSourcesOfSubtree(original.getTopicId());
+            if (!sources.isEmpty())
+                return chunkIdsOf(sources);
+        }
+        throw new TutorException(GENERATION_CANNOT_REGENERATE);
     }
 
     /** The question as the service wrote it, to be rewritten following a review. */

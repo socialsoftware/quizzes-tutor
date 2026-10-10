@@ -1,18 +1,14 @@
 import { ISOtoString } from '@/services/ConvertDateService';
 
+// Questions about a topic, written from the pieces of documents under it and under its subtopics
 export interface GenerationRequest {
-  topicId: number | null;
-  topic: string;
+  topicId: number;
   difficulty: string;
   count: number;
   groundingMode: string;
-  materialIds: string[];
-  // true: read the document sections linked to the topic (and its subtopics) instead of materialIds/sections
-  fromTopic: boolean;
   // null keeps the language of the materials
   language: string | null;
-  // Heading paths to draw from; empty uses the whole materials
-  sections: string[];
+  // What to ask about inside the topic, e.g. "sign rules of the product"
   focus: string | null;
 }
 

@@ -53,7 +53,7 @@ class SuggestReplyTest extends DiscussionFixtureSpockTest {
         sent.studentChoice() == OPTION_1_CONTENT
         sent.studentMessage() == DISCUSSION_MESSAGE
         sent.replies() == []
-        sent.materialSections() == [:]
+        sent.chunkIds() == []
     }
 
     def "the doubt is the last message of the student and what came before is the conversation"() {
@@ -98,13 +98,17 @@ class SuggestReplyTest extends DiscussionFixtureSpockTest {
         !text.contains(USER_2_NAME) && !text.contains(USER_2_USERNAME)
     }
 
-    def "the sections of the topics of the question are sent so the draft can use the course material"() {
+    def "the pieces of documents under the question's topics and subtopics are sent so the draft can use the course material"() {
         given:
         def topicDto = new TopicDto()
         topicDto.setName('Networks')
         def topic = topicService.createTopic(externalCourse.getId(), topicDto)
-        topicService.updateTopicSources(topic.getId(), [new TopicSourceDto('m1', 'Networks > HTTP'),
-                                                         new TopicSourceDto('m1', 'Networks > DNS')])
+        def subtopicDto = new TopicDto()
+        subtopicDto.setName('DNS')
+        subtopicDto.setParentId(topic.getId())
+        def subtopic = topicService.createTopic(externalCourse.getId(), subtopicDto)
+        topicService.updateTopicSources(topic.getId(), [new TopicSourceDto('m1', 'm1:1')])
+        topicService.updateTopicSources(subtopic.getId(), [new TopicSourceDto('m1', 'm1:2')])
         def question = discussion.getQuestion()
         question.addTopic(topicRepository.findById(topic.getId()).get())
 
@@ -112,7 +116,7 @@ class SuggestReplyTest extends DiscussionFixtureSpockTest {
         discussionSuggestionService.suggestReply(discussion.getId())
 
         then:
-        aqgClient.lastSuggestionRequest.materialSections() == [m1: ['Networks > HTTP', 'Networks > DNS']]
+        aqgClient.lastSuggestionRequest.chunkIds() == ['m1:1', 'm1:2']
     }
 
     def "an unknown discussion is refused before calling the service"() {

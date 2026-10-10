@@ -22,7 +22,7 @@ const node = (id: number, name: string, parentId: number | null = null, sources 
     parentId,
     sequence: null,
     numberOfQuestions: questions,
-    sources: Array.from({ length: sources }, (_, i) => ({ materialId: 'm1', sectionPath: `${name} ${i}` })),
+    sources: Array.from({ length: sources }, (_, i) => ({ materialId: 'm1', chunkId: `m1:${id}${i}` })),
   } as TopicNode);
 
 const tree = () => [
@@ -57,13 +57,13 @@ describe('TopicTree', () => {
   };
   const vm = (wrapper: any) => wrapper.vm as any;
 
-  test('shows the topics nested under their parents, with how many sections each has', async () => {
+  test('shows the topics nested under their parents, with how many pieces each has and with its subtopics', async () => {
     const wrapper = await mountTree();
 
     const names = wrapper.findAll('[data-cy="TopicName"]').map((n) => n.text());
     expect(names).toEqual(['Networks', 'HTTP', 'DNS', 'Databases']);
-    expect(wrapper.findAll('[data-cy="TopicSectionsChip"]').map((n) => n.text())).toEqual([
-      'no sections', '2 sections', '1 section', 'no sections',
+    expect(wrapper.findAll('[data-cy="TopicPiecesChip"]').map((n) => n.text())).toEqual([
+      '0 pieces, 3 with subtopics', '2 pieces', '1 piece', 'no pieces',
     ]);
     expect(wrapper.text()).toContain('3 question(s)');
   });

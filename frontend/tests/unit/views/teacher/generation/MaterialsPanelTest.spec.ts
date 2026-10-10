@@ -40,10 +40,14 @@ describe('MaterialsPanel', () => {
   });
 
   const mountPanel = async () => {
-    const wrapper = mount(MaterialsPanel, { global: { plugins: [createVuetify({ components, directives })] } });
+    const wrapper = mount(MaterialsPanel, {
+      global: { plugins: [createVuetify({ components, directives })], stubs: { DistributeMaterialDialog: true } },
+    });
     await flushPromises();
     return wrapper;
   };
+
+  const dialogOf = (wrapper: any) => wrapper.findComponent({ name: 'DistributeMaterialDialog' });
 
   test('lists the materials with their state and tells the parent about them', async () => {
     vi.spyOn(RemoteServices, 'getGenerationMaterials').mockResolvedValue([
@@ -108,7 +112,9 @@ describe('MaterialsPanel', () => {
       .mockResolvedValueOnce([material({ status: 'PROCESSING', chunkCount: 0, parser: null })])
       .mockResolvedValue([material({})]);
 
-    mount(MaterialsPanel, { global: { plugins: [createVuetify({ components, directives })] } });
+    mount(MaterialsPanel, {
+      global: { plugins: [createVuetify({ components, directives })], stubs: { DistributeMaterialDialog: true } },
+    });
     await vi.advanceTimersByTimeAsync(0);
     expect(list).toHaveBeenCalledTimes(1);
 
@@ -133,60 +139,69 @@ describe('MaterialsPanel', () => {
     expect(list.mock.calls.length).toBeGreaterThan(1);
   });
 
-  test('a finished document can be used to suggest topics, and the page hears when they are created', async () => {
+  test('a finished document can be put under topics, and the page hears when that is saved', async () => {
     vi.spyOn(RemoteServices, 'getGenerationMaterials').mockResolvedValue([
-      material({ id: 'ready', filename: 'book.pdf' }),
+      material({ id: 'ready', filename: 'book.pdf', placedChunks: 4 }),
       material({ id: 'busy', filename: 'later.pdf', status: 'PROCESSING', chunkCount: 0, parser: null }),
     ]);
-    const wrapper = mount(MaterialsPanel, {
-      global: {
-        plugins: [createVuetify({ components, directives })],
-        stubs: { TopicSuggestionDialog: true },
-      },
-    });
-    await flushPromises();
+    const wrapper = await mountPanel();
 
-    expect(wrapper.findAll('[data-cy="SuggestTopics"]')).toHaveLength(1);
-    expect(wrapper.findComponent({ name: 'TopicSuggestionDialog' }).exists()).toBe(false);
+    expect(wrapper.findAll('[data-cy="DistributeMaterial"]')).toHaveLength(1);
+    expect(dialogOf(wrapper).exists()).toBe(false);
 
-    await wrapper.find('[data-cy="SuggestTopics"]').trigger('click');
-    const dialog = wrapper.findComponent({ name: 'TopicSuggestionDialog' });
+    await wrapper.find('[data-cy="DistributeMaterial"]').trigger('click');
+    const dialog = dialogOf(wrapper);
 
-    expect(dialog.exists()).toBe(true);
     expect(dialog.props('materialId')).toBe('ready');
     expect(dialog.props('materialName')).toBe('book.pdf');
 
     dialog.vm.$emit('saved');
-    expect(wrapper.emitted('topics-changed')).toHaveLength(1);
-  });
-
-  test('a finished document opens the section editor, and the page hears when sections change', async () => {
-    vi.spyOn(RemoteServices, 'getGenerationMaterials').mockResolvedValue([
-      material({ id: 'ready', filename: 'book.pdf' }),
-      material({ id: 'busy', filename: 'later.pdf', status: 'PROCESSING', chunkCount: 0, parser: null }),
-    ]);
-    const wrapper = mount(MaterialsPanel, {
-      global: {
-        plugins: [createVuetify({ components, directives })],
-        stubs: { OutlineEditorDialog: true },
-      },
-    });
     await flushPromises();
-
-    expect(wrapper.findAll('[data-cy="EditSections"]')).toHaveLength(1);
-    expect(wrapper.findComponent({ name: 'OutlineEditorDialog' }).exists()).toBe(false);
-
-    await wrapper.find('[data-cy="EditSections"]').trigger('click');
-    const dialog = wrapper.findComponent({ name: 'OutlineEditorDialog' });
-
-    expect(dialog.props('materialId')).toBe('ready');
-    expect(dialog.props('materialName')).toBe('book.pdf');
-
-    dialog.vm.$emit('edited');
     expect(wrapper.emitted('topics-changed')).toHaveLength(1);
   });
 
-  test('reading a document again asks first, because the edits to its sections are lost', async () => {
+  test('shows how many pieces of each document are under a topic', async () => {
+    vi.spyOn(RemoteServices, 'getGenerationMaterials').mockResolvedValue([
+      material({ id: 'done', placedChunks: 3 }),
+      material({ id: 'new', placedChunks: 0 }),
+    ]);
+    const wrapper = await mountPanel();
+
+    const chips = wrapper.findAll('[data-cy="PlacedChunks"]');
+    expect(chips.map((chip) => chip.text())).toEqual(['3 / 12', '0 / 12']);
+    expect(chips[1].classes().join(' ')).toContain('orange');
+  });
+
+  test('a document that finishes being read opens to be put under topics', async () => {
+    vi.useFakeTimers();
+    vi.spyOn(RemoteServices, 'getGenerationMaterials')
+      .mockResolvedValueOnce([material({ status: 'PROCESSING', chunkCount: 0, parser: null })])
+      .mockResolvedValue([material({ placedChunks: 0 })]);
+    const wrapper = mount(MaterialsPanel, {
+      global: { plugins: [createVuetify({ components, directives })], stubs: { DistributeMaterialDialog: true } },
+    });
+    await vi.advanceTimersByTimeAsync(0);
+    expect(dialogOf(wrapper).exists()).toBe(false);
+
+    await vi.advanceTimersByTimeAsync(3000);
+
+    expect(dialogOf(wrapper).props('materialId')).toBe('m1');
+  });
+
+  test('a document read again that already has pieces under topics does not open by itself', async () => {
+    vi.useFakeTimers();
+    vi.spyOn(RemoteServices, 'getGenerationMaterials')
+      .mockResolvedValueOnce([material({ status: 'PROCESSING', chunkCount: 0, parser: null })])
+      .mockResolvedValue([material({ placedChunks: 5 })]);
+    const wrapper = mount(MaterialsPanel, {
+      global: { plugins: [createVuetify({ components, directives })], stubs: { DistributeMaterialDialog: true } },
+    });
+    await vi.advanceTimersByTimeAsync(3000);
+
+    expect(dialogOf(wrapper).exists()).toBe(false);
+  });
+
+  test('reading a document again asks first, because its pieces leave their topics', async () => {
     vi.spyOn(RemoteServices, 'getGenerationMaterials').mockResolvedValue([material({})]);
     const reprocess = vi.spyOn(RemoteServices, 'reprocessGenerationMaterial').mockResolvedValue(material({}));
     const confirmation = vi.spyOn(window, 'confirm').mockReturnValue(false);
@@ -195,7 +210,7 @@ describe('MaterialsPanel', () => {
     await wrapper.find('[data-cy="ReprocessMaterial"]').trigger('click');
     await flushPromises();
     expect(confirmation.mock.calls[0][0]).toContain('lecture.pdf');
-    expect(confirmation.mock.calls[0][0]).toContain('lost');
+    expect(confirmation.mock.calls[0][0]).toContain('leave their topics');
     expect(reprocess).not.toHaveBeenCalled();
 
     confirmation.mockReturnValue(true);

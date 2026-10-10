@@ -16,8 +16,9 @@
         @change="onFilesChosen"
       />
     </v-card-title>
-    <v-card-subtitle>
-      PDF, PowerPoint, Word or Markdown files. Questions are generated only from the ones you pick.
+    <v-card-subtitle class="text-wrap">
+      PDF, PowerPoint, Word or Markdown files. After a file is read, put its pieces under the topics of the course:
+      questions about a topic are written from the pieces under it and under its subtopics.
     </v-card-subtitle>
 
     <v-data-table
@@ -35,25 +36,12 @@
               v-if="getRaw(item).isReady()"
               class="mr-2 action-button"
               v-bind="activatorProps"
-              data-cy="SuggestTopics"
-              @click="suggestTopics(getRaw(item))"
+              data-cy="DistributeMaterial"
+              @click="distribute(getRaw(item))"
               >fas fa-sitemap</v-icon
             >
           </template>
-          <span>Suggest topics from this document's sections</span>
-        </v-tooltip>
-        <v-tooltip location="bottom">
-          <template v-slot:activator="{ props: activatorProps }">
-            <v-icon
-              v-if="getRaw(item).isReady()"
-              class="mr-2 action-button"
-              v-bind="activatorProps"
-              data-cy="EditSections"
-              @click="editSections(getRaw(item))"
-              >fas fa-list-ol</v-icon
-            >
-          </template>
-          <span>Rename, join or cut the sections of this document</span>
+          <span>Put the pieces of this document under topics</span>
         </v-tooltip>
         <v-tooltip location="bottom">
           <template v-slot:activator="{ props: activatorProps }">
@@ -66,7 +54,7 @@
               >fas fa-sync</v-icon
             >
           </template>
-          <span>Read the file again to rebuild its sections (discards your edits to them)</span>
+          <span>Read the file again (its pieces leave their topics)</span>
         </v-tooltip>
       </template>
       <template v-slot:[`item.status`]="{ item }">
@@ -82,26 +70,27 @@
       <template v-slot:[`item.parseSeconds`]="{ item }">
         {{ getRaw(item).parseSeconds ?? '-' }}
       </template>
-      <template v-slot:[`item.chunkCount`]="{ item }">
-        {{ getRaw(item).isReady() ? getRaw(item).chunkCount : '-' }}
+      <template v-slot:[`item.placedChunks`]="{ item }">
+        <span v-if="!getRaw(item).isReady()">-</span>
+        <v-chip
+          v-else
+          size="small"
+          :color="getRaw(item).isUndistributed() ? 'orange' : undefined"
+          data-cy="PlacedChunks"
+          @click="distribute(getRaw(item))"
+        >
+          {{ getRaw(item).placedChunks }} / {{ getRaw(item).chunkCount }}
+        </v-chip>
       </template>
       <template v-slot:no-data>No material yet. Upload the slides or notes of the course.</template>
     </v-data-table>
 
-    <outline-editor-dialog
-      v-if="editingFor"
-      v-model:dialog="editingOpen"
-      :material-id="editingFor.id"
-      :material-name="editingFor.filename"
-      @edited="emit('topics-changed')"
-    />
-
-    <topic-suggestion-dialog
-      v-if="suggestionFor"
-      v-model:dialog="suggestionOpen"
-      :material-id="suggestionFor.id"
-      :material-name="suggestionFor.filename"
-      @saved="emit('topics-changed')"
+    <distribute-material-dialog
+      v-if="distributing && distributeOpen"
+      v-model:dialog="distributeOpen"
+      :material-id="distributing.id"
+      :material-name="distributing.filename"
+      @saved="onDistributed"
     />
   </v-card>
 </template>
@@ -113,8 +102,7 @@ import RemoteServices from '@/services/RemoteServices';
 import { createPoller } from '@/services/Polling';
 import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
-import TopicSuggestionDialog from '@/views/teacher/generation/TopicSuggestionDialog.vue';
-import OutlineEditorDialog from '@/views/teacher/generation/OutlineEditorDialog.vue';
+import DistributeMaterialDialog from '@/views/teacher/generation/DistributeMaterialDialog.vue';
 
 const ACCEPTED_TYPES = '.pdf,.pptx,.docx,.md,.markdown,.txt';
 const MAX_UPLOAD_BYTES = 100 * 1024 * 1024;
@@ -133,25 +121,33 @@ const headers: any[] = withV2ColumnWidths(GenerationMaterial.headers);
 
 const getRaw = (item: any): GenerationMaterial => (item as any).raw || item;
 
-const suggestionFor = ref<GenerationMaterial | null>(null);
-const suggestionOpen = ref(false);
+const distributing = ref<GenerationMaterial | null>(null);
+const distributeOpen = ref(false);
 
-const suggestTopics = (material: GenerationMaterial) => {
-  suggestionFor.value = material;
-  suggestionOpen.value = true;
+const distribute = (material: GenerationMaterial) => {
+  distributing.value = material;
+  distributeOpen.value = true;
 };
 
-const editingFor = ref<GenerationMaterial | null>(null);
-const editingOpen = ref(false);
-
-const editSections = (material: GenerationMaterial) => {
-  editingFor.value = material;
-  editingOpen.value = true;
+const onDistributed = async () => {
+  emit('topics-changed');
+  await refresh().catch((error) => store.setError(error as string));
 };
+
+// Materials seen being read in this visit: the first one to finish opens for distribution
+const seenProcessing = new Set<string>();
 
 const refresh = async (): Promise<boolean> => {
   materials.value = await RemoteServices.getGenerationMaterials();
   emit('update:materials', materials.value);
+
+  const justRead = materials.value.find((material) => seenProcessing.has(material.id) && material.isUndistributed());
+  materials.value.forEach((material) => {
+    if (material.isProcessing()) seenProcessing.add(material.id);
+    else seenProcessing.delete(material.id);
+  });
+  if (justRead && !distributeOpen.value) distribute(justRead);
+
   return materials.value.some((material) => material.isProcessing());
 };
 
@@ -185,7 +181,7 @@ const onFilesChosen = async (event: Event) => {
   uploading.value = true;
   try {
     for (const file of files) {
-      await RemoteServices.uploadGenerationMaterial(file);
+      seenProcessing.add((await RemoteServices.uploadGenerationMaterial(file)).id);
     }
     await refresh();
     poller.start();
@@ -197,10 +193,12 @@ const onFilesChosen = async (event: Event) => {
 };
 
 const reprocess = async (material: GenerationMaterial) => {
-  const note = 'Any change you made to its sections is lost, and topics linked to sections that no longer exist will point to nothing.';
+  const note = 'Its pieces are cut again, so they leave their topics and you put the document under topics again.';
   if (!confirm(`Read "${material.filename}" again? ${note}`)) return;
   try {
     await RemoteServices.reprocessGenerationMaterial(material.id);
+    seenProcessing.add(material.id);
+    emit('topics-changed');
     await refresh();
     poller.start();
   } catch (error) {

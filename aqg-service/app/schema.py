@@ -52,25 +52,23 @@ class Revision(BaseModel):
     review: str = Field(min_length=1, max_length=4000)
 
 
+MAX_CHUNK_IDS = 5000
+
+
 class GenerationRequest(BaseModel):
     course_id: int
     topic: str
     difficulty: Difficulty = Difficulty.MEDIUM
     count: int = Field(default=1, ge=1, le=20)
     grounding_mode: GroundingMode = GroundingMode.STRICT
+    # Text given inline (tests, tools); the Tutor sends chunk_ids instead
     chunks: list[Chunk] = Field(default_factory=list)
-    material_ids: list[str] = Field(default_factory=list)
-    top_k: int = Field(default=5, ge=1, le=20)
+    # The pieces of the course materials the teacher put under the topic and its subtopics
+    chunk_ids: list[str] = Field(default_factory=list, max_length=MAX_CHUNK_IDS)
     style_examples: list[str] = Field(default_factory=list, max_length=3)
     # e.g. "Portuguese"; None keeps the language of the materials
     language: str | None = Field(default=None, max_length=40)
     revision: Revision | None = None
-    # Heading paths to draw from (a path also covers its subsections); empty means everything
-    sections: list[str] = Field(default_factory=list, max_length=500)
-    # Sections to read per material, matched exactly: a path does not cover the ones below it.
-    # Used when the selection comes from a topic tree, where a subsection may belong to another
-    # topic. A material listed here is read even if it is not in material_ids.
-    material_sections: dict[str, list[str]] = Field(default_factory=dict, max_length=100)
     # What to ask about inside the topic, e.g. "sign rules of the product"
     focus: str | None = Field(default=None, max_length=500)
     # Stems already in the course, so new drafts that repeat one are retried
@@ -79,10 +77,8 @@ class GenerationRequest(BaseModel):
 
     @model_validator(mode="after")
     def needs_context(self) -> "GenerationRequest":
-        if not self.chunks and not self.material_ids and not self.material_sections:
-            raise ValueError("provide chunks or material_ids")
-        if any(len(paths) > 500 for paths in self.material_sections.values()):
-            raise ValueError("at most 500 sections per material")
+        if not self.chunks and not self.chunk_ids:
+            raise ValueError("provide chunks or chunk_ids")
         return self
 
 
@@ -123,46 +119,13 @@ class MaterialStatus(str, Enum):
     FAILED = "FAILED"
 
 
-class Section(BaseModel):
-    """A heading path of a material (e.g. "Part I > 1 Numbers > §3. Rules for multiplication")."""
+class MaterialChunk(BaseModel):
+    """A piece of a material as the teacher sees it when putting the material under topics."""
 
-    path: str
-    title: str
-    chunk_count: int
-
-
-class OutlineEdit(BaseModel):
-    """One change to the sections of a document."""
-
-    op: Literal["rename", "merge", "shift", "split"]
-    path: str = Field(min_length=1, max_length=1000)
-    # rename: the new name; split: the name of the new section
-    title: str | None = Field(default=None, max_length=200)
-    # shift: -1 moves the section up a level, +1 under the section above it
-    delta: int | None = None
-    # split: the new section starts at this paragraph (counting from 0) of the section
-    paragraph: int | None = Field(default=None, ge=0)
-
-
-class OutlineNode(BaseModel):
-    """A heading of a document, with the text under it, to edit the sections by hand."""
-
-    path: str
-    title: str
-    depth: int
-    has_text: bool
-    paragraph_count: int
-    preview: str
-
-
-class OutlineEditResult(BaseModel):
-    # old section path -> where its text is now; paths not listed did not change
-    path_map: dict[str, list[str]]
-    outline: list[OutlineNode]
-
-
-class Paragraph(BaseModel):
-    index: int
+    id: str
+    position: int
+    # The headings above the piece ("Part I > 1 Numbers"), only to find one's way in the document
+    heading: str | None = None
     text: str
 
 
@@ -181,8 +144,8 @@ class DiscussionSuggestRequest(BaseModel):
     student_choice: str | None = Field(default=None, max_length=1000)
     student_message: str = Field(min_length=1, max_length=4000)
     replies: list[DiscussionTurn] = Field(default_factory=list, max_length=20)
-    # Where the question's topics are taught (document -> sections); empty = no course material
-    material_sections: dict[str, list[str]] = Field(default_factory=dict, max_length=100)
+    # The pieces of the course materials under the question's topics; empty = no course material
+    chunk_ids: list[str] = Field(default_factory=list, max_length=MAX_CHUNK_IDS)
     top_k: int = Field(default=3, ge=1, le=10)
     language: str | None = Field(default=None, max_length=40)
     model: "ModelConfig | None" = None
@@ -190,7 +153,7 @@ class DiscussionSuggestRequest(BaseModel):
 
 class DiscussionSuggestion(BaseModel):
     reply: str
-    # Sections of the course material the draft was written with
+    # Headings of the course material the draft was written with
     sources: list[str] = Field(default_factory=list)
 
 

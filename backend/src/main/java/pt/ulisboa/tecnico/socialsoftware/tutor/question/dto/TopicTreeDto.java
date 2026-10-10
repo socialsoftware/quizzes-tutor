@@ -5,9 +5,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * A tree of topics to create in one go: what the service proposes for a document and what the
- * teacher sends back after editing it. Nodes refer to their parent by `key`, not by id, because
- * most of them do not exist yet. Nothing is stored until the teacher saves it.
+ * Topics to create in one go, each with the pieces of documents to put under it: what the teacher
+ * sends after distributing a document over the topic tree. Nodes refer to their parent by `key`,
+ * not by id, because some of them do not exist yet; a node with `existingTopicId` stands for a
+ * topic the course already has.
  */
 public class TopicTreeDto implements Serializable {
     private List<Node> nodes = new ArrayList<>();
@@ -27,10 +28,8 @@ public class TopicTreeDto implements Serializable {
         private String key;
         private String name;
         private String parentKey;
-        // Set when a topic with this name already exists in the course: the node then only adds its sources to it
+        // Set when the node is a topic the course already has: it then only gets the node's pieces
         private Integer existingTopicId;
-        // Only informs the teacher; ignored when saving
-        private Integer chunkCount;
         private List<TopicSourceDto> sources = new ArrayList<>();
 
         public Node() {
@@ -57,10 +56,6 @@ public class TopicTreeDto implements Serializable {
         public Integer getExistingTopicId() { return existingTopicId; }
 
         public void setExistingTopicId(Integer existingTopicId) { this.existingTopicId = existingTopicId; }
-
-        public Integer getChunkCount() { return chunkCount; }
-
-        public void setChunkCount(Integer chunkCount) { this.chunkCount = chunkCount; }
 
         public List<TopicSourceDto> getSources() { return sources; }
 

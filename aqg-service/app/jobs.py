@@ -41,8 +41,11 @@ class JobStore:
     def set_running(self, job_id: str) -> None:
         self._update(job_id, status=JobStatus.RUNNING.value)
 
-    def set_done(self, job_id: str, outcomes: list[GenerationOutcome]) -> None:
-        self._update(job_id, status=JobStatus.DONE.value, outcomes=[o.model_dump(mode="json") for o in outcomes])
+    def set_done(self, job_id: str, outcomes: list[GenerationOutcome], model_id: str | None = None) -> None:
+        values = {"status": JobStatus.DONE.value, "outcomes": [o.model_dump(mode="json") for o in outcomes]}
+        if model_id:
+            values["model_id"] = model_id[:128]
+        self._update(job_id, **values)
 
     def set_failed(self, job_id: str, error: str) -> None:
         self._update(job_id, status=JobStatus.FAILED.value, error=error)

@@ -3,7 +3,6 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto;
 import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
-import java.util.Map;
 
 /**
  * Body of POST /discussion/suggest on the question generation service: a student's doubt about a
@@ -17,8 +16,8 @@ public record AqgDiscussionRequest(
         @JsonProperty("student_choice") String studentChoice,
         @JsonProperty("student_message") String studentMessage,
         List<Turn> replies,
-        // where the question's topics are taught (document -> sections); never null
-        @JsonProperty("material_sections") Map<String, List<String>> materialSections) {
+        // the pieces of documents under the question's topics; never null
+        @JsonProperty("chunk_ids") List<String> chunkIds) {
 
     public record Option(String content, boolean correct) {
     }

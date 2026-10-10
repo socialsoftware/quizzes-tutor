@@ -1,48 +1,57 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration
 
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgChunkDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionRequest
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionSuggestionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditResultDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineNodeDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgParagraphDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgSectionDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelChoiceDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelTestDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsViewDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.OllamaModelsDto
 
 /** Stands in for the question generation service: tests set the replies and inspect the calls. */
 class StubAqgClient implements AqgClient {
     AqgJobDto generateReply
     AqgJobDto jobReply
     List<AqgMaterialDto> materials = []
-    List<AqgSectionDto> sections = []
+    // material id -> its pieces
+    Map<String, List<AqgChunkDto>> chunks = [:]
     String reprocessedMaterialId
-    List<AqgOutlineNodeDto> outline = []
-    List<AqgParagraphDto> paragraphs = []
-    AqgOutlineEditResultDto editReply
-    AqgOutlineEditDto lastEdit
     AqgDiscussionSuggestionDto suggestionReply
     AqgDiscussionRequest lastSuggestionRequest
 
     AqgGenerateRequest lastGenerateRequest
     int getJobCalls = 0
 
+    LlmSettingsDto savedLlmSettings
+    LlmModelChoiceDto lastTestedModel
+    LlmModelChoiceDto lastPulledModel
+
     /** The bean outlives each test (the Spring context is cached), so tests start from a clean stub. */
     void reset() {
         generateReply = null
         jobReply = null
         materials = []
-        sections = []
+        chunks = [:]
         reprocessedMaterialId = null
-        outline = []
-        paragraphs = []
-        editReply = null
-        lastEdit = null
         suggestionReply = null
         lastSuggestionRequest = null
         lastGenerateRequest = null
         getJobCalls = 0
+        savedLlmSettings = null
+        lastTestedModel = null
+        lastPulledModel = null
+    }
+
+    /** A READY material of the course with pieces under the given headings, one piece per heading. */
+    void addMaterial(String materialId, int courseId, List<String> headings) {
+        materials << new AqgMaterialDto(materialId, courseId, materialId + '.pdf', 'READY', headings.size(), 'pymupdf', 1.0d, null)
+        chunks[materialId] = headings.withIndex().collect { heading, index ->
+            new AqgChunkDto("${materialId}:${index}".toString(), index, heading, "Text of ${heading}".toString())
+        }
     }
 
     @Override
@@ -52,34 +61,18 @@ class StubAqgClient implements AqgClient {
 
     @Override
     List<AqgMaterialDto> listMaterials(int courseId) {
-        return materials
+        return materials.findAll { it.courseId() == null || it.courseId() == courseId }
     }
 
     @Override
-    List<AqgSectionDto> getSections(String materialId) {
-        return sections
+    List<AqgChunkDto> getChunks(String materialId) {
+        return chunks.getOrDefault(materialId, [])
     }
 
     @Override
     AqgMaterialDto reprocessMaterial(String materialId) {
         reprocessedMaterialId = materialId
         return new AqgMaterialDto(materialId, 1, 'a.pdf', 'PROCESSING', 0, null, null, null)
-    }
-
-    @Override
-    List<AqgOutlineNodeDto> getOutline(String materialId) {
-        return outline
-    }
-
-    @Override
-    List<AqgParagraphDto> getSectionText(String materialId, String path) {
-        return paragraphs
-    }
-
-    @Override
-    AqgOutlineEditResultDto editOutline(String materialId, AqgOutlineEditDto edit) {
-        lastEdit = edit
-        return editReply
     }
 
     @Override
@@ -98,5 +91,33 @@ class StubAqgClient implements AqgClient {
     AqgJobDto getJob(String aqgJobId) {
         getJobCalls++
         return jobReply
+    }
+
+    @Override
+    LlmSettingsViewDto getLlmSettings() {
+        return new LlmSettingsViewDto(savedLlmSettings, [ollama: true, nvidia_nim: false], ['ollama', 'nvidia_nim'], [ollama: 'llama3.1:8b'])
+    }
+
+    @Override
+    LlmSettingsViewDto saveLlmSettings(LlmSettingsDto settings) {
+        savedLlmSettings = settings
+        return getLlmSettings()
+    }
+
+    @Override
+    LlmModelTestDto testModel(LlmModelChoiceDto model) {
+        lastTestedModel = model
+        return new LlmModelTestDto(true, 0.5d, '{"ok": true}', null)
+    }
+
+    @Override
+    OllamaModelsDto getOllamaModels() {
+        return new OllamaModelsDto(['llama3.1:8b'], [:], null)
+    }
+
+    @Override
+    OllamaModelsDto pullOllamaModel(LlmModelChoiceDto model) {
+        lastPulledModel = model
+        return new OllamaModelsDto([], [(model.model()): 'downloading'], null)
     }
 }

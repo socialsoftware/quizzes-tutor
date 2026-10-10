@@ -37,6 +37,7 @@ import StudentDiscussionsView from '@/views/student/discussions/StudentDiscussio
 import TeacherDiscussionsView from '@/views/teacher/discussions/TeacherDiscussionsView.vue';
 import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
 import ExportAllView from '@/views/admin/ExportAllView.vue';
+import LlmSettingsView from '@/views/admin/LlmSettingsView.vue';
 import CoursesView from '@/views/admin/courses/CoursesView.vue';
 import UsersView from '@/views/admin/UsersView.vue';
 
@@ -350,6 +351,15 @@ const router = createRouter({
           component: CoursesView,
           meta: {
             title: APP_NAME + ' - Manage courses',
+            requiredAuth: 'Admin',
+          },
+        },
+        {
+          path: 'llm',
+          name: 'llmSettings',
+          component: LlmSettingsView,
+          meta: {
+            title: APP_NAME + ' - Question generation model',
             requiredAuth: 'Admin',
           },
         },

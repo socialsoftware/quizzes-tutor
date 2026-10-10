@@ -9,15 +9,12 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicNodeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicTreeDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditResultDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineNodeDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgParagraphDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgSectionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationJobDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationMaterialDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationRequestDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.MaterialChunkDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.QuestionGenerationDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto;
 
@@ -52,36 +49,17 @@ public class QuestionGenerationController {
         return questionGenerationService.getMaterials(executionId);
     }
 
-    @GetMapping("/generation/{executionId}/materials/{materialId}/sections")
+    @GetMapping("/generation/{executionId}/materials/{materialId}/chunks")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<AqgSectionDto> getSections(@PathVariable int executionId, @PathVariable String materialId) {
-        return questionGenerationService.getSections(executionId, materialId);
+    public List<MaterialChunkDto> getMaterialChunks(@PathVariable int executionId, @PathVariable String materialId) {
+        return questionGenerationService.getMaterialChunks(executionId, materialId);
     }
 
-    @GetMapping("/generation/{executionId}/materials/{materialId}/outline")
+    @PutMapping("/generation/{executionId}/materials/{materialId}/distribution")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<AqgOutlineNodeDto> getOutline(@PathVariable int executionId, @PathVariable String materialId) {
-        return questionGenerationService.getOutline(executionId, materialId);
-    }
-
-    @GetMapping("/generation/{executionId}/materials/{materialId}/section-text")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<AqgParagraphDto> getSectionText(@PathVariable int executionId, @PathVariable String materialId,
-                                                @RequestParam String path) {
-        return questionGenerationService.getSectionText(executionId, materialId, path);
-    }
-
-    @PostMapping("/generation/{executionId}/materials/{materialId}/outline/edit")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public AqgOutlineEditResultDto editOutline(@PathVariable int executionId, @PathVariable String materialId,
-                                               @Valid @RequestBody AqgOutlineEditDto edit) {
-        return questionGenerationService.editOutline(executionId, materialId, edit);
-    }
-
-    @GetMapping("/generation/{executionId}/materials/{materialId}/topic-suggestion")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public TopicTreeDto suggestTopicTree(@PathVariable int executionId, @PathVariable String materialId) {
-        return questionGenerationService.suggestTopicTree(executionId, materialId);
+    public List<TopicNodeDto> distributeMaterial(@PathVariable int executionId, @PathVariable String materialId,
+                                                 @RequestBody TopicTreeDto tree) {
+        return questionGenerationService.distributeMaterial(executionId, materialId, tree);
     }
 
     @PostMapping("/generation/{executionId}/materials/{materialId}/reprocess")

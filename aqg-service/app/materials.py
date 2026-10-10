@@ -5,11 +5,10 @@ from sqlalchemy import delete, select
 from sqlalchemy.orm import sessionmaker
 
 from app.chunking.outline import clean_headings
-from app.chunking.outline_edit import OutlineError, OutlineSection, chunks_from_sections, sections_from_chunks, to_markdown
 from app.chunking.splitter import split_markdown
 from app.db import ChunkRow, MaterialRow
 from app.ingestion.adapters import Parsers, adapter_for
-from app.schema import Chunk, Material, MaterialStatus, Section
+from app.schema import Chunk, Material, MaterialChunk, MaterialStatus
 from app.storage.material_storage import MaterialStorage
 
 
@@ -62,44 +61,13 @@ class MaterialStore:
             row = session.get(MaterialRow, material_id)
             return row.markdown if row else None
 
-    def sections(self, material_id: str) -> list[Section]:
-        """Heading paths in reading order, with how many chunks each one holds."""
-        sections: dict[str, int] = {}
+    def chunks(self, material_id: str) -> list[MaterialChunk]:
+        """The pieces of a material in reading order, to put them under topics."""
         with self._session() as session:
             rows = session.scalars(
                 select(ChunkRow).where(ChunkRow.material_id == material_id).order_by(ChunkRow.position)
             )
-            for row in rows:
-                if row.source:
-                    sections[row.source] = sections.get(row.source, 0) + 1
-        return [
-            Section(path=path, title=path.split(SECTION_SEPARATOR)[-1], chunk_count=count)
-            for path, count in sections.items()
-        ]
-
-    def outline_sections(self, material_id: str) -> list[OutlineSection]:
-        """The document as sections of paragraphs, rebuilt from its chunks."""
-        with self._session() as session:
-            rows = session.scalars(
-                select(ChunkRow).where(ChunkRow.material_id == material_id).order_by(ChunkRow.position)
-            )
-            return sections_from_chunks([Chunk(id=r.id, text=r.text, source=r.source) for r in rows])
-
-    def save_sections(self, material_id: str, sections: list[OutlineSection]) -> None:
-        """Cuts edited sections into chunks again, replacing the old ones. The text itself is not
-        read from the original file again, so the edit survives; reading it again discards it."""
-        chunks = chunks_from_sections(sections, material_id)
-        if not chunks:
-            raise OutlineError("the document would be left without text")
-        with self._session.begin() as session:
-            session.execute(delete(ChunkRow).where(ChunkRow.material_id == material_id))
-            session.add_all(
-                ChunkRow(id=chunk.id, material_id=material_id, position=position, text=chunk.text, source=chunk.source)
-                for position, chunk in enumerate(chunks)
-            )
-            row = session.get(MaterialRow, material_id)
-            row.chunk_count = len(chunks)
-            row.markdown = to_markdown(sections)
+            return [MaterialChunk(id=r.id, position=r.position, heading=r.source, text=r.text) for r in rows]
 
     def set_failed(self, material_id: str, error: str) -> None:
         with self._session.begin() as session:
@@ -107,50 +75,31 @@ class MaterialStore:
             row.status = MaterialStatus.FAILED.value
             row.error = error
 
-    def chunks_for(
-        self,
-        course_id: int,
-        material_ids: list[str],
-        sections: list[str] | None = None,
-        material_sections: dict[str, list[str]] | None = None,
-    ) -> list[Chunk]:
-        """Chunks of the requested materials, optionally only those under the given heading
-        paths. A material with an entry in `material_sections` is read at exactly those paths
-        instead; ids of other courses or unfinished uploads are rejected instead of silently
-        ignored."""
-        chunks: list[Chunk] = []
+    def chunks_by_ids(self, course_id: int, chunk_ids: list[str]) -> list[Chunk]:
+        """The given chunks in reading order: documents in the order they first appear in
+        `chunk_ids`, pieces in document order. Chunks of another course, of an unfinished upload
+        or that no longer exist are refused instead of silently left out."""
+        wanted = list(dict.fromkeys(chunk_ids))
+        if not wanted:
+            return []
         with self._session() as session:
-            for material_id in material_ids:
-                row = session.get(MaterialRow, material_id)
-                if row is None or row.course_id != course_id:
-                    raise LookupError(f"material {material_id} does not exist in course {course_id}")
-                if row.status != MaterialStatus.READY.value:
-                    raise LookupError(f"material {material_id} is {row.status}")
-                rows = session.scalars(select(ChunkRow).where(ChunkRow.material_id == material_id).order_by(ChunkRow.position))
-                chunks.extend(
-                    Chunk(id=r.id, text=r.text, source=r.source) for r in rows if _wanted(r.source, material_id, sections, material_sections)
-                )
-        return chunks
+            rows = {row.id: row for row in session.scalars(select(ChunkRow).where(ChunkRow.id.in_(wanted)))}
+            missing = [chunk_id for chunk_id in wanted if chunk_id not in rows]
+            if missing:
+                raise LookupError(f"{len(missing)} piece(s) of text no longer exist (e.g. {missing[0]})")
+            materials = {
+                material_id: session.get(MaterialRow, material_id)
+                for material_id in dict.fromkeys(rows[chunk_id].material_id for chunk_id in wanted)
+            }
+        for material_id, material in materials.items():
+            if material is None or material.course_id != course_id:
+                raise LookupError(f"material {material_id} does not exist in course {course_id}")
+            if material.status != MaterialStatus.READY.value:
+                raise LookupError(f"material {material_id} is {material.status}")
 
-
-SECTION_SEPARATOR = " > "
-
-
-def _wanted(
-    source: str | None, material_id: str, sections: list[str] | None, material_sections: dict[str, list[str]] | None
-) -> bool:
-    if material_sections and material_id in material_sections:
-        return source in material_sections[material_id]
-    return in_sections(source, sections)
-
-
-def in_sections(source: str | None, sections: list[str] | None) -> bool:
-    """A chunk belongs to a selected section when its heading path is that path or below it."""
-    if not sections:
-        return True
-    if not source:
-        return False
-    return any(source == section or source.startswith(section + SECTION_SEPARATOR) for section in sections)
+        order = {material_id: index for index, material_id in enumerate(materials)}
+        ordered = sorted(rows.values(), key=lambda row: (order[row.material_id], row.position))
+        return [Chunk(id=row.id, text=row.text, source=row.source) for row in ordered]
 
 
 def _to_material(row: MaterialRow) -> Material:

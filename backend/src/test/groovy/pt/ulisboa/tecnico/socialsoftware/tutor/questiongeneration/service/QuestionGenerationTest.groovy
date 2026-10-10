@@ -12,7 +12,6 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.Generat
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgSectionDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationRequestDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
@@ -24,6 +23,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
 @DataJpaTest
 class QuestionGenerationTest extends SpockTest {
     def teacher
+    def topic
 
     def setup() {
         aqgClient.reset()
@@ -31,13 +31,19 @@ class QuestionGenerationTest extends SpockTest {
 
         teacher = new Teacher(USER_2_NAME, USER_2_USERNAME, USER_2_EMAIL, false, AuthUser.Type.TECNICO)
         userRepository.save(teacher)
+
+        topic = new Topic()
+        topic.setName('HTTP')
+        topic.setCourse(externalCourse)
+        topic.addSource('material-1', 'material-1:0')
+        topic.addSource('material-1', 'material-1:1')
+        topicRepository.save(topic)
     }
 
     def request(Map overrides = [:]) {
         def dto = new GenerationRequestDto()
-        dto.setTopic(overrides.containsKey('topic') ? overrides.topic : 'HTTP')
+        dto.setTopicId(overrides.containsKey('topicId') ? overrides.topicId : topic.getId())
         dto.setCount(overrides.containsKey('count') ? overrides.count : 2)
-        dto.setMaterialIds(overrides.containsKey('materialIds') ? overrides.materialIds : ['material-1'])
         return dto
     }
 
@@ -66,10 +72,10 @@ class QuestionGenerationTest extends SpockTest {
         when:
         def result = questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(), request())
 
-        then: "the service was asked for the course, topic and materials"
+        then: "the service was asked for the course, the topic and the pieces of documents under it"
         aqgClient.lastGenerateRequest.courseId() == externalCourse.getId()
         aqgClient.lastGenerateRequest.topic() == 'HTTP'
-        aqgClient.lastGenerateRequest.materialIds() == ['material-1']
+        aqgClient.lastGenerateRequest.chunkIds() == ['material-1:0', 'material-1:1']
         aqgClient.lastGenerateRequest.groundingMode() == 'STRICT'
 
         and: "the job is stored as requested"
@@ -78,26 +84,61 @@ class QuestionGenerationTest extends SpockTest {
         job.getStatus() == GenerationJob.Status.REQUESTED
         job.getCourseExecutionId() == externalCourseExecution.getId()
         job.getRequesterId() == teacher.getId()
+        job.getTopicId() == topic.getId()
+        job.getMaterialIds() == ['material-1']
         result.getId() == job.getId()
     }
 
     @Unroll
-    def "invalid request: count=#count materialIds=#materialIds topic=#topic"() {
+    def "invalid request: count=#count topic=#which"() {
+        given:
+        def empty = new Topic()
+        empty.setName('Empty')
+        empty.setCourse(externalCourse)
+        topicRepository.save(empty)
+        def topicId = [http: topic.getId(), empty: empty.getId(), none: null, unknown: -1][which]
+
         when:
         questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(),
-                request(count: count, materialIds: materialIds, topic: topic))
+                request(count: count, topicId: topicId))
 
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == errorMessage
 
         where:
-        count | materialIds    | topic  || errorMessage
-        0     | ['material-1'] | 'HTTP' || GENERATION_INVALID_COUNT
-        21    | ['material-1'] | 'HTTP' || GENERATION_INVALID_COUNT
-        2     | []             | 'HTTP' || GENERATION_MISSING_MATERIALS
-        2     | ['material-1'] | ' '    || GENERATION_MISSING_TOPIC
-        2     | ['material-1'] | null   || GENERATION_MISSING_TOPIC
+        count | which     || errorMessage
+        0     | 'http'    || GENERATION_INVALID_COUNT
+        21    | 'http'    || GENERATION_INVALID_COUNT
+        2     | 'none'    || GENERATION_MISSING_TOPIC
+        2     | 'unknown' || TOPIC_NOT_FOUND
+        2     | 'empty'   || GENERATION_TOPIC_WITHOUT_SOURCES
+    }
+
+    def "the pieces of the subtopics come after the topic's own, in tree order"() {
+        given:
+        def second = new Topic()
+        second.setName('Status codes')
+        second.setCourse(externalCourse)
+        second.setParentId(topic.getId())
+        second.setSequence(1)
+        second.addSource('material-2', 'material-2:5')
+        topicRepository.save(second)
+        def first = new Topic()
+        first.setName('Methods')
+        first.setCourse(externalCourse)
+        first.setParentId(topic.getId())
+        first.setSequence(0)
+        first.addSource('material-2', 'material-2:3')
+        topicRepository.save(first)
+        aqgClient.generateReply = aqgJob('PENDING')
+
+        when:
+        questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(), request())
+
+        then:
+        aqgClient.lastGenerateRequest.chunkIds() == ['material-1:0', 'material-1:1', 'material-2:3', 'material-2:5']
+        generationJobRepository.findAll().get(0).getMaterialIds() == ['material-1', 'material-2']
     }
 
     def "a job still running imports nothing"() {
@@ -149,6 +190,9 @@ class QuestionGenerationTest extends SpockTest {
         generations.every { it.getSourceChunkIds() == ['material-1:0'] }
         generations.count { it.needsHumanAttention() } == 1
         generations.get(0).getExplanation() == 'It is the missing resource code'
+
+        and: "the questions are filed under the topic they were asked about"
+        questions.every { it.getTopics()*.getId() == [topic.getId()] }
     }
 
     def "importing is done once even if the job is read again"() {
@@ -195,9 +239,9 @@ class QuestionGenerationTest extends SpockTest {
         other.isEmpty()
     }
 
-    def "materials are shown with the teacher facing field names"() {
+    def "materials are shown with the teacher facing field names and how many pieces are under a topic"() {
         given:
-        aqgClient.materials = [new AqgMaterialDto('m1', externalCourse.getId(), 'lecture.pdf', 'READY', 7, 'pymupdf4llm', 1.5, null)]
+        aqgClient.materials = [new AqgMaterialDto('material-1', externalCourse.getId(), 'lecture.pdf', 'READY', 7, 'pymupdf4llm', 1.5, null)]
 
         when:
         def result = questionGenerationService.getMaterials(externalCourseExecution.getId())
@@ -207,6 +251,7 @@ class QuestionGenerationTest extends SpockTest {
         result.get(0).getFilename() == 'lecture.pdf'
         result.get(0).getChunkCount() == 7
         result.get(0).getParser() == 'pymupdf4llm'
+        result.get(0).getPlacedChunks() == 2
     }
 
     def "a job of another course execution is not found"() {
@@ -407,10 +452,10 @@ class QuestionGenerationTest extends SpockTest {
         review.getType() == Review.Type.REQUEST_CHANGES
         review.getComment() == 'Ask it the other way round'
 
-        and: "the service rewrites one question from the same materials, given the old one and the review"
+        and: "the service rewrites one question from the text it rested on, given the old one and the review"
         def sent = aqgClient.lastGenerateRequest
         sent.count() == 1
-        sent.materialIds() == ['material-1']
+        sent.chunkIds() == ['material-1:0']
         sent.topic() == 'HTTP'
         sent.revision().review() == 'Ask it the other way round'
         sent.revision().previous().stem() == 'What does 404 mean?'
@@ -424,14 +469,8 @@ class QuestionGenerationTest extends SpockTest {
     }
 
     def "a finished rewrite replaces the question and puts it back up for review"() {
-        given: "a generated question filed under a topic"
+        given: "a generated question, filed under its topic"
         def generation = importedGeneration()
-        def topic = new Topic()
-        topic.setName('HTTP')
-        topic.setCourse(externalCourse)
-        topicRepository.save(topic)
-        generation.getQuestion().addTopic(topic)
-        questionRepository.save(generation.getQuestion())
         aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
         def regenerating = questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Ask it the other way round')
         aqgClient.jobReply = new AqgJobDto('aqg-2', 'DONE', 'mcq-v2', 'nim', 'STRICT', [rewrittenOutcome()], null)
@@ -477,35 +516,45 @@ class QuestionGenerationTest extends SpockTest {
         'returns nothing' | new AqgJobDto('aqg-2', 'DONE', 'mcq-v2', 'nim', 'STRICT', [new AqgJobDto.Outcome('INSUFFICIENT_CONTEXT', null, 0, [], [])], null)
     }
 
-    def "a question from before the materials were recorded is regenerated from the course's ready materials"() {
+    def "a question without the pieces it rested on is regenerated from what is under its topic now"() {
         given:
         def generation = importedGeneration()
-        def job = generationJobRepository.findAll().get(0)
-        job.setSource([], null)
-        generationJobRepository.save(job)
-        aqgClient.materials = [new AqgMaterialDto('m-ready', externalCourse.getId(), 'a.pdf', 'READY', 3, 'pymupdf4llm', 1.0, null),
-                               new AqgMaterialDto('m-busy', externalCourse.getId(), 'b.pdf', 'PROCESSING', 0, null, null, null)]
+        generation.getSourceChunkIds().clear()
+        questionGenerationRepository.save(generation)
         aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
 
         when:
         questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Clearer please')
 
         then:
-        aqgClient.lastGenerateRequest.materialIds() == ['m-ready']
+        aqgClient.lastGenerateRequest.chunkIds() == ['material-1:0', 'material-1:1']
     }
 
-    def "sections and focus go with the request and with a later regeneration"() {
+    def "a question with no text left to rest on cannot be regenerated"() {
+        given:
+        def generation = importedGeneration()
+        generation.getSourceChunkIds().clear()
+        questionGenerationRepository.save(generation)
+        topicRepository.findById(topic.getId()).get().getSources().clear()
+
+        when:
+        questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Clearer please')
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == GENERATION_CANNOT_REGENERATE
+    }
+
+    def "the focus goes with the request and with a later regeneration"() {
         given:
         aqgClient.generateReply = aqgJob('PENDING')
         def dto = request()
-        dto.setSections(['Part I > 1 Numbers'])
         dto.setFocus(' sign rules ')
 
         when:
         def job = questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(), dto)
 
         then:
-        aqgClient.lastGenerateRequest.sections() == ['Part I > 1 Numbers']
         aqgClient.lastGenerateRequest.focus() == 'sign rules'
 
         when: "a draft of that job is regenerated"
@@ -514,8 +563,7 @@ class QuestionGenerationTest extends SpockTest {
         aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
         questionGenerationService.regenerate(questionGenerationRepository.findAll().get(0).getId(), teacher.getId(), 'Harder')
 
-        then: "the rewrite stays inside the same sections and focus"
-        aqgClient.lastGenerateRequest.sections() == ['Part I > 1 Numbers']
+        then: "the rewrite keeps the focus"
         aqgClient.lastGenerateRequest.focus() == 'sign rules'
     }
 
@@ -532,22 +580,49 @@ class QuestionGenerationTest extends SpockTest {
         exception.getErrorMessage() == GENERATION_INVALID_FOCUS
     }
 
-    def "sections and reprocessing are only for materials of the course"() {
+    def "the pieces of a material come with the topic each one is under"() {
         given:
-        aqgClient.materials = [new AqgMaterialDto('m1', externalCourse.getId(), 'a.pdf', 'READY', 3, 'pymupdf4llm', 1.0, null)]
-        aqgClient.sections = [new AqgSectionDto('Part I > 1 Numbers', '1 Numbers', 4)]
-
-        expect:
-        questionGenerationService.getSections(externalCourseExecution.getId(), 'm1')*.title() == ['1 Numbers']
-        questionGenerationService.reprocessMaterial(externalCourseExecution.getId(), 'm1').getId() == 'm1'
-        aqgClient.reprocessedMaterialId == 'm1'
+        aqgClient.addMaterial('material-1', externalCourse.getId(), ['Networks', 'Networks > HTTP', 'Networks > DNS'])
 
         when:
-        questionGenerationService.getSections(externalCourseExecution.getId(), 'other-course-material')
+        def chunks = questionGenerationService.getMaterialChunks(externalCourseExecution.getId(), 'material-1')
+
+        then:
+        chunks*.id() == ['material-1:0', 'material-1:1', 'material-1:2']
+        chunks*.heading() == ['Networks', 'Networks > HTTP', 'Networks > DNS']
+        chunks*.topicId() == [topic.getId(), topic.getId(), null]
+    }
+
+    def "reprocessing a material takes its old pieces from the topics"() {
+        given:
+        aqgClient.addMaterial('material-1', externalCourse.getId(), ['Networks', 'Networks > HTTP'])
+
+        when:
+        def result = questionGenerationService.reprocessMaterial(externalCourseExecution.getId(), 'material-1')
+
+        then:
+        result.getId() == 'material-1'
+        aqgClient.reprocessedMaterialId == 'material-1'
+        topicRepository.findById(topic.getId()).get().getSources().isEmpty()
+    }
+
+    @Unroll
+    def "#what is only for materials of the course"() {
+        given:
+        aqgClient.addMaterial('other-course-material', externalCourse.getId() + 100, ['Elsewhere'])
+
+        when:
+        action(questionGenerationService, externalCourseExecution.getId())
 
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == GENERATION_MATERIAL_NOT_FOUND
+
+        where:
+        what           | action
+        'reading'      | { service, execution -> service.getMaterialChunks(execution, 'other-course-material') }
+        'reprocessing' | { service, execution -> service.reprocessMaterial(execution, 'other-course-material') }
+        'distributing' | { service, execution -> service.distributeMaterial(execution, 'other-course-material', null) }
     }
 
     def "regenerating needs a comment"() {

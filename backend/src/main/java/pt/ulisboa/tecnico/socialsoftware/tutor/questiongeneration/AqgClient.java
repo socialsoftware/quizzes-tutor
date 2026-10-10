@@ -1,15 +1,16 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration;
 
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgChunkDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionSuggestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineEditResultDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgOutlineNodeDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgParagraphDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto;
-import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgSectionDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelChoiceDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelTestDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsViewDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.OllamaModelsDto;
 
 import java.util.List;
 
@@ -22,19 +23,11 @@ public interface AqgClient {
 
     List<AqgMaterialDto> listMaterials(int courseId);
 
-    List<AqgSectionDto> getSections(String materialId);
+    /** The pieces (chunks) of a material in reading order, with the headings above each one. */
+    List<AqgChunkDto> getChunks(String materialId);
 
-    /** Rebuilds a material's chunks (and so its sections) with the service's current parsers. */
+    /** Rebuilds a material's chunks with the service's current parsers; the old chunk ids are gone. */
     AqgMaterialDto reprocessMaterial(String materialId);
-
-    /** The headings of a material, each with the text under it. */
-    List<AqgOutlineNodeDto> getOutline(String materialId);
-
-    /** The paragraphs a section has of its own. */
-    List<AqgParagraphDto> getSectionText(String materialId, String path);
-
-    /** Changes the sections of a material; the reply says where the text of each changed section went. */
-    AqgOutlineEditResultDto editOutline(String materialId, AqgOutlineEditDto edit);
 
     /** A draft reply to a student's doubt, for a teacher to edit; nothing is saved or sent. */
     AqgDiscussionSuggestionDto suggestReply(AqgDiscussionRequest request);
@@ -42,4 +35,17 @@ public interface AqgClient {
     AqgJobDto generate(AqgGenerateRequest request);
 
     AqgJobDto getJob(String aqgJobId);
+
+    /** The models the service uses, and whether each provider's API key is set in its environment. */
+    LlmSettingsViewDto getLlmSettings();
+
+    LlmSettingsViewDto saveLlmSettings(LlmSettingsDto settings);
+
+    /** One tiny call to a model, to check its name and how fast it answers. */
+    LlmModelTestDto testModel(LlmModelChoiceDto model);
+
+    OllamaModelsDto getOllamaModels();
+
+    /** Starts downloading a model to the Ollama server; it shows in getOllamaModels when done. */
+    OllamaModelsDto pullOllamaModel(LlmModelChoiceDto model);
 }

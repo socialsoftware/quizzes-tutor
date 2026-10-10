@@ -7,7 +7,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/** A topic as a node of the course's topic tree, with the document sections it is taught from. Teachers only. */
+/** A topic as a node of the course's topic tree, with the pieces of documents it is taught from. Teachers only. */
 public class TopicNodeDto implements Serializable {
     private Integer id;
     private String name;

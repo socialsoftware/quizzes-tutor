@@ -7,7 +7,7 @@ import RemoteServices from '@/services/RemoteServices';
 import { useStore } from '@/store';
 import TopicNode from '@/models/management/TopicNode';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
-import GenerationSection from '@/models/management/generation/GenerationSection';
+import MaterialChunk from '@/models/management/generation/MaterialChunk';
 
 vi.mock('@/store', () => ({ useStore: vi.fn() }));
 
@@ -16,11 +16,14 @@ globalThis.ResizeObserver = class { observe() { } unobserve() { } disconnect() {
 globalThis.IntersectionObserver = class { observe() { } unobserve() { } disconnect() { } } as any;
 import TopicSourcesDialog from '@/views/teacher/topics/TopicSourcesDialog.vue';
 
-const material = (id: string, filename: string, status = 'READY') =>
-  new GenerationMaterial({ id, filename, status, chunkCount: 3, parser: 'x', parseSeconds: 1, error: null } as GenerationMaterial);
+const topic = (sources: { materialId: string; chunkId: string }[]) =>
+  new TopicNode({ id: 9, name: 'Networks', parentId: null, sequence: null, numberOfQuestions: 0, sources } as TopicNode);
 
-const topic = (sources: { materialId: string; sectionPath: string }[]) =>
-  new TopicNode({ id: 7, name: 'Networks', parentId: null, sequence: null, numberOfQuestions: 0, sources } as TopicNode);
+const material = (id: string, filename: string) =>
+  new GenerationMaterial({ id, filename, status: 'READY', chunkCount: 3, parser: 'x', parseSeconds: 1, error: null } as GenerationMaterial);
+
+const chunk = (id: string, position: number, heading: string, text: string) =>
+  new MaterialChunk({ id, position, heading, text, topicId: 9 } as MaterialChunk);
 
 describe('TopicSourcesDialog', () => {
   let store: any;
@@ -28,19 +31,11 @@ describe('TopicSourcesDialog', () => {
   beforeEach(() => {
     store = { setLoading: vi.fn(), clearLoading: vi.fn(), setError: vi.fn() };
     (useStore as any).mockReturnValue(store);
-    vi.spyOn(RemoteServices, 'getGenerationMaterials').mockResolvedValue([
-      material('m1', 'book.pdf'),
-      material('m2', 'slides.pptx'),
-      material('m3', 'still-reading.pdf', 'PROCESSING'),
-    ]);
-    vi.spyOn(RemoteServices, 'getGenerationSections').mockImplementation(async (materialId: string) =>
+    vi.spyOn(RemoteServices, 'getGenerationMaterials').mockResolvedValue([material('m1', 'book.pdf'), material('m2', 'slides.pptx')]);
+    vi.spyOn(RemoteServices, 'getMaterialChunks').mockImplementation(async (materialId: string) =>
       materialId === 'm1'
-        ? [
-            new GenerationSection({ path: 'Networks', title: 'Networks', chunk_count: 1 }),
-            new GenerationSection({ path: 'Networks > HTTP', title: 'HTTP', chunk_count: 2 }),
-            new GenerationSection({ path: 'Networks > DNS', title: 'DNS', chunk_count: 2 }),
-          ]
-        : [new GenerationSection({ path: 'Intro', title: 'Intro', chunk_count: 1 })]
+        ? [chunk('m1:0', 0, 'Networks', 'Intro text'), chunk('m1:1', 1, 'Networks > HTTP', '404 means not found'), chunk('m1:2', 2, 'Networks > DNS', 'Name servers')]
+        : [chunk('m2:0', 0, 'Intro', 'Slide text')]
     );
   });
 
@@ -58,109 +53,69 @@ describe('TopicSourcesDialog', () => {
     await flushPromises();
     return wrapper;
   };
-  const vm = (wrapper: any) => wrapper.vm as any;
 
-  test('lists what the topic is linked to, grouped by document name', async () => {
+  const groups = () => Array.from(document.body.querySelectorAll('[data-cy="SourceGroup"]'));
+
+  test('shows the pieces of the topic grouped by document, in reading order, with their headings', async () => {
     await mountDialog(topic([
-      { materialId: 'm1', sectionPath: 'Networks > HTTP' },
-      { materialId: 'm2', sectionPath: 'Intro' },
-      { materialId: 'm1', sectionPath: 'Networks > DNS' },
+      { materialId: 'm1', chunkId: 'm1:2' },
+      { materialId: 'm2', chunkId: 'm2:0' },
+      { materialId: 'm1', chunkId: 'm1:1' },
     ]));
 
-    const groups = [...document.body.querySelectorAll('[data-cy="SourceGroup"]')].map((g) => g.textContent!.replace(/\s+/g, ' ').trim());
-    expect(groups).toHaveLength(2);
-    expect(groups[0]).toContain('book.pdf');
-    expect(groups[0]).toContain('Networks > HTTP');
-    expect(groups[0]).toContain('Networks > DNS');
-    expect(groups[1]).toContain('slides.pptx');
+    expect(groups().map((group) => group.querySelector('.font-weight-medium')!.textContent)).toEqual(['book.pdf', 'slides.pptx']);
+    const pieces = Array.from(groups()[0].querySelectorAll('[data-cy="SourcePiece"]')).map((piece) => piece.textContent);
+    expect(pieces[0]).toContain('Networks > HTTP');
+    expect(pieces[0]).toContain('404 means not found');
+    expect(pieces[1]).toContain('Name servers');
   });
 
-  test('says when nothing is linked yet', async () => {
+  test('says how to bring pieces when there are none', async () => {
     await mountDialog(topic([]));
 
-    expect(document.body.querySelector('[data-cy="NoSources"]')).not.toBeNull();
+    expect(document.body.querySelector('[data-cy="NoSources"]')!.textContent).toContain('Put under topics');
+    expect(RemoteServices.getMaterialChunks).not.toHaveBeenCalled();
   });
 
-  test('warns about a link whose section is no longer in the document', async () => {
+  test('a piece that is no longer in its document, or a document that is gone, is shown as such', async () => {
     await mountDialog(topic([
-      { materialId: 'm1', sectionPath: 'Networks > HTTP' },
-      { materialId: 'm1', sectionPath: 'Old chapter that was merged' },
+      { materialId: 'm1', chunkId: 'm1:99' },
+      { materialId: 'deleted', chunkId: 'deleted:0' },
     ]));
 
-    const chips = [...document.body.querySelectorAll('[data-cy="SourceChip"]')].map((c) => c.textContent!.replace(/\s+/g, ' ').trim());
-    expect(chips[0]).not.toContain('no longer');
-    expect(chips[1]).toContain('no longer in the document');
+    expect(document.body.textContent).toContain('No longer in the document');
+    expect(document.body.textContent).toContain('A document that no longer exists');
+    expect(RemoteServices.getMaterialChunks).toHaveBeenCalledTimes(1);
   });
 
-  test('a link to a document that is gone is shown as such and flagged', async () => {
-    await mountDialog(topic([{ materialId: 'deleted', sectionPath: 'X' }]));
-
-    const group = document.body.querySelector('[data-cy="SourceGroup"]')!.textContent!;
-    expect(group).toContain('document no longer available');
-    expect(group).toContain('no longer in the document');
-  });
-
-  test('only finished documents can be picked to add sections from', async () => {
-    const wrapper = await mountDialog(topic([]));
-
-    expect(vm(wrapper).readyMaterials.map((m: GenerationMaterial) => m.id)).toEqual(['m1', 'm2']);
-  });
-
-  test('removing a link and saving sends the rest', async () => {
-    const update = vi.spyOn(RemoteServices, 'updateTopicSources').mockResolvedValue(new TopicNode());
+  test('taking a piece out and saving sends the rest', async () => {
+    const update = vi.spyOn(RemoteServices, 'updateTopicSources').mockResolvedValue(topic([]));
     const wrapper = await mountDialog(topic([
-      { materialId: 'm1', sectionPath: 'Networks > HTTP' },
-      { materialId: 'm1', sectionPath: 'Networks > DNS' },
+      { materialId: 'm1', chunkId: 'm1:1' },
+      { materialId: 'm1', chunkId: 'm1:2' },
     ]));
 
-    vm(wrapper).removeSource('m1', 'Networks > HTTP');
-    await vm(wrapper).save();
+    (document.body.querySelector('[data-cy="RemoveSource"]') as HTMLElement).click();
+    await flushPromises();
+    (document.body.querySelector('[data-cy="SaveSources"]') as HTMLElement).click();
+    await flushPromises();
 
-    expect(update).toHaveBeenCalledTimes(1);
-    expect(update.mock.calls[0][0]).toBe(7);
-    expect(update.mock.calls[0][1].map((s: any) => s.sectionPath)).toEqual(['Networks > DNS']);
+    expect(update.mock.calls[0][0]).toBe(9);
+    expect(update.mock.calls[0][1].map((s: any) => s.chunkId)).toEqual(['m1:2']);
     expect(wrapper.emitted('saved')).toHaveLength(1);
     expect(wrapper.emitted('update:dialog')![0]).toEqual([false]);
   });
 
-  test('adding sections of a document offers only the ones not linked yet', async () => {
-    const update = vi.spyOn(RemoteServices, 'updateTopicSources').mockResolvedValue(new TopicNode());
-    const wrapper = await mountDialog(topic([{ materialId: 'm1', sectionPath: 'Networks' }]));
-
-    vm(wrapper).materialToAdd = 'm1';
-    await flushPromises();
-    expect(vm(wrapper).availableSections.map((s: GenerationSection) => s.path)).toEqual(['Networks > HTTP', 'Networks > DNS']);
-
-    vm(wrapper).sectionsToAdd = ['Networks > DNS'];
-    vm(wrapper).addSections();
-    await vm(wrapper).save();
-
-    expect(update.mock.calls[0][1].map((s: any) => [s.materialId, s.sectionPath])).toEqual([
-      ['m1', 'Networks'],
-      ['m1', 'Networks > DNS'],
-    ]);
-  });
-
-  test('changing the document to add from clears the sections picked for the other one', async () => {
-    const wrapper = await mountDialog(topic([]));
-    vm(wrapper).materialToAdd = 'm1';
-    await flushPromises();
-    vm(wrapper).sectionsToAdd = ['Networks > HTTP'];
-
-    vm(wrapper).materialToAdd = 'm2';
-    await flushPromises();
-
-    expect(vm(wrapper).sectionsToAdd).toEqual([]);
-  });
-
   test('a failed save is reported and the dialog stays open', async () => {
     vi.spyOn(RemoteServices, 'updateTopicSources').mockRejectedValue('Unable to connect to server');
-    const wrapper = await mountDialog(topic([{ materialId: 'm1', sectionPath: 'Networks' }]));
+    const wrapper = await mountDialog(topic([{ materialId: 'm1', chunkId: 'm1:1' }]));
 
-    await vm(wrapper).save();
+    (document.body.querySelector('[data-cy="RemoveSource"]') as HTMLElement).click();
+    await flushPromises();
+    (document.body.querySelector('[data-cy="SaveSources"]') as HTMLElement).click();
+    await flushPromises();
 
     expect(store.setError).toHaveBeenCalledWith('Unable to connect to server');
-    expect(wrapper.emitted('saved')).toBeUndefined();
     expect(wrapper.emitted('update:dialog')).toBeUndefined();
   });
 });

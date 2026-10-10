@@ -23,9 +23,9 @@ import Tournament from '@/models/user/Tournament';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
-import GenerationSection from '@/models/management/generation/GenerationSection';
+import MaterialChunk from '@/models/management/generation/MaterialChunk';
+import { LlmModelChoice, LlmModelTest, LlmSettings, LlmSettingsView, OllamaModels } from '@/models/admin/LlmSettings';
 import ReplySuggestion from '@/models/management/ReplySuggestion';
-import OutlineNode, { OutlineEdit, OutlineEditResult, Paragraph } from '@/models/management/generation/OutlineNode';
 import GenerationJob, { GenerationRequest } from '@/models/management/generation/GenerationJob';
 import QuestionGeneration from '@/models/management/generation/QuestionGeneration';
 import UserQuestionSubmissionInfo from '@/models/management/UserQuestionSubmissionInfo';
@@ -446,20 +446,10 @@ export default class RemoteServices {
       });
   }
 
-  // The course's topics as a tree, with the document sections each one is taught from (teachers)
+  // The course's topics as a tree, with the pieces of documents each one is taught from (teachers)
   static async getTopicTree(): Promise<TopicNode[]> {
     return httpClient
       .get(`/topics/courses/${useStore().getCurrentCourse!.courseId}/tree`)
-      .then((response) => response.data.map((node: any) => new TopicNode(node)))
-      .catch(async (error) => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  // Creates the topics of an accepted (and maybe edited) proposal and links them to their sections
-  static async saveTopicTree(nodes: TopicTreeNode[]): Promise<TopicNode[]> {
-    return httpClient
-      .put(`/topics/courses/${useStore().getCurrentCourse!.courseId}/tree`, { nodes })
       .then((response) => response.data.map((node: any) => new TopicNode(node)))
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
@@ -475,20 +465,11 @@ export default class RemoteServices {
       });
   }
 
+  // A piece that was under another topic moves to this one
   static async updateTopicSources(topicId: number, sources: TopicSource[]): Promise<TopicNode> {
     return httpClient
       .put(`/topics/${topicId}/sources`, sources)
       .then((response) => new TopicNode(response.data))
-      .catch(async (error) => {
-        throw Error(await this.errorMessage(error));
-      });
-  }
-
-  // A proposal of topics from the sections of a document; nothing is saved
-  static async getTopicSuggestion(materialId: string): Promise<TopicTreeNode[]> {
-    return httpClient
-      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/topic-suggestion`)
-      .then((response) => response.data.nodes.map((node: any) => new TopicTreeNode(node)))
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
@@ -1183,48 +1164,73 @@ export default class RemoteServices {
       });
   }
 
-  static async getGenerationSections(materialId: string): Promise<GenerationSection[]> {
+  // Administration: which models the question generation service uses (keys stay in its .env)
+  static async getLlmSettings(): Promise<LlmSettingsView> {
     return httpClient
-      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/sections`)
-      .then((response) => response.data.map((section: any) => new GenerationSection(section)))
+      .get('/admin/llm-settings')
+      .then((response) => response.data as LlmSettingsView)
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
 
-  // The headings of a material with the text under them, to edit its sections
-  static async getGenerationOutline(materialId: string): Promise<OutlineNode[]> {
+  static async saveLlmSettings(settings: LlmSettings): Promise<LlmSettingsView> {
     return httpClient
-      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/outline`)
-      .then((response) => response.data.map((node: any) => new OutlineNode(node)))
+      .put('/admin/llm-settings', settings)
+      .then((response) => response.data as LlmSettingsView)
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
 
-  // The paragraphs a section has of its own, to choose where to cut it
-  static async getGenerationSectionText(materialId: string, path: string): Promise<Paragraph[]> {
+  static async testLlmModel(model: LlmModelChoice): Promise<LlmModelTest> {
     return httpClient
-      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/section-text`, {
-        params: { path },
-      })
-      .then((response) => response.data as Paragraph[])
+      .post('/admin/llm-settings/test', model, { timeout: 120000 })
+      .then((response) => response.data as LlmModelTest)
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
 
-  // Topic links follow the sections that were renamed, merged or cut
-  static async editGenerationOutline(materialId: string, edit: OutlineEdit): Promise<OutlineEditResult> {
+  static async getOllamaModels(): Promise<OllamaModels> {
     return httpClient
-      .post(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/outline/edit`, edit)
-      .then((response) => new OutlineEditResult(response.data))
+      .get('/admin/llm-settings/ollama')
+      .then((response) => response.data as OllamaModels)
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });
   }
 
-  // Rebuilds the material's sections with the service's current parsers and heading cleanup
+  static async pullOllamaModel(model: string): Promise<OllamaModels> {
+    return httpClient
+      .post('/admin/llm-settings/ollama/pull', { provider: 'ollama', model })
+      .then((response) => response.data as OllamaModels)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // The pieces of a material in reading order, each with the topic it is under
+  static async getMaterialChunks(materialId: string): Promise<MaterialChunk[]> {
+    return httpClient
+      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/chunks`)
+      .then((response) => response.data.map((chunk: any) => new MaterialChunk(chunk)))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Puts every piece of a material where `nodes` say (creating the new topics); pieces in no node go under no topic
+  static async distributeMaterial(materialId: string, nodes: TopicTreeNode[]): Promise<TopicNode[]> {
+    return httpClient
+      .put(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/distribution`, { nodes })
+      .then((response) => response.data.map((node: any) => new TopicNode(node)))
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Reads the material again with the service's current parsers; its pieces leave their topics
   static async reprocessGenerationMaterial(materialId: string): Promise<GenerationMaterial> {
     return httpClient
       .post(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}/reprocess`)

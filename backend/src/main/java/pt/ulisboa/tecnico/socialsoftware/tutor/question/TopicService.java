@@ -31,11 +31,17 @@ import java.util.Map;
 import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 
 @Service
 public class TopicService {
+    // Siblings in their saved order; topics from before the tree existed after them, by name
+    private static final Comparator<Topic> TREE_ORDER =
+            Comparator.comparing((Topic topic) -> topic.getSequence() == null ? Integer.MAX_VALUE : topic.getSequence())
+                    .thenComparing(Topic::getName);
+
     @Autowired
     private QuestionService questionService;
 
@@ -81,7 +87,7 @@ public class TopicService {
         return new TopicDto(topic);
     }
 
-    /** The course's topics as a tree: siblings in their saved order, each with the document sections it is taught from. */
+    /** The course's topics as a tree: siblings in their saved order, each with the pieces of documents it is taught from. */
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
@@ -89,8 +95,7 @@ public class TopicService {
     public List<TopicNodeDto> findTopicTree(int courseId) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         return topicRepository.findTopics(course.getId()).stream()
-                .sorted(Comparator.comparing((Topic topic) -> topic.getSequence() == null ? Integer.MAX_VALUE : topic.getSequence())
-                        .thenComparing(Topic::getName))
+                .sorted(TREE_ORDER)
                 .map(TopicNodeDto::new)
                 .collect(Collectors.toList());
     }
@@ -115,19 +120,25 @@ public class TopicService {
         return new TopicNodeDto(topic);
     }
 
-    /** Replaces the document sections a topic is taught from. */
+    /**
+     * Replaces the pieces of documents a topic is taught from. A piece that was under another
+     * topic moves to this one, since a piece belongs to one topic at most.
+     */
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public TopicNodeDto updateTopicSources(Integer topicId, List<TopicSourceDto> sources) {
-        Topic topic = topicRepository.findById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
+        Topic topic = topicRepository.findTopicWithCourseById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
+        List<TopicSourceDto> newSources = sources == null ? List.of() : sources;
 
-        topic.replaceSources(sources == null ? List.of() : sources);
+        Set<String> chunkIds = newSources.stream().map(TopicSourceDto::getChunkId).collect(Collectors.toSet());
+        detachChunks(topicRepository.findTopics(topic.getCourse().getId()), chunkIds);
+        topic.replaceSources(newSources);
         return new TopicNodeDto(topic);
     }
 
-    /** The document sections of a topic and of every topic below it, without repeats. */
+    /** The pieces of documents under a topic and under every topic below it, in tree order. */
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
@@ -136,28 +147,26 @@ public class TopicService {
         Topic root = topicRepository.findTopicWithCourseById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
         List<Topic> courseTopics = topicRepository.findTopics(root.getCourse().getId());
 
-        Set<Integer> subtree = new HashSet<>(Set.of(root.getId()));
-        boolean grew = true;
-        while (grew) {
-            grew = false;
-            for (Topic topic : courseTopics) {
-                if (topic.getParentId() != null && subtree.contains(topic.getParentId()) && subtree.add(topic.getId()))
-                    grew = true;
-            }
-        }
-
-        Map<List<String>, TopicSourceDto> distinct = new LinkedHashMap<>();
-        courseTopics.stream()
-                .filter(topic -> subtree.contains(topic.getId()))
-                .sorted(Comparator.comparing(Topic::getId))
-                .flatMap(topic -> topic.getSources().stream())
-                .forEach(source -> distinct.putIfAbsent(List.of(source.getMaterialId(), source.getSectionPath()), new TopicSourceDto(source)));
+        Map<String, TopicSourceDto> distinct = new LinkedHashMap<>();
+        collectSources(root, courseTopics, distinct, new HashSet<>());
         return new ArrayList<>(distinct.values());
     }
 
+    // Depth first, children in their saved order, so the text of a chapter keeps the order of its sections
+    private void collectSources(Topic topic, List<Topic> courseTopics, Map<String, TopicSourceDto> into, Set<Integer> seen) {
+        if (!seen.add(topic.getId()))
+            return;
+        topic.getSources().forEach(source -> into.putIfAbsent(source.getChunkId(), new TopicSourceDto(source)));
+        courseTopics.stream()
+                .filter(child -> topic.getId().equals(child.getParentId()))
+                .sorted(TREE_ORDER)
+                .forEach(child -> collectSources(child, courseTopics, into, seen));
+    }
+
     /**
-     * Creates the topics of a tree the teacher accepted (or edited) and links them to their document
-     * sections, all or nothing. A node that names an existing topic only adds its sources to it.
+     * Creates the topics of a tree the teacher accepted (or edited) and puts their pieces of
+     * documents under them, all or nothing. A node that stands for an existing topic only gets its
+     * pieces. Pieces that were under other topics move.
      */
     @Retryable(
             value = {SQLException.class},
@@ -165,15 +174,111 @@ public class TopicService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<TopicNodeDto> saveTopicTree(int courseId, TopicTreeDto tree) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
-        List<TopicTreeDto.Node> nodes = tree == null || tree.getNodes() == null ? List.of() : tree.getNodes();
+        List<TopicTreeDto.Node> nodes = nodesOf(tree);
 
-        Map<String, TopicTreeDto.Node> byKey = new LinkedHashMap<>();
+        List<Topic> courseTopics = new ArrayList<>(topicRepository.findTopics(course.getId()));
+        detachChunks(courseTopics, chunkIdsOf(nodes));
+        return resolveTree(nodes, course, courseTopics);
+    }
+
+    /**
+     * Puts the pieces of one document under topics, replacing where they were before: a piece of
+     * the document that is in no node of `tree` ends up under no topic, so it is left out of
+     * question generation. `documentChunkIds` are the pieces the document has.
+     */
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<TopicNodeDto> distributeMaterial(int courseId, String materialId, Set<String> documentChunkIds, TopicTreeDto tree) {
+        Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
+        List<TopicTreeDto.Node> nodes = nodesOf(tree);
+
+        Set<String> placed = new HashSet<>();
         for (TopicTreeDto.Node node : nodes) {
-            if (node.getKey() == null || node.getKey().isBlank() || byKey.put(node.getKey(), node) != null)
-                throw new TutorException(TOPIC_TREE_INVALID, "a node has no key, or two nodes share one");
+            for (TopicSourceDto source : node.getSources() == null ? List.<TopicSourceDto>of() : node.getSources()) {
+                if (!materialId.equals(source.getMaterialId()) || !documentChunkIds.contains(source.getChunkId()))
+                    throw new TutorException(INVALID_TOPIC_SOURCE);
+                if (!placed.add(source.getChunkId()))
+                    throw new TutorException(TOPIC_TREE_INVALID, "a piece of the document is under two topics");
+            }
         }
 
         List<Topic> courseTopics = new ArrayList<>(topicRepository.findTopics(course.getId()));
+        detachChunks(courseTopics, documentChunkIds);
+        return resolveTree(nodes, course, courseTopics);
+    }
+
+    /** How many pieces of each document are under some topic of the course. */
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Map<String, Integer> countPlacedChunks(int courseId) {
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        topicRepository.findTopics(courseId).forEach(topic -> topic.getSources()
+                .forEach(source -> counts.merge(source.getMaterialId(), 1, Integer::sum)));
+        return counts;
+    }
+
+    /** The topic each piece of a document is under, by chunk id; pieces under no topic are absent. */
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public Map<String, Integer> findTopicsOfChunks(int courseId, String materialId) {
+        Map<String, Integer> topicOfChunk = new LinkedHashMap<>();
+        topicRepository.findTopics(courseId).forEach(topic -> topic.getSources().stream()
+                .filter(source -> materialId.equals(source.getMaterialId()))
+                .forEach(source -> topicOfChunk.put(source.getChunkId(), topic.getId())));
+        return topicOfChunk;
+    }
+
+    /** Takes a document's pieces from every topic, e.g. after the document was read again and its pieces changed. */
+    @Retryable(
+            value = {SQLException.class},
+            backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void detachMaterial(int courseId, String materialId) {
+        topicRepository.findTopics(courseId).forEach(topic -> topic.getSources().removeIf(source -> materialId.equals(source.getMaterialId())));
+    }
+
+    private List<TopicTreeDto.Node> nodesOf(TopicTreeDto tree) {
+        List<TopicTreeDto.Node> nodes = tree == null || tree.getNodes() == null ? List.of() : tree.getNodes();
+        Set<String> keys = new HashSet<>();
+        for (TopicTreeDto.Node node : nodes) {
+            if (node.getKey() == null || node.getKey().isBlank() || !keys.add(node.getKey()))
+                throw new TutorException(TOPIC_TREE_INVALID, "a node has no key, or two nodes share one");
+        }
+        return nodes;
+    }
+
+    private Set<String> chunkIdsOf(List<TopicTreeDto.Node> nodes) {
+        return nodes.stream()
+                .flatMap(node -> node.getSources() == null ? Stream.<TopicSourceDto>empty() : node.getSources().stream())
+                .map(TopicSourceDto::getChunkId)
+                .collect(Collectors.toSet());
+    }
+
+    /**
+     * Takes the given pieces away from every topic and writes that to the database at once: a piece
+     * belongs to one topic at most (unique chunk_id), and the new links are inserted before the
+     * old ones would otherwise be deleted.
+     */
+    private void detachChunks(List<Topic> courseTopics, Set<String> chunkIds) {
+        if (chunkIds.isEmpty())
+            return;
+        boolean changed = false;
+        for (Topic topic : courseTopics)
+            changed |= topic.removeSources(chunkIds);
+        if (changed)
+            topicRepository.flush();
+    }
+
+    private List<TopicNodeDto> resolveTree(List<TopicTreeDto.Node> nodes, Course course, List<Topic> courseTopics) {
+        Map<String, TopicTreeDto.Node> byKey = new LinkedHashMap<>();
+        nodes.forEach(node -> byKey.put(node.getKey(), node));
+
         Map<String, Topic> resolved = new LinkedHashMap<>();
         for (TopicTreeDto.Node node : nodes)
             resolveNode(node, byKey, resolved, new HashSet<>(), course, courseTopics);
@@ -213,7 +318,7 @@ public class TopicService {
         }
 
         if (node.getSources() != null)
-            node.getSources().forEach(source -> topic.addSource(source.getMaterialId(), source.getSectionPath()));
+            node.getSources().forEach(source -> topic.addSource(source.getMaterialId(), source.getChunkId()));
 
         visiting.remove(node.getKey());
         resolved.put(node.getKey(), topic);
@@ -279,7 +384,7 @@ public class TopicService {
         Topic topic = topicRepository.findById(topicId)
                 .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
 
-        // Its subtopics move up to where it was, so removing a chapter does not lose its sections
+        // Its subtopics move up to where it was; its own pieces of documents end up under no topic
         for (Topic child : topicRepository.findByParentId(topicId))
             child.setParentId(topic.getParentId());
 

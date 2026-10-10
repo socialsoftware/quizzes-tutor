@@ -4,7 +4,8 @@ from collections import Counter
 
 # PDF parsers turn every bold line into a heading, so the section paths of a textbook end up
 # full of "Example", "Exercises" or "Proof" at the level of the chapters. This module keeps
-# only the headings that structure the document, so sections can be picked by name.
+# only the headings that structure the document, so the headings shown next to each piece of
+# text read cleanly when the teacher puts the document under topics.
 
 _HEADING = re.compile(r"^(#{1,6})\s+(.*\S)\s*$")
 _FENCE = re.compile(r"^\s*```")
