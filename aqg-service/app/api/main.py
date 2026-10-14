@@ -1,3 +1,4 @@
+import logging
 import time
 import uuid
 from typing import Callable
@@ -15,7 +16,7 @@ from app.generation.synthesizer import ModelReplyError
 from app.ingestion.adapters import Parsers, UnsupportedFormat, adapter_for, build_parsers
 from app.llm.catalog import ModelCatalog
 from app.llm.ollama import OllamaClient
-from app.llm.provider import LiteLLMProvider, LLMProvider, build_provider
+from app.llm.provider import LiteLLMProvider, LLMProvider, LoggingProvider, build_provider
 from app.llm.settings import (
     LlmSettings,
     LlmSettingsStore,
@@ -73,10 +74,22 @@ def create_app(
     app.state.materials = materials
     app.state.llm_settings = llm_settings
 
-    def provider_for(request_model: ModelConfig | None, llm: LlmSettings) -> tuple[LLMProvider, str]:
-        """The model of the request if it names one, otherwise the settings' model and its fallbacks."""
+    if settings.log_prompts:
+        logging.getLogger("aqg.prompts").setLevel(logging.INFO)
+        if not logging.getLogger("aqg.prompts").handlers:
+            logging.getLogger("aqg.prompts").addHandler(logging.StreamHandler())
+
+    def provider_for(
+        request_model: ModelConfig | None, llm: LlmSettings, log_prompts: bool = False
+    ) -> tuple[LLMProvider, str]:
+        """The model of the request if it names one, otherwise the settings' model and its fallbacks.
+        With LOG_PROMPTS on, the questions' prompts are logged; those of discussions never are,
+        because they hold what a student wrote."""
         configs = [request_model] if request_model else llm.model_configs()
-        return build_provider(configs, provider_factory), configs[0].model
+        factory = provider_factory
+        if log_prompts and settings.log_prompts:
+            factory = lambda config: LoggingProvider(provider_factory(config))
+        return build_provider(configs, factory), configs[0].model
 
     def run_job(
         job_id: str, request: GenerationRequest, provider: LLMProvider, contexts: list[list[Chunk]], max_retries: int
@@ -174,7 +187,7 @@ def create_app(
         llm = llm_settings.get()
         contexts = plan_contexts(available, request.count, llm.context_chars, ranked)
 
-        provider, model_id = provider_for(request.model, llm)
+        provider, model_id = provider_for(request.model, llm, log_prompts=True)
         job = Job(
             id=uuid.uuid4().hex,
             prompt_version=PROMPT_VERSION,

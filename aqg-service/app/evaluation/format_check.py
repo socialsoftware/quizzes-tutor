@@ -7,6 +7,11 @@ from app.schema import GeneratedMCQ
 
 _MIN_STEM_LENGTH = 10
 
+# A correct option much longer than the distractors gives itself away (Tian et al., 2026): it is
+# flagged when it is this many times the average distractor and longer by at least this many characters
+_LENGTH_RATIO = 1.6
+_LENGTH_MARGIN = 20
+
 # The stem must stand on its own: students never see the material it came from
 _REFERS_TO_SOURCE = re.compile(
     r"\b(?:the|this|that)\s+(?:text|context|passage|excerpt|chunk|document)\b"
@@ -53,4 +58,20 @@ def check_format(question: GeneratedMCQ) -> list[str]:
         if _ENUMERATED_OPTION.match(option.content):
             problems.append(f"option {index + 1} starts with its own letter or number")
 
+    problems.extend(_option_length_problems(question))
     return problems
+
+
+def _option_length_problems(question: GeneratedMCQ) -> list[str]:
+    correct = [option for option in question.options if option.correct]
+    others = [len(option.content.strip()) for option in question.options if not option.correct]
+    if len(correct) != 1 or len(others) < 2:
+        return []  # a malformed draft is reported by the structure check
+    length = len(correct[0].content.strip())
+    average = sum(others) / len(others)
+    if average > 0 and length >= _LENGTH_RATIO * average and length - average >= _LENGTH_MARGIN:
+        return [
+            f"the correct option ({length} characters) is much longer than the distractors "
+            f"(about {average:.0f}): make the options similar in length so length does not give the answer away"
+        ]
+    return []

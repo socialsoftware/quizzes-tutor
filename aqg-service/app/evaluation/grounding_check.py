@@ -2,7 +2,7 @@ from dataclasses import dataclass, field
 
 from app.generation.prompts import GROUNDING_CHECK_SYSTEM, build_grounding_check_prompt
 from app.generation.synthesizer import ModelReplyError, parse_json_reply
-from app.llm.provider import LLMProvider
+from app.llm.provider import LLMProvider, precise
 from app.schema import Chunk, GeneratedMCQ, GroundingMode
 
 MIN_ANCHORED_DISTRACTORS = 2
@@ -19,7 +19,7 @@ def check_grounding(
 ) -> GroundingResult:
     prompt = build_grounding_check_prompt(chunks, question.model_dump_json(exclude={"difficulty", "topic"}))
     try:
-        report = parse_json_reply(provider.complete(GROUNDING_CHECK_SYSTEM, prompt))
+        report = parse_json_reply(precise(provider).complete(GROUNDING_CHECK_SYSTEM, prompt))
     except ModelReplyError as error:
         return GroundingResult(problems=[f"grounding check failed to run: {error}"])
 

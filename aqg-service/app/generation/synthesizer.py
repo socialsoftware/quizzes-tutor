@@ -36,9 +36,10 @@ def parse_json_reply(raw: str) -> dict:
 
 
 def synthesize(
-    request: GenerationRequest, provider: LLMProvider, feedback: str | None = None
+    request: GenerationRequest, provider: LLMProvider, feedback: str | None = None, system: str | None = None
 ) -> GeneratedMCQ:
-    raw = provider.complete(system_prompt(request.language), build_generation_prompt(request, feedback))
+    """`system` replaces the standard system prompt (used to compare prompt variants offline)."""
+    raw = provider.complete(system or system_prompt(request.language), build_generation_prompt(request, feedback))
     data = parse_json_reply(raw)
     if data.get("insufficient_context"):
         raise InsufficientContext(str(data.get("reason", "")))

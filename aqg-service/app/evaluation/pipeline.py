@@ -1,9 +1,12 @@
+import random
+
 from app.evaluation.distractor_check import check_distractors
 from app.evaluation.duplicate_check import find_duplicate
 from app.evaluation.format_check import check_format
 from app.evaluation.grounding_check import check_grounding
 from app.evaluation.structural_validator import validate_structure
 from app.generation.synthesizer import InsufficientContext, ModelReplyError, synthesize
+from app.generation.options import shuffle_options
 from app.llm.provider import LLMProvider
 from app.schema import GenerationOutcome, GenerationRequest, OutcomeStatus
 
@@ -13,12 +16,16 @@ def generate_verified_question(
     provider: LLMProvider,
     max_retries: int,
     seen_stems: list[str] | None = None,
+    system: str | None = None,
+    rng: random.Random | None = None,
 ) -> GenerationOutcome:
     """Generate one question and run it through the verification chain (structure, then
     grounding, then distractors; structure covers the regex format checks and repeats of
     `seen_stems`). A failed check sends its reasons back into the next
     attempt; once the retries are spent the draft is flagged for the teacher instead of
-    looping or being silently dropped."""
+    looping or being silently dropped. The options are shuffled in code right after each draft is
+    written, so the position of the correct one does not depend on the model (models favour some
+    positions), and every later check and message refers to the order the teacher will see."""
     failures: list[str] = []
     feedback: str | None = None
     last_draft = None
@@ -26,7 +33,7 @@ def generate_verified_question(
 
     for attempt in range(max_retries + 1):
         try:
-            draft = synthesize(request, provider, feedback)
+            draft = shuffle_options(synthesize(request, provider, feedback, system), rng)
         except InsufficientContext as error:
             failures.append(f"insufficient context: {error.reason}")
             return GenerationOutcome(

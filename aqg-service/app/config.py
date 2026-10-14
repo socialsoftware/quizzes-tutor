@@ -38,6 +38,8 @@ class Settings:
     discussion_suggestions: bool = True
     # Characters of course material per prompt; a topic with more text spreads it over the questions
     context_chars: int = 12000
+    # Writes every prompt sent to the model, and its reply, to the log (for debugging)
+    log_prompts: bool = False
 
     @staticmethod
     def from_env() -> "Settings":
@@ -58,6 +60,7 @@ class Settings:
             llm_thinking=os.getenv("LLM_THINKING", "false").lower() == "true",
             discussion_suggestions=os.getenv("DISCUSSION_SUGGESTIONS", "true").lower() != "false",
             context_chars=int(os.getenv("CONTEXT_CHARS", "12000")),
+            log_prompts=os.getenv("LOG_PROMPTS", "false").lower() == "true",
         )
 
 
