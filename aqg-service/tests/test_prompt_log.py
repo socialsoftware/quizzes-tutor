@@ -86,3 +86,46 @@ def test_the_log_says_which_model_of_a_fallback_chain_answered(caplog):
 
     assert "FAILED broken/model" in caplog.text
     assert "REPLY from fake/model" in caplog.text
+
+
+def test_each_call_says_which_step_of_the_job_made_it_and_failed_checks_are_noted(tmp_path, caplog):
+    implausible = {"also_correct": [], "implausible": [1]}
+    llm = FakeLLM([good_question(), GROUNDING, implausible, good_question(), GROUNDING, CLEAN_DISTRACTORS])
+    client = make_client(tmp_path, llm, log_prompts=True)
+
+    with caplog.at_level(logging.INFO, logger="aqg.prompts"):
+        client.post("/generate", json=BODY)
+
+    text = caplog.text
+    assert "question 1/1 › attempt 1 › write]" in text
+    assert "question 1/1 › attempt 1 › grounding check]" in text
+    assert "question 1/1 › attempt 1 › distractor check]" in text
+    assert "attempt 1 failed the checks: " in text
+    assert "question 1/1 › attempt 2 › rewrite after failed checks]" in text
+
+
+def test_the_log_says_where_a_call_goes_and_with_which_options(caplog):
+    from app.llm.provider import LiteLLMProvider
+    from app.schema import ModelConfig
+
+    class Remote(LiteLLMProvider):
+        def complete(self, system, user):
+            return "{}"
+
+    config = ModelConfig(model="ollama_chat/m", api_base="http://192.168.1.66:11434", options={"num_ctx": 8192})
+
+    with caplog.at_level(logging.INFO, logger="aqg.prompts"):
+        LoggingProvider(Remote(config)).complete("s", "u")
+
+    assert "PROMPT to ollama_chat/m @ http://192.168.1.66:11434" in caplog.text
+    assert "'num_ctx': 8192" in caplog.text
+
+
+def test_the_model_test_of_the_settings_page_is_logged(tmp_path, caplog):
+    client = make_client(tmp_path, FakeLLM([{"ok": True}]), log_prompts=True)
+
+    with caplog.at_level(logging.INFO, logger="aqg.prompts"):
+        response = client.post("/settings/llm/test", json={"provider": "ollama", "model": "m"})
+
+    assert response.json()["ok"] is True
+    assert "[model test]" in caplog.text and "REPLY from fake/model" in caplog.text

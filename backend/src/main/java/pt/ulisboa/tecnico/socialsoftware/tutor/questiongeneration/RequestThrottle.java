@@ -50,7 +50,7 @@ public class RequestThrottle {
     public void checkGeneration(Integer userId) {
         long wait = remaining("generate", userId, minGenerationMillis);
         if (wait > 0)
-            throw new TutorException(GENERATION_TOO_FAST, (wait + 999) / 1000);
+            throw new TutorException(GENERATION_TOO_FAST, (int) ((wait + 999) / 1000));
     }
 
     /** Counts a request that went through (a refused one does not make the teacher wait). */
@@ -62,7 +62,7 @@ public class RequestThrottle {
     public void checkAndRecordSuggestion(Integer userId) {
         long wait = remaining("suggest", userId, minSuggestionMillis);
         if (wait > 0)
-            throw new TutorException(SUGGESTION_TOO_FAST, (wait + 999) / 1000);
+            throw new TutorException(SUGGESTION_TOO_FAST, (int) ((wait + 999) / 1000));
         last.put(key("suggest", userId), System.currentTimeMillis());
     }
 

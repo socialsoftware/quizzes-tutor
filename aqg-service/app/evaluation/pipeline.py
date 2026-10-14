@@ -7,7 +7,7 @@ from app.evaluation.grounding_check import check_grounding
 from app.evaluation.structural_validator import validate_structure
 from app.generation.synthesizer import InsufficientContext, ModelReplyError, synthesize
 from app.generation.options import shuffle_options
-from app.llm.provider import LLMProvider
+from app.llm.provider import LLMProvider, log_note, log_step
 from app.schema import GenerationOutcome, GenerationRequest, OutcomeStatus
 
 
@@ -33,7 +33,8 @@ def generate_verified_question(
 
     for attempt in range(max_retries + 1):
         try:
-            draft = shuffle_options(synthesize(request, provider, feedback, system), rng)
+            with log_step(f"attempt {attempt + 1}"), log_step("write" if attempt == 0 else "rewrite after failed checks"):
+                draft = shuffle_options(synthesize(request, provider, feedback, system), rng)
         except InsufficientContext as error:
             failures.append(f"insufficient context: {error.reason}")
             return GenerationOutcome(
@@ -48,11 +49,13 @@ def generate_verified_question(
             if duplicate:
                 problems.append(f'the question repeats an existing one: "{duplicate[:200]}"')
             if not problems:
-                grounding = check_grounding(draft, request.chunks, request.grounding_mode, provider)
+                with log_step(f"attempt {attempt + 1}"), log_step("grounding check"):
+                    grounding = check_grounding(draft, request.chunks, request.grounding_mode, provider)
                 supporting = grounding.supporting_chunk_ids
                 problems = grounding.problems
             if not problems:
-                problems = check_distractors(draft, provider)
+                with log_step(f"attempt {attempt + 1}"), log_step("distractor check"):
+                    problems = check_distractors(draft, provider)
             if not problems:
                 return GenerationOutcome(
                     status=OutcomeStatus.OK,
@@ -62,6 +65,7 @@ def generate_verified_question(
                     source_chunk_ids=supporting,
                 )
 
+        log_note(f"attempt {attempt + 1} failed the checks: " + "; ".join(problems))
         failures.extend(f"attempt {attempt + 1}: {problem}" for problem in problems)
         feedback = "\n".join(f"- {problem}" for problem in problems)
 

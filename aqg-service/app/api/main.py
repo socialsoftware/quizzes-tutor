@@ -19,7 +19,7 @@ from app.ingestion.adapters import Parsers, UnsupportedFormat, adapter_for, buil
 from app.llm.catalog import ModelCatalog
 from app.llm.ollama import OllamaClient
 from app.limits import Limiters, RateLimited, RateLimitedProvider, same_secret
-from app.llm.provider import LiteLLMProvider, LLMProvider, LoggingProvider, build_provider
+from app.llm.provider import LiteLLMProvider, LLMProvider, LoggingProvider, build_provider, log_step
 from app.llm.settings import (
     LlmSettings,
     LlmSettingsStore,
@@ -145,9 +145,10 @@ def create_app(
                 previous = normalise(request.revision.previous.stem)
                 seen = [stem for stem in seen if normalise(stem) != previous]
             outcomes = []
-            for context in contexts:
+            for index, context in enumerate(contexts):
                 question_request = request.model_copy(update={"chunks": context})
-                outcome = generate_verified_question(question_request, provider, max_retries, seen)
+                with log_step(f"job {job_id[:8]}"), log_step(f"question {index + 1}/{len(contexts)}"):
+                    outcome = generate_verified_question(question_request, provider, max_retries, seen)
                 if outcome.question:
                     seen.append(outcome.question.stem)
                 outcomes.append(outcome)
@@ -310,9 +311,13 @@ def create_app(
         if choice.provider in missing_keys(llm.model_copy(update={"primary": choice, "fallbacks": []})):
             return ModelTestResult(ok=False, seconds=0, error=f"no API key for {choice.provider} in the service's environment")
         config = model_config_for(choice, llm).model_copy(update={"timeout": min(llm.timeout, 60)})
+        provider = provider_factory(config)
+        if settings.log_prompts:
+            provider = LoggingProvider(provider)
         started = time.perf_counter()
         try:
-            reply = provider_factory(config).complete("Reply with a JSON object and nothing else.", 'Return {"ok": true}')
+            with log_step("model test"):
+                reply = provider.complete("Reply with a JSON object and nothing else.", 'Return {"ok": true}')
         except Exception as error:  # the error is the answer to the test
             return ModelTestResult(ok=False, seconds=round(time.perf_counter() - started, 2), error=_short_error(error))
         return ModelTestResult(ok=True, seconds=round(time.perf_counter() - started, 2), reply=reply[:200])

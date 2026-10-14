@@ -1,3 +1,5 @@
+import contextlib
+import contextvars
 import logging
 import time
 from typing import Callable, Protocol
@@ -54,6 +56,28 @@ logger = logging.getLogger(__name__)
 
 prompt_logger = logging.getLogger("aqg.prompts")
 
+# Where in the work the next call comes from, e.g. ("job 1a2b3c4d", "question 2/5", "attempt 1", "write")
+_log_steps: contextvars.ContextVar[tuple[str, ...]] = contextvars.ContextVar("log_steps", default=())
+
+
+@contextlib.contextmanager
+def log_step(label: str):
+    """Names the calls made inside the block in the prompt log, nested under the steps already open."""
+    token = _log_steps.set((*_log_steps.get(), label))
+    try:
+        yield
+    finally:
+        _log_steps.reset(token)
+
+
+def log_note(message: str) -> None:
+    """A line of the prompt log about the work between two calls (the checks a draft failed...)."""
+    prompt_logger.info("NOTE [%s] %s", _current_step(), message)
+
+
+def _current_step() -> str:
+    return " › ".join(_log_steps.get()) or "call"
+
 
 class LoggingProvider:
     """Debugging aid (LOG_PROMPTS=true): writes to the log exactly what is sent to the model and
@@ -68,15 +92,30 @@ class LoggingProvider:
         return LoggingProvider(precise(self.provider) if temperature == 0 else self.provider)
 
     def complete(self, system: str, user: str) -> str:
-        prompt_logger.info("PROMPT to %s\n--- system ---\n%s\n--- user ---\n%s", self.model_id, system, user)
+        prompt_logger.info(
+            "%s\nPROMPT to %s%s [%s]\n--- system ---\n%s\n--- user ---\n%s",
+            "=" * 100, self.model_id, self._server(), _current_step(), system, user,
+        )
         started = time.monotonic()
         try:
             reply = self.provider.complete(system, user)
         except Exception as error:
-            prompt_logger.info("FAILED %s after %.1fs: %s", self.model_id, time.monotonic() - started, type(error).__name__)
+            prompt_logger.info(
+                "FAILED %s after %.1fs: %s: %s",
+                self.model_id, time.monotonic() - started, type(error).__name__, str(error)[:500],
+            )
             raise
         prompt_logger.info("REPLY from %s in %.1fs (%d characters)\n%s", self.model_id, time.monotonic() - started, len(reply), reply)
         return reply
+
+    def _server(self) -> str:
+        """Where the call goes (an Ollama on another machine...) and the options sent with it."""
+        config = getattr(self.provider, "config", None)
+        if config is None:
+            return ""
+        server = f" @ {config.api_base}" if config.api_base else ""
+        options = {"temperature": config.temperature, **(config.options or {})}
+        return f"{server} {options}"
 
 
 class FallbackProvider:

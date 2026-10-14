@@ -87,7 +87,7 @@ Do lado do backend (`application-prod.properties`): `aqg.service.apikey` (igual 
 - **Pedidos ficam `FAILED` com `RateLimited`** — o pedido esperou mais de 10 minutos por uma vaga no limite por minuto: há mais trabalho do que o limite deixa passar. Pede menos perguntas de cada vez, ou sobe `LLM_REQUESTS_PER_MINUTE` só se a tua conta do fornecedor o permitir.
 - **`FAILED` depois de reiniciar o serviço** — é esperado: os pedidos a meio morrem com o processo e são marcados como falhados.
 - **Um fornecedor "sem chave" não se deixa escolher** — define a chave no `.env` e reinicia o serviço.
-- **Ver o que vai para o modelo** — `LOG_PROMPTS=true`, reiniciar, e ler o log (`docker compose logs aqg-service`).
+- **Ver o que vai para o modelo** — `LOG_PROMPTS=true`, reiniciar, e ler o log (`docker compose logs aqg-service`). Cada chamada diz o modelo, o servidor (um Ollama noutra máquina, por exemplo), as opções (temperatura, `num_ctx`…) e o passo que a fez, como `[job 1a2b3c4d › question 2/5 › attempt 1 › distractor check]`; as linhas `NOTE` dizem porque uma tentativa chumbou nas verificações. O botão **Test** da página do administrador também aparece no log.
 
 ## 3. Segurança
 

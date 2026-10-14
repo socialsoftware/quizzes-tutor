@@ -20,6 +20,7 @@ class RequestThrottleTest extends SpockTest {
     def teacher
     def other
     def topic
+    def jobs = 0
 
     def setup() {
         aqgClient.reset()
@@ -44,6 +45,8 @@ class RequestThrottleTest extends SpockTest {
     }
 
     def ask(teacherId) {
+        // each job of the service has its own id (aqg_job_id is unique)
+        aqgClient.generateReply = new AqgJobDto("aqg-${++jobs}".toString(), 'PENDING', 'mcq-v3', 'model', 'STRICT', [], null)
         def dto = new GenerationRequestDto()
         dto.setTopicId(topic.getId())
         dto.setCount(1)
@@ -184,7 +187,7 @@ class RequestThrottleTest extends SpockTest {
         def first = ask(teacher.getId())
         ask(teacher.getId())
         def job = generationJobRepository.findById(first.getId()).get()
-        job.setStatus(GenerationJob.Status.IMPORTED)
+        job.markImported(1, 0)
 
         when:
         ask(teacher.getId())
