@@ -16,6 +16,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.ProviderMo
 /** Stands in for the question generation service: tests set the replies and inspect the calls. */
 class StubAqgClient implements AqgClient {
     AqgJobDto generateReply
+    // when set, generate() fails with it (the service refusing a request, being down...)
+    RuntimeException generateFailure
     AqgJobDto jobReply
     List<AqgMaterialDto> materials = []
     // material id -> its pieces
@@ -34,6 +36,7 @@ class StubAqgClient implements AqgClient {
     /** The bean outlives each test (the Spring context is cached), so tests start from a clean stub. */
     void reset() {
         generateReply = null
+        generateFailure = null
         jobReply = null
         materials = []
         chunks = [:]
@@ -85,6 +88,8 @@ class StubAqgClient implements AqgClient {
     @Override
     AqgJobDto generate(AqgGenerateRequest request) {
         lastGenerateRequest = request
+        if (generateFailure != null)
+            throw generateFailure
         return generateReply
     }
 

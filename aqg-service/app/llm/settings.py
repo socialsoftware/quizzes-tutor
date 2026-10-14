@@ -5,6 +5,7 @@ in the database and win over the environment. API keys are never part of them: t
 environment (OPENAI_API_KEY, ANTHROPIC_API_KEY, NVIDIA_NIM_API_KEY), and only whether each one is
 set is ever shown.
 """
+import ipaddress
 import os
 from typing import Literal
 from urllib.parse import urlparse
@@ -32,6 +33,18 @@ MAX_FALLBACKS = 5
 # that have them, such as gpt-oss; the others just think or not)
 OllamaThinking = Literal["default", "off", "low", "medium", "high"]
 SETTING_KEY = "llm"
+
+
+def _is_metadata_address(host: str) -> bool:
+    """The address of a cloud instance's metadata service or another link-local/unspecified one: the
+    administrator can point the service at a server, and these would hand out the machine's credentials."""
+    if host in ("metadata.google.internal", "metadata"):
+        return True
+    try:
+        address = ipaddress.ip_address(host)
+    except ValueError:
+        return False
+    return address.is_link_local or address.is_unspecified or address.is_multicast
 
 
 class CamelModel(BaseModel):
@@ -80,6 +93,10 @@ class LlmSettings(CamelModel):
         parsed = urlparse(url)
         if parsed.scheme not in ("http", "https") or not parsed.netloc:
             raise ValueError("the Ollama address must be an http(s) URL, e.g. http://ollama:11434")
+        if parsed.username or parsed.password:
+            raise ValueError("the Ollama address cannot contain a user name or password")
+        if _is_metadata_address(parsed.hostname or ""):
+            raise ValueError("that address is not allowed (link-local and cloud metadata addresses)")
         return url
 
     @staticmethod

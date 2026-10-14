@@ -29,3 +29,12 @@ spring.mail.properties.mail.smtp.starttls.enable=true
 
 ## Fraud service
 fraud.service.url=http://<FRAUD SERVICE HOST>:<FRAUD SERVICE PORT>/
+
+## Question generation service (aqg-service)
+aqg.service.url=http://<AQG SERVICE HOST>:8000
+# Must be the same value as AQG_API_KEY of the aqg-service. Use a long random string.
+aqg.service.apikey=<AQG API KEY>
+# Limits per teacher (in this backend process)
+generation.min-seconds-between-requests=10
+generation.min-seconds-between-suggestions=5
+generation.max-pending-jobs-per-teacher=2

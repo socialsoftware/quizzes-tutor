@@ -1,3 +1,6 @@
+from datetime import datetime, timezone
+
+from sqlalchemy import func, select
 from sqlalchemy.orm import sessionmaker
 
 from app.db import JobRow
@@ -10,10 +13,12 @@ class JobStore:
     def __init__(self, session_factory: sessionmaker) -> None:
         self._session = session_factory
 
-    def add(self, job: Job) -> None:
+    def add(self, job: Job, course_id: int | None = None, question_count: int = 0) -> None:
         with self._session.begin() as session:
             session.add(
                 JobRow(
+                    course_id=course_id,
+                    question_count=question_count,
                     id=job.id,
                     status=job.status.value,
                     prompt_version=job.prompt_version,
@@ -37,6 +42,37 @@ class JobStore:
                 outcomes=[GenerationOutcome.model_validate(o) for o in row.outcomes],
                 error=row.error,
             )
+
+    def pending(self) -> tuple[int, int]:
+        """Jobs waiting or being written, and the questions they still owe."""
+        unfinished = (JobStatus.PENDING.value, JobStatus.RUNNING.value)
+        with self._session() as session:
+            jobs, questions = session.execute(
+                select(func.count(JobRow.id), func.coalesce(func.sum(JobRow.question_count), 0)).where(JobRow.status.in_(unfinished))
+            ).one()
+        return int(jobs), int(questions)
+
+    def requested_today(self, course_id: int) -> int:
+        """Questions the course asked for since 00:00 UTC (failed jobs count: they used the model)."""
+        midnight = datetime.now(timezone.utc).replace(hour=0, minute=0, second=0, microsecond=0)
+        with self._session() as session:
+            total = session.execute(
+                select(func.coalesce(func.sum(JobRow.question_count), 0)).where(
+                    JobRow.course_id == course_id, JobRow.created_at >= midnight
+                )
+            ).scalar_one()
+        return int(total)
+
+    def fail_unfinished(self, reason: str) -> int:
+        """At start-up: a job that was waiting or running died with the previous process, and
+        would otherwise count against the queue for ever."""
+        unfinished = (JobStatus.PENDING.value, JobStatus.RUNNING.value)
+        with self._session.begin() as session:
+            rows = list(session.scalars(select(JobRow).where(JobRow.status.in_(unfinished))))
+            for row in rows:
+                row.status = JobStatus.FAILED.value
+                row.error = reason
+        return len(rows)
 
     def set_running(self, job_id: str) -> None:
         self._update(job_id, status=JobStatus.RUNNING.value)

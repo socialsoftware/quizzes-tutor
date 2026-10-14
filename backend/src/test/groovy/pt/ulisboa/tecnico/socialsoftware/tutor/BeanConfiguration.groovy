@@ -27,6 +27,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.LlmSettingsService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.QuestionGenerationService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.RequestThrottle
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.StubAqgClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService
@@ -151,6 +152,12 @@ class BeanConfiguration {
     @Bean
     StubAqgClient aqgClient() {
         return new StubAqgClient()
+    }
+
+    @Bean
+    RequestThrottle requestThrottle() {
+        // no pauses and no cap, so tests that ask for several jobs are not held back
+        return new RequestThrottle(0, 0, 1000)
     }
 
     @Bean

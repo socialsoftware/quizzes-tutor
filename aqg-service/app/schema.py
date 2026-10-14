@@ -55,13 +55,15 @@ class Revision(BaseModel):
 
 
 MAX_CHUNK_IDS = 5000
+# Questions one job may ask for; more at once only lengthens the wait and the queue
+MAX_QUESTIONS_PER_JOB = 10
 
 
 class GenerationRequest(BaseModel):
     course_id: int
     topic: str
     difficulty: Difficulty = Difficulty.MEDIUM
-    count: int = Field(default=1, ge=1, le=20)
+    count: int = Field(default=1, ge=1, le=MAX_QUESTIONS_PER_JOB)
     grounding_mode: GroundingMode = GroundingMode.STRICT
     # Text given inline (tests, tools); the Tutor sends chunk_ids instead
     chunks: list[Chunk] = Field(default_factory=list)

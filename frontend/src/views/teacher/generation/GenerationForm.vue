@@ -66,7 +66,7 @@
             v-model.number="count"
             type="number"
             min="1"
-            max="20"
+            max="10"
             label="Number of questions"
             :error-messages="countError"
             data-cy="GenerationCount"
@@ -115,7 +115,7 @@ interface TopicItem {
 }
 
 const MIN_COUNT = 1;
-const MAX_COUNT = 20;
+const MAX_COUNT = 10;
 const MAX_FOCUS = 500;
 const SAME_AS_MATERIALS = 'Same as the materials';
 

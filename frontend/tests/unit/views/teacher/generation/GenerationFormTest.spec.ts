@@ -79,11 +79,11 @@ describe('GenerationForm', () => {
     expect(vm(wrapper).topicHint).toBe('Written from 3 piece(s) of 2 document(s)');
   });
 
-  test('rejects a number of questions outside 1 to 20', async () => {
+  test('rejects a number of questions outside 1 to 10', async () => {
     const wrapper = await mountForm();
     vm(wrapper).topicId = 5;
 
-    for (const count of [0, 21, 2.5]) {
+    for (const count of [0, 11, 20, 2.5]) {
       vm(wrapper).count = count;
       await flushPromises();
       expect(generateButton(wrapper).attributes('disabled')).toBeDefined();

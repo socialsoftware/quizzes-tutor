@@ -57,6 +57,9 @@ class JobRow(Base):
     outcomes: Mapped[list] = mapped_column(JSON, default=list)
     error: Mapped[str | None] = mapped_column(Text, nullable=True)
     created_at: Mapped[datetime] = mapped_column(DateTime(timezone=True), default=lambda: datetime.now(timezone.utc))
+    # Who asked for how many questions, to count the day's quota and the queue
+    course_id: Mapped[int | None] = mapped_column(Integer, nullable=True, index=True)
+    question_count: Mapped[int | None] = mapped_column(Integer, nullable=True)
 
 
 def normalise_url(url: str) -> str:

@@ -26,6 +26,10 @@ public class FraudController {
     @Value("${fraud.service.url}")
     private String fraudServiceURL;
 
+    // Sent in every call: the fraud service only answers to the backend
+    @Value("${fraud.service.apikey:}")
+    private String fraudServiceApiKey;
+
     @Autowired
     private QuizService quizService;
 
@@ -33,13 +37,13 @@ public class FraudController {
     private AnswerService answerService;
 
     @GetMapping("/fraud/execution/{executionId}")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public QuizFraudTimeScoreDto getCourseExecutionFraudScores(@PathVariable Integer executionId) {
         return getFraudTimeScoresFromURI("/execution/" + executionId.toString());
     }
 
     @GetMapping("/fraud/execution/{executionId}/user/{userId}")
-    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'EXECUTION.ACCESS')")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public QuizFraudTimeScoreDto getUserFraudScores(@PathVariable Integer executionId, @PathVariable Integer userId) {
         return getFraudTimeScoresFromURI("/execution/" + executionId.toString() + "/user/" + userId.toString());
     }
@@ -60,17 +64,24 @@ public class FraudController {
     }
 
     private QuizFraudTimeScoreDto getFraudTimeScoresFromURI(String uri) {
-        WebClient client = WebClient.create(fraudServiceURL);
+        WebClient client = fraudClient();
         return client.get().uri(uri).accept(MediaType.APPLICATION_JSON).retrieve()
                 .bodyToMono(new ParameterizedTypeReference<QuizFraudTimeScoreDto>() {
                 }).block();
     }
 
     private QuizFraudCommunicationScoreDto getFraudCommunicationScoresFromURI(String uri) {
-        WebClient client = WebClient.create(fraudServiceURL);
+        WebClient client = fraudClient();
         return client.get().uri(uri).accept(MediaType.APPLICATION_JSON).retrieve()
                 .bodyToMono(new ParameterizedTypeReference<QuizFraudCommunicationScoreDto>() {
                 }).block();
+    }
+
+    private WebClient fraudClient() {
+        WebClient.Builder builder = WebClient.builder().baseUrl(fraudServiceURL);
+        if (fraudServiceApiKey != null && !fraudServiceApiKey.isBlank())
+            builder.defaultHeader("X-API-Key", fraudServiceApiKey);
+        return builder.build();
     }
 
     private void validateQuizId(Integer quizId) {

@@ -49,11 +49,15 @@ public class WebClientAqgClient implements AqgClient {
 
     private final WebClient client;
 
-    public WebClientAqgClient(@Value("${aqg.service.url:http://aqg-service:8000}") String baseUrl) {
-        this.client = WebClient.builder()
+    public WebClientAqgClient(@Value("${aqg.service.url:http://aqg-service:8000}") String baseUrl,
+                              @Value("${aqg.service.apikey:}") String apiKey) {
+        WebClient.Builder builder = WebClient.builder()
                 .baseUrl(baseUrl)
-                .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(MAX_REPLY_BYTES))
-                .build();
+                .codecs(codecs -> codecs.defaultCodecs().maxInMemorySize(MAX_REPLY_BYTES));
+        // The service only answers to the backend: it checks this key on every call
+        if (apiKey != null && !apiKey.isBlank())
+            builder.defaultHeader("X-API-Key", apiKey);
+        this.client = builder.build();
     }
 
     @Override

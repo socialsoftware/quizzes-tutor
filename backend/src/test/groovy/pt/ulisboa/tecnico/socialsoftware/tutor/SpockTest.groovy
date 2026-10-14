@@ -40,6 +40,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.*
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.AqgClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.LlmSettingsService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.QuestionGenerationService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.RequestThrottle
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.GenerationJobRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.QuestionGenerationRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
@@ -277,6 +278,9 @@ class SpockTest extends Specification {
 
     @Autowired
     QuestionGenerationService questionGenerationService
+
+    @Autowired
+    RequestThrottle requestThrottle
 
     @Autowired
     LlmSettingsService llmSettingsService

@@ -9,11 +9,27 @@ import fraud_times.quiz_orm as quiz_orm
 import get_scores as get_scores
 import create_dataset2 as create_dataset
 import json
+import hmac
 
 
 # Does not override env vars, so docker-compose shall set env vars if run. Otherwise, sets env vars from .env file
 load_dotenv()
 app = flask.Flask(__name__)
+
+FRAUD_API_KEY = os.environ.get("FRAUD_API_KEY", "")
+if not FRAUD_API_KEY:
+    print("WARNING: FRAUD_API_KEY is not set: anyone who can reach this service can read students' data.", file=sys.stderr)
+
+
+@app.before_request
+def only_the_backend():
+    """Every call must carry the key the backend was given (and nothing else is exposed)."""
+    if not FRAUD_API_KEY:
+        return None
+    given = flask.request.headers.get("X-API-Key", "")
+    if not hmac.compare_digest(given.encode(), FRAUD_API_KEY.encode()):
+        return flask.jsonify({"detail": "missing or wrong API key"}), 401
+    return None
 
 
 @app.route('/time/quiz/<int:quizId>')

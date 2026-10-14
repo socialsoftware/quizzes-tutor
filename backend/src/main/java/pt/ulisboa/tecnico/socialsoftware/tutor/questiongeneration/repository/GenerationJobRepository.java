@@ -21,4 +21,7 @@ public interface GenerationJobRepository extends JpaRepository<GenerationJob, In
     Optional<GenerationJob> findByIdForUpdate(@Param("id") Integer id);
 
     List<GenerationJob> findByCourseExecutionIdOrderByIdDesc(Integer courseExecutionId);
+
+    // Jobs a teacher asked for that nobody has collected yet (to stop a teacher piling them up)
+    long countByRequesterIdAndStatusAndCreationDateAfter(Integer requesterId, GenerationJob.Status status, java.time.LocalDateTime after);
 }

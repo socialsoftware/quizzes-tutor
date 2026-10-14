@@ -109,7 +109,8 @@ class QuestionGenerationTest extends SpockTest {
         where:
         count | which     || errorMessage
         0     | 'http'    || GENERATION_INVALID_COUNT
-        21    | 'http'    || GENERATION_INVALID_COUNT
+        11    | 'http'    || GENERATION_INVALID_COUNT
+        20    | 'http'    || GENERATION_INVALID_COUNT
         2     | 'none'    || GENERATION_MISSING_TOPIC
         2     | 'unknown' || TOPIC_NOT_FOUND
         2     | 'empty'   || GENERATION_TOPIC_WITHOUT_SOURCES

@@ -23,6 +23,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicTreeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.QuestionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.GenerationJob;
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.*;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.GenerationJobRepository;
@@ -49,7 +50,10 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
  */
 @Service
 public class QuestionGenerationService {
-    private static final int MAX_QUESTIONS_PER_JOB = 20;
+    // More at once only lengthens the wait and the queue of the generation service
+    private static final int MAX_QUESTIONS_PER_JOB = 10;
+    // A job nobody collected for this long no longer counts as being written
+    private static final int PENDING_WINDOW_MINUTES = 15;
     private static final int DEFAULT_QUESTIONS_PER_JOB = 5;
     private static final int MAX_TITLE_LENGTH = 100;
     private static final int MAX_LANGUAGE_LENGTH = 40;
@@ -72,6 +76,9 @@ public class QuestionGenerationService {
 
     @Autowired
     private TopicRepository topicRepository;
+
+    @Autowired
+    private RequestThrottle requestThrottle;
 
     @Autowired
     private QuestionService questionService;
@@ -154,6 +161,7 @@ public class QuestionGenerationService {
         int count = request.getCount() == null ? DEFAULT_QUESTIONS_PER_JOB : request.getCount();
         if (count < 1 || count > MAX_QUESTIONS_PER_JOB)
             throw new TutorException(GENERATION_INVALID_COUNT);
+        checkNotTooMany(requesterId);
 
         if (request.getTopicId() == null)
             throw new TutorException(GENERATION_MISSING_TOPIC);
@@ -181,6 +189,7 @@ public class QuestionGenerationService {
         job.setSource(materialIdsOf(sources), language);
         job.setFocus(focus);
         generationJobRepository.save(job);
+        requestThrottle.recordGeneration(requesterId);
         return new GenerationJobDto(job);
     }
 
@@ -203,6 +212,7 @@ public class QuestionGenerationService {
         GenerationJob original = questionGeneration.getJob();
         if (original == null)
             throw new TutorException(GENERATION_CANNOT_REGENERATE);
+        checkNotTooMany(userId);
         Integer courseId = questionGeneration.getCourseExecution().getCourse().getId();
         List<String> chunkIds = regenerationChunks(questionGeneration, original);
 
@@ -226,6 +236,7 @@ public class QuestionGenerationService {
         job.setRevisionOfId(questionGenerationId);
         generationJobRepository.save(job);
 
+        requestThrottle.recordGeneration(userId);
         questionGeneration.startRegeneration(job.getId());
         return new QuestionGenerationDto(questionGeneration);
     }
@@ -378,6 +389,15 @@ public class QuestionGenerationService {
      * The text to rewrite a question from: the pieces it was found to rest on, or else what is
      * under its topic now.
      */
+    /** A teacher cannot send request after request: a pause between them and a cap on the ones still being written. */
+    private void checkNotTooMany(Integer teacherId) {
+        requestThrottle.checkGeneration(teacherId);
+        long pending = generationJobRepository.countByRequesterIdAndStatusAndCreationDateAfter(
+                teacherId, GenerationJob.Status.REQUESTED, DateHandler.now().minusMinutes(PENDING_WINDOW_MINUTES));
+        if (pending >= requestThrottle.getMaxPendingJobs())
+            throw new TutorException(GENERATION_TOO_MANY_PENDING, requestThrottle.getMaxPendingJobs());
+    }
+
     private List<String> regenerationChunks(QuestionGeneration questionGeneration, GenerationJob original) {
         if (!questionGeneration.getSourceChunkIds().isEmpty())
             return new ArrayList<>(questionGeneration.getSourceChunkIds());

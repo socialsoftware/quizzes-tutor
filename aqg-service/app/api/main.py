@@ -1,9 +1,11 @@
 import logging
+import threading
 import time
 import uuid
 from typing import Callable
 
-from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, UploadFile
+from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi.responses import JSONResponse
 
 from app.config import Settings
 from app.db import create_session_factory
@@ -16,6 +18,7 @@ from app.generation.synthesizer import ModelReplyError
 from app.ingestion.adapters import Parsers, UnsupportedFormat, adapter_for, build_parsers
 from app.llm.catalog import ModelCatalog
 from app.llm.ollama import OllamaClient
+from app.limits import Limiters, RateLimited, RateLimitedProvider, same_secret
 from app.llm.provider import LiteLLMProvider, LLMProvider, LoggingProvider, build_provider
 from app.llm.settings import (
     LlmSettings,
@@ -48,6 +51,8 @@ ProviderFactory = Callable[[ModelConfig], LLMProvider]
 
 MAX_UPLOAD_BYTES = 100 * 1024 * 1024
 
+logger = logging.getLogger(__name__)
+
 
 def create_app(
     settings: Settings | None = None,
@@ -70,8 +75,30 @@ def create_app(
     catalog = catalog or ModelCatalog(ollama)
     # Model -> state of its last download to the Ollama server ("downloading", "done" or the error)
     ollama_pulls: dict[str, str] = {}
-    app = FastAPI(title="Quizzes Tutor AQG service")
+    # With an API key the interactive documentation is off: nobody browses it, and it lists every endpoint
+    docs = {} if not settings.api_key else {"docs_url": None, "redoc_url": None, "openapi_url": None}
+    app = FastAPI(title="Quizzes Tutor AQG service", **docs)
     app.state.materials = materials
+    app.state.jobs = jobs
+    app.state.session_factory = session_factory
+    limiters = Limiters(settings.llm_requests_per_minute)
+    # A job waiting for a turn holds a worker thread, which is why the number of queued jobs is capped
+    job_slots = threading.BoundedSemaphore(max(settings.max_concurrent_jobs, 1))
+    admission = threading.Lock()
+    died = jobs.fail_unfinished("The service was restarted before the job finished")
+    if died:
+        logger.warning("%d unfinished job(s) of the previous run were marked as failed", died)
+
+    if settings.api_key:
+
+        @app.middleware("http")
+        async def require_api_key(request: Request, call_next):
+            if request.url.path != "/health" and not same_secret(request.headers.get("x-api-key"), settings.api_key):
+                return JSONResponse({"detail": "missing or wrong API key"}, status_code=401)
+            return await call_next(request)
+
+    else:
+        logger.warning("AQG_API_KEY is not set: anyone who can reach this service can use it. Set it in production.")
     app.state.llm_settings = llm_settings
 
     if settings.log_prompts:
@@ -80,18 +107,33 @@ def create_app(
             logging.getLogger("aqg.prompts").addHandler(logging.StreamHandler())
 
     def provider_for(
-        request_model: ModelConfig | None, llm: LlmSettings, log_prompts: bool = False
+        request_model: ModelConfig | None, llm: LlmSettings, log_prompts: bool = False, interactive: bool = False
     ) -> tuple[LLMProvider, str]:
-        """The model of the request if it names one, otherwise the settings' model and its fallbacks.
-        With LOG_PROMPTS on, the questions' prompts are logged; those of discussions never are,
-        because they hold what a student wrote."""
+        """The settings' model and its fallbacks. With LOG_PROMPTS on, the questions' prompts are
+        logged; those of discussions never are, because they hold what a student wrote. Cloud
+        models draw on a per-minute budget; a job waits for it, an `interactive` call (a teacher
+        pressing a button) gives up quickly and the teacher is told to try again."""
+        if request_model is not None and not settings.allow_request_model:
+            raise HTTPException(status_code=422, detail="choosing the model per request is not allowed")
         configs = [request_model] if request_model else llm.model_configs()
-        factory = provider_factory
-        if log_prompts and settings.log_prompts:
-            factory = lambda config: LoggingProvider(provider_factory(config))
-        return build_provider(configs, factory), configs[0].model
+        wait = settings.interactive_rate_limit_wait if interactive else settings.rate_limit_wait
+
+        def build(config: ModelConfig) -> LLMProvider:
+            provider = provider_factory(config)
+            if log_prompts and settings.log_prompts:
+                provider = LoggingProvider(provider)
+            limiter = limiters.for_model(config.model)
+            return RateLimitedProvider(provider, limiter, wait) if limiter else provider
+
+        return build_provider(configs, build), configs[0].model
 
     def run_job(
+        job_id: str, request: GenerationRequest, provider: LLMProvider, contexts: list[list[Chunk]], max_retries: int
+    ) -> None:
+        with job_slots:  # at most MAX_CONCURRENT_JOBS jobs write at the same time; the rest wait here
+            _write_job(job_id, request, provider, contexts, max_retries)
+
+    def _write_job(
         job_id: str, request: GenerationRequest, provider: LLMProvider, contexts: list[list[Chunk]], max_retries: int
     ) -> None:
         jobs.set_running(job_id)
@@ -194,7 +236,27 @@ def create_app(
             model_id=model_id,
             grounding_mode=request.grounding_mode,
         )
-        jobs.add(job)
+        with admission:  # check and register together, so two requests cannot both take the last place
+            queued_jobs, queued_questions = jobs.pending()
+            if queued_jobs >= settings.max_queued_jobs or queued_questions + request.count > settings.max_queued_questions:
+                raise HTTPException(
+                    status_code=429,
+                    detail="The question generation queue is full. Try again in a few minutes.",
+                    headers={"Retry-After": "120"},
+                )
+            quota = settings.daily_questions_per_course
+            if quota > 0:
+                used = jobs.requested_today(request.course_id)
+                if used + request.count > quota:
+                    raise HTTPException(
+                        status_code=429,
+                        detail=(
+                            f"This course has already requested {used} of its {quota} questions for today. "
+                            "The count starts again at midnight UTC."
+                        ),
+                        headers={"Retry-After": "3600"},
+                    )
+            jobs.add(job, request.course_id, request.count)
         background.add_task(run_job, job.id, request, provider, contexts, llm.max_retries)
         return job
 
@@ -212,9 +274,13 @@ def create_app(
                 raise HTTPException(status_code=422, detail=str(error)) from error
             chunks = retriever.top_k(f"{request.question_stem} {request.student_message}", available, request.top_k)
 
-        provider, _ = provider_for(request.model, llm)
+        provider, _ = provider_for(request.model, llm, interactive=True)
         try:
             reply = suggest_reply(request, chunks, provider)
+        except RateLimited as error:
+            raise HTTPException(
+                status_code=429, detail="The model is busy right now. Try again in a minute.", headers={"Retry-After": "60"}
+            ) from error
         except ModelReplyError as error:
             raise HTTPException(status_code=502, detail=f"the model gave no usable reply ({error})") from error
         except Exception as error:  # a provider outage must not look like a bug here

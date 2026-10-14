@@ -9,6 +9,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionApplicationalService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.DiscussionSuggestionService;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.RequestThrottle;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.DiscussionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.discussion.dto.ReplyDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgDiscussionSuggestionDto;
@@ -26,6 +27,9 @@ public class DiscussionController {
 
     @Autowired
     private DiscussionSuggestionService discussionSuggestionService;
+
+    @Autowired
+    private RequestThrottle requestThrottle;
 
     @GetMapping("/discussions/courseexecutions/{courseExecutionId}/users")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#courseExecutionId, 'EXECUTION.ACCESS')")
@@ -73,7 +77,9 @@ public class DiscussionController {
     /** A draft for the teacher to edit: it is not saved, a reply only exists when the teacher sends it. */
     @PostMapping(value = "/discussions/{discussionId}/replies/suggest")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#discussionId, 'DISCUSSION.ACCESS')")
-    public AqgDiscussionSuggestionDto suggestReply(@PathVariable int discussionId) {
+    public AqgDiscussionSuggestionDto suggestReply(Principal principal, @PathVariable int discussionId) {
+        AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
+        requestThrottle.checkAndRecordSuggestion(authUser.getUser().getId());
         return discussionSuggestionService.suggestReply(discussionId);
     }
 

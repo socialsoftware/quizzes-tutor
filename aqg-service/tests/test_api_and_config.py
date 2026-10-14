@@ -35,7 +35,7 @@ def test_generate_runs_the_job_and_exposes_the_results():
 
     assert job["status"] == JobStatus.DONE
     assert [o["status"] for o in job["outcomes"]] == ["OK", "OK"]
-    assert job["prompt_version"] == "mcq-v2"
+    assert job["prompt_version"] == "mcq-v3"
     assert job["grounding_mode"] == "STRICT"
 
 

@@ -36,3 +36,5 @@ fraud.service.url=http://localhost:5000/
 
 ## Question generation service (aqg-service)
 aqg.service.url=http://localhost:8000
+# Must match AQG_API_KEY of the aqg-service (empty: the service is open, fine only on your own machine)
+aqg.service.apikey=
