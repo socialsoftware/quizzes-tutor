@@ -19,6 +19,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.dto.CourseExecutionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.execution.repository.CourseExecutionRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.GenerationAccess;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.UserService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
@@ -36,6 +37,9 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*;
 public class AuthUserService {
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private GenerationAccess generationAccess;
 
     @Autowired
     private CourseExecutionService courseExecutionService;
@@ -74,9 +78,9 @@ public class AuthUserService {
         authUser.setLastAccess(DateHandler.now());
 
         if (authUser.getUser().isTeacher()) {
-            return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser, fenix.getPersonTeachingCourses()));
+            return authDto(authUser, new AuthUserDto(authUser, fenix.getPersonTeachingCourses()));
         } else {
-            return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser));
+            return authDto(authUser, new AuthUserDto(authUser));
         }
     }
 
@@ -162,7 +166,7 @@ public class AuthUserService {
         }
         authUser.setLastAccess(DateHandler.now());
 
-        return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser));
+        return authDto(authUser, new AuthUserDto(authUser));
     }
 
     @Retryable(
@@ -178,7 +182,7 @@ public class AuthUserService {
         } else {
             authUser = userService.createDemoStudent();
         }
-        return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser));
+        return authDto(authUser, new AuthUserDto(authUser));
     }
 
     @Retryable(
@@ -189,7 +193,7 @@ public class AuthUserService {
     public AuthDto demoTeacherAuth() {
         AuthUser authUser = getDemoTeacher();
 
-        return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser));
+        return authDto(authUser, new AuthUserDto(authUser));
     }
 
     @Retryable(
@@ -200,7 +204,7 @@ public class AuthUserService {
     public AuthDto demoAdminAuth() {
         AuthUser authUser = getDemoAdmin();
 
-        return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), new AuthUserDto(authUser));
+        return authDto(authUser, new AuthUserDto(authUser));
     }
 
     private List<CourseExecution> getActiveTecnicoCourses(List<CourseExecutionDto> courses) {
@@ -236,4 +240,9 @@ public class AuthUserService {
         });
     }
 
+
+    private AuthDto authDto(AuthUser authUser, AuthUserDto authUserDto) {
+        authUserDto.setQuestionGeneration(generationAccess.allowed(authUser));
+        return new AuthDto(JwtTokenProvider.generateToken(authUser, userRepository), authUserDto);
+    }
 }

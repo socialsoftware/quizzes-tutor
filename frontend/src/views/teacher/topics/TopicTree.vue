@@ -23,7 +23,7 @@
     >
       <template v-slot:title="{ item }">
         <span data-cy="TopicName">{{ item.title }}</span>
-        <v-chip size="x-small" class="ml-2" data-cy="TopicPiecesChip" :color="subtreePieces(nodeOf(item)) ? 'primary' : undefined">
+        <v-chip v-if="canGenerateQuestions" size="x-small" class="ml-2" data-cy="TopicPiecesChip" :color="subtreePieces(nodeOf(item)) ? 'primary' : undefined">
           {{ piecesLabel(nodeOf(item)) }}
         </v-chip>
         <v-chip v-if="nodeOf(item).numberOfQuestions" size="x-small" class="ml-1">
@@ -34,7 +34,7 @@
         <v-icon size="small" class="mr-2 action-button" data-cy="AddSubtopic" title="Add a subtopic" @click.stop="askName('add', nodeOf(item))">fas fa-plus</v-icon>
         <v-icon size="small" class="mr-2 action-button" data-cy="RenameTopic" title="Rename" @click.stop="askName('rename', nodeOf(item))">edit</v-icon>
         <v-icon size="small" class="mr-2 action-button" data-cy="MoveTopic" title="Move under another topic" @click.stop="askParent(nodeOf(item))">fas fa-arrows-alt</v-icon>
-        <v-icon size="small" class="mr-2 action-button" data-cy="TopicPieces" title="Pieces of documents" @click.stop="editSources(nodeOf(item))">fas fa-file-alt</v-icon>
+        <v-icon v-if="canGenerateQuestions" size="small" class="mr-2 action-button" data-cy="TopicPieces" title="Pieces of documents" @click.stop="editSources(nodeOf(item))">fas fa-file-alt</v-icon>
         <v-icon size="small" class="action-button" color="red" data-cy="DeleteTopic" title="Delete" @click.stop="remove(nodeOf(item))">delete</v-icon>
       </template>
     </v-treeview>
@@ -93,6 +93,7 @@ import TopicNode from '@/models/management/TopicNode';
 import TopicSourcesDialog from '@/views/teacher/topics/TopicSourcesDialog.vue';
 
 const store = useStore();
+const canGenerateQuestions = computed(() => store.canGenerateQuestions);
 
 const nodes = ref<TopicNode[]>([]);
 const loading = ref(false);

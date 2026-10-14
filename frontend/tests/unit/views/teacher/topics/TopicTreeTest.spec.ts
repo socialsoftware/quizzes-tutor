@@ -36,7 +36,7 @@ describe('TopicTree', () => {
   let store: any;
 
   beforeEach(() => {
-    store = { setLoading: vi.fn(), clearLoading: vi.fn(), setError: vi.fn() };
+    store = { canGenerateQuestions: true, setLoading: vi.fn(), clearLoading: vi.fn(), setError: vi.fn() };
     (useStore as any).mockReturnValue(store);
     vi.spyOn(RemoteServices, 'getTopicTree').mockResolvedValue(tree());
   });
@@ -66,6 +66,17 @@ describe('TopicTree', () => {
       '0 pieces, 3 with subtopics', '2 pieces', '1 piece', 'no pieces',
     ]);
     expect(wrapper.text()).toContain('3 question(s)');
+  });
+
+  test('the demo teacher sees the topics without the pieces of documents', async () => {
+    store.canGenerateQuestions = false;
+
+    const wrapper = await mountTree();
+
+    expect(wrapper.findAll('[data-cy="TopicName"]')).toHaveLength(4);
+    expect(wrapper.find('[data-cy="TopicPiecesChip"]').exists()).toBe(false);
+    expect(wrapper.find('[data-cy="TopicPieces"]').exists()).toBe(false);
+    expect(wrapper.find('[data-cy="RenameTopic"]').exists()).toBe(true);
   });
 
   test('says how to get started when the course has no topics', async () => {

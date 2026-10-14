@@ -8,6 +8,8 @@ Este documento tem três partes: **como usar** (professores), **como pôr e mant
 
 Escreve **rascunhos** de perguntas de escolha múltipla a partir dos documentos da disciplina (PDF, PowerPoint, Word, Markdown). Nenhuma pergunta chega aos alunos sem a aprovares: ficam à espera de revisão, como as perguntas que os alunos propõem.
 
+Só aparece a professores que entram com a sua conta. Os utilizadores da demonstração (professor, aluno e administrador demo) não veem o menu *Generate*, o botão *Suggest reply* nem os pedaços de documentos nos tópicos, e o backend recusa-lhes esses pedidos.
+
 ### Passo a passo
 
 1. **Carregar documentos** — em *Management › Generate*, envia os ficheiros (até 100 MB cada). Cada um passa por `PROCESSING` e fica `READY` (um livro pode demorar alguns minutos) ou `FAILED` (o motivo aparece ao passar o rato).
@@ -80,6 +82,7 @@ Do lado do backend (`application-prod.properties`): `aqg.service.apikey` (igual 
 6. Faz cópias de segurança da base de dados (os documentos e os pedaços estão no schema `aqg`) e do volume `aqg-materials` (ficheiros originais).
 7. Atualiza as dependências Python do `aqg-service` regularmente: lê ficheiros enviados por utilizadores.
 8. Define quem é administrador: só eles mudam o modelo.
+9. Confirma que `generation.demo-enabled` é `false` (o valor por omissão): com `true`, qualquer pessoa que entre na demonstração gasta o modelo. Só se põe a `true` numa máquina de desenvolvimento, onde a demonstração é a única forma de entrar; aí convém também `demo.reset-on-startup=false`, senão cada reinício do backend apaga os tópicos do curso de demonstração e os pedaços de documentos que lhes atribuíste.
 
 ### Resolução de problemas
 

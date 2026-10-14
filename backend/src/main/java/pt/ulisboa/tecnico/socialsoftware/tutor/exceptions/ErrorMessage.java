@@ -183,6 +183,7 @@ public enum ErrorMessage {
     GENERATION_TOO_FAST("Wait %d more second(s) before asking for more questions"),
     GENERATION_TOO_MANY_PENDING("You already have %d request(s) being written. Wait for them to finish before asking for more"),
     SUGGESTION_TOO_FAST("Wait %d more second(s) before asking for another suggested reply"),
+    GENERATION_NOT_IN_DEMO("Question generation is only available to teachers who log in with their own account, not in the demo"),
     REVIEW_MISSING_QUESTION_GENERATION("Review is missing associated question generation"),
     CANNOT_REVIEW_QUESTION_GENERATION("Generated question already approved or rejected cannot be reviewed again"),
     AQG_SERVICE_UNAVAILABLE("The question generation service is not available"),

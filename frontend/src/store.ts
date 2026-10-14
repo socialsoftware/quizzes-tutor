@@ -46,6 +46,10 @@ export const useStore = defineStore('main', {
     isTeacher(state): boolean {
       return !!state.token && state.user !== null && state.user.role == 'TEACHER';
     },
+    // A teacher who may generate questions and ask for suggested replies (not the public demo teacher)
+    canGenerateQuestions(state): boolean {
+      return !!state.token && state.user !== null && state.user.role == 'TEACHER' && !!state.user.questionGeneration;
+    },
     isStudent(state): boolean {
       return !!state.token && state.user !== null && state.user.role == 'STUDENT';
     },

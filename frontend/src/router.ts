@@ -180,7 +180,7 @@ const router = createRouter({
           component: GenerationView,
           meta: {
             title: APP_NAME + ' - Generate Questions',
-            requiredAuth: 'Teacher',
+            requiredAuth: 'QuestionGeneration',
           },
         },
         {
@@ -360,7 +360,7 @@ const router = createRouter({
           component: LlmSettingsView,
           meta: {
             title: APP_NAME + ' - Question generation model',
-            requiredAuth: 'Admin',
+            requiredAuth: 'SystemAdmin',
           },
         },
         {
@@ -388,6 +388,10 @@ router.beforeEach(async (to) => {
   if (to.meta?.requiredAuth == 'None') {
     return true;
   } else if (to.meta?.requiredAuth == 'Admin' && store.isAdmin) {
+    return true;
+  } else if (to.meta?.requiredAuth == 'SystemAdmin' && store.isSystemAdmin) {
+    return true;
+  } else if (to.meta?.requiredAuth == 'QuestionGeneration' && store.canGenerateQuestions) {
     return true;
   } else if (to.meta?.requiredAuth == 'Teacher' && store.isTeacher) {
     return true;

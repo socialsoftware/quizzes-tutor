@@ -37,4 +37,9 @@ fraud.service.url=http://localhost:5000/
 ## Question generation service (aqg-service)
 aqg.service.url=http://localhost:8000
 # Must match AQG_API_KEY of the aqg-service (empty: the service is open, fine only on your own machine)
-aqg.service.apikey=
+aqg.service.apikey=# The demo users (the only way to log in without FenixEdu) can generate questions: only on your own machine
+generation.demo-enabled=true
+
+## Demo
+# false keeps the demo course as it is when the server restarts (it is still reset every night at 1:00)
+demo.reset-on-startup=false

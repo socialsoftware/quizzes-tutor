@@ -26,6 +26,9 @@ public class AuthUserDto {
 
     private boolean admin;
 
+    // Whether the question generation features are shown: not to the public demo users
+    private boolean questionGeneration;
+
     private Map<String, List<CourseExecutionDto>> courses;
 
     public AuthUserDto() {
@@ -51,6 +54,14 @@ public class AuthUserDto {
         this.role = authUser.getUser().getRole();
         this.admin = authUser.getUser().isAdmin();
         this.courses = getActiveAndInactiveCourses(authUser.getUser(), currentCourses);
+    }
+
+    public boolean isQuestionGeneration() {
+        return questionGeneration;
+    }
+
+    public void setQuestionGeneration(boolean questionGeneration) {
+        this.questionGeneration = questionGeneration;
     }
 
     public Integer getKey() {
@@ -140,6 +151,7 @@ public class AuthUserDto {
                 ", email='" + email + '\'' +
                 ", role=" + role +
                 ", admin=" + admin +
+                ", questionGeneration=" + questionGeneration +
                 ", courses=" + courses +
                 '}';
     }

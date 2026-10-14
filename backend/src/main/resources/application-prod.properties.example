@@ -38,3 +38,5 @@ aqg.service.apikey=<AQG API KEY>
 generation.min-seconds-between-requests=10
 generation.min-seconds-between-suggestions=5
 generation.max-pending-jobs-per-teacher=2
+# Question generation is not offered to the public demo users
+generation.demo-enabled=false

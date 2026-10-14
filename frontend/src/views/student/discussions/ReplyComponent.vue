@@ -49,7 +49,7 @@
           ></v-textarea>
           <v-card-actions>
             <v-btn
-              v-if="isTeacher"
+              v-if="canSuggest"
               data-cy="suggestReplyButton"
               variant="text"
               :loading="suggesting"
@@ -82,7 +82,7 @@
     ></v-textarea>
     <v-card-actions>
       <v-btn
-        v-if="isTeacher"
+        v-if="canSuggest"
         data-cy="suggestReplyButton"
         variant="text"
         :loading="suggesting"
@@ -118,7 +118,7 @@ const props = defineProps<{
 const store = useStore();
 const replyMessage = ref('');
 const user = store.user as User | null;
-const isTeacher = user?.role === 'TEACHER';
+const canSuggest = store.canGenerateQuestions;
 const suggesting = ref(false);
 
 // Fills the box with a draft for the teacher to read and fix; it is never sent by itself

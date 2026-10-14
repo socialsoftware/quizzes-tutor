@@ -18,8 +18,15 @@ import ReplyComponent from '@/views/student/discussions/ReplyComponent.vue';
 describe('ReplyComponent suggestions', () => {
   let store: any;
 
-  const mountReply = async (role: 'TEACHER' | 'STUDENT') => {
-    store = { user: { id: 7, role, username: 'someone' }, setLoading: vi.fn(), clearLoading: vi.fn(), setError: vi.fn() };
+  // questionGeneration is false for the public demo teacher
+  const mountReply = async (role: 'TEACHER' | 'STUDENT', questionGeneration = true) => {
+    store = {
+      user: { id: 7, role, username: 'someone', questionGeneration },
+      canGenerateQuestions: role === 'TEACHER' && questionGeneration,
+      setLoading: vi.fn(),
+      clearLoading: vi.fn(),
+      setError: vi.fn(),
+    };
     (useStore as any).mockReturnValue(store);
     const discussion = { id: 3, closed: false, replies: [] as Reply[], lastReplyDate: null };
     const wrapper = mount(ReplyComponent, {
@@ -43,6 +50,10 @@ describe('ReplyComponent suggestions', () => {
   test('only teachers are offered a suggestion', async () => {
     expect((await mountReply('TEACHER')).find('[data-cy="suggestReplyButton"]').exists()).toBe(true);
     expect((await mountReply('STUDENT')).find('[data-cy="suggestReplyButton"]').exists()).toBe(false);
+  });
+
+  test('the demo teacher is not offered a suggestion', async () => {
+    expect((await mountReply('TEACHER', false)).find('[data-cy="suggestReplyButton"]').exists()).toBe(false);
   });
 
   test('the draft goes into the box and nothing is sent', async () => {

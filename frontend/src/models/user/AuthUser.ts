@@ -10,6 +10,8 @@ export default class AuthUser {
   username!: string;
   role!: string;
   admin!: boolean;
+  // The question generation features; the public demo users do not get them
+  questionGeneration: boolean = false;
   courses: CourseMap = {};
   coursesNumber: number = 0;
 
@@ -20,6 +22,7 @@ export default class AuthUser {
       this.username = jsonObj.username;
       this.role = jsonObj.role;
       this.admin = jsonObj.admin;
+      this.questionGeneration = !!jsonObj.questionGeneration;
 
       for (const [term, courses] of Object.entries(jsonObj.courses)) {
         this.courses[term] = courses.map((course) => new Course(course));

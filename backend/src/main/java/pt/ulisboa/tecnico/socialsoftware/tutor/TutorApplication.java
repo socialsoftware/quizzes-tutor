@@ -2,6 +2,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor;
 
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.boot.web.servlet.support.SpringBootServletInitializer;
@@ -27,6 +28,11 @@ public class TutorApplication extends SpringBootServletInitializer implements In
     @Autowired
     private DemoUtils demoUtils;
 
+    // The demo course is also reset every night. Off on a development machine, where every restart
+    // would otherwise wipe what was tried in it (its topics, and the pieces of documents under them)
+    @Value("${demo.reset-on-startup:true}")
+    private boolean resetDemoOnStartup;
+
     public static void main(String[] args) {
         SpringApplication.run(TutorApplication.class, args);
     }
@@ -38,7 +44,8 @@ public class TutorApplication extends SpringBootServletInitializer implements In
         JwtTokenProvider.generateKeys();
         answerService.writeQuizAnswersAndQuestionStatistics();
 
-        demoUtils.resetDemoInfo();
+        if (resetDemoOnStartup)
+            demoUtils.resetDemoInfo();
     }
 
 }

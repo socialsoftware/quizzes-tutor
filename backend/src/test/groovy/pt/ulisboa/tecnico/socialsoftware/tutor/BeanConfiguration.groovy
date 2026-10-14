@@ -25,6 +25,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.GenerationAccess
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.LlmSettingsService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.QuestionGenerationService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.RequestThrottle
@@ -163,6 +164,12 @@ class BeanConfiguration {
     @Bean
     QuestionGenerationService questionGenerationService() {
         return new QuestionGenerationService()
+    }
+
+    @Bean
+    GenerationAccess generationAccess() {
+        // as in production: the demo users do not get question generation
+        return new GenerationAccess(false)
     }
 
     @Bean
