@@ -12,6 +12,7 @@ import org.springframework.web.reactive.function.client.WebClient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.QuizFraudCommunicationScoreDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.QuizFraudSpeedDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.QuizFraudTimeScoreDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.QuizService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
@@ -54,6 +55,17 @@ public class FraudController {
         answerService.writeQuizAnswers(quizId);
         validateQuizId(quizId);
         return getFraudTimeScoresFromURI("/time/quiz/" + quizId.toString());
+    }
+
+    /** Students who answered faster, or more evenly, than a person can read: signs for the teacher, not proof. */
+    @GetMapping("/fraud/speed/quiz/{quizId}")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public QuizFraudSpeedDto getQuizSpeedFraudScores(@PathVariable Integer quizId) {
+        answerService.writeQuizAnswers(quizId);
+        validateQuizId(quizId);
+        return fraudClient().get().uri("/speed/quiz/" + quizId.toString()).accept(MediaType.APPLICATION_JSON).retrieve()
+                .bodyToMono(new ParameterizedTypeReference<QuizFraudSpeedDto>() {
+                }).block();
     }
 
     @GetMapping("/fraud/communication/quiz/{quizId}")

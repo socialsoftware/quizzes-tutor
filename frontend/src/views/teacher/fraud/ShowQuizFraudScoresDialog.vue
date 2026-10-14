@@ -82,6 +82,12 @@
           </v-col>
         </v-row>
       </v-container>
+      <v-alert border="start" colored-border type="info" elevation="2" class="text-left">
+        <b>Speed</b> flags students whose answers came faster than the question and its options can be
+        read, or at almost the same time whatever their length (the time is the one the server
+        recorded). It is a sign to look at, <b>never proof</b>: a fast reader or a question seen before
+        can look like this too. Screenshots cannot be detected.
+      </v-alert>
       <v-data-table
         :headers="headers"
         :items="quizFraudScores"
@@ -89,7 +95,23 @@
         :mobile-breakpoint="0"
         :items-per-page="15"
         :items-per-page-options="[15, 30, 50, 100]"
-      />
+      >
+        <template v-slot:[`item.speedPoints`]="{ item }">
+          <v-chip
+            v-if="item.speedLevel && item.speedLevel !== 'NONE'"
+            :color="levelColor(item.speedLevel)"
+            size="small"
+            data-cy="SpeedLevel"
+            >{{ item.speedLevel }}</v-chip
+          >
+          <span v-else-if="item.speedLevel" class="text-medium-emphasis">-</span>
+        </template>
+        <template v-slot:[`item.speedReasons`]="{ item }">
+          <ul v-if="item.speedReasons && item.speedReasons.length" class="text-left" data-cy="SpeedReasons">
+            <li v-for="reason in item.speedReasons" :key="reason">{{ reason }}</li>
+          </ul>
+        </template>
+      </v-data-table>
     </v-card>
   </v-dialog>
 </template>
@@ -113,7 +135,11 @@ const headers: any[] = [
   { title: 'Time Score', key: 'scoreTime' },
   { title: 'Consumption Score', key: 'scoreCommunicationConsumer' },
   { title: 'Production Score', key: 'scoreCommunicationProducer' },
+  { title: 'Speed', key: 'speedPoints' },
+  { title: 'Why', key: 'speedReasons', sortable: false },
 ];
+
+const levelColor = (level: string) => (level === 'HIGH' ? 'error' : level === 'MEDIUM' ? 'warning' : 'info');
 
 const quizFraudScores = computed(() => {
   const result: UserFraudScore[] = [];

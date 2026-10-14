@@ -1,4 +1,4 @@
-from sqlalchemy import create_engine
+from sqlalchemy import create_engine, text
 from sqlalchemy import Column, Integer, String, Float, DateTime, Boolean, ForeignKey
 from sqlalchemy.orm import declarative_base, sessionmaker, relationship
 import pandas as pd
@@ -454,6 +454,33 @@ class QuizzesDBConnector():
         self.session.close()
         # A fresh engine (and pool) is created per request; release its connections
         self.engine.dispose()
+
+    def get_speed_rows(self, quiz_id):
+        """One row per answered question of the quiz: who, how long it took (seconds, as the server
+        recorded it), how long the question and its options are, and whether the choice was right."""
+        from fraud_times.speed import AnswerRow
+
+        rows = self.session.execute(text("""
+            SELECT quiz_a.user_id AS user_id,
+                   qa.time_taken AS time_taken,
+                   (chosen.id IS NOT NULL) AS answered,
+                   COALESCE(chosen.correct, false) AS correct,
+                   COALESCE(length(q.content), 0) + COALESCE((
+                       SELECT SUM(length(op.content)) FROM options op
+                       JOIN question_details qd ON qd.id = op.question_details_id
+                       WHERE qd.question_id = q.id), 0) AS chars
+            FROM question_answers qa
+            JOIN quiz_answers quiz_a ON quiz_a.id = qa.quiz_answer_id
+            JOIN quiz_questions qq ON qq.id = qa.quiz_question_id
+            JOIN questions q ON q.id = qq.question_id
+            LEFT JOIN answer_details ad ON ad.question_answer_id = qa.id
+            LEFT JOIN options chosen ON chosen.id = ad.option_id
+            WHERE quiz_a.quiz_id = :quiz_id AND qa.time_taken IS NOT NULL
+        """), {"quiz_id": quiz_id})
+        return [
+            AnswerRow(row.user_id, row.time_taken / 1000, int(row.chars), bool(row.correct), bool(row.answered))
+            for row in rows
+        ]
 
     def get_quiz(self, quiz_id):
         return self.session.query(Quiz).filter(Quiz.id == quiz_id).one()

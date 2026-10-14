@@ -6,6 +6,7 @@ import sys
 sys.path.append('fraud_graph/')
 import fraud_times.quiz_statistics as quiz_stats
 import fraud_times.quiz_orm as quiz_orm
+import fraud_times.speed as speed
 import get_scores as get_scores
 import create_dataset2 as create_dataset
 import json
@@ -43,6 +44,19 @@ def quizFraudScores(quizId):
               for user_id, user_score in statistic.statistic.items()]}
     db.close()
     return flask.jsonify(result)
+
+
+@app.route('/speed/quiz/<int:quizId>')
+def quizSpeedScores(quizId):
+    """Students whose answers came faster, or more evenly, than a person can read and decide."""
+    db = quiz_orm.QuizzesDBConnector()
+    try:
+        reports = speed.analyse(db.get_speed_rows(quizId))
+        users = [{"userInfo": db.getAuthUserInformationByUserId(report.user_id).to_dict(), **report.to_dict()}
+                 for report in reports]
+    finally:
+        db.close()
+    return flask.jsonify({"users": users})
 
 
 @app.route('/communication/quiz/<int:quizId>')

@@ -1,12 +1,14 @@
 import { FraudScores } from '@/models/management/fraud/FraudScores';
 import { UserFraudScore } from '@/models/management/fraud/UserFraudScore';
+import { UserFraudSpeed } from '@/models/management/fraud/UserFraudSpeed';
 
 export class QuizFraudInformation {
   users: { [username: string]: UserFraudScore } = {};
   constructor(
     timeScores: FraudScores,
     communicationProducerScores: FraudScores,
-    communicationConsumerScores: FraudScores
+    communicationConsumerScores: FraudScores,
+    speed: UserFraudSpeed[] = []
   ) {
     for (const timeScore of timeScores.fraudScores) {
       this.users[timeScore.userInfo.username] = {
@@ -28,6 +30,18 @@ export class QuizFraudInformation {
         ...this.users[consumerScore.userInfo.username],
         userInfo: consumerScore.userInfo,
         scoreCommunicationConsumer: consumerScore.score,
+      };
+    }
+
+    for (const entry of speed) {
+      this.users[entry.userInfo.username] = {
+        ...this.users[entry.userInfo.username],
+        userInfo: entry.userInfo,
+        speedLevel: entry.level,
+        speedPoints: entry.points,
+        speedReasons: entry.reasons,
+        speedAnswered: entry.answered,
+        speedTooFast: entry.tooFast,
       };
     }
   }

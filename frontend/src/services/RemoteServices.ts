@@ -33,6 +33,7 @@ import StatementQuestion from '@/models/statement/StatementQuestion';
 import router from '@/router';
 import QuestionQuery from '@/models/management/QuestionQuery';
 import { FraudScores } from '@/models/management/fraud/FraudScores';
+import { UserFraudSpeed } from '@/models/management/fraud/UserFraudSpeed';
 import { QuizFraudInformation } from '@/models/management/fraud/QuizFraudInformation';
 import Dashboard from '@/models/dashboard/Dashboard';
 import DifficultQuestion from '@/models/dashboard/DifficultQuestion';
@@ -904,6 +905,19 @@ export default class RemoteServices {
       });
   }
 
+  // Students who answered faster, or more evenly, than a person can read. Optional: when the
+  // fraud service cannot give it, the other scores are still shown.
+  static async getQuizSpeedFraud(quizId: number): Promise<UserFraudSpeed[]> {
+    return httpClient
+      .get(`/fraud/speed/quiz/${quizId}`)
+      .then((response) =>
+        (response.data.users ?? []).map(
+          (user: UserFraudSpeed) => new UserFraudSpeed(user)
+        )
+      )
+      .catch(() => []);
+  }
+
   static async getQuizCommunicationFraudScores(
     quizId: number
   ): Promise<FraudScores[]> {
@@ -928,10 +942,12 @@ export default class RemoteServices {
     const timeScores: FraudScores = await RemoteServices.getQuizTimeFraudScores(
       quizId
     );
+    const speed = await RemoteServices.getQuizSpeedFraud(quizId);
     return new QuizFraudInformation(
       timeScores,
       communicationScores[0],
-      communicationScores[1]
+      communicationScores[1],
+      speed
     );
   }
 
