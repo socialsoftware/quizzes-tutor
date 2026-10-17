@@ -11,6 +11,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.SpockTestIT
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.dto.AuthPasswordDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicSourceDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicTreeDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
 
 /** Question generation is for teachers with their own account, not for the public demo users. */
@@ -79,6 +81,39 @@ class GenerationAccessWebServiceIT extends SpockTestIT {
         then:
         def error = thrown(WebClientResponseException)
         error.responseBodyAsString.contains('not in the demo')
+    }
+
+    def "the demo teacher cannot put pieces of documents under topics by saving a topic tree"() {
+        given:
+        demoTeacherLogin()
+        def demoCourseId = courseService.getDemoCourse().getCourseId()
+        def node = new TopicTreeDto.Node('a', 'Networks', null)
+        node.setSources([new TopicSourceDto('m1', 'm1:0')])
+
+        when:
+        webClient.put().uri('/topics/courses/' + demoCourseId + '/tree')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(new TopicTreeDto([node]))
+                .retrieve().bodyToMono(String.class).block()
+
+        then:
+        def error = thrown(WebClientResponseException)
+        error.responseBodyAsString.contains('not in the demo')
+    }
+
+    def "the demo teacher can still save a topic tree without pieces of documents"() {
+        given:
+        demoTeacherLogin()
+        def demoCourseId = courseService.getDemoCourse().getCourseId()
+
+        when:
+        def saved = webClient.put().uri('/topics/courses/' + demoCourseId + '/tree')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue(new TopicTreeDto([new TopicTreeDto.Node('a', 'Networks ' + System.nanoTime(), null)]))
+                .retrieve().bodyToMono(String.class).block()
+
+        then:
+        saved.contains('Networks')
     }
 
     def "a teacher who logged in with an account is offered generation and can use it"() {

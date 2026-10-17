@@ -7,7 +7,7 @@ from sqlalchemy.orm import sessionmaker
 from app.chunking.outline import clean_headings
 from app.chunking.splitter import split_markdown
 from app.db import ChunkRow, MaterialRow
-from app.ingestion.adapters import Parsers, adapter_for
+from app.ingestion.adapters import OFFICE_SUFFIXES, Parsers, adapter_for, check_office_archive
 from app.schema import Chunk, Material, MaterialChunk, MaterialStatus
 from app.storage.material_storage import MaterialStorage
 
@@ -125,6 +125,8 @@ def process_material(
 ) -> None:
     try:
         started = time.perf_counter()
+        if path.suffix.lower() in OFFICE_SUFFIXES:
+            check_office_archive(path)
         document = adapter_for(path.name, parsers).extract(path)
         parse_seconds = time.perf_counter() - started
         _store_chunks(store, material_id, document.markdown, document.parser, parse_seconds, document.toc)

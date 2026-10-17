@@ -1675,7 +1675,8 @@ export default class RemoteServices {
   // A draft for the teacher to edit; nothing is saved or sent until the teacher submits a reply
   static async suggestReply(discussionId: number): Promise<ReplySuggestion> {
     return httpClient
-      .post('/discussions/' + discussionId + '/replies/suggest')
+      // the Tutor waits up to 100 s for the model; past the default timeout the real error would be lost
+      .post('/discussions/' + discussionId + '/replies/suggest', null, { timeout: 120000 })
       .then((response) => new ReplySuggestion(response.data))
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));

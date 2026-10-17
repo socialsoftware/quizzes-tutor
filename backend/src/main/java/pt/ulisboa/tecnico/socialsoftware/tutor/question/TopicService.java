@@ -20,11 +20,14 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicSourceDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicTreeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.CourseRepository;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.repository.TopicRepository;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.AqgClient;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.HashSet;
+import java.util.Collection;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -53,6 +56,9 @@ public class TopicService {
 
     @Autowired
     private TopicRepository topicRepository;
+
+    @Autowired
+    private AqgClient aqgClient;
 
     @Retryable(
             value = {SQLException.class},
@@ -131,6 +137,7 @@ public class TopicService {
     public TopicNodeDto updateTopicSources(Integer topicId, List<TopicSourceDto> sources) {
         Topic topic = topicRepository.findTopicWithCourseById(topicId).orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId));
         List<TopicSourceDto> newSources = sources == null ? List.of() : sources;
+        checkSourcesOfCourse(topic.getCourse().getId(), newSources);
 
         Set<String> chunkIds = newSources.stream().map(TopicSourceDto::getChunkId).collect(Collectors.toSet());
         detachChunks(topicRepository.findTopics(topic.getCourse().getId()), chunkIds);
@@ -175,6 +182,9 @@ public class TopicService {
     public List<TopicNodeDto> saveTopicTree(int courseId, TopicTreeDto tree) {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         List<TopicTreeDto.Node> nodes = nodesOf(tree);
+        checkSourcesOfCourse(course.getId(), nodes.stream()
+                .flatMap(node -> node.getSources() == null ? Stream.<TopicSourceDto>empty() : node.getSources().stream())
+                .collect(Collectors.toList()));
 
         List<Topic> courseTopics = new ArrayList<>(topicRepository.findTopics(course.getId()));
         detachChunks(courseTopics, chunkIdsOf(nodes));
@@ -251,6 +261,25 @@ public class TopicService {
                 throw new TutorException(TOPIC_TREE_INVALID, "a node has no key, or two nodes share one");
         }
         return nodes;
+    }
+
+    /**
+     * Only pieces of the course's own documents can go under its topics: a piece id is unique
+     * across courses, so one taken by another course would keep the course that owns the document
+     * from placing it. Which documents a course has is known by the generation service.
+     */
+    private void checkSourcesOfCourse(int courseId, Collection<TopicSourceDto> sources) {
+        if (sources.isEmpty())
+            return;
+        Set<String> materialIds = aqgClient.listMaterials(courseId).stream()
+                .map(AqgMaterialDto::id)
+                .collect(Collectors.toSet());
+        for (TopicSourceDto source : sources) {
+            String materialId = source.getMaterialId();
+            String chunkId = source.getChunkId();
+            if (materialId == null || chunkId == null || !materialIds.contains(materialId) || !chunkId.startsWith(materialId + ":"))
+                throw new TutorException(INVALID_TOPIC_SOURCE);
+        }
     }
 
     private Set<String> chunkIdsOf(List<TopicTreeDto.Node> nodes) {

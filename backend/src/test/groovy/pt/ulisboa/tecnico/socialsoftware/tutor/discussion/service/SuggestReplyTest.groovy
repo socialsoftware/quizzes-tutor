@@ -107,6 +107,7 @@ class SuggestReplyTest extends DiscussionFixtureSpockTest {
         subtopicDto.setName('DNS')
         subtopicDto.setParentId(topic.getId())
         def subtopic = topicService.createTopic(externalCourse.getId(), subtopicDto)
+        aqgClient.addMaterial('m1', externalCourse.getId(), ['Intro', 'Networks', 'DNS'])
         topicService.updateTopicSources(topic.getId(), [new TopicSourceDto('m1', 'm1:1')])
         topicService.updateTopicSources(subtopic.getId(), [new TopicSourceDto('m1', 'm1:2')])
         def question = discussion.getQuestion()

@@ -4,6 +4,8 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.MediaType;
@@ -37,9 +39,14 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AQ
 
 @Component
 public class WebClientAqgClient implements AqgClient {
+    private static final Logger logger = LoggerFactory.getLogger(WebClientAqgClient.class);
+
     private static final Duration TIMEOUT = Duration.ofSeconds(60);
     // The service gives a model up to 60 s to answer a test
     private static final Duration MODEL_TEST_TIMEOUT = Duration.ofSeconds(90);
+    // The service gives each model 45 s for a suggested reply: room for one to time out and a
+    // fall-back model to answer, so a slow model is reported as such instead of "unavailable"
+    private static final Duration SUGGESTION_TIMEOUT = Duration.ofSeconds(100);
     // The pieces of a whole book come back in one reply (~600 KB for 300 pages); Spring's default is 256 KB
     private static final int MAX_REPLY_BYTES = 64 * 1024 * 1024;
 
@@ -111,7 +118,7 @@ public class WebClientAqgClient implements AqgClient {
         return read(call(() -> client.post().uri("/discussion/suggest")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(json)
-                .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<AqgDiscussionSuggestionDto>() {});
+                .retrieve().bodyToMono(String.class).block(SUGGESTION_TIMEOUT)), new TypeReference<AqgDiscussionSuggestionDto>() {});
     }
 
     @Override
@@ -120,7 +127,7 @@ public class WebClientAqgClient implements AqgClient {
         try {
             json = objectMapper.writeValueAsString(request);
         } catch (JsonProcessingException e) {
-            throw new TutorException(AQG_SERVICE_ERROR, e.getMessage());
+            throw new TutorException(AQG_SERVICE_ERROR, "unreadable request");
         }
 
         return read(call(() -> client.post().uri("/generate")
@@ -190,16 +197,19 @@ public class WebClientAqgClient implements AqgClient {
         try {
             return objectMapper.writeValueAsString(body);
         } catch (JsonProcessingException e) {
-            throw new TutorException(AQG_SERVICE_ERROR, e.getMessage());
+            throw new TutorException(AQG_SERVICE_ERROR, "unreadable request");
         }
     }
 
-    /** What the service said was wrong: FastAPI puts it in "detail", as text or as a list of field errors. */
+    /**
+     * What the service said was wrong: FastAPI puts it in "detail", as text or as a list of field
+     * errors. Anything else (a proxy's error page, a stack trace) goes to the log, not to the browser.
+     */
     private String reasonOf(String body) {
         try {
             JsonNode detail = objectMapper.readTree(body).get("detail");
             if (detail == null)
-                return body;
+                return unexpected(body);
             if (detail.isTextual())
                 return detail.asText();
             List<String> reasons = new ArrayList<>();
@@ -210,8 +220,13 @@ public class WebClientAqgClient implements AqgClient {
             });
             return String.join("; ", reasons);
         } catch (JsonProcessingException e) {
-            return body;
+            return unexpected(body);
         }
+    }
+
+    private String unexpected(String body) {
+        logger.warn("Unexpected error reply from the question generation service: {}", body);
+        return "unexpected reply";
     }
 
     private String call(Supplier<String> request) {

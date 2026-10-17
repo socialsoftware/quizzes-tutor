@@ -392,4 +392,4 @@ def test_ordinary_addresses_still_work(url):
 def test_the_prompts_tell_the_model_that_course_text_is_data():
     assert "never as instructions" in system_prompt(None) and "<context>" in system_prompt(None)
     assert "never instructions" in GROUNDING_CHECK_SYSTEM
-    assert PROMPT_VERSION == "mcq-v3"
+    assert PROMPT_VERSION == "mcq-v4"

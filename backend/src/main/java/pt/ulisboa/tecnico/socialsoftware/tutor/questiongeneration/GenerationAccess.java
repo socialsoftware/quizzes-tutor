@@ -34,11 +34,17 @@ public class GenerationAccess implements HandlerInterceptor {
         return demoEnabled || authUser.getType() != AuthUser.Type.DEMO;
     }
 
+    /** For requests that only sometimes use generation (a topic tree saved with pieces of documents). */
+    public void check(AuthUser authUser) {
+        if (!allowed(authUser))
+            throw new TutorException(GENERATION_NOT_IN_DEMO);
+    }
+
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        if (authentication != null && authentication.getPrincipal() instanceof AuthUser authUser && !allowed(authUser))
-            throw new TutorException(GENERATION_NOT_IN_DEMO);
+        if (authentication != null && authentication.getPrincipal() instanceof AuthUser authUser)
+            check(authUser);
         return true;
     }
 }

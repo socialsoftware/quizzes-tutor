@@ -68,6 +68,14 @@ describe('TopicTree', () => {
     expect(wrapper.text()).toContain('3 question(s)');
   });
 
+  test('only topics with subtopics can be folded, and the names are aligned to the left', async () => {
+    const wrapper = await mountTree();
+
+    // Networks has HTTP and DNS under it; they and Databases are leaves
+    expect(wrapper.findAll('[data-cy="TopicTree"] .v-list-group')).toHaveLength(1);
+    expect(wrapper.find('[data-cy="TopicTree"]').classes()).toContain('text-left');
+  });
+
   test('the demo teacher sees the topics without the pieces of documents', async () => {
     store.canGenerateQuestions = false;
 

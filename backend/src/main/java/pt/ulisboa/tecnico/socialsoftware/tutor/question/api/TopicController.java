@@ -5,7 +5,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.security.core.Authentication;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.QuestionDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicDto;
@@ -13,6 +15,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicMoveDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicNodeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicSourceDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicTreeDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.GenerationAccess;
 
 import java.util.List;
 
@@ -22,6 +25,9 @@ public class TopicController {
 
     @Autowired
     private TopicService topicService;
+
+    @Autowired
+    private GenerationAccess generationAccess;
 
     @GetMapping("/topics/courses/{courseId}")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#courseId, 'COURSE.ACCESS')")
@@ -38,7 +44,13 @@ public class TopicController {
 
     @PutMapping("/topics/courses/{courseId}/tree")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#courseId, 'COURSE.ACCESS')")
-    public List<TopicNodeDto> saveTopicTree(@PathVariable int courseId, @RequestBody TopicTreeDto tree) {
+    public List<TopicNodeDto> saveTopicTree(Authentication authentication, @PathVariable int courseId,
+                                           @RequestBody TopicTreeDto tree) {
+        // Pieces of documents under topics are part of question generation, which the demo does not have
+        boolean withSources = tree != null && tree.getNodes() != null && tree.getNodes().stream()
+                .anyMatch(node -> node.getSources() != null && !node.getSources().isEmpty());
+        if (withSources)
+            generationAccess.check((AuthUser) authentication.getPrincipal());
         return this.topicService.saveTopicTree(courseId, tree);
     }
 

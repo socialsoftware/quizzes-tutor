@@ -14,8 +14,8 @@
         :keys="view.keys"
         :default-models="view.defaultModels"
         :available-models="modelsOf(draft.primary.provider)"
-        :models-error="catalog[draft.primary.provider]?.error ?? null"
-        :models-loading="catalog[draft.primary.provider]?.loading ?? false"
+        :models-error="modelsErrorOf(draft.primary.provider)"
+        :models-loading="modelsLoadingOf(draft.primary.provider)"
         @refresh-models="loadModels($event, true)"
       />
 
@@ -32,8 +32,8 @@
         :keys="view.keys"
         :default-models="view.defaultModels"
         :available-models="modelsOf(fallback.provider)"
-        :models-error="catalog[fallback.provider]?.error ?? null"
-        :models-loading="catalog[fallback.provider]?.loading ?? false"
+        :models-error="modelsErrorOf(fallback.provider)"
+        :models-loading="modelsLoadingOf(fallback.provider)"
         @refresh-models="loadModels($event, true)"
       >
         <v-btn icon="fas fa-arrow-up" size="x-small" variant="text" title="Try earlier" :disabled="index === 0" data-cy="FallbackUp" @click="moveFallback(index, -1)" />
@@ -284,6 +284,12 @@ const poller = createPoller(async () => {
 }, POLL_MS);
 
 const modelsOf = (provider: string) => (provider === 'ollama' ? ollama.value.models : catalog.value[provider]?.models ?? []);
+// Ollama's list comes with the server's state: a server that does not answer is not "model not installed"
+const modelsErrorOf = (provider: string) =>
+  provider === 'ollama' ? ollama.value.error ?? null : catalog.value[provider]?.error ?? null;
+const modelsLoadingOf = (provider: string) =>
+  // (polled while a model downloads: only the first read shows as loading)
+  provider === 'ollama' ? loadingOllama.value && ollama.value.models.length === 0 : catalog.value[provider]?.loading ?? false;
 
 const loadModels = async (provider: string, refresh = false) => {
   if (provider === 'ollama') {

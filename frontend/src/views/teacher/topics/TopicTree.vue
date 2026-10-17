@@ -17,7 +17,9 @@
       :items="forest"
       item-title="title"
       item-value="id"
+      :item-children="childrenOf"
       open-all
+      class="text-left"
       density="compact"
       data-cy="TopicTree"
     >
@@ -109,6 +111,9 @@ const sourcesDialog = ref(false);
 const forest = computed(() =>
   buildForest(nodes.value, (node) => node.id, (node) => node.parentId, (node) => node.name)
 );
+
+// A topic without subtopics is a leaf: an empty list would still give it an expand arrow
+const childrenOf = (item: Record<string, any>) => ((item as TreeItem).children.length > 0 ? item.children : undefined);
 
 const nodeOf = (item: TreeItem): TopicNode => nodes.value.find((node) => node.id === item.id)!;
 

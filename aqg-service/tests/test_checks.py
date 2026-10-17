@@ -33,6 +33,29 @@ def test_catch_all_and_lettered_options_are_refused():
     assert any("own letter" in p for p in check_format(with_option(0, "A) Resource not found")))
 
 
+def test_an_explanation_that_names_options_by_position_is_refused():
+    for explanation in (
+        "This matches option A, the definition in the notes.",
+        "It matches option 1.",
+        "Option C describes divisibility by 9.",
+        "The second option confuses 404 with 500.",
+        "A opção B confunde os dois códigos.",
+        "A segunda alternativa está errada.",
+        "La opción 3 es incorrecta.",
+    ):
+        assert any("by position" in p for p in check_format(question(explanation=explanation))), explanation
+
+
+def test_an_explanation_naming_options_by_what_they_say_passes():
+    for explanation in (
+        "404 means the resource is missing; a server error would be a 5xx code.",
+        "Squaring gives residues 0, 1, 4, 4, 1, so only 5k gives a multiple of 5.",
+        "The option about server errors confuses 404 with 500.",
+        "Choosing 3 or 4 as the base gives a different answer.",
+    ):
+        assert check_format(question(explanation=explanation)) == [], explanation
+
+
 def test_echoed_schema_placeholders_are_refused():
     assert any("placeholders" in p for p in check_format(with_option(1, "option text")))
 

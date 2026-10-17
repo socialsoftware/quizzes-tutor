@@ -1,4 +1,5 @@
 import logging
+import re
 import threading
 import time
 import uuid
@@ -50,6 +51,10 @@ from app.storage.material_storage import LocalMaterialStorage, MaterialStorage
 ProviderFactory = Callable[[ModelConfig], LLMProvider]
 
 MAX_UPLOAD_BYTES = 100 * 1024 * 1024
+# Seconds each model gets while a teacher waits on a button (a suggested reply): the Tutor waits
+# 100 s, room for the first model to time out and a fall-back one to answer. The model's own
+# timeout, often minutes for a slow local model, is for the generation jobs, which nobody watches.
+INTERACTIVE_TIMEOUT = 45
 
 logger = logging.getLogger(__name__)
 
@@ -153,7 +158,8 @@ def create_app(
                     seen.append(outcome.question.stem)
                 outcomes.append(outcome)
         except Exception as error:  # provider outages must fail the job, not the worker
-            jobs.set_failed(job_id, f"{type(error).__name__}: {error}")
+            logger.warning("job %s failed", job_id, exc_info=error)
+            jobs.set_failed(job_id, _public_error(error))
             return
         # A fallback model that stepped in is recorded with the job, so the questions say who wrote them
         used = getattr(provider, "used", [])
@@ -275,7 +281,8 @@ def create_app(
                 raise HTTPException(status_code=422, detail=str(error)) from error
             chunks = retriever.top_k(f"{request.question_stem} {request.student_message}", available, request.top_k)
 
-        provider, _ = provider_for(request.model, llm, interactive=True)
+        interactive = llm.model_copy(update={"timeout": min(llm.timeout, INTERACTIVE_TIMEOUT)})
+        provider, _ = provider_for(request.model, interactive, interactive=True)
         try:
             reply = suggest_reply(request, chunks, provider)
         except RateLimited as error:
@@ -366,6 +373,15 @@ def create_app(
         return job
 
     return app
+
+
+_ADDRESS = re.compile(r"\b(?:https?|wss?)://\S+")
+
+
+def _public_error(error: Exception) -> str:
+    """What teachers see of a failed job: the reason, without the addresses of the servers behind
+    the service (a provider's message can name them); the whole error is in the service's log."""
+    return _ADDRESS.sub("<server>", f"{type(error).__name__}: {error}")[:300]
 
 
 def _short_error(error: Exception) -> str:

@@ -31,6 +31,16 @@ _CATCH_ALL_OPTION = re.compile(
 # "A) ...", "b. ...", "3 - ...": the Tutor letters the options itself
 _ENUMERATED_OPTION = re.compile(r"^\s*(?:[A-Da-d]|[1-4])\s*[).:\-]\s+")
 
+# "Option A is wrong", "matches option 1", "the second option": the options are shuffled after the
+# draft is written and shown without letters, so a position in the explanation points at another
+# option or at none
+_OPTION_BY_POSITION = re.compile(
+    r"\b(?i:option|alternative|choice|opção|alternativa|opción)\s*\(?(?:[A-D]|[1-4])\b"
+    r"|(?i:\b(?:first|second|third|fourth|last)\s+(?:option|alternative|choice)\b)"
+    r"|(?i:\b(?:primeira|segunda|terceira|quarta|última)\s+(?:opção|alternativa)\b)"
+    r"|(?i:\b(?:primera|segunda|tercera|cuarta|última)\s+(?:opción|alternativa)\b)"
+)
+
 # Bits of the prompt or of the output schema echoed back by the model
 _PROMPT_LEFTOVER = re.compile(
     r"\[/?chunk\b|</?(?:context|task|teacher_review)>|\b(?:question|option)\s+text\b",
@@ -47,6 +57,12 @@ def check_format(question: GeneratedMCQ) -> list[str]:
         problems.append("the question stem is too short to be a question")
     if _REFERS_TO_SOURCE.search(stem):
         problems.append("the stem refers to the text/context, which the students never see")
+
+    if _OPTION_BY_POSITION.search(question.explanation):
+        problems.append(
+            "the explanation names options by position or letter (\"option A\", \"the second option\"); "
+            "the options are shown in another order and without letters, so name them by what they say"
+        )
 
     texts = [stem, question.explanation, *(option.content for option in question.options)]
     if any(_PROMPT_LEFTOVER.search(text) for text in texts):

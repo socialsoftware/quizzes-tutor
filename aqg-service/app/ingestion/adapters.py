@@ -1,3 +1,4 @@
+import zipfile
 from dataclasses import dataclass
 from pathlib import Path
 from typing import Protocol
@@ -101,6 +102,30 @@ def build_parsers(pdf_parser: str = "pymupdf", office_parser: str = "markitdown"
 MARKDOWN_SUFFIXES = {".md", ".markdown", ".txt"}
 PDF_SUFFIXES = {".pdf"}
 OFFICE_SUFFIXES = {".pptx", ".docx"}
+
+
+# A .pptx or .docx is a zip: a small upload can unpack to many gigabytes and take the service
+# down while it is read. Real documents unpack to a few times their size (their images are
+# already compressed), far below these limits.
+MAX_UNPACKED_BYTES = 1024 * 1024 * 1024
+MAX_ARCHIVE_ENTRIES = 20000
+
+
+class UnsafeDocument(Exception):
+    pass
+
+
+def check_office_archive(path: Path) -> None:
+    """Refuses an Office file that is not a zip or would unpack to too much, before any parser opens it."""
+    try:
+        with zipfile.ZipFile(path) as archive:
+            entries = archive.infolist()
+    except zipfile.BadZipFile as error:
+        raise UnsafeDocument("the file is not a valid Office document") from error
+    if len(entries) > MAX_ARCHIVE_ENTRIES:
+        raise UnsafeDocument(f"the document holds more than {MAX_ARCHIVE_ENTRIES} parts")
+    if sum(entry.file_size for entry in entries) > MAX_UNPACKED_BYTES:
+        raise UnsafeDocument("the document unpacks to more than 1 GB")
 
 
 def adapter_for(filename: str, parsers: Parsers) -> ContentAdapter:

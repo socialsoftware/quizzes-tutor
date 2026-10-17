@@ -86,11 +86,13 @@ const eclipseTheme = EditorView.theme(
       {
         backgroundColor: '#d7d4f0',
       },
+    // vue-codemirror always adds basicSetup, which marks the line holding the cursor: line 1 as
+    // soon as the editor opens, a blue bar over the code. The Vue2 editor never marked it.
     '.cm-activeLine': {
-      backgroundColor: '#e8f2ff',
+      backgroundColor: 'transparent',
     },
     '.cm-activeLineGutter': {
-      backgroundColor: '#e8f2ff',
+      backgroundColor: 'transparent',
     },
   },
   { dark: false }

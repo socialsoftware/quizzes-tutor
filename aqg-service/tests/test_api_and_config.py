@@ -35,7 +35,7 @@ def test_generate_runs_the_job_and_exposes_the_results():
 
     assert job["status"] == JobStatus.DONE
     assert [o["status"] for o in job["outcomes"]] == ["OK", "OK"]
-    assert job["prompt_version"] == "mcq-v3"
+    assert job["prompt_version"] == "mcq-v4"
     assert job["grounding_mode"] == "STRICT"
 
 
@@ -123,3 +123,18 @@ def test_unknown_provider_is_refused(monkeypatch):
     monkeypatch.setenv("LLM_PROVIDER", "carrier-pigeon")
     with pytest.raises(ValueError):
         Settings.from_env()
+
+
+def test_a_failed_job_does_not_show_the_address_of_the_model_server():
+    class Unreachable:
+        model_id = "ollama_chat/m"
+
+        def complete(self, system, user):
+            raise ConnectionError("cannot reach http://192.168.1.66:11434/api/chat (connection refused)")
+
+    client = make_client(Unreachable())
+    job_id = client.post("/generate", json=PAYLOAD).json()["id"]
+    job = client.get(f"/jobs/{job_id}").json()
+
+    assert job["status"] == JobStatus.FAILED
+    assert "connection refused" in job["error"] and "192.168.1.66" not in job["error"]

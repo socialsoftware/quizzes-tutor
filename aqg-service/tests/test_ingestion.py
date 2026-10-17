@@ -357,3 +357,54 @@ def test_materials_and_jobs_survive_a_service_restart(tmp_path):
     # the chunks came back too: generation from the stored material still works
     response = second.post("/generate", json={"course_id": 1, "topic": "HTTP status 404", "chunk_ids": [f"{material_id}:1"]})
     assert response.status_code == 202
+
+
+def office_file(parts: dict[str, bytes]) -> bytes:
+    import io
+    import zipfile
+
+    buffer = io.BytesIO()
+    with zipfile.ZipFile(buffer, "w", zipfile.ZIP_DEFLATED) as archive:
+        for name, content in parts.items():
+            archive.writestr(name, content)
+    return buffer.getvalue()
+
+
+def upload_office(client, content, name="slides.pptx"):
+    return client.post("/materials", data={"course_id": 1}, files={"file": (name, content)})
+
+
+def test_an_office_file_that_unpacks_to_too_much_is_refused_before_it_is_read(tmp_path, monkeypatch):
+    import app.ingestion.adapters as adapters
+
+    monkeypatch.setattr(adapters, "MAX_UNPACKED_BYTES", 1000)
+    parser = FakeParser()
+    settings = Settings(provider="ollama", model="m", ollama_base_url="http://x", max_retries=1, materials_dir=tmp_path)
+    client = TestClient(create_app(settings, parsers=Parsers(pdf=parser, office=parser)))
+
+    # 1 MB of zeros packs into about 1 KB: a small upload, a big unpacking
+    material = wait_for(client, upload_office(client, office_file({"ppt/slide1.xml": b"\0" * 1_000_000})).json()["id"])
+
+    assert material["status"] == "FAILED" and "unpacks to more than" in material["error"]
+
+
+def test_an_office_file_that_is_not_a_zip_is_refused(tmp_path):
+    client = TestClient(create_app(
+        Settings(provider="ollama", model="m", ollama_base_url="http://x", max_retries=1, materials_dir=tmp_path),
+        parsers=FAKE_PARSERS,
+    ))
+
+    material = wait_for(client, upload_office(client, b"not a zip", name="notes.docx").json()["id"])
+
+    assert material["status"] == "FAILED" and "not a valid Office document" in material["error"]
+
+
+def test_an_ordinary_office_file_is_read(tmp_path):
+    client = TestClient(create_app(
+        Settings(provider="ollama", model="m", ollama_base_url="http://x", max_retries=1, materials_dir=tmp_path),
+        parsers=FAKE_PARSERS,
+    ))
+
+    material = wait_for(client, upload_office(client, office_file({"ppt/slide1.xml": b"<p>HTTP</p>"})).json()["id"])
+
+    assert material["status"] == "READY"

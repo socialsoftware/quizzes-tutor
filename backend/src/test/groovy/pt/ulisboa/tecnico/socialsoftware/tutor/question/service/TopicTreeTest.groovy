@@ -17,6 +17,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicTreeDto
 class TopicTreeTest extends SpockTest {
     def setup() {
         createExternalCourseAndExecution()
+        // the documents of the course, as the generation service knows them (pieces m1:0..m1:4, m2:0..m2:4)
+        aqgClient.reset()
+        aqgClient.addMaterial('m1', externalCourse.getId(), ['A', 'B', 'C', 'D', 'E'])
+        aqgClient.addMaterial('m2', externalCourse.getId(), ['A', 'B', 'C', 'D', 'E'])
     }
 
     def create(String name, Integer parentId = null) {
@@ -300,6 +304,42 @@ class TopicTreeTest extends SpockTest {
 
         then:
         result*.chunkId == ['m1:0', 'm1:3', 'm1:5']
+    }
+
+    def "a piece of a document of another course cannot go under a topic"() {
+        given:
+        def topic = create('Networks')
+        aqgClient.addMaterial('other', 999, ['A'])
+
+        when:
+        topicService.updateTopicSources(topic.getId(), [new TopicSourceDto(materialId, chunkId)])
+
+        then:
+        def error = thrown(TutorException)
+        error.getErrorMessage() == ErrorMessage.INVALID_TOPIC_SOURCE
+        topicRepository.findById(topic.getId()).get().getSources().isEmpty()
+
+        where:
+        materialId | chunkId
+        'other'    | 'other:0'   // a document of another course
+        'unknown'  | 'unknown:0' // no such document
+        'm1'       | 'other:0'   // a piece of another document passed off as one of m1
+        'm1'       | null
+    }
+
+    def "a saved tree cannot put a piece of another course's document under a topic"() {
+        given:
+        aqgClient.addMaterial('other', 999, ['A'])
+        def foreign = new TopicTreeDto.Node('a', 'Networks', null)
+        foreign.setSources([new TopicSourceDto('other', 'other:0')])
+
+        when:
+        topicService.saveTopicTree(externalCourse.getId(), new TopicTreeDto([foreign]))
+
+        then:
+        def error = thrown(TutorException)
+        error.getErrorMessage() == ErrorMessage.INVALID_TOPIC_SOURCE
+        topicRepository.findTopics(externalCourse.getId()).isEmpty()
     }
 
     @TestConfiguration

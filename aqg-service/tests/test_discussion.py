@@ -165,3 +165,26 @@ def test_the_material_is_looked_up_with_the_doubt_not_only_the_question(tmp_path
     )
 
     assert response.json()["sources"] == ["Networks > DNS"]
+
+
+def test_a_suggestion_does_not_wait_for_a_slow_model_as_long_as_a_job_would(tmp_path):
+    from fastapi.testclient import TestClient
+
+    from app.api.main import INTERACTIVE_TIMEOUT, create_app
+    from app.config import Settings
+    from tests.test_ingestion import FAKE_PARSERS
+
+    configs = []
+
+    def factory(config):
+        configs.append(config)
+        return FakeLLM([{"reply": "ok"}])
+
+    settings = Settings(
+        provider="ollama", model="m", ollama_base_url="http://x", max_retries=1, materials_dir=tmp_path, llm_timeout=300
+    )
+    client = TestClient(create_app(settings, provider_factory=factory, parsers=FAKE_PARSERS))
+
+    assert suggest(client).status_code == 200
+    # the Tutor gives up on a suggestion after 100 s; a job keeps the 300 s of the settings
+    assert configs[-1].timeout == INTERACTIVE_TIMEOUT
