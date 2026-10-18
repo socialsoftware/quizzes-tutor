@@ -56,6 +56,17 @@ def test_an_explanation_naming_options_by_what_they_say_passes():
         assert check_format(question(explanation=explanation)) == [], explanation
 
 
+def test_options_that_start_like_an_enumeration_are_refused():
+    for content in ("A) Resource not found", "b. Resource not found", "C: Resource not found",
+                    "3) Resource not found", "A - Resource not found", "2 - Resource not found"):
+        assert any("own letter" in p for p in check_format(with_option(0, content))), content
+
+
+def test_maths_answers_are_not_taken_for_enumerations():
+    for content in ("a - b", "-a - b", "b - 2a", "3 - 1", "A - B", "x - y + 1", "2a + b", "a + b", "1/2", "3:4"):
+        assert not any("own letter" in p for p in check_format(with_option(0, content))), content
+
+
 def test_echoed_schema_placeholders_are_refused():
     assert any("placeholders" in p for p in check_format(with_option(1, "option text")))
 

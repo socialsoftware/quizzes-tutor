@@ -28,8 +28,12 @@ _CATCH_ALL_OPTION = re.compile(
     re.IGNORECASE,
 )
 
-# "A) ...", "b. ...", "3 - ...": the Tutor letters the options itself
-_ENUMERATED_OPTION = re.compile(r"^\s*(?:[A-Da-d]|[1-4])\s*[).:\-]\s+")
+# "A) ...", "b. ...", "C: ...", "A - text...", "3 - text...": the Tutor letters the options itself.
+# A dash only counts when text follows (a word of 3 letters) and the marker is a capital or a digit:
+# "a - b", "-a - b", "3 - 1" and "A - B" are answers of a maths question, not enumerations
+_ENUMERATED_OPTION = re.compile(
+    r"^\s*(?:(?:[A-Da-d]|[1-4])\s*[).:]\s+|(?:[A-D]|[1-4])\s+-\s+(?=.*[A-Za-z]{3}))"
+)
 
 # "Option A is wrong", "matches option 1", "the second option": the options are shuffled after the
 # draft is written and shown without letters, so a position in the explanation points at another

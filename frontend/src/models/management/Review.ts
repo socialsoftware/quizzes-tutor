@@ -18,9 +18,10 @@ export default class Review {
     { title: 'Reject', key: 'REJECT', color: 'red' },
   ];
 
-  // The option shown for a review-type select item (V4 select slots no longer expose `raw`)
+  // The option shown for a review-type select item. Vuetify 4's `selection` slot hands over the
+  // option itself (`{ title, key, color }`), older ones a wrapper with `raw` or `value`; a plain key works too
   static statusOptionFor(item: any): { title: string; key: string; color?: string } {
-    const value = item?.raw?.key ?? item?.value ?? item;
+    const value = item?.key ?? item?.raw?.key ?? item?.value ?? item;
     return Review.statusOptions.find((option) => option.key === value) ?? { title: String(value ?? ''), key: value };
   }
 

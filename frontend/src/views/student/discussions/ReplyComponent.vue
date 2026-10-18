@@ -212,7 +212,9 @@ ul {
 .submit-button {
   background-color: #1976d2 !important;
   color: white !important;
-  margin-left: 89%;
+  // To the right of the row, whether or not Suggest reply (teachers) is on its left; a percentage
+  // margin pushed it out of the dialog once there were two buttons
+  margin-left: auto;
 }
 
 .textarea-reply {
