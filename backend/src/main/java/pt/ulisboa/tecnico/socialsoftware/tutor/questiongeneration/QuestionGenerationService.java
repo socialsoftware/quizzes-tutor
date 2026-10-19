@@ -34,6 +34,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.Rev
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User;
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.repository.UserRepository;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.List;
@@ -54,6 +57,7 @@ public class QuestionGenerationService {
     private static final int MAX_QUESTIONS_PER_JOB = 10;
     // A job nobody collected for this long no longer counts as being written
     private static final int PENDING_WINDOW_MINUTES = 15;
+    private static final ObjectMapper DRAFT_WRITER = new ObjectMapper();
     private static final int DEFAULT_QUESTIONS_PER_JOB = 5;
     private static final int MAX_TITLE_LENGTH = 100;
     private static final int MAX_LANGUAGE_LENGTH = 40;
@@ -337,6 +341,7 @@ public class QuestionGenerationService {
                 question.updateTopics(Set.of(topic));
 
             QuestionGeneration questionGeneration = new QuestionGeneration(courseExecution, question, job);
+            questionGeneration.recordDraft(draftJson(outcome.question()), DateHandler.now());
             questionGeneration.setGenerationDetails(
                     aqgJob.modelId(),
                     aqgJob.promptVersion(),
@@ -365,6 +370,7 @@ public class QuestionGenerationService {
 
         // Rewritten in place: the Question keeps its id, topics and review log
         questionGeneration.getQuestion().update(draftDto(outcome.question()));
+        questionGeneration.recordDraft(draftJson(outcome.question()), DateHandler.now());
         questionGeneration.finishRegeneration();
         questionGeneration.setGenerationDetails(
                 aqgJob.modelId(),
@@ -407,6 +413,15 @@ public class QuestionGenerationService {
                 return chunkIdsOf(sources);
         }
         throw new TutorException(GENERATION_CANNOT_REGENERATE);
+    }
+
+    /** A draft as the model wrote it, kept for the analysis (stem, options with the correct one, explanation). */
+    private String draftJson(AqgJobDto.Question draft) {
+        try {
+            return DRAFT_WRITER.writeValueAsString(draft);
+        } catch (JsonProcessingException e) {
+            return null;
+        }
     }
 
     /** The question as the service wrote it, to be rewritten following a review. */

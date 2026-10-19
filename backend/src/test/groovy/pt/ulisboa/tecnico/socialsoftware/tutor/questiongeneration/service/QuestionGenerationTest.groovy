@@ -16,6 +16,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.Generation
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.dto.ReviewDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
+import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler
 import spock.lang.Unroll
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.*
@@ -649,6 +650,84 @@ class QuestionGenerationTest extends SpockTest {
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == CANNOT_REVIEW_QUESTION_GENERATION
+    }
+
+    // ---------------------------------------------------------------- what is kept for the analysis
+
+    def "the draft as the model wrote it is kept, with when it arrived"() {
+        when:
+        def generation = importedGeneration()
+
+        then:
+        def draft = new groovy.json.JsonSlurper().parseText(generation.getOriginalDraft())
+        draft.stem == 'What does 404 mean?'
+        draft.options.size() == 4
+        draft.options.count { it.correct } == 1
+        draft.options.find { it.correct }.content == 'Resource not found'
+        draft.explanation == 'It is the missing resource code'
+        generation.getModelDraft() == generation.getOriginalDraft()
+        generation.getImportedAt() != null
+        generation.getRegenerationCount() == 0
+        generation.getRegeneratedAt() == null
+    }
+
+    def "a regeneration keeps the original draft and records the new model version"() {
+        given:
+        def generation = importedGeneration()
+        def original = generation.getOriginalDraft()
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
+        def regenerating = questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Ask it the other way round')
+        aqgClient.jobReply = new AqgJobDto('aqg-2', 'DONE', 'mcq-v2', 'nim', 'STRICT', [rewrittenOutcome()], null)
+
+        when:
+        questionGenerationService.getGenerationJob(externalCourseExecution.getId(), regenerating.getRegenerationJobId())
+
+        then:
+        def result = questionGenerationRepository.findAll().get(0)
+        result.getOriginalDraft() == original
+        new groovy.json.JsonSlurper().parseText(result.getModelDraft()).stem == 'Which status code reports a missing resource?'
+        result.getRegenerationCount() == 1
+        result.getRegeneratedAt() != null
+    }
+
+    def "a teacher's edit after the model wrote it shows as a difference with the model draft"() {
+        given:
+        def generation = importedGeneration()
+
+        when: "the teacher changes the text of the question on the Questions page"
+        generation.getQuestion().setContent('What does the HTTP status code 404 mean?')
+
+        then:
+        def draft = new groovy.json.JsonSlurper().parseText(generation.getModelDraft())
+        draft.stem != generation.getQuestion().getContent()
+    }
+
+    def "a review of a generated question is dated by the server, not by what the browser says"() {
+        given:
+        def generation = importedGeneration()
+        def dto = reviewOf(generation.getId(), Review.Type.APPROVE)
+        dto.setCreationDate('2001-01-01T10:00:00Z')
+        def before = DateHandler.now().minusSeconds(5)
+
+        when:
+        questionGenerationService.createReview(dto)
+
+        then:
+        def review = reviewRepository.findAll().get(0)
+        review.getCreationDate() != null
+        review.getCreationDate().isAfter(before)
+    }
+
+    def "the review made by a regeneration has a date too"() {
+        given:
+        def generation = importedGeneration()
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
+
+        when:
+        questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Ask it the other way round')
+
+        then:
+        reviewRepository.findAll().get(0).getCreationDate() != null
     }
 
     @TestConfiguration

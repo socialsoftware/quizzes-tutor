@@ -53,7 +53,9 @@ public class Review {
         setComment(reviewDto.getComment());
         setUser(user);
         setQuestionGeneration(questionGeneration);
-        setCreationDate(DateHandler.toLocalDateTime(reviewDto.getCreationDate()));
+        // The server's clock: the browser's may be wrong, and a review made by the server itself
+        // (the REQUEST_CHANGES of a regeneration) has none. The time to a decision is measured from it.
+        setCreationDate(DateHandler.now());
     }
 
     public Review(User user, QuestionSubmission questionSubmission, ReviewDto reviewDto) {

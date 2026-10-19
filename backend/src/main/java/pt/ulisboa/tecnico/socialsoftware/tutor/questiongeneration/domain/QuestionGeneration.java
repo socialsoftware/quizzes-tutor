@@ -6,6 +6,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.domain.CourseExecution;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.domain.Review;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -65,6 +66,26 @@ public class QuestionGeneration {
     // The job rewriting this question while REGENERATING
     @Column(name = "regeneration_job_id")
     private Integer regenerationJobId;
+
+    // The question as the model first wrote it (JSON: stem, options, explanation). Never changes, so it
+    // can be compared with the final question to measure how much teachers and regenerations changed it.
+    @Column(name = "original_draft", columnDefinition = "TEXT")
+    private String originalDraft;
+
+    // The latest version the model wrote (the first one, or the last regeneration): what the teacher
+    // then edited, if the final question differs from it.
+    @Column(name = "model_draft", columnDefinition = "TEXT")
+    private String modelDraft;
+
+    // When the first draft was imported into the Tutor, and when the last regeneration was
+    @Column(name = "imported_at")
+    private LocalDateTime importedAt;
+
+    @Column(name = "regenerated_at")
+    private LocalDateTime regeneratedAt;
+
+    @Column(name = "regeneration_count")
+    private Integer regenerationCount = 0;
 
     @ElementCollection
     @CollectionTable(name = "question_generation_chunks", joinColumns = @JoinColumn(name = "question_generation_id"))
@@ -202,6 +223,38 @@ public class QuestionGeneration {
         this.needsHumanAttention = needsHumanAttention;
         this.explanation = explanation;
         this.sourceChunkIds = new ArrayList<>(sourceChunkIds);
+    }
+
+    /** Keeps a draft the model wrote: the first one becomes the original, every one the latest model version. */
+    public void recordDraft(String draftJson, LocalDateTime when) {
+        if (this.originalDraft == null) {
+            this.originalDraft = draftJson;
+            this.importedAt = when;
+        } else {
+            this.regeneratedAt = when;
+            this.regenerationCount = (this.regenerationCount == null ? 0 : this.regenerationCount) + 1;
+        }
+        this.modelDraft = draftJson;
+    }
+
+    public String getOriginalDraft() {
+        return originalDraft;
+    }
+
+    public String getModelDraft() {
+        return modelDraft;
+    }
+
+    public LocalDateTime getImportedAt() {
+        return importedAt;
+    }
+
+    public LocalDateTime getRegeneratedAt() {
+        return regeneratedAt;
+    }
+
+    public int getRegenerationCount() {
+        return regenerationCount == null ? 0 : regenerationCount;
     }
 
     public Set<Review> getReviews() {
