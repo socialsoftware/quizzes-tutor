@@ -9,3 +9,6 @@ psycopg[binary]==3.3.6
 python-dotenv==1.2.3
 scipy==1.18.1
 SQLAlchemy==2.1.0
+# Not used directly (matplotlib needs it): a floor so a recompile never goes back to the
+# versions with the heap overflows of Dependabot alerts #433-#441
+pillow>=13.0.0
