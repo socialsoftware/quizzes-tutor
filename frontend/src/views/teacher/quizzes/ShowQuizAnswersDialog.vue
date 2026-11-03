@@ -6,6 +6,8 @@
       @keydown.esc="$emit('update:dialog', false)"
       max-width="85%"
     >
+      <!-- The card is what lets a dialog scroll when it is taller than the window -->
+      <v-card>
       <v-data-table
         :headers="headers"
         :items="quizAnswers.quizAnswers"
@@ -93,6 +95,7 @@
           </tr>
         </template>
       </v-data-table>
+      </v-card>
     </v-dialog>
     <show-quiz-answers-details-dialog
       v-if="detailDialog"

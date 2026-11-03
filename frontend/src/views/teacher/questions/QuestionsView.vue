@@ -150,7 +150,7 @@
             </v-tooltip>
             <v-tooltip location="bottom">
               <template v-slot:activator="{ props }">
-                <span data-cy="showClarificationsButton" v-bind="props" @click="showClarificationDialog((item as any).raw || item)">
+                <span data-cy="showClarificationsButton" v-bind="props" @click="openClarifications((item as any).raw || item)">
                   <v-icon class="action-button">fas fa-comments</v-icon>
                 </span>
               </template>
@@ -348,7 +348,8 @@ const showStudentViewDialog = async (question: Question) => {
   }
 };
 
-const showClarificationDialog = (question: Question) => {
+// Not "showClarificationDialog": in <script setup> it would stand in for <show-clarification-dialog>
+const openClarifications = (question: Question) => {
   currentQuestion.value = question;
   clarificationDialog.value = true;
 };

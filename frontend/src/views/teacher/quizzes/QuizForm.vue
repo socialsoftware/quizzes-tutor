@@ -121,7 +121,7 @@
           <template v-slot:[`item.title`]="{ item }">
             <div
               class="clickableTitle"
-              @click="showQuestionDialog((item as any).raw || item)"
+              @click="openQuestion((item as any).raw || item)"
               @contextmenu="editQuestion((item as any).raw || item, $event)"
             >
               {{ item.title }}
@@ -139,7 +139,7 @@
               <template v-slot:activator="{ props }">
                 <v-icon
                   class="mr-2 action-button"
-                  @click="showQuestionDialog((item as any).raw || item)"
+                  @click="openQuestion((item as any).raw || item)"
                   v-bind="props"
                 >
                   visibility
@@ -279,7 +279,7 @@
           <template v-slot:[`item.title`]="{ item }">
             <div
               class="clickableTitle"
-              @click="showQuestionDialog((item as any).raw || item)"
+              @click="openQuestion((item as any).raw || item)"
               @contextmenu="editQuestion((item as any).raw || item, $event)"
             >
               {{ item.title }}
@@ -297,7 +297,7 @@
               <template v-slot:activator="{ props }">
                 <span
                   class="mr-2 action-button"
-                  @click="showQuestionDialog((item as any).raw || item)"
+                  @click="openQuestion((item as any).raw || item)"
                   v-bind="props"
                 >
                   <v-icon>visibility</v-icon>
@@ -507,7 +507,9 @@ const customSort = (items: any[], index: string, isDesc: string) => {
   return items;
 };
 
-const showQuestionDialog = (question: Question) => {
+// Not "showQuestionDialog": in <script setup> a function with that name would stand in for
+// <show-question-dialog> in the template, and the dialog would never be drawn
+const openQuestion = (question: Question) => {
   currentQuestion.value = question;
   questionDialog.value = true;
 };
