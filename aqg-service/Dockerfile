@@ -1,4 +1,4 @@
-FROM python:3.14-slim-trixie
+FROM python:3.13-slim
 
 WORKDIR /app
 COPY requirements.txt requirements.txt
