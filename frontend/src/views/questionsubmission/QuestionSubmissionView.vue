@@ -270,7 +270,9 @@ const checkRegenerations = async (): Promise<boolean> => {
 const regenerationPoller = createPoller(checkRegenerations, REGENERATION_POLL_MS);
 
 const getQuestionGenerations = async () => {
-  if (!store.isTeacher) return;
+  // Generated questions are for teachers with question generation: the demo teacher is a teacher too,
+  // but the backend refuses it (400), and the error alert would cover the page
+  if (!store.canGenerateQuestions) return;
   try {
     questionGenerations.value = await RemoteServices.getQuestionGenerations();
     if (questionGenerations.value.some((generation) => generation.isRegenerating())) regenerationPoller.start();
