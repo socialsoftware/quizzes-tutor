@@ -8,7 +8,6 @@ from app.chunking.splitter import split_markdown
 from app.config import Settings
 from app.db import MaterialRow
 from app.ingestion.adapters import (
-    FallbackAdapter,
     MarkdownAdapter,
     MarkItDownAdapter,
     ParsedDocument,
@@ -289,20 +288,45 @@ def test_a_parser_failure_is_reported_on_the_material(tmp_path):
     assert material["status"] == "FAILED" and "corrupt file" in material["error"]
 
 
-def test_fallback_parser_takes_over_only_when_the_fast_one_finds_no_text(tmp_path):
-    class Fast:
-        def __init__(self, text):
-            self.text = text
+def pdf_with(tmp_path, text):
+    import pymupdf
 
-        def extract(self, path):
-            return ParsedDocument(self.text, "fast")
+    document = pymupdf.open()
+    page = document.new_page()
+    if text:
+        page.insert_textbox(pymupdf.Rect(50, 50, 500, 700), text, fontsize=11)
+    path = tmp_path / "file.pdf"
+    document.save(path)
+    return path
 
-    class Heavy:
-        def extract(self, path):
-            return ParsedDocument("recovered by ocr " * 10, "heavy")
 
-    assert FallbackAdapter(Fast("x" * 100), Heavy()).extract(tmp_path).parser == "fast"
-    assert FallbackAdapter(Fast("   "), Heavy()).extract(tmp_path).parser == "heavy"
+def test_a_pdf_with_text_is_read(tmp_path):
+    from app.ingestion.adapters import PymupdfAdapter
+
+    path = pdf_with(tmp_path, "HTTP status 404 means the server cannot find the requested resource. " * 3)
+
+    assert "404" in PymupdfAdapter().extract(path).markdown
+
+
+def test_a_pdf_without_text_is_refused_with_the_reason(tmp_path):
+    import pytest
+
+    from app.ingestion.adapters import NoReadableText, PymupdfAdapter
+
+    with pytest.raises(NoReadableText, match="no text to read"):
+        PymupdfAdapter().extract(pdf_with(tmp_path, ""))
+
+
+def test_a_scanned_pdf_ends_up_failed_on_the_material_and_says_why(tmp_path):
+    from app.ingestion.adapters import build_parsers
+
+    settings = Settings(provider="ollama", model="m", ollama_base_url="http://x", max_retries=1, materials_dir=tmp_path)
+    client = TestClient(create_app(settings, parsers=build_parsers()))
+    scan = pdf_with(tmp_path, "").read_bytes()
+
+    material = wait_for(client, client.post("/materials", data={"course_id": 1}, files={"file": ("scan.pdf", scan)}).json()["id"])
+
+    assert material["status"] == "FAILED" and "no text to read" in material["error"]
 
 
 def test_markitdown_reads_a_real_pptx(tmp_path):
@@ -318,20 +342,6 @@ def test_markitdown_reads_a_real_pptx(tmp_path):
     document = MarkItDownAdapter().extract(path)
     assert document.parser == "markitdown"
     assert "HTTP status codes" in document.markdown and "404 means" in document.markdown
-
-
-def test_pymupdf_reads_a_real_pdf_and_finds_nothing_in_a_blank_one(tmp_path):
-    import pymupdf
-
-    with_text = pymupdf.open()
-    with_text.new_page().insert_text((72, 72), "DNS translates host names into IP addresses")
-    with_text.save(tmp_path / "text.pdf")
-    blank = pymupdf.open()
-    blank.new_page()
-    blank.save(tmp_path / "blank.pdf")
-
-    assert "DNS translates host names" in PymupdfAdapter().extract(tmp_path / "text.pdf").markdown
-    assert PymupdfAdapter().extract(tmp_path / "blank.pdf").markdown.strip() == ""
 
 
 def test_materials_and_jobs_survive_a_service_restart(tmp_path):

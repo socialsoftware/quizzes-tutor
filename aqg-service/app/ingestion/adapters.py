@@ -8,6 +8,10 @@ class UnsupportedFormat(Exception):
     pass
 
 
+class NoReadableText(Exception):
+    """The file has no text to read: a scanned PDF is only images, and this service does no OCR."""
+
+
 @dataclass(frozen=True)
 class ParsedDocument:
     markdown: str
@@ -25,8 +29,12 @@ class MarkdownAdapter:
         return ParsedDocument(path.read_text(encoding="utf-8"), "plain")
 
 
+# A PDF with less text than this has none worth reading: its pages are images
+MIN_PDF_CHARS = 50
+
+
 class PymupdfAdapter:
-    """PDFs that carry a text layer. CPU only, no models."""
+    """PDFs that carry a text layer. CPU only, no models; a scanned PDF (images of pages) is refused."""
 
     def extract(self, path: Path) -> ParsedDocument:
         import pymupdf
@@ -34,7 +42,13 @@ class PymupdfAdapter:
 
         with pymupdf.open(str(path)) as document:
             toc = tuple((level, title) for level, title, _page in document.get_toc(simple=True))
-        return ParsedDocument(pymupdf4llm.to_markdown(str(path)), "pymupdf4llm", toc)
+        markdown = pymupdf4llm.to_markdown(str(path))
+        if len(markdown.strip()) < MIN_PDF_CHARS:
+            raise NoReadableText(
+                "the PDF has no text to read (is it a scan?). Scanned documents are not supported: "
+                "use a PDF with selectable text"
+            )
+        return ParsedDocument(markdown, "pymupdf4llm", toc)
 
 
 class MarkItDownAdapter:
@@ -51,52 +65,14 @@ class MarkItDownAdapter:
         return ParsedDocument(self._converter.convert(str(path)).text_content, "markitdown")
 
 
-class MarkerAdapter:
-    """Layout and OCR models: slow, but it reads scanned or complex PDFs. The converter loads
-    several models, so it is built on first use and reused afterwards."""
-
-    def __init__(self) -> None:
-        self._converter = None
-
-    def extract(self, path: Path) -> ParsedDocument:
-        if self._converter is None:
-            from marker.converters.pdf import PdfConverter
-            from marker.models import create_model_dict
-
-            self._converter = PdfConverter(artifact_dict=create_model_dict())
-        from marker.output import text_from_rendered
-
-        text, _, _ = text_from_rendered(self._converter(str(path)))
-        return ParsedDocument(text, "marker")
-
-
-class FallbackAdapter:
-    """Use the fast parser, and fall back to the heavy one when it finds almost no text
-    (a scanned PDF has no text layer for the fast parser to read)."""
-
-    def __init__(self, primary: ContentAdapter, fallback: ContentAdapter, min_chars: int = 50):
-        self.primary = primary
-        self.fallback = fallback
-        self.min_chars = min_chars
-
-    def extract(self, path: Path) -> ParsedDocument:
-        document = self.primary.extract(path)
-        if len(document.markdown.strip()) >= self.min_chars:
-            return document
-        return self.fallback.extract(path)
-
-
 @dataclass
 class Parsers:
     pdf: ContentAdapter
     office: ContentAdapter
 
 
-def build_parsers(pdf_parser: str = "pymupdf", office_parser: str = "markitdown") -> Parsers:
-    marker = MarkerAdapter()
-    pdf: ContentAdapter = marker if pdf_parser == "marker" else FallbackAdapter(PymupdfAdapter(), marker)
-    office: ContentAdapter = marker if office_parser == "marker" else MarkItDownAdapter()
-    return Parsers(pdf=pdf, office=office)
+def build_parsers() -> Parsers:
+    return Parsers(pdf=PymupdfAdapter(), office=MarkItDownAdapter())
 
 
 MARKDOWN_SUFFIXES = {".md", ".markdown", ".txt"}

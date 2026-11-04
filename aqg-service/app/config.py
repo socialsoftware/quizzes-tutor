@@ -14,13 +14,6 @@ DEFAULT_MODELS = {
 }
 
 
-def _choice(name: str, default: str, allowed: tuple[str, ...]) -> str:
-    value = os.getenv(name, default)
-    if value not in allowed:
-        raise ValueError(f"{name} must be one of {allowed}, got {value!r}")
-    return value
-
-
 @dataclass(frozen=True)
 class Settings:
     provider: str
@@ -28,8 +21,6 @@ class Settings:
     ollama_base_url: str
     max_retries: int
     materials_dir: Path = Path("/data/materials")
-    pdf_parser: str = "pymupdf"
-    office_parser: str = "markitdown"
     keep_originals: bool = True
     database_url: str = "sqlite://"
     llm_timeout: float = 120
@@ -70,8 +61,6 @@ class Settings:
             ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://ollama:11434"),
             max_retries=int(os.getenv("VERIFICATION_MAX_RETRIES", "2")),
             materials_dir=Path(os.getenv("MATERIALS_DIR", "/data/materials")),
-            pdf_parser=_choice("PDF_PARSER", "pymupdf", ("pymupdf", "marker")),
-            office_parser=_choice("OFFICE_PARSER", "markitdown", ("markitdown", "marker")),
             keep_originals=os.getenv("KEEP_ORIGINALS", "true").lower() != "false",
             database_url=os.getenv("DATABASE_URL", "sqlite:///aqg.db"),
             llm_timeout=float(os.getenv("LLM_TIMEOUT", "120")),

@@ -33,6 +33,8 @@ services:
   aqg-service:
     build:
       context: ./aqg-service/
+      platforms:
+        - linux/amd64
     image: aqg-service:latest
     container_name: aqg-service
     depends_on:

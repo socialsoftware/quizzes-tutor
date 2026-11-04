@@ -69,7 +69,7 @@ def create_app(
     catalog: ModelCatalog | None = None,
 ) -> FastAPI:
     settings = settings or Settings.from_env()
-    parsers = parsers or build_parsers(settings.pdf_parser, settings.office_parser)
+    parsers = parsers or build_parsers()
     retriever = retriever or LexicalRetriever()
     storage = storage or LocalMaterialStorage(settings.materials_dir)
     session_factory = create_session_factory(settings.database_url)
