@@ -39,8 +39,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.sql.SQLException;
 import java.util.ArrayList;
+import java.util.HashSet;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Objects;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -60,6 +63,9 @@ public class QuestionGenerationService {
     private static final ObjectMapper DRAFT_WRITER = new ObjectMapper();
     private static final int DEFAULT_QUESTIONS_PER_JOB = 5;
     private static final int MAX_TITLE_LENGTH = 100;
+    private static final int MAX_TOPICS_PER_JOB = 10;
+    // generation_jobs.topic is a varchar(255)
+    private static final int MAX_TOPIC_LABEL_LENGTH = 250;
     private static final int MAX_LANGUAGE_LENGTH = 40;
     private static final int MAX_FOCUS_LENGTH = 500;
 
@@ -115,9 +121,9 @@ public class QuestionGenerationService {
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public List<MaterialChunkDto> getMaterialChunks(Integer executionId, String materialId) {
         checkMaterialOfCourse(executionId, materialId);
-        Map<String, Integer> topicOfChunk = topicService.findTopicsOfChunks(courseIdOf(executionId), materialId);
+        Map<String, List<Integer>> topicsOfChunk = topicService.findTopicsOfChunks(courseIdOf(executionId), materialId);
         return aqgClient.getChunks(materialId).stream()
-                .map(chunk -> new MaterialChunkDto(chunk, topicOfChunk.get(chunk.id())))
+                .map(chunk -> new MaterialChunkDto(chunk, topicsOfChunk.get(chunk.id())))
                 .collect(Collectors.toList());
     }
 
@@ -167,13 +173,19 @@ public class QuestionGenerationService {
             throw new TutorException(GENERATION_INVALID_COUNT);
         checkNotTooMany(requesterId);
 
-        if (request.getTopicId() == null)
+        List<Integer> topicIds = request.getTopicIds() == null ? List.of()
+                : request.getTopicIds().stream().filter(Objects::nonNull).distinct().collect(Collectors.toList());
+        if (topicIds.isEmpty())
             throw new TutorException(GENERATION_MISSING_TOPIC);
-        Topic topic = topicRepository.findTopicWithCourseById(request.getTopicId())
-                .filter(found -> found.getCourse().getId().equals(courseId))
-                .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, request.getTopicId()));
+        if (topicIds.size() > MAX_TOPICS_PER_JOB)
+            throw new TutorException(GENERATION_TOO_MANY_TOPICS, MAX_TOPICS_PER_JOB);
+        List<Topic> topics = new ArrayList<>();
+        for (Integer topicId : topicIds)
+            topics.add(topicRepository.findTopicWithCourseById(topicId)
+                    .filter(found -> found.getCourse().getId().equals(courseId))
+                    .orElseThrow(() -> new TutorException(TOPIC_NOT_FOUND, topicId)));
 
-        List<TopicSourceDto> sources = topicService.findSourcesOfSubtree(topic.getId());
+        List<TopicSourceDto> sources = sourcesOfTopics(topicIds);
         if (sources.isEmpty())
             throw new TutorException(GENERATION_TOPIC_WITHOUT_SOURCES);
 
@@ -185,10 +197,10 @@ public class QuestionGenerationService {
             throw new TutorException(GENERATION_INVALID_FOCUS);
 
         AqgJobDto aqgJob = aqgClient.generate(new AqgGenerateRequest(
-                courseId, topic.getName(), difficulty, count, groundingMode, language, null,
+                courseId, topicLabel(topics), difficulty, count, groundingMode, language, null,
                 questionRepository.findRecentContents(courseId), chunkIdsOf(sources), focus));
 
-        GenerationJob job = new GenerationJob(aqgJob.id(), executionId, requesterId, topic.getName(), topic.getId(),
+        GenerationJob job = new GenerationJob(aqgJob.id(), executionId, requesterId, topicLabel(topics), topicIds,
                 count, difficulty, groundingMode, aqgJob.status());
         job.setSource(materialIdsOf(sources), language);
         job.setFocus(focus);
@@ -233,7 +245,7 @@ public class QuestionGenerationService {
                 questionRepository.findRecentContents(courseId), chunkIds, original.getFocus()));
 
         GenerationJob job = new GenerationJob(aqgJob.id(), original.getCourseExecutionId(), userId,
-                original.getTopic(), original.getTopicId(), 1, original.getDifficulty(), original.getGroundingMode(),
+                original.getTopic(), original.getTopicIds(), 1, original.getDifficulty(), original.getGroundingMode(),
                 aqgJob.status());
         job.setSource(original.getMaterialIds(), original.getLanguage());
         job.setFocus(original.getFocus());
@@ -326,7 +338,7 @@ public class QuestionGenerationService {
     private void importQuestions(GenerationJob job, AqgJobDto aqgJob) {
         CourseExecution courseExecution = getCourseExecution(job.getCourseExecutionId());
         Integer courseId = courseExecution.getCourse().getId();
-        Topic topic = job.getTopicId() == null ? null : topicRepository.findById(job.getTopicId()).orElse(null);
+        Set<Topic> topics = new HashSet<>(topicRepository.findAllById(job.getTopicIds()));
 
         int imported = 0;
         int skipped = 0;
@@ -336,9 +348,9 @@ public class QuestionGenerationService {
                 continue;
             }
 
-            Question question = createDraftQuestion(courseId, outcome.question());
-            if (topic != null)
-                question.updateTopics(Set.of(topic));
+            Question question = createDraftQuestion(courseId, outcome.question(), job.getDifficulty());
+            if (!topics.isEmpty())
+                question.updateTopics(topics);
 
             QuestionGeneration questionGeneration = new QuestionGeneration(courseExecution, question, job);
             questionGeneration.recordDraft(draftJson(outcome.question()), DateHandler.now());
@@ -369,7 +381,7 @@ public class QuestionGenerationService {
         }
 
         // Rewritten in place: the Question keeps its id, topics and review log
-        questionGeneration.getQuestion().update(draftDto(outcome.question()));
+        questionGeneration.getQuestion().update(draftDto(outcome.question(), job.getDifficulty()));
         questionGeneration.recordDraft(draftJson(outcome.question()), DateHandler.now());
         questionGeneration.finishRegeneration();
         questionGeneration.setGenerationDetails(
@@ -381,6 +393,20 @@ public class QuestionGenerationService {
                 outcome.question().explanation(),
                 outcome.sourceChunkIds() == null ? new ArrayList<>() : outcome.sourceChunkIds());
         job.markImported(1, 0);
+    }
+
+    /** The pieces under the topics and their subtopics, each once, topic after topic in the order asked for. */
+    private List<TopicSourceDto> sourcesOfTopics(List<Integer> topicIds) {
+        Map<String, TopicSourceDto> distinct = new LinkedHashMap<>();
+        for (Integer topicId : topicIds)
+            topicService.findSourcesOfSubtree(topicId).forEach(source -> distinct.putIfAbsent(source.getChunkId(), source));
+        return new ArrayList<>(distinct.values());
+    }
+
+    /** The names of the topics, as the list of requests and the model's prompt show them. */
+    private String topicLabel(List<Topic> topics) {
+        String label = topics.stream().map(Topic::getName).collect(Collectors.joining(", "));
+        return label.length() <= MAX_TOPIC_LABEL_LENGTH ? label : label.substring(0, MAX_TOPIC_LABEL_LENGTH - 3) + "...";
     }
 
     private List<String> chunkIdsOf(List<TopicSourceDto> sources) {
@@ -407,11 +433,10 @@ public class QuestionGenerationService {
     private List<String> regenerationChunks(QuestionGeneration questionGeneration, GenerationJob original) {
         if (!questionGeneration.getSourceChunkIds().isEmpty())
             return new ArrayList<>(questionGeneration.getSourceChunkIds());
-        if (original.getTopicId() != null && topicRepository.existsById(original.getTopicId())) {
-            List<TopicSourceDto> sources = topicService.findSourcesOfSubtree(original.getTopicId());
-            if (!sources.isEmpty())
-                return chunkIdsOf(sources);
-        }
+        List<Integer> existing = original.getTopicIds().stream().filter(topicRepository::existsById).collect(Collectors.toList());
+        List<TopicSourceDto> sources = sourcesOfTopics(existing);
+        if (!sources.isEmpty())
+            return chunkIdsOf(sources);
         throw new TutorException(GENERATION_CANNOT_REGENERATE);
     }
 
@@ -443,15 +468,15 @@ public class QuestionGenerationService {
         return trimmed;
     }
 
-    private Question createDraftQuestion(Integer courseId, AqgJobDto.Question draft) {
-        QuestionDto created = questionService.createQuestion(courseId, draftDto(draft));
+    private Question createDraftQuestion(Integer courseId, AqgJobDto.Question draft, String difficulty) {
+        QuestionDto created = questionService.createQuestion(courseId, draftDto(draft, difficulty));
         Question question = questionRepository.findById(created.getId())
                 .orElseThrow(() -> new TutorException(QUESTION_NOT_FOUND, created.getId()));
         question.setOrigin(Question.Origin.GENERATED);
         return question;
     }
 
-    private QuestionDto draftDto(AqgJobDto.Question draft) {
+    private QuestionDto draftDto(AqgJobDto.Question draft, String difficulty) {
         List<OptionDto> options = new ArrayList<>();
         for (AqgJobDto.Option draftOption : draft.options()) {
             OptionDto option = new OptionDto();
@@ -463,16 +488,25 @@ public class QuestionGenerationService {
         details.setOptions(options);
 
         QuestionDto questionDto = new QuestionDto();
-        questionDto.setTitle(titleFor(draft.stem()));
+        questionDto.setTitle(titleFor(draft.stem(), difficulty));
         questionDto.setContent(draft.stem());
         questionDto.setStatus(Question.Status.SUBMITTED.name());
         questionDto.setQuestionDetailsDto(details);
         return questionDto;
     }
 
-    private String titleFor(String stem) {
+    /**
+     * The question's name: the start of the stem and, in brackets, the difficulty asked for, so the
+     * teacher knows it while reviewing and in the question bank (a question has no difficulty of its own
+     * until students answer it).
+     */
+    private String titleFor(String stem, String difficulty) {
         String oneLine = stem.replaceAll("\\s+", " ").trim();
-        return oneLine.length() <= MAX_TITLE_LENGTH ? oneLine : oneLine.substring(0, MAX_TITLE_LENGTH - 3) + "...";
+        String suffix = difficulty == null || difficulty.isBlank() ? ""
+                : " (" + difficulty.charAt(0) + difficulty.substring(1).toLowerCase() + ")";
+        int room = MAX_TITLE_LENGTH - suffix.length();
+        String head = oneLine.length() <= room ? oneLine : oneLine.substring(0, room - 3) + "...";
+        return head + suffix;
     }
 
     private CourseExecution getCourseExecution(Integer executionId) {

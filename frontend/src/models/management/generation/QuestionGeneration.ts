@@ -4,6 +4,8 @@ export default class QuestionGeneration {
   id!: number;
   courseExecutionId!: number;
   jobId: number | null = null;
+  // EASY, MEDIUM or HARD: what the teacher asked for (the question's name carries it too)
+  difficulty: string | null = null;
   question!: Question;
   status!: string;
   modelId: string | null = null;
@@ -24,6 +26,7 @@ export default class QuestionGeneration {
       this.id = jsonObj.id;
       this.courseExecutionId = jsonObj.courseExecutionId;
       this.jobId = jsonObj.jobId;
+      this.difficulty = jsonObj.difficulty ?? null;
       this.question = new Question(jsonObj.question);
       this.status = jsonObj.status;
       this.modelId = jsonObj.modelId;

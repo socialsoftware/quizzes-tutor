@@ -34,17 +34,24 @@
 
       <v-card-text v-if="!loading">
         <v-alert v-if="suggested" type="info" variant="tonal" density="compact" class="mb-3" data-cy="SuggestedNotice">
-          Suggested from the headings of the document. Check it, change what is wrong and save.
+          Suggested from the headings of the document. Check it, change what is wrong and save: a new topic is only
+          created if you save it with pieces under it.
         </v-alert>
-        <div class="d-flex align-center flex-wrap mb-3">
+        <div class="d-flex align-center flex-wrap mb-1">
           <span class="text-medium-emphasis" data-cy="DistributionSummary">
             {{ placedCount }} of {{ chunks.length }} pieces are under a topic. Pieces under no topic are not used to
-            generate questions. A topic chosen for a heading also goes to the headings below it.
+            generate questions. A piece can be under several topics. A topic chosen for a heading also goes to the
+            headings below it.
           </span>
           <v-spacer />
           <v-btn size="small" variant="text" data-cy="ExpandAll" @click="expandAll(!allExpanded)">
             {{ allExpanded ? 'Collapse all' : 'Show all pieces' }}
           </v-btn>
+        </div>
+        <div class="d-flex align-center flex-wrap ga-2 mb-3 text-caption" data-cy="DistributionLegend">
+          <v-chip size="x-small" :color="EXISTING_COLOR">A topic the course has</v-chip>
+          <v-chip size="x-small" :color="NEW_COLOR">A new topic: it is created when you save</v-chip>
+          <v-chip size="x-small">No topic</v-chip>
         </div>
 
         <v-row>
@@ -61,15 +68,25 @@
                 <span class="font-weight-medium group-title" data-cy="GroupTitle">{{ group.title }}</span>
                 <span class="text-caption text-medium-emphasis ml-2 text-no-wrap">{{ group.chunkIds.length }} piece(s)</span>
                 <v-spacer />
-                <v-chip
-                  size="small"
-                  class="ml-2 destination"
-                  :color="colorOf(groupDestination(group))"
-                  data-cy="GroupDestination"
-                  @click="openPicker({ group: group.index })"
-                >
-                  {{ groupLabel(group) }}
-                </v-chip>
+                <span class="d-flex flex-wrap justify-end ga-1 ml-2 destinations" data-cy="GroupDestination" @click="openPicker({ group: group.index })">
+                  <template v-if="groupTopics(group) === null">
+                    <v-chip size="small" class="destination" data-cy="DestinationChip">Several topics</v-chip>
+                  </template>
+                  <template v-else-if="groupTopics(group)!.length === 0">
+                    <v-chip size="small" class="destination" data-cy="DestinationChip">No topic</v-chip>
+                  </template>
+                  <v-chip
+                    v-for="destination in groupTopics(group) ?? []"
+                    v-else
+                    :key="destination"
+                    size="small"
+                    class="destination"
+                    :color="colorOf(destination)"
+                    data-cy="DestinationChip"
+                  >
+                    {{ labelOf(destination) }}
+                  </v-chip>
+                </span>
               </div>
               <div v-if="expanded.has(group.index)" :style="{ paddingLeft: `${Math.max(group.depth - 1, 0) * 20 + 32}px` }">
                 <div v-for="id in group.chunkIds" :key="id" class="d-flex align-start chunk-row" data-cy="ChunkRow">
@@ -83,15 +100,22 @@
                       >{{ fullText.has(id) ? 'less' : 'more' }}</a
                     >
                   </div>
-                  <v-chip
-                    size="x-small"
-                    class="ml-2 destination"
-                    :color="colorOf(destinations[id])"
-                    data-cy="ChunkDestination"
-                    @click="openPicker({ chunk: id })"
-                  >
-                    {{ labelOf(destinations[id]) }}
-                  </v-chip>
+                  <span class="d-flex flex-wrap justify-end ga-1 ml-2 destinations" data-cy="ChunkDestination" @click="openPicker({ chunk: id })">
+                    <v-chip v-if="destinationsOf(destinations, id).length === 0" size="x-small" class="destination" data-cy="DestinationChip">
+                      No topic
+                    </v-chip>
+                    <v-chip
+                      v-for="destination in destinationsOf(destinations, id)"
+                      v-else
+                      :key="destination"
+                      size="x-small"
+                      class="destination"
+                      :color="colorOf(destination)"
+                      data-cy="DestinationChip"
+                    >
+                      {{ labelOf(destination) }}
+                    </v-chip>
+                  </span>
                 </div>
               </div>
             </div>
@@ -113,7 +137,7 @@
                   data-cy="DistributionTopic"
                 >
                   <span :class="{ 'text-medium-emphasis': !countOf(option.value) }">{{ option.title }}</span>
-                  <v-chip v-if="option.isNew" size="x-small" color="primary" class="ml-1">new</v-chip>
+                  <v-chip v-if="option.isNew" size="x-small" :color="NEW_COLOR" class="ml-1">new</v-chip>
                   <v-chip v-if="countOf(option.value)" size="x-small" class="ml-1">{{ countOf(option.value) }}</v-chip>
                   <div v-if="problemOf(option)" class="text-error text-caption" data-cy="TopicProblem">
                     {{ problemOf(option) }}
@@ -148,12 +172,20 @@
           <p v-if="pickerBelow > 0" class="text-caption text-medium-emphasis mb-2">
             Also for the {{ pickerBelow }} heading(s) below it.
           </p>
+          <p v-if="pickerMixed" class="text-caption text-medium-emphasis mb-2" data-cy="PickerMixed">
+            These pieces are under different topics. What you choose replaces them.
+          </p>
           <v-autocomplete
-            v-model="pickerValue"
+            v-model="pickerValues"
             :items="pickerItems"
             item-title="title"
             item-value="value"
-            label="Topic"
+            label="Topics"
+            hint="Pick one or more. Leave it empty for no topic: the pieces are then not used for questions."
+            persistent-hint
+            multiple
+            chips
+            closable-chips
             autofocus
             :menu-props="{ contentClass: 'text-left' }"
             data-cy="PickerTopic"
@@ -165,7 +197,9 @@
           <div class="d-flex align-center new-topic">
             <v-text-field
               v-model="pickerNewName"
-              label="Or create a new topic under the one above"
+              label="Or create a new topic"
+              :hint="pickerNewHint"
+              persistent-hint
               :placeholder="pickerSuggestedName"
               persistent-placeholder
               data-cy="PickerNewName"
@@ -179,7 +213,7 @@
         <v-card-actions class="flex-wrap">
           <v-spacer />
           <v-btn variant="text" @click="pickerOpen = false">Cancel</v-btn>
-          <v-btn color="primary" data-cy="PickerApply" @click="applyPicked">Use topic</v-btn>
+          <v-btn color="primary" data-cy="PickerApply" @click="applyPicked">Use topics</v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
@@ -218,10 +252,13 @@ import MaterialChunk from '@/models/management/generation/MaterialChunk';
 import TopicNode from '@/models/management/TopicNode';
 import {
   ChunkGroup,
+  commonDestinations,
   created,
   Destination,
   DestinationOption,
   destinationOptions,
+  Destinations,
+  destinationsOf,
   existing,
   groupAndBelow,
   groupChunks,
@@ -240,14 +277,15 @@ interface PickerItem {
 }
 
 const PREVIEW_CHARS = 240;
-const DEFAULT_LEVELS = 2;
+// What tells a topic the course has from one that is created when the teacher saves
+const EXISTING_COLOR = 'primary';
+const NEW_COLOR = 'warning';
 const LEVEL_OPTIONS = [
   { levels: 1, title: 'One topic per chapter (first level of headings)' },
   { levels: 2, title: 'Chapters and their sections (two levels)' },
   { levels: 3, title: 'Three levels of headings' },
   { levels: 99, title: 'Every heading' },
 ];
-const MIXED = '\u0000mixed';
 
 const props = defineProps<{
   dialog: boolean;
@@ -266,7 +304,7 @@ const loading = ref(true);
 const saving = ref(false);
 const chunks = ref<MaterialChunk[]>([]);
 const topics = ref<TopicNode[]>([]);
-const destinations = ref<Record<string, Destination>>({});
+const destinations = ref<Destinations>({});
 const newTopics = ref<NewTopic[]>([]);
 const dirty = ref(false);
 const suggested = ref(false);
@@ -279,30 +317,29 @@ const chunkById = computed(() => new Map(chunks.value.map((chunk) => [chunk.id, 
 const options = computed(() => destinationOptions(topics.value, newTopics.value));
 const optionByValue = computed(() => new Map(options.value.map((option) => [option.value, option])));
 const problems = computed(() => nameProblems(newTopics.value, topics.value));
-const placedCount = computed(() => chunks.value.filter((chunk) => (destinations.value[chunk.id] ?? UNUSED) !== UNUSED).length);
+const placedCount = computed(() => chunks.value.filter((chunk) => destinationsOf(destinations.value, chunk.id).length > 0).length);
 const allExpanded = computed(() => groups.value.length > 0 && expanded.value.size === groups.value.length);
 
 const counts = computed(() => {
   const result = new Map<Destination, number>();
-  Object.values(destinations.value).forEach((destination) => result.set(destination, (result.get(destination) ?? 0) + 1));
+  Object.values(destinations.value).forEach((list) =>
+    new Set(list).forEach((destination) => result.set(destination, (result.get(destination) ?? 0) + 1))
+  );
   return result;
 });
 const countOf = (destination: Destination) => (destination === UNUSED ? 0 : counts.value.get(destination) ?? 0);
 
-const labelOf = (destination: Destination | undefined) =>
-  !destination ? 'No topic' : optionByValue.value.get(destination)?.title ?? 'No topic';
-
-const colorOf = (destination: Destination) => (destination === UNUSED || destination === MIXED ? undefined : 'primary');
-
-const groupDestination = (group: ChunkGroup): Destination => {
-  const values = new Set(group.chunkIds.map((id) => destinations.value[id] ?? UNUSED));
-  return values.size === 1 ? [...values][0] : MIXED;
+// A new topic says so in its name too, so the difference is not only in the colour
+const labelOf = (destination: Destination) => {
+  const option = optionByValue.value.get(destination);
+  if (!option) return 'No topic';
+  return option.isNew ? `${option.title} (new)` : option.title;
 };
 
-const groupLabel = (group: ChunkGroup) => {
-  const destination = groupDestination(group);
-  return destination === MIXED ? 'Several topics' : labelOf(destination);
-};
+const colorOf = (destination: Destination) => (optionByValue.value.get(destination)?.isNew ? NEW_COLOR : EXISTING_COLOR);
+
+// The topics all the pieces of a block go to; null when they go to different ones
+const groupTopics = (group: ChunkGroup): Destination[] | null => commonDestinations(group.chunkIds, destinations.value);
 
 const problemOf = (option: DestinationOption) =>
   option.isNew ? problems.value.get(option.value.slice(2)) ?? null : null;
@@ -337,13 +374,11 @@ const load = async () => {
     chunks.value = loadedChunks;
     topics.value = loadedTopics;
     newTopics.value = [];
-    destinations.value = Object.fromEntries(
-      loadedChunks.map((chunk) => [chunk.id, chunk.topicId === null ? UNUSED : existing(chunk.topicId)])
-    );
+    // A document starts with every piece where it already is: under no topic when it is new. The
+    // teacher puts the pieces under topics, or asks for a suggestion from the headings.
+    destinations.value = Object.fromEntries(loadedChunks.map((chunk) => [chunk.id, chunk.topicIds.map(existing)]));
     dirty.value = false;
     suggested.value = false;
-    // A document no topic has yet starts from the suggestion, so the teacher only fixes it
-    if (loadedChunks.length > 0 && loadedChunks.every((chunk) => chunk.topicId === null)) applySuggestion(DEFAULT_LEVELS, false);
   } catch (error) {
     store.setError(error as string);
     emit('update:dialog', false);
@@ -363,13 +398,14 @@ const applySuggestion = (levels: number, ask = true) => {
 // Topic picker, for one piece or for a heading (with the headings below it)
 const pickerOpen = ref(false);
 const pickerTarget = ref<{ group?: number; chunk?: string }>({});
-const pickerValue = ref<Destination>(UNUSED);
+const pickerValues = ref<Destination[]>([]);
+// The pieces of a block go to different topics: what is picked replaces them
+const pickerMixed = ref(false);
 const pickerNewName = ref('');
 
-const pickerItems = computed<PickerItem[]>(() => [
-  { title: 'No topic (not used for questions)', value: UNUSED, depth: 0 },
-  ...options.value.map((option) => ({ title: option.isNew ? `${option.title} (new)` : option.title, value: option.value, depth: option.depth })),
-]);
+const pickerItems = computed<PickerItem[]>(() =>
+  options.value.map((option) => ({ title: option.isNew ? `${option.title} (new)` : option.title, value: option.value, depth: option.depth }))
+);
 
 const pickerGroups = computed(() =>
   pickerTarget.value.group === undefined ? [] : groupAndBelow(groups.value, pickerTarget.value.group)
@@ -385,26 +421,37 @@ const pickerSuggestedName = computed(() =>
 );
 const newTopicName = computed(() => (pickerNewName.value.trim() || pickerSuggestedName.value).trim());
 
+// A new topic goes under the topic picked when it is the only one, and at the top otherwise
+const newTopicParent = computed<Destination>(() => (pickerValues.value.length === 1 ? pickerValues.value[0] : UNUSED));
+const pickerNewHint = computed(() =>
+  newTopicParent.value === UNUSED
+    ? 'Created at the top level of the topics'
+    : `Created under "${optionByValue.value.get(newTopicParent.value)?.title ?? ''}", in its place`
+);
+
 const openPicker = (target: { group?: number; chunk?: string }) => {
   pickerTarget.value = target;
   const current =
-    target.group !== undefined ? groupDestination(groups.value[target.group]) : destinations.value[target.chunk!] ?? UNUSED;
-  pickerValue.value = current === MIXED ? UNUSED : current;
+    target.group !== undefined
+      ? commonDestinations(groups.value[target.group].chunkIds, destinations.value)
+      : [...destinationsOf(destinations.value, target.chunk!)];
+  pickerMixed.value = current === null;
+  pickerValues.value = current ?? [];
   pickerNewName.value = '';
   pickerOpen.value = true;
 };
 
-const assign = (destination: Destination) => {
+const assign = (picked: Destination[]) => {
   const ids =
     pickerTarget.value.group !== undefined ? pickerGroups.value.flatMap((group) => group.chunkIds) : [pickerTarget.value.chunk!];
   const next = { ...destinations.value };
-  ids.forEach((id) => (next[id] = destination));
+  ids.forEach((id) => (next[id] = [...new Set(picked)]));
   destinations.value = next;
   dirty.value = true;
   pickerOpen.value = false;
 };
 
-const applyPicked = () => assign(pickerValue.value ?? UNUSED);
+const applyPicked = () => assign(pickerValues.value ?? []);
 
 const addNewTopic = (name: string, parent: Destination): Destination => {
   const key = `new-${++newTopicCounter}`;
@@ -415,7 +462,11 @@ const addNewTopic = (name: string, parent: Destination): Destination => {
 
 const applyNewTopic = () => {
   if (newTopicName.value === '') return;
-  assign(addNewTopic(newTopicName.value, pickerValue.value ?? UNUSED));
+  const parent = newTopicParent.value;
+  const picked = [...pickerValues.value];
+  const value = addNewTopic(newTopicName.value, parent);
+  // Under the only topic picked it takes that topic's place (its pieces already count for the topic above)
+  assign(parent === UNUSED ? [...picked, value] : [value]);
 };
 
 // New topics panel: add, rename, remove

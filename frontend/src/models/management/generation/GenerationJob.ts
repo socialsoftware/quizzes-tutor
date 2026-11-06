@@ -1,8 +1,8 @@
 import { ISOtoString } from '@/services/ConvertDateService';
 
-// Questions about a topic, written from the pieces of documents under it and under its subtopics
+// Questions about one or more topics, written from the pieces of documents under them and under their subtopics
 export interface GenerationRequest {
-  topicId: number;
+  topicIds: number[];
   difficulty: string;
   count: number;
   groundingMode: string;
@@ -15,7 +15,8 @@ export interface GenerationRequest {
 export default class GenerationJob {
   id!: number;
   topic!: string;
-  topicId: number | null = null;
+  // The topics asked about; `topic` has their names
+  topicIds: number[] = [];
   requestedCount!: number;
   difficulty!: string;
   groundingMode!: string;
@@ -31,7 +32,7 @@ export default class GenerationJob {
     if (jsonObj) {
       this.id = jsonObj.id;
       this.topic = jsonObj.topic;
-      this.topicId = jsonObj.topicId;
+      this.topicIds = jsonObj.topicIds ?? [];
       this.requestedCount = jsonObj.requestedCount;
       this.difficulty = jsonObj.difficulty;
       this.groundingMode = jsonObj.groundingMode;

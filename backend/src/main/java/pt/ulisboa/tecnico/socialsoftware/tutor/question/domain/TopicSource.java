@@ -10,10 +10,10 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.IN
 /**
  * A piece of a course material (a chunk of one document) a topic is taught from. The material
  * lives in the question generation service, so only the ids are kept here, with no link between
- * the two databases. A piece belongs to one topic at most.
+ * the two databases. A piece can be under several topics, but only once under each.
  */
 @Entity
-@Table(name = "topic_chunks", uniqueConstraints = @UniqueConstraint(columnNames = "chunk_id"))
+@Table(name = "topic_chunks", uniqueConstraints = @UniqueConstraint(columnNames = {"topic_id", "chunk_id"}))
 public class TopicSource {
     public static final int MAX_MATERIAL_ID_LENGTH = 64;
     public static final int MAX_CHUNK_ID_LENGTH = 100;

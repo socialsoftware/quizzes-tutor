@@ -34,8 +34,14 @@ public class GenerationJob {
 
     private String topic;
 
+    // The first topic asked for: what jobs kept before they could have several (see getTopicIds)
     @Column(name = "topic_id")
     private Integer topicId;
+
+    @ElementCollection
+    @CollectionTable(name = "generation_job_topics", joinColumns = @JoinColumn(name = "job_id"))
+    @Column(name = "topic_id")
+    private List<Integer> topicIds = new ArrayList<>();
 
     @Column(name = "requested_count")
     private Integer requestedCount;
@@ -80,17 +86,26 @@ public class GenerationJob {
     public GenerationJob() {
     }
 
-    public GenerationJob(String aqgJobId, Integer courseExecutionId, Integer requesterId, String topic, Integer topicId,
+    /** `topic` is the name of the topic, or the names of the topics, shown in the list of requests. */
+    public GenerationJob(String aqgJobId, Integer courseExecutionId, Integer requesterId, String topic, List<Integer> topicIds,
                          Integer requestedCount, String difficulty, String groundingMode, String aqgStatus) {
         this.aqgJobId = aqgJobId;
         this.courseExecutionId = courseExecutionId;
         this.requesterId = requesterId;
         this.topic = topic;
-        this.topicId = topicId;
+        this.topicIds = new ArrayList<>(topicIds);
+        this.topicId = topicIds.isEmpty() ? null : topicIds.get(0);
         this.requestedCount = requestedCount;
         this.difficulty = difficulty;
         this.groundingMode = groundingMode;
         this.aqgStatus = aqgStatus;
+    }
+
+    /** The topics the questions are about; jobs from before there could be several only have the first one. */
+    public List<Integer> getTopicIds() {
+        if (!topicIds.isEmpty())
+            return topicIds;
+        return topicId == null ? List.of() : List.of(topicId);
     }
 
     public void setSource(List<String> materialIds, String language) {

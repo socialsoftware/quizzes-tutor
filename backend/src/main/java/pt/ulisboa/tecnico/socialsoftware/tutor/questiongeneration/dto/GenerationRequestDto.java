@@ -1,13 +1,15 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 /**
- * A teacher's request for questions about a topic of the course. They are written from the pieces
- * of documents under the topic and under its subtopics.
+ * A teacher's request for questions about one or more topics of the course. They are written from
+ * the pieces of documents under the topics and under their subtopics.
  */
 public class GenerationRequestDto implements Serializable {
-    private Integer topicId;
+    private List<Integer> topicIds = new ArrayList<>();
     private String difficulty;
     private Integer count;
     private String groundingMode;
@@ -18,9 +20,12 @@ public class GenerationRequestDto implements Serializable {
     public GenerationRequestDto() {
     }
 
-    public Integer getTopicId() { return topicId; }
+    public List<Integer> getTopicIds() { return topicIds; }
 
-    public void setTopicId(Integer topicId) { this.topicId = topicId; }
+    public void setTopicIds(List<Integer> topicIds) { this.topicIds = topicIds == null ? new ArrayList<>() : new ArrayList<>(topicIds); }
+
+    /** A request for one topic (what clients sent before there could be several). */
+    public void setTopicId(Integer topicId) { this.topicIds = topicId == null ? new ArrayList<>() : new ArrayList<>(List.of(topicId)); }
 
     public String getDifficulty() { return difficulty; }
 

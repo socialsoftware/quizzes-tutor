@@ -43,7 +43,12 @@ class QuestionGenerationTest extends SpockTest {
 
     def request(Map overrides = [:]) {
         def dto = new GenerationRequestDto()
-        dto.setTopicId(overrides.containsKey('topicId') ? overrides.topicId : topic.getId())
+        if (overrides.containsKey('topicIds'))
+            dto.setTopicIds(overrides.topicIds)
+        else
+            dto.setTopicId(overrides.containsKey('topicId') ? overrides.topicId : topic.getId())
+        if (overrides.containsKey('difficulty'))
+            dto.setDifficulty(overrides.difficulty)
         dto.setCount(overrides.containsKey('count') ? overrides.count : 2)
         return dto
     }
@@ -195,6 +200,152 @@ class QuestionGenerationTest extends SpockTest {
 
         and: "the questions are filed under the topic they were asked about"
         questions.every { it.getTopics()*.getId() == [topic.getId()] }
+    }
+
+    def otherTopic(String name, List<String> chunkIds, Integer parentId = null) {
+        def other = new Topic()
+        other.setName(name)
+        other.setCourse(externalCourse)
+        other.setParentId(parentId)
+        chunkIds.each { other.addSource('material-1', it) }
+        topicRepository.save(other)
+        return other
+    }
+
+    def "several topics are asked about at once: their pieces go together, each once, and so do their names"() {
+        given: 'a second topic that shares a piece with the first'
+        def methods = otherTopic('Methods', ['material-1:1', 'material-1:2'])
+        aqgClient.generateReply = aqgJob('PENDING')
+
+        when:
+        def result = questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(),
+                request(topicIds: [topic.getId(), methods.getId()]))
+
+        then: "the service gets the pieces of both topics, the shared one once"
+        aqgClient.lastGenerateRequest.chunkIds() == ['material-1:0', 'material-1:1', 'material-1:2']
+        aqgClient.lastGenerateRequest.topic() == 'HTTP, Methods'
+
+        and: "the job remembers the topics"
+        def job = generationJobRepository.findAll().get(0)
+        job.getTopicIds() == [topic.getId(), methods.getId()]
+        job.getTopic() == 'HTTP, Methods'
+        result.getTopicIds() == [topic.getId(), methods.getId()]
+    }
+
+    def "the questions of a request about several topics are filed under all of them"() {
+        given:
+        def methods = otherTopic('Methods', ['material-1:2'])
+        aqgClient.generateReply = aqgJob('PENDING')
+        def job = questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(),
+                request(topicIds: [topic.getId(), methods.getId()]))
+        aqgClient.jobReply = aqgJob('DONE', [draftOutcome()])
+
+        when:
+        questionGenerationService.getGenerationJob(externalCourseExecution.getId(), job.getId())
+
+        then:
+        def question = questionRepository.findAll().get(0)
+        question.getTopics()*.getId() as Set == [topic.getId(), methods.getId()] as Set
+    }
+
+    @Unroll
+    def "a request about several topics is refused: #what"() {
+        given:
+        def empty = otherTopic('Empty', [])
+        def otherCourse = new pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course('Other', pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Course.Type.EXTERNAL)
+        courseRepository.save(otherCourse)
+        def foreign = new Topic()
+        foreign.setName('Foreign')
+        foreign.setCourse(otherCourse)
+        foreign.addSource('material-9', 'material-9:0')
+        topicRepository.save(foreign)
+        def ids = ids_.collect { [http: topic.getId(), empty: empty.getId(), foreign: foreign.getId(), unknown: -1][it] }
+
+        when:
+        questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(), request(topicIds: ids))
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == error
+
+        where:
+        what                            | ids_                  || error
+        'none'                          | []                    || GENERATION_MISSING_TOPIC
+        'a topic of another course'     | ['http', 'foreign']   || TOPIC_NOT_FOUND
+        'a topic that does not exist'   | ['http', 'unknown']   || TOPIC_NOT_FOUND
+        'only topics without pieces'    | ['empty']             || GENERATION_TOPIC_WITHOUT_SOURCES
+    }
+
+    def "at most ten topics for each request"() {
+        given:
+        def ids = (1..11).collect { otherTopic("T${it}", ["material-1:${it + 10}".toString()]).getId() }
+
+        when:
+        questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(), request(topicIds: ids))
+
+        then:
+        thrown(TutorException)
+    }
+
+    def "a repeated topic counts once, and a request with one topic still works through topicId"() {
+        given:
+        aqgClient.generateReply = aqgJob('PENDING')
+
+        when:
+        questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(),
+                request(topicIds: [topic.getId(), topic.getId()]))
+
+        then:
+        generationJobRepository.findAll().get(0).getTopicIds() == [topic.getId()]
+        aqgClient.lastGenerateRequest.chunkIds() == ['material-1:0', 'material-1:1']
+    }
+
+    def "a job from before there could be several topics still has its one topic"() {
+        given: 'a job that only has topic_id'
+        def job = new GenerationJob('old-job', externalCourseExecution.getId(), teacher.getId(), 'HTTP', [topic.getId()], 1, 'MEDIUM', 'STRICT', 'DONE')
+        job.@topicIds = []
+
+        expect:
+        job.getTopicIds() == [topic.getId()]
+    }
+
+    def "the name of a generated question carries the difficulty that was asked for"() {
+        given:
+        aqgClient.generateReply = aqgJob('PENDING')
+        def job = questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(),
+                request(difficulty: difficulty))
+        aqgClient.jobReply = aqgJob('DONE', [draftOutcome()])
+
+        when:
+        questionGenerationService.getGenerationJob(externalCourseExecution.getId(), job.getId())
+
+        then:
+        questionRepository.findAll().get(0).getTitle() == "What does 404 mean? (${shown})"
+        questionGenerationService.getCourseExecutionQuestionGenerations(externalCourseExecution.getId()).get(0).getDifficulty() == difficulty
+
+        where:
+        difficulty | shown
+        'EASY'     | 'Easy'
+        'MEDIUM'   | 'Medium'
+        'HARD'     | 'Hard'
+    }
+
+    def "a long stem is cut so that the name with the difficulty still fits"() {
+        given:
+        aqgClient.generateReply = aqgJob('PENDING')
+        def job = questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(), request(difficulty: 'HARD'))
+        def long_ = new AqgJobDto.Question('Why ' + ('word ' * 60), [
+                new AqgJobDto.Option('A', true), new AqgJobDto.Option('B', false),
+                new AqgJobDto.Option('C', false), new AqgJobDto.Option('D', false)], 'because')
+        aqgClient.jobReply = aqgJob('DONE', [new AqgJobDto.Outcome('OK', long_, 0, [], ['material-1:0'])])
+
+        when:
+        questionGenerationService.getGenerationJob(externalCourseExecution.getId(), job.getId())
+
+        then:
+        def title = questionRepository.findAll().get(0).getTitle()
+        title.length() <= 100
+        title.endsWith('... (Hard)')
     }
 
     def "importing is done once even if the job is read again"() {
@@ -592,7 +743,7 @@ class QuestionGenerationTest extends SpockTest {
         then:
         chunks*.id() == ['material-1:0', 'material-1:1', 'material-1:2']
         chunks*.heading() == ['Networks', 'Networks > HTTP', 'Networks > DNS']
-        chunks*.topicId() == [topic.getId(), topic.getId(), null]
+        chunks*.topicIds() == [[topic.getId()], [topic.getId()], []]
     }
 
     def "reprocessing a material takes its old pieces from the topics"() {

@@ -2,6 +2,7 @@ import { describe, expect, test } from 'vitest';
 import MaterialChunk from '@/models/management/generation/MaterialChunk';
 import TopicNode from '@/models/management/TopicNode';
 import {
+  commonDestinations,
   created,
   destinationOptions,
   existing,
@@ -15,7 +16,7 @@ import {
 } from '@/services/ChunkDistribution';
 
 const chunk = (id: string, heading: string | null) =>
-  new MaterialChunk({ id, position: 0, heading, text: `text of ${id}`, topicId: null } as MaterialChunk);
+  new MaterialChunk({ id, position: 0, heading, text: `text of ${id}`, topicIds: [] } as MaterialChunk);
 
 const topic = (id: number, name: string, parentId: number | null = null) =>
   new TopicNode({ id, name, parentId, sequence: null, numberOfQuestions: 0, sources: [] } as TopicNode);
@@ -58,23 +59,23 @@ describe('suggest', () => {
       ['Algebra > Equations', 'Equations', created('Algebra')],
       ['Geometry', 'Geometry', UNUSED],
     ]);
-    expect(destinations['b:0']).toBe(UNUSED);
-    expect(destinations['b:1']).toBe(created('Algebra'));
-    expect(destinations['b:4']).toBe(created('Algebra > Numbers'));
-    expect(destinations['b:6']).toBe(created('Geometry'));
+    expect(destinations['b:0']).toEqual([]);
+    expect(destinations['b:1']).toEqual([created('Algebra')]);
+    expect(destinations['b:4']).toEqual([created('Algebra > Numbers')]);
+    expect(destinations['b:6']).toEqual([created('Geometry')]);
   });
 
   test('one level puts whole chapters under one topic each', () => {
     const { destinations, newTopics } = suggest(BOOK, [], 1);
 
     expect(newTopics.map((t) => t.name)).toEqual(['Algebra', 'Geometry']);
-    expect(destinations['b:5']).toBe(created('Algebra'));
+    expect(destinations['b:5']).toEqual([created('Algebra')]);
   });
 
   test('a topic the course already has is reused, whatever the case', () => {
     const { destinations, newTopics } = suggest(BOOK, [topic(7, 'algebra')], 2);
 
-    expect(destinations['b:1']).toBe(existing(7));
+    expect(destinations['b:1']).toEqual([existing(7)]);
     expect(newTopics.find((t) => t.name === 'Numbers')!.parent).toBe(existing(7));
     expect(newTopics.some((t) => t.name === 'Algebra')).toBe(false);
   });
@@ -102,10 +103,26 @@ describe('destinationOptions', () => {
   });
 });
 
+describe('commonDestinations', () => {
+  test('the topics all the pieces go to, whatever their order', () => {
+    const destinations = { 'b:1': [existing(1), existing(2)], 'b:2': [existing(2), existing(1)], 'b:3': [] };
+
+    expect(commonDestinations(['b:1', 'b:2'], destinations)).toEqual([existing(1), existing(2)]);
+    expect(commonDestinations(['b:3', 'b:9'], destinations)).toEqual([]);
+  });
+
+  test('null when the pieces go to different topics', () => {
+    const destinations = { 'b:1': [existing(1)], 'b:2': [existing(1), existing(2)], 'b:3': [] };
+
+    expect(commonDestinations(['b:1', 'b:2'], destinations)).toBeNull();
+    expect(commonDestinations(['b:1', 'b:3'], destinations)).toBeNull();
+  });
+});
+
 describe('removeNewTopic', () => {
   test('its pieces and subtopics go to its parent', () => {
     const result = removeNewTopic(
-      { 'b:1': created('a'), 'b:2': created('b'), 'b:3': existing(5) },
+      { 'b:1': [created('a')], 'b:2': [created('b')], 'b:3': [existing(5)] },
       [
         { key: 'a', name: 'A', parent: existing(5) },
         { key: 'b', name: 'B', parent: created('a') },
@@ -113,14 +130,30 @@ describe('removeNewTopic', () => {
       'a'
     );
 
-    expect(result.destinations).toEqual({ 'b:1': existing(5), 'b:2': created('b'), 'b:3': existing(5) });
+    expect(result.destinations).toEqual({ 'b:1': [existing(5)], 'b:2': [created('b')], 'b:3': [existing(5)] });
     expect(result.newTopics).toEqual([{ key: 'b', name: 'B', parent: existing(5) }]);
   });
 
   test('at the top its pieces are no longer used', () => {
-    const result = removeNewTopic({ 'b:1': created('a') }, [{ key: 'a', name: 'A', parent: UNUSED }], 'a');
+    const result = removeNewTopic({ 'b:1': [created('a')] }, [{ key: 'a', name: 'A', parent: UNUSED }], 'a');
 
-    expect(result.destinations['b:1']).toBe(UNUSED);
+    expect(result.destinations['b:1']).toEqual([]);
+  });
+
+  test('a piece that was under the topic and under its parent is under the parent once', () => {
+    const result = removeNewTopic(
+      { 'b:1': [created('a'), existing(5)], 'b:2': [existing(9), created('a')] },
+      [{ key: 'a', name: 'A', parent: existing(5) }],
+      'a'
+    );
+
+    expect(result.destinations).toEqual({ 'b:1': [existing(5)], 'b:2': [existing(9), existing(5)] });
+  });
+
+  test('the other topics of a piece stay', () => {
+    const result = removeNewTopic({ 'b:1': [existing(1), created('a')] }, [{ key: 'a', name: 'A', parent: UNUSED }], 'a');
+
+    expect(result.destinations['b:1']).toEqual([existing(1)]);
   });
 });
 
@@ -148,7 +181,7 @@ describe('toTree', () => {
       { key: 'r', name: 'Rules', parent: created('n') },
       { key: 'empty', name: 'Nothing here', parent: UNUSED },
     ];
-    const destinations = { 'b:1': existing(1), 'b:2': UNUSED, 'b:4': created('r') };
+    const destinations = { 'b:1': [existing(1)], 'b:2': [], 'b:4': [created('r')] };
 
     const nodes = toTree('b', BOOK, destinations, newTopics, topics);
 
@@ -160,5 +193,18 @@ describe('toTree', () => {
     expect(nodes[0].sources.map((s) => s.chunkId)).toEqual(['b:1']);
     expect(nodes[1].sources).toEqual([]);
     expect(nodes[2].sources.map((s) => [s.materialId, s.chunkId])).toEqual([['b', 'b:4']]);
+  });
+
+  test('a piece that goes to several topics is in each of their nodes', () => {
+    const topics = [topic(1, 'Algebra'), topic(2, 'Geometry')];
+    const newTopics = [{ key: 'n', name: 'Numbers', parent: UNUSED }];
+    const destinations = { 'b:1': [existing(1), existing(2)], 'b:2': [existing(2), created('n'), existing(2)] };
+
+    const nodes = toTree('b', BOOK, destinations, newTopics, topics);
+
+    const sourcesOf = (key: string) => nodes.find((n) => n.key === key)!.sources.map((s) => s.chunkId);
+    expect(sourcesOf('t:1')).toEqual(['b:1']);
+    expect(sourcesOf('t:2')).toEqual(['b:1', 'b:2']);
+    expect(sourcesOf('n:n')).toEqual(['b:2']);
   });
 });

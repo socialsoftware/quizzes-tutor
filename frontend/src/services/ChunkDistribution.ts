@@ -4,11 +4,33 @@ import TopicTreeNode from '@/models/management/TopicTreeNode';
 import { buildForest, TreeItem } from '@/services/TopicTreeEditor';
 
 /**
- * Where a piece of a document goes: '' (no topic, so it is never used to generate questions),
- * `t:<id>` (a topic the course has) or `n:<key>` (a topic created when the teacher saves).
+ * A topic a piece of a document goes to: `t:<id>` (a topic the course has) or `n:<key>` (a topic
+ * created when the teacher saves). A new topic with '' (UNUSED) as its parent is at the top of the tree.
  */
 export type Destination = string;
 export const UNUSED: Destination = '';
+
+/**
+ * The topics each piece goes to, by piece id. A piece can go to several topics; a piece with none
+ * (or absent) is under no topic, so it is never used to generate questions.
+ */
+export type Destinations = Record<string, Destination[]>;
+
+export const destinationsOf = (destinations: Destinations, chunkId: string): Destination[] => destinations[chunkId] ?? [];
+
+/**
+ * The topics all the given pieces go to, when they go to the same ones (whatever the order);
+ * null when they go to different topics ("several topics").
+ */
+export function commonDestinations(chunkIds: string[], destinations: Destinations): Destination[] | null {
+  if (chunkIds.length === 0) return [];
+  const first = destinationsOf(destinations, chunkIds[0]);
+  const same = chunkIds.every((id) => {
+    const list = destinationsOf(destinations, id);
+    return list.length === first.length && list.every((destination) => first.includes(destination));
+  });
+  return same ? [...first] : null;
+}
 
 export const existing = (topicId: number): Destination => `t:${topicId}`;
 export const created = (key: string): Destination => `n:${key}`;
@@ -91,7 +113,7 @@ export function suggest(
   chunks: MaterialChunk[],
   topics: TopicNode[],
   levels: number
-): { destinations: Record<string, Destination>; newTopics: NewTopic[] } {
+): { destinations: Destinations; newTopics: NewTopic[] } {
   const existingByName = new Map<string, number>();
   topics.forEach((topic) => {
     if (!existingByName.has(normalise(topic.name))) existingByName.set(normalise(topic.name), topic.id);
@@ -102,7 +124,7 @@ export function suggest(
   const newTopics: NewTopic[] = [];
   const nameOf = new Map<Destination, string>();
   topics.forEach((topic) => nameOf.set(existing(topic.id), topic.name));
-  const destinations: Record<string, Destination> = {};
+  const destinations: Destinations = {};
 
   for (const chunk of chunks) {
     const segments = segmentsOf(chunk.heading).slice(0, levels);
@@ -125,7 +147,7 @@ export function suggest(
       }
       parent = destination;
     });
-    destinations[chunk.id] = parent;
+    destinations[chunk.id] = parent === UNUSED ? [] : [parent];
   }
   return { destinations, newTopics };
 }
@@ -181,17 +203,22 @@ export function destinationOptions(topics: TopicNode[], newTopics: NewTopic[]): 
  * of the document is dropped by accident (at the top there is no parent, so they go unused).
  */
 export function removeNewTopic(
-  destinations: Record<string, Destination>,
+  destinations: Destinations,
   newTopics: NewTopic[],
   key: string
-): { destinations: Record<string, Destination>; newTopics: NewTopic[] } {
+): { destinations: Destinations; newTopics: NewTopic[] } {
   const removed = newTopics.find((topic) => topic.key === key);
   if (!removed) return { destinations: { ...destinations }, newTopics: [...newTopics] };
   const value = created(key);
 
-  const nextDestinations: Record<string, Destination> = {};
-  Object.entries(destinations).forEach(([chunkId, destination]) => {
-    nextDestinations[chunkId] = destination === value ? removed.parent : destination;
+  const nextDestinations: Destinations = {};
+  Object.entries(destinations).forEach(([chunkId, list]) => {
+    const next: Destination[] = [];
+    list.forEach((destination) => {
+      const moved = destination === value ? removed.parent : destination;
+      if (moved !== UNUSED && !next.includes(moved)) next.push(moved);
+    });
+    nextDestinations[chunkId] = next;
   });
   const nextTopics = newTopics
     .filter((topic) => topic.key !== key)
@@ -219,21 +246,23 @@ export function nameProblems(newTopics: NewTopic[], topics: TopicNode[]): Map<st
 
 /**
  * What the Tutor saves: the topics that get pieces of the document (and the new ones above them),
- * each with its pieces. Pieces with no topic are in no node, so they end up under none.
+ * each with its pieces. A piece that goes to several topics is in several nodes; pieces with no
+ * topic are in no node, so they end up under none.
  */
 export function toTree(
   materialId: string,
   chunks: MaterialChunk[],
-  destinations: Record<string, Destination>,
+  destinations: Destinations,
   newTopics: NewTopic[],
   topics: TopicNode[]
 ): TopicTreeNode[] {
   const sourcesOf = new Map<Destination, TopicSource[]>();
   chunks.forEach((chunk) => {
-    const destination = destinations[chunk.id] ?? UNUSED;
-    if (destination === UNUSED) return;
-    if (!sourcesOf.has(destination)) sourcesOf.set(destination, []);
-    sourcesOf.get(destination)!.push(new TopicSource({ materialId, chunkId: chunk.id }));
+    new Set(destinationsOf(destinations, chunk.id)).forEach((destination) => {
+      if (destination === UNUSED) return;
+      if (!sourcesOf.has(destination)) sourcesOf.set(destination, []);
+      sourcesOf.get(destination)!.push(new TopicSource({ materialId, chunkId: chunk.id }));
+    });
   });
 
   // A new topic is created when it gets pieces or holds a new topic that does

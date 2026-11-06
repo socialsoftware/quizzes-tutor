@@ -53,6 +53,7 @@
           Written by <b>{{ questionGeneration.modelId || 'unknown model' }}</b>
           ({{ groundingLabel }}), from {{ questionGeneration.sourceChunkIds.length }} section(s) of your
           materials.
+          <span v-if="difficultyLabel" data-cy="Difficulty">Difficulty asked for: <b>{{ difficultyLabel }}</b>.</span>
         </div>
 
         <v-card-title class="headline">Reviews</v-card-title>
@@ -143,6 +144,11 @@ const statusOptions = [...Review.statusOptions];
 // Asking an AI question for changes has the model rewrite it from the comment
 const regenerates = computed(() => selected.value === 'REQUEST_CHANGES');
 const submitLabel = computed(() => (regenerates.value ? 'Regenerate with review' : 'submit'));
+
+const difficultyLabel = computed(() => {
+  const difficulty = props.questionGeneration.difficulty;
+  return difficulty ? difficulty.charAt(0) + difficulty.slice(1).toLowerCase() : '';
+});
 
 const groundingLabel = computed(() =>
   props.questionGeneration.groundingMode === 'ENRICHED'

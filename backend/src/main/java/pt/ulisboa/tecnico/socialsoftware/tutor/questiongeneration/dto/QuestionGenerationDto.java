@@ -11,6 +11,8 @@ public class QuestionGenerationDto implements Serializable {
     private Integer id;
     private Integer courseExecutionId;
     private Integer jobId;
+    // What the teacher asked for (EASY, MEDIUM or HARD); a question has no difficulty of its own until it is answered
+    private String difficulty;
     private QuestionDto question;
     private String status;
     private String modelId;
@@ -28,8 +30,10 @@ public class QuestionGenerationDto implements Serializable {
     public QuestionGenerationDto(QuestionGeneration questionGeneration) {
         this.id = questionGeneration.getId();
         this.courseExecutionId = questionGeneration.getCourseExecution().getId();
-        if (questionGeneration.getJob() != null)
+        if (questionGeneration.getJob() != null) {
             this.jobId = questionGeneration.getJob().getId();
+            this.difficulty = questionGeneration.getJob().getDifficulty();
+        }
         if (questionGeneration.getQuestion() != null)
             this.question = new QuestionDto(questionGeneration.getQuestion());
         this.status = questionGeneration.getStatus().name();
@@ -42,6 +46,10 @@ public class QuestionGenerationDto implements Serializable {
         this.sourceChunkIds = new ArrayList<>(questionGeneration.getSourceChunkIds());
         this.regenerationJobId = questionGeneration.getRegenerationJobId();
     }
+
+    public String getDifficulty() { return difficulty; }
+
+    public void setDifficulty(String difficulty) { this.difficulty = difficulty; }
 
     public Integer getRegenerationJobId() { return regenerationJobId; }
 

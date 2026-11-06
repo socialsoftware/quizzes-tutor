@@ -161,6 +161,16 @@ describe('ShowGeneratedQuestionDialog', () => {
     expect(wrapper.emitted('reviewed')).toBeUndefined();
   });
 
+  test('shows the difficulty that was asked for, when it is known', async () => {
+    await mountDialog(generation({ difficulty: 'HARD' }));
+    expect(document.body.querySelector('[data-cy="Difficulty"]')!.textContent).toContain('Difficulty asked for: Hard');
+  });
+
+  test('says nothing about difficulty for a question generated before it was kept', async () => {
+    await mountDialog(generation({ difficulty: null }));
+    expect(document.body.querySelector('[data-cy="Difficulty"]')).toBeNull();
+  });
+
   test('a question already decided cannot be reviewed again', async () => {
     await mountDialog(generation({ status: 'APPROVED' }));
 

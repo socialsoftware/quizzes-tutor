@@ -8,14 +8,17 @@
       <v-row>
         <v-col cols="12" md="6">
           <v-autocomplete
-            v-model="topicId"
+            v-model="topicIds"
             :items="topicItems"
             item-title="title"
             item-value="value"
             :item-props="topicItemProps"
-            label="Topic"
+            label="Topics"
             :hint="topicHint"
             persistent-hint
+            multiple
+            chips
+            closable-chips
             :no-data-text="'The course has no topics yet'"
             :menu-props="{ contentClass: 'text-left' }"
             data-cy="GenerationTopic"
@@ -33,7 +36,7 @@
           <v-text-field
             v-model="focus"
             label="Focus (optional)"
-            hint="What to ask about inside the topic, e.g. sign rules of the product"
+            hint="What to ask about inside the topics, e.g. sign rules of the product"
             persistent-hint
             counter="500"
             :error-messages="focusError"
@@ -128,7 +131,7 @@ const emit = defineEmits<{ (e: 'requested', job: GenerationJob): void }>();
 const store = useStore();
 
 const topics = ref<TopicNode[]>([]);
-const topicId = ref<number | null>(null);
+const topicIds = ref<number[]>([]);
 const difficulty = ref('MEDIUM');
 const count = ref(5);
 const groundingMode = ref('STRICT');
@@ -145,7 +148,7 @@ const difficultyOptions = [
   { title: 'Hard - apply to a new case', value: 'HARD' },
 ];
 const groundingOptions = [
-  { title: 'Only the topic\'s documents', value: 'STRICT' },
+  { title: 'Only the topics\' documents', value: 'STRICT' },
   { title: 'Documents plus general knowledge', value: 'ENRICHED' },
 ];
 
@@ -173,12 +176,20 @@ const topicItems = computed<TopicItem[]>(() => {
 // A topic with no text under it cannot be generated from
 const topicItemProps = (item: TopicItem) => ({ disabled: item.pieces === 0 });
 
-const selectedItem = computed(() => topicItems.value.find((item) => item.value === topicId.value) ?? null);
+// The pieces under the topics picked and under their subtopics, each once (topics can share pieces)
+const selectedPieces = computed(() => {
+  const pieces = new Map<string, string>();
+  topicIds.value.forEach((id) =>
+    TopicNode.subtreeSources(topics.value, id).forEach((source) => pieces.set(source.chunkId, source.materialId))
+  );
+  return { pieces: pieces.size, documents: new Set(pieces.values()).size };
+});
 
 const topicHint = computed(() => {
-  const item = selectedItem.value;
-  if (!item) return 'Questions are written from the pieces of documents under the topic and its subtopics';
-  return `Written from ${item.pieces} piece(s) of ${item.documents} document(s)`;
+  if (topicIds.value.length === 0)
+    return 'Questions are written from the pieces of documents under the topics and their subtopics';
+  const { pieces, documents } = selectedPieces.value;
+  return `Written from ${pieces} piece(s) of ${documents} document(s)`;
 });
 
 const countError = computed(() =>
@@ -189,8 +200,8 @@ const countError = computed(() =>
 
 const canRequest = computed(
   () =>
-    selectedItem.value !== null &&
-    selectedItem.value.pieces > 0 &&
+    topicIds.value.length > 0 &&
+    selectedPieces.value.pieces > 0 &&
     countError.value.length === 0 &&
     focusError.value.length === 0
 );
@@ -200,7 +211,7 @@ const request = async () => {
   requesting.value = true;
   try {
     const job = await RemoteServices.requestGeneration({
-      topicId: topicId.value!,
+      topicIds: [...topicIds.value],
       difficulty: difficulty.value,
       count: count.value,
       groundingMode: groundingMode.value,
@@ -220,7 +231,7 @@ const request = async () => {
 const loadTopics = async () => {
   try {
     topics.value = await RemoteServices.getTopicTree();
-    if (topicId.value !== null && !topics.value.some((topic) => topic.id === topicId.value)) topicId.value = null;
+    topicIds.value = topicIds.value.filter((id) => topics.value.some((topic) => topic.id === id));
   } catch (error) {
     store.setError(error as string);
   }

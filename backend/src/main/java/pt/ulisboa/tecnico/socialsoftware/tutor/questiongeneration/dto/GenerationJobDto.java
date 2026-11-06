@@ -4,12 +4,15 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.Generat
 import pt.ulisboa.tecnico.socialsoftware.tutor.utils.DateHandler;
 
 import java.io.Serializable;
+import java.util.ArrayList;
+import java.util.List;
 
 public class GenerationJobDto implements Serializable {
     private Integer id;
     private Integer courseExecutionId;
     private String topic;
     private Integer topicId;
+    private List<Integer> topicIds = new ArrayList<>();
     private Integer requestedCount;
     private String difficulty;
     private String groundingMode;
@@ -28,6 +31,7 @@ public class GenerationJobDto implements Serializable {
         this.courseExecutionId = job.getCourseExecutionId();
         this.topic = job.getTopic();
         this.topicId = job.getTopicId();
+        this.topicIds = new ArrayList<>(job.getTopicIds());
         this.requestedCount = job.getRequestedCount();
         this.difficulty = job.getDifficulty();
         this.groundingMode = job.getGroundingMode();
@@ -51,6 +55,10 @@ public class GenerationJobDto implements Serializable {
     public String getTopic() { return topic; }
 
     public void setTopic(String topic) { this.topic = topic; }
+
+    public List<Integer> getTopicIds() { return topicIds; }
+
+    public void setTopicIds(List<Integer> topicIds) { this.topicIds = topicIds; }
 
     public Integer getTopicId() { return topicId; }
 

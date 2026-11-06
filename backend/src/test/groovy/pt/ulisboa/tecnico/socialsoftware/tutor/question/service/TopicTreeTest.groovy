@@ -253,7 +253,7 @@ class TopicTreeTest extends SpockTest {
         result.getSources()*.chunkId == ['m2:4']
     }
 
-    def "a piece put under a topic leaves the topic it was under"() {
+    def "a piece put under a topic stays under the topics it was under"() {
         given:
         def first = create('First')
         def second = create('Second')
@@ -263,8 +263,37 @@ class TopicTreeTest extends SpockTest {
         topicService.updateTopicSources(second.getId(), [new TopicSourceDto('m1', 'm1:1')])
 
         then:
-        topicRepository.findById(first.getId()).get().getSources()*.chunkId == ['m1:0']
+        topicRepository.findById(first.getId()).get().getSources()*.chunkId as Set == ['m1:0', 'm1:1'] as Set
         topicRepository.findById(second.getId()).get().getSources()*.chunkId == ['m1:1']
+    }
+
+    def "taking a piece from one topic does not take it from the others"() {
+        given:
+        def first = create('First')
+        def second = create('Second')
+        def both = [new TopicSourceDto('m1', 'm1:0')]
+        topicService.updateTopicSources(first.getId(), both)
+        topicService.updateTopicSources(second.getId(), both)
+
+        when:
+        topicService.updateTopicSources(first.getId(), [])
+
+        then:
+        topicRepository.findById(first.getId()).get().getSources().isEmpty()
+        topicRepository.findById(second.getId()).get().getSources()*.chunkId == ['m1:0']
+    }
+
+    def "updating the pieces of a topic keeps the ones that stay and adds the new"() {
+        given:
+        def topic = create('Networks')
+        topicService.updateTopicSources(topic.getId(), [new TopicSourceDto('m1', 'm1:0'), new TopicSourceDto('m1', 'm1:1')])
+
+        when:
+        def result = topicService.updateTopicSources(topic.getId(), [new TopicSourceDto('m1', 'm1:1'), new TopicSourceDto('m1', 'm1:2')])
+
+        then:
+        result.getSources()*.chunkId as Set == ['m1:1', 'm1:2'] as Set
+        topicRepository.findById(topic.getId()).get().getSources().size() == 2
     }
 
     def "a piece needs a material and a chunk"() {

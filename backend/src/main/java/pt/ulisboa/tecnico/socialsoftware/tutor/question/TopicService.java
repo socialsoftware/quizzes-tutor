@@ -127,8 +127,8 @@ public class TopicService {
     }
 
     /**
-     * Replaces the pieces of documents a topic is taught from. A piece that was under another
-     * topic moves to this one, since a piece belongs to one topic at most.
+     * Replaces the pieces of documents a topic is taught from. A piece can be under several
+     * topics, so the ones it is under elsewhere are left as they are.
      */
     @Retryable(
             value = {SQLException.class},
@@ -139,8 +139,6 @@ public class TopicService {
         List<TopicSourceDto> newSources = sources == null ? List.of() : sources;
         checkSourcesOfCourse(topic.getCourse().getId(), newSources);
 
-        Set<String> chunkIds = newSources.stream().map(TopicSourceDto::getChunkId).collect(Collectors.toSet());
-        detachChunks(topicRepository.findTopics(topic.getCourse().getId()), chunkIds);
         topic.replaceSources(newSources);
         return new TopicNodeDto(topic);
     }
@@ -173,7 +171,7 @@ public class TopicService {
     /**
      * Creates the topics of a tree the teacher accepted (or edited) and puts their pieces of
      * documents under them, all or nothing. A node that stands for an existing topic only gets its
-     * pieces. Pieces that were under other topics move.
+     * pieces. The pieces stay under the other topics they are under.
      */
     @Retryable(
             value = {SQLException.class},
@@ -187,14 +185,14 @@ public class TopicService {
                 .collect(Collectors.toList()));
 
         List<Topic> courseTopics = new ArrayList<>(topicRepository.findTopics(course.getId()));
-        detachChunks(courseTopics, chunkIdsOf(nodes));
         return resolveTree(nodes, course, courseTopics);
     }
 
     /**
      * Puts the pieces of one document under topics, replacing where they were before: a piece of
      * the document that is in no node of `tree` ends up under no topic, so it is left out of
-     * question generation. `documentChunkIds` are the pieces the document has.
+     * question generation, and a piece in several nodes is under all of them. `documentChunkIds`
+     * are the pieces the document has.
      */
     @Retryable(
             value = {SQLException.class},
@@ -204,13 +202,10 @@ public class TopicService {
         Course course = courseRepository.findById(courseId).orElseThrow(() -> new TutorException(COURSE_NOT_FOUND, courseId));
         List<TopicTreeDto.Node> nodes = nodesOf(tree);
 
-        Set<String> placed = new HashSet<>();
         for (TopicTreeDto.Node node : nodes) {
             for (TopicSourceDto source : node.getSources() == null ? List.<TopicSourceDto>of() : node.getSources()) {
                 if (!materialId.equals(source.getMaterialId()) || !documentChunkIds.contains(source.getChunkId()))
                     throw new TutorException(INVALID_TOPIC_SOURCE);
-                if (!placed.add(source.getChunkId()))
-                    throw new TutorException(TOPIC_TREE_INVALID, "a piece of the document is under two topics");
             }
         }
 
@@ -219,29 +214,31 @@ public class TopicService {
         return resolveTree(nodes, course, courseTopics);
     }
 
-    /** How many pieces of each document are under some topic of the course. */
+    /** How many pieces of each document are under some topic of the course (a piece under several topics counts once). */
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public Map<String, Integer> countPlacedChunks(int courseId) {
-        Map<String, Integer> counts = new LinkedHashMap<>();
+        Map<String, Set<String>> chunksOf = new LinkedHashMap<>();
         topicRepository.findTopics(courseId).forEach(topic -> topic.getSources()
-                .forEach(source -> counts.merge(source.getMaterialId(), 1, Integer::sum)));
+                .forEach(source -> chunksOf.computeIfAbsent(source.getMaterialId(), id -> new HashSet<>()).add(source.getChunkId())));
+        Map<String, Integer> counts = new LinkedHashMap<>();
+        chunksOf.forEach((materialId, chunkIds) -> counts.put(materialId, chunkIds.size()));
         return counts;
     }
 
-    /** The topic each piece of a document is under, by chunk id; pieces under no topic are absent. */
+    /** The topics each piece of a document is under, by chunk id (in the order of the topics); pieces under no topic are absent. */
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
-    public Map<String, Integer> findTopicsOfChunks(int courseId, String materialId) {
-        Map<String, Integer> topicOfChunk = new LinkedHashMap<>();
+    public Map<String, List<Integer>> findTopicsOfChunks(int courseId, String materialId) {
+        Map<String, List<Integer>> topicsOfChunk = new LinkedHashMap<>();
         topicRepository.findTopics(courseId).forEach(topic -> topic.getSources().stream()
                 .filter(source -> materialId.equals(source.getMaterialId()))
-                .forEach(source -> topicOfChunk.put(source.getChunkId(), topic.getId())));
-        return topicOfChunk;
+                .forEach(source -> topicsOfChunk.computeIfAbsent(source.getChunkId(), id -> new ArrayList<>()).add(topic.getId())));
+        return topicsOfChunk;
     }
 
     /** Takes a document's pieces from every topic, e.g. after the document was read again and its pieces changed. */
@@ -282,17 +279,9 @@ public class TopicService {
         }
     }
 
-    private Set<String> chunkIdsOf(List<TopicTreeDto.Node> nodes) {
-        return nodes.stream()
-                .flatMap(node -> node.getSources() == null ? Stream.<TopicSourceDto>empty() : node.getSources().stream())
-                .map(TopicSourceDto::getChunkId)
-                .collect(Collectors.toSet());
-    }
-
     /**
-     * Takes the given pieces away from every topic and writes that to the database at once: a piece
-     * belongs to one topic at most (unique chunk_id), and the new links are inserted before the
-     * old ones would otherwise be deleted.
+     * Takes the given pieces away from every topic and writes that to the database at once, so the
+     * new links are not inserted before the old ones are deleted (a topic holds a piece once).
      */
     private void detachChunks(List<Topic> courseTopics, Set<String> chunkIds) {
         if (chunkIds.isEmpty())

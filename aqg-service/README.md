@@ -1,248 +1,266 @@
-# Gerar perguntas com a IA
+# Generating questions with AI
 
-*Quizzes Tutor · Guia para professores*
+*Quizzes Tutor · Teacher's guide*
 
-> O `aqg-service` é o serviço que escreve os rascunhos de perguntas e as sugestões de resposta às dúvidas dos alunos. Este guia mostra como o professor o usa a partir do Tutor. Para o arrancar, ver o README da raiz do repositório.
+> `aqg-service` is the service that writes the draft questions and the suggested replies to student doubts. This guide shows how a teacher uses it from the Tutor. To start the service, see the README at the root of the repository.
 
-A IA analisa os documentos da disciplina e elabora **rascunhos** de perguntas de escolha múltipla. **Nenhum conteúdo é disponibilizado aos alunos sem aprovação prévia.** Este guia apresenta o procedimento completo na interface do sistema, estruturado em 5 passos, além do processo de solicitação de rascunho de resposta para dúvidas de alunos.
+The AI reads the course documents and writes **drafts** of multiple-choice questions. **Nothing reaches the students without approval.** This guide covers the whole procedure in the interface in 5 steps, plus how to ask for a draft reply to a student's doubt.
 
-### O caminho em resumo
+### The path in short
 
-1.  **Carregamento** do documento (PDF, PowerPoint, Word ou Markdown).
+1.  **Upload** a document (PDF, PowerPoint, Word or Markdown).
 
-2.  **Associação** de cada secção ao respetivo tópico (procedimento executado uma única vez por documento).
+2.  **Put each part of it under the topics** you want (once per document). Nothing is put under a topic, or created, until you decide it.
 
-3.  **Solicitação** de perguntas: definição de tópico, quantidade e nível de dificuldade.
+3.  **Ask** for questions: choose one or several topics, the number of questions and the difficulty.
 
-4.  **Processamento**: o sistema gera os rascunhos em segundo plano durante alguns minutos.
+4.  **Wait**: the drafts are written in the background, which takes a few minutes.
 
-5.  **Revisão** na secção *Submissions*: aprovação, rejeição ou pedido de alterações.
+5.  **Review** them in *Submissions*: approve, reject or ask for changes.
 
-As funcionalidades encontram-se acessíveis em **Management › Generate** (passos 1 a 4) e em **Management › Submissions** (passo 5).
+The features are under **Management › Generate** (steps 1 to 4) and **Management › Submissions** (step 5).
 
-![Menu Management aberto com a opção Generate](readme-images/guia-01.jpg)
+![Management menu open with the Generate option](readme-images/guia-01.jpg)
 
-1. Aceder ao menu **Management** e selecionar a opção **Generate**.
+1. Open the **Management** menu and select **Generate**.
 
-## 1. Carregar o documento
+## 1. Upload the document
 
-Em **Management › Generate**, selecionar **Upload material** e escolher o ficheiro pretendido (formatos PDF, PowerPoint, Word ou Markdown, até 100 MB). O sistema processa o texto e divide-o em segmentos. O processamento de um documento extenso pode demorar alguns minutos.
+In **Management › Generate**, select **Upload material** and choose the file (PDF, PowerPoint, Word or Markdown, up to 100 MB). The system reads the text and splits it into pieces. A long document can take a few minutes.
 
-![Página Generate com o painel de documentos e o formulário](readme-images/guia-02.jpg)
+![Generate page with the documents panel and the form](readme-images/guia-02.jpg)
 
-1. **Upload material**: selecionar o ficheiro a carregar a partir do computador.
-2. **Estado**: PROCESSING durante a leitura, READY quando concluído e FAILED em caso de erro (passar o cursor sobre o estado para verificar o motivo).
-3. **Under topics**: indica a quantidade de segmentos já associados a um tópico (no exemplo, 244 de 246).
-4. **Botão de tópicos** (ícone de árvore): dá acesso ao passo 2.
-5. **Ler outra vez**: reprocessa a segmentação do documento. Esta ação remove a associação prévia dos segmentos aos tópicos, sendo necessária nova distribuição.
-
-> [!TIP]
-> **Dica**
->
-> PDFs com texto selecionável (não digitalizados) e com índice dão melhores perguntas.
->
-> PDFs digitalizados (páginas que são só imagens) **não são suportados**: o serviço não faz OCR, e o documento fica em `FAILED` com a indicação de que não tem texto para ler.
-
-## 2. Pôr cada parte do documento no seu tópico
-
-A IA gera perguntas com base em **um tópico específico**, utilizando exclusivamente os segmentos de documento associados a esse tópico (e respetivos subtópicos). Após o carregamento do documento, deve ser definida a associação entre cada secção e o respetivo tópico. Para tal, selecionar o botão de tópicos (item 4 da figura anterior) para abrir a janela de configuração.
-
-![Janela para pôr o documento nos tópicos](readme-images/guia-03.jpg)
-
-1. **Suggest from headings**: gera propostas automáticas de tópicos com base nos títulos do documento (método recomendado).
-2. **Tópico associado a cada título**: indicado pela etiqueta azul à direita. A indicação *No topic* (cinzento) assinala a ausência de tópico associado. Clicar na etiqueta para alterar.
-3. **Topics**: lista de tópicos da disciplina e quantidade de segmentos associados a cada um. A opção *New topic* permite criar um novo tópico.
-4. **Save**: guarda a distribuição efetuada.
-5. **Show all pieces**: exibe o conteúdo textual de cada segmento para consulta detalhada.
-
-### Procedimento simplificado: sugestão automática do sistema
-
-Selecionar **Suggest from headings** e definir o número de níveis de cabeçalho a converter em tópicos. Recomenda-se selecionar o nível mais adequado à estrutura pretendida e efetuar os ajustes necessários posteriormente.
-
-![Menu com as quatro opções de sugestão](readme-images/guia-04.jpg)
-
-1. Opções disponíveis: *One topic per chapter* (apenas capítulos principais), *Chapters and their sections* (dois níveis hierárquicos), *Three levels of headings* e *Every heading* (conversão de todos os títulos em tópicos).
-
-### Alteração de tópico de um segmento
-
-Clicar na etiqueta do título correspondente e selecionar um tópico existente ou criar um novo.
-
-![Janela para escolher o tópico de um título](readme-images/guia-05.jpg)
-
-1. **Topic**: seleção de um tópico da lista ou de *No topic* caso a secção não deva ser utilizada.
-2. **Criação de um novo tópico**: introdução da designação e clique em *Create*. O novo tópico fica subordinado ao tópico selecionado superiormente.
-3. **Use topic**: aplica a seleção efetuada.
-
-- O tópico atribuído a um título principal aplica-se automaticamente às subsecções dependentes.
-
-- Os segmentos assinalados *sem tópico* (*No topic*) **são excluídos** da geração de perguntas.
-
-- A distribuição de tópicos é guardada para utilizações futuras do documento.
-
-## 3. Pedir as perguntas
-
-Na mesma página, localiza-se o formulário **Generate questions**. Inicialmente, deve selecionar-se o tópico pretendido na lista, que indica o número de segmentos associados.
-
-![Lista de tópicos com o número de pedaços de cada um](readme-images/guia-06.jpg)
-
-1. **Tópicos da disciplina**, apresentados em estrutura hierárquica com os respetivos subtópicos.
-2. **Quantidade de segmentos** por tópico (incluindo subtópicos). Tópicos sem segmentos associados não permitem a geração de perguntas.
-
-Após o preenchimento dos parâmetros solicitados, selecionar **Generate**.
-
-![Formulário de pedido de perguntas preenchido](readme-images/guia-07.jpg)
-
-1. **Topic**: seleção do tópico. É exibida a contagem de segmentos a analisar (no exemplo, 27 segmentos de 1 documento).
-2. **Focus** (opcional): especificação do âmbito dentro do tópico (ex.: *rules of addition and multiplication*). Limite máximo de 500 caracteres.
-3. **Language**: seleção de *Same as the materials* ou indicação de outro idioma.
-4. **Difficulty**: *Easy* (memorização de factos ou definições), *Medium* (relação entre conceitos) ou *Hard* (aplicação a novos cenários).
-5. **Number of questions**: definição da quantidade pretendida (entre 1 e 10 por pedido).
-6. **Based on**: *Only the topic's documents* (restrição estrita da resposta aos documentos) ou *Documents plus general knowledge* (integração de conhecimento geral, mantendo a resposta fundamentada no material base).
-7. **Generate**: submissão do pedido.
+1. **Upload material**: pick the file to upload from your computer.
+2. **Status**: PROCESSING while the file is read, READY when done and FAILED on error (hover the status to see why).
+3. **Under topics**: how many pieces are already under a topic (in the example, 244 of 246). A new document starts with **0**: every piece is under *no topic* until you decide.
+4. **Topics button** (tree icon): opens step 2.
+5. **Read again**: reads the document again. This removes the topics its pieces were under, so you have to distribute them again.
 
 > [!TIP]
-> **Para perguntas mais certeiras**
+> **Tip**
 >
-> Tópicos delimitados e específicos originam questões de maior precisão comparativamente a tópicos abrangentes. Recomenda-se a utilização do campo **Focus** para refinar o pedido. Caso seja exibida a indicação de matéria insuficiente, deve adicionar-se mais segmentos ao tópico em causa.
+> PDFs with selectable text (not scanned) and with a table of contents give better questions.
+>
+> Scanned PDFs (pages that are only images) **are not supported**: the service does no OCR, and the document ends as `FAILED` saying it has no text to read.
 
-## 4. Esperar
+## 2. Put each part of the document under its topics
 
-A secção **Generation requests** apresenta o estado do pedido. Durante a geração das perguntas, o estado é exibido como GENERATING. A navegação no sistema pode prosseguir normalmente durante este processo.
+The AI writes questions about **the topics you pick**, using only the pieces of documents under those topics (and their subtopics). After uploading, decide where each part goes: select the topics button (item 4 above) to open the window.
 
-![Lista de pedidos com o pedido novo a ser gerado](readme-images/guia-08.jpg)
+![Window to put the document under topics](readme-images/guia-03.jpg)
 
-1. Pedido em estado de processamento.
+1. **Suggest from headings**: proposes topics from the headings of the document. It is only a suggestion (see below); nothing is created yet.
+2. **Topics of each heading**: shown as one chip per topic on the right. *No topic* (grey) means the heading is not under any topic. Click to change.
+3. **Topics**: the topics of the course and how many pieces each has. *New topic* lets you create one.
+4. **Save**: saves the distribution.
+5. **Show all pieces**: shows the text of each piece, so you can check it or give a single piece its own topics.
 
-Após a conclusão do processamento, o estado altera-se para READY FOR REVIEW, indicando que as perguntas estão disponíveis para validação.
+### Colours: is the topic new or does it already exist?
 
-![Lista de pedidos com o pedido pronto para revisão](readme-images/guia-09.jpg)
+A legend above the list explains the colours:
 
-1. READY FOR REVIEW: as questões encontram-se prontas para consulta na secção *Submissions*.
+- **Blue**: a topic the course already has.
+- **Orange**, with *(new)* in its name: a topic that does **not** exist yet. It is only created when you press **Save**.
 
-Caso surja o estado FAILED, deve passar-se o cursor sobre a indicação para verificar o motivo da falha (ex.: indisponibilidade do modelo), podendo ser efetuada nova submissão.
+If you do not want a suggested topic, remove it or choose another one before saving. Nothing is created before that.
 
-## 5. Rever e aprovar
+### A quick start: let the system suggest
 
-Aceder a **Management › Submissions**. As perguntas geradas pela IA são identificadas pelo prefixo AI-… e pela indicação do modelo responsável pela sua criação.
+Select **Suggest from headings** and choose how many levels of headings should become topics. Pick the level that fits the structure you want and adjust afterwards. The suggested topics that the course already has are shown in blue, and the others in orange (new).
 
-![Lista de Submissions com as perguntas geradas](readme-images/guia-10.jpg)
+![Menu with the four suggestion options](readme-images/guia-04.jpg)
 
-1. **Perguntas geradas**: os identificadores AI-20, AI-21 e AI-22 correspondem ao pedido efetuado neste exemplo.
-2. Abertura do detalhe da pergunta.
-3. **Autoria**: indicação do modelo de IA utilizado.
+1. Options: *One topic per chapter* (main chapters only), *Chapters and their sections* (two levels), *Three levels of headings* and *Every heading* (all headings become topics).
 
-### Análise detalhada da pergunta
+### Changing the topics of a part
 
-![Janela de uma pergunta gerada, com aviso das verificações automáticas](readme-images/guia-11.jpg)
+Click the chips of the heading and pick **one or several** topics, or create a new one. A piece of a document can be under as many topics as you want.
 
-1. **Aviso de verificação** (exibido apenas quando aplicável): assinala que a IA efetuou tentativas de correção, mas as validações automáticas ainda detetam inconsistências. **Recomenda-se uma verificação rigorosa do conteúdo** antes da respetiva aprovação.
-2. **A pergunta e as opções.** A opção correta vem marcada com \[★\].
-3. **Why the answer is correct**: justificação teórica gerada pelo sistema.
-4. **Written by**: indicação do modelo e quantidade de secções analisadas no documento de origem.
+![Window to choose the topics of a heading](readme-images/guia-05.jpg)
+
+1. **Topics**: choose any number of topics from the list. Leave it empty to put the part under *no topic*.
+2. **Creating a new topic**: type its name and press *Create*. If exactly one topic is chosen, the new topic goes under it and replaces it in the choice; otherwise it goes at the top level and is added to the chosen topics.
+3. **Use topics**: applies the choice.
+
+- The topics given to a heading also apply to the headings below it.
+
+- If the pieces of a heading are under different topics, it says *Several topics*. Whatever you choose then replaces the topics of all its pieces.
+
+- Pieces under *no topic* **are left out** of question generation.
+
+- Putting a piece under a topic does not take it away from its other topics.
+
+- The distribution is saved for future use of the document.
+
+## 3. Ask for the questions
+
+On the same page there is the **Generate questions** form. First pick the topics you want, **one or several**; the list shows how many pieces each has.
+
+![List of topics with the number of pieces of each](readme-images/guia-06.jpg)
+
+1. **Topics of the course**, in a tree with their subtopics.
+2. **Number of pieces** of each topic (subtopics included). Topics with no pieces cannot be used for generation.
+
+After filling in the options, select **Generate**.
+
+![Form to ask for questions, filled in](readme-images/guia-07.jpg)
+
+1. **Topics**: pick up to 10 topics. The pieces of all of them are used, and a piece that is under several of them counts once. The hint shows how many pieces of how many documents will be read (in the example, 27 pieces of 1 document).
+2. **Focus** (optional): narrows the scope inside the topics (e.g. *rules of addition and multiplication*). At most 500 characters.
+3. **Language**: *Same as the materials* or another language.
+4. **Difficulty**: *Easy* (recalling facts or definitions), *Medium* (relating concepts) or *Hard* (applying them to new situations).
+5. **Number of questions**: between 1 and 10 per request.
+6. **Based on**: *Only the topic's documents* (answers strictly from the documents) or *Documents plus general knowledge* (adds general knowledge while staying grounded in the material).
+7. **Generate**: sends the request.
+
+Every generated question is filed under **all** the topics you picked.
+
+> [!TIP]
+> **For sharper questions**
+>
+> Narrow, specific topics give more precise questions than broad ones. Use **Focus** to refine the request. If you are told there is not enough material, put more pieces under the topics.
+
+## 4. Wait
+
+The **Generation requests** section shows the state of the request. While the questions are written it says GENERATING. You can keep using the system meanwhile.
+
+![List of requests with the new one being written](readme-images/guia-08.jpg)
+
+1. A request being processed.
+
+When it finishes, the state becomes READY FOR REVIEW: the questions are ready to be checked.
+
+![List of requests with the request ready for review](readme-images/guia-09.jpg)
+
+1. READY FOR REVIEW: the questions are in *Submissions*.
+
+If it says FAILED, hover it to see the reason (e.g. the model is unavailable); you can then ask again.
+
+## 5. Review and approve
+
+Go to **Management › Submissions**. The questions written by the AI have the prefix AI-… and show the model that wrote them. **The difficulty you asked for is kept in the name of the question, in brackets at the end** (for example *What does 404 mean? (Medium)*), so you can tell it in the list.
+
+![Submissions list with the generated questions](readme-images/guia-10.jpg)
+
+1. **Generated questions**: AI-20, AI-21 and AI-22 are the ones requested in this example.
+2. Opens the question.
+3. **Author**: the AI model that was used.
+
+### Looking at a question in detail
+
+![Window of a generated question, with the warning from the automatic checks](readme-images/guia-11.jpg)
+
+1. **Check warning** (only when it applies): the AI tried to correct the question, but the automatic checks still find problems. **Check the content carefully** before approving.
+2. **The question and its options.** The correct option is marked with \[★\].
+3. **Why the answer is correct**: the justification written by the system.
+4. **Written by**: the model, how many pieces of the source were read and the difficulty that was asked for.
 
 > [!WARNING]
-> **Obrigatoriedade de revisão técnica**
+> **Technical review is required**
 >
-> Embora as validações automáticas identifiquem falhas de formatação ou de fundamentação, estas **não garantem** a qualidade pedagógica nem a precisão técnica da questão. A decisão final de aprovação é da inteira responsabilidade do docente.
+> The automatic checks catch formatting and grounding problems, but they **do not guarantee** pedagogical quality or technical accuracy. The final decision to approve is entirely the teacher's.
 
-### Processo de decisão
+### Deciding
 
-Na secção **Reviews** da mesma janela, deve selecionar-se a ação pretendida e clicar em *Submit*.
+In the **Reviews** section of the same window, choose the action and select *Submit*.
 
-![Menu Review Type com as quatro opções](readme-images/guia-12.jpg)
+![Review Type menu with the four options](readme-images/guia-12.jpg)
 
-1. **Comment**: campo para inserção de observações.
-2. **Review Type**: seleção da decisão a aplicar (descrita na tabela seguinte).
-3. **Submit**: submissão da avaliação.
+1. **Comment**: a field for your remarks.
+2. **Review Type**: the decision to apply (see the table below).
+3. **Submit**: sends the review.
 
-| **Escolha** | **O que acontece** |
+| **Choice** | **What happens** |
 |----|----|
-| **Approve** | A pergunta é aprovada e integrada na base de dados para utilização em quizzes e torneios. |
-| **Reject** | A pergunta é rejeitada. A inclusão de comentário é opcional. |
-| **Request Changes** | A IA **reformula a pergunta** com base no comentário inserido (preenchimento obrigatório). |
-| **Comment** | Regista apenas a observação inserida, mantendo a pergunta pendente de decisão. |
+| **Approve** | The question is approved and added to the database, ready for quizzes and tournaments. |
+| **Reject** | The question is rejected. A comment is optional. |
+| **Request Changes** | The AI **rewrites the question** following your comment (required). |
+| **Comment** | Only records the remark; the question stays pending. |
 
-### Solicitação de reformulação à IA
+### Asking the AI to rewrite
 
-Para proceder a ajustamentos na questão, deve selecionar-se **Request Changes** e detalhar as alterações pretendidas. O botão de submissão passará a exibir a designação *Regenerate with review*.
+To adjust a question, choose **Request Changes** and describe what to change. The submit button then reads *Regenerate with review*.
 
-![Pedido de alterações com o botão Regenerate with review](readme-images/guia-13.jpg)
+![Request for changes with the Regenerate with review button](readme-images/guia-13.jpg)
 
-1. **Introdução das instruções de alteração** (ex.: *Make the wrong options closer to the right one*).
-2. **Request Changes** (a etiqueta amarela).
-3. **Regenerate with review**: aciona a reescrita da questão pela IA. A lista de submissões é atualizada automaticamente assim que a nova versão estiver concluída.
+1. **Instructions for the change** (e.g. *Make the wrong options closer to the right one*).
+2. **Request Changes** (the yellow label).
+3. **Regenerate with review**: the AI rewrites the question, using the pieces under all the topics of the request. The list of submissions updates by itself when the new version is ready.
 
-## Elaboração de respostas a dúvidas de alunos com apoio da IA
+## Replying to student doubts with AI
 
-Nas secções de discussão, a IA pode gerar um **rascunho** de resposta para validação, edição e envio pelo docente: **o sistema não efetua envios automáticos.**
+In the discussions, the AI can write a **draft** reply for the teacher to check, edit and send: **nothing is sent automatically.**
 
-### 1. Acesso à discussão
+### 1. Open the discussion
 
-As mensagens enviadas pelos alunos encontram-se listadas em **Management › Discussions**.
+The messages sent by students are listed in **Management › Discussions**.
 
-![Lista de discussões](readme-images/guia-14.jpg)
+![List of discussions](readme-images/guia-14.jpg)
 
-1. **A dúvida do aluno**, com a pergunta a que se refere.
-2. Abertura da discussão pretendida.
+1. **The student's doubt**, with the question it refers to.
+2. Opens the discussion.
 
-### 2. Geração do rascunho
+### 2. Write the draft
 
-A interface exibe a questão de origem, a dúvida do aluno e a caixa de resposta. Selecionar **Suggest reply** para iniciar o processamento.
+The page shows the original question, the student's doubt and the reply box. Select **Suggest reply** to start.
 
-![Discussão aberta com a caixa de resposta e o botão Suggest reply](readme-images/guia-15.jpg)
+![Open discussion with the reply box and the Suggest reply button](readme-images/guia-15.jpg)
 
-1. **A caixa de resposta.**
-2. **Suggest reply**: solicita a criação de um rascunho de resposta (processo com duração de alguns segundos).
-3. **Submit**: transmite a resposta final ao aluno.
+1. **The reply box.**
+2. **Suggest reply**: asks for a draft reply (it takes a few seconds).
+3. **Submit**: sends the final reply to the student.
 
-### 3. Validação, edição e submissão
+### 3. Check, edit and submit
 
-O rascunho é inserido na caixa de resposta. Após realizar as edições necessárias, selecionar **Submit**.
+The draft is placed in the reply box. After making your edits, select **Submit**.
 
-![Rascunho de resposta escrito pela IA na caixa de resposta](readme-images/guia-16.jpg)
+![Draft reply written by the AI in the reply box](readme-images/guia-16.jpg)
 
-1. **Rascunho gerado**: passível de edição direta na caixa de texto.
-2. **Nova solicitação** (*Suggest reply*): gera uma proposta alternativa. Caso exista texto inserido na caixa, o sistema solicitará confirmação antes de proceder à substituição.
-3. **Submit**: envia a versão validada ao aluno.
+1. **The draft**: you can edit it directly in the text box.
+2. **Ask again** (*Suggest reply*): writes another proposal. If the box already has text, you are asked to confirm before it is replaced.
+3. **Submit**: sends the checked version to the student.
 
-- O rascunho utiliza como base a pergunta, a opção selecionada pelo aluno, o texto da dúvida e o conteúdo dos documentos associados ao tópico.
+- The draft is based on the question, the option the student chose, the text of the doubt and the documents under the topic.
 
-- **Nenhum dado pessoal ou identificador do aluno** é transmitido ao modelo de IA.
+- **No personal data or identifier of the student** is sent to the AI model.
 
-- Na ausência de documentos associados ao tópico, o rascunho é elaborado exclusivamente com base no enunciado da pergunta e na dúvida apresentada.
+- If the topic has no documents, the draft is written only from the question and the doubt.
 
 > [!WARNING]
-> **Validação obrigatória do rascunho**
+> **Check the draft**
 >
-> A IA pode gerar respostas imprecisas ou genéricas. Deve verificar-se a exatidão da informação e ajustar o tom do texto antes de efetuar o envio.
+> The AI can write replies that are inaccurate or generic. Check the information and adjust the tone before sending.
 
-## Mensagens de sistema e notificações
+## System messages and notifications
 
-De forma a otimizar a utilização dos recursos do modelo, existem limites definidos. Apresentam-se abaixo as notificações mais frequentes:
+To protect the model's resources there are limits. The most common messages:
 
-| **Mensagem** | **Descrição** |
+| **Message** | **Description** |
 |----|----|
-| *Wait N more second(s) before asking for more questions* | Existe um intervalo mínimo obrigatório entre pedidos consecutivos (por omissão, 10 segundos). |
-| *You already have N request(s) being written…* | Existem pedidos em processamento. Deve aguardar-se a sua conclusão e consultar a lista respetiva. |
-| *The question generation queue is full* | A fila de processamento encontra-se lotada. Recomenda-se tentar novamente após alguns minutos. |
-| *This course has already requested X of its Y questions for today* | Foi atingido o limite diário de perguntas para a disciplina. O limite é reiniciado às 00:00 (UTC). |
-| *The model is busy right now* | O servidor do modelo atingiu a capacidade máxima por minuto. Recomenda-se aguardar um minuto antes de tentar novamente. |
-| *Wait N more second(s) before asking for another suggested reply* | Aplica-se um intervalo mínimo entre solicitações consecutivas de rascunho de resposta (por omissão, 5 segundos). |
-| *the model did not answer* | O serviço encontra-se indisponível ou com resposta lenta. Caso o problema persista, deve contactar-se o administrador do sistema. |
-| *reply suggestions are turned off* | A funcionalidade de sugestão de respostas foi desativada pelo administrador. |
+| *Wait N more second(s) before asking for more questions* | There is a minimum pause between consecutive requests (10 seconds by default). |
+| *You already have N request(s) being written…* | Requests are still being processed. Wait for them to finish and check the list. |
+| *The question generation queue is full* | The processing queue is full. Try again in a few minutes. |
+| *This course has already requested X of its Y questions for today* | The daily limit of questions for the course was reached. It resets at 00:00 (UTC). |
+| *The model is busy right now* | The model server reached its per-minute capacity. Wait a minute before trying again. |
+| *Wait N more second(s) before asking for another suggested reply* | There is a minimum pause between consecutive reply drafts (5 seconds by default). |
+| *the model did not answer* | The service is unavailable or slow. If the problem persists, contact the system administrator. |
+| *reply suggestions are turned off* | The administrator turned the reply suggestions off. |
+| *Pick at least one topic of the course to generate questions about* | No topic was chosen in the form. |
+| *Pick at most 10 topics for each request* | Too many topics in one request. Split it into two. |
+| *Neither these topics nor their subtopics have pieces of a document under them yet* | Put pieces of a document under the topics first (step 2). |
 
-### Boas práticas de utilização
+### Good practice
 
-- **Validação prévia**: verificar sempre a pergunta e a opção correta antes de efetuar a aprovação.
+- **Check first**: always check the question and its correct option before approving.
 
-- **Qualidade dos ficheiros**: utilizar preferencialmente ficheiros PDF com texto pesquisável e índice estruturado.
+- **File quality**: prefer PDFs with searchable text and a structured table of contents.
 
-- **Granularidade**: definir tópicos específicos e utilizar o campo **Focus** para afinar a geração.
+- **Granularity**: use specific topics and the **Focus** field to refine the generation. Use several topics when a question should draw on more than one.
 
-- **Lotes reduzidos**: solicitar pequenos volumes de perguntas (3 a 5 por pedido) e proceder à sua revisão iterativa.
+- **Small batches**: ask for few questions (3 to 5 per request) and review them as you go.
 
-- **Ajustes**: utilizar a opção **Request Changes** em vez de rejeitar questões com potencial de reaproveitamento.
+- **Adjustments**: use **Request Changes** instead of rejecting questions that can be saved.
 
-- **Reprocessamento**: ao reler um documento, deve reatribuir-se os segmentos aos respetivos tópicos.
+- **Reprocessing**: when you read a document again, put its pieces under the topics again.
 
-> *As capturas de ecrã apresentadas pertencem ao curso de demonstração; na interface do utilizador são exibidos os ficheiros e tópicos próprios do respetivo curso.*
+> *The screenshots come from the demonstration course; in the interface you see the files and topics of your own course. Some screenshots of the distribution window and the form predate the colour legend and the multi-topic choice.*

@@ -10,6 +10,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicSourceDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.tournament.domain.Tournament;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.INVALID_NAME_FOR_TOPIC;
 
@@ -116,8 +117,13 @@ public class Topic implements DomainEntity {
         return sources.removeIf(source -> chunkIds.contains(source.getChunkId()));
     }
 
+    /**
+     * Makes the pieces of this topic the given ones. Only the difference is written: a piece that
+     * stays is not deleted and inserted again (the database checks that a topic holds a piece once).
+     */
     public void replaceSources(List<TopicSourceDto> newSources) {
-        sources.clear();
+        Set<String> wanted = newSources.stream().map(TopicSourceDto::getChunkId).collect(Collectors.toSet());
+        sources.removeIf(source -> !wanted.contains(source.getChunkId()));
         newSources.forEach(source -> addSource(source.getMaterialId(), source.getChunkId()));
     }
 

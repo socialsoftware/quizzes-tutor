@@ -23,7 +23,7 @@ const material = (id: string, filename: string) =>
   new GenerationMaterial({ id, filename, status: 'READY', chunkCount: 3, parser: 'x', parseSeconds: 1, error: null } as GenerationMaterial);
 
 const chunk = (id: string, position: number, heading: string, text: string) =>
-  new MaterialChunk({ id, position, heading, text, topicId: 9 } as MaterialChunk);
+  new MaterialChunk({ id, position, heading, text, topicIds: [9] } as MaterialChunk);
 
 describe('TopicSourcesDialog', () => {
   let store: any;

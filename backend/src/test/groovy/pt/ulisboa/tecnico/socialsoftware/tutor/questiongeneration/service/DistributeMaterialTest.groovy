@@ -62,8 +62,51 @@ class DistributeMaterialTest extends SpockTest {
         and: "the pieces are shown with their topics"
         def http = topics.find { it.getName() == 'HTTP' }.getId()
         def dns = topics.find { it.getName() == 'DNS' }.getId()
-        questionGenerationService.getMaterialChunks(externalCourseExecution.getId(), 'book')*.topicId() ==
-                [networks.getId(), http, dns, null]
+        questionGenerationService.getMaterialChunks(externalCourseExecution.getId(), 'book')*.topicIds() ==
+                [[networks.getId()], [http], [dns], []]
+    }
+
+    def "a piece can be put under several topics, and counts once among the placed ones"() {
+        given:
+        def dto = new TopicDto()
+        dto.setName('Protocols')
+        def protocols = topicService.createTopic(externalCourse.getId(), dto)
+
+        when:
+        distribute([
+                node('t', 'Networks', null, networks.getId(), ['book:0', 'book:1']),
+                node('p', 'Protocols', null, protocols.getId(), ['book:1']),
+        ])
+
+        then: "the piece is under both"
+        chunksOf('Networks') == ['book:0', 'book:1'] as Set
+        chunksOf('Protocols') == ['book:1'] as Set
+
+        and: "it is shown with both topics, in the order of the topics"
+        def chunks = questionGenerationService.getMaterialChunks(externalCourseExecution.getId(), 'book')
+        chunks[1].topicIds() as Set == [networks.getId(), protocols.getId()] as Set
+        chunks[0].topicIds() == [networks.getId()]
+
+        and: "the document has two pieces placed, not three"
+        questionGenerationService.getMaterials(externalCourseExecution.getId()).find { it.getId() == 'book' }.getPlacedChunks() == 2
+    }
+
+    def "distributing again drops a piece from the topics the new distribution leaves it out of"() {
+        given:
+        def dto = new TopicDto()
+        dto.setName('Protocols')
+        def protocols = topicService.createTopic(externalCourse.getId(), dto)
+        distribute([
+                node('t', 'Networks', null, networks.getId(), ['book:1']),
+                node('p', 'Protocols', null, protocols.getId(), ['book:1']),
+        ])
+
+        when:
+        distribute([node('p', 'Protocols', null, protocols.getId(), ['book:1'])])
+
+        then:
+        chunksOf('Networks').isEmpty()
+        chunksOf('Protocols') == ['book:1'] as Set
     }
 
     def "distributing a document again replaces where its pieces were, and only its pieces"() {
@@ -120,7 +163,6 @@ class DistributeMaterialTest extends SpockTest {
         what                                  | nodes                                                                                    || error
         'a piece of another document'         | [node('t', 'Networks', null, null, ['slides:0'], 'slides')]                              || INVALID_TOPIC_SOURCE
         'a piece the document does not have'  | [node('n', 'New', null, null, ['book:99'])]                                              || INVALID_TOPIC_SOURCE
-        'a piece under two topics'            | [node('a', 'A', null, null, ['book:0']), node('b', 'B', null, null, ['book:0'])]          || TOPIC_TREE_INVALID
         'a new topic named as an existing one'| [node('n', 'Networks', null, null, ['book:0'])]                                          || DUPLICATE_TOPIC
         'a new topic without a name'          | [node('n', ' ', null, null, ['book:0'])]                                                 || INVALID_NAME_FOR_TOPIC
     }

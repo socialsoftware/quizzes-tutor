@@ -68,20 +68,30 @@ describe('GenerationForm', () => {
     const wrapper = await mountForm();
     expect(generateButton(wrapper).attributes('disabled')).toBeDefined();
 
-    vm(wrapper).topicId = 4;
+    vm(wrapper).topicIds = [4];
     await flushPromises();
     expect(generateButton(wrapper).attributes('disabled')).toBeDefined();
     expect(vm(wrapper).topicItemProps(vm(wrapper).topicItems[0])).toEqual({ disabled: true });
 
-    vm(wrapper).topicId = 5;
+    vm(wrapper).topicIds = [5];
     await flushPromises();
     expect(generateButton(wrapper).attributes('disabled')).toBeUndefined();
     expect(vm(wrapper).topicHint).toBe('Written from 3 piece(s) of 2 document(s)');
   });
 
+  test('several topics are written from the union of their pieces, each counted once', async () => {
+    const wrapper = await mountForm();
+    vm(wrapper).topicIds = [5, 6];
+    await flushPromises();
+
+    // Section is under Chapter, so m1:1 and m2:0 are not counted twice
+    expect(vm(wrapper).topicHint).toBe('Written from 3 piece(s) of 2 document(s)');
+    expect(generateButton(wrapper).attributes('disabled')).toBeUndefined();
+  });
+
   test('rejects a number of questions outside 1 to 10', async () => {
     const wrapper = await mountForm();
-    vm(wrapper).topicId = 5;
+    vm(wrapper).topicIds = [5];
 
     for (const count of [0, 11, 20, 2.5]) {
       vm(wrapper).count = count;
@@ -92,7 +102,7 @@ describe('GenerationForm', () => {
 
   test('a focus over 500 characters blocks the request', async () => {
     const wrapper = await mountForm();
-    vm(wrapper).topicId = 5;
+    vm(wrapper).topicIds = [5];
     vm(wrapper).focus = 'x'.repeat(501);
     await flushPromises();
 
@@ -102,7 +112,7 @@ describe('GenerationForm', () => {
   test('sends the topic and the options, and tells the page about the job', async () => {
     const request = vi.spyOn(RemoteServices, 'requestGeneration').mockResolvedValue(new GenerationJob());
     const wrapper = await mountForm();
-    vm(wrapper).topicId = 6;
+    vm(wrapper).topicIds = [6];
     vm(wrapper).difficulty = 'HARD';
     vm(wrapper).count = 3;
     vm(wrapper).groundingMode = 'ENRICHED';
@@ -113,7 +123,7 @@ describe('GenerationForm', () => {
     await flushPromises();
 
     expect(request).toHaveBeenCalledWith({
-      topicId: 6,
+      topicIds: [6],
       difficulty: 'HARD',
       count: 3,
       groundingMode: 'ENRICHED',
@@ -126,7 +136,7 @@ describe('GenerationForm', () => {
   test('sends the chosen language, or none to keep the language of the materials', async () => {
     const request = vi.spyOn(RemoteServices, 'requestGeneration').mockResolvedValue(new GenerationJob());
     const wrapper = await mountForm();
-    vm(wrapper).topicId = 5;
+    vm(wrapper).topicIds = [5];
     vm(wrapper).language = 'Portuguese';
     await flushPromises();
 
@@ -139,7 +149,7 @@ describe('GenerationForm', () => {
   test('a refused request is reported and nothing is emitted', async () => {
     vi.spyOn(RemoteServices, 'requestGeneration').mockRejectedValue('The question generation service is not available');
     const wrapper = await mountForm();
-    vm(wrapper).topicId = 5;
+    vm(wrapper).topicIds = [5];
     await flushPromises();
 
     await generateButton(wrapper).trigger('click');
@@ -152,13 +162,13 @@ describe('GenerationForm', () => {
   test('topics are read again when a document was put under them, and a topic that is gone is unpicked', async () => {
     const tree = vi.spyOn(RemoteServices, 'getTopicTree');
     const wrapper = await mountForm();
-    vm(wrapper).topicId = 6;
+    vm(wrapper).topicIds = [6];
 
     tree.mockResolvedValue([topicNode(4, 'Empty', null, ['m3:0', 'm3:1'])]);
     await wrapper.setProps({ topicsVersion: 1 });
     await flushPromises();
 
     expect(vm(wrapper).topicItems.map((item: any) => [item.title, item.pieces])).toEqual([['Empty', 2]]);
-    expect(vm(wrapper).topicId).toBeNull();
+    expect(vm(wrapper).topicIds).toEqual([]);
   });
 });
