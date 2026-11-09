@@ -152,6 +152,17 @@ public class QuestionGenerationService {
         return new GenerationMaterialDto(aqgClient.reprocessMaterial(materialId));
     }
 
+    /**
+     * Forgets a material. Its pieces leave their topics; the questions already written from it stay,
+     * since they hold their own text.
+     */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void deleteMaterial(Integer executionId, String materialId) {
+        checkMaterialOfCourse(executionId, materialId);
+        aqgClient.deleteMaterial(materialId);
+        topicService.detachMaterial(courseIdOf(executionId), materialId);
+    }
+
     private Integer courseIdOf(Integer executionId) {
         return getCourseExecution(executionId).getCourse().getId();
     }

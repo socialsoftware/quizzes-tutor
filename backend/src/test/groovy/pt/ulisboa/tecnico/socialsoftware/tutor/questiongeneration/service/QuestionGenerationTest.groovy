@@ -759,6 +759,18 @@ class QuestionGenerationTest extends SpockTest {
         topicRepository.findById(topic.getId()).get().getSources().isEmpty()
     }
 
+    def "deleting a material takes its pieces from the topics and forgets it in the service"() {
+        given:
+        aqgClient.addMaterial('material-1', externalCourse.getId(), ['Networks', 'Networks > HTTP'])
+
+        when:
+        questionGenerationService.deleteMaterial(externalCourseExecution.getId(), 'material-1')
+
+        then:
+        aqgClient.deletedMaterialId == 'material-1'
+        topicRepository.findById(topic.getId()).get().getSources().isEmpty()
+    }
+
     @Unroll
     def "#what is only for materials of the course"() {
         given:
@@ -775,6 +787,7 @@ class QuestionGenerationTest extends SpockTest {
         what           | action
         'reading'      | { service, execution -> service.getMaterialChunks(execution, 'other-course-material') }
         'reprocessing' | { service, execution -> service.reprocessMaterial(execution, 'other-course-material') }
+        'deleting'     | { service, execution -> service.deleteMaterial(execution, 'other-course-material') }
         'distributing' | { service, execution -> service.distributeMaterial(execution, 'other-course-material', null) }
     }
 

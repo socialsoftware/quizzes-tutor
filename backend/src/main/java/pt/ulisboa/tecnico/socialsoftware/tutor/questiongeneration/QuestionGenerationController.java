@@ -68,6 +68,12 @@ public class QuestionGenerationController {
         return questionGenerationService.reprocessMaterial(executionId, materialId);
     }
 
+    @DeleteMapping("/generation/{executionId}/materials/{materialId}")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public void deleteMaterial(@PathVariable int executionId, @PathVariable String materialId) {
+        questionGenerationService.deleteMaterial(executionId, materialId);
+    }
+
     @PostMapping("/generation/{executionId}/jobs")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
     public GenerationJobDto requestGeneration(Authentication authentication, @PathVariable int executionId,

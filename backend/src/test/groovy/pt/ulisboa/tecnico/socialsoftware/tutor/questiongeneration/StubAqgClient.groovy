@@ -23,6 +23,7 @@ class StubAqgClient implements AqgClient {
     // material id -> its pieces
     Map<String, List<AqgChunkDto>> chunks = [:]
     String reprocessedMaterialId
+    String deletedMaterialId
     AqgDiscussionSuggestionDto suggestionReply
     AqgDiscussionRequest lastSuggestionRequest
 
@@ -41,6 +42,7 @@ class StubAqgClient implements AqgClient {
         materials = []
         chunks = [:]
         reprocessedMaterialId = null
+        deletedMaterialId = null
         suggestionReply = null
         lastSuggestionRequest = null
         lastGenerateRequest = null
@@ -71,6 +73,11 @@ class StubAqgClient implements AqgClient {
     @Override
     List<AqgChunkDto> getChunks(String materialId) {
         return chunks.getOrDefault(materialId, [])
+    }
+
+    @Override
+    void deleteMaterial(String materialId) {
+        deletedMaterialId = materialId
     }
 
     @Override

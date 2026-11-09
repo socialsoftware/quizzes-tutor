@@ -56,6 +56,19 @@
           </template>
           <span>Read the file again (its pieces leave their topics)</span>
         </v-tooltip>
+        <v-tooltip location="bottom">
+          <template v-slot:activator="{ props: activatorProps }">
+            <v-icon
+              v-if="!getRaw(item).isProcessing()"
+              class="ml-2 action-button"
+              v-bind="activatorProps"
+              data-cy="DeleteMaterial"
+              @click="remove(getRaw(item))"
+              >fas fa-trash</v-icon
+            >
+          </template>
+          <span>Delete this document (its pieces leave their topics)</span>
+        </v-tooltip>
       </template>
       <template v-slot:[`item.status`]="{ item }">
         <v-tooltip location="bottom" :disabled="!getRaw(item).error">
@@ -201,6 +214,18 @@ const reprocess = async (material: GenerationMaterial) => {
     emit('topics-changed');
     await refresh();
     poller.start();
+  } catch (error) {
+    store.setError(error as string);
+  }
+};
+
+const remove = async (material: GenerationMaterial) => {
+  const note = 'Its pieces leave their topics. The questions already written from it are kept.';
+  if (!confirm(`Delete "${material.filename}"? ${note} This cannot be undone.`)) return;
+  try {
+    await RemoteServices.deleteGenerationMaterial(material.id);
+    emit('topics-changed');
+    await refresh();
   } catch (error) {
     store.setError(error as string);
   }

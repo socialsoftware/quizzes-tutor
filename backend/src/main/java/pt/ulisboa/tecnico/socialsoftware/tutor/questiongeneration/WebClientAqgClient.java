@@ -106,6 +106,12 @@ public class WebClientAqgClient implements AqgClient {
     }
 
     @Override
+    public void deleteMaterial(String materialId) {
+        call(() -> client.delete().uri("/materials/{materialId}", materialId)
+                .retrieve().bodyToMono(String.class).block(TIMEOUT));
+    }
+
+    @Override
     public AqgDiscussionSuggestionDto suggestReply(AqgDiscussionRequest request) {
         String json;
         try {

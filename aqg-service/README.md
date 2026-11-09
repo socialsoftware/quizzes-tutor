@@ -35,6 +35,7 @@ In **Management › Generate**, select **Upload material** and choose the file (
 3. **Under topics**: how many pieces are already under a topic (in the example, 244 of 246). A new document starts with **0**: every piece is under *no topic* until you decide.
 4. **Topics button** (tree icon): opens step 2.
 5. **Read again**: reads the document again. This removes the topics its pieces were under, so you have to distribute them again.
+6. **Delete** (bin icon): deletes the document, its pieces and the stored file, after asking for confirmation. Its pieces leave their topics. The questions already written from it are kept. A document that is still being read cannot be deleted until it finishes.
 
 > [!TIP]
 > **Tip**

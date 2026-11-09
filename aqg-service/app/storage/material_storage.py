@@ -1,3 +1,4 @@
+import shutil
 from pathlib import Path
 from typing import Protocol
 
@@ -11,6 +12,8 @@ class MaterialStorage(Protocol):
     def original(self, course_id: int, material_id: str) -> Path | None: ...
 
     def legacy_markdown(self, course_id: int, material_id: str) -> str | None: ...
+
+    def delete(self, course_id: int, material_id: str) -> None: ...
 
 
 class LocalMaterialStorage:
@@ -41,3 +44,6 @@ class LocalMaterialStorage:
     def legacy_markdown(self, course_id: int, material_id: str) -> str | None:
         path = self._directory(course_id, material_id) / LEGACY_MARKDOWN
         return path.read_text(encoding="utf-8") if path.is_file() else None
+
+    def delete(self, course_id: int, material_id: str) -> None:
+        shutil.rmtree(self._directory(course_id, material_id), ignore_errors=True)

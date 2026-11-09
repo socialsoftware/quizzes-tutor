@@ -30,6 +30,9 @@ public interface AqgClient {
     /** Rebuilds a material's chunks with the service's current parsers; the old chunk ids are gone. */
     AqgMaterialDto reprocessMaterial(String materialId);
 
+    /** Forgets a material, its pieces and its original file. */
+    void deleteMaterial(String materialId);
+
     /** A draft reply to a student's doubt, for a teacher to edit; nothing is saved or sent. */
     AqgDiscussionSuggestionDto suggestReply(AqgDiscussionRequest request);
 

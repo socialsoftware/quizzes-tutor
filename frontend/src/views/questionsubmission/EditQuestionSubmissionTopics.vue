@@ -20,6 +20,9 @@
       multiple
       chips
       disabled
+      return-object
+      item-title="name"
+      item-value="name"
       append-icon="false"
     ></v-select>
   </v-form>

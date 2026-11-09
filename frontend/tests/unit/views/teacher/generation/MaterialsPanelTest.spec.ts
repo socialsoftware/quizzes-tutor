@@ -218,4 +218,25 @@ describe('MaterialsPanel', () => {
     await flushPromises();
     expect(reprocess).toHaveBeenCalledWith('m1');
   });
+
+  test('deleting a document asks first, then forgets it and tells the page its topics changed', async () => {
+    const getMaterials = vi.spyOn(RemoteServices, 'getGenerationMaterials').mockResolvedValue([material({})]);
+    const remove = vi.spyOn(RemoteServices, 'deleteGenerationMaterial').mockResolvedValue(undefined);
+    const confirmation = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const wrapper = await mountPanel();
+
+    await wrapper.find('[data-cy="DeleteMaterial"]').trigger('click');
+    await flushPromises();
+    expect(confirmation.mock.calls[0][0]).toContain('lecture.pdf');
+    expect(remove).not.toHaveBeenCalled();
+
+    confirmation.mockReturnValue(true);
+    getMaterials.mockResolvedValue([]);
+    await wrapper.find('[data-cy="DeleteMaterial"]').trigger('click');
+    await flushPromises();
+
+    expect(remove).toHaveBeenCalledWith('m1');
+    expect(wrapper.emitted('topics-changed')).toHaveLength(1);
+    expect(wrapper.find('[data-cy="DeleteMaterial"]').exists()).toBe(false);
+  });
 });

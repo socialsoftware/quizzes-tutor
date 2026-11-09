@@ -32,6 +32,12 @@ class MaterialStore:
             rows = session.scalars(select(MaterialRow).where(MaterialRow.course_id == course_id).order_by(MaterialRow.id))
             return [_to_material(row) for row in rows]
 
+    def delete(self, material_id: str) -> None:
+        """Forgets a material and its pieces."""
+        with self._session.begin() as session:
+            session.execute(delete(ChunkRow).where(ChunkRow.material_id == material_id))
+            session.execute(delete(MaterialRow).where(MaterialRow.id == material_id))
+
     def set_processing(self, material_id: str) -> None:
         with self._session.begin() as session:
             row = session.get(MaterialRow, material_id)

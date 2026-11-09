@@ -1266,6 +1266,16 @@ export default class RemoteServices {
       });
   }
 
+  // Forgets the material and its pieces; the questions already written from it stay
+  static async deleteGenerationMaterial(materialId: string): Promise<void> {
+    return httpClient
+      .delete(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}`)
+      .then(() => undefined)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async requestGeneration(request: GenerationRequest): Promise<GenerationJob> {
     return httpClient
       .post(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/jobs`, request)

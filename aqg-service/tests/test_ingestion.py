@@ -212,6 +212,29 @@ def test_a_material_from_before_the_database_text_is_reprocessed_from_its_file(t
     assert [c["heading"] for c in client.get(f"/materials/{material['id']}/chunks").json()] == ["Old > Only section"]
 
 
+def test_a_deleted_material_is_gone_with_its_pieces_and_its_file(tmp_path):
+    client = make_client(tmp_path, FakeLLM([]), keep_originals=True)
+    material = wait_for(client, upload(client).json()["id"])
+    assert (tmp_path / "1" / material["id"] / "lecture.pdf").exists()
+
+    assert client.delete(f"/materials/{material['id']}").status_code == 204
+
+    assert client.get(f"/materials/{material['id']}").status_code == 404
+    assert client.get(f"/materials/{material['id']}/chunks").status_code == 404
+    assert client.get("/courses/1/materials").json() == []
+    assert not (tmp_path / "1" / material["id"]).exists()
+    assert client.delete(f"/materials/{material['id']}").status_code == 404
+
+
+def test_a_material_still_being_read_is_not_deleted(tmp_path):
+    client = make_client(tmp_path, FakeLLM([]))
+    material = wait_for(client, upload(client).json()["id"])
+    client.app.state.materials.set_processing(material["id"])
+
+    assert client.delete(f"/materials/{material['id']}").status_code == 409
+    assert client.get(f"/materials/{material['id']}").status_code == 200
+
+
 def test_the_pieces_of_a_material_are_listed_in_reading_order_with_their_headings(tmp_path):
     client = make_client(tmp_path, FakeLLM([]))
     material_id = wait_for(client, upload(client).json()["id"])["id"]

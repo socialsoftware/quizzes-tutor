@@ -44,6 +44,7 @@ from app.schema import (
     Job,
     Material,
     MaterialChunk,
+    MaterialStatus,
     ModelConfig,
 )
 from app.storage.material_storage import LocalMaterialStorage, MaterialStorage
@@ -205,6 +206,17 @@ def create_app(
         materials.set_processing(material_id)
         background.add_task(reprocess_material, materials, material_id, parsers, storage)
         return materials.get(material_id)
+
+    @app.delete("/materials/{material_id}", status_code=204)
+    def delete_material(material_id: str) -> None:
+        """Forgets the material, its pieces and the original file."""
+        material = materials.get(material_id)
+        if material is None:
+            raise HTTPException(status_code=404, detail="material not found")
+        if material.status == MaterialStatus.PROCESSING:
+            raise HTTPException(status_code=409, detail="the material is still being read; try again when it is done")
+        materials.delete(material_id)
+        storage.delete(material.course_id, material_id)
 
     @app.get("/materials/{material_id}")
     def get_material(material_id: str) -> Material:
