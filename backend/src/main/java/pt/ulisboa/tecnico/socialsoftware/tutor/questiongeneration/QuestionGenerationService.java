@@ -41,6 +41,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Objects;
@@ -353,9 +354,12 @@ public class QuestionGenerationService {
 
         int imported = 0;
         int skipped = 0;
+        Set<String> skippedReasons = new LinkedHashSet<>();
         for (AqgJobDto.Outcome outcome : aqgJob.outcomes() == null ? List.<AqgJobDto.Outcome>of() : aqgJob.outcomes()) {
             if (outcome.question() == null) {
                 skipped++;
+                if (outcome.failures() != null)
+                    outcome.failures().forEach(failure -> skippedReasons.add(failure.replaceFirst("^insufficient context: ", "")));
                 continue;
             }
 
@@ -377,7 +381,7 @@ public class QuestionGenerationService {
             imported++;
         }
 
-        job.markImported(imported, skipped);
+        job.markImported(imported, skipped, String.join("; ", skippedReasons));
     }
 
     private void importRevision(GenerationJob job, AqgJobDto aqgJob) {

@@ -7,6 +7,10 @@ from typing import Callable, Protocol
 from app.schema import ModelConfig
 
 
+# How many times a call is repeated after a timeout, a dropped connection or an overloaded model
+TRANSIENT_RETRIES = 1
+
+
 class LLMProvider(Protocol):
     model_id: str
 
@@ -40,6 +44,8 @@ class LiteLLMProvider:
             api_key=self.config.api_key,
             temperature=self.config.temperature,
             timeout=self.config.timeout,
+            # A call that times out or loses its connection is made once more before the job fails
+            num_retries=TRANSIENT_RETRIES,
             extra_body=self.config.extra_body,
             **(self.config.options or {}),
             messages=[

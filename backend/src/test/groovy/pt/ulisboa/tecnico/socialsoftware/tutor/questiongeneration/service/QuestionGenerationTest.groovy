@@ -167,7 +167,7 @@ class QuestionGenerationTest extends SpockTest {
         given:
         def job = requestedJob()
         aqgClient.jobReply = aqgJob('DONE', [draftOutcome('OK'), draftOutcome('NEEDS_HUMAN_ATTENTION'),
-                                             new AqgJobDto.Outcome('INSUFFICIENT_CONTEXT', null, 0, ['no context'], [])])
+                                             new AqgJobDto.Outcome('INSUFFICIENT_CONTEXT', null, 0, ['insufficient context: the text is only a heading'], [])])
 
         when:
         def result = questionGenerationService.getGenerationJob(externalCourseExecution.getId(), job.getId())
@@ -176,6 +176,7 @@ class QuestionGenerationTest extends SpockTest {
         result.getStatus() == 'IMPORTED'
         result.getImportedCount() == 2
         result.getSkippedCount() == 1
+        result.getSkippedReason() == 'the text is only a heading'
 
         and: "the questions are hidden from quizzes and marked as generated"
         def questions = questionRepository.findAll()

@@ -50,7 +50,7 @@ describe('JobsPanel', () => {
 
   test('shows what happened to each earlier request', async () => {
     vi.spyOn(RemoteServices, 'getGenerationJobs').mockResolvedValue([
-      job({ id: 1, status: 'IMPORTED', importedCount: 4, skippedCount: 1 }),
+      job({ id: 1, status: 'IMPORTED', importedCount: 4, skippedCount: 1, skippedReason: 'the text is only a heading' }),
       job({ id: 2, status: 'FAILED', error: 'ollama unreachable' }),
     ]);
 
@@ -59,6 +59,17 @@ describe('JobsPanel', () => {
     const text = wrapper.text();
     expect(text).toContain('READY FOR REVIEW');
     expect(text).toContain('FAILED');
+  });
+
+  test('says why a question was skipped, when the model gave a reason', async () => {
+    vi.spyOn(RemoteServices, 'getGenerationJobs').mockResolvedValue([]);
+    const wrapper = await mountPanel();
+    const describe = (wrapper.vm as any).describe;
+
+    expect(describe(job({ status: 'IMPORTED', importedCount: 0, skippedCount: 1, skippedReason: 'the text is only a heading' }))).toBe(
+      '0 question(s) waiting for review in Submissions, 1 skipped for lack of material: the text is only a heading'
+    );
+    expect(describe(job({ status: 'IMPORTED', importedCount: 2, skippedCount: 0 }))).toBe('2 question(s) waiting for review in Submissions');
   });
 
   test('a job left pending earlier is picked up again and imported when it finishes', async () => {

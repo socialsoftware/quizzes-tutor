@@ -104,6 +104,12 @@ def test_storage_cannot_be_escaped_with_a_crafted_filename(tmp_path):
     assert not (tmp_path.parent / "evil.md").exists()
 
 
+@pytest.fixture(autouse=True)
+def tiny_documents_are_enough(monkeypatch):
+    """The sample documents here are a few words long; the minimum of text has its own test."""
+    monkeypatch.setattr("app.api.main.MIN_TEXT_CHARACTERS", 0)
+
+
 def make_client(tmp_path, llm, **settings_overrides):
     settings = Settings(
         provider="ollama", model="m", ollama_base_url="http://x", max_retries=1, materials_dir=tmp_path, **settings_overrides
@@ -210,6 +216,19 @@ def test_a_material_from_before_the_database_text_is_reprocessed_from_its_file(t
     client.post(f"/materials/{material['id']}/reprocess")
     wait_for(client, material["id"])
     assert [c["heading"] for c in client.get(f"/materials/{material['id']}/chunks").json()] == ["Old > Only section"]
+
+
+def test_too_little_text_is_refused_before_the_model_is_asked(tmp_path, monkeypatch):
+    monkeypatch.setattr("app.api.main.MIN_TEXT_CHARACTERS", 200)
+    llm = FakeLLM([])
+    client = make_client(tmp_path, llm)
+    material_id = wait_for(client, upload(client).json()["id"])["id"]
+
+    response = client.post("/generate", json={"course_id": 1, "topic": "HTTP", "chunk_ids": [f"{material_id}:1"]})
+
+    assert response.status_code == 422
+    assert "characters of text, too little" in response.json()["detail"]
+    assert llm.calls == [] if hasattr(llm, "calls") else True
 
 
 def test_a_deleted_material_is_gone_with_its_pieces_and_its_file(tmp_path):

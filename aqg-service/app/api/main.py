@@ -49,6 +49,9 @@ from app.schema import (
 )
 from app.storage.material_storage import LocalMaterialStorage, MaterialStorage
 
+# Less text than this cannot ground a question: the request is refused before the model is asked
+MIN_TEXT_CHARACTERS = 200
+
 ProviderFactory = Callable[[ModelConfig], LLMProvider]
 
 MAX_UPLOAD_BYTES = 100 * 1024 * 1024
@@ -232,11 +235,19 @@ def create_app(
     @app.post("/generate", status_code=202)
     def generate(request: GenerationRequest, background: BackgroundTasks) -> Job:
         try:
-            available = [*request.chunks, *materials.chunks_by_ids(request.course_id, request.chunk_ids)]
+            from_documents = materials.chunks_by_ids(request.course_id, request.chunk_ids)
+            available = [*request.chunks, *from_documents]
         except LookupError as error:
             raise HTTPException(status_code=422, detail=str(error)) from error
         if not any(chunk.text.strip() for chunk in available):
             raise HTTPException(status_code=422, detail="the topic has no text to write questions from")
+        characters = sum(len(chunk.text.strip()) for chunk in available)
+        if request.chunk_ids and characters < MIN_TEXT_CHARACTERS:
+            raise HTTPException(
+                status_code=422,
+                detail=f"the pieces under the topics have only {characters} characters of text, too little to write "
+                "a question from; put more of the document under them",
+            )
         # With a focus the most relevant pieces come first; otherwise they stay in reading order
         ranked = False
         if request.focus:

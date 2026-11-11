@@ -63,6 +63,10 @@ public class GenerationJob {
     @Column(name = "skipped_count")
     private Integer skippedCount = 0;
 
+    /** What the model said when it could not write a question, so the teacher knows what to change. */
+    @Column(name = "skipped_reason", length = 500)
+    private String skippedReason;
+
     @Column(columnDefinition = "TEXT")
     private String error;
 
@@ -138,9 +142,19 @@ public class GenerationJob {
     }
 
     public void markImported(int imported, int skipped) {
+        markImported(imported, skipped, null);
+    }
+
+    public void markImported(int imported, int skipped, String skippedReason) {
         this.status = Status.IMPORTED;
         this.importedCount = imported;
         this.skippedCount = skipped;
+        this.skippedReason = skippedReason == null || skippedReason.isBlank() ? null
+                : skippedReason.substring(0, Math.min(skippedReason.length(), 500));
+    }
+
+    public String getSkippedReason() {
+        return skippedReason;
     }
 
     public void markFailed(String error) {

@@ -274,3 +274,24 @@ def test_the_options_reach_litellm(monkeypatch):
     LiteLLMProvider(ModelConfig(model="ollama_chat/m", options={"num_ctx": 4096, "reasoning_effort": "none"})).complete("s", "u")
 
     assert sent["num_ctx"] == 4096 and sent["reasoning_effort"] == "none"
+
+
+def test_a_call_that_times_out_or_loses_its_connection_is_repeated(monkeypatch):
+    import litellm
+
+    from app.llm.provider import LiteLLMProvider
+    from app.schema import ModelConfig
+
+    sent = {}
+
+    class Reply:
+        choices = [type("Choice", (), {"message": type("Message", (), {"content": "{}"})()})()]
+
+    def completion(**kwargs):
+        sent.update(kwargs)
+        return Reply()
+
+    monkeypatch.setattr(litellm, "completion", completion)
+    LiteLLMProvider(ModelConfig(model="nvidia_nim/m")).complete("s", "u")
+
+    assert sent["num_retries"] >= 1

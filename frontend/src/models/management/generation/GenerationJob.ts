@@ -25,6 +25,7 @@ export default class GenerationJob {
   generationStatus: string | null = null;
   importedCount: number = 0;
   skippedCount: number = 0;
+  skippedReason: string | null = null;
   error: string | null = null;
   creationDate!: string;
 
@@ -40,6 +41,7 @@ export default class GenerationJob {
       this.generationStatus = jsonObj.generationStatus;
       this.importedCount = jsonObj.importedCount ?? 0;
       this.skippedCount = jsonObj.skippedCount ?? 0;
+      this.skippedReason = jsonObj.skippedReason ?? null;
       this.error = jsonObj.error;
       this.creationDate = ISOtoString(jsonObj.creationDate);
     }
