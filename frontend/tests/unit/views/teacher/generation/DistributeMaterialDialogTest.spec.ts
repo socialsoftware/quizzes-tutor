@@ -122,6 +122,63 @@ describe('DistributeMaterialDialog', () => {
     expect(groupChips(0).map((chip) => chip.textContent!.trim())).toEqual(['Algebra', 'Geometry']);
   });
 
+  test('the document view shows every piece in full, with a bar for each topic it is under and faded when it is under none', async () => {
+    await mountDialog([chunk('b:0', 'Algebra', [7, 8], 'First text'), chunk('b:1', 'Algebra', [7], 'Second text'), chunk('b:2', 'Geometry', [], 'Third text')]);
+
+    await click('[data-cy="ViewReading"]');
+
+    const pieces = Array.from(document.body.querySelectorAll('[data-cy="ReadingChunk"]'));
+    expect(pieces.map((piece) => piece.querySelector('.chunk-text')!.textContent)).toEqual(['First text', 'Second text', 'Third text']);
+    expect(pieces.map((piece) => piece.querySelectorAll('.stripe:not(.none)').length)).toEqual([2, 1, 0]);
+    expect(pieces.map((piece) => piece.classList.contains('unused'))).toEqual([false, false, true]);
+    // the heading is said once for the pieces under it
+    expect(document.body.querySelectorAll('[data-cy="ReadingChunk"] .font-weight-medium')).toHaveLength(2);
+  });
+
+  test('a piece can be given its topics from the document view', async () => {
+    const wrapper = await mountDialog([chunk('b:0', 'Algebra', [], 'First text')]);
+    await click('[data-cy="ViewReading"]');
+
+    await click('[data-cy="ReadingChunk"]');
+
+    expect(vm(wrapper).pickerOpen).toBe(true);
+  });
+
+  test('the view by topic shows how much text each topic is written from, subtopics included, and warns when it is too little', async () => {
+    vi.spyOn(RemoteServices, 'getTopicTree').mockResolvedValue([
+      new TopicNode({ id: 7, name: 'Algebra', parentId: null, sequence: null, numberOfQuestions: 0, sources: [] } as TopicNode),
+      new TopicNode({ id: 9, name: 'Numbers', parentId: 7, sequence: null, numberOfQuestions: 0, sources: [] } as TopicNode),
+      new TopicNode({ id: 8, name: 'Geometry', parentId: null, sequence: null, numberOfQuestions: 0, sources: [] } as TopicNode),
+    ]);
+    await mountDialog([
+      chunk('b:0', 'Algebra', [7], 'a'.repeat(150)),
+      chunk('b:1', 'Algebra > Numbers', [9], 'b'.repeat(120)),
+      chunk('b:2', 'Geometry', [8], 'c'.repeat(50)),
+      chunk('b:3', 'Appendix', [], 'd'.repeat(30)),
+    ]);
+
+    await click('[data-cy="ViewTopics"]');
+
+    const summaries = Array.from(document.body.querySelectorAll('[data-cy="TopicSummary"]'));
+    const sizes = summaries.map((summary) => summary.querySelector('[data-cy="TopicSize"]')!.textContent!.trim());
+    expect(sizes).toEqual(['2 piece(s) · 270 characters', '1 piece(s) · 120 characters', '1 piece(s) · 50 characters']);
+    expect(summaries.map((summary) => summary.querySelector('[data-cy="TopicTooLittle"]') !== null)).toEqual([false, true, true]);
+    expect(document.body.querySelector('[data-cy="UnusedSummary"]')!.textContent).toContain('1 piece(s) · 30 characters');
+  });
+
+  test('a topic with nothing under it says so, and its text opens when asked', async () => {
+    await mountDialog([chunk('b:0', 'Algebra', [7], 'x'.repeat(250))]);
+    await click('[data-cy="ViewTopics"]');
+
+    const summaries = Array.from(document.body.querySelectorAll('[data-cy="TopicSummary"]'));
+    expect(summaries[1].querySelector('[data-cy="TopicEmpty"]')).not.toBeNull();
+    expect(document.body.querySelectorAll('[data-cy="TopicPiece"]')).toHaveLength(0);
+
+    await click('[data-cy="ToggleTopic"]');
+
+    expect(document.body.querySelector('[data-cy="TopicPiece"] .chunk-text')!.textContent).toBe('x'.repeat(250));
+  });
+
   test('blocks follow the headings of the document, and a block shows its pieces when opened', async () => {
     await mountDialog(BOOK);
 

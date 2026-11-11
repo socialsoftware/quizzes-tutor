@@ -32,6 +32,8 @@ class StubAqgClient implements AqgClient {
 
     LlmSettingsDto savedLlmSettings
     LlmModelChoiceDto lastTestedModel
+    String lastTestedKey
+    LlmModelTestDto keyTestReply = new LlmModelTestDto(true, 0.5d, '{"ok": true}', null)
     LlmModelChoiceDto lastPulledModel
 
     /** The bean outlives each test (the Spring context is cached), so tests start from a clean stub. */
@@ -48,6 +50,8 @@ class StubAqgClient implements AqgClient {
         lastGenerateRequest = null
         getJobCalls = 0
         savedLlmSettings = null
+        lastTestedKey = null
+        keyTestReply = new LlmModelTestDto(true, 0.5d, '{"ok": true}', null)
         lastTestedModel = null
         lastPulledModel = null
     }
@@ -108,7 +112,7 @@ class StubAqgClient implements AqgClient {
 
     @Override
     LlmSettingsViewDto getLlmSettings() {
-        return new LlmSettingsViewDto(savedLlmSettings, [ollama: true, nvidia_nim: false], ['ollama', 'nvidia_nim'], [ollama: 'llama3.1:8b'])
+        return new LlmSettingsViewDto(savedLlmSettings, [ollama: true, nvidia_nim: false], ['ollama', 'nvidia_nim'], [ollama: 'llama3.1:8b', nvidia_nim: 'nvidia/model', openai: 'gpt-4o-mini', anthropic: 'claude-sonnet-5'])
     }
 
     @Override
@@ -121,6 +125,13 @@ class StubAqgClient implements AqgClient {
     LlmModelTestDto testModel(LlmModelChoiceDto model) {
         lastTestedModel = model
         return new LlmModelTestDto(true, 0.5d, '{"ok": true}', null)
+    }
+
+    @Override
+    LlmModelTestDto testModel(LlmModelChoiceDto model, String apiKey) {
+        lastTestedModel = model
+        lastTestedKey = apiKey
+        return keyTestReply
     }
 
     @Override

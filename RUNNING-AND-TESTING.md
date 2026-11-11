@@ -249,6 +249,26 @@ cp data/env/fraud-service.dev.env.example data/env/fraud-service.dev.env
 cp data/env/aqg-service.dev.env.example   data/env/aqg-service.dev.env
 ```
 
+#### Teachers' own API keys for question generation
+
+A teacher can give their own NVIDIA NIM, OpenAI or Anthropic key (**Generate › My API keys**) so that their
+requests are charged to their account; without one the service's key is used. Keys are checked with the
+provider, encrypted with AES-256-GCM and never shown again (only their last four characters).
+
+You do not have to set anything up: the first time the backend starts it makes the key that encrypts them
+and saves it in `data/secrets/generation-master.key` (the `./data/secrets` volume of `docker-compose.yml`),
+readable only by the server's user. Two things to keep in mind:
+
+* **Do not lose that file.** Without it the saved keys cannot be read and the teachers have to give them
+  again. It is outside git and outside the database on purpose: a copy of the database alone reveals no key,
+  so back the folder up apart from the database dumps.
+* To use a key of your own instead, set `GENERATION_KEYS_MASTER_KEY` in `data/env/backend.dev.env`
+  (`openssl rand -base64 32`); it wins over the file. Outside Docker the file is
+  `~/.quizzes-tutor/generation-master.key`, or wherever `GENERATION_KEYS_MASTER_KEY_FILE` points.
+
+The backend sends a teacher's key to the `aqg-service` only with that teacher's requests, over the internal
+Docker network, and the service uses it for that request and forgets it.
+
 #### Question generation with a local model (Ollama)
 
 The `aqg-service` calls an LLM chosen in `data/env/aqg-service.dev.env`. With the default

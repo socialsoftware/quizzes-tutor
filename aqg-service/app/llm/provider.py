@@ -53,11 +53,27 @@ class LiteLLMProvider:
                 {"role": "user", "content": user},
             ],
             response_format={"type": "json_object"},
+            # Streamed, so `timeout` is the time the provider stays silent and not the time the whole
+            # answer may take: a slow model that keeps writing is waited for, a stalled one is not
+            stream=True,
         )
-        return response.choices[0].message.content
+        return _text_of(response)
 
 
 logger = logging.getLogger(__name__)
+
+
+def _text_of(response) -> str:
+    """The text of a streamed reply (a whole reply, as test doubles give, is read as it is)."""
+    if hasattr(response, "choices"):
+        return response.choices[0].message.content
+    parts = []
+    for chunk in response:
+        if chunk.choices:
+            piece = chunk.choices[0].delta.content
+            if piece:
+                parts.append(piece)
+    return "".join(parts)
 
 
 prompt_logger = logging.getLogger("aqg.prompts")

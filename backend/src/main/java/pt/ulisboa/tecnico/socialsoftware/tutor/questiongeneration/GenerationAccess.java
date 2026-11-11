@@ -22,7 +22,7 @@ import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.GE
 @Component
 public class GenerationAccess implements HandlerInterceptor {
     /** Requests this guards, registered in WebConfiguration. */
-    public static final String[] PATHS = {"/generation/**", "/discussions/*/replies/suggest", "/topics/*/sources"};
+    public static final String[] PATHS = {"/generation/**", "/discussions/*/replies/suggest", "/topics/*/sources", "/teacher/api-keys/**"};
 
     private final boolean demoEnabled;
 

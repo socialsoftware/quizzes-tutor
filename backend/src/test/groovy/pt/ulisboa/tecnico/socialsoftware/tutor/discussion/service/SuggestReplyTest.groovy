@@ -29,6 +29,24 @@ class SuggestReplyTest extends DiscussionFixtureSpockTest {
         discussion = createDiscussion(questionAnswer)
     }
 
+    def "the draft is asked for with the keys of the teacher who asks"() {
+        given:
+        teacherApiKeyService.saveKey(teacher.getId(), 'nvidia_nim', 'nvapi-SECRET-key-0123456789')
+
+        when:
+        discussionSuggestionService.suggestReply(discussion.getId(), teacher.getId())
+
+        then:
+        aqgClient.lastSuggestionRequest.apiKeys() == [nvidia_nim: 'nvapi-SECRET-key-0123456789']
+        !aqgClient.lastSuggestionRequest.toString().contains('SECRET')
+
+        when:
+        discussionSuggestionService.suggestReply(discussion.getId())
+
+        then:
+        aqgClient.lastSuggestionRequest.apiKeys().isEmpty()
+    }
+
     def "the draft of the service is returned and nothing is saved"() {
         when:
         def suggestion = discussionSuggestionService.suggestReply(discussion.getId())

@@ -295,3 +295,24 @@ def test_a_call_that_times_out_or_loses_its_connection_is_repeated(monkeypatch):
     LiteLLMProvider(ModelConfig(model="nvidia_nim/m")).complete("s", "u")
 
     assert sent["num_retries"] >= 1
+
+
+def test_a_streamed_reply_is_put_together(monkeypatch):
+    import litellm
+
+    from app.llm.provider import LiteLLMProvider
+    from app.schema import ModelConfig
+
+    def piece(text):
+        return type("Chunk", (), {"choices": [type("Choice", (), {"delta": type("Delta", (), {"content": text})()})()]})()
+
+    sent = {}
+
+    def completion(**kwargs):
+        sent.update(kwargs)
+        return iter([piece('{"a"'), piece(None), piece(": 1}")])
+
+    monkeypatch.setattr(litellm, "completion", completion)
+
+    assert LiteLLMProvider(ModelConfig(model="nvidia_nim/m")).complete("s", "u") == '{"a": 1}'
+    assert sent["stream"] is True

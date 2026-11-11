@@ -44,7 +44,12 @@
             headings below it.
           </span>
           <v-spacer />
-          <v-btn size="small" variant="text" data-cy="ExpandAll" @click="expandAll(!allExpanded)">
+          <v-btn-toggle v-model="view" mandatory density="compact" variant="outlined" divided class="mr-2" data-cy="ViewSwitch">
+            <v-btn size="small" value="outline" data-cy="ViewOutline">Outline</v-btn>
+            <v-btn size="small" value="reading" data-cy="ViewReading">Document</v-btn>
+            <v-btn size="small" value="topics" data-cy="ViewTopics">By topic</v-btn>
+          </v-btn-toggle>
+          <v-btn v-if="view === 'outline'" size="small" variant="text" data-cy="ExpandAll" @click="expandAll(!allExpanded)">
             {{ allExpanded ? 'Collapse all' : 'Show all pieces' }}
           </v-btn>
         </div>
@@ -55,7 +60,89 @@
         </div>
 
         <v-row>
-          <v-col cols="12" md="8" class="document">
+          <v-col v-if="view === 'reading'" cols="12" md="8" class="document" data-cy="ReadingView">
+            <p class="text-caption text-medium-emphasis mb-2">
+              The document as it is read. The bar beside each piece shows the topics it is under; faded pieces are under no
+              topic and are not used for questions. Click a piece to change its topics.
+            </p>
+            <div
+              v-for="(chunk, position) in chunks"
+              :key="chunk.id"
+              class="reading-chunk d-flex"
+              :class="{ unused: destinationsOf(destinations, chunk.id).length === 0 }"
+              data-cy="ReadingChunk"
+              @click="openPicker({ chunk: chunk.id })"
+            >
+              <div class="stripes" data-cy="ReadingStripes">
+                <span
+                  v-for="destination in destinationsOf(destinations, chunk.id)"
+                  :key="destination"
+                  class="stripe"
+                  :style="{ background: `rgb(var(--v-theme-${colorOf(destination)}))` }"
+                  :title="labelOf(destination)"
+                />
+                <span v-if="destinationsOf(destinations, chunk.id).length === 0" class="stripe none" />
+              </div>
+              <div class="flex-grow-1">
+                <div v-if="chunk.heading && chunk.heading !== chunks[position - 1]?.heading" class="text-caption font-weight-medium">
+                  {{ chunk.heading }}
+                </div>
+                <div class="chunk-text">{{ chunk.text }}</div>
+                <div class="d-flex flex-wrap ga-1 mt-1">
+                  <v-chip v-if="destinationsOf(destinations, chunk.id).length === 0" size="x-small" data-cy="DestinationChip">No topic</v-chip>
+                  <v-chip
+                    v-for="destination in destinationsOf(destinations, chunk.id)"
+                    v-else
+                    :key="destination"
+                    size="x-small"
+                    :color="colorOf(destination)"
+                    data-cy="DestinationChip"
+                  >
+                    {{ labelOf(destination) }}
+                  </v-chip>
+                </div>
+              </div>
+            </div>
+          </v-col>
+
+          <v-col v-else-if="view === 'topics'" cols="12" md="8" class="document" data-cy="TopicsView">
+            <p class="text-caption text-medium-emphasis mb-2">
+              What each topic will be written from: its own pieces and the ones under its subtopics. A topic needs at least
+              {{ MIN_TEXT_CHARACTERS }} characters of text to be used.
+            </p>
+            <div v-for="summary in topicSummaries" :key="summary.option.value" class="topic-summary" data-cy="TopicSummary">
+              <div class="d-flex align-center flex-wrap ga-1" :style="{ paddingLeft: `${summary.option.depth * 16}px` }">
+                <v-btn
+                  variant="text"
+                  size="x-small"
+                  :icon="openTopics.has(summary.option.value) ? 'fas fa-chevron-down' : 'fas fa-chevron-right'"
+                  :disabled="summary.pieces === 0"
+                  data-cy="ToggleTopic"
+                  @click="toggleTopic(summary.option.value)"
+                />
+                <span class="font-weight-medium">{{ summary.option.title }}</span>
+                <v-chip v-if="summary.option.isNew" size="x-small" :color="NEW_COLOR">new</v-chip>
+                <span class="text-caption text-medium-emphasis" data-cy="TopicSize">
+                  {{ summary.pieces }} piece(s) · {{ summary.characters }} characters
+                </span>
+                <v-chip v-if="summary.pieces === 0" size="x-small" data-cy="TopicEmpty">nothing under it</v-chip>
+                <v-chip v-else-if="summary.characters < MIN_TEXT_CHARACTERS" size="x-small" color="error" data-cy="TopicTooLittle">
+                  too little text to write questions
+                </v-chip>
+              </div>
+              <div v-if="openTopics.has(summary.option.value)" class="topic-text" :style="{ marginLeft: `${summary.option.depth * 16 + 32}px` }">
+                <div v-for="chunk in summary.chunks" :key="chunk.id" class="mb-2" data-cy="TopicPiece">
+                  <div v-if="chunk.heading" class="text-caption font-weight-medium">{{ chunk.heading }}</div>
+                  <div class="chunk-text">{{ chunk.text }}</div>
+                </div>
+              </div>
+            </div>
+            <div class="topic-summary text-medium-emphasis" data-cy="UnusedSummary">
+              Under no topic: {{ unused.pieces }} piece(s) · {{ unused.characters }} characters, not used for questions.
+            </div>
+          </v-col>
+
+          <v-col v-else cols="12" md="8" class="document">
             <div v-for="group in groups" :key="group.index" data-cy="ChunkGroup">
               <div class="d-flex align-center group-row" :style="{ paddingLeft: `${Math.max(group.depth - 1, 0) * 20}px` }">
                 <v-btn
@@ -277,6 +364,8 @@ interface PickerItem {
 }
 
 const PREVIEW_CHARS = 240;
+// The least text a topic needs for a question to be written from it (the generation service refuses less)
+const MIN_TEXT_CHARACTERS = 200;
 // What tells a topic the course has from one that is created when the teacher saves
 const EXISTING_COLOR = 'primary';
 const NEW_COLOR = 'warning';
@@ -308,6 +397,8 @@ const destinations = ref<Destinations>({});
 const newTopics = ref<NewTopic[]>([]);
 const dirty = ref(false);
 const suggested = ref(false);
+const view = ref<'outline' | 'reading' | 'topics'>('outline');
+const openTopics = ref(new Set<Destination>());
 const expanded = ref(new Set<number>());
 const fullText = ref(new Set<string>());
 let newTopicCounter = 0;
@@ -357,12 +448,43 @@ const expandAll = (open: boolean) => {
   expanded.value = open ? new Set(groups.value.map((group) => group.index)) : new Set();
 };
 
+const toggleTopic = (destination: Destination) => {
+  const next = new Set(openTopics.value);
+  if (next.has(destination)) next.delete(destination);
+  else next.add(destination);
+  openTopics.value = next;
+};
+
 const toggleText = (id: string) => {
   const next = new Set(fullText.value);
   if (next.has(id)) next.delete(id);
   else next.add(id);
   fullText.value = next;
 };
+
+const sizeOf = (list: MaterialChunk[]) => list.reduce((sum, chunk) => sum + chunk.text.trim().length, 0);
+
+// What each topic is written from: its own pieces and those of its subtopics, in reading order. The topics
+// come in tree order, so the subtopics of one are the ones after it that are deeper.
+const topicSummaries = computed(() => {
+  const own = new Map<Destination, Set<string>>();
+  Object.entries(destinations.value).forEach(([id, list]) =>
+    list.forEach((destination) => own.set(destination, (own.get(destination) ?? new Set()).add(id)))
+  );
+  const all = options.value;
+  return all.map((option, index) => {
+    const ids = new Set<string>(own.get(option.value) ?? []);
+    for (let next = index + 1; next < all.length && all[next].depth > option.depth; next++)
+      own.get(all[next].value)?.forEach((id) => ids.add(id));
+    const list = chunks.value.filter((chunk) => ids.has(chunk.id));
+    return { option, chunks: list, pieces: list.length, characters: sizeOf(list) };
+  });
+});
+
+const unused = computed(() => {
+  const list = chunks.value.filter((chunk) => destinationsOf(destinations.value, chunk.id).length === 0);
+  return { pieces: list.length, characters: sizeOf(list) };
+});
 
 const load = async () => {
   loading.value = true;
@@ -569,6 +691,43 @@ defineExpose({ destinations, newTopics, groups, applySuggestion });
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.reading-chunk {
+  padding: 6px 0;
+  cursor: pointer;
+  border-bottom: 1px dashed rgba(0, 0, 0, 0.08);
+
+  &.unused {
+    opacity: 0.55;
+  }
+}
+
+.stripes {
+  display: flex;
+  flex: 0 0 auto;
+  margin-right: 10px;
+  gap: 2px;
+}
+
+.stripe {
+  width: 5px;
+  border-radius: 3px;
+
+  &.none {
+    background: rgba(0, 0, 0, 0.2);
+  }
+}
+
+.topic-summary {
+  padding: 6px 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+}
+
+.topic-text {
+  max-height: 260px;
+  overflow-y: auto;
+  padding: 6px 0;
 }
 
 .chunk-row {

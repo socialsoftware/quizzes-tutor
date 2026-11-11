@@ -26,6 +26,7 @@ from app.llm.settings import (
     LlmSettingsStore,
     LlmSettingsView,
     ModelChoice,
+    ModelTestRequest,
     ModelTestResult,
     Provider,
     OllamaModels,
@@ -116,22 +117,28 @@ def create_app(
             logging.getLogger("aqg.prompts").addHandler(logging.StreamHandler())
 
     def provider_for(
-        request_model: ModelConfig | None, llm: LlmSettings, log_prompts: bool = False, interactive: bool = False
+        request_model: ModelConfig | None,
+        llm: LlmSettings,
+        log_prompts: bool = False,
+        interactive: bool = False,
+        api_keys: dict[str, str] | None = None,
     ) -> tuple[LLMProvider, str]:
         """The settings' model and its fallbacks. With LOG_PROMPTS on, the questions' prompts are
         logged; those of discussions never are, because they hold what a student wrote. Cloud
         models draw on a per-minute budget; a job waits for it, an `interactive` call (a teacher
-        pressing a button) gives up quickly and the teacher is told to try again."""
+        pressing a button) gives up quickly and the teacher is told to try again. `api_keys` are the
+        asking teacher's own keys: they replace the service's for the models of that provider, and
+        those calls do not draw on the service's per-minute budget."""
         if request_model is not None and not settings.allow_request_model:
             raise HTTPException(status_code=422, detail="choosing the model per request is not allowed")
-        configs = [request_model] if request_model else llm.model_configs()
+        configs = [request_model] if request_model else llm.model_configs(api_keys or {})
         wait = settings.interactive_rate_limit_wait if interactive else settings.rate_limit_wait
 
         def build(config: ModelConfig) -> LLMProvider:
             provider = provider_factory(config)
             if log_prompts and settings.log_prompts:
                 provider = LoggingProvider(provider)
-            limiter = limiters.for_model(config.model)
+            limiter = None if config.api_key else limiters.for_model(config.model)
             return RateLimitedProvider(provider, limiter, wait) if limiter else provider
 
         return build_provider(configs, build), configs[0].model
@@ -162,8 +169,12 @@ def create_app(
                     seen.append(outcome.question.stem)
                 outcomes.append(outcome)
         except Exception as error:  # provider outages must fail the job, not the worker
-            logger.warning("job %s failed", job_id, exc_info=error)
-            jobs.set_failed(job_id, _public_error(error))
+            if request.api_keys:
+                # A provider's message can repeat a key: no traceback, and the keys cut out of the text
+                logger.warning("job %s failed: %s", job_id, _scrub(_short_error(error), request.api_keys))
+            else:
+                logger.warning("job %s failed", job_id, exc_info=error)
+            jobs.set_failed(job_id, _scrub(_public_error(error), request.api_keys))
             return
         # A fallback model that stepped in is recorded with the job, so the questions say who wrote them
         used = getattr(provider, "used", [])
@@ -259,7 +270,7 @@ def create_app(
         llm = llm_settings.get()
         contexts = plan_contexts(available, request.count, llm.context_chars, ranked)
 
-        provider, model_id = provider_for(request.model, llm, log_prompts=True)
+        provider, model_id = provider_for(request.model, llm, log_prompts=True, api_keys=request.api_keys)
         job = Job(
             id=uuid.uuid4().hex,
             prompt_version=PROMPT_VERSION,
@@ -305,7 +316,7 @@ def create_app(
             chunks = retriever.top_k(f"{request.question_stem} {request.student_message}", available, request.top_k)
 
         interactive = llm.model_copy(update={"timeout": min(llm.timeout, INTERACTIVE_TIMEOUT)})
-        provider, _ = provider_for(request.model, interactive, interactive=True)
+        provider, _ = provider_for(request.model, interactive, interactive=True, api_keys=request.api_keys)
         try:
             reply = suggest_reply(request, chunks, provider)
         except RateLimited as error:
@@ -335,12 +346,16 @@ def create_app(
         return llm_settings.view()
 
     @app.post("/settings/llm/test")
-    def test_model(choice: ModelChoice) -> ModelTestResult:
-        """One tiny call to the model, to see that the name is right and it answers in time."""
+    def test_model(choice: ModelTestRequest) -> ModelTestResult:
+        """One tiny call to the model, to see that the name is right and it answers in time. With an
+        `apiKey` the call is made with that key (a teacher checking their own) and nothing is kept."""
         llm = llm_settings.get()
-        if choice.provider in missing_keys(llm.model_copy(update={"primary": choice, "fallbacks": []})):
+        key = (choice.api_key or "").strip()
+        if not key and choice.provider in missing_keys(llm.model_copy(update={"primary": choice, "fallbacks": []})):
             return ModelTestResult(ok=False, seconds=0, error=f"no API key for {choice.provider} in the service's environment")
         config = model_config_for(choice, llm).model_copy(update={"timeout": min(llm.timeout, 60)})
+        if key:
+            config = config.model_copy(update={"api_key": key})
         provider = provider_factory(config)
         if settings.log_prompts:
             provider = LoggingProvider(provider)
@@ -349,7 +364,9 @@ def create_app(
             with log_step("model test"):
                 reply = provider.complete("Reply with a JSON object and nothing else.", 'Return {"ok": true}')
         except Exception as error:  # the error is the answer to the test
-            return ModelTestResult(ok=False, seconds=round(time.perf_counter() - started, 2), error=_short_error(error))
+            return ModelTestResult(
+                ok=False, seconds=round(time.perf_counter() - started, 2), error=_scrub(_short_error(error), {"key": key})
+            )
         return ModelTestResult(ok=True, seconds=round(time.perf_counter() - started, 2), reply=reply[:200])
 
     @app.get("/settings/llm/models")
@@ -405,6 +422,14 @@ def _public_error(error: Exception) -> str:
     """What teachers see of a failed job: the reason, without the addresses of the servers behind
     the service (a provider's message can name them); the whole error is in the service's log."""
     return _ADDRESS.sub("<server>", f"{type(error).__name__}: {error}")[:300]
+
+
+def _scrub(text: str, api_keys: dict[str, str]) -> str:
+    """The text with every API key in it cut out."""
+    for key in api_keys.values():
+        if key:
+            text = text.replace(key, "<key>")
+    return text
 
 
 def _short_error(error: Exception) -> str:

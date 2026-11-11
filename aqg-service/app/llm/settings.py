@@ -116,8 +116,22 @@ class LlmSettings(CamelModel):
     def choices(self) -> list[ModelChoice]:
         return [self.primary, *self.fallbacks]
 
-    def model_configs(self) -> list[ModelConfig]:
-        return [model_config_for(choice, self) for choice in self.choices()]
+    def model_configs(self, api_keys: dict[str, str] | None = None) -> list[ModelConfig]:
+        """The models in order of use. `api_keys` (by provider) are the asking teacher's own keys, used
+        instead of the environment's for the models of that provider."""
+        keys = api_keys or {}
+        configs = []
+        for choice in self.choices():
+            config = model_config_for(choice, self)
+            key = (keys.get(choice.provider) or "").strip()
+            configs.append(config.model_copy(update={"api_key": key}) if key else config)
+        return configs
+
+
+class ModelTestRequest(ModelChoice):
+    """A model to try; with an `apiKey` the call is made with that key."""
+
+    api_key: str | None = Field(default=None, max_length=500, repr=False)
 
 
 class LlmSettingsView(CamelModel):

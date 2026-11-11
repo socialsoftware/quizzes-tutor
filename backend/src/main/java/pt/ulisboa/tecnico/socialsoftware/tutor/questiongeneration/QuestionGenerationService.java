@@ -38,7 +38,9 @@ import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import java.sql.SQLException;
+import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
@@ -64,6 +66,7 @@ public class QuestionGenerationService {
     private static final ObjectMapper DRAFT_WRITER = new ObjectMapper();
     private static final int DEFAULT_QUESTIONS_PER_JOB = 5;
     private static final int MAX_TITLE_LENGTH = 100;
+    private static final int MAX_USAGE_DAYS = 90;
     private static final int MAX_TOPICS_PER_JOB = 10;
     // generation_jobs.topic is a varchar(255)
     private static final int MAX_TOPIC_LABEL_LENGTH = 250;
@@ -99,6 +102,9 @@ public class QuestionGenerationService {
 
     @Autowired
     private GenerationJobRepository generationJobRepository;
+
+    @Autowired
+    private TeacherApiKeyService teacherApiKeyService;
 
     @Autowired
     private ReviewRepository reviewRepository;
@@ -164,6 +170,49 @@ public class QuestionGenerationService {
         topicService.detachMaterial(courseIdOf(executionId), materialId);
     }
 
+    /**
+     * What each course asked for in the last `days` days, today included: the requests made and the
+     * questions they asked for. Courses that asked for nothing are left out.
+     */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public GenerationUsageDto getUsage(int days) {
+        if (days < 1 || days > MAX_USAGE_DAYS)
+            throw new TutorException(GENERATION_USAGE_DAYS, MAX_USAGE_DAYS);
+
+        LocalDate today = DateHandler.now().toLocalDate();
+        LocalDate first = today.minusDays(days - 1L);
+        List<LocalDate> dates = first.datesUntil(today.plusDays(1)).collect(Collectors.toList());
+
+        Map<Integer, int[]> requests = new LinkedHashMap<>();
+        Map<Integer, int[]> questions = new LinkedHashMap<>();
+        for (GenerationJob job : generationJobRepository.findByCreationDateGreaterThanEqual(first.atStartOfDay())) {
+            int index = (int) java.time.temporal.ChronoUnit.DAYS.between(first, job.getCreationDate().toLocalDate());
+            if (index < 0 || index >= days)
+                continue;
+            requests.computeIfAbsent(job.getCourseExecutionId(), id -> new int[days])[index]++;
+            questions.computeIfAbsent(job.getCourseExecutionId(), id -> new int[days])[index] +=
+                    job.getRequestedCount() == null ? 0 : job.getRequestedCount();
+        }
+
+        List<GenerationUsageDto.Row> rows = new ArrayList<>();
+        requests.forEach((executionId, perDay) -> {
+            CourseExecution execution = courseExecutionRepository.findById(executionId).orElse(null);
+            int[] asked = questions.get(executionId);
+            rows.add(new GenerationUsageDto.Row(
+                    executionId,
+                    execution == null ? "(deleted course " + executionId + ")" : execution.getCourse().getName(),
+                    execution == null ? "" : execution.getAcademicTerm(),
+                    java.util.Arrays.stream(perDay).boxed().collect(Collectors.toList()),
+                    java.util.Arrays.stream(asked).boxed().collect(Collectors.toList()),
+                    java.util.Arrays.stream(perDay).sum(),
+                    java.util.Arrays.stream(asked).sum()));
+        });
+        rows.sort(Comparator.comparingInt(GenerationUsageDto.Row::totalRequests).reversed()
+                .thenComparing(GenerationUsageDto.Row::course));
+
+        return new GenerationUsageDto(dates.stream().map(LocalDate::toString).collect(Collectors.toList()), rows);
+    }
+
     private Integer courseIdOf(Integer executionId) {
         return getCourseExecution(executionId).getCourse().getId();
     }
@@ -210,7 +259,8 @@ public class QuestionGenerationService {
 
         AqgJobDto aqgJob = aqgClient.generate(new AqgGenerateRequest(
                 courseId, topicLabel(topics), difficulty, count, groundingMode, language, null,
-                questionRepository.findRecentContents(courseId), chunkIdsOf(sources), focus));
+                questionRepository.findRecentContents(courseId), chunkIdsOf(sources), focus)
+                .withApiKeys(teacherApiKeyService.keysOf(requesterId)));
 
         GenerationJob job = new GenerationJob(aqgJob.id(), executionId, requesterId, topicLabel(topics), topicIds,
                 count, difficulty, groundingMode, aqgJob.status());
@@ -254,7 +304,8 @@ public class QuestionGenerationService {
         AqgJobDto aqgJob = aqgClient.generate(new AqgGenerateRequest(
                 courseId, original.getTopic(), original.getDifficulty(), 1, original.getGroundingMode(),
                 original.getLanguage(), new AqgGenerateRequest.Revision(currentDraft(questionGeneration), comment),
-                questionRepository.findRecentContents(courseId), chunkIds, original.getFocus()));
+                questionRepository.findRecentContents(courseId), chunkIds, original.getFocus())
+                .withApiKeys(teacherApiKeyService.keysOf(userId)));
 
         GenerationJob job = new GenerationJob(aqgJob.id(), original.getCourseExecutionId(), userId,
                 original.getTopic(), original.getTopicIds(), 1, original.getDifficulty(), original.getGroundingMode(),

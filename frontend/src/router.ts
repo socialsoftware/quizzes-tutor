@@ -38,6 +38,7 @@ import TeacherDiscussionsView from '@/views/teacher/discussions/TeacherDiscussio
 import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
 import ExportAllView from '@/views/admin/ExportAllView.vue';
 import LlmSettingsView from '@/views/admin/LlmSettingsView.vue';
+import GenerationUsageView from '@/views/admin/GenerationUsageView.vue';
 import CoursesView from '@/views/admin/courses/CoursesView.vue';
 import UsersView from '@/views/admin/UsersView.vue';
 
@@ -360,6 +361,15 @@ const router = createRouter({
           component: LlmSettingsView,
           meta: {
             title: APP_NAME + ' - Question generation model',
+            requiredAuth: 'SystemAdmin',
+          },
+        },
+        {
+          path: 'generation-usage',
+          name: 'generationUsage',
+          component: GenerationUsageView,
+          meta: {
+            title: APP_NAME + ' - Question generation usage',
             requiredAuth: 'SystemAdmin',
           },
         },

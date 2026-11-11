@@ -3,6 +3,7 @@ package pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationUsageDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelChoiceDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelTestDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsDto;
@@ -16,6 +17,9 @@ public class LlmSettingsController {
     @Autowired
     private LlmSettingsService llmSettingsService;
 
+    @Autowired
+    private QuestionGenerationService questionGenerationService;
+
     @GetMapping("/admin/llm-settings")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public LlmSettingsViewDto getSettings() {
@@ -26,6 +30,13 @@ public class LlmSettingsController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public LlmSettingsViewDto saveSettings(@RequestBody LlmSettingsDto settings) {
         return llmSettingsService.saveSettings(settings);
+    }
+
+    /** How many requests and questions each course asked for in the last days. */
+    @GetMapping("/admin/generation/usage")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public GenerationUsageDto getUsage(@RequestParam(defaultValue = "10") int days) {
+        return questionGenerationService.getUsage(days);
     }
 
     @PostMapping("/admin/llm-settings/test")

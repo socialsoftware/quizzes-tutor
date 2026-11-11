@@ -123,6 +123,24 @@ describe('LlmSettingsView', () => {
 
     expect(wrapper.find('[data-cy="MissingKey"]').text()).toContain('OpenAI');
     expect(saveButton(wrapper).attributes('disabled')).toBeDefined();
+    expect(wrapper.find('[data-cy="SaveProblems"]').text()).toContain('Fallback 1: there is no API key for OpenAI');
+  });
+
+  test('a disabled Save says what is wrong, and says nothing when there is nothing to save', async () => {
+    const wrapper = await mountPage();
+    expect(wrapper.find('[data-cy="SaveProblems"]').exists()).toBe(false);
+
+    vm(wrapper).draft.primary = { provider: 'nvidia_nim', model: '' };
+    await flushPromises();
+
+    expect(saveButton(wrapper).attributes('disabled')).toBeDefined();
+    expect(wrapper.find('[data-cy="SaveProblems"]').text()).toContain('Main model: pick or type a model');
+
+    vm(wrapper).draft.primary = { provider: 'nvidia_nim', model: 'meta/llama-3.3-70b-instruct' };
+    await flushPromises();
+
+    expect(wrapper.find('[data-cy="SaveProblems"]').exists()).toBe(false);
+    expect(saveButton(wrapper).attributes('disabled')).toBeUndefined();
   });
 
   test('values out of range or a bad address cannot be saved', async () => {

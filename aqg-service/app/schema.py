@@ -78,6 +78,9 @@ class GenerationRequest(BaseModel):
     # Stems already in the course, so new drafts that repeat one are retried
     existing_stems: list[str] = Field(default_factory=list, max_length=5000)
     model: ModelConfig | None = None
+    # The asking teacher's own API keys by provider. Used for this request only: never stored,
+    # printed or sent back
+    api_keys: dict[str, str] = Field(default_factory=dict, exclude=True, repr=False, max_length=4)
 
     @model_validator(mode="after")
     def needs_context(self) -> "GenerationRequest":
@@ -151,6 +154,8 @@ class DiscussionSuggestRequest(BaseModel):
     # The pieces of the course materials under the question's topics; empty = no course material
     chunk_ids: list[str] = Field(default_factory=list, max_length=MAX_CHUNK_IDS)
     top_k: int = Field(default=3, ge=1, le=10)
+    # The asking teacher's own API keys by provider (see GenerationRequest.api_keys)
+    api_keys: dict[str, str] = Field(default_factory=dict, exclude=True, repr=False, max_length=4)
     language: str | None = Field(default=None, max_length=40)
     model: "ModelConfig | None" = None
 

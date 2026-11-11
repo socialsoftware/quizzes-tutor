@@ -22,6 +22,8 @@ import Reply from '@/models/management/Reply';
 import Tournament from '@/models/user/Tournament';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
+import { GenerationUsage } from '@/models/admin/GenerationUsage';
+import { TeacherApiKeys } from '@/models/management/generation/TeacherApiKeys';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
 import MaterialChunk from '@/models/management/generation/MaterialChunk';
 import { LlmModelChoice, LlmModelTest, LlmSettings, LlmSettingsView, OllamaModels, ProviderModels } from '@/models/admin/LlmSettings';
@@ -1185,6 +1187,44 @@ export default class RemoteServices {
     return httpClient
       .get('/admin/llm-settings')
       .then((response) => response.data as LlmSettingsView)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // The teacher's own API keys for question generation (the key is never sent back)
+  static async getMyApiKeys(): Promise<TeacherApiKeys> {
+    return httpClient
+      .get('/teacher/api-keys')
+      .then((response) => response.data as TeacherApiKeys)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async saveMyApiKey(provider: string, key: string): Promise<TeacherApiKeys> {
+    return httpClient
+      .put(`/teacher/api-keys/${provider}`, { key })
+      .then((response) => response.data as TeacherApiKeys)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async removeMyApiKey(provider: string): Promise<TeacherApiKeys> {
+    return httpClient
+      .delete(`/teacher/api-keys/${provider}`)
+      .then((response) => response.data as TeacherApiKeys)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Administration: requests and questions each course asked of the generation in the last days
+  static async getGenerationUsage(days: number): Promise<GenerationUsage> {
+    return httpClient
+      .get('/admin/generation/usage', { params: { days } })
+      .then((response) => response.data as GenerationUsage)
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });

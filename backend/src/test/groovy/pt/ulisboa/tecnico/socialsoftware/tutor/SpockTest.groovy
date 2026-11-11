@@ -41,7 +41,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.AqgClient
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.LlmSettingsService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.QuestionGenerationService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.RequestThrottle
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.ApiKeyCipher
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.TeacherApiKeyService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.GenerationJobRepository
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.TeacherApiKeyRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.repository.QuestionGenerationRepository
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.QuestionSubmissionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questionsubmission.repository.QuestionSubmissionRepository
@@ -290,6 +293,15 @@ class SpockTest extends Specification {
 
     @Autowired
     GenerationJobRepository generationJobRepository
+
+    @Autowired
+    TeacherApiKeyService teacherApiKeyService
+
+    @Autowired
+    TeacherApiKeyRepository teacherApiKeyRepository
+
+    @Autowired
+    ApiKeyCipher apiKeyCipher
 
     // A StubAqgClient in the DataJpaTest contexts, the real client in the integration tests
     @Autowired

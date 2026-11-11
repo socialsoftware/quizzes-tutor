@@ -169,7 +169,13 @@
       />
     </v-card-text>
 
-    <v-card-actions v-if="view && draft">
+    <v-card-actions v-if="view && draft" class="flex-wrap">
+      <div v-if="dirty && problems.length > 0" class="text-error text-caption text-left problems" data-cy="SaveProblems">
+        Cannot save yet:
+        <ul>
+          <li v-for="problem in problems" :key="problem">{{ problem }}</li>
+        </ul>
+      </div>
       <v-spacer />
       <v-btn variant="text" :disabled="!dirty || saving" data-cy="ResetLlmSettings" @click="reset">Undo changes</v-btn>
       <v-btn color="primary" :loading="saving" :disabled="!dirty || !valid" data-cy="SaveLlmSettings" @click="save">Save</v-btn>
@@ -182,7 +188,7 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import { createPoller } from '@/services/Polling';
-import { LlmSettings, LlmSettingsView, OllamaModels } from '@/models/admin/LlmSettings';
+import { LlmSettings, LlmSettingsView, OllamaModels, PROVIDER_NAMES } from '@/models/admin/LlmSettings';
 import LlmModelRow from '@/views/admin/LlmModelRow.vue';
 
 const MAX_FALLBACKS = 5;
@@ -245,21 +251,27 @@ const contextTooSmall = computed(
 
 const contextHint = computed(() => `A prompt here takes about ${promptTokens.value} tokens; empty keeps the server's default`);
 
-const valid = computed(() => {
+// What keeps the settings from being saved, so a disabled Save never looks broken
+const problems = computed(() => {
   const settings = draft.value;
-  if (!settings || !view.value) return false;
-  const choices = [settings.primary, ...settings.fallbacks];
-  return (
-    choices.every((choice) => choice.model.trim() !== '' && view.value!.keys[choice.provider]) &&
-    urlError.value.length === 0 &&
-    contextWindowError.value.length === 0 &&
-    rangeError(settings.timeout, 5, 900).length === 0 &&
-    rangeError(settings.maxRetries, 0, 5).length === 0 &&
-    rangeError(settings.contextChars, 2000, 60000).length === 0 &&
-    Number.isInteger(settings.maxRetries) &&
-    Number.isInteger(settings.contextChars)
-  );
+  if (!settings || !view.value) return [];
+  const found: string[] = [];
+  [settings.primary, ...settings.fallbacks].forEach((choice, index) => {
+    const where = index === 0 ? 'Main model' : `Fallback ${index}`;
+    if (choice.model.trim() === '') found.push(`${where}: pick or type a model`);
+    if (!view.value!.keys[choice.provider])
+      found.push(`${where}: there is no API key for ${PROVIDER_NAMES[choice.provider] ?? choice.provider} in the generation service's .env`);
+  });
+  if (urlError.value.length > 0) found.push('Ollama: the address must be an http(s) address');
+  if (contextWindowError.value.length > 0) found.push('Context window: between 1024 and 262144 tokens');
+  if (rangeError(settings.timeout, 5, 900).length > 0) found.push('Timeout: between 5 and 900 seconds');
+  if (rangeError(settings.maxRetries, 0, 5).length > 0 || !Number.isInteger(settings.maxRetries)) found.push('Rewrites: a whole number from 0 to 5');
+  if (rangeError(settings.contextChars, 2000, 60000).length > 0 || !Number.isInteger(settings.contextChars))
+    found.push('Characters of material: a whole number from 2000 to 60000');
+  return found;
 });
+
+const valid = computed(() => !!draft.value && !!view.value && problems.value.length === 0);
 
 const pullLabel = (state: string) =>
   state === 'done' ? 'downloaded' : state === 'downloading' ? 'downloading…' : `failed (${state})`;
@@ -331,12 +343,13 @@ const load = async () => {
   try {
     view.value = await RemoteServices.getLlmSettings();
     draft.value = copy(view.value.settings);
-    await loadOllama();
-    if (Object.values(ollama.value.pulls).includes('downloading')) poller.start();
   } catch (error) {
     store.setError(error as string);
   }
   store.clearLoading();
+  // An Ollama server that is down takes a while to give up: the page does not wait for it
+  await loadOllama();
+  if (Object.values(ollama.value.pulls).includes('downloading')) poller.start();
 };
 
 const reset = () => {
@@ -375,6 +388,14 @@ onUnmounted(() => poller.stop());
 <style lang="scss" scoped>
 .llm-settings {
   text-align: left;
+}
+
+.problems {
+  flex: 1 1 300px;
+
+  ul {
+    padding-left: 18px;
+  }
 }
 
 .pull-field {

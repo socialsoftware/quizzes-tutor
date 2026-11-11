@@ -56,6 +56,14 @@ The AI writes questions about **the topics you pick**, using only the pieces of 
 4. **Save**: saves the distribution.
 5. **Show all pieces**: shows the text of each piece, so you can check it or give a single piece its own topics.
 
+### Seeing how the document will be split
+
+The buttons **Outline**, **Document** and **By topic** above the list change how the document is shown. Nothing is saved by switching between them, and they follow every change you make before pressing **Save**.
+
+- **Outline**: the headings with their topics, as described above.
+- **Document**: the whole text in reading order. A coloured bar beside each piece shows the topics it is under, one bar per topic. Pieces under no topic are faded, because they will not be used for questions. Click a piece to change its topics.
+- **By topic**: for each topic, how many pieces and how many characters of text questions about it will be written from (its subtopics included). Open a topic to read exactly that text. A topic with less than 200 characters is flagged as having too little text, and a topic with nothing under it says so. At the end it shows what is left under no topic.
+
 ### Colours: is the topic new or does it already exist?
 
 A legend above the list explains the colours:
@@ -231,6 +239,15 @@ The draft is placed in the reply box. After making your edits, select **Submit**
 > **Check the draft**
 >
 > The AI can write replies that are inaccurate or generic. Check the information and adjust the tone before sending.
+
+## For administrators
+
+Under **Administration**, two pages are for the system administrator:
+
+- **Question Generation Model**: which models write the questions, the fallbacks and the timeout. When **Save** is off, the reason is written beside it (for example a provider with no API key in the service's `.env`, or an empty model name).
+- **Question Generation Usage**: a table of the requests each course made on each of the last 7, 10 or 30 days, with the number of questions they asked for in brackets, and the totals per course and per day.
+
+The timeout is a limit of our service only: it is how long the service waits for the model to answer one call. A call that exceeds it is repeated once and then the next fallback is tried; an answer that arrives after that is thrown away on our side and never shows up as a question.
 
 ## System messages and notifications
 

@@ -25,7 +25,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.execution.CourseExecutionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.impexp.domain.AnswersXmlImport
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.QuestionService
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.TopicService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.ApiKeyCipher
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.GenerationAccess
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.TeacherApiKeyService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.LlmSettingsService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.QuestionGenerationService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.RequestThrottle
@@ -159,6 +161,17 @@ class BeanConfiguration {
     RequestThrottle requestThrottle() {
         // no pauses and no cap, so tests that ask for several jobs are not held back
         return new RequestThrottle(0, 0, 1000)
+    }
+
+    @Bean
+    ApiKeyCipher apiKeyCipher() {
+        // 32 bytes (0..31) in base64: a key for tests only
+        return new ApiKeyCipher('AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=')
+    }
+
+    @Bean
+    TeacherApiKeyService teacherApiKeyService() {
+        return new TeacherApiKeyService()
     }
 
     @Bean

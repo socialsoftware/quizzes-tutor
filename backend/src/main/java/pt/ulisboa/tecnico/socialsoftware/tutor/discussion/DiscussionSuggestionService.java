@@ -46,13 +46,22 @@ public class DiscussionSuggestionService {
     private AqgClient aqgClient;
 
     @Autowired
+    private pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.TeacherApiKeyService teacherApiKeyService;
+
+    @Autowired
     private TopicService topicService;
 
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public AqgDiscussionSuggestionDto suggestReply(Integer discussionId) {
+        return suggestReply(discussionId, null);
+    }
+
+    /** With the teacher's own API keys, if they gave any, for the model to use. */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public AqgDiscussionSuggestionDto suggestReply(Integer discussionId, Integer teacherId) {
         Discussion discussion = discussionRepository.findById(discussionId)
                 .orElseThrow(() -> new TutorException(DISCUSSION_NOT_FOUND, discussionId));
-        return aqgClient.suggestReply(buildRequest(discussion));
+        return aqgClient.suggestReply(buildRequest(discussion).withApiKeys(teacherApiKeyService.keysOf(teacherId)));
     }
 
     AqgDiscussionRequest buildRequest(Discussion discussion) {

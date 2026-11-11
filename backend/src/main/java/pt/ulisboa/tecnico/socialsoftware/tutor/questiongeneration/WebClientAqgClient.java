@@ -32,6 +32,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.ProviderMo
 import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.function.Supplier;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AQG_SERVICE_ERROR;
@@ -168,6 +169,15 @@ public class WebClientAqgClient implements AqgClient {
     @Override
     public LlmModelTestDto testModel(LlmModelChoiceDto model) {
         String json = write(model);
+        return read(call(() -> client.post().uri("/settings/llm/test")
+                .contentType(MediaType.APPLICATION_JSON)
+                .bodyValue(json)
+                .retrieve().bodyToMono(String.class).block(MODEL_TEST_TIMEOUT)), new TypeReference<LlmModelTestDto>() {});
+    }
+
+    @Override
+    public LlmModelTestDto testModel(LlmModelChoiceDto model, String apiKey) {
+        String json = write(Map.of("provider", model.provider(), "model", model.model(), "apiKey", apiKey));
         return read(call(() -> client.post().uri("/settings/llm/test")
                 .contentType(MediaType.APPLICATION_JSON)
                 .bodyValue(json)

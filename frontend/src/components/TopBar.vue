@@ -149,6 +149,13 @@
                 prepend-icon="fas fa-robot"
                 title="Question Generation Model"
               ></v-list-item>
+              <v-list-item
+                v-if="isSystemAdmin"
+                data-cy="generationUsageMenuButton"
+                to="/admin/generation-usage"
+                prepend-icon="fas fa-chart-bar"
+                title="Question Generation Usage"
+              ></v-list-item>
               <v-list-item to="/admin/export" prepend-icon="fas fa-download" title="Export"></v-list-item>
             </v-list>
           </v-menu>
@@ -256,6 +263,7 @@
             <v-list-item to="/admin/users" prepend-icon="fas fa-users" title="Manage Users"></v-list-item>
             <v-list-item to="/admin/courses" prepend-icon="fas fa-school" title="Manage Courses"></v-list-item>
             <v-list-item v-if="isSystemAdmin" to="/admin/llm" prepend-icon="fas fa-robot" title="Question Generation Model"></v-list-item>
+            <v-list-item v-if="isSystemAdmin" to="/admin/generation-usage" prepend-icon="fas fa-chart-bar" title="Question Generation Usage"></v-list-item>
             <v-list-item to="/admin/export" prepend-icon="fas fa-download" title="Export"></v-list-item>
           </v-list-group>
 

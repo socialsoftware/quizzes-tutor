@@ -115,6 +115,8 @@ services:
       - ./data/images:/images
       - ./data/load:/load
       - ./data/export:/export
+      # the key that encrypts teachers' API keys is made here on the first start: keep this folder
+      - ./data/secrets:/secrets
     env_file:
       - ./data/env/backend.dev.env
     environment:

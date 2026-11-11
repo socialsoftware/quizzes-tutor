@@ -48,6 +48,9 @@ public interface AqgClient {
     /** One tiny call to a model, to check its name and how fast it answers. */
     LlmModelTestDto testModel(LlmModelChoiceDto model);
 
+    /** The same call made with the given API key (a teacher checking their own); the key is not kept. */
+    LlmModelTestDto testModel(LlmModelChoiceDto model, String apiKey);
+
     /** The models a provider offers, read from the provider with the service's key; `refresh` skips its cache. */
     ProviderModelsDto getProviderModels(String provider, boolean refresh);
 

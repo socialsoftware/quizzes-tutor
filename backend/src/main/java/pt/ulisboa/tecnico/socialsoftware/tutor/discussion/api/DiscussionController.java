@@ -80,7 +80,7 @@ public class DiscussionController {
     public AqgDiscussionSuggestionDto suggestReply(Principal principal, @PathVariable int discussionId) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
         requestThrottle.checkAndRecordSuggestion(authUser.getUser().getId());
-        return discussionSuggestionService.suggestReply(discussionId);
+        return discussionSuggestionService.suggestReply(discussionId, authUser.getUser().getId());
     }
 
     @PostMapping(value = "/discussions/{discussionId}/replies/add")

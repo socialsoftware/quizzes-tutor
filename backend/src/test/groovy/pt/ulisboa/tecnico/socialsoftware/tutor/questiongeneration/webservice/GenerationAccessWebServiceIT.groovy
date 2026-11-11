@@ -68,6 +68,21 @@ class GenerationAccessWebServiceIT extends SpockTestIT {
         error.responseBodyAsString.contains('not in the demo')
     }
 
+    def "the demo teacher cannot keep an API key"() {
+        given:
+        demoTeacherLogin()
+
+        when:
+        webClient.put().uri('/teacher/api-keys/nvidia_nim')
+                .headers(httpHeaders -> httpHeaders.putAll(headers))
+                .bodyValue([key: 'nvapi-not-for-the-demo-1234'])
+                .retrieve().bodyToMono(String.class).block()
+
+        then:
+        def error = thrown(WebClientResponseException)
+        error.responseBodyAsString.contains('not in the demo')
+    }
+
     def "the demo teacher cannot place pieces of documents under a topic"() {
         given:
         demoTeacherLogin()
