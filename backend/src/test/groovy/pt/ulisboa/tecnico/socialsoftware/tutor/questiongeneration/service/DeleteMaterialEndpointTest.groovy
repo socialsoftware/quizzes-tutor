@@ -5,6 +5,10 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.QuestionGenerationController
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.QuestionGenerationService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.WebClientAqgClient
+import org.springframework.security.core.Authentication
+import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
+import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationModelsDto
 import spock.lang.Specification
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AQG_SERVICE_ERROR
@@ -68,4 +72,23 @@ class DeleteMaterialEndpointTest extends Specification {
         then:
         1 * service.deleteMaterial(3, 'm1')
     }
+
+    def "the controller gives each teacher the models they can pick, and their keys' status is theirs alone"() {
+        given:
+        def service = Mock(QuestionGenerationService)
+        def controller = new QuestionGenerationController()
+        controller.@questionGenerationService = service
+        def user = Stub(User) { getId() >> 7 }
+        def authUser = Stub(AuthUser) { getUser() >> user }
+        def authentication = Stub(Authentication) { getPrincipal() >> authUser }
+        def models = new GenerationModelsDto(null, [], [])
+
+        when:
+        def result = controller.getModels(authentication, 3)
+
+        then:
+        1 * service.getModels(7) >> models
+        result.is(models)
+    }
 }
+

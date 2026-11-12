@@ -21,6 +21,7 @@ public class GenerationJobDto implements Serializable {
     private Integer importedCount;
     private Integer skippedCount;
     private String skippedReason;
+    private String chosenModel;
     private String error;
     private String creationDate;
 
@@ -41,6 +42,7 @@ public class GenerationJobDto implements Serializable {
         this.importedCount = job.getImportedCount();
         this.skippedCount = job.getSkippedCount();
         this.skippedReason = job.getSkippedReason();
+        this.chosenModel = job.getChosenModel() == null ? null : job.getChosenProvider() + "/" + job.getChosenModel();
         this.error = job.getError();
         if (job.getCreationDate() != null)
             this.creationDate = DateHandler.toISOString(job.getCreationDate());
@@ -93,6 +95,10 @@ public class GenerationJobDto implements Serializable {
     public Integer getSkippedCount() { return skippedCount; }
 
     public String getSkippedReason() { return skippedReason; }
+
+    public String getChosenModel() { return chosenModel; }
+
+    public void setChosenModel(String chosenModel) { this.chosenModel = chosenModel; }
 
     public void setSkippedReason(String skippedReason) { this.skippedReason = skippedReason; }
 

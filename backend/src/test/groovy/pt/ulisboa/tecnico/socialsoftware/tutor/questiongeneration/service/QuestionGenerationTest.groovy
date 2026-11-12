@@ -10,6 +10,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Question
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.GenerationJob
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.domain.QuestionGeneration
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgGenerateRequest
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelChoiceDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgMaterialDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationRequestDto
@@ -620,6 +623,37 @@ class QuestionGenerationTest extends SpockTest {
         def job = generationJobRepository.findAll().find { it.getAqgJobId() == 'aqg-2' }
         job.getRevisionOfId() == generation.getId()
         result.getRegenerationJobId() == job.getId()
+    }
+
+    def "a rewrite keeps the model the teacher picked, while they may still use it"() {
+        given:
+        aqgClient.savedLlmSettings = new LlmSettingsDto(new LlmModelChoiceDto('nvidia_nim', 'usual/model'), [],
+                'http://ollama:11434', null, 'default', 120d, false, 2, true, 12000, [new LlmModelChoiceDto('nvidia_nim', 'free/model')])
+        def generation = importedGeneration()
+        def job = generationJobRepository.findAll().get(0)
+        job.setChosenModel('nvidia_nim', 'free/model')
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
+
+        when:
+        questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Ask it the other way round')
+
+        then:
+        aqgClient.lastGenerateRequest.chosenModel() == new AqgGenerateRequest.ChosenModel('nvidia_nim', 'free/model')
+    }
+
+    def "a rewrite goes back to the usual models when the teacher may no longer use the one they picked"() {
+        given:
+        aqgClient.savedLlmSettings = new LlmSettingsDto(new LlmModelChoiceDto('nvidia_nim', 'usual/model'), [],
+                'http://ollama:11434', null, 'default', 120d, false, 2, true, 12000, [])
+        def generation = importedGeneration()
+        generationJobRepository.findAll().get(0).setChosenModel('nvidia_nim', 'free/model')
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
+
+        when:
+        questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Once more')
+
+        then:
+        aqgClient.lastGenerateRequest.chosenModel() == null
     }
 
     def "a finished rewrite replaces the question and puts it back up for review"() {

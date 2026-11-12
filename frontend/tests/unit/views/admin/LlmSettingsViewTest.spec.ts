@@ -18,6 +18,7 @@ const settingsView = (): LlmSettingsView => ({
   settings: {
     primary: { provider: 'nvidia_nim', model: 'nvidia/nemotron-3-ultra-550b-a55b' },
     fallbacks: [{ provider: 'ollama', model: 'llama3.1:8b' }],
+    teacherModels: [],
     ollamaBaseUrl: 'http://ollama:11434',
     ollamaContextLength: null,
     ollamaThinking: 'default',
@@ -113,6 +114,36 @@ describe('LlmSettingsView', () => {
 
     expect(save.mock.calls[0][0]).toEqual(expect.objectContaining({ primary: { provider: 'ollama', model: 'qwen3:4b' }, timeout: 600 }));
     expect(vm(wrapper).dirty).toBe(false);
+  });
+
+  test('the models teachers may pick are added, checked like the others and sent with the settings', async () => {
+    const save = vi.spyOn(RemoteServices, 'saveLlmSettings').mockResolvedValue(settingsView());
+    const wrapper = await mountPage();
+
+    await wrapper.find('[data-cy="AddTeacherModel"]').trigger('click');
+    await flushPromises();
+    expect(vm(wrapper).draft.teacherModels).toEqual([{ provider: 'nvidia_nim', model: 'nvidia/nemotron-3-ultra-550b-a55b' }]);
+
+    vm(wrapper).draft.teacherModels[0] = { provider: 'nvidia_nim', model: '' };
+    await flushPromises();
+    expect(wrapper.find('[data-cy="SaveProblems"]').text()).toContain('Model teachers can pick 1: pick or type a model');
+
+    vm(wrapper).draft.teacherModels[0] = { provider: 'nvidia_nim', model: 'meta/llama-3.3-70b-instruct' };
+    await flushPromises();
+    await saveButton(wrapper).trigger('click');
+    await flushPromises();
+
+    expect(save.mock.calls[0][0].teacherModels).toEqual([{ provider: 'nvidia_nim', model: 'meta/llama-3.3-70b-instruct' }]);
+  });
+
+  test('a model teachers may pick can be taken off the list again', async () => {
+    const wrapper = await mountPage();
+    await wrapper.find('[data-cy="AddTeacherModel"]').trigger('click');
+    await flushPromises();
+
+    await wrapper.find('[data-cy="RemoveTeacherModel"]').trigger('click');
+
+    expect(vm(wrapper).draft.teacherModels).toEqual([]);
   });
 
   test('a provider without its API key cannot be saved and says why', async () => {

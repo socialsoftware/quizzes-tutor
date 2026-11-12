@@ -59,6 +59,13 @@ MAX_CHUNK_IDS = 5000
 MAX_QUESTIONS_PER_JOB = 10
 
 
+class ChosenModel(BaseModel):
+    """The model a teacher picked for a request. The Tutor checks they may; it is tried before the usual ones."""
+
+    provider: Literal["ollama", "openai", "anthropic", "nvidia_nim"]
+    model: str = Field(min_length=1, max_length=200, pattern=r"^[A-Za-z0-9._:/@+\-]+$")
+
+
 class GenerationRequest(BaseModel):
     course_id: int
     topic: str
@@ -78,6 +85,8 @@ class GenerationRequest(BaseModel):
     # Stems already in the course, so new drafts that repeat one are retried
     existing_stems: list[str] = Field(default_factory=list, max_length=5000)
     model: ModelConfig | None = None
+    # The model the teacher picked, tried before the service's usual ones
+    chosen_model: ChosenModel | None = None
     # The asking teacher's own API keys by provider. Used for this request only: never stored,
     # printed or sent back
     api_keys: dict[str, str] = Field(default_factory=dict, exclude=True, repr=False, max_length=4)

@@ -72,11 +72,12 @@ describe('ApiKeysDialog', () => {
   test('a key is sent as typed, then the field is emptied and the status updates', async () => {
     vi.spyOn(RemoteServices, 'getMyApiKeys').mockResolvedValue(keys());
     const save = vi.spyOn(RemoteServices, 'saveMyApiKey').mockResolvedValue(keys(['nvidia_nim']));
-    await mountDialog();
+    const wrapper = await mountDialog();
 
     expect((rows()[0].querySelector('[data-cy="SaveKey"]') as HTMLButtonElement).disabled).toBe(true);
     await type(rows()[0], '  nvapi-secret-1234  ');
     await click(rows()[0], 'SaveKey');
+    expect(wrapper.emitted('changed')).toHaveLength(1);
 
     expect(save).toHaveBeenCalledWith('nvidia_nim', 'nvapi-secret-1234');
     expect((rows()[0].querySelector('[data-cy="KeyInput"] input') as HTMLInputElement).value).toBe('');

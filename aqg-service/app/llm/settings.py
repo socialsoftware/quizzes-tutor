@@ -28,6 +28,7 @@ API_KEY_VARIABLES = {
 }
 
 MAX_FALLBACKS = 5
+MAX_TEACHER_MODELS = 20
 
 # Ollama's "think": the model's own default, off, or on with an effort (levels only change models
 # that have them, such as gpt-oss; the others just think or not)
@@ -70,6 +71,9 @@ class LlmSettings(CamelModel):
     primary: ModelChoice
     # Tried in order when a call to the model before fails (outage, overload, timeout, model withdrawn)
     fallbacks: list[ModelChoice] = Field(default_factory=list, max_length=MAX_FALLBACKS)
+    # The models any teacher may pick for their own requests (the ones known to work for this use
+    # case), on top of the one above; with their own key a teacher may pick others of its provider
+    teacher_models: list[ModelChoice] = Field(default_factory=list, max_length=MAX_TEACHER_MODELS)
     ollama_base_url: str = Field(max_length=500)
     # Tokens the Ollama model reads at once (its num_ctx); None keeps the server's default, which
     # can be smaller than a prompt with several pieces of material
@@ -116,12 +120,19 @@ class LlmSettings(CamelModel):
     def choices(self) -> list[ModelChoice]:
         return [self.primary, *self.fallbacks]
 
-    def model_configs(self, api_keys: dict[str, str] | None = None) -> list[ModelConfig]:
+    def chain_for(self, chosen: "ModelChoice | None") -> list[ModelChoice]:
+        """The models in order of use: the one a teacher picked (if any) before the usual ones."""
+        usual = self.choices()
+        if chosen is None:
+            return usual
+        return [chosen, *(choice for choice in usual if choice != chosen)]
+
+    def model_configs(self, api_keys: dict[str, str] | None = None, chosen: "ModelChoice | None" = None) -> list[ModelConfig]:
         """The models in order of use. `api_keys` (by provider) are the asking teacher's own keys, used
         instead of the environment's for the models of that provider."""
         keys = api_keys or {}
         configs = []
-        for choice in self.choices():
+        for choice in self.chain_for(chosen):
             config = model_config_for(choice, self)
             key = (keys.get(choice.provider) or "").strip()
             configs.append(config.model_copy(update={"api_key": key}) if key else config)
@@ -229,4 +240,6 @@ class LlmSettingsStore:
 def missing_keys(settings: LlmSettings) -> list[str]:
     """Providers chosen whose key is not in the environment: calls to them could only fail."""
     present = keys_present()
-    return list(dict.fromkeys(choice.provider for choice in settings.choices() if not present[choice.provider]))
+    # The models teachers may pick are for everyone, so they need the service's key too
+    chosen = [*settings.choices(), *settings.teacher_models]
+    return list(dict.fromkeys(choice.provider for choice in chosen if not present[choice.provider]))

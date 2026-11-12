@@ -10,6 +10,9 @@ export interface GenerationRequest {
   language: string | null;
   // What to ask about inside the topic, e.g. "sign rules of the product"
   focus: string | null;
+  // The model picked (both or none): null for the usual ones
+  provider?: string | null;
+  model?: string | null;
 }
 
 export default class GenerationJob {
@@ -26,6 +29,8 @@ export default class GenerationJob {
   importedCount: number = 0;
   skippedCount: number = 0;
   skippedReason: string | null = null;
+  // The model the teacher picked, as provider/model; null when the usual ones were used
+  chosenModel: string | null = null;
   error: string | null = null;
   creationDate!: string;
 
@@ -42,6 +47,7 @@ export default class GenerationJob {
       this.importedCount = jsonObj.importedCount ?? 0;
       this.skippedCount = jsonObj.skippedCount ?? 0;
       this.skippedReason = jsonObj.skippedReason ?? null;
+      this.chosenModel = jsonObj.chosenModel ?? null;
       this.error = jsonObj.error;
       this.creationDate = ISOtoString(jsonObj.creationDate);
     }

@@ -98,6 +98,14 @@ public class TeacherApiKeyService {
         return keys;
     }
 
+    /** The providers the teacher has a key for, without reading any key. */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public List<String> providersWithKey(Integer userId) {
+        if (userId == null || !cipher.isConfigured())
+            return List.of();
+        return repository.findByUserId(userId).stream().map(TeacherApiKey::getProvider).collect(Collectors.toList());
+    }
+
     private void checkProvider(String provider) {
         if (!PROVIDERS.contains(provider))
             throw new TutorException(TEACHER_API_KEY_PROVIDER, provider == null ? "" : provider);

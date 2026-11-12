@@ -63,6 +63,13 @@ public class GenerationJob {
     @Column(name = "skipped_count")
     private Integer skippedCount = 0;
 
+    /** The model the teacher picked for this request, if they picked one (kept so a regeneration can use it again). */
+    @Column(name = "chosen_provider", length = 32)
+    private String chosenProvider;
+
+    @Column(name = "chosen_model", length = 200)
+    private String chosenModel;
+
     /** What the model said when it could not write a question, so the teacher knows what to change. */
     @Column(name = "skipped_reason", length = 500)
     private String skippedReason;
@@ -151,6 +158,19 @@ public class GenerationJob {
         this.skippedCount = skipped;
         this.skippedReason = skippedReason == null || skippedReason.isBlank() ? null
                 : skippedReason.substring(0, Math.min(skippedReason.length(), 500));
+    }
+
+    public void setChosenModel(String provider, String model) {
+        this.chosenProvider = provider;
+        this.chosenModel = model;
+    }
+
+    public String getChosenProvider() {
+        return chosenProvider;
+    }
+
+    public String getChosenModel() {
+        return chosenModel;
     }
 
     public String getSkippedReason() {

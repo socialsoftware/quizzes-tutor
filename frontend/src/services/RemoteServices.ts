@@ -23,6 +23,7 @@ import Tournament from '@/models/user/Tournament';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import { GenerationUsage } from '@/models/admin/GenerationUsage';
+import { GenerationModels } from '@/models/management/generation/GenerationModels';
 import { TeacherApiKeys } from '@/models/management/generation/TeacherApiKeys';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
 import MaterialChunk from '@/models/management/generation/MaterialChunk';
@@ -1311,6 +1312,16 @@ export default class RemoteServices {
     return httpClient
       .delete(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/materials/${materialId}`)
       .then(() => undefined)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // The models the teacher can pick for a request
+  static async getGenerationModels(): Promise<GenerationModels> {
+    return httpClient
+      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/models`)
+      .then((response) => response.data as GenerationModels)
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });

@@ -23,18 +23,28 @@ public record AqgGenerateRequest(
         @JsonProperty("chunk_ids") List<String> chunkIds,
         // what to ask about inside the topic
         String focus,
+        // the model the teacher picked, tried before the service's usual ones; null for the usual ones
+        @JsonProperty("chosen_model") @JsonInclude(JsonInclude.Include.NON_NULL) ChosenModel chosenModel,
         // the asking teacher's own API keys by provider; empty when they have none
         @JsonProperty("api_keys") @JsonInclude(JsonInclude.Include.NON_EMPTY) Map<String, String> apiKeys) {
+
+    public record ChosenModel(String provider, String model) {
+    }
 
     public AqgGenerateRequest(int courseId, String topic, String difficulty, int count, String groundingMode,
                               String language, Revision revision, List<String> existingStems, List<String> chunkIds,
                               String focus) {
-        this(courseId, topic, difficulty, count, groundingMode, language, revision, existingStems, chunkIds, focus, Map.of());
+        this(courseId, topic, difficulty, count, groundingMode, language, revision, existingStems, chunkIds, focus, null, Map.of());
     }
 
     public AqgGenerateRequest withApiKeys(Map<String, String> keys) {
         return new AqgGenerateRequest(courseId, topic, difficulty, count, groundingMode, language, revision,
-                existingStems, chunkIds, focus, keys);
+                existingStems, chunkIds, focus, chosenModel, keys);
+    }
+
+    public AqgGenerateRequest withChosenModel(LlmModelChoiceDto model) {
+        return new AqgGenerateRequest(courseId, topic, difficulty, count, groundingMode, language, revision,
+                existingStems, chunkIds, focus, model == null ? null : new ChosenModel(model.provider(), model.model()), apiKeys);
     }
 
     // the keys are never printed

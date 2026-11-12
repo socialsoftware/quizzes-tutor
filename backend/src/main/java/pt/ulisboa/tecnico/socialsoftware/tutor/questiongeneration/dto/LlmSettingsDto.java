@@ -20,5 +20,14 @@ public record LlmSettingsDto(
         Boolean thinking,
         Integer maxRetries,
         Boolean discussionSuggestions,
-        Integer contextChars) implements Serializable {
+        Integer contextChars,
+        // the models any teacher may pick for their own requests
+        List<LlmModelChoiceDto> teacherModels) implements Serializable {
+
+    public LlmSettingsDto(LlmModelChoiceDto primary, List<LlmModelChoiceDto> fallbacks, String ollamaBaseUrl,
+                          Integer ollamaContextLength, String ollamaThinking, Double timeout, Boolean thinking,
+                          Integer maxRetries, Boolean discussionSuggestions, Integer contextChars) {
+        this(primary, fallbacks, ollamaBaseUrl, ollamaContextLength, ollamaThinking, timeout, thinking, maxRetries,
+                discussionSuggestions, contextChars, List.of());
+    }
 }

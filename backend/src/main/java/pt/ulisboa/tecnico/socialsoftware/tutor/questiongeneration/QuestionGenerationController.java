@@ -13,6 +13,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicNodeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.dto.TopicTreeDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationJobDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationMaterialDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationModelsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationRequestDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.MaterialChunkDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.QuestionGenerationDto;
@@ -81,6 +82,12 @@ public class QuestionGenerationController {
         AuthUser authUser = (AuthUser) authentication.getPrincipal();
 
         return questionGenerationService.requestGeneration(executionId, authUser.getUser().getId(), request);
+    }
+
+    @GetMapping("/generation/{executionId}/models")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public GenerationModelsDto getModels(Authentication authentication, @PathVariable int executionId) {
+        return questionGenerationService.getModels(((AuthUser) authentication.getPrincipal()).getUser().getId());
     }
 
     @GetMapping("/generation/{executionId}/jobs")

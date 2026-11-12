@@ -84,6 +84,44 @@
           />
         </v-col>
       </v-row>
+
+      <v-row>
+        <v-col cols="12" :sm="modelPick === CUSTOM ? 4 : 6">
+          <v-select
+            v-model="modelPick"
+            :items="modelItems"
+            item-title="title"
+            item-value="value"
+            label="Model"
+            :hint="modelHint"
+            persistent-hint
+            :menu-props="{ contentClass: 'text-left' }"
+            data-cy="GenerationModel"
+          />
+        </v-col>
+        <template v-if="modelPick === CUSTOM">
+          <v-col cols="12" sm="3">
+            <v-select
+              v-model="customProvider"
+              :items="ownKeyProviders.map((provider) => ({ title: PROVIDER_NAMES[provider] ?? provider, value: provider }))"
+              item-title="title"
+              item-value="value"
+              label="Provider"
+              data-cy="GenerationCustomProvider"
+            />
+          </v-col>
+          <v-col cols="12" sm="5">
+            <v-text-field
+              v-model="customModel"
+              label="Model name"
+              hint="As the provider names it, e.g. gpt-4o-mini. Your own key pays for it"
+              persistent-hint
+              autocomplete="off"
+              data-cy="GenerationCustomModel"
+            />
+          </v-col>
+        </template>
+      </v-row>
     </v-card-text>
     <v-card-actions>
       <v-spacer />
@@ -107,6 +145,8 @@ import RemoteServices from '@/services/RemoteServices';
 import TopicNode from '@/models/management/TopicNode';
 import GenerationJob from '@/models/management/generation/GenerationJob';
 import { buildForest, TreeItem } from '@/services/TopicTreeEditor';
+import { GenerationModels } from '@/models/management/generation/GenerationModels';
+import { PROVIDER_NAMES } from '@/models/admin/LlmSettings';
 
 interface TopicItem {
   title: string;
@@ -121,10 +161,15 @@ const MIN_COUNT = 1;
 const MAX_COUNT = 10;
 const MAX_FOCUS = 500;
 const SAME_AS_MATERIALS = 'Same as the materials';
+// What the Model field holds for the usual models, and for a model typed by a teacher with a key of their own
+const USUAL = '';
+const CUSTOM = '__custom';
 
 const props = defineProps<{
   // Changes when topics or their pieces changed elsewhere (e.g. a document was distributed)
   topicsVersion?: number;
+  // Changes when the teacher gave or removed an API key of their own
+  keysVersion?: number;
 }>();
 const emit = defineEmits<{ (e: 'requested', job: GenerationJob): void }>();
 
@@ -139,6 +184,44 @@ const language = ref<string | null>(SAME_AS_MATERIALS);
 const languageOptions = [SAME_AS_MATERIALS, 'Portuguese', 'English', 'Spanish', 'French'];
 const requesting = ref(false);
 const focus = ref('');
+const models = ref<GenerationModels | null>(null);
+const modelPick = ref<string>(USUAL);
+const customProvider = ref<string | null>(null);
+const customModel = ref('');
+
+const ownKeyProviders = computed(() => models.value?.ownKeyProviders ?? []);
+
+const nameOf = (choice: { provider: string; model: string; ownKey: boolean }) =>
+  `${PROVIDER_NAMES[choice.provider] ?? choice.provider} · ${choice.model}${choice.ownKey ? ' (your key)' : ''}`;
+
+// The usual models, the ones the administrator lists and, with a key of their own, any model of that provider
+const modelItems = computed(() => {
+  const items = [
+    {
+      title: models.value?.defaultModel ? `Usual: ${nameOf(models.value.defaultModel)}` : 'The usual model',
+      value: USUAL,
+    },
+    ...(models.value?.models ?? []).map((choice) => ({ title: nameOf(choice), value: `${choice.provider}|${choice.model}` })),
+  ];
+  if (ownKeyProviders.value.length > 0) items.push({ title: 'Another model of my own key…', value: CUSTOM });
+  return items;
+});
+
+const modelHint = computed(() =>
+  models.value && models.value.models.length === 0 && ownKeyProviders.value.length === 0
+    ? 'The administrator has not listed other models; with your own API key you can pick any of its provider'
+    : 'The one that writes the questions; if it fails the usual ones take over'
+);
+
+// The model picked, as it goes in the request; null for the usual ones
+const chosenModel = computed<{ provider: string; model: string } | null>(() => {
+  if (modelPick.value === USUAL) return null;
+  if (modelPick.value === CUSTOM) return { provider: customProvider.value ?? '', model: customModel.value.trim() };
+  const [provider, ...rest] = modelPick.value.split('|');
+  return { provider, model: rest.join('|') };
+});
+
+const modelValid = computed(() => modelPick.value !== CUSTOM || (!!customProvider.value && customModel.value.trim() !== ''));
 
 const focusError = computed(() => (focus.value.length > MAX_FOCUS ? [`At most ${MAX_FOCUS} characters`] : []));
 
@@ -203,7 +286,8 @@ const canRequest = computed(
     topicIds.value.length > 0 &&
     selectedPieces.value.pieces > 0 &&
     countError.value.length === 0 &&
-    focusError.value.length === 0
+    focusError.value.length === 0 &&
+    modelValid.value
 );
 
 const request = async () => {
@@ -220,6 +304,8 @@ const request = async () => {
           ? null
           : language.value.trim(),
       focus: focus.value.trim() === '' ? null : focus.value.trim(),
+      provider: chosenModel.value?.provider ?? null,
+      model: chosenModel.value?.model ?? null,
     });
     emit('requested', job);
   } catch (error) {
@@ -237,6 +323,24 @@ const loadTopics = async () => {
   }
 };
 
+// What the teacher can pick depends on the keys they gave: it is read again when those change
+const loadModels = async () => {
+  try {
+    models.value = await RemoteServices.getGenerationModels();
+    if (modelPick.value === CUSTOM && models.value.ownKeyProviders.length === 0) modelPick.value = USUAL;
+    if (!customProvider.value || !models.value.ownKeyProviders.includes(customProvider.value))
+      customProvider.value = models.value.ownKeyProviders[0] ?? null;
+    const stillThere = modelPick.value === USUAL || modelPick.value === CUSTOM || modelItems.value.some((item) => item.value === modelPick.value);
+    if (!stillThere) modelPick.value = USUAL;
+  } catch (error) {
+    store.setError(error as string);
+  }
+};
+
 watch(() => props.topicsVersion, loadTopics);
-onMounted(loadTopics);
+watch(() => props.keysVersion, loadModels);
+onMounted(() => {
+  loadTopics();
+  loadModels();
+});
 </script>

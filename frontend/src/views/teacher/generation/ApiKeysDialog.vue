@@ -73,7 +73,7 @@ import { TeacherApiKeys } from '@/models/management/generation/TeacherApiKeys';
 import { PROVIDER_NAMES } from '@/models/admin/LlmSettings';
 
 const props = defineProps<{ dialog: boolean }>();
-const emit = defineEmits<{ (e: 'update:dialog', value: boolean): void }>();
+const emit = defineEmits<{ (e: 'update:dialog', value: boolean): void; (e: 'changed'): void }>();
 
 const store = useStore();
 const keys = ref<TeacherApiKeys | null>(null);
@@ -102,6 +102,7 @@ const save = async (provider: string) => {
   try {
     keys.value = await RemoteServices.saveMyApiKey(provider, drafts[provider].trim());
     delete drafts[provider];
+    emit('changed');
   } catch (error) {
     store.setError(error as string);
   }
@@ -113,6 +114,7 @@ const remove = async (provider: string) => {
   working.value = provider;
   try {
     keys.value = await RemoteServices.removeMyApiKey(provider);
+    emit('changed');
   } catch (error) {
     store.setError(error as string);
   }

@@ -120,7 +120,8 @@ After filling in the options, select **Generate**.
 4. **Difficulty**: *Easy* (recalling facts or definitions), *Medium* (relating concepts) or *Hard* (applying them to new situations).
 5. **Number of questions**: between 1 and 10 per request.
 6. **Based on**: *Only the topic's documents* (answers strictly from the documents) or *Documents plus general knowledge* (adds general knowledge while staying grounded in the material).
-7. **Generate**: sends the request.
+7. **Model**: *Usual* is the model the administrator chose. You can pick any model on the administrator's list of models for teachers. If you gave your own API key (see below), **Another model of my own key…** lets you type any model of that provider, and your key pays for it. If the model you picked fails, the usual ones take over.
+8. **Generate**: sends the request.
 
 Every generated question is filed under **all** the topics you picked.
 
@@ -240,11 +241,16 @@ The draft is placed in the reply box. After making your edits, select **Submit**
 >
 > The AI can write replies that are inaccurate or generic. Check the information and adjust the tone before sending.
 
+### Using your own API key
+
+The **API key for question generation** card at the top of the page tells whose key your requests use. **My API keys** lets you give your own NVIDIA NIM, OpenAI or Anthropic key. It is checked with the provider, kept encrypted and never shown again (only how it ends), and it is only used for your own requests. Without one, the site's key is used. With one, you can also pick other models of that provider in the **Model** field. You can remove it whenever you want.
+
 ## For administrators
 
 Under **Administration**, two pages are for the system administrator:
 
 - **Question Generation Model**: which models write the questions, the fallbacks and the timeout. When **Save** is off, the reason is written beside it (for example a provider with no API key in the service's `.env`, or an empty model name).
+  - **Models teachers can pick**: the list of models any teacher may choose when asking for questions, for instance the free ones that work well for this use case. Use **Test** on each one. They use the service's key, so their provider needs a key in the service's `.env`. A teacher with an API key of their own can also pick any other model of that provider.
 - **Question Generation Usage**: a table of the requests each course made on each of the last 7, 10 or 30 days, with the number of questions they asked for in brackets, and the totals per course and per day.
 
 The timeout is a limit of our service only: it is how long the service waits for the model to answer one call. A call that exceeds it is repeated once and then the next fallback is tried; an answer that arrives after that is thrown away on our side and never shows up as a question.

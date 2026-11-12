@@ -175,6 +175,7 @@ public enum ErrorMessage {
     GENERATION_JOB_NOT_FOUND("Generation job not found with id %d"),
     GENERATION_TOO_MANY_TOPICS("Pick at most %d topics for each request"),
     GENERATION_USAGE_DAYS("Ask for between 1 and %d days"),
+    GENERATION_MODEL_NOT_ALLOWED("That model is not one you can pick: choose one of the list, or one of a provider you have given your own API key for"),
     TEACHER_API_KEYS_NOT_CONFIGURED("The server has no encryption key for API keys, so keys cannot be saved"),
     TEACHER_API_KEY_PROVIDER("There are no API keys for the provider '%s'"),
     TEACHER_API_KEY_INVALID("An API key is 8 to 500 characters long, with no spaces"),

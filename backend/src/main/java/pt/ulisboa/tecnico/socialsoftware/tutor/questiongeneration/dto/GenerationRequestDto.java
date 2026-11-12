@@ -16,9 +16,20 @@ public class GenerationRequestDto implements Serializable {
     private String language;
     // What to ask about inside the topic, e.g. "sign rules of the product"
     private String focus;
+    // The model picked for this request (both or none): one the administrator lists, or any of a provider the teacher has a key for
+    private String provider;
+    private String model;
 
     public GenerationRequestDto() {
     }
+
+    public String getProvider() { return provider; }
+
+    public void setProvider(String provider) { this.provider = provider; }
+
+    public String getModel() { return model; }
+
+    public void setModel(String model) { this.model = model; }
 
     public List<Integer> getTopicIds() { return topicIds; }
 

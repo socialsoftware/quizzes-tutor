@@ -28,9 +28,14 @@ const topicNode = (id: number, name: string, parentId: number | null = null, chu
 describe('GenerationForm', () => {
   let store: any;
 
+  let models: any;
+
   beforeEach(() => {
     store = { setLoading: vi.fn(), clearLoading: vi.fn(), setError: vi.fn() };
     (useStore as any).mockReturnValue(store);
+    models = vi
+      .spyOn(RemoteServices, 'getGenerationModels')
+      .mockResolvedValue({ defaultModel: null, models: [], ownKeyProviders: [] });
     vi.spyOn(RemoteServices, 'getTopicTree').mockResolvedValue([
       topicNode(4, 'Empty'),
       topicNode(5, 'Chapter', null, ['m1:0']),
@@ -129,8 +134,71 @@ describe('GenerationForm', () => {
       groundingMode: 'ENRICHED',
       language: null,
       focus: 'name servers',
+      provider: null,
+      model: null,
     });
     expect(wrapper.emitted('requested')).toHaveLength(1);
+  });
+
+  test('offers the usual model and the ones the administrator lists, and sends the one picked', async () => {
+    models.mockResolvedValue({
+      defaultModel: { provider: 'nvidia_nim', model: 'usual/model', ownKey: false },
+      models: [{ provider: 'nvidia_nim', model: 'free/model', ownKey: false }],
+      ownKeyProviders: [],
+    });
+    const request = vi.spyOn(RemoteServices, 'requestGeneration').mockResolvedValue(new GenerationJob());
+    const wrapper = await mountForm();
+
+    expect(vm(wrapper).modelItems.map((item: any) => item.title)).toEqual(['Usual: NVIDIA NIM · usual/model', 'NVIDIA NIM · free/model']);
+
+    vm(wrapper).topicIds = [6];
+    vm(wrapper).modelPick = 'nvidia_nim|free/model';
+    await flushPromises();
+    await generateButton(wrapper).trigger('click');
+    await flushPromises();
+
+    expect(request.mock.calls[0][0]).toEqual(expect.objectContaining({ provider: 'nvidia_nim', model: 'free/model' }));
+  });
+
+  test('with a key of their own a teacher can type another model of that provider, and must name it', async () => {
+    models.mockResolvedValue({
+      defaultModel: { provider: 'nvidia_nim', model: 'usual/model', ownKey: false },
+      models: [{ provider: 'nvidia_nim', model: 'free/model', ownKey: true }],
+      ownKeyProviders: ['openai'],
+    });
+    const request = vi.spyOn(RemoteServices, 'requestGeneration').mockResolvedValue(new GenerationJob());
+    const wrapper = await mountForm();
+
+    expect(vm(wrapper).modelItems.map((item: any) => item.title)).toContain('Another model of my own key…');
+    expect(vm(wrapper).modelItems[1].title).toContain('(your key)');
+
+    vm(wrapper).topicIds = [6];
+    vm(wrapper).modelPick = '__custom';
+    await flushPromises();
+    expect(generateButton(wrapper).attributes('disabled')).toBeDefined();
+
+    vm(wrapper).customModel = ' gpt-4o-mini ';
+    await flushPromises();
+    await generateButton(wrapper).trigger('click');
+    await flushPromises();
+
+    expect(request.mock.calls[0][0]).toEqual(expect.objectContaining({ provider: 'openai', model: 'gpt-4o-mini' }));
+  });
+
+  test('what can be picked is read again when the teacher gives or removes a key, and a model that went is dropped', async () => {
+    models.mockResolvedValue({
+      defaultModel: null,
+      models: [{ provider: 'nvidia_nim', model: 'free/model', ownKey: false }],
+      ownKeyProviders: [],
+    });
+    const wrapper = await mountForm();
+    vm(wrapper).modelPick = 'nvidia_nim|free/model';
+
+    models.mockResolvedValue({ defaultModel: null, models: [], ownKeyProviders: [] });
+    await wrapper.setProps({ keysVersion: 1 });
+    await flushPromises();
+
+    expect(vm(wrapper).modelPick).toBe('');
   });
 
   test('sends the chosen language, or none to keep the language of the materials', async () => {

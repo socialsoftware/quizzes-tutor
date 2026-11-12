@@ -52,6 +52,30 @@
         Add fallback
       </v-btn>
 
+      <h3 class="text-subtitle-1 font-weight-medium mt-6">Models teachers can pick</h3>
+      <p class="text-caption text-medium-emphasis">
+        List the models that work for this use case and that the service's own key may pay for (the free ones, for
+        instance): any teacher can then pick them when asking for questions. Use <b>Test</b> to check each one. A teacher
+        who gives their own API key can also pick any other model of that provider.
+      </p>
+      <llm-model-row
+        v-for="(choice, index) in draft.teacherModels"
+        :key="`teacher-${index}`"
+        v-model="draft.teacherModels[index]"
+        :providers="view.providers"
+        :keys="view.keys"
+        :default-models="view.defaultModels"
+        :available-models="modelsOf(choice.provider)"
+        :models-error="modelsErrorOf(choice.provider)"
+        :models-loading="modelsLoadingOf(choice.provider)"
+        @refresh-models="loadModels($event, true)"
+      >
+        <v-btn icon="delete" size="x-small" variant="text" color="red" title="Remove" data-cy="RemoveTeacherModel" @click="removeTeacherModel(index)" />
+      </llm-model-row>
+      <v-btn size="small" variant="text" :disabled="draft.teacherModels.length >= MAX_TEACHER_MODELS" data-cy="AddTeacherModel" @click="addTeacherModel">
+        Add a model
+      </v-btn>
+
       <h3 class="text-subtitle-1 font-weight-medium mt-6">Ollama</h3>
       <v-text-field
         v-model="draft.ollamaBaseUrl"
@@ -192,6 +216,7 @@ import { LlmSettings, LlmSettingsView, OllamaModels, PROVIDER_NAMES } from '@/mo
 import LlmModelRow from '@/views/admin/LlmModelRow.vue';
 
 const MAX_FALLBACKS = 5;
+const MAX_TEACHER_MODELS = 20;
 const THINKING_OPTIONS = [
   { title: "The model's default", value: 'default' },
   { title: 'Off', value: 'off' },
@@ -256,8 +281,11 @@ const problems = computed(() => {
   const settings = draft.value;
   if (!settings || !view.value) return [];
   const found: string[] = [];
-  [settings.primary, ...settings.fallbacks].forEach((choice, index) => {
-    const where = index === 0 ? 'Main model' : `Fallback ${index}`;
+  const named = [
+    ...[settings.primary, ...settings.fallbacks].map((choice, index) => ({ choice, where: index === 0 ? 'Main model' : `Fallback ${index}` })),
+    ...settings.teacherModels.map((choice, index) => ({ choice, where: `Model teachers can pick ${index + 1}` })),
+  ];
+  named.forEach(({ choice, where }) => {
     if (choice.model.trim() === '') found.push(`${where}: pick or type a model`);
     if (!view.value!.keys[choice.provider])
       found.push(`${where}: there is no API key for ${PROVIDER_NAMES[choice.provider] ?? choice.provider} in the generation service's .env`);
@@ -282,6 +310,13 @@ const addFallback = () => {
 };
 
 const removeFallback = (index: number) => draft.value!.fallbacks.splice(index, 1);
+
+const addTeacherModel = () => {
+  const provider = draft.value!.primary.provider;
+  draft.value!.teacherModels.push({ provider, model: view.value!.defaultModels[provider] ?? '' });
+};
+
+const removeTeacherModel = (index: number) => draft.value!.teacherModels.splice(index, 1);
 
 const moveFallback = (index: number, delta: number) => {
   const fallbacks = draft.value!.fallbacks;
@@ -319,7 +354,7 @@ const loadModels = async (provider: string, refresh = false) => {
 
 // Each provider in use has its list read the first time it appears
 watch(
-  () => (draft.value ? [draft.value.primary, ...draft.value.fallbacks].map((choice) => choice.provider) : []),
+  () => (draft.value ? [draft.value.primary, ...draft.value.fallbacks, ...draft.value.teacherModels].map((choice) => choice.provider) : []),
   (providers) => {
     new Set(providers).forEach((provider) => {
       if (provider !== 'ollama' && !catalog.value[provider]) loadModels(provider);

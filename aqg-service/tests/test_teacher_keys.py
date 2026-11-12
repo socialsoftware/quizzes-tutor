@@ -113,3 +113,44 @@ def test_the_suggested_reply_uses_the_teachers_key_too(tmp_path):
     )
 
     assert [config.api_key for config in seen] == [KEY]
+
+
+def test_the_model_a_teacher_picked_is_tried_first_with_their_key_and_the_usual_ones_follow(tmp_path):
+    seen = []
+    client = TestClient(app_with(tmp_path, FakeLLM([good_question(), GROUNDED, CLEAN_DISTRACTORS]), seen))
+
+    ask(client, chosen_model={"provider": "openai", "model": "gpt-4o-mini"}, api_keys={"openai": KEY})
+
+    assert [(config.model, config.api_key) for config in seen] == [("gpt-4o-mini", KEY), ("nvidia_nim/m", None)]
+
+
+def test_a_model_picked_that_is_already_the_main_one_is_not_tried_twice(tmp_path):
+    seen = []
+    client = TestClient(app_with(tmp_path, FakeLLM([good_question(), GROUNDED, CLEAN_DISTRACTORS]), seen))
+
+    ask(client, chosen_model={"provider": "nvidia_nim", "model": "m"})
+
+    assert [config.model for config in seen] == ["nvidia_nim/m"]
+
+
+def test_a_model_name_that_is_not_a_model_name_is_refused(tmp_path):
+    client = TestClient(app_with(tmp_path, FakeLLM([]), []))
+
+    assert ask(client, chosen_model={"provider": "nvidia_nim", "model": "m; rm -rf /"}).status_code == 422
+    assert ask(client, chosen_model={"provider": "nowhere", "model": "m"}).status_code == 422
+    assert ask(client, chosen_model={"provider": "nvidia_nim", "model": ""}).status_code == 422
+
+
+def test_the_models_teachers_may_pick_are_kept_with_the_settings_and_need_the_services_key(tmp_path, monkeypatch):
+    monkeypatch.setenv("NVIDIA_NIM_API_KEY", "service-key")
+    monkeypatch.delenv("OPENAI_API_KEY", raising=False)
+    client = TestClient(app_with(tmp_path, FakeLLM([]), []))
+    current = client.get("/settings/llm").json()["settings"]
+    assert current["teacherModels"] == []
+
+    saved = client.put("/settings/llm", json={**current, "teacherModels": [{"provider": "nvidia_nim", "model": "free/model"}]})
+    assert saved.status_code == 200
+    assert client.get("/settings/llm").json()["settings"]["teacherModels"] == [{"provider": "nvidia_nim", "model": "free/model"}]
+
+    refused = client.put("/settings/llm", json={**current, "teacherModels": [{"provider": "openai", "model": "gpt-4o-mini"}]})
+    assert refused.status_code == 422

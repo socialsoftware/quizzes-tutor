@@ -213,6 +213,44 @@ public class QuestionGenerationService {
         return new GenerationUsageDto(dates.stream().map(LocalDate::toString).collect(Collectors.toList()), rows);
     }
 
+    /** The models a teacher can pick, with the usual one. */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public GenerationModelsDto getModels(Integer teacherId) {
+        LlmSettingsDto settings = aqgClient.getLlmSettings().settings();
+        List<String> ownKeys = teacherApiKeyService.providersWithKey(teacherId);
+        List<GenerationModelsDto.Choice> models = new ArrayList<>();
+        if (settings != null && settings.teacherModels() != null)
+            settings.teacherModels().forEach(choice ->
+                    models.add(new GenerationModelsDto.Choice(choice.provider(), choice.model(), ownKeys.contains(choice.provider()))));
+        GenerationModelsDto.Choice usual = settings == null || settings.primary() == null ? null
+                : new GenerationModelsDto.Choice(settings.primary().provider(), settings.primary().model(),
+                ownKeys.contains(settings.primary().provider()));
+        return new GenerationModelsDto(usual, models, ownKeys);
+    }
+
+    /**
+     * The model a teacher picked, if they may: one the administrator lists, or any model of a provider
+     * they have their own key for (the key pays for it). `strict` refuses a model they may not use; the
+     * regeneration of an older request is not strict and goes back to the usual models instead.
+     */
+    private LlmModelChoiceDto resolveModel(Integer teacherId, String provider, String model, boolean strict) {
+        if ((provider == null || provider.isBlank()) && (model == null || model.isBlank()))
+            return null;
+        String name = model == null ? "" : model.trim();
+        LlmModelChoiceDto choice = new LlmModelChoiceDto(provider == null ? "" : provider.trim(), name);
+        boolean wellFormed = name.matches("[A-Za-z0-9._:/@+\\-]{1,200}") && TeacherApiKeyService.PROVIDERS.contains(choice.provider())
+                || "ollama".equals(choice.provider()) && name.matches("[A-Za-z0-9._:/@+\\-]{1,200}");
+        if (wellFormed) {
+            LlmSettingsDto settings = aqgClient.getLlmSettings().settings();
+            boolean listed = settings != null && settings.teacherModels() != null && settings.teacherModels().contains(choice);
+            if (listed || teacherApiKeyService.providersWithKey(teacherId).contains(choice.provider()))
+                return choice;
+        }
+        if (strict)
+            throw new TutorException(GENERATION_MODEL_NOT_ALLOWED);
+        return null;
+    }
+
     private Integer courseIdOf(Integer executionId) {
         return getCourseExecution(executionId).getCourse().getId();
     }
@@ -257,15 +295,20 @@ public class QuestionGenerationService {
         if (focus != null && focus.length() > MAX_FOCUS_LENGTH)
             throw new TutorException(GENERATION_INVALID_FOCUS);
 
+        LlmModelChoiceDto chosen = resolveModel(requesterId, request.getProvider(), request.getModel(), true);
+
         AqgJobDto aqgJob = aqgClient.generate(new AqgGenerateRequest(
                 courseId, topicLabel(topics), difficulty, count, groundingMode, language, null,
                 questionRepository.findRecentContents(courseId), chunkIdsOf(sources), focus)
+                .withChosenModel(chosen)
                 .withApiKeys(teacherApiKeyService.keysOf(requesterId)));
 
         GenerationJob job = new GenerationJob(aqgJob.id(), executionId, requesterId, topicLabel(topics), topicIds,
                 count, difficulty, groundingMode, aqgJob.status());
         job.setSource(materialIdsOf(sources), language);
         job.setFocus(focus);
+        if (chosen != null)
+            job.setChosenModel(chosen.provider(), chosen.model());
         generationJobRepository.save(job);
         requestThrottle.recordGeneration(requesterId);
         return new GenerationJobDto(job);
@@ -305,6 +348,7 @@ public class QuestionGenerationService {
                 courseId, original.getTopic(), original.getDifficulty(), 1, original.getGroundingMode(),
                 original.getLanguage(), new AqgGenerateRequest.Revision(currentDraft(questionGeneration), comment),
                 questionRepository.findRecentContents(courseId), chunkIds, original.getFocus())
+                .withChosenModel(resolveModel(userId, original.getChosenProvider(), original.getChosenModel(), false))
                 .withApiKeys(teacherApiKeyService.keysOf(userId)));
 
         GenerationJob job = new GenerationJob(aqgJob.id(), original.getCourseExecutionId(), userId,
@@ -312,6 +356,7 @@ public class QuestionGenerationService {
                 aqgJob.status());
         job.setSource(original.getMaterialIds(), original.getLanguage());
         job.setFocus(original.getFocus());
+        job.setChosenModel(original.getChosenProvider(), original.getChosenModel());
         job.setRevisionOfId(questionGenerationId);
         generationJobRepository.save(job);
 

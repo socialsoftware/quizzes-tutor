@@ -122,6 +122,7 @@ def create_app(
         log_prompts: bool = False,
         interactive: bool = False,
         api_keys: dict[str, str] | None = None,
+        chosen: ModelChoice | None = None,
     ) -> tuple[LLMProvider, str]:
         """The settings' model and its fallbacks. With LOG_PROMPTS on, the questions' prompts are
         logged; those of discussions never are, because they hold what a student wrote. Cloud
@@ -131,7 +132,7 @@ def create_app(
         those calls do not draw on the service's per-minute budget."""
         if request_model is not None and not settings.allow_request_model:
             raise HTTPException(status_code=422, detail="choosing the model per request is not allowed")
-        configs = [request_model] if request_model else llm.model_configs(api_keys or {})
+        configs = [request_model] if request_model else llm.model_configs(api_keys or {}, chosen)
         wait = settings.interactive_rate_limit_wait if interactive else settings.rate_limit_wait
 
         def build(config: ModelConfig) -> LLMProvider:
@@ -270,7 +271,8 @@ def create_app(
         llm = llm_settings.get()
         contexts = plan_contexts(available, request.count, llm.context_chars, ranked)
 
-        provider, model_id = provider_for(request.model, llm, log_prompts=True, api_keys=request.api_keys)
+        chosen = ModelChoice(provider=request.chosen_model.provider, model=request.chosen_model.model) if request.chosen_model else None
+        provider, model_id = provider_for(request.model, llm, log_prompts=True, api_keys=request.api_keys, chosen=chosen)
         job = Job(
             id=uuid.uuid4().hex,
             prompt_version=PROMPT_VERSION,
