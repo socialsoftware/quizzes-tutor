@@ -16,6 +16,8 @@
       >
         <div class="col">
           {{ quiz.title }}
+          <v-chip v-if="quiz.singleSession" size="x-small" color="warning" class="ml-1" data-cy="SingleSessionBadge">Opens only once</v-chip>
+          <v-chip v-if="quiz.safeBrowserOnly" size="x-small" color="info" class="ml-1" data-cy="SafeBrowserBadge">Safe Exam Browser only</v-chip>
         </div>
         <div class="col">
           {{ quiz.availableDate }}
@@ -54,6 +56,14 @@ onMounted(async () => {
 });
 
 const solveQuiz = async (quiz: StatementQuiz) => {
+  // A quiz that opens once is lost if the page is closed or reloaded: the student is told before it starts
+  if (
+    quiz.singleSession &&
+    !confirm(
+      `"${quiz.title}" can only be opened once. If you close or reload the page you will not be able to come back to it. Open it now?`
+    )
+  )
+    return;
   store.setLoading();
   try {
     let statementQuiz: StatementQuiz = await RemoteServices.startQuiz(quiz.id);

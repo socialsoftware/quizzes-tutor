@@ -92,6 +92,54 @@
             </v-tooltip>
           </v-col>
         </v-row>
+        <v-row>
+          <v-col cols="12" sm="6">
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-switch
+                  v-model="quiz.singleSession"
+                  label="Open only once"
+                  v-bind="props"
+                  data-cy="SingleSession"
+                />
+              </template>
+              <span>
+                Each student can open the quiz once. If they close or reload it they cannot open it again, unless you
+                let them in the answers of the quiz
+              </span>
+            </v-tooltip>
+          </v-col>
+          <v-col cols="12" sm="6">
+            <v-tooltip location="bottom">
+              <template v-slot:activator="{ props }">
+                <v-switch
+                  v-model="quiz.safeBrowserOnly"
+                  label="Only in the Safe Exam Browser"
+                  v-bind="props"
+                  data-cy="SafeBrowserOnly"
+                />
+              </template>
+              <span>
+                The quiz can only be done in the Safe Exam Browser set up with the Config Key below, which blocks other
+                windows and programs
+              </span>
+            </v-tooltip>
+          </v-col>
+        </v-row>
+        <v-row v-if="quiz.safeBrowserOnly">
+          <v-col cols="12">
+            <v-text-field
+              v-model="quiz.sebConfigKey"
+              label="Config Key of the Safe Exam Browser setup"
+              hint="64 characters (0-9, a-f), shown by the Safe Exam Browser's configuration tool under Exam > Config Key. Keep it secret: whoever has it can pass for the browser. The students need the browser set up with that same configuration"
+              persistent-hint
+              :error-messages="sebKeyError"
+              autocomplete="off"
+              spellcheck="false"
+              data-cy="SebConfigKey"
+            />
+          </v-col>
+        </v-row>
       </v-container>
 
       <v-card v-show="quizQuestions.length != 0">
@@ -409,11 +457,20 @@ const headers = ref<any[]>(withV2ColumnWidths([
   { title: 'Answers', key: 'numberOfAnswers', align: 'center', width: '5px' },
 ]));
 
+// The Safe Exam Browser setup is identified by its Config Key: 64 hexadecimal characters
+const SEB_KEY = /^[0-9a-fA-F]{64}$/;
+const sebKeyError = computed(() =>
+  props.quiz.safeBrowserOnly && !SEB_KEY.test((props.quiz.sebConfigKey ?? '').trim())
+    ? ['The Config Key has 64 hexadecimal characters']
+    : []
+);
+
 const canSave = computed(() => {
   return (
     !!props.quiz.title &&
     !!props.quiz.availableDate &&
-    ((props.quiz.timed && props.quiz.conclusionDate !== undefined) || !props.quiz.timed)
+    ((props.quiz.timed && props.quiz.conclusionDate !== undefined) || !props.quiz.timed) &&
+    sebKeyError.value.length === 0
   );
 });
 

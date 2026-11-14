@@ -96,7 +96,7 @@ public class QuizService {
             backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.READ_COMMITTED)
     public QuizDto findById(Integer quizId) {
-        return this.quizRepository.findById(quizId).map(quiz -> new QuizDto(quiz, true))
+        return this.quizRepository.findById(quizId).map(quiz -> new QuizDto(quiz, true).withSebConfigKey(quiz))
                 .orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
     }
 
@@ -113,7 +113,7 @@ public class QuizService {
         return quizRepository.findQuizzesOfExecution(executionId).stream()
                 .filter(quiz -> !(quiz.getType().equals(Quiz.QuizType.GENERATED) || quiz.getType().equals(Quiz.QuizType.TOURNAMENT)))
                 .sorted(comparator)
-                .map(quiz -> new QuizDto(quiz, false))
+                .map(quiz -> new QuizDto(quiz, false).withSebConfigKey(quiz))
                 .collect(Collectors.toList());
     }
 
@@ -144,7 +144,7 @@ public class QuizService {
 
         quizRepository.save(quiz);
 
-        return new QuizDto(quiz, true);
+        return new QuizDto(quiz, true).withSebConfigKey(quiz);
     }
 
 
@@ -165,6 +165,7 @@ public class QuizService {
             quiz.setCode(quizRepository.getMaxCode(quiz.getCourseExecution().getId()).orElse(0) + 1);
         }
         quiz.setOneWay(quizDto.isOneWay());
+        quiz.setExamRules(quizDto.isSingleSession(), quizDto.isSafeBrowserOnly(), quizDto.getSebConfigKey());
 
         if (quizDto.isTimed())
             quiz.setType(Quiz.QuizType.IN_CLASS.toString());
@@ -186,7 +187,7 @@ public class QuizService {
                     });
         }
 
-        return new QuizDto(quiz, true);
+        return new QuizDto(quiz, true).withSebConfigKey(quiz);
     }
 
 
@@ -232,7 +233,7 @@ public class QuizService {
 
         quizRepository.save(newQuiz);
 
-        return new QuizDto(newQuiz, true);
+        return new QuizDto(newQuiz, true).withSebConfigKey(newQuiz);
     }
 
     @Retryable(
@@ -382,7 +383,7 @@ public class QuizService {
             }
         }
 
-        return new QuizDto(quiz, false);
+        return new QuizDto(quiz, false).withSebConfigKey(quiz);
     }
 
     @Retryable(
@@ -396,6 +397,6 @@ public class QuizService {
             answerService.deleteQuizAnswer(quizAnswer);
         }
 
-        return new QuizDto(quiz, false);
+        return new QuizDto(quiz, false).withSebConfigKey(quiz);
     }
 }

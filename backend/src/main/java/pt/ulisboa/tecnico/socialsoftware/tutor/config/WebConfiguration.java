@@ -9,6 +9,7 @@ import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.ResourceHandlerRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurationSupport;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.GenerationAccess;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.SafeBrowserAccess;
 
 @Configuration
 @ComponentScan(basePackageClasses = {WebConfiguration.class})
@@ -21,9 +22,13 @@ public class WebConfiguration extends WebMvcConfigurationSupport {
     @Autowired
     private GenerationAccess generationAccess;
 
+    @Autowired
+    private SafeBrowserAccess safeBrowserAccess;
+
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
         registry.addInterceptor(generationAccess).addPathPatterns(GenerationAccess.PATHS);
+        registry.addInterceptor(safeBrowserAccess).addPathPatterns(SafeBrowserAccess.PATHS);
     }
 
     @Override

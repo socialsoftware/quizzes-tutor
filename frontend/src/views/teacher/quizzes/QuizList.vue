@@ -19,6 +19,9 @@
           />
 
           <v-spacer />
+          <v-btn variant="text" class="mr-2" data-cy="SpeedReportButton" @click="speedReportOpen = true">
+            Answer times report
+          </v-btn>
           <v-btn
             color="primary"
            
@@ -138,11 +141,13 @@
     </footer>
 
     <show-quiz-dialog v-if="quiz" v-model:dialog="quizDialog" :quiz="quiz" />
+    <speed-report-dialog v-model:dialog="speedReportOpen" />
 
     <show-quiz-answers-dialog
       v-if="quizAnswers && quiz"
       v-model:dialog="quizAnswersDialog"
       :conclusion-date="quiz.conclusionDate"
+      :quiz-id="quiz.id"
       :quizAnswers="quizAnswers"
     />
 
@@ -177,6 +182,7 @@ import { useStore } from '@/store';
 import { Quiz } from '@/models/management/Quiz';
 import RemoteServices from '@/services/RemoteServices';
 import ShowQuizDialog from '@/views/teacher/quizzes/ShowQuizDialog.vue';
+import SpeedReportDialog from '@/views/teacher/fraud/SpeedReportDialog.vue';
 import ShowQuizAnswersDialog from '@/views/teacher/quizzes/ShowQuizAnswersDialog.vue';
 import QrcodeVue from 'qrcode.vue';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
@@ -192,6 +198,7 @@ const store = useStore();
 
 const quiz = ref<Quiz | null>(null);
 const quizAnswers = ref<QuizAnswers | null>(null);
+const speedReportOpen = ref(false);
 const quizFraudInformation = ref<QuizFraudInformation | null>(null);
 const search = ref<string>('');
 

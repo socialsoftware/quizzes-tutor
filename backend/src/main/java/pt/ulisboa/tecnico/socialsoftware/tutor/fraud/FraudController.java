@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.reactive.function.client.WebClient;
 import pt.ulisboa.tecnico.socialsoftware.tutor.answer.AnswerService;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
+import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.ExecutionFraudSpeedDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.QuizFraudCommunicationScoreDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.QuizFraudSpeedDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.fraud.dto.QuizFraudTimeScoreDto;
@@ -65,6 +66,22 @@ public class FraudController {
         validateQuizId(quizId);
         return fraudClient().get().uri("/speed/quiz/" + quizId.toString()).accept(MediaType.APPLICATION_JSON).retrieve()
                 .bodyToMono(new ParameterizedTypeReference<QuizFraudSpeedDto>() {
+                }).block();
+    }
+
+    /**
+     * The students whose answer times make them worth a look over every quiz of the course: a pattern
+     * that repeats from quiz to quiz is a much stronger sign than a single quiz. Signs, not proof.
+     */
+    @GetMapping("/fraud/speed/execution/{executionId}")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
+    public ExecutionFraudSpeedDto getExecutionSpeedFraudScores(@PathVariable Integer executionId) {
+        // the answers of a quiz given in class are written to the quiz when it is looked at
+        quizService.findNonGeneratedQuizzes(executionId).stream()
+                .filter(quiz -> Quiz.QuizType.IN_CLASS.toString().equals(quiz.getType()))
+                .forEach(quiz -> answerService.writeQuizAnswers(quiz.getId()));
+        return fraudClient().get().uri("/speed/execution/" + executionId).accept(MediaType.APPLICATION_JSON).retrieve()
+                .bodyToMono(new ParameterizedTypeReference<ExecutionFraudSpeedDto>() {
                 }).block();
     }
 

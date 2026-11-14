@@ -106,6 +106,13 @@ public class QuizController {
         return this.quizService.removeNonFilledQuizAnswers(quizId);
     }
 
+    /** Lets a student open a single-session quiz again (their browser crashed, for instance). */
+    @PostMapping("/quizzes/{quizId}/answers/{quizAnswerId}/reopen")
+    @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
+    public void reopenQuizAnswer(@PathVariable Integer quizId, @PathVariable Integer quizAnswerId) {
+        answerService.reopenQuizAnswer(quizId, quizAnswerId);
+    }
+
     @GetMapping("/quizzes/{quizId}/answers")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#quizId, 'QUIZ.ACCESS')")
     public QuizAnswersDto getQuizAnswers(@PathVariable Integer quizId) {

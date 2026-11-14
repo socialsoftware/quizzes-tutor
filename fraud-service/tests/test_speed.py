@@ -5,7 +5,7 @@ import pytest
 
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), ".."))
 
-from fraud_times.speed import AnswerRow, analyse, reading_seconds  # noqa: E402
+from fraud_times.speed import AnswerRow, across_quizzes, analyse, reading_seconds  # noqa: E402
 
 LONG = 800  # characters of a question with its options: at least 20 s to read
 
@@ -143,3 +143,96 @@ def test_an_ordinary_student_is_not_called_faster_than_the_class():
     ordinary = report_of(rows, 2)
 
     assert not any("median student" in r for r in ordinary.reasons)
+
+
+# ---------------------------------------------------------------- quizzes of five questions
+
+
+def test_five_answers_with_almost_the_same_time_are_flagged_as_even():
+    # 23, 21, 20, 21 and 21 seconds on five different questions, as the server recorded them
+    report = report_of(student(1, [23, 21, 20, 21, 21], chars=700), 1)
+
+    assert report.points >= 1
+    assert any("almost the same time on every question" in reason for reason in report.reasons)
+
+
+def test_five_answers_with_the_usual_spread_are_not():
+    report = report_of(student(1, [25, 40, 31, 52, 28], chars=700), 1)
+
+    assert report.reasons == []
+
+
+def test_one_long_wait_followed_by_quick_answers_is_flagged():
+    # one question open for nearly two minutes, then the others answered in 7, 9 and 1 seconds
+    report = report_of(student(1, [109, 7, 9, 1, 25], chars=500), 1)
+
+    assert any("one question took 109 s and then 3 others took 20 s or less" in reason for reason in report.reasons)
+    assert report.points >= 1
+
+
+@pytest.mark.parametrize(
+    "times",
+    [
+        [70, 45, 50, 38, 60],  # slow everywhere
+        [90, 30, 40, 35, 28],  # one slow one, the rest at a normal pace
+        [90, 7, 9, 40, 35],  # only two quick ones
+        [50, 5, 6, 7, 8],  # the slow one is not slow enough
+    ],
+)
+def test_a_slow_question_alone_is_not_a_burst(times):
+    report = report_of(student(1, times, chars=500), 1)
+
+    assert not any("others took" in reason for reason in report.reasons)
+
+
+# ---------------------------------------------------------------- over the quizzes of a course
+
+
+def quiz_rows(*students):
+    rows = []
+    for user, times in students:
+        rows += student(user, times, chars=700)
+    return rows
+
+
+def test_a_pattern_that_repeats_over_quizzes_comes_first_and_clean_students_are_left_out():
+    even = [23, 21, 20, 21, 21]
+    normal = [25, 40, 31, 52, 28]
+    by_quiz = {
+        1: ("Quiz 1", quiz_rows((1, [3, 4, 2, 5, 3]), (2, even), (3, normal))),
+        2: ("Quiz 2", quiz_rows((1, [4, 3, 3, 2, 6]), (2, normal), (3, normal))),
+        3: ("Quiz 3", quiz_rows((1, even), (2, normal), (3, normal))),
+    }
+
+    users = across_quizzes(by_quiz)
+
+    assert [u.user_id for u in users] == [1, 2]
+    first = users[0]
+    assert first.quizzes_analysed == 3
+    assert first.flagged_quizzes >= 2
+    assert first.quizzes[0].points >= first.quizzes[-1].points
+    assert {q.title for q in first.quizzes} == {"Quiz 1", "Quiz 2", "Quiz 3"}
+    assert users[1].flagged_quizzes <= 1
+
+
+def test_trying_to_reopen_a_quiz_that_opens_once_makes_a_student_worth_a_look_on_its_own():
+    by_quiz = {1: ("Quiz 1", quiz_rows((1, [25, 40, 31, 52, 28])))}
+
+    users = across_quizzes(by_quiz, {1: 3, 2: 0})
+
+    assert [(u.user_id, u.blocked_openings) for u in users] == [(1, 3)]
+
+
+def test_no_quizzes_no_students():
+    assert across_quizzes({}) == []
+    assert across_quizzes({}, {5: 2})[0].blocked_openings == 2
+
+
+def test_the_history_is_what_the_service_answers_in_json():
+    users = across_quizzes({1: ("Quiz 1", quiz_rows((1, [3, 4, 2, 5, 3])))})
+
+    data = users[0].to_dict()
+
+    assert data["quizzesAnalysed"] == 1 and data["flaggedQuizzes"] == 1 and data["blockedOpenings"] == 0
+    assert data["quizzes"][0]["title"] == "Quiz 1" and data["quizzes"][0]["level"] in ("MEDIUM", "HIGH")
+

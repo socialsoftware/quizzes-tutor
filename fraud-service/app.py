@@ -59,6 +59,20 @@ def quizSpeedScores(quizId):
     return flask.jsonify({"users": users})
 
 
+@app.route('/speed/execution/<int:executionId>')
+def executionSpeedReport(executionId):
+    """The students the timing of their answers makes worth a look, over all the quizzes of the course."""
+    db = quiz_orm.QuizzesDBConnector()
+    try:
+        by_quiz = db.get_execution_speed_rows(executionId)
+        histories = speed.across_quizzes(by_quiz, db.get_blocked_openings(executionId))
+        users = [{"userInfo": db.getAuthUserInformationByUserId(history.user_id).to_dict(), **history.to_dict()}
+                 for history in histories]
+    finally:
+        db.close()
+    return flask.jsonify({"quizzesAnalysed": len(by_quiz), "users": users})
+
+
 @app.route('/communication/quiz/<int:quizId>')
 def quizFraudScoresGraph(quizId):
     data = create_dataset.create_dataset(quizId, "*")

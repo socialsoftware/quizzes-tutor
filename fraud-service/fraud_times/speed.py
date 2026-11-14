@@ -27,6 +27,16 @@ UNIFORM_MAX_MEAN_SECONDS = 30.0
 FAST_AND_RIGHT = 0.5  # share of all answers that were both too fast and correct
 CLASS_SPEED_FACTOR = 3.0  # this many times faster per character than the median student
 
+# One question that takes long, then the rest in a rush: the time to ask a tool and read what it
+# says, followed by answers copied from it
+BURST_SLOW_SECONDS = 60.0  # the slow one took at least this long...
+BURST_SLOW_FACTOR = 4.0  # ... and this many times the median of the others
+BURST_FAST_SECONDS = 20.0  # at least BURST_MIN_FAST of the others took no more than this
+BURST_MIN_FAST = 3
+
+# A quiz counts as flagged for a student from this many points (MEDIUM)
+FLAG_POINTS = 2
+
 LEVELS = ((3, "HIGH"), (2, "MEDIUM"), (1, "LOW"))
 
 
@@ -100,7 +110,7 @@ def _report(user: int, answers: list[AnswerRow], speed: float | None, class_medi
         )
 
     mean = statistics.mean(times)
-    if len(answers) >= MIN_ANSWERS + 1 and mean <= UNIFORM_MAX_MEAN_SECONDS:
+    if len(answers) >= MIN_ANSWERS and mean <= UNIFORM_MAX_MEAN_SECONDS:
         cv = statistics.pstdev(times) / mean
         if cv < UNIFORM_MAX_CV:
             report.points += 1
@@ -119,5 +129,103 @@ def _report(user: int, answers: list[AnswerRow], speed: float | None, class_medi
             f"about {class_median / speed:.0f} times faster per character than the median student of the quiz"
         )
 
+    burst = _burst(times)
+    if burst:
+        report.points += 1
+        report.reasons.append(burst)
+
     report.level = next((name for minimum, name in LEVELS if report.points >= minimum), "NONE")
     return report
+
+
+def _burst(times: list[float]) -> str | None:
+    """One long wait followed by several quick answers, or None."""
+    ordered = sorted(times)
+    slowest, rest = ordered[-1], ordered[:-1]
+    if slowest < BURST_SLOW_SECONDS or len(rest) < BURST_MIN_FAST + 1:
+        return None
+    if slowest < BURST_SLOW_FACTOR * statistics.median(rest):
+        return None
+    quick = [seconds for seconds in rest if seconds <= BURST_FAST_SECONDS]
+    if len(quick) < BURST_MIN_FAST:
+        return None
+    return (
+        f"one question took {slowest:.0f} s and then {len(quick)} others took {BURST_FAST_SECONDS:.0f} s or less "
+        f"(as fast as {quick[0]:.0f} s)"
+    )
+
+
+@dataclass
+class QuizResult:
+    """What one quiz said about a student."""
+
+    quiz_id: int
+    title: str
+    answered: int
+    too_fast: int
+    mean_seconds: float | None
+    points: int
+    level: str
+    reasons: list[str]
+
+    def to_dict(self) -> dict:
+        return {
+            "quizId": self.quiz_id,
+            "title": self.title,
+            "answered": self.answered,
+            "tooFast": self.too_fast,
+            "meanSeconds": None if self.mean_seconds is None else round(self.mean_seconds, 1),
+            "points": self.points,
+            "level": self.level,
+            "reasons": self.reasons,
+        }
+
+
+@dataclass
+class StudentHistory:
+    """What the quizzes of a course said about a student, together: a pattern that repeats from quiz to
+    quiz is a much stronger sign than one quiz."""
+
+    user_id: int
+    quizzes_analysed: int = 0
+    flagged_quizzes: int = 0
+    total_points: int = 0
+    blocked_openings: int = 0
+    quizzes: list[QuizResult] = field(default_factory=list)
+
+    def to_dict(self) -> dict:
+        return {
+            "quizzesAnalysed": self.quizzes_analysed,
+            "flaggedQuizzes": self.flagged_quizzes,
+            "totalPoints": self.total_points,
+            "blockedOpenings": self.blocked_openings,
+            "quizzes": [quiz.to_dict() for quiz in self.quizzes],
+        }
+
+
+def across_quizzes(
+    rows_by_quiz: dict[int, tuple[str, list[AnswerRow]]], blocked_openings: dict[int, int] | None = None
+) -> list[StudentHistory]:
+    """The students worth a look over all the quizzes of a course, most repeated first. A student is
+    listed when any quiz flagged them or they tried to reopen a quiz that opens only once."""
+    blocked = blocked_openings or {}
+    histories: dict[int, StudentHistory] = {}
+    for quiz_id, (title, rows) in rows_by_quiz.items():
+        for report in analyse(rows):
+            history = histories.setdefault(report.user_id, StudentHistory(report.user_id))
+            history.quizzes_analysed += 1
+            history.total_points += report.points
+            if report.points >= FLAG_POINTS:
+                history.flagged_quizzes += 1
+            history.quizzes.append(
+                QuizResult(quiz_id, title, report.answered, report.too_fast, report.mean_seconds, report.points,
+                           report.level, report.reasons)
+            )
+    for user_id, count in blocked.items():
+        if count > 0:
+            histories.setdefault(user_id, StudentHistory(user_id)).blocked_openings = count
+
+    listed = [h for h in histories.values() if h.total_points > 0 or h.blocked_openings > 0]
+    for history in listed:
+        history.quizzes.sort(key=lambda quiz: (-quiz.points, quiz.quiz_id))
+    return sorted(listed, key=lambda h: (-h.flagged_quizzes, -h.total_points, -h.blocked_openings, h.user_id))

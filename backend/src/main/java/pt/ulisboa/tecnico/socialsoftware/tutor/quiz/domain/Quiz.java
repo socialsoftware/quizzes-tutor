@@ -58,6 +58,18 @@ public class Quiz implements DomainEntity {
     @Column(columnDefinition = "boolean default false")
     private boolean oneWay = false;
 
+    // The quiz can only be opened once by each student: if they close or reload it they cannot come back
+    @Column(columnDefinition = "boolean default false")
+    private boolean singleSession = false;
+
+    // The quiz can only be done in the Safe Exam Browser configured with the key below
+    @Column(columnDefinition = "boolean default false")
+    private boolean safeBrowserOnly = false;
+
+    // The Config Key of that Safe Exam Browser setup (64 hex characters). It is a secret: students never see it
+    @Column(length = 64)
+    private String sebConfigKey;
+
     @Column(nullable = false)
     private String title = "Title";
 
@@ -100,6 +112,7 @@ public class Quiz implements DomainEntity {
         setQrCodeOnly(quizDto.isQrCodeOnly());
         setCode(quizDto.getCode());
         setOneWay(quizDto.isOneWay());
+        setExamRules(quizDto.isSingleSession(), quizDto.isSafeBrowserOnly(), quizDto.getSebConfigKey());
         setCreationDate(DateHandler.toLocalDateTime(quizDto.getCreationDate()));
         setAvailableDate(DateHandler.toLocalDateTime(quizDto.getAvailableDate()));
         setConclusionDate(DateHandler.toLocalDateTime(quizDto.getConclusionDate()));
@@ -117,6 +130,9 @@ public class Quiz implements DomainEntity {
         qrCodeOnly = quiz.isQrCodeOnly();
         code = quiz.getCode();
         oneWay = quiz.isOneWay();
+        singleSession = quiz.isSingleSession();
+        safeBrowserOnly = quiz.isSafeBrowserOnly();
+        sebConfigKey = quiz.getSebConfigKey();
         title = quiz.getTitle();
         type = quiz.getType();
         series = quiz.getSeries();
@@ -183,6 +199,28 @@ public class Quiz implements DomainEntity {
 
     public boolean isTournamentQuiz() {
         return type == QuizType.TOURNAMENT;
+    }
+
+    public boolean isSingleSession() {
+        return singleSession;
+    }
+
+    public boolean isSafeBrowserOnly() {
+        return safeBrowserOnly;
+    }
+
+    public String getSebConfigKey() {
+        return sebConfigKey;
+    }
+
+    /** The rules that make a quiz harder to cheat on. The Safe Exam Browser needs the Config Key of its setup. */
+    public void setExamRules(boolean singleSession, boolean safeBrowserOnly, String sebConfigKey) {
+        String key = sebConfigKey == null ? null : sebConfigKey.trim().toLowerCase();
+        if (safeBrowserOnly && (key == null || !key.matches("[0-9a-f]{64}")))
+            throw new TutorException(QUIZ_SEB_KEY_INVALID);
+        this.singleSession = singleSession;
+        this.safeBrowserOnly = safeBrowserOnly;
+        this.sebConfigKey = safeBrowserOnly ? key : null;
     }
 
     public boolean isOneWay() {

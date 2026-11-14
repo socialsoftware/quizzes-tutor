@@ -1,5 +1,6 @@
 package pt.ulisboa.tecnico.socialsoftware.tutor.answer;
 
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -10,6 +11,7 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser;
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.domain.Quiz;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.dto.QuizDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.SafeBrowserCheck;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
 
 import java.security.Principal;
@@ -24,6 +26,9 @@ public class AnswerController {
 
     @Autowired
     private QuizRepository quizRepository;
+
+    @Autowired
+    private SafeBrowserCheck safeBrowserCheck;
 
     @GetMapping("/answers/{executionId}/quizzes/available")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
@@ -59,10 +64,11 @@ public class AnswerController {
 
     @GetMapping("/answers/{executionId}/bycode/{code}")
     @PreAuthorize("hasRole('ROLE_STUDENT') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public StatementQuizDto getQuizByCode(Principal principal, @PathVariable int executionId, @PathVariable int code) {
+    public StatementQuizDto getQuizByCode(Principal principal, HttpServletRequest request, @PathVariable int executionId, @PathVariable int code) {
         AuthUser authUser = (AuthUser) ((Authentication) principal).getPrincipal();
 
         Quiz quiz = quizRepository.findByCourseExecutionAndCode(executionId, code).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, code));
+        safeBrowserCheck.check(quiz, request);
 
         return answerService.getQuizByQRCode(authUser.getUser().getId(), quiz.getId());
     }

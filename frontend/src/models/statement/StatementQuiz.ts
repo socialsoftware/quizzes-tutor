@@ -10,6 +10,8 @@ export default class StatementQuiz {
   title!: string;
   qrCodeOnly!: boolean;
   oneWay!: boolean;
+  singleSession: boolean = false;
+  safeBrowserOnly: boolean = false;
   timed!: boolean;
   availableDate!: string;
   conclusionDate!: string;
@@ -29,6 +31,8 @@ export default class StatementQuiz {
       this.title = jsonObj.title;
       this.qrCodeOnly = jsonObj.qrCodeOnly;
       this.oneWay = jsonObj.oneWay;
+      this.singleSession = jsonObj.singleSession ?? false;
+      this.safeBrowserOnly = jsonObj.safeBrowserOnly ?? false;
       this.timed = jsonObj.timed;
       this.availableDate = ISOtoString(jsonObj.availableDate);
       this.conclusionDate = ISOtoString(jsonObj.conclusionDate);

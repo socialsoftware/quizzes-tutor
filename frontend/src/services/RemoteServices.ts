@@ -23,6 +23,8 @@ import Tournament from '@/models/user/Tournament';
 import QuestionSubmission from '@/models/management/QuestionSubmission';
 import Review from '@/models/management/Review';
 import { GenerationUsage } from '@/models/admin/GenerationUsage';
+import { ExecutionFraudSpeed } from '@/models/management/fraud/ExecutionFraudSpeed';
+import { safeExamBrowserHeaders } from '@/services/SafeExamBrowser';
 import { GenerationModels } from '@/models/management/generation/GenerationModels';
 import { TeacherApiKeys } from '@/models/management/generation/TeacherApiKeys';
 import GenerationMaterial from '@/models/management/generation/GenerationMaterial';
@@ -52,6 +54,8 @@ httpClient.defaults.baseURL =
 httpClient.defaults.headers.post['Content-Type'] = 'application/json';
 httpClient.interceptors.request.use(
   (config) => {
+    // Inside the Safe Exam Browser every call carries its proof (nothing is added elsewhere)
+    Object.entries(safeExamBrowserHeaders()).forEach(([name, value]) => config.headers?.set(name, value));
     if (config.headers !== undefined && !config.headers.Authorization) {
       const token = useStore().getToken;
 
@@ -886,6 +890,16 @@ export default class RemoteServices {
       });
   }
 
+  // A teacher lets a student open a single-session quiz again
+  static async reopenQuizAnswer(quizId: number, quizAnswerId: number): Promise<void> {
+    return httpClient
+      .post(`/quizzes/${quizId}/answers/${quizAnswerId}/reopen`)
+      .then(() => undefined)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
   static async getQuizAnswers(quizId: number): Promise<QuizAnswers> {
     return httpClient
       .get(`/quizzes/${quizId}/answers`)
@@ -1188,6 +1202,16 @@ export default class RemoteServices {
     return httpClient
       .get('/admin/llm-settings')
       .then((response) => response.data as LlmSettingsView)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // The students whose answer times stand out over all the quizzes of the course
+  static async getExecutionSpeedReport(): Promise<ExecutionFraudSpeed> {
+    return httpClient
+      .get(`/fraud/speed/execution/${useStore().getCurrentCourse!.courseExecutionId}`)
+      .then((response) => new ExecutionFraudSpeed(response.data))
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
       });

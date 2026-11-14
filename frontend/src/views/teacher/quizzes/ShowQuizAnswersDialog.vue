@@ -40,6 +40,21 @@
           >
         </template>
 
+        <template v-slot:[`item.session`]="{ item }">
+          <span v-if="item.blockedOpenings > 0" class="text-red-darken-1" data-cy="BlockedOpenings">
+            {{ item.blockedOpenings }} refused
+          </span>
+          <v-btn
+            v-if="item.sessionOpenedAt && quizId"
+            size="x-small"
+            variant="text"
+            data-cy="ReopenQuizAnswer"
+            @click="reopen(item)"
+          >
+            Let open again
+          </v-btn>
+        </template>
+
         <template v-slot:[`item.submissionLag`]="{ item }">
           <span
             :class="[
@@ -82,7 +97,7 @@
 
         <template v-slot:[`body.append`]>
           <tr>
-            <td colspan="4">Correct key:</td>
+            <td colspan="5">Correct key:</td>
             <td>
               <span
                 v-for="(sequence, index) in quizAnswers.correctSequence"
@@ -110,18 +125,23 @@
 import { withV2ColumnWidths } from '@/services/DataTableHeaders';
 import { ref } from 'vue';
 import { milisecondsToHHMMSS } from '@/services/ConvertDateService';
+import RemoteServices from '@/services/RemoteServices';
+import { useStore } from '@/store';
 import { QuizAnswers } from '@/models/management/QuizAnswers';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 import ShowQuizAnswersDetailsDialog from '@/views/teacher/quizzes/ShowQuizAnswersDetailsDialog.vue';
 
-defineProps<{
+const props = defineProps<{
   dialog: boolean;
   quizAnswers: QuizAnswers;
   conclusionDate: string | Date;
+  // The quiz, to let a student open it again when it can only be opened once
+  quizId?: number;
 }>();
 
 defineEmits(['update:dialog']);
 
+const store = useStore();
 const detailDialog = ref(false);
 const quizAnswerDetails = ref<QuizAnswer | undefined>(undefined);
 const quizAnswerDetailCurrentQuestion = ref<number | undefined>(undefined);
@@ -131,12 +151,24 @@ const headers = ref<any[]>(withV2ColumnWidths([
   { title: 'Name', key: 'name', align: 'start', width: '5%' },
   { title: 'Username', key: 'username', align: 'center', width: '5%' },
   { title: 'Start Date', key: 'creationDate', align: 'center', width: '5%' },
+  { title: 'Single session', key: 'session', align: 'center', width: '5%', sortable: false },
   { title: 'Submission Lag', key: 'submissionLag', align: 'center', width: '5%' },
   { title: 'Answers', key: 'answers', align: 'center', width: '15%' },
 ]));
 
 const convertToHHMMSS = (time: number | undefined | null): string => {
   return milisecondsToHHMMSS(time);
+};
+
+const reopen = async (answer: QuizAnswer) => {
+  if (!props.quizId) return;
+  if (!confirm(`Let ${answer.name} open the quiz again?`)) return;
+  try {
+    await RemoteServices.reopenQuizAnswer(props.quizId, answer.id);
+    answer.sessionOpenedAt = null;
+  } catch (error) {
+    store.setError(error as string);
+  }
 };
 
 const openAnswerDetailsDialog = (quizAnswerD: QuizAnswer, index: number) => {

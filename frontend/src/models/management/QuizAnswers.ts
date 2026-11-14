@@ -1,3 +1,4 @@
+import { reactive } from 'vue';
 import { QuizAnswer } from '@/models/management/QuizAnswer';
 
 export class QuizAnswers {
@@ -19,19 +20,21 @@ export class QuizAnswers {
 
     // if there is timeToSubmission start an interval that decreases the timeToSubmission every second
     if (this.timeToSubmission != null && this.timeToSubmission > 0) {
+      // through the reactive proxy, or the page never sees the clock move (see StatementQuiz)
+      const self = reactive(this) as QuizAnswers;
       this.timerId = window.setInterval(() => {
-        if (this.timeToSubmission != null && this.timeToSubmission > 0) {
-          this.timeToSubmission = Math.max(
+        if (self.timeToSubmission != null && self.timeToSubmission > 0) {
+          self.timeToSubmission = Math.max(
             0,
-            this.timeToSubmission - Math.floor(Date.now() - this.lastTimeCalled)
+            self.timeToSubmission - Math.floor(Date.now() - self.lastTimeCalled)
           );
         }
 
-        if (!this.timeToSubmission) {
-          clearInterval(this.timerId);
+        if (!self.timeToSubmission) {
+          clearInterval(self.timerId);
         }
 
-        this.lastTimeCalled = Date.now();
+        self.lastTimeCalled = Date.now();
       }, 1000);
     }
   }

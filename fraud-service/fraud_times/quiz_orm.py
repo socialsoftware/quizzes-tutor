@@ -455,13 +455,10 @@ class QuizzesDBConnector():
         # A fresh engine (and pool) is created per request; release its connections
         self.engine.dispose()
 
-    def get_speed_rows(self, quiz_id):
-        """One row per answered question of the quiz: who, how long it took (seconds, as the server
-        recorded it), how long the question and its options are, and whether the choice was right."""
-        from fraud_times.speed import AnswerRow
-
-        rows = self.session.execute(text("""
+    _SPEED_SELECT = """
             SELECT quiz_a.user_id AS user_id,
+                   quiz_a.quiz_id AS quiz_id,
+                   z.title AS title,
                    qa.time_taken AS time_taken,
                    (chosen.id IS NOT NULL) AS answered,
                    COALESCE(chosen.correct, false) AS correct,
@@ -471,16 +468,56 @@ class QuizzesDBConnector():
                        WHERE qd.question_id = q.id), 0) AS chars
             FROM question_answers qa
             JOIN quiz_answers quiz_a ON quiz_a.id = qa.quiz_answer_id
+            JOIN quizzes z ON z.id = quiz_a.quiz_id
             JOIN quiz_questions qq ON qq.id = qa.quiz_question_id
             JOIN questions q ON q.id = qq.question_id
             LEFT JOIN answer_details ad ON ad.question_answer_id = qa.id
             LEFT JOIN options chosen ON chosen.id = ad.option_id
-            WHERE quiz_a.quiz_id = :quiz_id AND qa.time_taken IS NOT NULL
-        """), {"quiz_id": quiz_id})
+            WHERE qa.time_taken IS NOT NULL
+    """
+
+    def get_speed_rows(self, quiz_id):
+        """One row per answered question of the quiz: who, how long it took (seconds, as the server
+        recorded it), how long the question and its options are, and whether the choice was right."""
+        from fraud_times.speed import AnswerRow
+
+        rows = self.session.execute(text(self._SPEED_SELECT + " AND quiz_a.quiz_id = :quiz_id"), {"quiz_id": quiz_id})
         return [
             AnswerRow(row.user_id, row.time_taken / 1000, int(row.chars), bool(row.correct), bool(row.answered))
             for row in rows
         ]
+
+    def get_execution_speed_rows(self, execution_id):
+        """The same for every quiz the students were given in a course execution (not the ones they
+        generated for themselves nor tournaments): {quiz id: (title, rows)}."""
+        from fraud_times.speed import AnswerRow
+
+        rows = self.session.execute(
+            text(self._SPEED_SELECT + " AND z.course_execution_id = :execution_id AND z.type IN ('PROPOSED', 'IN_CLASS')"),
+            {"execution_id": execution_id},
+        )
+        by_quiz = {}
+        for row in rows:
+            title, answers = by_quiz.setdefault(row.quiz_id, (row.title, []))
+            answers.append(AnswerRow(row.user_id, row.time_taken / 1000, int(row.chars), bool(row.correct), bool(row.answered)))
+        return by_quiz
+
+    def get_blocked_openings(self, execution_id):
+        """How many times each student tried to open a quiz that opens only once and was already open: {user id: count}."""
+        # The column is added by the backend when it starts: until then there is nothing to count
+        has_column = self.session.execute(text("""
+            SELECT 1 FROM information_schema.columns
+            WHERE table_name = 'quiz_answers' AND column_name = 'blocked_openings' AND table_schema = current_schema()
+        """)).first()
+        if not has_column:
+            return {}
+        rows = self.session.execute(text("""
+            SELECT quiz_a.user_id AS user_id, SUM(COALESCE(quiz_a.blocked_openings, 0)) AS blocked
+            FROM quiz_answers quiz_a JOIN quizzes z ON z.id = quiz_a.quiz_id
+            WHERE z.course_execution_id = :execution_id
+            GROUP BY quiz_a.user_id
+        """), {"execution_id": execution_id})
+        return {row.user_id: int(row.blocked) for row in rows}
 
     def get_quiz(self, quiz_id):
         return self.session.query(Quiz).filter(Quiz.id == quiz_id).one()

@@ -85,6 +85,9 @@ public enum ErrorMessage {
 
     QUESTION_IS_USED_IN_QUIZ("Question is used in quiz %s"),
     USER_NOT_ENROLLED("%s - Not enrolled in any available course"),
+    QUIZ_ALREADY_OPENED("This quiz can only be opened once and it was already opened. Ask your teacher if you need to open it again"),
+    QUIZ_SAFE_BROWSER_REQUIRED("This quiz can only be done in the Safe Exam Browser"),
+    QUIZ_SEB_KEY_INVALID("The Safe Exam Browser Config Key is 64 hexadecimal characters"),
     QUIZ_NO_LONGER_AVAILABLE("This quiz is no longer available"),
     QUIZ_NOT_YET_AVAILABLE("This quiz is not yet available"),
     CANNOT_START_QRCODE_QUIZ("This is a QRCode only quiz"),

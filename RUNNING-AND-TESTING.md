@@ -249,6 +249,33 @@ cp data/env/fraud-service.dev.env.example data/env/fraud-service.dev.env
 cp data/env/aqg-service.dev.env.example   data/env/aqg-service.dev.env
 ```
 
+#### Rules for quizzes taken under supervision
+
+Two options of the quiz form (**Management › Quizzes**, the switches under *Timer*) make a quiz harder to cheat on.
+Both are off by default and only apply to the quiz they are set on.
+
+* **Open only once.** Each student can open the quiz one time. If they close the page or reload it they cannot get
+  back in (the answers they had already sent are kept). Each refused attempt is counted and shown to the teacher in
+  the answers of the quiz (*Single session* column, *n refused*), where the teacher can also press **Let open again**
+  for a student whose browser really crashed. The student is warned before opening the quiz.
+* **Only in the Safe Exam Browser.** The quiz can only be opened, answered and concluded from the
+  [Safe Exam Browser](https://safeexambrowser.org/) (SEB, free and open source, for Windows, macOS and iOS), which
+  blocks other windows and programs. To set it up:
+  1. In SEB's configuration tool, open *Exam* and enable **Use Browser & Config Keys (send in HTTP header)**; set the
+     *Start URL* to the Tutor and save the `.seb` file. Give that file to the students and have them open it.
+  2. Copy the **Config Key** the tool shows (64 characters) into the *Config Key* field of the quiz.
+  3. Do a trial with a real SEB on a computer like the students' before the exam.
+
+  The server cannot see which browser it is talking to (that can be faked); it checks the proof SEB sends: a hash of
+  the page address and the Config Key. So the Config Key is a secret: it is only shown to teachers, and whoever has it
+  can pass for the browser. SEB cannot stop a student from reading the questions on a phone, and it does not run on
+  Linux: students who cannot install it need another way to take the test.
+
+Under *Answer times report* in the same page, the teacher gets a list of the students whose answer times look unlike a
+person reading (too fast, almost the same on every question, one long wait followed by quick answers) over all the
+quizzes of the course, with the reasons in words and how many times they tried to reopen a quiz that opens once. They
+are signs to look at, never proof.
+
 #### Teachers' own API keys for question generation
 
 A teacher can give their own NVIDIA NIM, OpenAI or Anthropic key (**Generate › My API keys**) so that their

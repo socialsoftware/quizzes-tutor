@@ -37,6 +37,7 @@ import StudentDiscussionsView from '@/views/student/discussions/StudentDiscussio
 import TeacherDiscussionsView from '@/views/teacher/discussions/TeacherDiscussionsView.vue';
 import TournamentResultsView from '@/views/student/tournament/TournamentResultsView.vue';
 import ExportAllView from '@/views/admin/ExportAllView.vue';
+import { refreshSafeExamBrowserKeys } from '@/services/SafeExamBrowser';
 import LlmSettingsView from '@/views/admin/LlmSettingsView.vue';
 import GenerationUsageView from '@/views/admin/GenerationUsageView.vue';
 import CoursesView from '@/views/admin/courses/CoursesView.vue';
@@ -413,6 +414,7 @@ router.beforeEach(async (to) => {
 });
 
 router.afterEach(async (to) => {
+  refreshSafeExamBrowserKeys();
   const store = useStore();
   document.title = (to.meta?.title as string) || '';
   store.clearLoading();

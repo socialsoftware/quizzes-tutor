@@ -9,6 +9,11 @@ export class Quiz {
   code!: number;
   timed: boolean = false;
   oneWay: boolean = false;
+  // Can only be opened once by each student: closing or reloading it ends their chance
+  singleSession: boolean = false;
+  // Can only be done in the Safe Exam Browser set up with the Config Key below (64 hex characters; for teachers only)
+  safeBrowserOnly: boolean = false;
+  sebConfigKey: string | null = null;
   title!: string;
   creationDate!: string;
   availableDate!: string;
@@ -32,6 +37,9 @@ export class Quiz {
       this.code = jsonObj.code;
       this.timed = jsonObj.timed;
       this.oneWay = jsonObj.oneWay;
+      this.singleSession = jsonObj.singleSession ?? false;
+      this.safeBrowserOnly = jsonObj.safeBrowserOnly ?? false;
+      this.sebConfigKey = jsonObj.sebConfigKey ?? null;
       this.title = jsonObj.title;
       this.type = jsonObj.type;
       this.series = jsonObj.series;

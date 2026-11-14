@@ -352,7 +352,7 @@ public class AnswerService {
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, noRollbackFor = TutorException.class)
     public StatementQuizDto getQuizByQRCode(int userId, int quizId) {
         Student student = studentRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
@@ -366,6 +366,7 @@ public class AnswerService {
         QuizAnswer quizAnswer = getQuizAnswer(student, quiz);
 
         if (quiz.getAvailableDate() == null || DateHandler.now().isAfter(quiz.getAvailableDate())) {
+            openSession(quiz, quizAnswer);
             StatementQuizDto result = getPreparedStatementQuizDto(student, quiz, quizAnswer);
             return result;
         } else {  // Send timer
@@ -378,7 +379,7 @@ public class AnswerService {
     @Retryable(
             value = {SQLException.class},
             backoff = @Backoff(delay = 2000))
-    @Transactional(isolation = Isolation.READ_COMMITTED)
+    @Transactional(isolation = Isolation.READ_COMMITTED, noRollbackFor = TutorException.class)
     public StatementQuizDto startQuiz(int userId, int quizId) {
         Student student = studentRepository.findById(userId).orElseThrow(() -> new TutorException(USER_NOT_FOUND, userId));
         Quiz quiz = quizRepository.findById(quizId).orElseThrow(() -> new TutorException(QUIZ_NOT_FOUND, quizId));
@@ -394,9 +395,29 @@ public class AnswerService {
         }
 
         QuizAnswer quizAnswer = getQuizAnswer(student, quiz);
+        openSession(quiz, quizAnswer);
 
         StatementQuizDto result = getPreparedStatementQuizDto(student, quiz, quizAnswer);
         return result;
+    }
+
+    /**
+     * A single-session quiz is opened once: the first opening starts it, and any other (a second tab, a
+     * reload, a closed browser) is refused and counted, so the teacher can see who tried.
+     */
+    private void openSession(Quiz quiz, QuizAnswer quizAnswer) {
+        if (quiz.isSingleSession() && !quizAnswer.openSession())
+            throw new TutorException(QUIZ_ALREADY_OPENED);
+    }
+
+    /** A teacher lets a student open a single-session quiz again. */
+    @Transactional(isolation = Isolation.READ_COMMITTED)
+    public void reopenQuizAnswer(Integer quizId, Integer quizAnswerId) {
+        QuizAnswer quizAnswer = quizAnswerRepository.findById(quizAnswerId)
+                .orElseThrow(() -> new TutorException(QUIZ_ANSWER_NOT_FOUND, quizAnswerId));
+        if (!quizAnswer.getQuiz().getId().equals(quizId))
+            throw new TutorException(QUIZ_ANSWER_NOT_FOUND, quizAnswerId);
+        quizAnswer.allowReopening();
     }
 
     private void commonChecks(Student student, Quiz quiz) {

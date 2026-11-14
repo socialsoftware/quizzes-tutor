@@ -51,6 +51,14 @@ public class QuizAnswer implements DomainEntity {
 
     private Integer currentSequenceQuestion = 0;
 
+    // When the student opened a single-session quiz; null while nobody has, and again after a teacher lets them open it again
+    @Column(name = "session_opened_at")
+    private LocalDateTime sessionOpenedAt;
+
+    // How many times the student tried to open a single-session quiz that was already open or lost
+    @Column(name = "blocked_openings", columnDefinition = "integer default 0")
+    private Integer blockedOpenings = 0;
+
     @ManyToOne(fetch = FetchType.LAZY, optional = false)
     @JoinColumn(name = "user_id")
     private Student student;
@@ -115,6 +123,29 @@ public class QuizAnswer implements DomainEntity {
 
     public void setAnswerDate(LocalDateTime answerDate) {
         this.answerDate = answerDate;
+    }
+
+    public LocalDateTime getSessionOpenedAt() {
+        return sessionOpenedAt;
+    }
+
+    public int getBlockedOpenings() {
+        return blockedOpenings == null ? 0 : blockedOpenings;
+    }
+
+    /** The student opens the quiz: it can be done once, so a second opening is refused and counted. */
+    public boolean openSession() {
+        if (sessionOpenedAt != null) {
+            blockedOpenings = getBlockedOpenings() + 1;
+            return false;
+        }
+        sessionOpenedAt = DateHandler.now();
+        return true;
+    }
+
+    /** A teacher lets the student open the quiz again (their browser crashed, for instance). */
+    public void allowReopening() {
+        sessionOpenedAt = null;
     }
 
     public boolean isCompleted() {

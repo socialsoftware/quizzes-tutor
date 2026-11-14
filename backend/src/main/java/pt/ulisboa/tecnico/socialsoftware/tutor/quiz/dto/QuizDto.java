@@ -24,6 +24,10 @@ public class QuizDto implements Serializable {
     private Integer code;
 
     private boolean timed;
+    private boolean singleSession;
+    private boolean safeBrowserOnly;
+    // Only teachers get the Config Key (see withSebConfigKey); a student who knew it could forge the proof of the browser
+    private String sebConfigKey;
 
     private String type;
 
@@ -60,6 +64,8 @@ public class QuizDto implements Serializable {
         this.code = quiz.getCode();
         this.title = quiz.getTitle();
         this.timed = quiz.getType().equals(Quiz.QuizType.IN_CLASS);
+        this.singleSession = quiz.isSingleSession();
+        this.safeBrowserOnly = quiz.isSafeBrowserOnly();
         this.type = quiz.getType().toString();
         this.series = quiz.getSeries();
         this.version = quiz.getVersion();
@@ -123,6 +129,36 @@ public class QuizDto implements Serializable {
 
     public void setOneWay(boolean oneWay) {
         this.oneWay = oneWay;
+    }
+
+    public boolean isSingleSession() {
+        return singleSession;
+    }
+
+    public void setSingleSession(boolean singleSession) {
+        this.singleSession = singleSession;
+    }
+
+    public boolean isSafeBrowserOnly() {
+        return safeBrowserOnly;
+    }
+
+    public void setSafeBrowserOnly(boolean safeBrowserOnly) {
+        this.safeBrowserOnly = safeBrowserOnly;
+    }
+
+    public String getSebConfigKey() {
+        return sebConfigKey;
+    }
+
+    public void setSebConfigKey(String sebConfigKey) {
+        this.sebConfigKey = sebConfigKey;
+    }
+
+    /** For teachers: the Config Key goes with the quiz so the form can show it. */
+    public QuizDto withSebConfigKey(Quiz quiz) {
+        this.sebConfigKey = quiz.getSebConfigKey();
+        return this;
     }
 
     public boolean isTimed() {

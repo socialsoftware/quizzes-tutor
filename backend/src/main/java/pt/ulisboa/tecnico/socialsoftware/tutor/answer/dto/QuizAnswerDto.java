@@ -16,6 +16,8 @@ public class QuizAnswerDto implements Serializable {
     private String creationDate;
     private String answerDate;
     private boolean fraud;
+    private String sessionOpenedAt;
+    private int blockedOpenings;
     private List<QuestionAnswerDto> questionAnswers = new ArrayList<>();
 
 
@@ -29,11 +31,21 @@ public class QuizAnswerDto implements Serializable {
         this.answerDate = DateHandler.toISOString(quizAnswer.getAnswerDate());
         this.creationDate = DateHandler.toISOString(quizAnswer.getCreationDate());
         this.fraud = quizAnswer.isFraud();
+        this.sessionOpenedAt = DateHandler.toISOString(quizAnswer.getSessionOpenedAt());
+        this.blockedOpenings = quizAnswer.getBlockedOpenings();
 
         this.questionAnswers = quizAnswer.getQuestionAnswers().stream()
                 .sorted(Comparator.comparing(qa -> qa.getQuizQuestion().getSequence()))
                 .map(QuestionAnswerDto::new)
                 .collect(Collectors.toList());
+    }
+
+    public String getSessionOpenedAt() {
+        return sessionOpenedAt;
+    }
+
+    public int getBlockedOpenings() {
+        return blockedOpenings;
     }
 
     public Integer getId() {
