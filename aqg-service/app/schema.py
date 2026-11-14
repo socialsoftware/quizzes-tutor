@@ -1,7 +1,7 @@
 from enum import Enum
 from typing import Literal
 
-from pydantic import BaseModel, Field, model_validator
+from pydantic import BaseModel, Field, field_validator, model_validator
 
 
 class Difficulty(str, Enum):
@@ -62,8 +62,17 @@ MAX_QUESTIONS_PER_JOB = 10
 class ChosenModel(BaseModel):
     """The model a teacher picked for a request. The Tutor checks they may; it is tried before the usual ones."""
 
-    provider: Literal["ollama", "openai", "anthropic", "nvidia_nim"]
+    provider: str
     model: str = Field(min_length=1, max_length=200, pattern=r"^[A-Za-z0-9._:/@+\-]+$")
+
+    @field_validator("provider")
+    @classmethod
+    def known_provider(cls, provider: str) -> str:
+        from app.llm.providers import is_supported
+
+        if not is_supported(provider):
+            raise ValueError(f"{provider!r} is not a provider that can be used")
+        return provider
 
 
 class GenerationRequest(BaseModel):

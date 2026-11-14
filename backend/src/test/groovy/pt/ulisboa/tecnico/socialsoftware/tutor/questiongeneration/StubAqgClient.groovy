@@ -33,6 +33,8 @@ class StubAqgClient implements AqgClient {
     LlmSettingsDto savedLlmSettings
     LlmModelChoiceDto lastTestedModel
     String lastTestedKey
+    List<String> lastProvidersWithKey
+    String lastModelsKey
     LlmModelTestDto keyTestReply = new LlmModelTestDto(true, 0.5d, '{"ok": true}', null)
     LlmModelChoiceDto lastPulledModel
 
@@ -51,6 +53,8 @@ class StubAqgClient implements AqgClient {
         getJobCalls = 0
         savedLlmSettings = null
         lastTestedKey = null
+        lastProvidersWithKey = null
+        lastModelsKey = null
         keyTestReply = new LlmModelTestDto(true, 0.5d, '{"ok": true}', null)
         lastTestedModel = null
         lastPulledModel = null
@@ -112,12 +116,13 @@ class StubAqgClient implements AqgClient {
 
     @Override
     LlmSettingsViewDto getLlmSettings() {
-        return new LlmSettingsViewDto(savedLlmSettings, [ollama: true, nvidia_nim: false], ['ollama', 'nvidia_nim'], [ollama: 'llama3.1:8b', nvidia_nim: 'nvidia/model', openai: 'gpt-4o-mini', anthropic: 'claude-sonnet-5'])
+        return new LlmSettingsViewDto(savedLlmSettings, [ollama: true, nvidia_nim: false], ['ollama', 'nvidia_nim', 'openai', 'anthropic', 'gemini', 'groq'], [ollama: 'llama3.1:8b', nvidia_nim: 'nvidia/model', openai: 'gpt-4o-mini', anthropic: 'claude-sonnet-5', gemini: 'gemini-2.5-flash', groq: 'llama-3.3-70b-versatile'], [ollama: 'Ollama (local)', nvidia_nim: 'NVIDIA NIM', openai: 'OpenAI', anthropic: 'Anthropic', gemini: 'Google Gemini', groq: 'Groq'])
     }
 
     @Override
-    LlmSettingsViewDto saveLlmSettings(LlmSettingsDto settings) {
+    LlmSettingsViewDto saveLlmSettings(LlmSettingsDto settings, List<String> providersWithKey) {
         savedLlmSettings = settings
+        lastProvidersWithKey = providersWithKey
         return getLlmSettings()
     }
 
@@ -135,7 +140,8 @@ class StubAqgClient implements AqgClient {
     }
 
     @Override
-    ProviderModelsDto getProviderModels(String provider, boolean refresh) {
+    ProviderModelsDto getProviderModels(String provider, boolean refresh, String apiKey) {
+        lastModelsKey = apiKey
         return new ProviderModelsDto(provider, ['model-of-' + provider], null)
     }
 

@@ -158,10 +158,14 @@ public class WebClientAqgClient implements AqgClient {
     }
 
     @Override
-    public LlmSettingsViewDto saveLlmSettings(LlmSettingsDto settings) {
+    public LlmSettingsViewDto saveLlmSettings(LlmSettingsDto settings, List<String> providersWithKey) {
         String json = write(settings);
         return read(call(() -> client.put().uri("/settings/llm")
                 .contentType(MediaType.APPLICATION_JSON)
+                .headers(headers -> {
+                    if (providersWithKey != null && !providersWithKey.isEmpty())
+                        headers.set("X-Providers-With-Key", String.join(",", providersWithKey));
+                })
                 .bodyValue(json)
                 .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<LlmSettingsViewDto>() {});
     }
@@ -185,11 +189,15 @@ public class WebClientAqgClient implements AqgClient {
     }
 
     @Override
-    public ProviderModelsDto getProviderModels(String provider, boolean refresh) {
+    public ProviderModelsDto getProviderModels(String provider, boolean refresh, String apiKey) {
         return read(call(() -> client.get()
                 .uri(uri -> uri.path("/settings/llm/models").queryParam("provider", "{provider}")
                         .queryParam("refresh", refresh).build(provider))
                 .accept(MediaType.APPLICATION_JSON)
+                .headers(headers -> {
+                    if (apiKey != null && !apiKey.isBlank())
+                        headers.set("X-Provider-Key", apiKey);
+                })
                 .retrieve().bodyToMono(String.class).block(TIMEOUT)), new TypeReference<ProviderModelsDto>() {});
     }
 

@@ -74,7 +74,13 @@ def test_settings_start_from_the_environment_and_show_which_keys_are_set(monkeyp
     assert view["settings"]["primary"] == {"provider": "ollama", "model": "llama3.1:8b"}
     assert view["settings"]["ollamaBaseUrl"] == "http://ollama:11434"
     assert view["settings"]["timeout"] == 90
-    assert view["keys"] == {"ollama": True, "openai": False, "anthropic": False, "nvidia_nim": True}
+    assert {name: view["keys"][name] for name in ("ollama", "openai", "anthropic", "nvidia_nim")} == {
+        "ollama": True, "openai": False, "anthropic": False, "nvidia_nim": True}
+    # every provider LiteLLM can use with a key is offered, each with a name and a model to try
+    assert {"gemini", "groq", "mistral", "deepseek", "openrouter"} <= set(view["providers"])
+    assert view["providers"][0] == "ollama" and "bedrock" not in view["providers"] and "azure" not in view["providers"]
+    assert view["providerNames"]["gemini"] == "Google Gemini" and view["providerNames"]["nvidia_nim"] == "NVIDIA NIM"
+    assert view["defaultModels"]["gemini"] and view["defaultModels"]["groq"]
     assert "secret-value" not in str(view)
 
 
@@ -316,3 +322,53 @@ def test_a_streamed_reply_is_put_together(monkeypatch):
 
     assert LiteLLMProvider(ModelConfig(model="nvidia_nim/m")).complete("s", "u") == '{"a": 1}'
     assert sent["stream"] is True
+
+
+def test_a_key_for_another_provider_of_litellm_is_found_in_its_environment_variable(monkeypatch):
+    monkeypatch.delenv("GROQ_API_KEY", raising=False)
+    assert make_client().get("/settings/llm").json()["keys"]["groq"] is False
+
+    monkeypatch.setenv("GROQ_API_KEY", "service-groq-key")
+    view = make_client().get("/settings/llm").json()
+
+    assert view["keys"]["groq"] is True
+    assert "service-groq-key" not in str(view)
+
+
+def test_models_of_any_provider_are_called_the_way_litellm_names_them():
+    from app.llm.providers import model_name
+
+    assert model_name("gemini", "gemini-2.5-flash") == "gemini/gemini-2.5-flash"
+    assert model_name("groq", "llama-3.3-70b-versatile") == "groq/llama-3.3-70b-versatile"
+    assert model_name("openai", "gpt-4o-mini") == "gpt-4o-mini"
+    assert model_name("ollama", "llama3.1:8b") == "ollama_chat/llama3.1:8b"
+
+
+def test_a_provider_that_needs_more_than_a_key_or_does_not_exist_is_refused():
+    client = make_client()
+    current = client.get("/settings/llm").json()["settings"]
+
+    for provider in ("bedrock", "azure", "vertex_ai", "carrier-pigeon"):
+        body = {**current, "primary": {"provider": provider, "model": "m"}}
+        assert client.put("/settings/llm", json=body).status_code == 422
+
+
+def test_providers_the_tutor_holds_a_key_for_count_as_having_one_when_saving(monkeypatch):
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    monkeypatch.delenv("GOOGLE_API_KEY", raising=False)
+    client = make_client()
+    current = client.get("/settings/llm").json()["settings"]
+    body = {**current, "primary": {"provider": "gemini", "model": "gemini-2.5-flash"}}
+
+    assert client.put("/settings/llm", json=body).status_code == 422
+    assert client.put("/settings/llm", json=body, headers={"X-Providers-With-Key": "gemini, groq"}).status_code == 200
+
+
+def test_the_models_of_a_provider_litellm_knows_are_listed_without_a_key_and_a_key_given_is_used(monkeypatch):
+    monkeypatch.delenv("GEMINI_API_KEY", raising=False)
+    client = make_client()
+
+    listed = client.get("/settings/llm/models", params={"provider": "gemini"}).json()
+
+    assert listed["error"] is None and listed["models"]
+    assert all(not name.startswith("gemini/") for name in listed["models"])

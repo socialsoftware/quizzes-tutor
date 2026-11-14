@@ -6,6 +6,7 @@ import * as directives from 'vuetify/directives';
 import RemoteServices from '@/services/RemoteServices';
 import { useStore } from '@/store';
 import { LlmSettingsView } from '@/models/admin/LlmSettings';
+import { TeacherApiKeys } from '@/models/management/generation/TeacherApiKeys';
 
 vi.mock('@/store', () => ({ useStore: vi.fn() }));
 
@@ -33,6 +34,16 @@ const settingsView = (): LlmSettingsView => ({
   defaultModels: { ollama: 'llama3.1:8b', openai: 'gpt-4o-mini', anthropic: 'claude-sonnet-5', nvidia_nim: 'nvidia/nemotron-3-ultra-550b-a55b' },
 });
 
+const siteKeys = (given: string[] = []): TeacherApiKeys => ({
+  available: true,
+  keys: given.map((provider) => ({ provider, name: provider === 'gemini' ? 'Google Gemini' : provider, lastFour: '9876', updatedAt: null })),
+  providers: [
+    { id: 'gemini', name: 'Google Gemini' },
+    { id: 'groq', name: 'Groq' },
+    { id: 'nvidia_nim', name: 'NVIDIA NIM' },
+  ],
+});
+
 describe('LlmSettingsView', () => {
   let store: any;
 
@@ -40,6 +51,7 @@ describe('LlmSettingsView', () => {
     store = { setLoading: vi.fn(), clearLoading: vi.fn(), setError: vi.fn() };
     (useStore as any).mockReturnValue(store);
     vi.spyOn(RemoteServices, 'getLlmSettings').mockResolvedValue(settingsView());
+    vi.spyOn(RemoteServices, 'getSiteApiKeys').mockResolvedValue(siteKeys());
     vi.spyOn(RemoteServices, 'getOllamaModels').mockResolvedValue({ models: ['llama3.1:8b'], pulls: {}, error: null });
     vi.spyOn(RemoteServices, 'getProviderModels').mockImplementation(async (provider: string) =>
       provider === 'nvidia_nim'
@@ -274,4 +286,70 @@ describe('LlmSettingsView', () => {
     expect(wrapper.find('[data-cy="TestError"]').text()).toContain('model withdrawn');
     expect(RemoteServices.testLlmModel).toHaveBeenCalledWith({ provider: 'nvidia_nim', model: 'nvidia/nemotron-3-ultra-550b-a55b' });
   });
+
+  test('the keys of the site are listed and a key is given for any provider, which is then a provider with a key', async () => {
+    const save = vi.spyOn(RemoteServices, 'saveSiteApiKey').mockResolvedValue(siteKeys(['gemini']));
+    const fresh = settingsView();
+    fresh.keys = { ...fresh.keys, gemini: true };
+    vi.spyOn(RemoteServices, 'getLlmSettings').mockResolvedValue(fresh);
+    const wrapper = await mountPage();
+    expect(wrapper.find('[data-cy="NoKeys"]').exists()).toBe(true);
+
+    const panel = wrapper.findComponent({ name: 'ApiKeysPanel' });
+    (panel.vm as any).provider = 'gemini';
+    (panel.vm as any).draft = '  AIza-site-key-1234  ';
+    await flushPromises();
+    await wrapper.find('[data-cy="SaveKey"]').trigger('click');
+    await flushPromises();
+
+    expect(save).toHaveBeenCalledWith('gemini', 'AIza-site-key-1234', '');
+    expect(wrapper.findAll('[data-cy="ApiKeyRow"]')).toHaveLength(1);
+    expect(vm(wrapper).view.keys.gemini).toBe(true);
+    // what the administrator was changing in the rest of the page is left alone
+    expect(vm(wrapper).dirty).toBe(false);
+  });
+
+  test('a key of the site that the provider refuses is reported', async () => {
+    vi.spyOn(RemoteServices, 'saveSiteApiKey').mockRejectedValue('The provider did not accept this key: 401');
+    const wrapper = await mountPage();
+
+    const panel = wrapper.findComponent({ name: 'ApiKeysPanel' });
+    (panel.vm as any).provider = 'groq';
+    (panel.vm as any).draft = 'gsk-wrong-key-1234';
+    await flushPromises();
+    await wrapper.find('[data-cy="SaveKey"]').trigger('click');
+    await flushPromises();
+
+    expect(store.setError).toHaveBeenCalledWith('The provider did not accept this key: 401');
+  });
+
+  test('removing a key of the site asks first', async () => {
+    vi.spyOn(RemoteServices, 'getSiteApiKeys').mockResolvedValue(siteKeys(['gemini']));
+    const remove = vi.spyOn(RemoteServices, 'removeSiteApiKey').mockResolvedValue(siteKeys());
+    const confirmation = vi.spyOn(window, 'confirm').mockReturnValue(false);
+    const wrapper = await mountPage();
+
+    await wrapper.find('[data-cy="RemoveKey"]').trigger('click');
+    expect(remove).not.toHaveBeenCalled();
+
+    confirmation.mockReturnValue(true);
+    await wrapper.find('[data-cy="RemoveKey"]').trigger('click');
+    await flushPromises();
+
+    expect(remove).toHaveBeenCalledWith('gemini');
+    expect(wrapper.findAll('[data-cy="ApiKeyRow"]')).toHaveLength(0);
+  });
+
+  test('a provider LiteLLM knows is called by the name the service gave it', async () => {
+    const view = settingsView();
+    view.providers = ['ollama', 'gemini', 'groq'];
+    view.providerNames = { gemini: 'Google Gemini', groq: 'Groq' };
+    view.keys = { ollama: true, gemini: true, groq: false };
+    vi.spyOn(RemoteServices, 'getLlmSettings').mockResolvedValue(view);
+    const wrapper = await mountPage();
+
+    const row = wrapper.findComponent({ name: 'LlmModelRow' });
+    expect((row.vm as any).providerItems.map((item: any) => item.title)).toEqual(['Ollama (local)', 'Google Gemini', 'Groq (no API key)']);
+  });
 });
+

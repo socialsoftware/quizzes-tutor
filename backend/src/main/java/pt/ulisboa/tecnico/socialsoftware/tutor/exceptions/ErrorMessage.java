@@ -182,6 +182,7 @@ public enum ErrorMessage {
     TEACHER_API_KEYS_NOT_CONFIGURED("The server has no encryption key for API keys, so keys cannot be saved"),
     TEACHER_API_KEY_PROVIDER("There are no API keys for the provider '%s'"),
     TEACHER_API_KEY_INVALID("An API key is 8 to 500 characters long, with no spaces"),
+    TEACHER_API_KEY_MODEL("Name a model of the provider to check the key with"),
     TEACHER_API_KEY_REJECTED("The provider did not accept this key: %s"),
     TEACHER_API_KEY_UNREADABLE("A saved API key could not be read: save it again"),
     GENERATION_MISSING_TOPIC("Pick at least one topic of the course to generate questions about"),

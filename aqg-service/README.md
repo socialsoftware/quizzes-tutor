@@ -243,13 +243,14 @@ The draft is placed in the reply box. After making your edits, select **Submit**
 
 ### Using your own API key
 
-The **API key for question generation** card at the top of the page tells whose key your requests use. **My API keys** lets you give your own NVIDIA NIM, OpenAI or Anthropic key. It is checked with the provider, kept encrypted and never shown again (only how it ends), and it is only used for your own requests. Without one, the site's key is used. With one, you can also pick other models of that provider in the **Model** field. You can remove it whenever you want.
+The **API key for question generation** card at the top of the page tells whose key your requests use. **My API keys** lets you give your own key for **any provider LiteLLM supports** (Google Gemini, Groq, Mistral, DeepSeek, OpenRouter, OpenAI, Anthropic, NVIDIA NIM and many more): pick the provider in the list, paste the key and press **Check and save**. Providers that need more than a key (Amazon Bedrock, Azure, Google Vertex AI…) are not offered. The key is checked with the provider, using a usual model of it or the one you name in *Model to check the key with*; if a provider refuses the usual model, type another one there. The key is kept encrypted and never shown again (only how it ends), and it is only used for your own requests. Without one, the site's key is used. With one, you can also pick other models of that provider in the **Model** field. You can remove it whenever you want.
 
 ## For administrators
 
 Under **Administration**, two pages are for the system administrator:
 
-- **Question Generation Model**: which models write the questions, the fallbacks and the timeout. When **Save** is off, the reason is written beside it (for example a provider with no API key in the service's `.env`, or an empty model name).
+- **Question Generation Model**: the API keys of the site, which models write the questions, the fallbacks and the timeout. When **Save** is off, the reason is written beside it (for example a provider with no API key in the service's `.env`, or an empty model name).
+  - **API keys of the site**: the same list as for teachers, for the whole site: pick any provider, paste its key and press **Check and save**. A key given here wins over the one in the service's `.env`, so nothing has to be edited on the server to add a provider. It is encrypted and never shown again.
   - **Models teachers can pick**: the list of models any teacher may choose when asking for questions, for instance the free ones that work well for this use case. Use **Test** on each one. They use the service's key, so their provider needs a key in the service's `.env`. A teacher with an API key of their own can also pick any other model of that provider.
 - **Question Generation Usage**: a table of the requests each course made on each of the last 7, 10 or 30 days, with the number of questions they asked for in brackets, and the totals per course and per day.
 

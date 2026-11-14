@@ -5,7 +5,7 @@ import time
 import uuid
 from typing import Callable
 
-from fastapi import BackgroundTasks, FastAPI, File, Form, HTTPException, Request, UploadFile
+from fastapi import Header, BackgroundTasks, FastAPI, File, Form, HTTPException, Request, UploadFile
 from fastapi.responses import JSONResponse
 
 from app.config import Settings
@@ -21,6 +21,7 @@ from app.llm.catalog import ModelCatalog
 from app.llm.ollama import OllamaClient
 from app.limits import Limiters, RateLimited, RateLimitedProvider, same_secret
 from app.llm.provider import LiteLLMProvider, LLMProvider, LoggingProvider, build_provider, log_step
+from app.llm.providers import is_supported
 from app.llm.settings import (
     LlmSettings,
     LlmSettingsStore,
@@ -337,8 +338,12 @@ def create_app(
         return llm_settings.view()
 
     @app.put("/settings/llm")
-    def save_llm_settings(new_settings: LlmSettings) -> LlmSettingsView:
-        missing = missing_keys(new_settings)
+    def save_llm_settings(
+        new_settings: LlmSettings, x_providers_with_key: str | None = Header(default=None)
+    ) -> LlmSettingsView:
+        # The Tutor keeps keys of its own (the administrator gave them there): it says which providers have one
+        given = {name.strip() for name in (x_providers_with_key or "").split(",") if name.strip()}
+        missing = missing_keys(new_settings, given)
         if missing:
             raise HTTPException(
                 status_code=422,
@@ -372,10 +377,14 @@ def create_app(
         return ModelTestResult(ok=True, seconds=round(time.perf_counter() - started, 2), reply=reply[:200])
 
     @app.get("/settings/llm/models")
-    def provider_models(provider: Provider, refresh: bool = False) -> ProviderModels:
+    def provider_models(
+        provider: Provider, refresh: bool = False, x_provider_key: str | None = Header(default=None)
+    ) -> ProviderModels:
         """The models of a provider that can write text; a list that cannot be read says why."""
+        if not is_supported(provider):
+            raise HTTPException(status_code=422, detail=f"{provider!r} is not a provider that can be used")
         try:
-            models = catalog.models(provider, llm_settings.get().ollama_base_url, refresh)
+            models = catalog.models(provider, llm_settings.get().ollama_base_url, refresh, (x_provider_key or "").strip() or None)
         except Exception as error:  # an unreachable provider or a missing key are normal answers here
             return ProviderModels(provider=provider, error=_short_error(error))
         return ProviderModels(provider=provider, models=models)

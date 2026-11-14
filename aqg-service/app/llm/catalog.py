@@ -11,7 +11,7 @@ import time
 import httpx
 
 from app.llm.ollama import OllamaClient
-from app.llm.settings import API_KEY_VARIABLES
+from app.llm import providers
 
 # Models in these lists that cannot write a question: embeddings, rerankers, safety classifiers,
 # document parsers, speech and image models
@@ -42,19 +42,22 @@ class ModelCatalog:
         # provider -> (when it was read, models); lists change rarely and the calls are slow
         self._cache: dict[str, tuple[float, list[str]]] = {}
 
-    def models(self, provider: str, ollama_base_url: str, refresh: bool = False) -> list[str]:
+    def models(self, provider: str, ollama_base_url: str, refresh: bool = False, key: str | None = None) -> list[str]:
         if provider == "ollama":
             # What is installed changes with every download: never cached
             return self.ollama.list_models(ollama_base_url)
         cached = self._cache.get(provider)
         if cached and not refresh and time.monotonic() - cached[0] < CACHE_SECONDS:
             return cached[1]
-        models = sorted({model for model in self._read(provider) if not NOT_FOR_TEXT.search(model)})
+        models = sorted({model for model in self._read(provider, key) if not NOT_FOR_TEXT.search(model)})
         self._cache[provider] = (time.monotonic(), models)
         return models
 
-    def _read(self, provider: str) -> list[str]:
-        key = os.getenv(API_KEY_VARIABLES[provider])
+    def _read(self, provider: str, given_key: str | None = None) -> list[str]:
+        if provider not in DEFAULT_BASES:
+            # The others have no list call this service knows: what LiteLLM knows of them
+            return list(providers.suggested_models(provider))
+        key = given_key or providers.service_key(provider)
         if not key:
             raise NoApiKey(f"no API key for {provider} in the service's environment")
         variable, default = DEFAULT_BASES[provider]

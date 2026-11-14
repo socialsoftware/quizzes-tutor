@@ -24,7 +24,7 @@ public class TeacherApiKeyController {
     @PreAuthorize("hasRole('ROLE_TEACHER')")
     public TeacherApiKeysDto saveKey(Authentication authentication, @PathVariable String provider,
                                      @RequestBody TeacherApiKeyRequestDto request) {
-        return teacherApiKeyService.saveKey(userId(authentication), provider, request.getKey());
+        return teacherApiKeyService.saveKey(userId(authentication), provider, request.getKey(), request.getModel());
     }
 
     @DeleteMapping("/teacher/api-keys/{provider}")

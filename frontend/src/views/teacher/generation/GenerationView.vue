@@ -19,7 +19,6 @@
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue';
 import RemoteServices from '@/services/RemoteServices';
-import { PROVIDER_NAMES } from '@/models/admin/LlmSettings';
 import { TeacherApiKeys } from '@/models/management/generation/TeacherApiKeys';
 import GenerationJob from '@/models/management/generation/GenerationJob';
 import ApiKeysDialog from '@/views/teacher/generation/ApiKeysDialog.vue';
@@ -36,7 +35,7 @@ const keysVersion = ref(0);
 const myKeys = ref<TeacherApiKeys | null>(null);
 
 const keyStatus = computed(() => {
-  const own = (myKeys.value?.keys ?? []).filter((key) => key.configured).map((key) => PROVIDER_NAMES[key.provider] ?? key.provider);
+  const own = (myKeys.value?.keys ?? []).map((key) => key.name);
   return own.length > 0
     ? `Your requests use your own key: ${own.join(', ')}`
     : "Your requests use the site's key. You can give your own to pick other models";

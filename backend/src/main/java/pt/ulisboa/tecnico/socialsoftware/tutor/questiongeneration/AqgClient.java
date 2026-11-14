@@ -43,7 +43,12 @@ public interface AqgClient {
     /** The models the service uses, and whether each provider's API key is set in its environment. */
     LlmSettingsViewDto getLlmSettings();
 
-    LlmSettingsViewDto saveLlmSettings(LlmSettingsDto settings);
+    /** Saves the settings; `providersWithKey` are the providers the Tutor holds a key for, which count as having one. */
+    LlmSettingsViewDto saveLlmSettings(LlmSettingsDto settings, List<String> providersWithKey);
+
+    default LlmSettingsViewDto saveLlmSettings(LlmSettingsDto settings) {
+        return saveLlmSettings(settings, List.of());
+    }
 
     /** One tiny call to a model, to check its name and how fast it answers. */
     LlmModelTestDto testModel(LlmModelChoiceDto model);
@@ -52,7 +57,12 @@ public interface AqgClient {
     LlmModelTestDto testModel(LlmModelChoiceDto model, String apiKey);
 
     /** The models a provider offers, read from the provider with the service's key; `refresh` skips its cache. */
-    ProviderModelsDto getProviderModels(String provider, boolean refresh);
+    /** The models of a provider, read with `apiKey` when one is given (the site's, for a provider the service has none for). */
+    ProviderModelsDto getProviderModels(String provider, boolean refresh, String apiKey);
+
+    default ProviderModelsDto getProviderModels(String provider, boolean refresh) {
+        return getProviderModels(provider, refresh, null);
+    }
 
     OllamaModelsDto getOllamaModels();
 

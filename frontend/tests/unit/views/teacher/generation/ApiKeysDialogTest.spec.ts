@@ -14,14 +14,22 @@ globalThis.ResizeObserver = class { observe() { } unobserve() { } disconnect() {
 globalThis.IntersectionObserver = class { observe() { } unobserve() { } disconnect() { } } as any;
 import ApiKeysDialog from '@/views/teacher/generation/ApiKeysDialog.vue';
 
-const keys = (configured: string[] = [], available = true): TeacherApiKeys => ({
+const PROVIDERS = [
+  { id: 'anthropic', name: 'Anthropic' },
+  { id: 'gemini', name: 'Google Gemini' },
+  { id: 'groq', name: 'Groq' },
+  { id: 'nvidia_nim', name: 'NVIDIA NIM' },
+];
+
+const keys = (given: string[] = [], available = true): TeacherApiKeys => ({
   available,
-  keys: ['nvidia_nim', 'openai', 'anthropic'].map((provider) => ({
-    provider,
-    configured: configured.includes(provider),
-    lastFour: configured.includes(provider) ? '3456' : null,
+  keys: PROVIDERS.filter((provider) => given.includes(provider.id)).map((provider) => ({
+    provider: provider.id,
+    name: provider.name,
+    lastFour: '3456',
     updatedAt: null,
   })),
+  providers: PROVIDERS,
 });
 
 describe('ApiKeysDialog', () => {
@@ -48,67 +56,119 @@ describe('ApiKeysDialog', () => {
   };
 
   const rows = () => Array.from(document.body.querySelectorAll('[data-cy="ApiKeyRow"]'));
-  const type = async (row: Element, value: string) => {
-    const input = row.querySelector('[data-cy="KeyInput"] input') as HTMLInputElement;
+  const field = (cy: string) => document.body.querySelector(`[data-cy="${cy}"] input`) as HTMLInputElement;
+  const type = async (cy: string, value: string) => {
+    const input = field(cy);
     input.value = value;
     input.dispatchEvent(new Event('input'));
     await flushPromises();
   };
-  const click = async (row: Element, cy: string) => {
-    (row.querySelector(`[data-cy="${cy}"]`) as HTMLElement).click();
+  const click = async (cy: string, root: ParentNode = document.body) => {
+    (root.querySelector(`[data-cy="${cy}"]`) as HTMLElement).click();
     await flushPromises();
   };
+  // The provider is picked in the autocomplete of the panel
+  const pick = async (wrapper: any, provider: string) => {
+    const panel = wrapper.findComponent({ name: 'ApiKeysPanel' });
+    (panel.vm as any).provider = provider;
+    await flushPromises();
+  };
+  const saveButton = () => document.body.querySelector('[data-cy="SaveKey"]') as HTMLButtonElement;
 
-  test('shows which providers have a key of the teacher and how it ends, never the key', async () => {
-    vi.spyOn(RemoteServices, 'getMyApiKeys').mockResolvedValue(keys(['openai']));
-    await mountDialog();
-
-    expect(rows()).toHaveLength(3);
-    expect(rows()[1].querySelector('[data-cy="KeyConfigured"]')!.textContent).toContain('ending in 3456');
-    expect(rows()[0].querySelector('[data-cy="KeyNotSet"]')).not.toBeNull();
-    expect((rows()[0].querySelector('[data-cy="KeyInput"] input') as HTMLInputElement).type).toBe('password');
-  });
-
-  test('a key is sent as typed, then the field is emptied and the status updates', async () => {
+  test('the button to save is ready, not busy, until a key is being checked, and the key field says to choose a provider first', async () => {
     vi.spyOn(RemoteServices, 'getMyApiKeys').mockResolvedValue(keys());
-    const save = vi.spyOn(RemoteServices, 'saveMyApiKey').mockResolvedValue(keys(['nvidia_nim']));
+    let finish: (value: TeacherApiKeys) => void = () => undefined;
+    vi.spyOn(RemoteServices, 'saveMyApiKey').mockReturnValue(new Promise((resolve) => (finish = resolve)));
     const wrapper = await mountDialog();
 
-    expect((rows()[0].querySelector('[data-cy="SaveKey"]') as HTMLButtonElement).disabled).toBe(true);
-    await type(rows()[0], '  nvapi-secret-1234  ');
-    await click(rows()[0], 'SaveKey');
-    expect(wrapper.emitted('changed')).toHaveLength(1);
+    expect(saveButton().classList.contains('v-btn--loading')).toBe(false);
+    expect(field('KeyInput').placeholder).toBe('Choose a provider first');
 
-    expect(save).toHaveBeenCalledWith('nvidia_nim', 'nvapi-secret-1234');
-    expect((rows()[0].querySelector('[data-cy="KeyInput"] input') as HTMLInputElement).value).toBe('');
-    expect(rows()[0].querySelector('[data-cy="KeyConfigured"]')).not.toBeNull();
+    await pick(wrapper, 'gemini');
+    expect(field('KeyInput').placeholder).toBe('Paste the key here');
+    await type('KeyInput', 'AIza-secret-1234');
+    await click('SaveKey');
+    expect(saveButton().classList.contains('v-btn--loading')).toBe(true);
+
+    finish(keys(['gemini']));
+    await flushPromises();
+    expect(saveButton().classList.contains('v-btn--loading')).toBe(false);
   });
 
-  test('a key the provider refuses is reported and not shown as saved', async () => {
-    vi.spyOn(RemoteServices, 'getMyApiKeys').mockResolvedValue(keys());
-    vi.spyOn(RemoteServices, 'saveMyApiKey').mockRejectedValue('The provider did not accept this key: 401');
+  test('lists the keys given, by the name of the provider and how they end, never the key', async () => {
+    vi.spyOn(RemoteServices, 'getMyApiKeys').mockResolvedValue(keys(['gemini', 'groq']));
     await mountDialog();
 
-    await type(rows()[1], 'sk-bad-key-1234');
-    await click(rows()[1], 'SaveKey');
+    expect(rows().map((row) => row.querySelector('[data-cy="KeyProvider"]')!.textContent)).toEqual(['Google Gemini', 'Groq']);
+    expect(rows()[0].querySelector('[data-cy="KeyConfigured"]')!.textContent).toContain('ending in 3456');
+    expect((field('KeyInput')).type).toBe('password');
+  });
+
+  test('says when no key was given and the site\'s is used', async () => {
+    vi.spyOn(RemoteServices, 'getMyApiKeys').mockResolvedValue(keys());
+    await mountDialog();
+
+    expect(document.body.querySelector('[data-cy="NoKeys"]')!.textContent).toContain("site's");
+  });
+
+  test('offers every provider for a key, a key is sent for the one picked, then the form is emptied', async () => {
+    vi.spyOn(RemoteServices, 'getMyApiKeys').mockResolvedValue(keys());
+    const save = vi.spyOn(RemoteServices, 'saveMyApiKey').mockResolvedValue(keys(['gemini']));
+    const wrapper = await mountDialog();
+    const panel = wrapper.findComponent({ name: 'ApiKeysPanel' });
+    expect((panel.vm as any).providerItems.map((item: any) => item.title)).toEqual(['Anthropic', 'Google Gemini', 'Groq', 'NVIDIA NIM']);
+
+    await pick(wrapper, 'gemini');
+    expect(saveButton().disabled).toBe(true);
+    await type('KeyInput', '  AIza-secret-1234  ');
+    await click('SaveKey');
+
+    expect(save).toHaveBeenCalledWith('gemini', 'AIza-secret-1234', '');
+    expect(wrapper.emitted('changed')).toHaveLength(1);
+    expect(field('KeyInput').value).toBe('');
+    expect(rows()).toHaveLength(1);
+  });
+
+  test('a model to check the key with can be named', async () => {
+    vi.spyOn(RemoteServices, 'getMyApiKeys').mockResolvedValue(keys());
+    const save = vi.spyOn(RemoteServices, 'saveMyApiKey').mockResolvedValue(keys(['groq']));
+    const wrapper = await mountDialog();
+
+    await pick(wrapper, 'groq');
+    await type('KeyCheckModel', ' llama-3.1-8b-instant ');
+    await type('KeyInput', 'gsk-secret-1234');
+    await click('SaveKey');
+
+    expect(save).toHaveBeenCalledWith('groq', 'gsk-secret-1234', 'llama-3.1-8b-instant');
+  });
+
+  test('a key the provider refuses is reported and not shown as given', async () => {
+    vi.spyOn(RemoteServices, 'getMyApiKeys').mockResolvedValue(keys());
+    vi.spyOn(RemoteServices, 'saveMyApiKey').mockRejectedValue('The provider did not accept this key: 401');
+    const wrapper = await mountDialog();
+
+    await pick(wrapper, 'groq');
+    await type('KeyInput', 'gsk-bad-key-1234');
+    await click('SaveKey');
 
     expect(store.setError).toHaveBeenCalledWith('The provider did not accept this key: 401');
-    expect(rows()[1].querySelector('[data-cy="KeyConfigured"]')).toBeNull();
+    expect(rows()).toHaveLength(0);
   });
 
   test('removing a key asks first', async () => {
     vi.spyOn(RemoteServices, 'getMyApiKeys').mockResolvedValue(keys(['anthropic']));
     const remove = vi.spyOn(RemoteServices, 'removeMyApiKey').mockResolvedValue(keys());
     const confirmation = vi.spyOn(window, 'confirm').mockReturnValue(false);
-    await mountDialog();
+    const wrapper = await mountDialog();
 
-    await click(rows()[2], 'RemoveKey');
+    await click('RemoveKey', rows()[0]);
     expect(remove).not.toHaveBeenCalled();
 
     confirmation.mockReturnValue(true);
-    await click(rows()[2], 'RemoveKey');
+    await click('RemoveKey', rows()[0]);
     expect(remove).toHaveBeenCalledWith('anthropic');
-    expect(rows()[2].querySelector('[data-cy="KeyNotSet"]')).not.toBeNull();
+    expect(wrapper.emitted('changed')).toHaveLength(1);
+    expect(rows()).toHaveLength(0);
   });
 
   test('a server that cannot keep keys says so and takes none', async () => {
@@ -116,18 +176,19 @@ describe('ApiKeysDialog', () => {
     await mountDialog();
 
     expect(document.body.querySelector('[data-cy="KeysUnavailable"]')).not.toBeNull();
-    expect((rows()[0].querySelector('[data-cy="KeyInput"] input') as HTMLInputElement).disabled).toBe(true);
+    expect(field('KeyInput').disabled).toBe(true);
   });
 
   test('what was typed is dropped when the dialog is reopened', async () => {
     vi.spyOn(RemoteServices, 'getMyApiKeys').mockResolvedValue(keys());
     const wrapper = await mountDialog();
-    await type(rows()[0], 'nvapi-typed-and-not-saved');
+    await pick(wrapper, 'groq');
+    await type('KeyInput', 'gsk-typed-and-not-saved');
 
     await wrapper.setProps({ dialog: false });
     await wrapper.setProps({ dialog: true });
     await flushPromises();
 
-    expect((rows()[0].querySelector('[data-cy="KeyInput"] input') as HTMLInputElement).value).toBe('');
+    expect(field('KeyInput').value).toBe('');
   });
 });

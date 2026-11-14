@@ -2,17 +2,32 @@
   <v-card class="table llm-settings" data-cy="LlmSettings">
     <v-card-title>Question generation model</v-card-title>
     <v-card-subtitle class="text-wrap">
-      Which models write the generated questions and the reply drafts in discussions. API keys are set in the
-      generation service's .env file and are never shown or sent here.
+      Which models write the generated questions and the reply drafts in discussions. The API keys are given below
+      (encrypted, never shown again) or in the generation service's .env file.
     </v-card-subtitle>
 
     <v-card-text v-if="view && draft">
-      <h3 class="text-subtitle-1 font-weight-medium mt-2">Main model</h3>
+      <h3 class="text-subtitle-1 font-weight-medium mt-2">API keys of the site</h3>
+      <p class="text-caption text-medium-emphasis">
+        The keys the service uses for everyone who has none of their own, for any provider LiteLLM supports. They are
+        checked with the provider when given, kept encrypted, and a key given here wins over the one in the service's .env.
+      </p>
+      <api-keys-panel
+        ref="keysPanel"
+        :keys="siteKeys"
+        :working="workingKey"
+        empty-text="No key given here: only those in the generation service's .env are used."
+        @save="saveSiteKey"
+        @remove="removeSiteKey"
+      />
+
+      <h3 class="text-subtitle-1 font-weight-medium mt-6">Main model</h3>
       <llm-model-row
         v-model="draft.primary"
         :providers="view.providers"
         :keys="view.keys"
         :default-models="view.defaultModels"
+        :provider-names="view.providerNames"
         :available-models="modelsOf(draft.primary.provider)"
         :models-error="modelsErrorOf(draft.primary.provider)"
         :models-loading="modelsLoadingOf(draft.primary.provider)"
@@ -31,6 +46,7 @@
         :providers="view.providers"
         :keys="view.keys"
         :default-models="view.defaultModels"
+        :provider-names="view.providerNames"
         :available-models="modelsOf(fallback.provider)"
         :models-error="modelsErrorOf(fallback.provider)"
         :models-loading="modelsLoadingOf(fallback.provider)"
@@ -65,6 +81,7 @@
         :providers="view.providers"
         :keys="view.keys"
         :default-models="view.defaultModels"
+        :provider-names="view.providerNames"
         :available-models="modelsOf(choice.provider)"
         :models-error="modelsErrorOf(choice.provider)"
         :models-loading="modelsLoadingOf(choice.provider)"
@@ -212,8 +229,10 @@ import { computed, onMounted, onUnmounted, ref, watch } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
 import { createPoller } from '@/services/Polling';
-import { LlmSettings, LlmSettingsView, OllamaModels, PROVIDER_NAMES } from '@/models/admin/LlmSettings';
+import { LlmSettings, LlmSettingsView, OllamaModels, providerLabel } from '@/models/admin/LlmSettings';
 import LlmModelRow from '@/views/admin/LlmModelRow.vue';
+import ApiKeysPanel from '@/views/admin/ApiKeysPanel.vue';
+import { TeacherApiKeys } from '@/models/management/generation/TeacherApiKeys';
 
 const MAX_FALLBACKS = 5;
 const MAX_TEACHER_MODELS = 20;
@@ -240,6 +259,46 @@ const pulling = ref(false);
 const modelToPull = ref('');
 // The models each cloud provider offers, read once per provider (Ollama's come from `ollama`)
 const catalog = ref<Record<string, { models: string[]; error: string | null; loading: boolean }>>({});
+
+const siteKeys = ref<TeacherApiKeys | null>(null);
+const workingKey = ref<string | null>(null);
+const keysPanel = ref<InstanceType<typeof ApiKeysPanel> | null>(null);
+
+// After a key is given or removed, which providers have one changes: the rest of the page is left as it is
+const refreshKeys = async () => {
+  const fresh = await RemoteServices.getLlmSettings();
+  if (view.value) {
+    view.value.keys = fresh.keys;
+    view.value.providers = fresh.providers;
+    view.value.providerNames = fresh.providerNames;
+  }
+};
+
+const saveSiteKey = async ({ provider, key, model }: { provider: string; key: string; model: string }) => {
+  if (workingKey.value) return;
+  workingKey.value = provider;
+  try {
+    siteKeys.value = await RemoteServices.saveSiteApiKey(provider, key, model);
+    keysPanel.value?.clear();
+    await refreshKeys();
+  } catch (error) {
+    store.setError(error as string);
+  }
+  workingKey.value = null;
+};
+
+const removeSiteKey = async (provider: string) => {
+  const name = siteKeys.value?.keys.find((key) => key.provider === provider)?.name ?? provider;
+  if (!confirm(`Remove the site's ${name} key? Requests for it will use the key in the service's .env, if there is one.`)) return;
+  workingKey.value = provider;
+  try {
+    siteKeys.value = await RemoteServices.removeSiteApiKey(provider);
+    await refreshKeys();
+  } catch (error) {
+    store.setError(error as string);
+  }
+  workingKey.value = null;
+};
 
 const copy = (settings: LlmSettings): LlmSettings => JSON.parse(JSON.stringify(settings));
 
@@ -288,7 +347,7 @@ const problems = computed(() => {
   named.forEach(({ choice, where }) => {
     if (choice.model.trim() === '') found.push(`${where}: pick or type a model`);
     if (!view.value!.keys[choice.provider])
-      found.push(`${where}: there is no API key for ${PROVIDER_NAMES[choice.provider] ?? choice.provider} in the generation service's .env`);
+      found.push(`${where}: there is no API key for ${providerLabel(choice.provider, view.value!.providerNames)}: give one in API keys of the site, or in the generation service's .env`);
   });
   if (urlError.value.length > 0) found.push('Ollama: the address must be an http(s) address');
   if (contextWindowError.value.length > 0) found.push('Context window: between 1024 and 262144 tokens');
@@ -378,6 +437,7 @@ const load = async () => {
   try {
     view.value = await RemoteServices.getLlmSettings();
     draft.value = copy(view.value.settings);
+    siteKeys.value = await RemoteServices.getSiteApiKeys();
   } catch (error) {
     store.setError(error as string);
   }

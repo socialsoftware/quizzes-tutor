@@ -12,5 +12,12 @@ public record LlmSettingsViewDto(
         LlmSettingsDto settings,
         Map<String, Boolean> keys,
         List<String> providers,
-        Map<String, String> defaultModels) implements Serializable {
+        Map<String, String> defaultModels,
+        // how each provider is called ("Google Gemini" for gemini)
+        Map<String, String> providerNames) implements Serializable {
+
+    public LlmSettingsViewDto(LlmSettingsDto settings, Map<String, Boolean> keys, List<String> providers,
+                              Map<String, String> defaultModels) {
+        this(settings, keys, providers, defaultModels, Map.of());
+    }
 }

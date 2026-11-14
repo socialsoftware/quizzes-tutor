@@ -278,8 +278,10 @@ are signs to look at, never proof.
 
 #### Teachers' own API keys for question generation
 
-A teacher can give their own NVIDIA NIM, OpenAI or Anthropic key (**Generate › My API keys**) so that their
-requests are charged to their account; without one the service's key is used. Keys are checked with the
+A teacher can give their own key for any provider LiteLLM supports (Google Gemini, Groq, Mistral, OpenAI, Anthropic,
+NVIDIA NIM…, **Generate › My API keys**) so that their requests are charged to their account; without one the site's
+key is used. The administrator gives the site's keys the same way, under **Administration › Question Generation Model ›
+API keys of the site** (they win over the keys in the `aqg-service`'s `.env`, which still work). Keys are checked with the
 provider, encrypted with AES-256-GCM and never shown again (only their last four characters).
 
 You do not have to set anything up: the first time the backend starts it makes the key that encrypts them

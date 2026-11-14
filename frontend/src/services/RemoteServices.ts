@@ -1227,9 +1227,10 @@ export default class RemoteServices {
       });
   }
 
-  static async saveMyApiKey(provider: string, key: string): Promise<TeacherApiKeys> {
+  // `model` is the model to check the key with; none = the usual one of the provider
+  static async saveMyApiKey(provider: string, key: string, model?: string): Promise<TeacherApiKeys> {
     return httpClient
-      .put(`/teacher/api-keys/${provider}`, { key })
+      .put(`/teacher/api-keys/${provider}`, { key, model: model || null })
       .then((response) => response.data as TeacherApiKeys)
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));
@@ -1239,6 +1240,34 @@ export default class RemoteServices {
   static async removeMyApiKey(provider: string): Promise<TeacherApiKeys> {
     return httpClient
       .delete(`/teacher/api-keys/${provider}`)
+      .then((response) => response.data as TeacherApiKeys)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  // Administration: the API keys of the whole site, given here instead of in the generation service's .env
+  static async getSiteApiKeys(): Promise<TeacherApiKeys> {
+    return httpClient
+      .get('/admin/api-keys')
+      .then((response) => response.data as TeacherApiKeys)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async saveSiteApiKey(provider: string, key: string, model?: string): Promise<TeacherApiKeys> {
+    return httpClient
+      .put(`/admin/api-keys/${provider}`, { key, model: model || null })
+      .then((response) => response.data as TeacherApiKeys)
+      .catch(async (error) => {
+        throw Error(await this.errorMessage(error));
+      });
+  }
+
+  static async removeSiteApiKey(provider: string): Promise<TeacherApiKeys> {
+    return httpClient
+      .delete(`/admin/api-keys/${provider}`)
       .then((response) => response.data as TeacherApiKeys)
       .catch(async (error) => {
         throw Error(await this.errorMessage(error));

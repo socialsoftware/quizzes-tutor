@@ -8,7 +8,9 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.TutorException
 import pt.ulisboa.tecnico.socialsoftware.tutor.question.domain.Topic
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.ApiKeyCipher
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.TeacherApiKeyService
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.AqgJobDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelChoiceDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationRequestDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelTestDto
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.Teacher
@@ -68,9 +70,11 @@ class TeacherApiKeyTest extends SpockTest {
         aqgClient.lastTestedKey == KEY
         aqgClient.lastTestedModel.provider() == 'nvidia_nim'
         keys.available()
-        keys.keys()*.provider() == ['nvidia_nim', 'openai', 'anthropic']
-        keys.keys()*.configured() == [true, false, false]
+        keys.keys()*.provider() == ['nvidia_nim']
+        keys.keys()[0].name() == 'NVIDIA NIM'
         keys.keys()[0].lastFour() == '3456789'.substring(3)
+        keys.providers()*.id().containsAll(['nvidia_nim', 'openai', 'anthropic', 'gemini', 'groq'])
+        !keys.providers()*.id().contains('ollama')
         !keys.toString().contains('SECRET')
         def row = teacherApiKeyRepository.findByUserIdAndProvider(teacher.getId(), 'nvidia_nim').get()
         !row.getEncryptedKey().contains('SECRET')
@@ -112,13 +116,87 @@ class TeacherApiKeyTest extends SpockTest {
         'something too long'    | 'k' * 501
     }
 
-    def "only the providers with a key can be given one"() {
+    @Unroll
+    def "#provider is not a provider a key can be given for"() {
         when:
-        teacherApiKeyService.saveKey(teacher.getId(), 'ollama', KEY)
+        teacherApiKeyService.saveKey(teacher.getId(), provider, KEY)
 
         then:
         def exception = thrown(TutorException)
         exception.getErrorMessage() == TEACHER_API_KEY_PROVIDER
+        aqgClient.lastTestedKey == null
+
+        where:
+        provider << ['ollama', 'bedrock', 'carrier-pigeon', null]
+    }
+
+    def "a key can be given for any provider the service knows, checked with the usual model of that provider"() {
+        when:
+        def keys = teacherApiKeyService.saveKey(teacher.getId(), 'gemini', KEY)
+
+        then:
+        aqgClient.lastTestedModel == new LlmModelChoiceDto('gemini', 'gemini-2.5-flash')
+        aqgClient.lastTestedKey == KEY
+        keys.keys()*.name() == ['Google Gemini']
+        teacherApiKeyService.keysOf(teacher.getId()) == [gemini: KEY]
+    }
+
+    def "the teacher can name the model to check the key with"() {
+        when:
+        teacherApiKeyService.saveKey(teacher.getId(), 'groq', KEY, ' llama-3.1-8b-instant ')
+
+        then:
+        aqgClient.lastTestedModel == new LlmModelChoiceDto('groq', 'llama-3.1-8b-instant')
+    }
+
+    def "a model name that is not one cannot be used to check a key"() {
+        when:
+        teacherApiKeyService.saveKey(teacher.getId(), 'groq', KEY, 'x; rm -rf /')
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getErrorMessage() == TEACHER_API_KEY_MODEL
+        aqgClient.lastTestedKey == null
+    }
+
+    def "the keys are listed by the name of the provider"() {
+        given:
+        teacherApiKeyService.saveKey(teacher.getId(), 'nvidia_nim', KEY)
+        teacherApiKeyService.saveKey(teacher.getId(), 'gemini', KEY)
+        teacherApiKeyService.saveKey(teacher.getId(), 'groq', KEY)
+
+        expect:
+        teacherApiKeyService.getKeys(teacher.getId()).keys()*.name() == ['Google Gemini', 'Groq', 'NVIDIA NIM']
+    }
+
+    def "the administrator's keys are the site's: they go with every request, and a teacher's own win over them"() {
+        given:
+        teacherApiKeyService.saveKey(TeacherApiKeyService.SITE, 'gemini', 'site-gemini-key-1234')
+        teacherApiKeyService.saveKey(TeacherApiKeyService.SITE, 'groq', 'site-groq-key-1234')
+        teacherApiKeyService.saveKey(teacher.getId(), 'groq', 'teacher-groq-key-1234')
+
+        expect:
+        teacherApiKeyService.siteKeys() == [gemini: 'site-gemini-key-1234', groq: 'site-groq-key-1234']
+        teacherApiKeyService.siteProviders().toSet() == ['gemini', 'groq'] as Set
+        teacherApiKeyService.keysOf(teacher.getId()) == [gemini: 'site-gemini-key-1234', groq: 'teacher-groq-key-1234']
+        teacherApiKeyService.keysOf(other.getId()) == [gemini: 'site-gemini-key-1234', groq: 'site-groq-key-1234']
+        and: "a teacher's own providers are theirs only"
+        teacherApiKeyService.providersWithKey(teacher.getId()) == ['groq']
+        teacherApiKeyService.providersWithKey(other.getId()).isEmpty()
+        and: "the page of a teacher never lists the site's keys"
+        teacherApiKeyService.getKeys(other.getId()).keys().isEmpty()
+        teacherApiKeyService.getKeys(TeacherApiKeyService.SITE).keys().size() == 2
+    }
+
+    def "a request for questions carries the site's keys when the teacher has none of their own"() {
+        given:
+        teacherApiKeyService.saveKey(TeacherApiKeyService.SITE, 'gemini', 'site-gemini-key-1234')
+
+        when:
+        questionGenerationService.requestGeneration(externalCourseExecution.getId(), teacher.getId(), request())
+
+        then:
+        aqgClient.lastGenerateRequest.apiKeys() == [gemini: 'site-gemini-key-1234']
     }
 
     def "a new key replaces the old one, and a key can be removed"() {
@@ -136,7 +214,7 @@ class TeacherApiKeyTest extends SpockTest {
         def keys = teacherApiKeyService.removeKey(teacher.getId(), 'nvidia_nim')
 
         then:
-        keys.keys()*.configured() == [false, false, false]
+        keys.keys().isEmpty()
         teacherApiKeyRepository.count() == 0L
         teacherApiKeyService.keysOf(teacher.getId()).isEmpty()
     }
@@ -146,7 +224,7 @@ class TeacherApiKeyTest extends SpockTest {
         teacherApiKeyService.saveKey(teacher.getId(), 'nvidia_nim', KEY)
 
         expect:
-        teacherApiKeyService.getKeys(other.getId()).keys()*.configured() == [false, false, false]
+        teacherApiKeyService.getKeys(other.getId()).keys().isEmpty()
         teacherApiKeyService.keysOf(other.getId()).isEmpty()
 
         when:

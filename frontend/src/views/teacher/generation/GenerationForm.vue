@@ -103,7 +103,7 @@
           <v-col cols="12" sm="3">
             <v-select
               v-model="customProvider"
-              :items="ownKeyProviders.map((provider) => ({ title: PROVIDER_NAMES[provider] ?? provider, value: provider }))"
+              :items="ownKeyProviders.map((provider) => ({ title: providerLabel(provider), value: provider }))"
               item-title="title"
               item-value="value"
               label="Provider"
@@ -146,7 +146,7 @@ import TopicNode from '@/models/management/TopicNode';
 import GenerationJob from '@/models/management/generation/GenerationJob';
 import { buildForest, TreeItem } from '@/services/TopicTreeEditor';
 import { GenerationModels } from '@/models/management/generation/GenerationModels';
-import { PROVIDER_NAMES } from '@/models/admin/LlmSettings';
+import { providerLabel } from '@/models/admin/LlmSettings';
 
 interface TopicItem {
   title: string;
@@ -192,7 +192,7 @@ const customModel = ref('');
 const ownKeyProviders = computed(() => models.value?.ownKeyProviders ?? []);
 
 const nameOf = (choice: { provider: string; model: string; ownKey: boolean }) =>
-  `${PROVIDER_NAMES[choice.provider] ?? choice.provider} · ${choice.model}${choice.ownKey ? ' (your key)' : ''}`;
+  `${providerLabel(choice.provider)} · ${choice.model}${choice.ownKey ? ' (your key)' : ''}`;
 
 // The usual models, the ones the administrator lists and, with a key of their own, any model of that provider
 const modelItems = computed(() => {

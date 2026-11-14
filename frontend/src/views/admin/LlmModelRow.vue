@@ -1,6 +1,6 @@
 <template>
   <div class="d-flex align-center flex-wrap model-row" data-cy="LlmModelRow">
-    <v-select
+    <v-autocomplete
       :model-value="modelValue.provider"
       :items="providerItems"
       item-title="title"
@@ -65,13 +65,15 @@
 import { computed, ref } from 'vue';
 import { useStore } from '@/store';
 import RemoteServices from '@/services/RemoteServices';
-import { LlmModelChoice, LlmModelTest, PROVIDER_NAMES } from '@/models/admin/LlmSettings';
+import { LlmModelChoice, LlmModelTest, providerLabel } from '@/models/admin/LlmSettings';
 
 const props = defineProps<{
   modelValue: LlmModelChoice;
   providers: string[];
   keys: Record<string, boolean>;
   defaultModels: Record<string, string>;
+  // How each provider is called
+  providerNames?: Record<string, string>;
   // The models the provider offers (for Ollama, the ones its server has)
   availableModels: string[];
   // Why they could not be read, if so
@@ -88,13 +90,13 @@ const store = useStore();
 const testing = ref(false);
 const result = ref<LlmModelTest | null>(null);
 
-const providerName = computed(() => PROVIDER_NAMES[props.modelValue.provider] ?? props.modelValue.provider);
+const providerName = computed(() => providerLabel(props.modelValue.provider, props.providerNames));
 const hasKey = computed(() => props.keys[props.modelValue.provider] ?? false);
 
 const providerItems = computed(() =>
   props.providers.map((provider) => ({
     value: provider,
-    title: `${PROVIDER_NAMES[provider] ?? provider}${props.keys[provider] ? '' : ' (no API key)'}`,
+    title: `${providerLabel(provider, props.providerNames)}${props.keys[provider] ? '' : ' (no API key)'}`,
   }))
 );
 

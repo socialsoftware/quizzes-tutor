@@ -4,7 +4,7 @@ from pathlib import Path
 
 from app.schema import ModelConfig
 
-PROVIDERS = ("ollama", "openai", "anthropic", "nvidia_nim")
+from app.llm.providers import default_model, is_supported, supported_providers
 
 DEFAULT_MODELS = {
     "ollama": "llama3.1:8b",
@@ -53,11 +53,11 @@ class Settings:
     @staticmethod
     def from_env() -> "Settings":
         provider = os.getenv("LLM_PROVIDER", "ollama")
-        if provider not in PROVIDERS:
-            raise ValueError(f"LLM_PROVIDER must be one of {PROVIDERS}, got {provider!r}")
+        if not is_supported(provider):
+            raise ValueError(f"LLM_PROVIDER must be one of {supported_providers()}, got {provider!r}")
         return Settings(
             provider=provider,
-            model=os.getenv("LLM_MODEL") or DEFAULT_MODELS[provider],
+            model=os.getenv("LLM_MODEL") or DEFAULT_MODELS.get(provider) or default_model(provider) or "",
             ollama_base_url=os.getenv("OLLAMA_BASE_URL", "http://ollama:11434"),
             max_retries=int(os.getenv("VERIFICATION_MAX_RETRIES", "2")),
             materials_dir=Path(os.getenv("MATERIALS_DIR", "/data/materials")),

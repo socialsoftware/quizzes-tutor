@@ -9,6 +9,8 @@ import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmModelTe
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.LlmSettingsViewDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.OllamaModelsDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.TeacherApiKeyRequestDto;
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.TeacherApiKeysDto;
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.ProviderModelsDto;
 
 /** Administrators only: which models the question generation service uses. */
@@ -19,6 +21,9 @@ public class LlmSettingsController {
 
     @Autowired
     private QuestionGenerationService questionGenerationService;
+
+    @Autowired
+    private TeacherApiKeyService teacherApiKeyService;
 
     @GetMapping("/admin/llm-settings")
     @PreAuthorize("hasRole('ROLE_ADMIN')")
@@ -37,6 +42,25 @@ public class LlmSettingsController {
     @PreAuthorize("hasRole('ROLE_ADMIN')")
     public GenerationUsageDto getUsage(@RequestParam(defaultValue = "10") int days) {
         return questionGenerationService.getUsage(days);
+    }
+
+    /** The keys of the whole site, which the administrator gives here instead of in the service's environment. */
+    @GetMapping("/admin/api-keys")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public TeacherApiKeysDto getSiteKeys() {
+        return teacherApiKeyService.getKeys(TeacherApiKeyService.SITE);
+    }
+
+    @PutMapping("/admin/api-keys/{provider}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public TeacherApiKeysDto saveSiteKey(@PathVariable String provider, @RequestBody TeacherApiKeyRequestDto request) {
+        return teacherApiKeyService.saveKey(TeacherApiKeyService.SITE, provider, request.getKey(), request.getModel());
+    }
+
+    @DeleteMapping("/admin/api-keys/{provider}")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public TeacherApiKeysDto removeSiteKey(@PathVariable String provider) {
+        return teacherApiKeyService.removeKey(TeacherApiKeyService.SITE, provider);
     }
 
     @PostMapping("/admin/llm-settings/test")

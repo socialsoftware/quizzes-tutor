@@ -6,7 +6,14 @@ export const PROVIDER_NAMES: Record<string, string> = {
   nvidia_nim: 'NVIDIA NIM',
   openai: 'OpenAI',
   anthropic: 'Anthropic',
+  gemini: 'Google Gemini',
 };
+
+// How a provider is called: the name the service gave, else one known here, else its id made readable
+export const providerLabel = (provider: string, names?: Record<string, string>): string =>
+  names?.[provider] ??
+  PROVIDER_NAMES[provider] ??
+  provider.replace('_ai', ' AI').replace(/_/g, ' ').replace(/\b\w/g, (letter) => letter.toUpperCase());
 
 export interface LlmModelChoice {
   provider: string;
@@ -36,6 +43,8 @@ export interface LlmSettingsView {
   keys: Record<string, boolean>;
   providers: string[];
   defaultModels: Record<string, string>;
+  // How each provider is called ("Google Gemini" for gemini)
+  providerNames?: Record<string, string>;
 }
 
 export interface LlmModelTest {

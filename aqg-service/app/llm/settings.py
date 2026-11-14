@@ -14,18 +14,13 @@ from pydantic import BaseModel, ConfigDict, Field, field_validator
 from pydantic.alias_generators import to_camel
 from sqlalchemy.orm import sessionmaker
 
-from app.config import DEFAULT_MODELS, PROVIDERS, Settings
+from app.config import Settings
+from app.llm import providers
 from app.db import SettingRow
 from app.schema import ModelConfig
 
-Provider = Literal["ollama", "openai", "anthropic", "nvidia_nim"]
-
-# The environment variable LiteLLM reads each provider's key from; Ollama needs none
-API_KEY_VARIABLES = {
-    "openai": "OPENAI_API_KEY",
-    "anthropic": "ANTHROPIC_API_KEY",
-    "nvidia_nim": "NVIDIA_NIM_API_KEY",
-}
+# A provider by its LiteLLM name (see app.llm.providers for the ones that can be used)
+Provider = str
 
 MAX_FALLBACKS = 5
 MAX_TEACHER_MODELS = 20
@@ -57,6 +52,13 @@ class CamelModel(BaseModel):
 class ModelChoice(CamelModel):
     provider: Provider
     model: str = Field(min_length=1, max_length=200)
+
+    @field_validator("provider")
+    @classmethod
+    def known_provider(cls, provider: str) -> str:
+        if not providers.is_supported(provider):
+            raise ValueError(f"{provider!r} is not a provider that can be used")
+        return provider
 
     @field_validator("model")
     @classmethod
@@ -150,6 +152,8 @@ class LlmSettingsView(CamelModel):
     # Whether each provider can be used: its key is set in the service's environment (never the key)
     keys: dict[str, bool]
     providers: list[str]
+    # How each provider is called ("Google Gemini" for gemini)
+    provider_names: dict[str, str] = Field(default_factory=dict)
     default_models: dict[str, str]
 
 
@@ -175,8 +179,12 @@ class OllamaModels(CamelModel):
     error: str | None = None
 
 
-def keys_present() -> dict[str, bool]:
-    return {provider: provider == "ollama" or bool(os.getenv(API_KEY_VARIABLES[provider])) for provider in PROVIDERS}
+def keys_present(also: set[str] | frozenset[str] = frozenset()) -> dict[str, bool]:
+    """Which providers the service has a key for: in its environment, or (`also`) given with the request."""
+    return {
+        provider: provider == "ollama" or provider in also or bool(providers.service_key(provider))
+        for provider in providers.supported_providers()
+    }
 
 
 def model_config_for(choice: ModelChoice, llm: LlmSettings) -> ModelConfig:
@@ -199,9 +207,7 @@ def model_config_for(choice: ModelChoice, llm: LlmSettings) -> ModelConfig:
         # without it. Models without the switch ignore the template argument.
         extra_body = None if llm.thinking else {"chat_template_kwargs": {"enable_thinking": False}}
         return ModelConfig(model=f"nvidia_nim/{choice.model}", timeout=timeout, extra_body=extra_body)
-    if choice.provider == "anthropic":
-        return ModelConfig(model=f"anthropic/{choice.model}", timeout=timeout)
-    return ModelConfig(model=choice.model, timeout=timeout)
+    return ModelConfig(model=providers.model_name(choice.provider, choice.model), timeout=timeout)
 
 
 class LlmSettingsStore:
@@ -233,13 +239,21 @@ class LlmSettingsStore:
 
     def view(self) -> LlmSettingsView:
         return LlmSettingsView(
-            settings=self.get(), keys=keys_present(), providers=list(PROVIDERS), default_models=dict(DEFAULT_MODELS)
+            settings=self.get(),
+            keys=keys_present(),
+            providers=providers.supported_providers(),
+            provider_names={p: providers.provider_name(p) for p in providers.supported_providers()},
+            default_models={p: m for p in providers.supported_providers() if (m := self._default(p))},
         )
 
+    @staticmethod
+    def _default(provider: str) -> str | None:
+        return providers.default_model(provider) or ("llama3.1:8b" if provider == "ollama" else None)
 
-def missing_keys(settings: LlmSettings) -> list[str]:
-    """Providers chosen whose key is not in the environment: calls to them could only fail."""
-    present = keys_present()
+
+def missing_keys(settings: LlmSettings, also: set[str] | frozenset[str] = frozenset()) -> list[str]:
+    """Providers chosen whose key is not in the environment (nor among `also`): calls to them could only fail."""
+    present = keys_present(also)
     # The models teachers may pick are for everyone, so they need the service's key too
     chosen = [*settings.choices(), *settings.teacher_models]
     return list(dict.fromkeys(choice.provider for choice in chosen if not present[choice.provider]))

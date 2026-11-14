@@ -154,3 +154,13 @@ def test_the_models_teachers_may_pick_are_kept_with_the_settings_and_need_the_se
 
     refused = client.put("/settings/llm", json={**current, "teacherModels": [{"provider": "openai", "model": "gpt-4o-mini"}]})
     assert refused.status_code == 422
+
+
+def test_a_teacher_with_a_key_of_another_provider_litellm_knows_can_pick_a_model_of_it(tmp_path):
+    seen = []
+    client = TestClient(app_with(tmp_path, FakeLLM([good_question(), GROUNDED, CLEAN_DISTRACTORS]), seen))
+
+    response = ask(client, chosen_model={"provider": "gemini", "model": "gemini-2.5-flash"}, api_keys={"gemini": KEY})
+
+    assert response.status_code == 202
+    assert [(config.model, config.api_key) for config in seen] == [("gemini/gemini-2.5-flash", KEY), ("nvidia_nim/m", None)]

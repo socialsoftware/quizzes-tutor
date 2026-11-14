@@ -9,6 +9,10 @@ import org.springframework.security.core.Authentication
 import pt.ulisboa.tecnico.socialsoftware.tutor.auth.domain.AuthUser
 import pt.ulisboa.tecnico.socialsoftware.tutor.user.domain.User
 import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.GenerationModelsDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.LlmSettingsController
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.TeacherApiKeyService
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.TeacherApiKeyRequestDto
+import pt.ulisboa.tecnico.socialsoftware.tutor.questiongeneration.dto.TeacherApiKeysDto
 import spock.lang.Specification
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.AQG_SERVICE_ERROR
@@ -89,6 +93,28 @@ class DeleteMaterialEndpointTest extends Specification {
         then:
         1 * service.getModels(7) >> models
         result.is(models)
+    }
+
+    def "the administrator's controller keeps the keys of the site under the site's owner"() {
+        given:
+        def service = Mock(TeacherApiKeyService)
+        def controller = new LlmSettingsController()
+        controller.@teacherApiKeyService = service
+        def keys = new TeacherApiKeysDto(true, [], [])
+        def request = new TeacherApiKeyRequestDto()
+        request.setKey('site-key-12345')
+        request.setModel('gemini-2.5-flash')
+
+        when:
+        def listed = controller.getSiteKeys()
+        def saved = controller.saveSiteKey('gemini', request)
+        def removed = controller.removeSiteKey('gemini')
+
+        then:
+        1 * service.getKeys(TeacherApiKeyService.SITE) >> keys
+        1 * service.saveKey(TeacherApiKeyService.SITE, 'gemini', 'site-key-12345', 'gemini-2.5-flash') >> keys
+        1 * service.removeKey(TeacherApiKeyService.SITE, 'gemini') >> keys
+        listed.is(keys) && saved.is(keys) && removed.is(keys)
     }
 }
 

@@ -238,8 +238,8 @@ public class QuestionGenerationService {
             return null;
         String name = model == null ? "" : model.trim();
         LlmModelChoiceDto choice = new LlmModelChoiceDto(provider == null ? "" : provider.trim(), name);
-        boolean wellFormed = name.matches("[A-Za-z0-9._:/@+\\-]{1,200}") && TeacherApiKeyService.PROVIDERS.contains(choice.provider())
-                || "ollama".equals(choice.provider()) && name.matches("[A-Za-z0-9._:/@+\\-]{1,200}");
+        boolean wellFormed = name.matches("[A-Za-z0-9._:/@+\\-]{1,200}")
+                && ("ollama".equals(choice.provider()) || teacherApiKeyService.isKeyProvider(choice.provider()));
         if (wellFormed) {
             LlmSettingsDto settings = aqgClient.getLlmSettings().settings();
             boolean listed = settings != null && settings.teacherModels() != null && settings.teacherModels().contains(choice);
