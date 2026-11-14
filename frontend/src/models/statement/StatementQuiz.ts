@@ -1,3 +1,4 @@
+import { reactive } from 'vue';
 import StatementQuestion from '@/models/statement/StatementQuestion';
 import StatementAnswer from '@/models/statement/StatementAnswer';
 import { ISOtoString } from '@/services/ConvertDateService';
@@ -51,28 +52,27 @@ export default class StatementQuiz {
         (this.timeToSubmission != null && this.timeToSubmission > 0) ||
         (this.timeToAvailability != null && this.timeToAvailability > 0)
       ) {
+        // The pages keep the quiz in a ref, which watches a reactive proxy of this object. `this` is
+        // the plain object, so changes made through it are never seen: the clock stayed still and
+        // the watcher that concludes the quiz at zero never ran. The proxy of an object is always
+        // the same one, so going through it lets the pages see every second.
+        const self = reactive(this) as StatementQuiz;
         this.timerId = window.setInterval(() => {
-          if (this.timeToAvailability != null && this.timeToAvailability > 0) {
-            this.timeToAvailability = Math.max(
-              0,
-              this.timeToAvailability -
-                Math.floor(Date.now() - this.lastTimeCalled)
-            );
+          const elapsed = Math.floor(Date.now() - self.lastTimeCalled);
+
+          if (self.timeToAvailability != null && self.timeToAvailability > 0) {
+            self.timeToAvailability = Math.max(0, self.timeToAvailability - elapsed);
           }
 
-          if (this.timeToSubmission != null && this.timeToSubmission > 0) {
-            this.timeToSubmission = Math.max(
-              0,
-              this.timeToSubmission -
-                Math.floor(Date.now() - this.lastTimeCalled)
-            );
+          if (self.timeToSubmission != null && self.timeToSubmission > 0) {
+            self.timeToSubmission = Math.max(0, self.timeToSubmission - elapsed);
           }
 
-          if (!this.timeToSubmission && !this.timeToAvailability) {
-            clearInterval(this.timerId);
+          if (!self.timeToSubmission && !self.timeToAvailability) {
+            clearInterval(self.timerId);
           }
 
-          this.lastTimeCalled = Date.now();
+          self.lastTimeCalled = Date.now();
         }, 1000);
       }
     }
