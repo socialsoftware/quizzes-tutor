@@ -473,6 +473,7 @@ public class QuestionGenerationService {
                     "NEEDS_HUMAN_ATTENTION".equals(outcome.status()),
                     outcome.question().explanation(),
                     outcome.sourceChunkIds() == null ? new ArrayList<>() : outcome.sourceChunkIds());
+            recordWork(questionGeneration, outcome);
             questionGenerationRepository.save(questionGeneration);
             imported++;
         }
@@ -503,7 +504,16 @@ public class QuestionGenerationService {
                 "NEEDS_HUMAN_ATTENTION".equals(outcome.status()),
                 outcome.question().explanation(),
                 outcome.sourceChunkIds() == null ? new ArrayList<>() : outcome.sourceChunkIds());
+        recordWork(questionGeneration, outcome);
         job.markImported(1, 0);
+    }
+
+    /** Keeps what the checks found and what the draft cost, for the evaluation. */
+    private void recordWork(QuestionGeneration questionGeneration, AqgJobDto.Outcome outcome) {
+        questionGeneration.setVerificationFailures(outcome.failures());
+        if (outcome.usage() != null)
+            questionGeneration.addCost(outcome.usage().calls(), outcome.usage().promptTokens(),
+                    outcome.usage().completionTokens(), outcome.usage().seconds());
     }
 
     /** The pieces under the topics and their subtopics, each once, topic after topic in the order asked for. */

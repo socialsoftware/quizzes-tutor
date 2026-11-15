@@ -22,6 +22,7 @@ from app.llm.ollama import OllamaClient
 from app.limits import Limiters, RateLimited, RateLimitedProvider, same_secret
 from app.llm.provider import LiteLLMProvider, LLMProvider, LoggingProvider, build_provider, log_step
 from app.llm.providers import is_supported
+from app.llm.usage import metering
 from app.llm.settings import (
     LlmSettings,
     LlmSettingsStore,
@@ -48,6 +49,7 @@ from app.schema import (
     MaterialChunk,
     MaterialStatus,
     ModelConfig,
+    Usage,
 )
 from app.storage.material_storage import LocalMaterialStorage, MaterialStorage
 
@@ -165,8 +167,9 @@ def create_app(
             outcomes = []
             for index, context in enumerate(contexts):
                 question_request = request.model_copy(update={"chunks": context})
-                with log_step(f"job {job_id[:8]}"), log_step(f"question {index + 1}/{len(contexts)}"):
+                with metering() as meter, log_step(f"job {job_id[:8]}"), log_step(f"question {index + 1}/{len(contexts)}"):
                     outcome = generate_verified_question(question_request, provider, max_retries, seen)
+                outcome.usage = Usage(**meter.totals())
                 if outcome.question:
                     seen.append(outcome.question.stem)
                 outcomes.append(outcome)

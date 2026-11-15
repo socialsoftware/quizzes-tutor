@@ -22,7 +22,22 @@ public record AqgJobDto(
             Question question,
             Integer retries,
             List<String> failures,
-            @JsonProperty("source_chunk_ids") List<String> sourceChunkIds) {
+            @JsonProperty("source_chunk_ids") List<String> sourceChunkIds,
+            // what the calls to the models cost to write this question; null from an older service
+            Usage usage) {
+
+        public Outcome(String status, Question question, Integer retries, List<String> failures, List<String> sourceChunkIds) {
+            this(status, question, retries, failures, sourceChunkIds, null);
+        }
+    }
+
+    /** Calls, tokens and seconds spent writing one question, retries and checks included. */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Usage(
+            Integer calls,
+            @JsonProperty("prompt_tokens") Integer promptTokens,
+            @JsonProperty("completion_tokens") Integer completionTokens,
+            Double seconds) {
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)

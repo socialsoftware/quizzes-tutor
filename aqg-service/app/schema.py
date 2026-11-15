@@ -113,12 +113,22 @@ class OutcomeStatus(str, Enum):
     INSUFFICIENT_CONTEXT = "INSUFFICIENT_CONTEXT"
 
 
+class Usage(BaseModel):
+    """What the calls to the models cost to write one question, retries and checks included."""
+
+    calls: int = 0
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    seconds: float = 0.0
+
+
 class GenerationOutcome(BaseModel):
     status: OutcomeStatus
     question: GeneratedMCQ | None = None
     retries: int = 0
     failures: list[str] = Field(default_factory=list)
     source_chunk_ids: list[str] = Field(default_factory=list)
+    usage: Usage | None = None
 
 
 class JobStatus(str, Enum):

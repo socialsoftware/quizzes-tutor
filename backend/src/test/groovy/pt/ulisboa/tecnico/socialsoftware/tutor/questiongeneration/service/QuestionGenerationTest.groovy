@@ -656,6 +656,61 @@ class QuestionGenerationTest extends SpockTest {
         aqgClient.lastGenerateRequest.chosenModel() == null
     }
 
+    def "what writing a question cost and what the checks found wrong are kept with it"() {
+        given:
+        def job = requestedJob()
+        def question = new AqgJobDto.Question('What does 404 mean?', [
+                new AqgJobDto.Option('Resource not found', true), new AqgJobDto.Option('Server error', false),
+                new AqgJobDto.Option('Unauthorized', false), new AqgJobDto.Option('Redirect', false)], 'It is the missing resource code')
+        def outcome = new AqgJobDto.Outcome('NEEDS_HUMAN_ATTENTION', question, 2,
+                ['the correct option is much longer than the distractors', 'a distractor is also correct'],
+                ['material-1:0'], new AqgJobDto.Usage(7, 5200, 610, 41.5d))
+        aqgClient.jobReply = aqgJob('DONE', [outcome])
+
+        when:
+        questionGenerationService.getGenerationJob(externalCourseExecution.getId(), job.getId())
+
+        then:
+        def generation = questionGenerationRepository.findAll().get(0)
+        generation.getModelCalls() == 7
+        generation.getPromptTokens() == 5200
+        generation.getCompletionTokens() == 610
+        generation.getGenerationSeconds() == 41.5d
+        generation.getVerificationFailures() == 'the correct option is much longer than the distractors\na distractor is also correct'
+    }
+
+    def "a service that does not report the cost leaves it empty, and a draft that passed has no failures"() {
+        when:
+        def generation = importedGeneration()
+
+        then:
+        generation.getModelCalls() == null
+        generation.getVerificationFailures() == null
+    }
+
+    def "a rewrite adds its cost to the cost of the question and replaces the failures"() {
+        given:
+        def generation = importedGeneration()
+        generation.addCost(3, 1000, 100, 10d)
+        aqgClient.generateReply = new AqgJobDto('aqg-2', 'PENDING', 'mcq-v2', 'nim', 'STRICT', [], null)
+        def regenerating = questionGenerationService.regenerate(generation.getId(), teacher.getId(), 'Ask it the other way round')
+        def rewritten = rewrittenOutcome()
+        aqgClient.jobReply = new AqgJobDto('aqg-2', 'DONE', 'mcq-v2', 'nim', 'STRICT', [
+                new AqgJobDto.Outcome('OK', rewritten.question(), 0, ['a distractor is also correct'], ['material-1:0'],
+                        new AqgJobDto.Usage(2, 800, 90, 6d))], null)
+
+        when:
+        questionGenerationService.getGenerationJob(externalCourseExecution.getId(), regenerating.getRegenerationJobId())
+
+        then:
+        def saved = questionGenerationRepository.findAll().get(0)
+        saved.getModelCalls() == 5
+        saved.getPromptTokens() == 1800
+        saved.getCompletionTokens() == 190
+        saved.getGenerationSeconds() == 16d
+        saved.getVerificationFailures() == 'a distractor is also correct'
+    }
+
     def "a finished rewrite replaces the question and puts it back up for review"() {
         given: "a generated question, filed under its topic"
         def generation = importedGeneration()

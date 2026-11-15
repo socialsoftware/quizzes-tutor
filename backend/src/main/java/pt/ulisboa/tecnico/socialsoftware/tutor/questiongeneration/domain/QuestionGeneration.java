@@ -84,6 +84,23 @@ public class QuestionGeneration {
     @Column(name = "regenerated_at")
     private LocalDateTime regeneratedAt;
 
+    // What the checks found wrong in the last draft the model wrote, one per line (empty when it passed)
+    @Column(name = "verification_failures", columnDefinition = "TEXT")
+    private String verificationFailures;
+
+    // What writing the question cost, regenerations included: calls to the models, tokens and seconds
+    @Column(name = "model_calls")
+    private Integer modelCalls;
+
+    @Column(name = "prompt_tokens")
+    private Integer promptTokens;
+
+    @Column(name = "completion_tokens")
+    private Integer completionTokens;
+
+    @Column(name = "generation_seconds")
+    private Double generationSeconds;
+
     @Column(name = "regeneration_count")
     private Integer regenerationCount = 0;
 
@@ -224,6 +241,34 @@ public class QuestionGeneration {
         this.explanation = explanation;
         this.sourceChunkIds = new ArrayList<>(sourceChunkIds);
     }
+
+    public void setVerificationFailures(List<String> failures) {
+        this.verificationFailures = failures == null || failures.isEmpty() ? null : String.join("\n", failures);
+    }
+
+    public String getVerificationFailures() {
+        return verificationFailures;
+    }
+
+    /** Adds what one more draft cost (the first one, or a regeneration) to what the question has cost so far. */
+    public void addCost(Integer calls, Integer promptTokens, Integer completionTokens, Double seconds) {
+        this.modelCalls = sum(this.modelCalls, calls);
+        this.promptTokens = sum(this.promptTokens, promptTokens);
+        this.completionTokens = sum(this.completionTokens, completionTokens);
+        this.generationSeconds = (this.generationSeconds == null ? 0d : this.generationSeconds) + (seconds == null ? 0d : seconds);
+    }
+
+    private static Integer sum(Integer total, Integer more) {
+        return (total == null ? 0 : total) + (more == null ? 0 : more);
+    }
+
+    public Integer getModelCalls() { return modelCalls; }
+
+    public Integer getPromptTokens() { return promptTokens; }
+
+    public Integer getCompletionTokens() { return completionTokens; }
+
+    public Double getGenerationSeconds() { return generationSeconds; }
 
     /** Keeps a draft the model wrote: the first one becomes the original, every one the latest model version. */
     public void recordDraft(String draftJson, LocalDateTime when) {

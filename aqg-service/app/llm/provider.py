@@ -4,6 +4,7 @@ import logging
 import time
 from typing import Callable, Protocol
 
+from app.llm import usage
 from app.schema import ModelConfig
 
 
@@ -38,6 +39,11 @@ class LiteLLMProvider:
     def complete(self, system: str, user: str) -> str:
         import litellm
 
+        messages = [
+            {"role": "system", "content": system},
+            {"role": "user", "content": user},
+        ]
+        started = time.monotonic()
         response = litellm.completion(
             model=self.config.model,
             api_base=self.config.api_base,
@@ -48,32 +54,46 @@ class LiteLLMProvider:
             num_retries=TRANSIENT_RETRIES,
             extra_body=self.config.extra_body,
             **(self.config.options or {}),
-            messages=[
-                {"role": "system", "content": system},
-                {"role": "user", "content": user},
-            ],
+            messages=messages,
             response_format={"type": "json_object"},
             # Streamed, so `timeout` is the time the provider stays silent and not the time the whole
             # answer may take: a slow model that keeps writing is waited for, a stalled one is not
             stream=True,
         )
-        return _text_of(response)
+        text, prompt_tokens, completion_tokens = _read(response, messages)
+        usage.record(prompt_tokens, completion_tokens, time.monotonic() - started)
+        return text
 
 
 logger = logging.getLogger(__name__)
 
 
-def _text_of(response) -> str:
-    """The text of a streamed reply (a whole reply, as test doubles give, is read as it is)."""
+def _read(response, messages) -> tuple[str, int | None, int | None]:
+    """The text of a reply and the tokens it cost. A streamed reply is read to its end (a whole reply, as
+    test doubles give, is read as it is); the tokens are those the provider counted, or LiteLLM's count."""
     if hasattr(response, "choices"):
-        return response.choices[0].message.content
+        used = getattr(response, "usage", None)
+        return (
+            response.choices[0].message.content,
+            getattr(used, "prompt_tokens", None),
+            getattr(used, "completion_tokens", None),
+        )
+    chunks = list(response)
     parts = []
-    for chunk in response:
+    for chunk in chunks:
         if chunk.choices:
             piece = chunk.choices[0].delta.content
             if piece:
                 parts.append(piece)
-    return "".join(parts)
+    prompt_tokens = completion_tokens = None
+    try:
+        import litellm
+
+        used = litellm.stream_chunk_builder(chunks, messages=messages).usage
+        prompt_tokens, completion_tokens = used.prompt_tokens, used.completion_tokens
+    except Exception:  # the cost is a measurement: not knowing it must not fail the question
+        logger.debug("the tokens of a call could not be counted", exc_info=True)
+    return "".join(parts), prompt_tokens, completion_tokens
 
 
 prompt_logger = logging.getLogger("aqg.prompts")
