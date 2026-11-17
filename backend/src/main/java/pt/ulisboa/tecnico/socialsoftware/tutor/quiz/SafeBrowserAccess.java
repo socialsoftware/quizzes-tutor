@@ -4,6 +4,7 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsUtils;
 import org.springframework.web.servlet.HandlerInterceptor;
 import org.springframework.web.servlet.HandlerMapping;
 import pt.ulisboa.tecnico.socialsoftware.tutor.quiz.repository.QuizRepository;
@@ -30,6 +31,9 @@ public class SafeBrowserAccess implements HandlerInterceptor {
     @Override
     @SuppressWarnings("unchecked")
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) {
+        // The browser's CORS preflight never carries the proof (it is made without custom headers or credentials)
+        if (CorsUtils.isPreFlightRequest(request))
+            return true;
         Map<String, String> variables = (Map<String, String>) request.getAttribute(HandlerMapping.URI_TEMPLATE_VARIABLES_ATTRIBUTE);
         String quizId = variables == null ? null : variables.get("quizId");
         if (quizId != null && quizId.matches("\\d{1,9}"))

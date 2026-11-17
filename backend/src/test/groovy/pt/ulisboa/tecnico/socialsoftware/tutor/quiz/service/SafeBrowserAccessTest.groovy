@@ -58,6 +58,18 @@ class SafeBrowserAccessTest extends Specification {
         access.preHandle(request([quizId: '7'], ['X-SafeExamBrowser-ConfigKeyHash': proof]), new MockHttpServletResponse(), null)
     }
 
+    def "the CORS preflight, which never carries the proof, is let through"() {
+        given:
+        quizzes.findById(7) >> Optional.of(quiz(true))
+        def request = request([quizId: '7'])
+        request.setMethod('OPTIONS')
+        request.addHeader('Origin', 'https://tutor.example.org')
+        request.addHeader('Access-Control-Request-Method', 'POST')
+
+        expect:
+        access.preHandle(request, new MockHttpServletResponse(), null)
+    }
+
     def "a quiz for any browser lets every request through"() {
         given:
         quizzes.findById(7) >> Optional.of(quiz(false))

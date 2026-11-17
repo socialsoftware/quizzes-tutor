@@ -12,7 +12,9 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.util.ArrayList;
 import java.util.HexFormat;
+import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Set;
 
 import static pt.ulisboa.tecnico.socialsoftware.tutor.exceptions.ErrorMessage.QUIZ_SAFE_BROWSER_REQUIRED;
 
@@ -50,8 +52,24 @@ public class SafeBrowserCheck {
                     quiz.getId(), requestUrl(request), SEB_HEADER, request.getHeader(SEB_HEADER) != null ? "present" : "missing",
                     PAGE_HASH_HEADER, request.getHeader(PAGE_HASH_HEADER) != null ? "present" : "missing",
                     request.getHeader(PAGE_URL_HEADER), request.getHeader("Referer"));
-            throw new TutorException(QUIZ_SAFE_BROWSER_REQUIRED);
+            throw new TutorException(QUIZ_SAFE_BROWSER_REQUIRED, refusalReason(quiz, request));
         }
+    }
+
+    /** What the student or teacher sees next to the refusal, so a failure in a classroom can be diagnosed without the server log. Never the key. */
+    static String refusalReason(Quiz quiz, HttpServletRequest request) {
+        String key = quiz.getSebConfigKey();
+        if (key == null || key.isBlank())
+            return "the quiz has no Config Key";
+        boolean header = request.getHeader(SEB_HEADER) != null;
+        String page = request.getHeader(PAGE_URL_HEADER);
+        boolean pair = page != null && request.getHeader(PAGE_HASH_HEADER) != null;
+        if (!header && !pair)
+            return "no proof arrived: the browser sent none of its key headers";
+        String address = pair ? page : requestUrl(request);
+        if (address.length() > 150)
+            address = address.substring(0, 150);
+        return "a proof arrived but it does not match the Config Key of this quiz; address used: " + address;
     }
 
     boolean isFromSafeBrowser(String configKey, HttpServletRequest request) {
@@ -60,8 +78,7 @@ public class SafeBrowserCheck {
 
         String direct = request.getHeader(SEB_HEADER);
         if (direct != null) {
-            List<String> addresses = new ArrayList<>();
-            addresses.add(requestUrl(request));
+            List<String> addresses = new ArrayList<>(requestUrls(request));
             String referer = withoutFragment(request.getHeader("Referer"));
             if (referer != null)
                 addresses.add(referer);
@@ -97,6 +114,49 @@ public class SafeBrowserCheck {
             host = request.getServerName() + (request.getServerPort() > 0 ? ":" + request.getServerPort() : "");
         String query = request.getQueryString();
         return scheme + "://" + host + request.getRequestURI() + (query == null ? "" : "?" + query);
+    }
+
+    /**
+     * The addresses the browser may have hashed for a request. Behind a proxy that ends https, strips the /api
+     * prefix or does not forward the host, the server only sees part of the address (for example
+     * http://backend:8080/answers/7/start). So it also tries https, the prefix and the public address the page
+     * itself came from (Origin and Referer). A wrong guess changes nothing: the proof still needs the Config Key.
+     */
+    static List<String> requestUrls(HttpServletRequest request) {
+        String host = firstOf(request.getHeader("X-Forwarded-Host"), request.getHeader("Host"));
+        if (host == null)
+            host = request.getServerName() + (request.getServerPort() > 0 ? ":" + request.getServerPort() : "");
+        String query = request.getQueryString() == null ? "" : "?" + request.getQueryString();
+        String prefix = firstOf(request.getHeader("X-Forwarded-Prefix"), "/api");
+        String scheme = firstOf(request.getHeader("X-Forwarded-Proto"), request.getScheme());
+
+        List<String> bases = new ArrayList<>();
+        for (String s : List.of(scheme, "https", "http"))
+            bases.add(s + "://" + host);
+        for (String header : List.of("Origin", "Referer")) {
+            String base = originOf(request.getHeader(header));
+            if (base != null)
+                bases.add(base);
+        }
+
+        Set<String> urls = new LinkedHashSet<>();
+        urls.add(requestUrl(request));
+        for (String base : bases)
+            for (String p : List.of("", prefix))
+                urls.add(base + p + request.getRequestURI() + query);
+        return new ArrayList<>(urls);
+    }
+
+    /** scheme://host[:port] of an address, or null when it is not one. */
+    private static String originOf(String address) {
+        if (address == null || address.isBlank())
+            return null;
+        try {
+            java.net.URI uri = new java.net.URI(address.trim());
+            return uri.getScheme() == null || uri.getRawAuthority() == null ? null : uri.getScheme() + "://" + uri.getRawAuthority();
+        } catch (java.net.URISyntaxException e) {
+            return null;
+        }
     }
 
     private static String firstOf(String forwarded, String own) {

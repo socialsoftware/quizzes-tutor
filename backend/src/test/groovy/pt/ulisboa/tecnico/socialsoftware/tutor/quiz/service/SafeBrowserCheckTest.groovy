@@ -101,4 +101,52 @@ class SafeBrowserCheckTest extends Specification {
         !check.isFromSafeBrowser(null, request('/answers/7/start', ['X-SafeExamBrowser-ConfigKeyHash': proof(URL, '')]))
         !check.isFromSafeBrowser('', request('/answers/7/start', ['X-SafeExamBrowser-ConfigKeyHash': proof(URL, '')]))
     }
+
+    def "behind a proxy that ends https the address the browser used is still recognised"() {
+        given:
+        def request = new MockHttpServletRequest('GET', '/answers/7/start')
+        request.setScheme('http')
+        request.addHeader('Host', 'tutor.example.org')
+        request.addHeader('X-SafeExamBrowser-ConfigKeyHash', proof('https://tutor.example.org/answers/7/start'))
+
+        expect:
+        check.isFromSafeBrowser(KEY, request)
+    }
+
+    def "behind a proxy that strips the api prefix the address the browser used is still recognised"() {
+        expect:
+        check.isFromSafeBrowser(KEY, request('/answers/7/start', ['X-SafeExamBrowser-ConfigKeyHash': proof('https://tutor.example.org/api/answers/7/start')]))
+    }
+
+    def "behind a proxy that forwards nothing the public address comes from the page's Origin or Referer"() {
+        given:
+        def request = new MockHttpServletRequest('POST', '/answers/7/submit')
+        request.setScheme('http')
+        request.addHeader('Host', 'backend:8080')
+        request.addHeader(header, value)
+        request.addHeader('X-SafeExamBrowser-ConfigKeyHash', proof('https://tutor.example.org/api/answers/7/submit'))
+
+        expect:
+        check.isFromSafeBrowser(KEY, request)
+
+        where:
+        header    | value
+        'Origin'  | 'https://tutor.example.org'
+        'Referer' | 'https://tutor.example.org/student/quiz#top'
+    }
+
+    def "the refusal says what is wrong without giving the key"() {
+        when:
+        check.check(quiz(), request(*args))
+
+        then:
+        def exception = thrown(TutorException)
+        exception.getMessage().contains(text)
+        !exception.getMessage().contains(KEY)
+
+        where:
+        args                                                                      || text
+        []                                                                        || 'no proof arrived'
+        ['/answers/7/start', ['X-SEB-Page-Url': 'https://x/p', 'X-SEB-Config-Key-Hash': 'bad']] || 'address used: https://x/p'
+    }
 }
