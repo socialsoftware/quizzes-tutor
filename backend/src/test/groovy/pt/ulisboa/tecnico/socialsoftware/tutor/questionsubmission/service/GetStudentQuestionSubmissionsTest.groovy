@@ -52,7 +52,7 @@ class GetStudentQuestionSubmissionsTest extends SpockTest {
         questionSubmission.setQuestion(questions[0])
         questionSubmission.setSubmitter(student1)
         questionSubmission.setCourseExecution(externalCourseExecution)
-        questionSubmission.setStatus(QuestionSubmission.Status.REJECTED)
+        questionSubmission.setStatus(QuestionSubmission.Status.IN_REVIEW)
         externalCourseExecution.addQuestionSubmission(questionSubmission)
         student1.addQuestionSubmission(questionSubmission)
         questionSubmissionRepository.save(questionSubmission)
@@ -69,7 +69,27 @@ class GetStudentQuestionSubmissionsTest extends SpockTest {
         submission.getQuestion().getStatus() == Question.Status.SUBMITTED.name()
         submission.getSubmitterId() == student1.getId()
         submission.getCourseExecutionId() == externalCourseExecution.getId()
-        submission.getStatus() == QuestionSubmission.Status.REJECTED.name()
+        submission.getStatus() == QuestionSubmission.Status.IN_REVIEW.name()
+    }
+
+    def "the submissions the teacher rejected are not listed for the student"() {
+        given: "one rejected and one still in review"
+        [QuestionSubmission.Status.REJECTED, QuestionSubmission.Status.IN_REVIEW].eachWithIndex { status, i ->
+            def questionSubmission = new QuestionSubmission()
+            questionSubmission.setQuestion(questions[i])
+            questionSubmission.setSubmitter(student1)
+            questionSubmission.setCourseExecution(externalCourseExecution)
+            questionSubmission.setStatus(status)
+            externalCourseExecution.addQuestionSubmission(questionSubmission)
+            student1.addQuestionSubmission(questionSubmission)
+            questionSubmissionRepository.save(questionSubmission)
+        }
+
+        when:
+        def result = questionSubmissionService.getStudentQuestionSubmissions(student1.getId(), externalCourseExecution.getId())
+
+        then:
+        result*.getStatus() == [QuestionSubmission.Status.IN_REVIEW.name()]
     }
 
     def "get question submissions with 3 submitted questions"() {

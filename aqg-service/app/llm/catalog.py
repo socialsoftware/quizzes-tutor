@@ -25,6 +25,7 @@ DEFAULT_BASES = {
     "nvidia_nim": ("NVIDIA_NIM_API_BASE", "https://integrate.api.nvidia.com/v1"),
     "openai": ("OPENAI_API_BASE", "https://api.openai.com/v1"),
     "anthropic": ("ANTHROPIC_API_BASE", "https://api.anthropic.com/v1"),
+    "gemini": ("GEMINI_API_BASE", "https://generativelanguage.googleapis.com/v1beta"),
 }
 
 CACHE_SECONDS = 600
@@ -58,15 +59,41 @@ class ModelCatalog:
             # The others have no list call this service knows: what LiteLLM knows of them
             return list(providers.suggested_models(provider))
         key = given_key or providers.service_key(provider)
+        if not key and provider == "gemini":
+            # Without a key there is no live list; LiteLLM's may name models that are gone
+            return list(providers.suggested_models(provider))
         if not key:
             raise NoApiKey(f"no API key for {provider} in the service's environment")
         variable, default = DEFAULT_BASES[provider]
         base = (os.getenv(variable) or default).rstrip("/")
         if provider == "anthropic":
             return self._read_anthropic(base, key)
+        if provider == "gemini":
+            return self._read_gemini(base, key)
         response = self.http.get(f"{base}/models", headers={"Authorization": f"Bearer {key}"}, timeout=TIMEOUT_SECONDS)
         response.raise_for_status()
         return [model["id"] for model in response.json().get("data", [])]
+
+    def live_models(self, provider: str, key: str | None = None) -> list[str]:
+        """The models a provider lists now, for a key; never cached, since the key may be one being checked."""
+        return sorted({model for model in self._read(provider, key) if not NOT_FOR_TEXT.search(model)})
+
+    def _read_gemini(self, base: str, key: str) -> list[str]:
+        """Gemini lists `models/<name>` with the methods each supports; only those that generate text count."""
+        models: list[str] = []
+        params: dict = {"pageSize": 1000}
+        while True:
+            response = self.http.get(f"{base}/models", headers={"x-goog-api-key": key}, params=params, timeout=TIMEOUT_SECONDS)
+            response.raise_for_status()
+            page = response.json()
+            models.extend(
+                model["name"].removeprefix("models/")
+                for model in page.get("models", [])
+                if "generateContent" in model.get("supportedGenerationMethods", ["generateContent"])
+            )
+            if not page.get("nextPageToken"):
+                return models
+            params = {"pageSize": 1000, "pageToken": page["nextPageToken"]}
 
     def _read_anthropic(self, base: str, key: str) -> list[str]:
         headers = {"x-api-key": key, "anthropic-version": "2023-06-01"}
@@ -80,3 +107,35 @@ class ModelCatalog:
             if not page.get("has_more") or not page.get("last_id"):
                 return models
             params = {"limit": 1000, "after_id": page["last_id"]}
+
+
+_GEMINI_STABLE = re.compile(r"^gemini-(\d+(?:\.\d+)*)-(flash|flash-lite|pro)$")
+
+
+def usual_gemini(models: list[str]) -> str | None:
+    """The model to try a Gemini key with: the newest stable Flash, else Flash-Lite, else Pro, else any.
+    Stable names only: previews and experiments are the ones that get withdrawn."""
+    for family in ("flash", "flash-lite", "pro"):
+        found = [(tuple(int(n) for n in m.group(1).split(".")), name)
+                 for name in models if (m := _GEMINI_STABLE.match(name)) and m.group(2) == family]
+        if found:
+            return max(found)[1]
+    return models[0] if models else None
+
+
+def gemini_alternatives(models: list[str], first: str, limit: int = 3) -> list[str]:
+    """Models to try one after the other when checking a key: `first`, then the newest stable ones. A model
+    that is overloaded or gone says nothing about the key, so the next one is tried."""
+    ranked = sorted(
+        ((tuple(int(n) for n in m.group(1).split(".")), name) for name in models if (m := _GEMINI_STABLE.match(name))),
+        reverse=True,
+    )
+    order = [first] + [name for _, name in ranked if name != first]
+    return order[:limit]
+
+
+_NOT_THE_KEYS_FAULT = re.compile(r"\b(503|502|504|429|404)\b|UNAVAILABLE|high demand|overloaded|not found|no longer|decommission|deprecated|retired", re.IGNORECASE)
+
+
+def says_nothing_about_the_key(error: str) -> bool:
+    return bool(_NOT_THE_KEYS_FAULT.search(error))

@@ -17,7 +17,7 @@ from app.generation.discussion import suggest_reply
 from app.generation.prompts import PROMPT_VERSION
 from app.generation.synthesizer import ModelReplyError
 from app.ingestion.adapters import Parsers, UnsupportedFormat, adapter_for, build_parsers
-from app.llm.catalog import ModelCatalog
+from app.llm.catalog import ModelCatalog, gemini_alternatives, says_nothing_about_the_key, usual_gemini
 from app.llm.ollama import OllamaClient
 from app.limits import Limiters, RateLimited, RateLimitedProvider, same_secret
 from app.llm.provider import LiteLLMProvider, LLMProvider, LoggingProvider, build_provider, log_step
@@ -355,6 +355,20 @@ def create_app(
         llm_settings.save(new_settings)
         return llm_settings.view()
 
+    def _models_to_try(choice: ModelTestRequest, key: str) -> list[ModelTestRequest]:
+        """Gemini withdraws models and its newest ones are often overloaded, so a key is checked with up to three
+        models, the one named first when the provider still lists it: a key must not be refused for that."""
+        if choice.provider != "gemini" or not key:  # without a key it is a model being tried, not a key
+            return [choice]
+        try:
+            listed = catalog.live_models("gemini", key or None)
+        except Exception:  # a bad key or no network: the call itself will say so
+            return [choice]
+        if not listed:
+            return [choice]
+        first = choice.model if choice.model in listed else (usual_gemini(listed) or choice.model)
+        return [choice.model_copy(update={"model": name}) for name in gemini_alternatives(listed, first)]
+
     @app.post("/settings/llm/test")
     def test_model(choice: ModelTestRequest) -> ModelTestResult:
         """One tiny call to the model, to see that the name is right and it answers in time. With an
@@ -363,6 +377,14 @@ def create_app(
         key = (choice.api_key or "").strip()
         if not key and choice.provider in missing_keys(llm.model_copy(update={"primary": choice, "fallbacks": []})):
             return ModelTestResult(ok=False, seconds=0, error=f"no API key for {choice.provider} in the service's environment")
+        result = None
+        for attempt in _models_to_try(choice, key):
+            result = _try_model(attempt, llm, key)
+            if result.ok or not says_nothing_about_the_key(result.error or ""):
+                break
+        return result
+
+    def _try_model(choice: ModelTestRequest, llm, key: str) -> ModelTestResult:
         config = model_config_for(choice, llm).model_copy(update={"timeout": min(llm.timeout, 60)})
         if key:
             config = config.model_copy(update={"api_key": key})

@@ -12,7 +12,8 @@ import java.util.Optional;
 @Repository
 @Transactional
 public interface QuestionSubmissionRepository extends JpaRepository<QuestionSubmission, Integer> {
-    @Query(value = "select s.* from question_submissions s where s.submitter_id = :submitterId and s.course_execution_id = :courseExecutionId", nativeQuery = true)
+    // Rejected submissions are left out: the student has nothing left to do with them, and the page opens faster
+    @Query(value = "select s.* from question_submissions s where s.submitter_id = :submitterId and s.course_execution_id = :courseExecutionId and s.status <> 'REJECTED'", nativeQuery = true)
     List<QuestionSubmission> findQuestionSubmissionsByUserAndCourseExecution(Integer submitterId, Integer courseExecutionId);
 
     @Query(value = "select s.* from question_submissions s where s.course_execution_id = :courseExecutionId", nativeQuery = true)

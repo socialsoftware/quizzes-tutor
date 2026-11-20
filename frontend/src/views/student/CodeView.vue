@@ -57,8 +57,10 @@ const setCode = async () => {
 
 watch(
   () => quiz.value?.timeToAvailability,
-  (newVal) => {
-    if (!!quiz.value && !newVal) {
+  (newVal, oldVal) => {
+    // Ask again only when the countdown to the start has run out. Asking for a quiz that has started is
+    // what opens it, and a quiz that can be opened once must not be opened a second time here
+    if (!!quiz.value && !newVal && !!oldVal) {
       getQuizByCode();
     }
     timer.value = milisecondsToHHMMSS(newVal ?? 0);

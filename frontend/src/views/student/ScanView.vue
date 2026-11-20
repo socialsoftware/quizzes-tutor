@@ -51,8 +51,10 @@ const onDecode = async (decodedString: string) => {
 
 watch(
   () => quiz.value?.timeToAvailability,
-  (newVal) => {
-    if (!!quiz.value && !newVal) {
+  (newVal, oldVal) => {
+    // Ask again only when the countdown to the start has run out. Asking for a quiz that has started is
+    // what opens it, and a quiz that can be opened once must not be opened a second time here
+    if (!!quiz.value && !newVal && !!oldVal) {
       getQuizByQRCode();
     }
     timer.value = milisecondsToHHMMSS(newVal ?? 0);
