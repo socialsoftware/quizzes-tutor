@@ -384,10 +384,19 @@
       :quiz="quiz"
       v-on:close-quiz-dialog="onCloseQuizDialog"
     />
-    <v-dialog v-model:dialog="positionDialog" max-width="200px" persistent>
+    <v-dialog v-model="positionDialog" max-width="200px" persistent>
       <v-card>
         <v-card-text>
-          <v-text-field v-model="position" label="position" required>
+          <v-text-field
+            v-model.number="position"
+            label="position"
+            type="number"
+            min="1"
+            :max="quizQuestions.length"
+            data-cy="PositionField"
+            required
+            @keyup.enter="saveSetPosition"
+          >
           </v-text-field>
         </v-card-text>
         <v-card-actions>
