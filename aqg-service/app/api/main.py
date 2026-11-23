@@ -67,6 +67,11 @@ INTERACTIVE_TIMEOUT = 45
 logger = logging.getLogger(__name__)
 
 
+# Seconds a model may stay silent when a key is being checked, and the time after which no other model is tried
+KEY_CHECK_TIMEOUT = 12
+KEY_CHECK_BUDGET = 25
+
+
 def create_app(
     settings: Settings | None = None,
     provider_factory: ProviderFactory = LiteLLMProvider,
@@ -377,15 +382,21 @@ def create_app(
         key = (choice.api_key or "").strip()
         if not key and choice.provider in missing_keys(llm.model_copy(update={"primary": choice, "fallbacks": []})):
             return ModelTestResult(ok=False, seconds=0, error=f"no API key for {choice.provider} in the service's environment")
+        # A key is checked while a person waits behind a proxy that gives up after a minute: each model gets a
+        # short time and no new one is started once the budget is spent
+        timeout = min(llm.timeout, KEY_CHECK_TIMEOUT if key else 60)
+        started = time.monotonic()
         result = None
         for attempt in _models_to_try(choice, key):
-            result = _try_model(attempt, llm, key)
+            result = _try_model(attempt, llm, key, timeout)
             if result.ok or not says_nothing_about_the_key(result.error or ""):
+                break
+            if key and time.monotonic() - started > KEY_CHECK_BUDGET:
                 break
         return result
 
-    def _try_model(choice: ModelTestRequest, llm, key: str) -> ModelTestResult:
-        config = model_config_for(choice, llm).model_copy(update={"timeout": min(llm.timeout, 60)})
+    def _try_model(choice: ModelTestRequest, llm, key: str, timeout: float) -> ModelTestResult:
+        config = model_config_for(choice, llm).model_copy(update={"timeout": timeout})
         if key:
             config = config.model_copy(update={"api_key": key})
         provider = provider_factory(config)

@@ -1836,6 +1836,9 @@ export default class RemoteServices {
       return 'Unauthorized access or expired token';
     } else if (error.message.split(' ')[0] === 'timeout') {
       return 'Request timeout - Server took too long to respond';
+    } else if ([502, 503, 504].includes(error.response?.status)) {
+      // The proxy in front of the server gave up: its answer is an HTML page, not worth showing
+      return 'The server took too long to answer or is not available (' + error.response.status + '). Wait a moment and try again';
     } else if (error.response && error.response.data && error.response.data.message) {
       return error.response.data.message;
     } else if (error.response) {

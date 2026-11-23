@@ -211,3 +211,22 @@ def test_a_gemini_key_the_provider_rejects_stops_at_the_first_model():
 
     assert result["ok"] is False
     assert len(factory.configs) == 1
+
+
+def test_a_key_check_gives_each_model_a_short_time_and_stops_when_the_budget_is_spent(monkeypatch):
+    from app.api import main
+    from tests.test_llm_settings import Recorder
+
+    monkeypatch.setattr(main, "KEY_CHECK_BUDGET", -1)  # spent as soon as the first model has been tried
+
+    class Overloaded:
+        def complete(self, system, user):
+            raise RuntimeError("503 UNAVAILABLE")
+
+    factory = Recorder(default=Overloaded())
+
+    result = _gemini_client(factory).post("/settings/llm/test", json={"provider": "gemini", "model": "gemini-3.8-flash", "apiKey": "g"}).json()
+
+    assert result["ok"] is False
+    assert len(factory.configs) == 1  # the first attempt used up the budget
+    assert factory.configs[0].timeout == main.KEY_CHECK_TIMEOUT
