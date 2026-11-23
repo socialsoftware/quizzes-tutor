@@ -125,3 +125,9 @@ def test_usage_is_in_what_the_service_keeps_and_not_mixed_between_questions(tmp_
 
     assert first == second and first["calls"] >= 1
     assert json.dumps(first).count("secret") == 0
+
+
+def test_the_library_litellm_needs_to_retry_a_call_is_installed():
+    # LiteLLM imports tenacity only when num_retries is set, and does not require it: without it every
+    # call fails with "tenacity import failed", which a key check shows as a key the provider refused
+    import tenacity  # noqa: F401

@@ -2,6 +2,8 @@ fastapi
 uvicorn
 pydantic
 litellm
+# LiteLLM imports it only when a call is retried (num_retries), so it is not installed with it
+tenacity
 python-multipart
 pymupdf4llm
 markitdown[pptx,docx]
