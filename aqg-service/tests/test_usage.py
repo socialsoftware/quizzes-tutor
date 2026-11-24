@@ -131,3 +131,31 @@ def test_the_library_litellm_needs_to_retry_a_call_is_installed():
     # LiteLLM imports tenacity only when num_retries is set, and does not require it: without it every
     # call fails with "tenacity import failed", which a key check shows as a key the provider refused
     import tenacity  # noqa: F401
+
+
+def test_a_model_that_takes_one_temperature_only_is_not_refused_for_the_one_we_ask():
+    # Claude Opus and Sonnet 5 accept temperature=1 only; without drop_params LiteLLM raises
+    # UnsupportedParamsError, which a key check showed as a key the provider refused
+    import litellm
+
+    reply = litellm.completion(model="anthropic/claude-opus-5-5", api_key="x", temperature=0.7, drop_params=True,
+                               mock_response="ok", messages=[{"role": "user", "content": "hi"}])
+
+    assert reply.choices[0].message.content == "ok"
+
+
+def test_the_provider_asks_litellm_to_drop_what_a_model_does_not_take(monkeypatch):
+    import litellm
+
+    asked = {}
+
+    def completion(**kwargs):
+        asked.update(kwargs)
+        return iter([piece("{}")])
+
+    monkeypatch.setattr(litellm, "completion", completion)
+    monkeypatch.setattr(litellm, "stream_chunk_builder", lambda chunks, messages=None: None)
+
+    LiteLLMProvider(ModelConfig(model="anthropic/claude-opus-5-5")).complete("s", "u")
+
+    assert asked["drop_params"] is True

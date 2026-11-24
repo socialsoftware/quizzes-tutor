@@ -49,6 +49,8 @@ class LiteLLMProvider:
             api_base=self.config.api_base,
             api_key=self.config.api_key,
             temperature=self.config.temperature,
+            # Some models (Claude Opus and Sonnet 5, for one) accept one temperature only: leave out what a model does not take
+            drop_params=True,
             timeout=self.config.timeout,
             # A call that times out or loses its connection is made once more before the job fails
             num_retries=TRANSIENT_RETRIES,
