@@ -148,85 +148,51 @@ def test_gemini_lists_what_the_key_can_use_now_and_only_models_that_generate_tex
     assert http.calls[0]["headers"] == {"x-goog-api-key": "g-key"}
 
 
-def test_the_model_a_gemini_key_is_tried_with_is_the_newest_stable_flash():
-    from app.llm.catalog import usual_gemini
-
-    assert usual_gemini(["gemini-2.5-flash", "gemini-3.6-flash", "gemini-3.7-flash-preview", "gemini-3.6-flash-lite"]) == "gemini-3.6-flash"
-    assert usual_gemini(["gemini-3.6-flash-lite", "gemini-2.5-pro"]) == "gemini-3.6-flash-lite"
-    assert usual_gemini(["gemini-x-preview"]) == "gemini-x-preview"
-    assert usual_gemini([]) is None
-
-
-def test_a_gemini_key_is_not_refused_because_the_default_model_was_withdrawn(monkeypatch):
-    from tests.test_llm_settings import FakeLLM, Recorder, settings
-
-    class Listing(ModelCatalog):
-        def live_models(self, provider, key=None):
-            return ["gemini-3.6-flash", "gemini-3.5-flash-lite"]
-
-    factory = Recorder({"gemini/gemini-3.6-flash": FakeLLM([{"ok": True}])})
-    client = TestClient(create_app(settings(database_url="sqlite://"), provider_factory=factory, catalog=Listing(FakeOllama(), FakeHttp())))
-
-    result = client.post("/settings/llm/test", json={"provider": "gemini", "model": "gemini-2.5-flash", "apiKey": "g-key"}).json()
-
-    assert result["ok"] is True
-    assert factory.configs[-1].model == "gemini/gemini-3.6-flash"
-
-
-def _gemini_client(factory):
+def _gemini_client(factory, listing):
     from tests.test_llm_settings import settings
 
     class Listing(ModelCatalog):
         def live_models(self, provider, key=None):
-            return ["gemini-3.8-flash", "gemini-3.5-flash", "gemini-2.5-flash", "gemini-2.5-pro"]
+            if isinstance(listing, Exception):
+                raise listing
+            return listing
 
     return TestClient(create_app(settings(database_url="sqlite://"), provider_factory=factory, catalog=Listing(FakeOllama(), FakeHttp())))
 
 
-def test_a_gemini_key_is_accepted_when_the_first_model_is_overloaded_and_the_next_answers():
-    from tests.test_llm_settings import FakeLLM, Recorder
+def _check(client, key="g"):
+    return client.post("/settings/llm/test", json={"provider": "gemini", "model": "gemini-3.8-flash", "apiKey": key}).json()
 
-    class Overloaded:
-        def complete(self, system, user):
-            raise RuntimeError("503 UNAVAILABLE: This model is currently experiencing high demand")
 
-    factory = Recorder({"gemini/gemini-3.8-flash": Overloaded(), "gemini/gemini-3.5-flash": FakeLLM([{"ok": True}])})
+def test_a_gemini_key_is_accepted_when_the_provider_lists_its_models_without_calling_a_model():
+    from tests.test_llm_settings import Recorder
 
-    result = _gemini_client(factory).post("/settings/llm/test", json={"provider": "gemini", "model": "gemini-3.8-flash", "apiKey": "g"}).json()
+    factory = Recorder()
+
+    result = _check(_gemini_client(factory, ["gemini-3.8-flash", "gemini-2.5-flash"]))
 
     assert result["ok"] is True
-    assert [c.model for c in factory.configs] == ["gemini/gemini-3.8-flash", "gemini/gemini-3.5-flash"]
+    assert "2 models" in result["reply"]
+    assert factory.configs == []  # no model was asked: one may be overloaded or withdrawn, which says nothing of the key
 
 
-def test_a_gemini_key_the_provider_rejects_stops_at_the_first_model():
+def test_a_gemini_key_the_provider_rejects_says_why():
     from tests.test_llm_settings import Recorder
 
-    class Rejected:
-        def complete(self, system, user):
-            raise RuntimeError("400 API key not valid. Please pass a valid API key. API_KEY_INVALID")
-
-    factory = Recorder({"gemini/gemini-3.8-flash": Rejected()})
-
-    result = _gemini_client(factory).post("/settings/llm/test", json={"provider": "gemini", "model": "gemini-3.8-flash", "apiKey": "g"}).json()
+    result = _check(_gemini_client(Recorder(), RuntimeError("HTTP 400: API key not valid, key=g-secret")))
 
     assert result["ok"] is False
-    assert len(factory.configs) == 1
+    assert "API key not valid" in result["error"]
+    assert "g-secret" not in result["error"]
 
 
-def test_a_key_check_gives_each_model_a_short_time_and_stops_when_the_budget_is_spent(monkeypatch):
-    from app.api import main
-    from tests.test_llm_settings import Recorder
+def test_a_gemini_key_whose_list_is_empty_is_tried_with_the_model_named():
+    from tests.test_llm_settings import FakeLLM, Recorder
 
-    monkeypatch.setattr(main, "KEY_CHECK_BUDGET", -1)  # spent as soon as the first model has been tried
+    factory = Recorder({"gemini/gemini-3.8-flash": FakeLLM([{"ok": True}])})
 
-    class Overloaded:
-        def complete(self, system, user):
-            raise RuntimeError("503 UNAVAILABLE")
+    result = _check(_gemini_client(factory, []))
 
-    factory = Recorder(default=Overloaded())
-
-    result = _gemini_client(factory).post("/settings/llm/test", json={"provider": "gemini", "model": "gemini-3.8-flash", "apiKey": "g"}).json()
-
-    assert result["ok"] is False
-    assert len(factory.configs) == 1  # the first attempt used up the budget
-    assert factory.configs[0].timeout == main.KEY_CHECK_TIMEOUT
+    assert result["ok"] is True
+    assert [c.model for c in factory.configs] == ["gemini/gemini-3.8-flash"]
+    assert factory.configs[0].timeout <= 25

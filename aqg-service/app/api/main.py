@@ -17,7 +17,7 @@ from app.generation.discussion import suggest_reply
 from app.generation.prompts import PROMPT_VERSION
 from app.generation.synthesizer import ModelReplyError
 from app.ingestion.adapters import Parsers, UnsupportedFormat, adapter_for, build_parsers
-from app.llm.catalog import ModelCatalog, gemini_alternatives, says_nothing_about_the_key, usual_gemini
+from app.llm.catalog import ModelCatalog
 from app.llm.ollama import OllamaClient
 from app.limits import Limiters, RateLimited, RateLimitedProvider, same_secret
 from app.llm.provider import LiteLLMProvider, LLMProvider, LoggingProvider, build_provider, log_step
@@ -67,9 +67,8 @@ INTERACTIVE_TIMEOUT = 45
 logger = logging.getLogger(__name__)
 
 
-# Seconds a model may stay silent when a key is being checked, and the time after which no other model is tried
-KEY_CHECK_TIMEOUT = 12
-KEY_CHECK_BUDGET = 25
+# Seconds a model may stay silent when a key is being checked (the proxy in front gives up after a minute)
+KEY_CHECK_TIMEOUT = 25
 
 
 def create_app(
@@ -360,19 +359,18 @@ def create_app(
         llm_settings.save(new_settings)
         return llm_settings.view()
 
-    def _models_to_try(choice: ModelTestRequest, key: str) -> list[ModelTestRequest]:
-        """Gemini withdraws models and its newest ones are often overloaded, so a key is checked with up to three
-        models, the one named first when the provider still lists it: a key must not be refused for that."""
-        if choice.provider != "gemini" or not key:  # without a key it is a model being tried, not a key
-            return [choice]
+    def _gemini_key_check(key: str) -> ModelTestResult | None:
+        """Gemini answers a model list to any valid key at once, while a model may be withdrawn, overloaded or
+        slow to start (its newest think first), so a key is checked by asking for the list. None when the list
+        comes back empty and the key has to be tried with a model."""
+        started = time.perf_counter()
         try:
-            listed = catalog.live_models("gemini", key or None)
-        except Exception:  # a bad key or no network: the call itself will say so
-            return [choice]
+            listed = catalog.live_models("gemini", key)
+        except Exception as error:  # the error is the answer to the check
+            return ModelTestResult(ok=False, seconds=round(time.perf_counter() - started, 2), error=_scrub(_short_error(error), {"key": key}))
         if not listed:
-            return [choice]
-        first = choice.model if choice.model in listed else (usual_gemini(listed) or choice.model)
-        return [choice.model_copy(update={"model": name}) for name in gemini_alternatives(listed, first)]
+            return None
+        return ModelTestResult(ok=True, seconds=round(time.perf_counter() - started, 2), reply=f"key accepted: {len(listed)} models")
 
     @app.post("/settings/llm/test")
     def test_model(choice: ModelTestRequest) -> ModelTestResult:
@@ -382,18 +380,12 @@ def create_app(
         key = (choice.api_key or "").strip()
         if not key and choice.provider in missing_keys(llm.model_copy(update={"primary": choice, "fallbacks": []})):
             return ModelTestResult(ok=False, seconds=0, error=f"no API key for {choice.provider} in the service's environment")
-        # A key is checked while a person waits behind a proxy that gives up after a minute: each model gets a
-        # short time and no new one is started once the budget is spent
-        timeout = min(llm.timeout, KEY_CHECK_TIMEOUT if key else 60)
-        started = time.monotonic()
-        result = None
-        for attempt in _models_to_try(choice, key):
-            result = _try_model(attempt, llm, key, timeout)
-            if result.ok or not says_nothing_about_the_key(result.error or ""):
-                break
-            if key and time.monotonic() - started > KEY_CHECK_BUDGET:
-                break
-        return result
+        if choice.provider == "gemini" and key:
+            quick = _gemini_key_check(key)
+            if quick is not None:
+                return quick
+        # A key is checked while a person waits behind a proxy that gives up after a minute
+        return _try_model(choice, llm, key, min(llm.timeout, KEY_CHECK_TIMEOUT if key else 60))
 
     def _try_model(choice: ModelTestRequest, llm, key: str, timeout: float) -> ModelTestResult:
         config = model_config_for(choice, llm).model_copy(update={"timeout": timeout})

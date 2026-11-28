@@ -107,35 +107,3 @@ class ModelCatalog:
             if not page.get("has_more") or not page.get("last_id"):
                 return models
             params = {"limit": 1000, "after_id": page["last_id"]}
-
-
-_GEMINI_STABLE = re.compile(r"^gemini-(\d+(?:\.\d+)*)-(flash|flash-lite|pro)$")
-
-
-def usual_gemini(models: list[str]) -> str | None:
-    """The model to try a Gemini key with: the newest stable Flash, else Flash-Lite, else Pro, else any.
-    Stable names only: previews and experiments are the ones that get withdrawn."""
-    for family in ("flash", "flash-lite", "pro"):
-        found = [(tuple(int(n) for n in m.group(1).split(".")), name)
-                 for name in models if (m := _GEMINI_STABLE.match(name)) and m.group(2) == family]
-        if found:
-            return max(found)[1]
-    return models[0] if models else None
-
-
-def gemini_alternatives(models: list[str], first: str, limit: int = 3) -> list[str]:
-    """Models to try one after the other when checking a key: `first`, then the newest stable ones. A model
-    that is overloaded or gone says nothing about the key, so the next one is tried."""
-    ranked = sorted(
-        ((tuple(int(n) for n in m.group(1).split(".")), name) for name in models if (m := _GEMINI_STABLE.match(name))),
-        reverse=True,
-    )
-    order = [first] + [name for _, name in ranked if name != first]
-    return order[:limit]
-
-
-_NOT_THE_KEYS_FAULT = re.compile(r"\b(503|502|504|429|404)\b|UNAVAILABLE|high demand|overloaded|not found|no longer|decommission|deprecated|retired", re.IGNORECASE)
-
-
-def says_nothing_about_the_key(error: str) -> bool:
-    return bool(_NOT_THE_KEYS_FAULT.search(error))

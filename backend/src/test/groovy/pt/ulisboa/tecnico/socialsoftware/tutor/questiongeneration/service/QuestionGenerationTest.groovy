@@ -484,6 +484,21 @@ class QuestionGenerationTest extends SpockTest {
         Review.Type.REJECT  || QuestionGeneration.Status.REJECTED
     }
 
+    def "a teacher can ask only for the generated questions in some states"() {
+        given: "two questions of one job, one of them rejected"
+        def job = requestedJob()
+        aqgClient.jobReply = aqgJob('DONE', [draftOutcome(), draftOutcome()])
+        questionGenerationService.getGenerationJob(externalCourseExecution.getId(), job.getId())
+        questionGenerationService.createReview(reviewOf(questionGenerationRepository.findAll().get(0).getId(), Review.Type.REJECT))
+
+        expect:
+        questionGenerationService.getCourseExecutionQuestionGenerations(externalCourseExecution.getId(), ['REJECTED']).size() == 1
+        questionGenerationService.getCourseExecutionQuestionGenerations(externalCourseExecution.getId(), ['IN_REVIEW']).size() == 1
+        questionGenerationService.getCourseExecutionQuestionGenerations(externalCourseExecution.getId(), ['IN_REVIEW', 'REJECTED']).size() == 2
+        questionGenerationService.getCourseExecutionQuestionGenerations(externalCourseExecution.getId(), null).size() == 2
+        questionGenerationService.getCourseExecutionQuestionGenerations(externalCourseExecution.getId(), ['APPROVED']).isEmpty()
+    }
+
     def "asking for changes needs a comment"() {
         given:
         def generation = importedGeneration()

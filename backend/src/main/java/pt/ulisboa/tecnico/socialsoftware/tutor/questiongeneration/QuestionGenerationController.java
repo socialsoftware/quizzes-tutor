@@ -104,8 +104,9 @@ public class QuestionGenerationController {
 
     @GetMapping("/generation/{executionId}/questions")
     @PreAuthorize("hasRole('ROLE_TEACHER') and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<QuestionGenerationDto> getQuestionGenerations(@PathVariable int executionId) {
-        return questionGenerationService.getCourseExecutionQuestionGenerations(executionId);
+    public List<QuestionGenerationDto> getQuestionGenerations(@PathVariable int executionId,
+                                                              @RequestParam(required = false) List<String> status) {
+        return questionGenerationService.getCourseExecutionQuestionGenerations(executionId, status);
     }
 
     @PostMapping("/generation/questions/{questionGenerationId}/reviews")

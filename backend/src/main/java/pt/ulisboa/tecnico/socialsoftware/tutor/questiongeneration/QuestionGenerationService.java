@@ -406,9 +406,17 @@ public class QuestionGenerationService {
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionGenerationDto> getCourseExecutionQuestionGenerations(Integer executionId) {
-        return questionGenerationRepository.findByCourseExecution(executionId).stream()
-                .map(QuestionGenerationDto::new)
-                .collect(Collectors.toList());
+        return getCourseExecutionQuestionGenerations(executionId, null);
+    }
+
+    /** The generated questions of a course execution, only those in one of `statuses` when given. */
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuestionGenerationDto> getCourseExecutionQuestionGenerations(Integer executionId, java.util.Collection<String> statuses) {
+        List<QuestionGeneration> generations = statuses == null || statuses.isEmpty()
+                ? questionGenerationRepository.findByCourseExecution(executionId)
+                : questionGenerationRepository.findByCourseExecutionAndStatus(executionId, statuses);
+        return generations.stream().map(QuestionGenerationDto::new).collect(Collectors.toList());
     }
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))

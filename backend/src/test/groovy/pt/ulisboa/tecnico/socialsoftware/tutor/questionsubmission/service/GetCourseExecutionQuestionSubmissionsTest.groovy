@@ -130,6 +130,26 @@ class GetCourseExecutionQuestionSubmissionsTest extends SpockTest {
         submission3.getCourseExecutionId() == externalCourseExecution.getId()
     }
 
+    def "a teacher can ask only for the submissions in some states"() {
+        given: "one submission in each of three states"
+        [QuestionSubmission.Status.IN_REVIEW, QuestionSubmission.Status.REJECTED, QuestionSubmission.Status.IN_REVISION].eachWithIndex { status, i ->
+            def questionSubmission = new QuestionSubmission()
+            questionSubmission.setQuestion(questions[i])
+            questionSubmission.setSubmitter(student1)
+            questionSubmission.setCourseExecution(externalCourseExecution)
+            questionSubmission.setStatus(status)
+            externalCourseExecution.addQuestionSubmission(questionSubmission)
+            student1.addQuestionSubmission(questionSubmission)
+            questionSubmissionRepository.save(questionSubmission)
+        }
+
+        expect:
+        questionSubmissionService.getCourseExecutionQuestionSubmissions(externalCourseExecution.getId(), ['IN_REVIEW'])*.getStatus() == ['IN_REVIEW']
+        questionSubmissionService.getCourseExecutionQuestionSubmissions(externalCourseExecution.getId(), ['IN_REVISION', 'REJECTED']).size() == 2
+        questionSubmissionService.getCourseExecutionQuestionSubmissions(externalCourseExecution.getId(), []).size() == 3
+        questionSubmissionService.getCourseExecutionQuestionSubmissions(externalCourseExecution.getId(), ['APPROVED']).isEmpty()
+    }
+
     def "get question submissions with no submitted questions"() {
         when:
         def result = questionSubmissionService.getCourseExecutionQuestionSubmissions(externalCourseExecution.getId())

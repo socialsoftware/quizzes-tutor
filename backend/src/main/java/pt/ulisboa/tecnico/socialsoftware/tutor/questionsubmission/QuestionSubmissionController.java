@@ -70,8 +70,9 @@ public class QuestionSubmissionController {
 
     @GetMapping("/submissions/{executionId}/execution")
     @PreAuthorize("(hasRole('ROLE_TEACHER') or hasRole('ROLE_STUDENT')) and hasPermission(#executionId, 'EXECUTION.ACCESS')")
-    public List<QuestionSubmissionDto> getCourseExecutionQuestionSubmissions(@Valid @PathVariable int executionId) {
-        return questionSubmissionService.getCourseExecutionQuestionSubmissions(executionId);
+    public List<QuestionSubmissionDto> getCourseExecutionQuestionSubmissions(@Valid @PathVariable int executionId,
+                                                                             @RequestParam(required = false) List<String> status) {
+        return questionSubmissionService.getCourseExecutionQuestionSubmissions(executionId, status);
     }
 
     @GetMapping("/submissions/{questionSubmissionId}/reviews")

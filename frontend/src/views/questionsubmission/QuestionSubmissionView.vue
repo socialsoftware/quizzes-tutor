@@ -22,6 +22,21 @@
           />
 
           <v-spacer />
+          <v-btn-toggle
+            v-if="!store.isStudent"
+            v-model="shown"
+            mandatory
+            divided
+            density="comfortable"
+            color="primary"
+            class="mr-2"
+            data-cy="ShownStatus"
+            @update:model-value="getQuestionSubmissions"
+          >
+            <v-btn v-for="option in SHOWN" :key="option.key" :value="option.key" :data-cy="`Shown-${option.key}`">
+              {{ option.label }}
+            </v-btn>
+          </v-btn-toggle>
           <v-btn
             color="primary"
             class="mr-2"
@@ -211,6 +226,17 @@ const topicsComponentKey = ref<number>(0);
 // Teachers see the questions written by the AI next to the students' submissions
 type Row = QuestionSubmission | QuestionGeneration;
 
+// What a teacher asks to see: only these are fetched, so the page opens fast with what is waiting for a review
+const SHOWN = [
+  { key: 'review', label: 'To review', statuses: ['IN_REVIEW'] },
+  { key: 'revision', label: 'In revision', statuses: ['IN_REVISION', 'REGENERATING'] },
+  { key: 'approved', label: 'Approved', statuses: ['APPROVED'] },
+  { key: 'rejected', label: 'Rejected', statuses: ['REJECTED'] },
+  { key: 'all', label: 'All', statuses: [] as string[] },
+];
+const shown = ref<string>('review');
+const shownStatuses = () => SHOWN.find((option) => option.key === shown.value)?.statuses ?? [];
+
 const questionGenerations = ref<QuestionGeneration[]>([]);
 const currentQuestionGeneration = ref<QuestionGeneration | null>(null);
 const generatedQuestionDialog = ref<boolean>(false);
@@ -274,7 +300,7 @@ const getQuestionGenerations = async () => {
   // but the backend refuses it (400), and the error alert would cover the page
   if (!store.canGenerateQuestions) return;
   try {
-    questionGenerations.value = await RemoteServices.getQuestionGenerations();
+    questionGenerations.value = await RemoteServices.getQuestionGenerations(shownStatuses());
     if (questionGenerations.value.some((generation) => generation.isRegenerating())) regenerationPoller.start();
   } catch (error) {
     store.setError(error as string);
@@ -301,7 +327,7 @@ const getQuestionSubmissions = async () => {
       topics.value = _topics;
     } else {
       const [_submissions, _topics] = await Promise.all([
-        RemoteServices.getCourseExecutionQuestionSubmissions(),
+        RemoteServices.getCourseExecutionQuestionSubmissions(shownStatuses()),
         RemoteServices.getTopics(),
       ]);
       questionSubmissions.value = _submissions;

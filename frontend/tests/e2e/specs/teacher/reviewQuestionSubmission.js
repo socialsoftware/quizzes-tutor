@@ -28,18 +28,24 @@ describe('Teacher walkthrough', () => {
 
   it('login approves a submission', () => {
     cy.reviewQuestionSubmission('Approve', 'Test', 'Comment');
+    // a reviewed submission leaves the list of those still to review
+    cy.get('[data-cy="Shown-approved"]').click();
     cy.checkSubmissionStatus('Test', 'APPROVED');
     cy.checkReview('Test', 'Comment', false, 'APPROVED');
   });
 
   it('login rejects a submission', () => {
     cy.reviewQuestionSubmission('Reject', 'Test', 'Comment');
+    // a reviewed submission leaves the list of those still to review
+    cy.get('[data-cy="Shown-rejected"]').click();
     cy.checkSubmissionStatus('Test', 'REJECTED');
     cy.checkReview('Test', 'Comment', false, 'REJECTED');
   });
 
   it('login requests changes for a submission', () => {
     cy.reviewQuestionSubmission('Request Changes', 'Test', 'Comment');
+    // a reviewed submission leaves the list of those still to review
+    cy.get('[data-cy="Shown-revision"]').click();
     cy.checkSubmissionStatus('Test', 'IN REVISION');
     cy.checkReview('Test', 'Comment', false, 'CHANGES REQUESTED');
   });

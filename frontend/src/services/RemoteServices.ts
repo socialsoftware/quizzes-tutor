@@ -1408,9 +1408,12 @@ export default class RemoteServices {
       });
   }
 
-  static async getQuestionGenerations(): Promise<QuestionGeneration[]> {
+  // `statuses`: only the generated questions in one of these states (none given = all of them)
+  static async getQuestionGenerations(statuses: string[] = []): Promise<QuestionGeneration[]> {
     return httpClient
-      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/questions`)
+      .get(`/generation/${useStore().getCurrentCourse!.courseExecutionId}/questions`, {
+        params: statuses.length ? { status: statuses.join(',') } : {},
+      })
       .then((response) =>
         response.data.map((generation: any) => new QuestionGeneration(generation))
       )
@@ -1472,13 +1475,14 @@ export default class RemoteServices {
       });
   }
 
-  static async getCourseExecutionQuestionSubmissions(): Promise<
-    QuestionSubmission[]
-  > {
+  // `statuses`: only the submissions in one of these states (none given = all of them)
+  static async getCourseExecutionQuestionSubmissions(
+    statuses: string[] = []
+  ): Promise<QuestionSubmission[]> {
     return httpClient
-      .get(
-        `/submissions/${useStore().getCurrentCourse!.courseExecutionId}/execution`
-      )
+      .get(`/submissions/${useStore().getCurrentCourse!.courseExecutionId}/execution`, {
+        params: statuses.length ? { status: statuses.join(',') } : {},
+      })
       .then((response) => {
         return response.data.map((questionSubmission: any) => {
           return new QuestionSubmission(questionSubmission);

@@ -158,8 +158,17 @@ public class QuestionSubmissionService {
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
     @Transactional(isolation = Isolation.REPEATABLE_READ)
     public List<QuestionSubmissionDto> getCourseExecutionQuestionSubmissions(Integer courseExecutionId) {
-        return questionSubmissionRepository.findQuestionSubmissionsByCourseExecution(courseExecutionId).stream().map(QuestionSubmissionDto::new)
-                .collect(Collectors.toList());
+        return getCourseExecutionQuestionSubmissions(courseExecutionId, null);
+    }
+
+    /** The submissions of a course execution, only those in one of `statuses` when given (a smaller answer, faster to build). */
+    @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))
+    @Transactional(isolation = Isolation.REPEATABLE_READ)
+    public List<QuestionSubmissionDto> getCourseExecutionQuestionSubmissions(Integer courseExecutionId, java.util.Collection<String> statuses) {
+        List<QuestionSubmission> submissions = statuses == null || statuses.isEmpty()
+                ? questionSubmissionRepository.findQuestionSubmissionsByCourseExecution(courseExecutionId)
+                : questionSubmissionRepository.findQuestionSubmissionsByCourseExecutionAndStatus(courseExecutionId, statuses);
+        return submissions.stream().map(QuestionSubmissionDto::new).collect(Collectors.toList());
     }
 
     @Retryable(value = {SQLException.class}, backoff = @Backoff(delay = 5000))

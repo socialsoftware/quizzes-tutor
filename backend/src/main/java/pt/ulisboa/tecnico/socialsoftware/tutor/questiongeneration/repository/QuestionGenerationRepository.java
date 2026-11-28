@@ -15,6 +15,9 @@ public interface QuestionGenerationRepository extends JpaRepository<QuestionGene
     @Query(value = "select g.* from question_generations g where g.course_execution_id = :courseExecutionId order by g.id", nativeQuery = true)
     List<QuestionGeneration> findByCourseExecution(@Param("courseExecutionId") Integer courseExecutionId);
 
+    @Query(value = "select g.* from question_generations g where g.course_execution_id = :courseExecutionId and g.status in (:statuses) order by g.id", nativeQuery = true)
+    List<QuestionGeneration> findByCourseExecutionAndStatus(@Param("courseExecutionId") Integer courseExecutionId, @Param("statuses") java.util.Collection<String> statuses);
+
     @Query(value = "select g.* from question_generations g where g.question_id = :questionId", nativeQuery = true)
     QuestionGeneration findByQuestionId(@Param("questionId") Integer questionId);
 }
