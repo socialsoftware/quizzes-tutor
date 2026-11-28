@@ -28,6 +28,16 @@ _CATCH_ALL_OPTION = re.compile(
     re.IGNORECASE,
 )
 
+# An option that speaks of the other options ("None of the other options is correct", "All the other statements
+# are correct"): it is said that way and is not longer to give the answer away. Unlike "of the above", it does
+# not depend on where the option is shown
+_ABOUT_THE_OTHERS = re.compile(
+    r"\b(?:all|none)\s+(?:of\s+)?the\s+other\b"
+    r"|\b(?:todas|nenhuma|todos|nenhum)\s+(?:as|os|das|dos)\s+outr[ao]s\b"
+    r"|\b(?:todas|ninguna|todos|ninguno)\s+(?:las|los|de\s+las|de\s+los)\s+otr[ao]s\b",
+    re.IGNORECASE,
+)
+
 # "A) ...", "b. ...", "C: ...", "A - text...", "3 - text...": the Tutor letters the options itself.
 # A dash only counts when text follows (a word of 3 letters) and the marker is a capital or a digit:
 # "a - b", "-a - b", "3 - 1" and "A - B" are answers of a maths question, not enumerations
@@ -87,6 +97,8 @@ def _option_length_problems(question: GeneratedMCQ) -> list[str]:
     others = [len(option.content.strip()) for option in question.options if not option.correct]
     if len(correct) != 1 or len(others) < 2:
         return []  # a malformed draft is reported by the structure check
+    if _ABOUT_THE_OTHERS.search(correct[0].content):
+        return []
     length = len(correct[0].content.strip())
     average = sum(others) / len(others)
     if average > 0 and length >= _LENGTH_RATIO * average and length - average >= _LENGTH_MARGIN:

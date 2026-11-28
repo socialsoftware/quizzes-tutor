@@ -107,6 +107,22 @@ def test_a_correct_option_much_longer_than_the_others_is_flagged():
     assert f"{len(long_answer)} characters" in problems[0]
 
 
+@pytest.mark.parametrize("answer", [
+    "None of the other options is correct",
+    "All the other statements are correct",
+    "Nenhuma das outras opções está correta",
+    "Todas las otras opciones son correctas",
+])
+def test_an_option_about_the_other_options_is_not_flagged_for_being_longer(answer):
+    assert check_format(mcq(answer, "Server error", "Unauthorized", "Redirect")) == []
+
+
+def test_all_of_the_above_is_still_refused():
+    problems = check_format(mcq("All of the above are correct", "Server error", "Unauthorized", "Redirect"))
+
+    assert any("all/none of the above" in problem for problem in problems)
+
+
 @pytest.mark.parametrize(
     "correct, wrong",
     [

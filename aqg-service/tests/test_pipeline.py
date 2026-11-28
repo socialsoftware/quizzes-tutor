@@ -113,3 +113,62 @@ def test_prompt_carries_rubric_grounding_and_context(request_strict):
     assert '[chunk id="c1"]' in prompt
     assert "Difficulty: MEDIUM" in prompt
     assert "insufficient_context" in prompt
+
+
+def _request(topic, level=None, revision=None):
+    from app.schema import Chunk, Difficulty, GenerationRequest
+
+    return GenerationRequest(
+        course_id=1, topic=topic, difficulty=level or Difficulty.HARD, chunks=[Chunk(id=f"m:{topic}", text="A fact.")],
+        revision=revision,
+    )
+
+
+def test_only_a_small_share_of_the_hard_questions_have_a_special_style():
+    from collections import Counter
+
+    from app.generation.prompts import question_style
+
+    styles = Counter(question_style(_request(f"topic {i}")) for i in range(2000))
+
+    special = 2000 - styles[None]
+    assert 0.10 * 2000 < special < 0.20 * 2000  # 10-20 %
+    assert set(styles) == {None, "statements", "none_of_others", "all_of_others"}
+
+
+def test_the_two_catch_all_styles_say_the_other_options_never_the_above_ones():
+    from app.generation.prompts import STYLE_INSTRUCTIONS
+
+    for style in ("none_of_others", "all_of_others"):
+        text = STYLE_INSTRUCTIONS[style]
+        assert "never 'above'" in text and "other options" in text
+    assert "All the statements are true" in STYLE_INSTRUCTIONS["statements"]
+    assert "All the statements are false" in STYLE_INSTRUCTIONS["statements"]
+
+
+def test_the_style_is_in_the_prompt_of_the_questions_that_have_one_and_only_those():
+    from app.generation.prompts import build_generation_prompt, question_style
+
+    for i in range(200):
+        request = _request(f"topic {i}")
+        prompt = build_generation_prompt(request)
+        assert ("Question style:" in prompt) == (question_style(request) is not None)
+
+
+def test_easy_and_medium_questions_and_rewrites_never_have_a_special_style():
+    from app.generation.prompts import build_generation_prompt, question_style
+    from app.schema import Difficulty, Revision
+
+    for i in range(300):
+        for level in (Difficulty.EASY, Difficulty.MEDIUM):
+            assert question_style(_request(f"t{i}", level)) is None
+            assert "Question style:" not in build_generation_prompt(_request(f"t{i}", level))
+        rewrite = _request(f"t{i}", revision=Revision(previous=good_question(), review="Make it clearer"))
+        assert question_style(rewrite) is None
+
+
+def test_the_checks_know_what_the_catch_all_options_mean():
+    from app.generation.prompts import build_distractor_check_prompt, build_grounding_check_prompt
+
+    assert "all the other options are correct" in build_distractor_check_prompt("{}")
+    assert "none of them is" in build_grounding_check_prompt([], "{}")
